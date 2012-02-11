@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -38,9 +38,9 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class GraphBuilder extends AndamaSink<RCSTransaction> {
+public class GraphBuilder extends Sink<RCSTransaction> {
 	
-	public GraphBuilder(final AndamaGroup threadGroup, final RepositorySettings settings, final Repository repository,
+	public GraphBuilder(final Group threadGroup, final RepositorySettings settings, final Repository repository,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		final Map<String, RevDependency> reverseDependencies = new HashMap<String, RevDependency>();

@@ -12,8 +12,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -63,8 +63,8 @@ public class BackrefEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		registerDoubleOption(settings, arguments, "confidence", "Score for backreference in transaction and report.",
 		                     this.scoreBackRef + "", true);
 	}

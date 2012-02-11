@@ -15,6 +15,7 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.settings;
 
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
 /**
@@ -26,8 +27,8 @@ public class InfozillaSettings extends TrackerSettings {
 	/**
 	 * 
 	 */
-	public InfozillaArguments setInfozillaArgs(final boolean isRequired) {
-		InfozillaArguments infozillaArguments = new InfozillaArguments(this, isRequired);
+	public InfozillaArguments setInfozillaArgs(final Requirement requirement) {
+		final InfozillaArguments infozillaArguments = new InfozillaArguments(getRootArgumentSet(), requirement);
 		return infozillaArguments;
 	}
 	

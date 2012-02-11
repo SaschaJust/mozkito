@@ -22,8 +22,8 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -151,8 +151,8 @@ public abstract class SearchEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
 		                   true);
 		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);

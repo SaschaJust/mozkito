@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
 
@@ -142,7 +142,7 @@ public class MappingEngineTest {
 		System.setProperties(properties);
 		
 		this.settings = new MappingSettings();
-		this.arguments = new MappingArguments(new AndamaChain(this.settings, chainName) {
+		this.arguments = new MappingArguments(new Chain(this.settings, chainName) {
 			
 			@Override
 			public void setup() {

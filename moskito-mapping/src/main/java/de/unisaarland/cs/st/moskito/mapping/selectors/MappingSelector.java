@@ -28,15 +28,6 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 public abstract class MappingSelector extends Node {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.selectors", this.getClass().getSimpleName());
-	}
-	
 	/**
 	 * @param entity
 	 *            the element under subject

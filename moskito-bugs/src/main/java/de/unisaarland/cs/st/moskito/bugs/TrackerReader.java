@@ -18,8 +18,8 @@ package de.unisaarland.cs.st.moskito.bugs;
 import java.net.URI;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
@@ -30,13 +30,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends AndamaSource<RawReport> {
+public class TrackerReader extends Source<RawReport> {
 	
 	/**
 	 * @param threadGroup
 	 * @param tracker
 	 */
-	public TrackerReader(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
+	public TrackerReader(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<RawReport, RawReport>(this) {

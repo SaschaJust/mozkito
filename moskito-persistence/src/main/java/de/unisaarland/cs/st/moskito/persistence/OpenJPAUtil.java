@@ -32,7 +32,7 @@ import javax.persistence.criteria.Root;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -149,7 +149,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 					Class<?> activeClass;
 					try {
 						activeClass = Class.forName(element.getClassName());
-						if (ClassFinder.extending(activeClass, AndamaChain.class)) {
+						if (ClassFinder.extending(activeClass, Chain.class)) {
 							unit = activeClass.getSimpleName().toLowerCase();
 							break;
 						}

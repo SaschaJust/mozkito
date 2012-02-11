@@ -12,8 +12,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 
 import org.joda.time.DateTime;
 
@@ -65,8 +65,8 @@ public class CreationOrderEngine extends MappingEngine {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		registerDoubleOption(settings, arguments, "confidence",
 		                     "Score in case the report was created after the transaction.",
 		                     this.scoreReportCreatedAfterTransaction + "", true);

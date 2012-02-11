@@ -24,8 +24,7 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -134,12 +133,13 @@ public class SVMTrainer extends MappingTrainer {
 		return null;
 	}
 	
-	@Override
-	public void init() {
-		
-	}
-	
 	// read in a problem (in svmlight format)
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	private void parse_command_line(final String argv[]) {
 		int i;
@@ -320,12 +320,6 @@ public class SVMTrainer extends MappingTrainer {
 		}
 		
 		fp.close();
-	}
-	
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		
 	}
 	
 	@SuppressWarnings ("unused")

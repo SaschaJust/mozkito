@@ -15,11 +15,15 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.LoggerArguments;
-import net.ownhero.dev.andama.settings.LongArgument;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
+import net.ownhero.dev.andama.settings.arguments.LongArgument;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
@@ -31,29 +35,32 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Bugs extends AndamaChain {
+public class Bugs extends Chain {
 	
-	private final AndamaPool        threadPool;
+	private final Pool              threadPool;
 	private final TrackerArguments  trackerArguments;
 	private final DatabaseArguments databaseArguments;
 	private final LoggerArguments   logSettings;
 	
 	/**
+	 * @throws SettingsParseError
+	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Bugs() {
+	public Bugs() throws SettingsParseError, ArgumentRegistrationException {
 		super(new TrackerSettings());
-		this.threadPool = new AndamaPool(Bugs.class.getSimpleName(), this);
-		TrackerSettings settings = (TrackerSettings) getSettings();
-		this.trackerArguments = settings.setTrackerArgs(true);
-		this.databaseArguments = settings.setDatabaseArgs(false, this.getClass().getSimpleName().toLowerCase());
-		this.logSettings = settings.setLoggerArg(true);
-		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
-		new LongArgument(settings, "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
+		this.threadPool = new Pool(Bugs.class.getSimpleName(), this);
+		final TrackerSettings settings = (TrackerSettings) getSettings();
+		this.trackerArguments = settings.setTrackerArgs(new Required());
+		this.databaseArguments = settings.setDatabaseArgs(new Optional(), this.getClass().getSimpleName().toLowerCase());
+		this.logSettings = settings.setLoggerArg(new Required());
+		new BooleanArgument(settings.getRootArgumentSet(), "headless",
+		                    "Can be enabled when running without graphical interface", "false", new Optional());
+		new LongArgument(settings.getRootArgumentSet(), "cache.size",
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
+		                 new Required());
 		
-		settings.parseArguments();
+		settings.parse();
 	}
 	
 	/*
@@ -76,7 +83,7 @@ public class Bugs extends AndamaChain {
 	 */
 	@Override
 	public void setup() {
-		Tracker tracker = this.trackerArguments.getValue();
+		final Tracker tracker = this.trackerArguments.getValue();
 		this.logSettings.getValue();
 		
 		new TrackerReader(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
@@ -85,7 +92,7 @@ public class Bugs extends AndamaChain {
 		new TrackerXMLChecker(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
 		new TrackerParser(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
 		
-		PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		if (persistenceUtil != null) {
 			new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker,
 			                     persistenceUtil);

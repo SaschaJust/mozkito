@@ -23,22 +23,22 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
-public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
+public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
 	
 	private File                     outputFile;
 	private boolean                  checkedConsistency = false;
 	
 	Map<String, Map<String, Double>> metricValues       = new HashMap<String, Map<String, Double>>();
 	
-	public GenealogyMetricSink(AndamaGroup threadGroup, AndamaSettings settings, File outputFile) {
+	public GenealogyMetricSink(Group threadGroup, Settings settings, File outputFile) {
 		super(threadGroup, settings, false);
 		this.outputFile = outputFile;
 		

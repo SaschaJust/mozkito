@@ -13,8 +13,8 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.LoggerArguments;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -22,15 +22,15 @@ import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
-public class GenealogyToolChain extends AndamaChain {
+public class GenealogyToolChain extends Chain {
 	
-	private final AndamaPool         threadPool;
+	private final Pool         threadPool;
 	private final GenealogyArguments genealogyArgs;
 	
 	public GenealogyToolChain() {
 		super(new GenealogySettings());
 		
-		this.threadPool = new AndamaPool(GenealogyToolChain.class.getSimpleName(), this);
+		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
 		final LoggerArguments loggerArg = settings.setLoggerArg(false);
 		loggerArg.getValue();

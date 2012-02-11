@@ -18,12 +18,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.registerable.Registered;
+import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
-public abstract class Node extends Registered {
+public abstract class Node implements ArgumentProvider {
 	
 	private final Map<Class<? extends MappingStorage>, MappingStorage> storages = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	
+	public abstract String getDescription();
+	
+	/**
+	 * @return
+	 */
+	public String getHandle() {
+		return getClass().getSimpleName();
+	}
 	
 	/**
 	 * @param key

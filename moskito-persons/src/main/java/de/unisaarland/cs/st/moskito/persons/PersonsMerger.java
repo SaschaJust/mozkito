@@ -15,9 +15,9 @@
  */
 package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PersonsMerger extends AndamaSink<PersonContainer> {
+public class PersonsMerger extends Sink<PersonContainer> {
 	
 	/**
 	 * @param threadGroup
@@ -37,7 +37,7 @@ public class PersonsMerger extends AndamaSink<PersonContainer> {
 	 * @param persistenceUtil
 	 * @param processor
 	 */
-	public PersonsMerger(final AndamaGroup threadGroup, final AndamaSettings settings,
+	public PersonsMerger(final Group threadGroup, final Settings settings,
 	        final PersistenceUtil persistenceUtil, final MergingProcessor processor) {
 		super(threadGroup, settings, false);
 		

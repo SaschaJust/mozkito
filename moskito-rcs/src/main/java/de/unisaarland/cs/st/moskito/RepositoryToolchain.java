@@ -15,11 +15,15 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.LoggerArguments;
-import net.ownhero.dev.andama.settings.LongArgument;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
+import net.ownhero.dev.andama.settings.arguments.LongArgument;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -33,9 +37,9 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryToolchain extends AndamaChain {
+public class RepositoryToolchain extends Chain {
 	
-	private final AndamaPool          threadPool;
+	private final Pool                threadPool;
 	private final RepositoryArguments repoSettings;
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
@@ -43,21 +47,23 @@ public class RepositoryToolchain extends AndamaChain {
 	private PersistenceUtil           persistenceUtil;
 	private Repository                repository;
 	
-	public RepositoryToolchain() {
+	public RepositoryToolchain() throws SettingsParseError, ArgumentRegistrationException {
 		super(new RepositorySettings());
-		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
-		this.databaseSettings = settings.setDatabaseArgs(false, "rcs");
-		this.repoSettings = settings.setRepositoryArg(true);
-		this.logSettings = settings.setLoggerArg(true);
-		new BooleanArgument(settings, "headless", "Can be enabled when running without graphical interface", "false",
-		                    false);
-		new LongArgument(settings, "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000", true);
-		new BooleanArgument(settings, "repository.analyze", "Requires consistency checks on the repository", "false",
-		                    false);
 		
-		settings.parseArguments();
+		this.repoSettings = settings.setRepositoryArg(new Required());
+		this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
+		this.logSettings = settings.setLoggerArg(new Required());
+		new BooleanArgument(settings.getRootArgumentSet(), "headless",
+		                    "Can be enabled when running without graphical interface", "false", new Optional());
+		new LongArgument(settings.getRootArgumentSet(), "cache.size",
+		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
+		                 new Required());
+		new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
+		                    "Requires consistency checks on the repository", "false", new Optional());
+		
+		settings.parse();
 	}
 	
 	/*

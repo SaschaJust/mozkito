@@ -15,8 +15,8 @@ package de.unisaarland.cs.st.moskito.mapping.selectors;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -118,8 +118,8 @@ public class TransactionRegexSelector extends MappingSelector {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		registerStringOption(settings, arguments, "pattern", "Pattern of transaction ids to scan for.", "(\\d{2,})",
 		                     true);
 	}

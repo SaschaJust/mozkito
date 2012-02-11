@@ -27,15 +27,6 @@ public abstract class MappingTrainer extends Node {
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.trainers", this.getClass().getSimpleName());
-	}
-	
 	/**
 	 * 
 	 */

@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -41,7 +41,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction> {
+public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
 	/**
 	 * @see RepoSuiteTransformerThread
@@ -49,8 +49,8 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryParser(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository, final BranchFactory bFactory) {
+	public RepositoryParser(final Group threadGroup, final RepositorySettings settings, final Repository repository,
+	        final BranchFactory bFactory) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();

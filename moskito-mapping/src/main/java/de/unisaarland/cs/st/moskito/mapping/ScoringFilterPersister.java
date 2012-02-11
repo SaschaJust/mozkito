@@ -15,8 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.mapping;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringFilterPersister extends AndamaSink<FilteredMapping> {
+public class ScoringFilterPersister extends Sink<FilteredMapping> {
 	
 	private Integer i = 0;
 	
@@ -39,7 +39,7 @@ public class ScoringFilterPersister extends AndamaSink<FilteredMapping> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public ScoringFilterPersister(final AndamaGroup threadGroup, final MappingSettings settings,
+	public ScoringFilterPersister(final Group threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		

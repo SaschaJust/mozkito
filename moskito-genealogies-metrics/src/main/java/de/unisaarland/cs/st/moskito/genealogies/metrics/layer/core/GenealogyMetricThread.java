@@ -19,9 +19,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
@@ -31,14 +31,14 @@ import org.apache.commons.lang.StringUtils;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyCoreNode;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
-public class GenealogyMetricThread extends AndamaTransformer<GenealogyCoreNode, GenealogyMetricValue> {
+public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, GenealogyMetricValue> {
 	
 	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
 	
 	private Iterator<GenealogyMetricValue>            iter              = null;
 	private String                                    metricName        = "<UNKNOWN>";
 	
-	public GenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings, final GenealogyCoreMetric metric) {
+	public GenealogyMetricThread(Group threadGroup, Settings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
 		
 		metricName = StringUtils.join(metric.getMetricNames().toArray(new String[metric.getMetricNames().size()]));

@@ -3,23 +3,23 @@
  */
 package de.unisaarland.cs.st.moskito.mapping;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaMultiplexer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Multiplexer;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingMux extends AndamaMultiplexer<Mapping> {
+public class MappingMux extends Multiplexer<Mapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param settings
 	 * @param parallelizable
 	 */
-	public MappingMux(final AndamaGroup threadGroup, final AndamaSettings settings) {
+	public MappingMux(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 	}
 	

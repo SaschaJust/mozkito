@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.moskito.mapping;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.ioda.Tuple;
@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
+public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 	
 	/**
 	 * @param threadGroup
@@ -32,7 +32,7 @@ public class ReportFinder extends AndamaTransformer<RCSTransaction, Candidate> {
 	 * @param finder
 	 * @param persistenceUtil
 	 */
-	public ReportFinder(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder,
+	public ReportFinder(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, true);
 		

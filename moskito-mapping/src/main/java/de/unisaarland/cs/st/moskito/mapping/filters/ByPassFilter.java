@@ -14,8 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -52,8 +52,8 @@ public class ByPassFilter extends MappingFilter {
 	}
 	
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		// TODO Auto-generated method stub
 		
 	}

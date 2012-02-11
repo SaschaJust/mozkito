@@ -12,7 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
-import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
 /**
@@ -24,10 +26,11 @@ public class MappingSettings extends TrackerSettings {
 	/**
 	 * @param isRequired
 	 * @return
+	 * @throws ArgumentRegistrationException
 	 */
-	public MappingArguments setMappingArgs(final AndamaChain chain,
-	                                       final boolean isRequired) {
-		final MappingArguments mappingArguments = new MappingArguments(chain, this, isRequired);
+	public MappingArguments setMappingArgs(final ArgumentSet<?> set,
+	                                       final Requirement requirement) throws ArgumentRegistrationException {
+		final MappingArguments mappingArguments = new MappingArguments(set, requirement);
 		return mappingArguments;
 	}
 	

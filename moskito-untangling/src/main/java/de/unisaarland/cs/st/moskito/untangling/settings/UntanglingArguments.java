@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
 import net.ownhero.dev.andama.settings.DoubleArgument;
@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class UntanglingArguments extends AndamaArgumentSet<Boolean> {
+public class UntanglingArguments extends ArgumentSet<Boolean> {
 	
 	private final DirectoryArgument  callgraphArg;
 	private final ListArgument       atomicChangesArg;
@@ -254,7 +254,7 @@ public class UntanglingArguments extends AndamaArgumentSet<Boolean> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentSet#getValue()
+	 * @see net.ownhero.dev.andama.settings.ArgumentSet#getValue()
 	 */
 	@Override
 	public Boolean getValue() {

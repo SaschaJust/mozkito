@@ -35,11 +35,11 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			Bugs bugs = new Bugs();
+			final Bugs bugs = new Bugs();
 			bugs.setName(bugs.getClass().getSimpleName());
 			bugs.start();
 			bugs.join();
-		} catch (InterruptedException e) {
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PersonsArguments extends AndamaArgumentSet<MergingProcessor> {
+public class PersonsArguments extends ArgumentSet<MergingProcessor> {
 	
 	private final Set<MergingEngine> engines = new HashSet<MergingEngine>();
 	

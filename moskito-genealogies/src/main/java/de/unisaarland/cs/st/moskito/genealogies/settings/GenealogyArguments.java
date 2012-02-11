@@ -14,20 +14,20 @@
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.DirectoryArgument;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
-public class GenealogyArguments extends AndamaArgumentSet<CoreChangeGenealogy> {
+public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	
 	private DirectoryArgument graphDBArg;
 	private DatabaseArguments dbArgs;
 	
-	public GenealogyArguments(AndamaSettings settings, boolean isRequired, String unit) {
+	public GenealogyArguments(Settings settings, boolean isRequired, String unit) {
 		super();
 		graphDBArg = new DirectoryArgument(
 		                                   settings,

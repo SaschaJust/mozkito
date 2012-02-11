@@ -20,8 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.BooleanArgument;
 import net.ownhero.dev.andama.settings.ListArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
@@ -40,10 +40,10 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PPAToolChain extends AndamaChain {
+public class PPAToolChain extends Chain {
 	
 	/** The thread pool. */
-	private final AndamaPool          threadPool;
+	private final Pool          threadPool;
 	
 	/** The repo settings. */
 	private final RepositoryArguments repoSettings;
@@ -71,7 +71,7 @@ public class PPAToolChain extends AndamaChain {
 	public PPAToolChain() {
 		super(new RepositorySettings());
 		
-		this.threadPool = new AndamaPool(PPAToolChain.class.getSimpleName(), this);
+		this.threadPool = new Pool(PPAToolChain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(true);

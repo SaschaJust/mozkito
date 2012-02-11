@@ -18,11 +18,11 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.arguments.EnumArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -41,10 +41,10 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.Transa
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
-public class GenealogyMetricsToolChain extends AndamaChain {
+public class GenealogyMetricsToolChain extends Chain {
 	
 	private final GenealogyArguments genealogyArgs;
-	private final AndamaPool         threadPool;
+	private final Pool               threadPool;
 	private CoreChangeGenealogy      genealogy;
 	private final EnumArgument       granularityArg;
 	private final OutputFileArgument outputFileArgument;
@@ -52,7 +52,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 	public GenealogyMetricsToolChain() {
 		super(new GenealogySettings());
 		final GenealogySettings settings = (GenealogySettings) getSettings();
-		this.threadPool = new AndamaPool(GenealogyMetricsToolChain.class.getSimpleName(), this);
+		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		settings.setLoggerArg(false);
 		this.genealogyArgs = settings.setGenealogyArgs(true);
 		this.granularityArg = new EnumArgument(settings, "genealogy.metric.level",

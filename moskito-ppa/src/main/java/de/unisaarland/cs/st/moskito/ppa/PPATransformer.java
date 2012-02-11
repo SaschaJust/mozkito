@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.moskito.ppa;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor;
@@ -22,9 +22,9 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PPATransformer extends AndamaTransformer<RCSTransaction, JavaChangeOperation> {
+public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
 	
-	public PPATransformer(AndamaGroup threadGroup, AndamaSettings settings, final Repository repository,
+	public PPATransformer(Group threadGroup, Settings settings, final Repository repository,
 	        final Boolean usePPA, JavaElementFactory factory) {
 		super(threadGroup, settings, false);
 		

@@ -13,9 +13,9 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 
-public class GenealogySettings extends AndamaSettings {
+public class GenealogySettings extends Settings {
 	
 	/**
 	 * Add the repository argument set.

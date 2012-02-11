@@ -15,10 +15,10 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryReader extends AndamaSource<LogEntry> {
+public class RepositoryReader extends Source<LogEntry> {
 	
 	private LogIterator logIterator;
 	
@@ -40,8 +40,7 @@ public class RepositoryReader extends AndamaSource<LogEntry> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryReader(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository) {
+	public RepositoryReader(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<LogEntry, LogEntry>(this) {

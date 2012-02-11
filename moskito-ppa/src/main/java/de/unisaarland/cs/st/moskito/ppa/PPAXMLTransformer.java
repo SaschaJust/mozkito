@@ -27,9 +27,9 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
@@ -49,7 +49,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
+public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
@@ -110,7 +110,7 @@ public class PPAXMLTransformer extends AndamaSink<JavaChangeOperation> {
 	 * @throws ParserConfigurationException
 	 *             the parser configuration exception
 	 */
-	public PPAXMLTransformer(final AndamaGroup threadGroup, final AndamaSettings settings, final OutputStream outStream)
+	public PPAXMLTransformer(final Group threadGroup, final Settings settings, final OutputStream outStream)
 	        throws ParserConfigurationException {
 		super(threadGroup, settings, false);
 		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);

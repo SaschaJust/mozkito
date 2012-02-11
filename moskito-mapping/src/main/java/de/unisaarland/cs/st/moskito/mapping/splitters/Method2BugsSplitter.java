@@ -14,8 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.splitters;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
@@ -44,8 +44,8 @@ public class Method2BugsSplitter extends MappingSplitter {
 	}
 	
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		// TODO Auto-generated method stub
 		
 	}

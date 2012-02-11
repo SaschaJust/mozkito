@@ -21,15 +21,6 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 public abstract class MappingStorage extends Node {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.storages", this.getClass().getSimpleName());
-	}
-	
 	/**
 	 * @param util
 	 */

@@ -18,9 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
@@ -31,11 +31,11 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-public class ChangeOperationReader extends AndamaSource<OperationCollection> {
+public class ChangeOperationReader extends Source<OperationCollection> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public ChangeOperationReader(final AndamaGroup threadGroup, final AndamaSettings settings,
+	public ChangeOperationReader(final Group threadGroup, final Settings settings,
 	        final BranchFactory branchFactory) {
 		super(threadGroup, settings, false);
 		

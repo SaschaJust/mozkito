@@ -19,7 +19,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.InputFileArgument;
 import net.ownhero.dev.andama.settings.OutputFileArgument;
 import net.ownhero.dev.ioda.FileUtils;
@@ -45,7 +45,7 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		AndamaSettings settings = new AndamaSettings();
+		Settings settings = new Settings();
 		
 		InputFileArgument inArg = new InputFileArgument(settings, "in", "The file to be analyzed (full qualified path",
 		                                                null, true);

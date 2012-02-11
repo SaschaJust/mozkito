@@ -17,8 +17,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
@@ -60,6 +62,13 @@ public class ReportRegexSelector extends MappingSelector {
 	@Override
 	public void init() {
 		setPattern((String) getOption("pattern").getSecond().getValue());
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		new StringArgument(set, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
+		                   set.getRequirements());
+		return true;
 	}
 	
 	/*
@@ -115,8 +124,8 @@ public class ReportRegexSelector extends MappingSelector {
 	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
+	public void register(final Settings settings,
+	                     final ArgumentSet<?> arguments) {
 		registerStringOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
 		                     true);
 	}

@@ -18,8 +18,8 @@ package de.unisaarland.cs.st.moskito.mapping;
 import java.util.Iterator;
 import java.util.List;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
@@ -32,7 +32,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TransactionReader extends AndamaSource<RCSTransaction> {
+public class TransactionReader extends Source<RCSTransaction> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
@@ -42,7 +42,7 @@ public class TransactionReader extends AndamaSource<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public TransactionReader(final AndamaGroup threadGroup, final MappingSettings settings,
+	public TransactionReader(final Group threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
