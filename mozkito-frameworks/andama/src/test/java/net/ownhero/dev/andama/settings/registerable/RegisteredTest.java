@@ -6,8 +6,8 @@ package net.ownhero.dev.andama.settings.registerable;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 
 import org.junit.Test;
 
@@ -28,8 +28,8 @@ public class RegisteredTest {
 			}
 			
 			@Override
-			public void register(final AndamaSettings settings,
-			                     final AndamaArgumentSet<?> arguments) {
+			public void register(final Settings settings,
+			                     final ArgumentSet<?> arguments) {
 				// TODO Auto-generated method stub
 				
 			}

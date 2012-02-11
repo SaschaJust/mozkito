@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgument;
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.IArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -19,12 +19,12 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  */
 public class IsRequired extends Requirement {
 	
-	private final AndamaArgument<?> argument;
+	private final Argument<?> argument;
 	
 	/**
 	 * @param argument
 	 */
-	public IsRequired(@NotNull final AndamaArgument<?> argument) {
+	public IsRequired(@NotNull final Argument<?> argument) {
 		try {
 			this.argument = argument;
 		} finally {
@@ -46,8 +46,8 @@ public class IsRequired extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
+	public Set<IArgument<?>> getDependencies() {
+		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			dependencies.add(this.argument);
 			

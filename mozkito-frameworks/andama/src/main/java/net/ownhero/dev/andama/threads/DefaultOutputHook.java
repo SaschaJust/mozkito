@@ -15,7 +15,7 @@ public class DefaultOutputHook<K, V> extends OutputHook<K, V> {
 	/**
 	 * @param thread
 	 */
-	public DefaultOutputHook(final AndamaThread<K, V> thread) {
+	public DefaultOutputHook(final Node<K, V> thread) {
 		super(thread);
 	}
 	

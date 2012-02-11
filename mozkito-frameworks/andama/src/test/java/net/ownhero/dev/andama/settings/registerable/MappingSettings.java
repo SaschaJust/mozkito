@@ -13,8 +13,8 @@
 
 package net.ownhero.dev.andama.settings.registerable;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 
-public class MappingSettings extends AndamaSettings {
+public class MappingSettings extends Settings {
 	
 }

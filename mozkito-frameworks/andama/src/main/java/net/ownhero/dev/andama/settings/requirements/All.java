@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.andama.settings.IArgument;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -87,8 +87,8 @@ public final class All extends Requirement {
 	 * net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
+	public Set<IArgument<?>> getDependencies() {
+		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			for (Requirement requirement : this.requirements) {
 				dependencies.addAll(requirement.getDependencies());

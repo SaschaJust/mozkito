@@ -4,8 +4,8 @@
 package net.ownhero.dev.andama.threads;
 
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.settings.Settings;
 
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ public class AndamaThreadTest {
 	
 	@Test
 	public void test() {
-		final AndamaSettings settings = new AndamaSettings();
-		final ExampleThread1 thread = new ExampleThread1(new AndamaGroup("me", new AndamaChain(settings) {
+		final Settings settings = new Settings();
+		final ExampleThread1 thread = new ExampleThread1(new Group("me", new Chain(settings) {
 			
 			@Override
 			public void setup() {

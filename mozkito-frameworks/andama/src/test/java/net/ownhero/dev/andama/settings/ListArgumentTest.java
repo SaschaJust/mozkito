@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.arguments.ListArgument;
 import net.ownhero.dev.andama.settings.dependencies.Optional;
 import net.ownhero.dev.andama.settings.dependencies.Required;
 
@@ -36,7 +37,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testInValidPropertiesDelimiter() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required(), "@");
 		System.setProperty(name, listString);
@@ -51,7 +52,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testNotRequiredGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
 		                                          new Required());
 		assertEquals(name, arg.getName());
@@ -67,7 +68,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Optional());
 		settings.parseArguments();
@@ -76,7 +77,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testRequiredProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new ListArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
 			settings.parseArguments();
@@ -88,7 +89,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testValidDefault() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
 		                                          new Required());
 		try {
@@ -103,7 +104,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required());
 		System.setProperty(name, listString);
@@ -119,7 +120,7 @@ public class ListArgumentTest {
 	
 	@Test
 	public void testValidPropertiesDelimiter() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required(), "@");
 		System.setProperty(name, "one@two");

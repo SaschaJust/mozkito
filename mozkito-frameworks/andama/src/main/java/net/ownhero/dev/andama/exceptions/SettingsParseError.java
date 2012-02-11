@@ -5,7 +5,7 @@ package net.ownhero.dev.andama.exceptions;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.andama.settings.IArgument;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
@@ -20,12 +20,12 @@ public class SettingsParseError extends Exception {
      * 
      */
 	private static final long                serialVersionUID = 6569706686166731951L;
-	private final AndamaArgumentInterface<?> argument;
+	private final IArgument<?> argument;
 	
 	/**
 	 * @param arg0
 	 */
-	public SettingsParseError(final String arg0, final AndamaArgumentInterface<?> argument) {
+	public SettingsParseError(final String arg0, final IArgument<?> argument) {
 		super(arg0);
 		this.argument = argument;
 	}
@@ -34,7 +34,7 @@ public class SettingsParseError extends Exception {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public SettingsParseError(final String arg0, final AndamaArgumentInterface<?> argument, final Throwable arg1) {
+	public SettingsParseError(final String arg0, final IArgument<?> argument, final Throwable arg1) {
 		super(arg0, arg1);
 		this.argument = argument;
 	}

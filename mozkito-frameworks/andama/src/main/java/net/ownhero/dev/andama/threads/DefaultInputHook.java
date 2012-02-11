@@ -15,7 +15,7 @@ public class DefaultInputHook<K, V> extends InputHook<K, V> {
 	/**
 	 * @param thread
 	 */
-	public DefaultInputHook(final AndamaThread<K, V> thread) {
+	public DefaultInputHook(final Node<K, V> thread) {
 		super(thread);
 	}
 	

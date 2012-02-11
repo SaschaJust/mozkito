@@ -16,6 +16,7 @@ package net.ownhero.dev.andama.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
 import net.ownhero.dev.andama.settings.dependencies.Optional;
 import net.ownhero.dev.andama.settings.dependencies.Required;
 
@@ -39,7 +40,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testInValidDefault() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required());
 		try {
 			settings.parseArguments();
@@ -51,7 +52,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testInValidProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		System.setProperty(name, "hubba");
 		try {
@@ -64,7 +65,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testNotRequiredGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "2.5",
 		                                              new Optional());
 		assertEquals(name, arg.getName());
@@ -78,7 +79,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                              new Optional());
 		settings.parseArguments();
@@ -87,7 +88,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testRequiredProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
 			settings.parseArguments();
@@ -99,7 +100,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testValidDefault() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", "2.5",
 		                                              new Required());
 		try {
@@ -112,7 +113,7 @@ public class DoubleArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final DoubleArgument arg = new DoubleArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                              new Required());
 		System.setProperty(name, "2.5");

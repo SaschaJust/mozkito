@@ -8,17 +8,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Source;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TextSource extends AndamaSource<String> {
+public class TextSource extends Source<String> {
 	
-	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final File file) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process File
@@ -26,14 +26,14 @@ public class TextSource extends AndamaSource<String> {
 		addHooks();
 	}
 	
-	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final InputStream stream) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process stream
 		addHooks();
 	}
 	
-	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final URI uri) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URI
@@ -41,7 +41,7 @@ public class TextSource extends AndamaSource<String> {
 		addHooks();
 	}
 	
-	public TextSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable,
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final URL url) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URL

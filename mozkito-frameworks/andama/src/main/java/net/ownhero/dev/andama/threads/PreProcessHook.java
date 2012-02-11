@@ -7,9 +7,9 @@ package net.ownhero.dev.andama.threads;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class PreProcessHook<K, V> extends AndamaHook<K, V> {
+public abstract class PreProcessHook<K, V> extends Hook<K, V> {
 	
-	public PreProcessHook(final AndamaThread<K, V> thread) {
+	public PreProcessHook(final Node<K, V> thread) {
 		super(thread);
 	}
 	

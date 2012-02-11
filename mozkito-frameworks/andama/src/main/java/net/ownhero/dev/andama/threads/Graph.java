@@ -29,32 +29,32 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 public class Graph {
 	
 	private final HashSet<Class<?>>                                                                                   connectionTypes = new HashSet<Class<?>>();
-	private final HashMap<Class<?>, HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>> inputTypes      = new HashMap<Class<?>, HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>>();
+	private final HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>> inputTypes      = new HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>>();
 	
-	private final HashMap<Class<?>, HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>> outputTypes     = new HashMap<Class<?>, HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>>();
-	private final List<AndamaThreadable<?, ?>>                                                                        transformers    = new LinkedList<AndamaThreadable<?, ?>>();
-	private AndamaGroup                                                                                               group;
+	private final HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>> outputTypes     = new HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>>();
+	private final List<INode<?, ?>>                                                                        transformers    = new LinkedList<INode<?, ?>>();
+	private Group                                                                                               group;
 	
 	/**
 	 * @param group
 	 */
-	public Graph(@NotNull final AndamaGroup group) {
+	public Graph(@NotNull final Group group) {
 		try {
 			this.group = group;
 			CollectionCondition.notEmpty(group.getThreads(), "Cannot build graph on empty thread group.");
 			
-			for (final AndamaThreadable<?, ?> thread : group.getThreads()) {
+			for (final INode<?, ?> thread : group.getThreads()) {
 				if (thread.getInputType() != null) {
 					this.connectionTypes.add(thread.getInputType());
 					
 					if (!this.inputTypes.containsKey(thread.getInputType())) {
 						this.inputTypes.put(thread.getInputType(),
-						                    new HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>());
+						                    new HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>());
 					}
 					
-					final HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>> map = this.inputTypes.get(thread.getInputType());
+					final HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> map = this.inputTypes.get(thread.getInputType());
 					if (!map.containsKey(thread.getBaseType())) {
-						map.put(thread.getBaseType(), new LinkedList<AndamaThreadable<?, ?>>());
+						map.put(thread.getBaseType(), new LinkedList<INode<?, ?>>());
 					}
 					
 					map.get(thread.getBaseType()).add(thread);
@@ -64,18 +64,18 @@ public class Graph {
 					
 					if (!this.outputTypes.containsKey(thread.getOutputType())) {
 						this.outputTypes.put(thread.getOutputType(),
-						                     new HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>>());
+						                     new HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>());
 					}
 					
-					final HashMap<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>> map = this.outputTypes.get(thread.getOutputType());
+					final HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> map = this.outputTypes.get(thread.getOutputType());
 					if (!map.containsKey(thread.getBaseType())) {
-						map.put(thread.getBaseType(), new LinkedList<AndamaThreadable<?, ?>>());
+						map.put(thread.getBaseType(), new LinkedList<INode<?, ?>>());
 					}
 					
 					map.get(thread.getBaseType()).add(thread);
 				}
 				
-				if (thread.getBaseType().equals(AndamaTransformer.class)) {
+				if (thread.getBaseType().equals(Transformer.class)) {
 					this.transformers.add(thread);
 				}
 				
@@ -99,14 +99,14 @@ public class Graph {
 	 * 
 	 */
 	public void buildGraph() {
-		final List<AndamaThreadable<?, ?>> headThreads = new LinkedList<AndamaThreadable<?, ?>>();
-		final List<AndamaThreadable<?, ?>> tailThreads = new LinkedList<AndamaThreadable<?, ?>>();
-		AndamaThreadable<?, ?> headThread = null;
-		AndamaThreadable<?, ?> tailThread = null;
+		final List<INode<?, ?>> headThreads = new LinkedList<INode<?, ?>>();
+		final List<INode<?, ?>> tailThreads = new LinkedList<INode<?, ?>>();
+		INode<?, ?> headThread = null;
+		INode<?, ?> tailThread = null;
 		
 		for (final Class<?> inputType : this.connectionTypes) {
-			final Map<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>> inputMap = this.inputTypes.get(inputType);
-			final Map<Class<? extends AndamaThread<?, ?>>, LinkedList<AndamaThreadable<?, ?>>> outputMap = this.outputTypes.get(inputType);
+			final Map<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> inputMap = this.inputTypes.get(inputType);
+			final Map<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> outputMap = this.outputTypes.get(inputType);
 			
 			// @formatter:off
 			/*
@@ -117,28 +117,28 @@ public class Graph {
 			 * 4. cross:   >-<
 			 */
 			// @formatter:on
-			if (inputMap.containsKey(AndamaMultiplexer.class)) {
-				final LinkedList<AndamaThreadable<?, ?>> muxList = inputMap.get(AndamaMultiplexer.class);
+			if (inputMap.containsKey(Multiplexer.class)) {
+				final LinkedList<INode<?, ?>> muxList = inputMap.get(Multiplexer.class);
 				if (muxList.size() > 1) {
 					// TODO error
 				}
 				
-				if (inputMap.containsKey(AndamaDemultiplexer.class)) {
+				if (inputMap.containsKey(Demultiplexer.class)) {
 					// cross
-					final LinkedList<AndamaThreadable<?, ?>> demuxList = inputMap.get(AndamaDemultiplexer.class);
+					final LinkedList<INode<?, ?>> demuxList = inputMap.get(Demultiplexer.class);
 					if (demuxList.size() > 1) {
 						// TODO error
 					} else {
 						// look back for incoming threads (which should only be transformers and sources; since we don't
 						// use transformers in subgraphs, sources is the only relevant thing here).
-						final AndamaThreadable<?, ?> demux = demuxList.iterator().next();
+						final INode<?, ?> demux = demuxList.iterator().next();
 						headThread = demux;
 						tailThread = demux;
-						final LinkedList<AndamaThreadable<?, ?>> sourceList = outputMap.get(AndamaSource.class);
+						final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
 						
 						if ((sourceList != null) && !sourceList.isEmpty()) {
 							// attach all available sources
-							for (final AndamaThreadable<?, ?> source : sourceList) {
+							for (final INode<?, ?> source : sourceList) {
 								connect(source, demux);
 							}
 						}
@@ -150,11 +150,11 @@ public class Graph {
 						// after that, we take the multiplexer (which definitely exists-checked prior to this)
 						// we then take the available sinks for that type
 						
-						final LinkedList<AndamaThreadable<?, ?>> filterList = inputMap.get(AndamaFilter.class);
+						final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
 						
 						if ((filterList != null) && !filterList.isEmpty()) {
 							// attach all available filters
-							for (final AndamaThreadable<?, ?> filter : filterList) {
+							for (final INode<?, ?> filter : filterList) {
 								connect(tailThread, filter);
 								tailThread = filter;
 							}
@@ -162,20 +162,20 @@ public class Graph {
 						
 						// now lookup multiplexers
 						if ((muxList != null) && !muxList.isEmpty()) {
-							if (tailThread.getBaseType().equals(AndamaDemultiplexer.class)) {
+							if (tailThread.getBaseType().equals(Demultiplexer.class)) {
 								// TODO: ERROR
 							}
 							
-							for (final AndamaThreadable<?, ?> mux : muxList) {
+							for (final INode<?, ?> mux : muxList) {
 								connect(tailThread, mux);
 								tailThread = mux;
 							}
 						}
 						
-						final LinkedList<AndamaThreadable<?, ?>> sinkList = inputMap.get(AndamaSink.class);
+						final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
 						
 						if ((sinkList != null) && !sinkList.isEmpty()) {
-							for (final AndamaThreadable<?, ?> sink : sinkList) {
+							for (final INode<?, ?> sink : sinkList) {
 								connect(demux, sink);
 							}
 						}
@@ -184,26 +184,26 @@ public class Graph {
 					}
 				} else {
 					// y-open
-					final AndamaThreadable<?, ?> mux = muxList.iterator().next();
+					final INode<?, ?> mux = muxList.iterator().next();
 					headThread = mux;
 					tailThread = mux;
 					
 					// look to the left (filters and sources)
-					final LinkedList<AndamaThreadable<?, ?>> filterList = outputMap.get(AndamaFilter.class);
+					final LinkedList<INode<?, ?>> filterList = outputMap.get(Filter.class);
 					
 					if ((filterList != null) && !filterList.isEmpty()) {
 						// attach all available filters
-						for (final AndamaThreadable<?, ?> filter : filterList) {
+						for (final INode<?, ?> filter : filterList) {
 							connect(filter, headThread);
 							headThread = filter;
 						}
 					}
 					
-					final LinkedList<AndamaThreadable<?, ?>> sourceList = outputMap.get(AndamaSource.class);
+					final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
 					
 					if ((sourceList != null) && !sourceList.isEmpty()) {
 						// attach all available sources
-						for (final AndamaThreadable<?, ?> source : sourceList) {
+						for (final INode<?, ?> source : sourceList) {
 							connect(source, mux);
 						}
 					}
@@ -211,10 +211,10 @@ public class Graph {
 					headThreads.add(headThread);
 					
 					// look to the right
-					final LinkedList<AndamaThreadable<?, ?>> sinkList = inputMap.get(AndamaSink.class);
+					final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
 					
 					if ((sinkList != null) && !sinkList.isEmpty()) {
-						for (final AndamaThreadable<?, ?> sink : sinkList) {
+						for (final INode<?, ?> sink : sinkList) {
 							connect(tailThread, sink);
 						}
 					}
@@ -222,22 +222,22 @@ public class Graph {
 					tailThreads.add(tailThread);
 				}
 			} else {
-				if (inputMap.containsKey(AndamaDemultiplexer.class)) {
+				if (inputMap.containsKey(Demultiplexer.class)) {
 					// y-close
-					final LinkedList<AndamaThreadable<?, ?>> demuxList = inputMap.get(AndamaDemultiplexer.class);
+					final LinkedList<INode<?, ?>> demuxList = inputMap.get(Demultiplexer.class);
 					if (demuxList.size() > 1) {
 						// TODO error
 					} else {
 						// look back for incoming threads (which should only be transformers and sources; since we don't
 						// use transformers in subgraphs, sources is the only relevant thing here).
-						final AndamaThreadable<?, ?> demux = demuxList.iterator().next();
+						final INode<?, ?> demux = demuxList.iterator().next();
 						headThread = demux;
 						tailThread = demux;
-						final LinkedList<AndamaThreadable<?, ?>> sourceList = outputMap.get(AndamaSource.class);
+						final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
 						
 						if ((sourceList != null) && !sourceList.isEmpty()) {
 							// attach all available sources
-							for (final AndamaThreadable<?, ?> source : sourceList) {
+							for (final INode<?, ?> source : sourceList) {
 								connect(source, demux);
 							}
 						}
@@ -248,20 +248,20 @@ public class Graph {
 						// we are currently in a demux which means we look out for filters next
 						// we then take the available sinks for that type
 						
-						final LinkedList<AndamaThreadable<?, ?>> filterList = inputMap.get(AndamaFilter.class);
+						final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
 						
 						if ((filterList != null) && !filterList.isEmpty()) {
 							// attach all available filters
-							for (final AndamaThreadable<?, ?> filter : filterList) {
+							for (final INode<?, ?> filter : filterList) {
 								connect(tailThread, filter);
 								tailThread = filter;
 							}
 						}
 						
-						final LinkedList<AndamaThreadable<?, ?>> sinkList = inputMap.get(AndamaSink.class);
+						final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
 						
 						if ((sinkList != null) && !sinkList.isEmpty()) {
-							for (final AndamaThreadable<?, ?> sink : sinkList) {
+							for (final INode<?, ?> sink : sinkList) {
 								connect(demux, sink);
 							}
 						}
@@ -270,19 +270,19 @@ public class Graph {
 					}
 				} else {
 					// flat
-					final LinkedList<AndamaThreadable<?, ?>> sinkList = inputMap.get(AndamaSink.class);
+					final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
 					if ((sinkList != null) && (sinkList.size() > 1)) {
 						// TODO error
 					}
 					
-					final LinkedList<AndamaThreadable<?, ?>> sourceList = outputMap.get(AndamaSource.class);
+					final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
 					if ((sourceList != null) && (sourceList.size() > 1)) {
 						// TODO error
 					}
 					
-					final LinkedList<AndamaThreadable<?, ?>> filterList = inputMap.get(AndamaFilter.class);
+					final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
 					if ((filterList != null) && !filterList.isEmpty()) {
-						for (final AndamaThreadable<?, ?> filter : filterList) {
+						for (final INode<?, ?> filter : filterList) {
 							if (headThread == null) {
 								headThread = filter;
 								tailThread = filter;
@@ -295,7 +295,7 @@ public class Graph {
 					
 					if ((sourceList != null) && !sourceList.isEmpty()) {
 						if (headThread != null) {
-							final AndamaThreadable<?, ?> source = sourceList.iterator().next();
+							final INode<?, ?> source = sourceList.iterator().next();
 							connect(source, headThread);
 							headThread = null;
 						}
@@ -303,7 +303,7 @@ public class Graph {
 					
 					if ((sinkList != null) && !sinkList.isEmpty()) {
 						if (tailThread != null) {
-							final AndamaThreadable<?, ?> sink = sinkList.iterator().next();
+							final INode<?, ?> sink = sinkList.iterator().next();
 							connect(tailThread, sink);
 							tailThread = null;
 						}
@@ -312,10 +312,10 @@ public class Graph {
 			}
 		}
 		
-		for (final AndamaThreadable<?, ?> transformer : this.transformers) {
+		for (final INode<?, ?> transformer : this.transformers) {
 			boolean inputConnected = false;
 			boolean outputConnected = false;
-			for (final AndamaThreadable<?, ?> thread : tailThreads) {
+			for (final INode<?, ?> thread : tailThreads) {
 				if (thread.getOutputType().equals(transformer.getInputType())) {
 					connect(thread, transformer);
 					// tailThreads.remove(thread);
@@ -324,7 +324,7 @@ public class Graph {
 				}
 			}
 			
-			for (final AndamaThreadable<?, ?> thread : headThreads) {
+			for (final INode<?, ?> thread : headThreads) {
 				if (thread.getInputType().equals(transformer.getOutputType())) {
 					connect(transformer, thread);
 					// headThreads.remove(thread);
@@ -338,7 +338,7 @@ public class Graph {
 			}
 		}
 		
-		for (final AndamaThreadable<?, ?> thread : this.group.getThreads()) {
+		for (final INode<?, ?> thread : this.group.getThreads()) {
 			if (!thread.checkConnections()) {
 				// TODO error
 				System.err.println("ERROR");
@@ -351,10 +351,10 @@ public class Graph {
 	 * @param to
 	 */
 	@SuppressWarnings ("unchecked")
-	private <T> void connect(final AndamaThreadable<?, ?> from,
-	                         final AndamaThreadable<?, ?> to) {
-		final AndamaThreadable<?, T> typedFrom = (AndamaThreadable<?, T>) from;
-		final AndamaThreadable<T, ?> typedTo = (AndamaThreadable<T, ?>) to;
+	private <T> void connect(final INode<?, ?> from,
+	                         final INode<?, ?> to) {
+		final INode<?, T> typedFrom = (INode<?, T>) from;
+		final INode<T, ?> typedTo = (INode<T, ?>) to;
 		
 		typedFrom.connectOutput(typedTo);
 	}

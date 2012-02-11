@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.threads.INode;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -20,7 +20,7 @@ import net.ownhero.dev.kisa.Logger;
  * The {@link AndamaDataStorage} elements are the node of a.
  * 
  * @param <E>
- *            the element type {@link AndamaChain} and used for the communication between the threads.
+ *            the element type {@link Chain} and used for the communication between the threads.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public final class AndamaDataStorage<E> {
@@ -29,10 +29,10 @@ public final class AndamaDataStorage<E> {
 	private final Queue<Tuple<E, CountDownLatch>>       queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
 	
 	/** The writers. */
-	private final BlockingDeque<AndamaThreadable<?, E>> writers = new LinkedBlockingDeque<AndamaThreadable<?, E>>();
+	private final BlockingDeque<INode<?, E>> writers = new LinkedBlockingDeque<INode<?, E>>();
 	
 	/** The readers. */
-	private final BlockingDeque<AndamaThreadable<E, ?>> readers = new LinkedBlockingDeque<AndamaThreadable<E, ?>>();
+	private final BlockingDeque<INode<E, ?>> readers = new LinkedBlockingDeque<INode<E, ?>>();
 	
 	/** The cache size. */
 	private final int                                   cacheSize;
@@ -109,10 +109,10 @@ public final class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public final void registerInput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public final void registerInput(@NotNull ("Registering null objects is not allowed.") final INode<?, E> writerThread) {
 		
 		if (Logger.logInfo()) {
-			Logger.info("Registering input " + ((AndamaThreadable<?, E>) writerThread).getName());
+			Logger.info("Registering input " + ((INode<?, E>) writerThread).getName());
 		}
 		
 		this.writers.add(writerThread);
@@ -127,10 +127,10 @@ public final class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public final void registerOutput(@NotNull ("Registering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public final void registerOutput(@NotNull ("Registering null objects is not allowed.") final INode<E, ?> readerThread) {
 		
 		if (Logger.logInfo()) {
-			Logger.info("Registering output " + ((AndamaThreadable<E, ?>) readerThread).getName());
+			Logger.info("Registering output " + ((INode<E, ?>) readerThread).getName());
 		}
 		
 		this.readers.add(readerThread);
@@ -155,13 +155,13 @@ public final class AndamaDataStorage<E> {
 	 * @param writerThread
 	 *            may not be null
 	 */
-	public final void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<?, E> writerThread) {
+	public final void unregisterInput(@NotNull ("Unregistering null objects is not allowed.") final INode<?, E> writerThread) {
 		if (this.writers.contains(writerThread)) {
 			this.writers.remove(writerThread);
 			
 			if (Logger.logInfo()) {
 				Logger.info("Unregistering input "
-				        + ((AndamaThreadable<?, E>) writerThread).getName()
+				        + ((INode<?, E>) writerThread).getName()
 				        + ". "
 				        + (this.writers.isEmpty()
 				                                 ? "No remaining input threads."
@@ -182,13 +182,13 @@ public final class AndamaDataStorage<E> {
 	 * @param readerThread
 	 *            may not be null
 	 */
-	public final void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final AndamaThreadable<E, ?> readerThread) {
+	public final void unregisterOutput(@NotNull ("Unregistering null objects is not allowed.") final INode<E, ?> readerThread) {
 		if (this.readers.contains(readerThread)) {
 			this.readers.remove(readerThread);
 			
 			if (Logger.logInfo()) {
 				Logger.info("Unregistering output "
-				        + ((AndamaThreadable<E, ?>) readerThread).getName()
+				        + ((INode<E, ?>) readerThread).getName()
 				        + ". "
 				        + (this.readers.isEmpty()
 				                                 ? "No remaining output threads."

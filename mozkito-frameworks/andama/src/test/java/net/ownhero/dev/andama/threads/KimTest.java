@@ -14,8 +14,8 @@
 package net.ownhero.dev.andama.threads;
 
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.kimtest.KimDemux;
 import net.ownhero.dev.andama.threads.kimtest.KimMux;
 import net.ownhero.dev.andama.threads.kimtest.KimSink;
@@ -28,8 +28,8 @@ public class KimTest {
 	
 	@Test
 	public void test() {
-		final AndamaSettings settings = new AndamaSettings();
-		final AndamaGroup group = new AndamaGroup("me", new AndamaChain(settings) {
+		final Settings settings = new Settings();
+		final Group group = new Group("me", new Chain(settings) {
 			
 			@Override
 			public void setup() {

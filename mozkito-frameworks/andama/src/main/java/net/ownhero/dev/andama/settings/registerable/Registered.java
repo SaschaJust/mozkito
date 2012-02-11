@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.settings.AndamaArgument;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -115,9 +115,9 @@ public abstract class Registered {
 		        + " tries to register config option.");
 	}
 	
-	public static Set<? extends Registered> handleRegistered(final AndamaChain chain,
-	                                                         final AndamaSettings settings,
-	                                                         final AndamaArgumentSet<?> arguments,
+	public static Set<? extends Registered> handleRegistered(final Chain chain,
+	                                                         final Settings settings,
+	                                                         final ArgumentSet<?> arguments,
 	                                                         final String argumentName,
 	                                                         final Class<? extends Registered> superClass,
 	                                                         final boolean isRequired) {
@@ -197,9 +197,9 @@ public abstract class Registered {
 		return registereds;
 	}
 	
-	private final Map<String, Tuple<String, AndamaArgument<?>>> registeredOptions = new HashMap<String, Tuple<String, AndamaArgument<?>>>();
+	private final Map<String, Tuple<String, Argument<?>>> registeredOptions = new HashMap<String, Tuple<String, Argument<?>>>();
 	
-	private AndamaSettings                                      settings;
+	private Settings                                      settings;
 	
 	/**
 	 * @param settingsClass
@@ -207,16 +207,16 @@ public abstract class Registered {
 	 * @param result
 	 * @return
 	 */
-	final String deriveSettingsClassificationString(final Class<? extends AndamaSettings> settingsClass,
+	final String deriveSettingsClassificationString(final Class<? extends Settings> settingsClass,
 	                                                final Set<String> tokens,
 	                                                final StringBuilder result) {
-		if (settingsClass == AndamaSettings.class) {
+		if (settingsClass == Settings.class) {
 			tokens.add("Settings");
-			final String string = AndamaSettings.class.getSimpleName().replace("Settings", "");
+			final String string = Settings.class.getSimpleName().replace("Settings", "");
 			return string;
 		} else {
 			@SuppressWarnings ("unchecked")
-			final String helper = deriveSettingsClassificationString((Class<? extends AndamaSettings>) settingsClass.getSuperclass(),
+			final String helper = deriveSettingsClassificationString((Class<? extends Settings>) settingsClass.getSuperclass(),
 			                                                         tokens, result);
 			String name = settingsClass.getSimpleName();
 			for (final String token : tokens) {
@@ -289,7 +289,7 @@ public abstract class Registered {
 	 * @param optionName
 	 * @return
 	 */
-	protected final Tuple<String, AndamaArgument<?>> getOption(@NotNull final String optionName) {
+	protected final Tuple<String, Argument<?>> getOption(@NotNull final String optionName) {
 		return this.registeredOptions.get(optionName);
 	}
 	
@@ -320,7 +320,7 @@ public abstract class Registered {
 	/**
 	 * @return the settings
 	 */
-	public final AndamaSettings getSettings() {
+	public final Settings getSettings() {
 		return this.settings;
 	}
 	
@@ -330,14 +330,14 @@ public abstract class Registered {
 	 * @param isRequired
 	 */
 	@NoneNull
-	public abstract void register(final AndamaSettings settings,
-	                              final AndamaArgumentSet<?> arguments);
+	public abstract void register(final Settings settings,
+	                              final ArgumentSet<?> arguments);
 	
 	/**
 	 * @param settings
 	 *            the settings to set
 	 */
-	public final void setSettings(final AndamaSettings settings) {
+	public final void setSettings(final Settings settings) {
 		this.settings = settings;
 	}
 	

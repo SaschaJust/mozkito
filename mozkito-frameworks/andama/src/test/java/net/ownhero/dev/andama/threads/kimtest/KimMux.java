@@ -13,13 +13,13 @@
 
 package net.ownhero.dev.andama.threads.kimtest;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaMultiplexer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Multiplexer;
 
-public class KimMux extends AndamaMultiplexer<Integer> {
+public class KimMux extends Multiplexer<Integer> {
 	
-	public KimMux(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
+	public KimMux(final Group threadGroup, final Settings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	

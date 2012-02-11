@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
+import net.ownhero.dev.andama.settings.IArgument;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -31,11 +31,11 @@ public abstract class Requirement {
 	/**
 	 * @param arguments
 	 */
-	public static void printGraph(final Collection<AndamaArgumentSet<?>> arguments) {
+	public static void printGraph(final Collection<ArgumentSet<?>> arguments) {
 		StringBuilder builder = new StringBuilder();
 		
-		for (AndamaArgumentInterface<?> aai : arguments) {
-			for (AndamaArgumentInterface<?> aaiDependency : aai.getDependencies()) {
+		for (IArgument<?> aai : arguments) {
+			for (IArgument<?> aaiDependency : aai.getDependencies()) {
 				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName())
 				       .append(FileUtils.lineSeparator);
 			}
@@ -56,7 +56,7 @@ public abstract class Requirement {
 	/**
 	 * @return
 	 */
-	public abstract Set<AndamaArgumentInterface<?>> getDependencies();
+	public abstract Set<IArgument<?>> getDependencies();
 	
 	/**
 	 * @return

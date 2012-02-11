@@ -7,9 +7,9 @@ package net.ownhero.dev.andama.threads;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class PreInputHook<K, V> extends AndamaHook<K, V> {
+public abstract class PreInputHook<K, V> extends Hook<K, V> {
 	
-	public PreInputHook(final AndamaThread<K, V> thread) {
+	public PreInputHook(final Node<K, V> thread) {
 		super(thread);
 	}
 	

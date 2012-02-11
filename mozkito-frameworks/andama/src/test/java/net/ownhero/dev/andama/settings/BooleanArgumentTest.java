@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
 
@@ -25,7 +26,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultFalse_NotRequired() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "fAlse", new Optional());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -41,7 +42,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultFalse_Required() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "fAlse", new Required());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -57,7 +58,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultTrue_NotRequired() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "TRuE", new Optional());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -73,7 +74,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_DefaultTrue_Required() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", "trUe", new Required());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -89,7 +90,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_NoDefault_NotRequired() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Optional());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -105,7 +106,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testGetValue_NoDefault_Required() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Required());
 		assertEquals("this is only a test argument", arg.getDescription());
@@ -122,7 +123,7 @@ public class BooleanArgumentTest {
 	
 	@Test
 	public void testSetValue() throws ArgumentRegistrationException {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final BooleanArgument arg = new BooleanArgument(settings.getRootArgumentSet(), "testArg",
 		                                                "this is only a test argument", null, new Required());
 		try {

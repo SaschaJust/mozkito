@@ -7,9 +7,9 @@ package net.ownhero.dev.andama.threads;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class PostExecutionHook<K, V> extends AndamaHook<K, V> {
+public abstract class PostExecutionHook<K, V> extends Hook<K, V> {
 	
-	public PostExecutionHook(final AndamaThread<K, V> thread) {
+	public PostExecutionHook(final Node<K, V> thread) {
 		super(thread);
 	}
 	

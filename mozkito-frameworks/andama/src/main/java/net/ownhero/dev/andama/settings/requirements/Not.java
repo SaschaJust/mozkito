@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.andama.settings.IArgument;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
@@ -55,8 +55,8 @@ public class Not extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		Set<AndamaArgumentInterface<?>> dependencies = null;
+	public Set<IArgument<?>> getDependencies() {
+		Set<IArgument<?>> dependencies = null;
 		try {
 			dependencies = this.requirement.getDependencies();
 			return dependencies;

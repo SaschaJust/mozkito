@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
+import net.ownhero.dev.andama.settings.IArgument;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
@@ -30,8 +30,8 @@ public class Optional extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
+	public Set<IArgument<?>> getDependencies() {
+		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			return dependencies;
 		} finally {

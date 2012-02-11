@@ -16,6 +16,7 @@ package net.ownhero.dev.andama.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.dependencies.Optional;
 import net.ownhero.dev.andama.settings.dependencies.Required;
 
@@ -40,7 +41,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testInValidDefault() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", "2.5", new Required());
 		try {
 			settings.parseArguments();
@@ -52,7 +53,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testInValidProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		System.setProperty(name, "2.5");
 		try {
@@ -65,7 +66,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testNotRequiredGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description",
 		                                          String.valueOf(myLong), new Optional());
 		assertEquals(name, arg.getName());
@@ -79,7 +80,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Optional());
 		settings.parseArguments();
@@ -88,7 +89,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testRequiredProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
 			settings.parseArguments();
@@ -100,7 +101,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testValidDefault() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description",
 		                                          String.valueOf(myLong), new Required());
 		try {
@@ -113,7 +114,7 @@ public class LongArgumentTest {
 	
 	@Test
 	public void testValidProperties() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required());
 		System.setProperty(name, String.valueOf(myLong));

@@ -13,13 +13,13 @@
 
 package net.ownhero.dev.andama.threads.kimtest;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Source;
 
-public class KimSource extends AndamaSource<Integer> {
+public class KimSource extends Source<Integer> {
 	
-	public KimSource(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
+	public KimSource(final Group threadGroup, final Settings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	

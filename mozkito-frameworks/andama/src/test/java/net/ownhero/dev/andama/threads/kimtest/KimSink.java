@@ -13,13 +13,13 @@
 
 package net.ownhero.dev.andama.threads.kimtest;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 
-public class KimSink extends AndamaSink<Double> {
+public class KimSink extends Sink<Double> {
 	
-	public KimSink(final AndamaGroup threadGroup, final AndamaSettings settings, final boolean parallelizable) {
+	public KimSink(final Group threadGroup, final Settings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	

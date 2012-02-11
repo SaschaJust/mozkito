@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.settings.arguments.InputFileArgument;
 import net.ownhero.dev.andama.settings.dependencies.Optional;
 import net.ownhero.dev.andama.settings.dependencies.Required;
 import net.ownhero.dev.ioda.FileUtils;
@@ -47,7 +48,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testNotRequiredExists() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
 		                                                    this.file.getAbsolutePath(), new Optional());
 		settings.parseArguments();
@@ -58,7 +59,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotExists() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
 		                      new Optional());
 		this.file.delete();
@@ -72,7 +73,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testNotRequiredNotGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null,
 		                                                    new Optional());
 		settings.parseArguments();
@@ -81,7 +82,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testRequiredExists() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
 		                                                    this.file.getAbsolutePath(), new Required());
 		assertEquals(name, arg.getName());
@@ -93,7 +94,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testRequiredNotExists() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
 		                      new Required());
 		this.file.delete();
@@ -107,7 +108,7 @@ public class InputFileArgumentTest {
 	
 	@Test
 	public void testRequiredNotGiven() {
-		final AndamaSettings settings = new AndamaSettings();
+		final Settings settings = new Settings();
 		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null, new Required());
 		try {
 			settings.parseArguments();

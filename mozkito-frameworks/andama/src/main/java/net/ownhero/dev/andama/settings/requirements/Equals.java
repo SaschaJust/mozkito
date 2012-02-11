@@ -8,13 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgument;
-import net.ownhero.dev.andama.settings.AndamaArgumentInterface;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.DoubleArgument;
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.LongArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.IArgument;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.arguments.EnumArgument;
+import net.ownhero.dev.andama.settings.arguments.LongArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -24,8 +24,8 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  */
 public class Equals extends Requirement {
 	
-	private final AndamaArgument<?>    argument;
-	private AndamaArgumentInterface<?> depender;
+	private final Argument<?>    argument;
+	private IArgument<?> depender;
 	private Object                     value;
 	
 	/**
@@ -88,7 +88,7 @@ public class Equals extends Requirement {
 	 * @param argument
 	 * @param depender
 	 */
-	public Equals(@NotNull final StringArgument argument, @NotNull final AndamaArgumentInterface<?> depender) {
+	public Equals(@NotNull final StringArgument argument, @NotNull final IArgument<?> depender) {
 		try {
 			this.argument = argument;
 			this.depender = depender;
@@ -136,8 +136,8 @@ public class Equals extends Requirement {
 	 * net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<AndamaArgumentInterface<?>> getDependencies() {
-		HashSet<AndamaArgumentInterface<?>> dependencies = new HashSet<AndamaArgumentInterface<?>>();
+	public Set<IArgument<?>> getDependencies() {
+		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			dependencies.add(this.argument);
 			

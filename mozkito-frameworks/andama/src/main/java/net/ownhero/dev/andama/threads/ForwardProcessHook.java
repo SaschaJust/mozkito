@@ -14,7 +14,7 @@ public class ForwardProcessHook<K> extends ProcessHook<K, K> {
 	/**
 	 * @param thread
 	 */
-	public ForwardProcessHook(final AndamaThread<K, K> thread) {
+	public ForwardProcessHook(final Node<K, K> thread) {
 		super(thread);
 	}
 	

@@ -6,20 +6,20 @@ package net.ownhero.dev.andama.threads.comparator;
 import java.util.Comparator;
 
 import net.ownhero.dev.andama.exceptions.UnsupportedThreadTypeException;
-import net.ownhero.dev.andama.threads.AndamaDemultiplexer;
-import net.ownhero.dev.andama.threads.AndamaFilter;
-import net.ownhero.dev.andama.threads.AndamaMultiplexer;
-import net.ownhero.dev.andama.threads.AndamaSink;
-import net.ownhero.dev.andama.threads.AndamaSource;
-import net.ownhero.dev.andama.threads.AndamaThreadable;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.Demultiplexer;
+import net.ownhero.dev.andama.threads.Filter;
+import net.ownhero.dev.andama.threads.Multiplexer;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.andama.threads.INode;
+import net.ownhero.dev.andama.threads.Transformer;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 @SuppressWarnings ("rawtypes")
-public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
+public class AndamaThreadComparator implements Comparator<INode> {
 	
 	/*
 	 * (non-Javadoc)
@@ -27,8 +27,8 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 	 * < Demultiplexer < Sink
 	 */
 	@Override
-	public int compare(final AndamaThreadable arg0,
-	                   final AndamaThreadable arg1) {
+	public int compare(final INode arg0,
+	                   final INode arg1) {
 		if ((arg0 == null)) {
 			if ((arg1 == null)) {
 				return 0;
@@ -41,56 +41,56 @@ public class AndamaThreadComparator implements Comparator<AndamaThreadable> {
 			}
 		}
 		
-		if (AndamaSource.class.isAssignableFrom(arg0.getClass())) {
+		if (Source.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = source
-			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
+			if (Source.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
-		} else if (AndamaMultiplexer.class.isAssignableFrom(arg0.getClass())) {
+		} else if (Multiplexer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = multiplexer
-			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
+			if (Source.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
-			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Multiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
-		} else if (AndamaFilter.class.isAssignableFrom(arg0.getClass())) {
+		} else if (Filter.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = filter
-			if (AndamaSource.class.isAssignableFrom(arg1.getClass())) {
+			if (Source.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
-			} else if (AndamaMultiplexer.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Multiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return 1;
-			} else if (AndamaFilter.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Filter.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return -1;
 			}
-		} else if (AndamaTransformer.class.isAssignableFrom(arg0.getClass())) {
+		} else if (Transformer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = filter
-			if (AndamaTransformer.class.isAssignableFrom(arg1.getClass())) {
+			if (Transformer.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
-			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Demultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
-			} else if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Sink.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
 			} else {
 				return 1;
 			}
-		} else if (AndamaDemultiplexer.class.isAssignableFrom(arg0.getClass())) {
+		} else if (Demultiplexer.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = demultiplexer
-			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
+			if (Sink.class.isAssignableFrom(arg1.getClass())) {
 				return -1;
-			} else if (AndamaDemultiplexer.class.isAssignableFrom(arg1.getClass())) {
+			} else if (Demultiplexer.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return 1;
 			}
-		} else if (AndamaSink.class.isAssignableFrom(arg0.getClass())) {
+		} else if (Sink.class.isAssignableFrom(arg0.getClass())) {
 			// arg0 = sink
-			if (AndamaSink.class.isAssignableFrom(arg1.getClass())) {
+			if (Sink.class.isAssignableFrom(arg1.getClass())) {
 				return arg0.getThreadID().compareTo(arg1.getThreadID());
 			} else {
 				return 1;

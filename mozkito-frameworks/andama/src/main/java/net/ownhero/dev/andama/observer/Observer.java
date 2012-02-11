@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.threads.AndamaThreadable;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.threads.INode;
 
 /**
  * @author just
@@ -38,8 +38,8 @@ public class Observer {
 		return null;
 	}
 	
-	public Collection<AndamaThreadable<?, ?>> getThreads(final long chainID) {
-		return new LinkedList<AndamaThreadable<?, ?>>();
+	public Collection<INode<?, ?>> getThreads(final long chainID) {
+		return new LinkedList<INode<?, ?>>();
 	}
 	
 	@SuppressWarnings ("unused")
@@ -48,18 +48,18 @@ public class Observer {
 	}
 	
 	@SuppressWarnings ("unused")
-	private void registerChain(final AndamaChain chain) {
+	private void registerChain(final Chain chain) {
 		
 	}
 	
 	@SuppressWarnings ("unused")
-	private void spawnChain(final Class<? extends AndamaChain> clazz,
+	private void spawnChain(final Class<? extends Chain> clazz,
 	                        final Properties settings) {
 		
 	}
 	
 	@SuppressWarnings ("unused")
-	private void unregisterChain(final AndamaChain chain) {
+	private void unregisterChain(final Chain chain) {
 		
 	}
 	
