@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package net.ownhero.dev.kisa;
 
 import java.io.ByteArrayOutputStream;
@@ -116,9 +128,9 @@ public class Logger {
 			if (System.getProperty("disableTermColors") == null) {
 				if (System.console() != null) { // avoid colors when piping
 					                            // output
-					String termVariable = System.getenv("TERM");
+					final String termVariable = System.getenv("TERM");
 					if (termVariable != null) {
-						Pattern pattern = Pattern.compile(".*color.*", Pattern.CASE_INSENSITIVE);
+						final Pattern pattern = Pattern.compile(".*color.*", Pattern.CASE_INSENSITIVE);
 						return pattern.matcher(termVariable).matches() || termVariable.equalsIgnoreCase("screen");
 					}
 				}
@@ -200,9 +212,8 @@ public class Logger {
 	public static final PrintStream     error               = new LogStream(LogLevel.ERROR);
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with debug log level
 	 * 
 	 * @param message
 	 *            the string to be logged
@@ -212,9 +223,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with debug log level
 	 * 
 	 * @category external loggers
 	 * 
@@ -229,9 +239,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * argument using the format string with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with debug log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -244,9 +253,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * arguments using the format string with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the arguments using the format string with debug log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -262,16 +270,13 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with debug log level
 	 * 
 	 * @param message
-	 *            the string to be logged or format string if arguments are not
-	 *            null
+	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding
-	 *            format string
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
 	 * @param t
 	 *            exception to be logged along the error message supplied
 	 * @param offset
@@ -308,9 +313,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message and the exception string with debug log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with debug log level
 	 * 
 	 * @param message
 	 *            the format string to be used
@@ -323,9 +327,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with error log level
 	 * 
 	 * @param message
 	 *            the string to be logged
@@ -335,9 +338,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with error log level
 	 * 
 	 * @category external loggers
 	 * 
@@ -352,9 +354,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * argument using the format string with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with error log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -367,9 +368,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * arguments using the format string with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the arguments using the format string with error log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -385,16 +385,13 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with error log level
 	 * 
 	 * @param message
-	 *            the string to be logged or format string if arguments are not
-	 *            null
+	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding
-	 *            format string
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
 	 * @param t
 	 *            exception to be logged along the error message supplied
 	 * @param offset
@@ -450,9 +447,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message and the exception string with error log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with error log level
 	 * 
 	 * @param message
 	 *            the format string to be used
@@ -481,9 +477,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with info log level
 	 * 
 	 * @param message
 	 *            the string to be logged
@@ -493,9 +488,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with info log level
 	 * 
 	 * @category external loggers
 	 * 
@@ -510,9 +504,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * argument using the format string with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with info log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -525,9 +518,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * arguments using the format string with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the arguments using the format string with info log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -543,16 +535,13 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with info log level
 	 * 
 	 * @param message
-	 *            the string to be logged or format string if arguments are not
-	 *            null
+	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding
-	 *            format string
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
 	 * @param t
 	 *            exception to be logged along the error message supplied
 	 * @param offset
@@ -608,9 +597,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message and the exception string with info log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with info log level
 	 * 
 	 * @param message
 	 *            the format string to be used
@@ -686,14 +674,14 @@ public class Logger {
 	}
 	
 	public static synchronized void setConsoleLevel(final LogLevel level) {
-		Properties properties = System.getProperties();
+		final Properties properties = System.getProperties();
 		properties.put("log.console.level", level.name());
 		System.setProperties(properties);
 		updateConsoleLevel();
 	}
 	
 	public static void setFileLevel(final LogLevel level) {
-		Properties properties = System.getProperties();
+		final Properties properties = System.getProperties();
 		properties.put("log.file.level", level.name());
 		System.setProperties(properties);
 		updateFileLevel();
@@ -713,9 +701,8 @@ public class Logger {
 	
 	/**
 	 * 
-	 * @return a tuple containing the corresponding logger to the calling
-	 *         instance and the exact calling location (class, method, line
-	 *         number). Both entries are guaranteed to not be null
+	 * @return a tuple containing the corresponding logger to the calling instance and the exact calling location
+	 *         (class, method, line number). Both entries are guaranteed to not be null
 	 */
 	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
 		final Throwable throwable = new Throwable();
@@ -747,9 +734,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with trace log level
 	 * 
 	 * @param message
 	 *            the string to be logged
@@ -759,9 +745,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with trace log level
 	 * 
 	 * @category external loggers
 	 * 
@@ -776,9 +761,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * argument using the format string with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with trace log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -791,9 +775,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * arguments using the format string with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the arguments using the format string with trace log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -809,16 +792,13 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with trace log level
 	 * 
 	 * @param message
-	 *            the string to be logged or format string if arguments are not
-	 *            null
+	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding
-	 *            format string
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
 	 * @param t
 	 *            exception to be logged along the error message supplied
 	 * @param offset
@@ -855,9 +835,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message and the exception string with trace log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with trace log level
 	 * 
 	 * @param message
 	 *            the format string to be used
@@ -905,7 +884,7 @@ public class Logger {
 	public static void updateConsoleLevel() {
 		// CONSOLE APPENDER
 		
-		for (WriterAppender appender : consoleAppenders) {
+		for (final WriterAppender appender : consoleAppenders) {
 			org.apache.log4j.Logger.getRootLogger().removeAppender(appender);
 		}
 		
@@ -997,9 +976,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with warn log level
 	 * 
 	 * @param message
 	 *            the string to be logged
@@ -1009,9 +987,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with warn log level
 	 * 
 	 * @category external loggers
 	 * 
@@ -1026,9 +1003,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * argument using the format string with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with warn log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -1041,9 +1017,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * arguments using the format string with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the arguments using the format string with warn log level
 	 * 
 	 * @param fmt
 	 *            the format string to be used
@@ -1059,16 +1034,13 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with warn log level
 	 * 
 	 * @param message
-	 *            the string to be logged or format string if arguments are not
-	 *            null
+	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding
-	 *            format string
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
 	 * @param t
 	 *            exception to be logged along the error message supplied
 	 * @param offset
@@ -1124,9 +1096,8 @@ public class Logger {
 	}
 	
 	/**
-	 * requests the logger for the calling instance and the
-	 * classname::methodname#linenumber tag and uses this information to log the
-	 * message and the exception string with warn log level
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with warn log level
 	 * 
 	 * @param message
 	 *            the format string to be used
