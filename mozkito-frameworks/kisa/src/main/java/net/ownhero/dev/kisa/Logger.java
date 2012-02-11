@@ -1,9 +1,9 @@
 package net.ownhero.dev.kisa;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
@@ -36,40 +35,78 @@ import org.slf4j.LoggerFactory;
  */
 public class Logger {
 	
-	public static class LoggerOutputStream extends ByteArrayOutputStream {
+	private static class LoggerOutputStream extends OutputStream {
 		
-		private final CountDownLatch latch = new CountDownLatch(1);
-		
-		/**
-		 * 
-		 */
-		public LoggerOutputStream() {
-			super();
+		private static class LogDebugWrapper implements LogWrapper {
+			
+			@Override
+			public void log(final String s) {
+				if (Logger.logDebug()) {
+					Logger.debug(s, null, null, 6);
+				}
+			}
 		}
 		
-		/**
-		 * @param size
-		 */
-		public LoggerOutputStream(final int size) {
-			super(size);
+		private static interface LogWrapper {
+			
+			public void log(String s);
 		}
 		
-		/*
-		 * (non-Javadoc)
-		 * @see java.io.ByteArrayOutputStream#close()
-		 */
+		private ByteArrayOutputStream stream  = new ByteArrayOutputStream();
+		private LogDebugWrapper       wrapper = new LogDebugWrapper();
+		
+		public LoggerOutputStream(final LogLevel level) {
+			switch (level) {
+				case DEBUG:
+					this.wrapper = new LogDebugWrapper();
+					break;
+				default:
+			}
+		}
+		
 		@Override
 		public void close() throws IOException {
+			flush();
 			super.close();
-			this.latch.countDown();
 		}
 		
-		/**
-		 * @return
-		 */
-		public CountDownLatch latch() {
-			return this.latch;
+		@Override
+		public void flush() throws IOException {
+			System.err.println("flush");
+			this.wrapper.log(this.stream.toString());
+			this.stream = new ByteArrayOutputStream();
+			super.flush();
 		}
+		
+		@Override
+		public void write(final byte[] b) throws IOException {
+			super.write(b, 0, b.length);
+		}
+		
+		@Override
+		public void write(final byte[] b,
+		                  final int off,
+		                  final int len) throws IOException {
+			super.write(b, off, len);
+		}
+		
+		@Override
+		public void write(final int b) throws IOException {
+			this.stream.write(b);
+			if (((char) b == '\n') || (b == 0)) {
+				this.wrapper.log(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
+			}
+		}
+	}
+	
+	public static class LogStream extends PrintStream {
+		
+		public LogStream(final LogLevel level) {
+			super(new LoggerOutputStream(level));
+		}
+		
 	}
 	
 	private static enum TerminalColor {
@@ -139,7 +176,7 @@ public class Logger {
 	
 	private static LogLevel             logLevel            = LogLevel.WARN;
 	
-	private static boolean              debug               = false;
+	private static boolean              debugEnabled        = false;
 	
 	private static LogLevel             maxLevel            = null;
 	private static Layout               defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
@@ -156,32 +193,11 @@ public class Logger {
 		
 	}
 	
-	/**
-	 * @return
-	 */
-	public static OutputStream debug() {
-		final LoggerOutputStream debugStream = new LoggerOutputStream();
-		final OutputStream stream = new BufferedOutputStream(debugStream);
-		
-		final Thread thread = new Thread() {
-			
-			@Override
-			public void run() {
-				try {
-					debugStream.latch.await();
-				} catch (final InterruptedException e) {
-					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
-					}
-				}
-				debug(debugStream.toString(), null, null, 3);
-			};
-		};
-		
-		thread.start();
-		
-		return stream;
-	}
+	public static final PrintStream     debug               = new LogStream(LogLevel.DEBUG);
+	public static final PrintStream     info                = new LogStream(LogLevel.INFO);
+	public static final PrintStream     warn                = new LogStream(LogLevel.WARN);
+	public static final PrintStream     trace               = new LogStream(LogLevel.TRACE);
+	public static final PrintStream     error               = new LogStream(LogLevel.ERROR);
 	
 	/**
 	 * requests the logger for the calling instance and the
@@ -395,7 +411,7 @@ public class Logger {
 		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
-		if (debug) {
+		if (debugEnabled) {
 			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
@@ -553,7 +569,7 @@ public class Logger {
 		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
-		if (debug) {
+		if (debugEnabled) {
 			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
@@ -626,6 +642,14 @@ public class Logger {
 		return logLevel.compareTo(LogLevel.WARN) >= 0;
 	}
 	
+	public static void main(final String[] args) {
+		Logger.error.println("YihaaH!");
+		
+		Logger.error.print("yop");
+		Logger.error.print("yep");
+		Logger.error.flush();
+	}
+	
 	public static void readConfiguration() {
 		// FIXME what if we do not use log4j?
 		
@@ -637,7 +661,7 @@ public class Logger {
 		
 		// org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(getLogLevel().toString()));
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
-			Logger.debug = true;
+			Logger.debugEnabled = true;
 		}
 	}
 	
@@ -683,7 +707,7 @@ public class Logger {
 		Logger.logLevel = logLevel;
 		
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
-			Logger.debug = true;
+			Logger.debugEnabled = true;
 		}
 	}
 	
@@ -1061,7 +1085,7 @@ public class Logger {
 		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
 		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
 		
-		if (debug) {
+		if (debugEnabled) {
 			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
@@ -1114,10 +1138,4 @@ public class Logger {
 		warn(message, null, t, 3);
 	}
 	
-	/**
-	 * @return the simple class name of the instance
-	 */
-	public String getHandle() {
-		return this.getClass().getSimpleName();
-	}
 }
