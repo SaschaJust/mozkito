@@ -308,9 +308,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 				tx.finish();
 				return false;
 			}
-			this.rootIndex.remove(to, ROOT_VERTICES);
 			tx.success();
 			tx.finish();
+			if (isRoot(to)) {
+				final Transaction tx2 = this.graph.beginTx();
+				this.rootIndex.remove(to, ROOT_VERTICES);
+				tx2.success();
+				tx2.finish();
+			}
+			
 		}
 		
 		if (!dependent.getRevision().getTransaction().getId().equals(target.getRevision().getTransaction().getId())) {
@@ -490,8 +496,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return parents;
 	}
 	
-	// /////////////
-	
 	/**
 	 * Returns the directed edge type between the two specified vertices.
 	 * 
@@ -529,6 +533,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		return null;
 	}
+	
+	// /////////////
 	
 	@Override
 	public Collection<GenealogyEdgeType> getEdges(final JavaChangeOperation from,
@@ -596,6 +602,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	private Node getNodeForVertex(final JavaChangeOperation op) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, op.getId());
 		if (!indexHits.hasNext()) {
+			indexHits.close();
 			return null;
 		}
 		final Node node = indexHits.next();
@@ -669,6 +676,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		while (indexHits.hasNext()) {
 			result.add(getVertexForNode(indexHits.next()));
 		}
+		indexHits.close();
 		return result;
 	}
 	
@@ -711,6 +719,10 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
+	private boolean isRoot(final Node node) {
+		return node.hasProperty(ROOT_VERTICES) && (node.getProperty(ROOT_VERTICES).equals(new Integer(1)));
+	}
+	
 	public JavaChangeOperation loadById(final long id,
 	                                    final Class<? extends JavaChangeOperation> clazz) {
 		return this.persistenceUtil.loadById(id, clazz);
@@ -721,7 +733,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * 
 	 * @return the genealogy vertex iterator
 	 */
-	public IndexHits<Node> nodes() {
+	protected IndexHits<Node> nodes() {
 		return this.nodeIndex.query(NODE_ID, "*");
 	}
 	

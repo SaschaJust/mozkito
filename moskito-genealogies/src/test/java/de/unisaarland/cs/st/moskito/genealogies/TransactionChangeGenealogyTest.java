@@ -42,7 +42,7 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		changeGenealogy.close();
 		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
 		
-		assertEquals(16, tdg.edgeSize());
+		assertEquals(12, tdg.edgeSize());
 		
 		assertTrue(tdg.containsVertex(environmentTransactions.get(1)));
 		assertTrue(tdg.containsVertex(environmentTransactions.get(2)));
@@ -89,12 +89,7 @@ public class TransactionChangeGenealogyTest extends MoskitoTest {
 		assertTrue(edges.contains(GenealogyEdgeType.DeletedDefinitionOnDefinition));
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(2)));
-		
-		assertTrue(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(3)));
-		edges = tdg.getEdges(environmentTransactions.get(3), environmentTransactions.get(3));
-		assertEquals(1, edges.size());
-		assertTrue(edges.contains(GenealogyEdgeType.CallOnDefinition));
-		
+		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(3)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(4)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(5)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(6)));

@@ -128,9 +128,15 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 				tx.finish();
 				return false;
 			}
-			this.rootIndex.remove(to, ROOT_VERTICES);
 			tx.success();
 			tx.finish();
+			if (isRoot(to)) {
+				final Transaction tx2 = this.graph.beginTx();
+				this.rootIndex.remove(to, ROOT_VERTICES);
+				tx2.success();
+				tx2.finish();
+			}
+			
 		}
 		return true;
 	}
@@ -284,8 +290,6 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return parentOperations;
 	}
 	
-	// /////////////
-	
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
 	 * within the specified edge type array. (incoming edges)
@@ -304,6 +308,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		}
 		return parents;
 	}
+	
+	// /////////////
 	
 	/**
 	 * Returns the directed edge type between the two specified vertices.
@@ -413,6 +419,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	private Node getNodeForVertex(final RCSTransaction op) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, op.getId());
 		if (!indexHits.hasNext()) {
+			indexHits.close();
 			return null;
 		}
 		final Node node = indexHits.next();
@@ -487,6 +494,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		while (indexHits.hasNext()) {
 			result.add(getVertexForNode(indexHits.next()));
 		}
+		indexHits.close();
 		return result;
 	}
 	
@@ -525,6 +533,10 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return numEdges;
 	}
 	
+	private boolean isRoot(final Node node) {
+		return node.hasProperty(ROOT_VERTICES) && (node.getProperty(ROOT_VERTICES).equals(new Integer(1)));
+	}
+	
 	public RCSTransaction loadById(final String id,
 	                               final Class<? extends RCSTransaction> clazz) {
 		if (!this.nodeCache.containsKey(id)) {
@@ -538,7 +550,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * 
 	 * @return the genealogy vertex iterator
 	 */
-	public IndexHits<Node> nodes() {
+	protected IndexHits<Node> nodes() {
 		return this.nodeIndex.query(NODE_ID, "*");
 	}
 	
