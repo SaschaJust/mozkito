@@ -127,17 +127,22 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		
 		for (final JavaChangeOperation op : changeOperations) {
 			
+			final String filePath = op.getChangedPath();
+			if ((!filePath.endsWith(".java")) | (filePath.toLowerCase().contains("test"))) {
+				continue;
+			}
+			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
-			changedFiles.add(op.getChangedPath());
+			changedFiles.add(filePath);
 			
-			if (!changedLines.containsKey(op.getChangedPath())) {
-				changedLines.put(op.getChangedPath(), new TreeSet<Integer>());
+			if (!changedLines.containsKey(filePath)) {
+				changedLines.put(filePath, new TreeSet<Integer>());
 			}
 			
 			final JavaElementLocation changedElementLocation = op.getChangedElementLocation();
 			for (int i = changedElementLocation.getStartLine(); i <= changedElementLocation.getEndLine(); ++i) {
-				changedLines.get(op.getChangedPath()).add(i);
+				changedLines.get(filePath).add(i);
 			}
 			
 			if (op.getChangeType().equals(ChangeType.Added)) {
@@ -204,6 +209,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		                                          numChangedLineBlocks));
 		
 		for (final RCSTransaction dependant : this.genealogy.getAllDependants(transaction)) {
+			// ignore test and non java files.
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
 		
@@ -221,6 +227,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		                                                                     : dependantStats.getSum()));
 		
 		for (final RCSTransaction parent : this.genealogy.getAllParents(transaction)) {
+			// ignore test and non java files.
 			parentStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}
 		
