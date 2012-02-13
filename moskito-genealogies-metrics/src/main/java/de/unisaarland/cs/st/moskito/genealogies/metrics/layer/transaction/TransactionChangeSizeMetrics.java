@@ -15,7 +15,12 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -28,6 +33,7 @@ import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
@@ -35,25 +41,32 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
-	private static final String   changeSize          = "numChangeOperations";
+	private static final String   changeSize                    = "numChangeOperations";
 	
-	private static final String   numAddOperations    = "numAddOperations";
-	private static final String   numDelOperations    = "numDelOperations";
-	private static final String   numAddedMethDefs    = "numAddedMethDefs";
-	private static final String   numDeletedMethDefs  = "numDeletedMethDefs";
+	private static final String   numAddOperations              = "numAddOperations";
+	private static final String   numDelOperations              = "numDelOperations";
+	private static final String   numAddedMethDefs              = "numAddedMethDefs";
+	private static final String   numDeletedMethDefs            = "numDeletedMethDefs";
 	
-	private static final String   numAddedClassDefs   = "numAddedClassDefs";
-	private static final String   numDeletedClassDefs = "numDeletedClassDefs";
+	private static final String   numAddedClassDefs             = "numAddedClassDefs";
+	private static final String   numDeletedClassDefs           = "numDeletedClassDefs";
 	
-	private static final String   numAddedCalls       = "numAddedCalls";
-	private static final String   numDeletedCalls     = "numDeletedCalls";
+	private static final String   numAddedCalls                 = "numAddedCalls";
+	private static final String   numDeletedCalls               = "numDeletedCalls";
 	
-	private static final String   avgDepChangeSize    = "avgDepChangeSize";
-	private static final String   maxDepChangeSize    = "maxDepChangeSize";
-	private static final String   sumDepChangeSize    = "sumDepChangeSize";
-	private static final String   avgParentChangeSize = "avgParentChangeSize";
-	private static final String   maxParentChangeSize = "maxParentChangeSize";
-	private static final String   sumParentChangeSize = "sumParentChangeSize";
+	private static final String   avgDepChangeSize              = "avgDepChangeSize";
+	private static final String   maxDepChangeSize              = "maxDepChangeSize";
+	private static final String   sumDepChangeSize              = "sumDepChangeSize";
+	private static final String   avgParentChangeSize           = "avgParentChangeSize";
+	private static final String   maxParentChangeSize           = "maxParentChangeSize";
+	private static final String   sumParentChangeSize           = "sumParentChangeSize";
+	
+	private static final String   numChangedFiles               = "numChangedFiles";
+	private static final String   effectiveNumOperations        = "effectiveNumOperations";
+	private static final String   effectiveNumMethDefOperations = "effectiveNumMethDefOperations";
+	private static final String   effectiveNumCallOperations    = "effectiveNumCallOperations";
+	private static final String   changedBlocks                 = "numChangedLineBlocks";
+	
 	private final PersistenceUtil persistenceUtil;
 	
 	public TransactionChangeSizeMetrics(final TransactionChangeGenealogy genealogy) {
@@ -71,6 +84,14 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		metricNames.add(avgParentChangeSize);
 		metricNames.add(maxParentChangeSize);
 		metricNames.add(sumParentChangeSize);
+		
+		metricNames.add(numChangedFiles);
+		metricNames.add(effectiveNumOperations);
+		metricNames.add(effectiveNumMethDefOperations);
+		metricNames.add(effectiveNumCallOperations);
+		
+		metricNames.add(changedBlocks);
+		
 		return metricNames;
 	}
 	
@@ -101,9 +122,23 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		int numAddedCalls = 0;
 		int numDeletedCalls = 0;
 		
+		final Set<String> changedFiles = new HashSet<String>();
+		final Map<String, Set<Integer>> changedLines = new HashMap<String, Set<Integer>>();
+		
 		for (final JavaChangeOperation op : changeOperations) {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
+			
+			changedFiles.add(op.getChangedPath());
+			
+			if (!changedLines.containsKey(op.getChangedPath())) {
+				changedLines.put(op.getChangedPath(), new TreeSet<Integer>());
+			}
+			
+			final JavaElementLocation changedElementLocation = op.getChangedElementLocation();
+			for (int i = changedElementLocation.getStartLine(); i <= changedElementLocation.getEndLine(); ++i) {
+				changedLines.get(op.getChangedPath()).add(i);
+			}
 			
 			if (op.getChangeType().equals(ChangeType.Added)) {
 				++numAddOperations;
@@ -142,6 +177,31 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedClassDefs, nodeId,
 		                                          numDeletedClassDefs));
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedCalls, nodeId, numDeletedCalls));
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numChangedFiles, nodeId,
+		                                          changedFiles.size()));
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumOperations, nodeId,
+		                                          numAddOperations - numDelOperations));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumMethDefOperations, nodeId,
+		                                          numAddedMethDefs - numDeletedMethDefs));
+		
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumCallOperations, nodeId,
+		                                          numAddedCalls - numDeletedCalls));
+		
+		int numChangedLineBlocks = 0;
+		for (final String filePath : changedLines.keySet()) {
+			++numChangedLineBlocks;
+			int lastLine = -1;
+			for (final int line : changedLines.get(filePath)) {
+				if ((lastLine != -1) && ((lastLine + 1) < line)) {
+					++numChangedLineBlocks;
+				}
+				lastLine = line;
+			}
+		}
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.changedBlocks, nodeId,
+		                                          numChangedLineBlocks));
 		
 		for (final RCSTransaction dependant : this.genealogy.getAllDependants(transaction)) {
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
