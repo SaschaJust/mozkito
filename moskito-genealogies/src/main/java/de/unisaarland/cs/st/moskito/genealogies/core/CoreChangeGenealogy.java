@@ -720,7 +720,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	private boolean isRoot(final Node node) {
-		return node.hasProperty(ROOT_VERTICES) && (node.getProperty(ROOT_VERTICES).equals(new Integer(1)));
+		final IndexHits<Node> indexHits = this.rootIndex.query(ROOT_VERTICES, 1);
+		boolean result = false;
+		while (indexHits.hasNext()) {
+			final Node hit = indexHits.next();
+			result |= (hit.getId() == node.getId());
+			if (result) {
+				break;
+			}
+		}
+		indexHits.close();
+		return result;
 	}
 	
 	public JavaChangeOperation loadById(final long id,

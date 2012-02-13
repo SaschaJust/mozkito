@@ -34,7 +34,7 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void testChangeGenealogy() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
-		                                                      FileShutdownAction.KEEP);
+		                                                      FileShutdownAction.DELETE);
 		
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
@@ -43,7 +43,7 @@ public class CoreChangeGenealogyTest extends MoskitoTest {
 		CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
 		final PersistenceUtil persistenceUtil = testEnvironment.getPersistenceUtil();
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = testEnvironment.getEnvironmentOperations();
-		
+		changeGenealogy.getTransactionLayer().close();
 		changeGenealogy.close();
 		changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile, persistenceUtil);
 		assertEquals(41, changeGenealogy.vertexSize());
