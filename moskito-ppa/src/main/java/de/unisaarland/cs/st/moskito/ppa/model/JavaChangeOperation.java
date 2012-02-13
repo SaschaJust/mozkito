@@ -106,7 +106,8 @@ public class JavaChangeOperation implements Annotated {
 	}
 	
 	/** The id. */
-	private long                id        = -1;
+	private long                id;
+	private boolean             setId     = false;
 	
 	/** The change type. */
 	private ChangeType          changeType;
@@ -158,7 +159,7 @@ public class JavaChangeOperation implements Annotated {
 		}
 		
 		final JavaChangeOperation other = (JavaChangeOperation) obj;
-		if (getId() < 0) {
+		if (!this.setId) {
 			
 			if (getChangedElementLocation() == null) {
 				if (other.getChangedElementLocation() != null) {
@@ -247,7 +248,7 @@ public class JavaChangeOperation implements Annotated {
 	@Override
 	public int hashCode() {
 		int result = 1;
-		if (getId() < 0) {
+		if (!this.setId) {
 			final int prime = 31;
 			result = (prime * result) + ((getChangedElementLocation() == null)
 			                                                                  ? 0
@@ -312,6 +313,7 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	protected void setId(final long id) {
 		this.id = id;
+		this.setId = true;
 	}
 	
 	/**
