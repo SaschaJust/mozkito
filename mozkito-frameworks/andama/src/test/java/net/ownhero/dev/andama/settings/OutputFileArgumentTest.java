@@ -18,33 +18,41 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class OutputFileArgumentTest {
 	
 	private static String      name = "outputFile";
 	private OutputFileArgument arg  = null;
+	private File               file = null;
 	
 	@Test
-	public void blaTest() {
+	public void blaTest() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		this.arg = new OutputFileArgument(
 		                                  settings.getRootArgumentSet(),
 		                                  "output.xml",
 		                                  "Instead of writing the source code change operations to the DB, output them as XML into this file.",
 		                                  null, new Optional(), true);
-		settings.parseArguments();
+		settings.parse();
 		final File value = this.arg.getValue();
 		assertEquals(null, value);
 		
+	}
+	
+	@Before
+	public void setup() {
+		this.file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 	}
 	
 	@After
@@ -55,72 +63,69 @@ public class OutputFileArgumentTest {
 	}
 	
 	@Test
-	public void testNotRequiredExistsNoOverwrite() {
-		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+	public void testNotRequiredExistsNoOverwrite() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
-		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
-		                                  new Optional(), false);
-		settings.parseArguments();
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                  this.file.getAbsolutePath(), new Optional(), false);
+		settings.parse();
 		final File value = this.arg.getValue();
 		assertTrue(value == null);
 	}
 	
 	@Test
-	public void testNotRequiredExistsOverwrite() {
-		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-		final Settings settings = new Settings();
-		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
-		                                  new Optional(), true);
-		settings.parseArguments();
-		final File value = this.arg.getValue();
-		assertTrue(value != null);
-		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
-	}
-	
-	@Test
-	public void testNotRequiredNotExistsNoOverwrite() {
+	public void testNotRequiredExistsOverwrite() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
-		                                  "/tmp/fhdjkshfjksdhfjk.kim", new Optional(), false);
-		settings.parseArguments();
+		                                  this.file.getAbsolutePath(), new Optional(), true);
+		settings.parse();
 		final File value = this.arg.getValue();
-		assertEquals("/tmp/fhdjkshfjksdhfjk.kim", value.getAbsolutePath());
+		assertTrue(value != null);
+		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 	@Test
-	public void testNotRequiredNotExistsOverwrite() {
+	public void testNotRequiredNotExistsNoOverwrite() throws ArgumentRegistrationException, SettingsParseError {
+		final Settings settings = new Settings();
+		this.file.delete();
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                  this.file.getAbsolutePath(), new Optional(), false);
+		settings.parse();
+		final File value = this.arg.getValue();
+		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
+	}
+	
+	@Test
+	public void testNotRequiredNotExistsOverwrite() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
 		                                  "/tmp/fhdjkshfjksdhfjk.kim", new Optional(), true);
-		settings.parseArguments();
+		settings.parse();
 		final File value = this.arg.getValue();
 		assertTrue(value != null);
 	}
 	
 	@Test
-	public void testRequiredExistsNoOverwrite() {
-		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+	public void testRequiredExistsNoOverwrite() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
-		new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
+		new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
 		                       new Required(), false);
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testRequiredExistsOverwrite() {
-		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+	public void testRequiredExistsOverwrite() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
-		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument", file.getAbsolutePath(),
-		                                  new Required(), true);
-		settings.parseArguments();
+		this.arg = new OutputFileArgument(settings.getRootArgumentSet(), name, "test argument",
+		                                  this.file.getAbsolutePath(), new Required(), true);
+		settings.parse();
 		final File value = this.arg.getValue();
 		assertTrue(value != null);
-		assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
+		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 }

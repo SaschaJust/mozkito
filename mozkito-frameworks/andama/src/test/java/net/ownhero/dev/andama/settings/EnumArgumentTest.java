@@ -15,10 +15,11 @@ package net.ownhero.dev.andama.settings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.junit.After;
 import org.junit.Test;
@@ -28,14 +29,6 @@ public class EnumArgumentTest {
 	private static enum TestEnum {
 		ONE, TWO;
 		
-		public static String[] getValues() {
-			final TestEnum[] values = values();
-			final String[] result = new String[values.length];
-			for (int i = 0; i < values.length; ++i) {
-				result[i] = values[i].toString();
-			}
-			return result;
-		}
 	};
 	
 	private static String name = "enumArg";
@@ -46,93 +39,87 @@ public class EnumArgumentTest {
 	}
 	
 	@Test
-	public void testInValidDefault() {
+	public void testInValidProperties() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		new EnumArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required(),
-		                 TestEnum.getValues());
-		try {
-			settings.parseArguments();
-			fail();
-		} catch (final Shutdown e) {
-			
-		}
-	}
-	
-	@Test
-	public void testInValidProperties() {
-		final Settings settings = new Settings();
-		new EnumArgument(settings.getRootArgumentSet(), name, "test description", "hubba", new Required(),
-		                 TestEnum.getValues());
+		new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name, "test description", TestEnum.ONE,
+		                           new Required());
 		System.setProperty(name, "hubba");
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testNotRequiredGiven() {
+	public void testNotRequiredGiven() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", "ONE",
-		                                          new Optional(), TestEnum.getValues());
+		final EnumArgument<TestEnum> arg = new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name,
+		                                                              "test description", TestEnum.ONE, new Optional());
 		assertEquals(name, arg.getName());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
-		assertEquals(TestEnum.ONE.toString(), arg.getValue());
+		assertEquals(TestEnum.ONE, arg.getValue());
 	}
 	
 	@Test
-	public void testNotRequiredNotGiven() {
+	public void testNotRequiredNotGiven() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", null,
-		                                          new Optional(), TestEnum.getValues());
-		settings.parseArguments();
+		final EnumArgument<TestEnum> arg = new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name,
+		                                                              "test description", null, new Optional(),
+		                                                              TestEnum.values());
+		try {
+			settings.parse();
+		} catch (final SettingsParseError e) {
+			fail();
+		}
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testRequiredProperties() {
+	public void testRequiredProperties() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		new EnumArgument(settings.getRootArgumentSet(), name, "test description", null, new Required(),
-		                 TestEnum.getValues());
+		new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name, "test description", null, new Required(),
+		                           TestEnum.values());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testValidDefault() {
+	public void testValidDefault() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", "TWO",
-		                                          new Required(), TestEnum.getValues());
+		final EnumArgument<TestEnum> arg = new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name,
+		                                                              "test description", TestEnum.TWO, new Required(),
+		                                                              TestEnum.values());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
-		assertEquals(TestEnum.TWO.toString(), arg.getValue());
+		assertEquals(TestEnum.TWO, arg.getValue());
 	}
 	
 	@Test
-	public void testValidProperties() {
+	public void testValidProperties() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		final EnumArgument arg = new EnumArgument(settings.getRootArgumentSet(), name, "test description", null,
-		                                          new Required(), TestEnum.getValues());
+		final EnumArgument<TestEnum> arg = new EnumArgument<TestEnum>(settings.getRootArgumentSet(), name,
+		                                                              "test description", null, new Required(),
+		                                                              TestEnum.values());
 		System.setProperty(name, "TWO");
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
-		assertEquals(TestEnum.TWO.toString(), arg.getValue());
+		assertEquals(TestEnum.TWO, arg.getValue());
 	}
 	
 }

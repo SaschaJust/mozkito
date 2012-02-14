@@ -17,8 +17,8 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -130,39 +130,42 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T> {
 						} else {
 							
 							final String value = getStringValue().toUpperCase();
-							@SuppressWarnings ({ "unchecked", "static-access" })
-							final T valueOf = (T) this.possibleValues.iterator()
-							                                         .next()
-							                                         .valueOf(this.possibleValues.iterator().next()
-							                                                                     .getClass(), value);
-							if (!this.possibleValues.contains(valueOf)) {
-								if (Logger.logError()) {
-									final StringBuilder ss = new StringBuilder();
-									ss.append("Value `" + value + "` set for argument `");
-									ss.append(getName());
-									ss.append("` is invalid.");
-									ss.append(System.getProperty("line.separator"));
-									ss.append("Please choose one of the following possible values:");
-									ss.append(System.getProperty("line.separator"));
-									
-									for (final T s : this.possibleValues) {
-										ss.append("\t");
-										ss.append(s);
+							
+							try {
+								@SuppressWarnings ({ "unchecked" })
+								final T valueOf = (T) Enum.valueOf(this.possibleValues.iterator().next().getClass(),
+								                                   value);
+								if (!this.possibleValues.contains(valueOf)) {
+									if (Logger.logError()) {
+										final StringBuilder ss = new StringBuilder();
+										ss.append("Value `" + value + "` set for argument `");
+										ss.append(getName());
+										ss.append("` is invalid.");
 										ss.append(System.getProperty("line.separator"));
+										ss.append("Please choose one of the following possible values:");
+										ss.append(System.getProperty("line.separator"));
+										
+										for (final T s : this.possibleValues) {
+											ss.append("\t");
+											ss.append(s);
+											ss.append(System.getProperty("line.separator"));
+										}
+										
+										Logger.error(ss.toString());
 									}
 									
-									Logger.error(ss.toString());
-								}
-								
-								ret = false;
-							} else {
-								for (final T val : this.possibleValues) {
-									if (val.toString().equalsIgnoreCase(getStringValue().trim())) {
-										setCachedValue(val);
-										ret = true;
-										break;
+									ret = false;
+								} else {
+									for (final T val : this.possibleValues) {
+										if (val.toString().equalsIgnoreCase(getStringValue().trim())) {
+											setCachedValue(val);
+											ret = true;
+											break;
+										}
 									}
 								}
+							} catch (final IllegalArgumentException e) {
+								ret = false;
 							}
 						}
 					} else {
@@ -177,5 +180,4 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T> {
 			__initPostCondition(ret);
 		}
 	}
-	
 }

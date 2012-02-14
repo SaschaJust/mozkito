@@ -18,10 +18,12 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.settings.arguments.InputFileArgument;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
@@ -47,73 +49,71 @@ public class InputFileArgumentTest {
 	}
 	
 	@Test
-	public void testNotRequiredExists() {
+	public void testNotRequiredExists() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
 		                                                    this.file.getAbsolutePath(), new Optional());
-		settings.parseArguments();
+		settings.parse();
 		final File value = arg.getValue();
 		assertTrue(value != null);
 		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 	@Test
-	public void testNotRequiredNotExists() {
+	public void testNotRequiredNotExistsDefaultAvailable() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
 		                      new Optional());
 		this.file.delete();
 		try {
-			settings.parseArguments();
+			settings.parse();
+		} catch (final SettingsParseError s) {
 			fail();
-		} catch (final Shutdown s) {
-			
 		}
 	}
 	
 	@Test
-	public void testNotRequiredNotGiven() {
+	public void testNotRequiredNotGiven() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null,
 		                                                    new Optional());
-		settings.parseArguments();
+		settings.parse();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testRequiredExists() {
+	public void testRequiredExists() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final InputFileArgument arg = new InputFileArgument(settings.getRootArgumentSet(), name, "test argument",
 		                                                    this.file.getAbsolutePath(), new Required());
 		assertEquals(name, arg.getName());
-		settings.parseArguments();
+		settings.parse();
 		final File value = arg.getValue();
 		assertTrue(value != null);
 		assertEquals(this.file.getAbsolutePath(), value.getAbsolutePath());
 	}
 	
 	@Test
-	public void testRequiredNotExists() {
+	public void testRequiredNotExistsDefaultAvailable() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", this.file.getAbsolutePath(),
 		                      new Required());
 		this.file.delete();
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
-			
+		} catch (final SettingsParseError e) {
 		}
 	}
 	
 	@Test
-	public void testRequiredNotGiven() {
+	public void testRequiredNotGiven() throws ArgumentRegistrationException {
 		final Settings settings = new Settings();
-		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null, new Required());
+		new InputFileArgument(settings.getRootArgumentSet(), name, "test argument", null, Requirement.required);
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}

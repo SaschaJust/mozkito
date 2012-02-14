@@ -16,10 +16,11 @@ package net.ownhero.dev.andama.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.settings.arguments.ListArgument;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.junit.After;
 import org.junit.Test;
@@ -36,13 +37,13 @@ public class ListArgumentTest {
 	}
 	
 	@Test
-	public void testInValidPropertiesDelimiter() {
+	public void testInValidPropertiesDelimiter() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required(), "@");
 		System.setProperty(name, listString);
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -51,13 +52,13 @@ public class ListArgumentTest {
 	}
 	
 	@Test
-	public void testNotRequiredGiven() {
+	public void testNotRequiredGiven() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
 		                                          new Required());
 		assertEquals(name, arg.getName());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -67,33 +68,33 @@ public class ListArgumentTest {
 	}
 	
 	@Test
-	public void testNotRequiredNotGiven() {
+	public void testNotRequiredNotGiven() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Optional());
-		settings.parseArguments();
+		settings.parse();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testRequiredProperties() {
+	public void testRequiredProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new ListArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testValidDefault() {
+	public void testValidDefault() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", listString,
 		                                          new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -103,13 +104,13 @@ public class ListArgumentTest {
 	}
 	
 	@Test
-	public void testValidProperties() {
+	public void testValidProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required());
 		System.setProperty(name, listString);
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -119,13 +120,13 @@ public class ListArgumentTest {
 	}
 	
 	@Test
-	public void testValidPropertiesDelimiter() {
+	public void testValidPropertiesDelimiter() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final ListArgument arg = new ListArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required(), "@");
 		System.setProperty(name, "one@two");
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}

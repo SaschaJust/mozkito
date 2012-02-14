@@ -297,6 +297,7 @@ public class Settings {
 			}
 		}
 		
+		getProperties().clear();
 		getProperties().putAll(this.fileProps);
 		
 		this.commandlineProps = (Properties) System.getProperties().clone();
@@ -318,12 +319,12 @@ public class Settings {
 		
 		if (!validateSettings()) {
 			System.err.println(getHelpString());
-			throw new Shutdown();
+			throw new SettingsParseError(null, null);
 		}
 		
 		if (this.helpArg.getValue()) {
 			System.err.println(getHelpString());
-			throw new Shutdown();
+			throw new SettingsParseError(null, null);
 		}
 		
 		if (Logger.logInfo()) {

@@ -19,8 +19,15 @@ public class SettingsParseError extends Exception {
 	/**
      * 
      */
-	private static final long                serialVersionUID = 6569706686166731951L;
-	private final IArgument<?> argument;
+	private static final long serialVersionUID = 6569706686166731951L;
+	private IArgument<?>      argument         = null;
+	
+	/**
+	 * 
+	 */
+	public SettingsParseError() {
+		super();
+	}
 	
 	/**
 	 * @param arg0
@@ -45,18 +52,23 @@ public class SettingsParseError extends Exception {
 	 */
 	@Override
 	public String getMessage() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(super.getMessage());
-		builder.append(FileUtils.lineSeparator).append(this.argument.getName());
-		List<Requirement> requirements = this.argument.getRequirements().getMissingRequirements();
-		builder.append(FileUtils.lineSeparator).append("Total dependencies: ").append(this.argument.getRequirements());
-		
-		if (requirements != null) {
-			builder.append(FileUtils.lineSeparator).append("Unresolved dependencies: ")
-			       .append(JavaUtils.collectionToString(requirements));
+		if (this.argument != null) {
+			final StringBuilder builder = new StringBuilder();
+			builder.append(super.getMessage());
+			builder.append(FileUtils.lineSeparator).append(this.argument.getName());
+			final List<Requirement> requirements = this.argument.getRequirements().getMissingRequirements();
+			builder.append(FileUtils.lineSeparator).append("Total dependencies: ")
+			       .append(this.argument.getRequirements());
+			
+			if (requirements != null) {
+				builder.append(FileUtils.lineSeparator).append("Unresolved dependencies: ")
+				       .append(JavaUtils.collectionToString(requirements));
+			}
+			
+			return builder.toString();
+		} else {
+			return super.getMessage();
 		}
-		
-		return builder.toString();
 	}
 	
 }

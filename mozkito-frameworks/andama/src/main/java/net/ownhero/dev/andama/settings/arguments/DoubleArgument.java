@@ -13,8 +13,8 @@
 package net.ownhero.dev.andama.settings.arguments;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
@@ -55,9 +55,13 @@ public class DoubleArgument extends Argument<Double> {
 			if (!isInitialized()) {
 				synchronized (this) {
 					if (!isInitialized()) {
-						if (validStringValue()) {
-							setCachedValue(null);
-							ret = true;
+						if (!validStringValue()) {
+							if (required()) {
+								// TODO ERRor log
+							} else {
+								setCachedValue(null);
+								ret = true;
+							}
 						} else {
 							try {
 								setCachedValue(Double.valueOf(getStringValue()));

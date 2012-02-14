@@ -15,10 +15,11 @@ package net.ownhero.dev.andama.settings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.settings.arguments.LongArgument;
-import net.ownhero.dev.andama.settings.dependencies.Optional;
-import net.ownhero.dev.andama.settings.dependencies.Required;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,38 +41,38 @@ public class LongArgumentTest {
 	}
 	
 	@Test
-	public void testInValidDefault() {
+	public void testInValidDefault() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", "2.5", new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testInValidProperties() {
+	public void testInValidProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		System.setProperty(name, "2.5");
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testNotRequiredGiven() {
+	public void testNotRequiredGiven() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description",
 		                                          String.valueOf(myLong), new Optional());
 		assertEquals(name, arg.getName());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -79,33 +80,33 @@ public class LongArgumentTest {
 	}
 	
 	@Test
-	public void testNotRequiredNotGiven() {
+	public void testNotRequiredNotGiven() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Optional());
-		settings.parseArguments();
+		settings.parse();
 		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
-	public void testRequiredProperties() {
+	public void testRequiredProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new LongArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 			fail();
-		} catch (final Shutdown e) {
+		} catch (final SettingsParseError e) {
 			
 		}
 	}
 	
 	@Test
-	public void testValidDefault() {
+	public void testValidDefault() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description",
 		                                          String.valueOf(myLong), new Required());
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -113,13 +114,13 @@ public class LongArgumentTest {
 	}
 	
 	@Test
-	public void testValidProperties() {
+	public void testValidProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		final LongArgument arg = new LongArgument(settings.getRootArgumentSet(), name, "test description", null,
 		                                          new Required());
 		System.setProperty(name, String.valueOf(myLong));
 		try {
-			settings.parseArguments();
+			settings.parse();
 		} catch (final Exception e) {
 			fail();
 		}

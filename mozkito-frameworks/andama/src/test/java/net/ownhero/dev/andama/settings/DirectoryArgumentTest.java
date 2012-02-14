@@ -96,7 +96,7 @@ public class DirectoryArgumentTest {
 		final Settings settings = new Settings();
 		try {
 			new DirectoryArgument(settings.getRootArgumentSet(), "testArg", "test argument", this.dirName,
-			                      new Optional(), true);
+			                      new Optional(), false);
 			settings.parse();
 			fail();
 		} catch (final Exception e) {

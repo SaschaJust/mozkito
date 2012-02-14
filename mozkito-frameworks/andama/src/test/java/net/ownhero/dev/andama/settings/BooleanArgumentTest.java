@@ -118,7 +118,6 @@ public class BooleanArgumentTest {
 		} catch (final SettingsParseError e) {
 			
 		}
-		assertEquals(null, arg.getValue());
 	}
 	
 	@Test
@@ -133,26 +132,12 @@ public class BooleanArgumentTest {
 			
 		}
 		
-		arg.setStringValue("false");
+		System.setProperty("testArg", "false");
 		try {
 			settings.parse();
 		} catch (final SettingsParseError e) {
-			fail();
+			fail(e.getMessage());
 		}
 		assertEquals(false, arg.getValue());
-		arg.setStringValue(null);
-		try {
-			settings.parse();
-			fail();
-		} catch (final SettingsParseError e) {
-			
-		}
-		arg.setStringValue("tRuE");
-		try {
-			settings.parse();
-		} catch (final SettingsParseError e) {
-			fail();
-		}
-		assertEquals(true, arg.getValue());
 	}
 }

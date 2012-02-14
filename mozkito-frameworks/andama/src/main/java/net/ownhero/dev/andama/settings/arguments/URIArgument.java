@@ -17,8 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.Argument;
+import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
@@ -197,8 +197,12 @@ public class URIArgument extends Argument<URI> {
 								}
 							}
 						}
+					} else {
+						ret = true;
 					}
 				}
+			} else {
+				ret = true;
 			}
 			return ret;
 		} finally {
