@@ -15,6 +15,7 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.settings;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -25,9 +26,10 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 public class InfozillaSettings extends TrackerSettings {
 	
 	/**
+	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public InfozillaArguments setInfozillaArgs(final Requirement requirement) {
+	public InfozillaArguments setInfozillaArgs(final Requirement requirement) throws ArgumentRegistrationException {
 		final InfozillaArguments infozillaArguments = new InfozillaArguments(getRootArgumentSet(), requirement);
 		return infozillaArguments;
 	}

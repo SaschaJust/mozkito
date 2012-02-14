@@ -18,11 +18,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.DirectoryArgument;
-import net.ownhero.dev.andama.settings.ListArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.arguments.SetArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -46,39 +49,41 @@ public class CallGraphToolChain {
 	private final OutputFileArgument  outArg;
 	private final RepositoryArguments repoSettings;
 	private Repository                repository = null;
-	private final ListArgument        packageFilterArg;
+	private final SetArgument         packageFilterArg;
 	private File                      sourceDir;
 	private final DirectoryArgument   cacheDirArg;
 	private final String              transactionId;
 	
-	public CallGraphToolChain() {
-		RepositorySettings settings = new RepositorySettings();
+	public CallGraphToolChain() throws ArgumentRegistrationException, SettingsParseError {
+		final RepositorySettings settings = new RepositorySettings();
 		
-		this.repoSettings = settings.setRepositoryArg(true);
-		this.transactionArg = new StringArgument(settings, "transaction.id",
-		                                         "The transaction id to create the call graph for.", null, false);
+		this.repoSettings = settings.setRepositoryArg(Requirement.required);
+		this.transactionArg = new StringArgument(settings.getRootArgumentSet(), "transaction.id",
+		                                         "The transaction id to create the call graph for.", null,
+		                                         Requirement.optional);
 		this.dirArg = new DirectoryArgument(
-		                                    settings,
+		                                    settings.getRootArgumentSet(),
 		                                    "source.directory",
 		                                    "(Only used when "
 		                                            + this.transactionArg.getName()
 		                                            + " not set) Use files from from.directory to build the call graph on.",
-		                                    null, false, false);
-		this.packageFilterArg = new ListArgument(
-		                                         settings,
-		                                         "package.filter",
-		                                         "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-		                                         "", false);
+		                                    null, Requirement.optional, false);
+		this.packageFilterArg = new SetArgument(
+		                                        settings.getRootArgumentSet(),
+		                                        "package.filter",
+		                                        "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
+		                                        "", Requirement.optional);
 		
 		this.cacheDirArg = new DirectoryArgument(
-		                                         settings,
+		                                         settings.getRootArgumentSet(),
 		                                         "cache.dir",
 		                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
-		                                         null, false, false);
+		                                         null, Requirement.optional, false);
 		
-		this.outArg = new OutputFileArgument(settings, "output", "File to store the serialized CallGraph in.", null,
-		                                     true, true);
-		settings.parseArguments();
+		this.outArg = new OutputFileArgument(settings.getRootArgumentSet(), "output",
+		                                     "File to store the serialized CallGraph in.", null, Requirement.required,
+		                                     true);
+		settings.parse();
 		
 		this.transactionId = this.transactionArg.getValue();
 		
@@ -95,23 +100,23 @@ public class CallGraphToolChain {
 	}
 	
 	public void run() {
-		String[] fileExtensions = { "java" };
-		Collection<File> files = FileUtils.listFiles(this.sourceDir, fileExtensions, true);
-		HashSet<String> packageFilter = this.packageFilterArg.getValue();
+		final String[] fileExtensions = { "java" };
+		final Collection<File> files = FileUtils.listFiles(this.sourceDir, fileExtensions, true);
+		final HashSet<String> packageFilter = this.packageFilterArg.getValue();
 		
-		JavaElementFactory elementFactory = new JavaElementFactory();
+		final JavaElementFactory elementFactory = new JavaElementFactory();
 		
-		JavaElementLocationSet elemCache = new JavaElementLocationSet(elementFactory);
+		final JavaElementLocationSet elemCache = new JavaElementLocationSet(elementFactory);
 		
-		Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
+		final Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		
-		File cacheDir = this.cacheDirArg.getValue();
+		final File cacheDir = this.cacheDirArg.getValue();
 		
 		// generate the call graph
 		CallGraph callGraph = null;
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead())
 		        && (this.transactionId != null)) {
-			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
 			        + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);
@@ -119,25 +124,25 @@ public class CallGraphToolChain {
 		}
 		if (callGraph == null) {
 			callGraph = new CallGraph();
-			for (Entry<File, CompilationUnit> cuEntry : compilationUnits.entrySet()) {
+			for (final Entry<File, CompilationUnit> cuEntry : compilationUnits.entrySet()) {
 				String relativePath = cuEntry.getKey().getAbsolutePath();
 				if (!relativePath.startsWith(this.sourceDir.getAbsolutePath())) {
 					throw new UnrecoverableError("CU file must start with sourceDir path!");
 				}
 				relativePath = relativePath.substring(this.sourceDir.getAbsolutePath().length());
-				PPATypeVisitor typeVisitor = new PPATypeVisitor(
-				                                                cuEntry.getValue(),
-				                                                relativePath,
-				                                                packageFilter.toArray(new String[packageFilter.size()]),
-				                                                elemCache);
-				CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath,
-				                                                                  elemCache);
+				final PPATypeVisitor typeVisitor = new PPATypeVisitor(
+				                                                      cuEntry.getValue(),
+				                                                      relativePath,
+				                                                      packageFilter.toArray(new String[packageFilter.size()]),
+				                                                      elemCache);
+				final CallGraphPPAVisitor callGraphPPAVisitor = new CallGraphPPAVisitor(callGraph, true, relativePath,
+				                                                                        elemCache);
 				typeVisitor.registerVisitor(callGraphPPAVisitor);
 				cuEntry.getValue().accept(typeVisitor);
 			}
 		}
 		if (Logger.logInfo()) {
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			sb.append("Generated call graph with:");
 			sb.append(FileUtils.lineSeparator);
 			sb.append("\t");
@@ -150,7 +155,7 @@ public class CallGraphToolChain {
 			Logger.info(sb.toString());
 			
 		}
-		File outFile = this.outArg.getValue();
+		final File outFile = this.outArg.getValue();
 		callGraph.serialize(outFile);
 	}
 }

@@ -13,19 +13,22 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 
 public class GenealogySettings extends Settings {
 	
 	/**
 	 * Add the repository argument set.
 	 * 
-	 * @param isRequired
+	 * @param requirement
 	 *            Set to <code>true</code> if the repository settings are required.
 	 * @return the genealogy arguments
+	 * @throws ArgumentRegistrationException
 	 */
-	public GenealogyArguments setGenealogyArgs(final boolean isRequired) {
-		return new GenealogyArguments(this, isRequired, "ppa");
+	public GenealogyArguments setGenealogyArgs(final Requirement requirement) throws ArgumentRegistrationException {
+		return new GenealogyArguments(getRootArgumentSet(), requirement, "ppa");
 	}
 	
 }

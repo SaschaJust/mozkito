@@ -17,12 +17,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.arguments.EnumArgument;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -38,37 +41,37 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.Partitio
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
 public class GenealogyMetricsToolChain extends Chain {
 	
-	private final GenealogyArguments genealogyArgs;
-	private final Pool               threadPool;
-	private CoreChangeGenealogy      genealogy;
-	private final EnumArgument       granularityArg;
-	private final OutputFileArgument outputFileArgument;
+	private final GenealogyArguments        genealogyArgs;
+	private final Pool                      threadPool;
+	private CoreChangeGenealogy             genealogy;
+	private final EnumArgument<MetricLevel> granularityArg;
+	private final OutputFileArgument        outputFileArgument;
 	
-	public GenealogyMetricsToolChain() {
+	public GenealogyMetricsToolChain() throws SettingsParseError, ArgumentRegistrationException {
 		super(new GenealogySettings());
 		final GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
-		settings.setLoggerArg(false);
-		this.genealogyArgs = settings.setGenealogyArgs(true);
-		this.granularityArg = new EnumArgument(settings, "genealogy.metric.level",
-		                                       "The granularity level the metrics should be computed on.",
-		                                       "CHANGEOPERATION", true, new String[] { "CHANGEOPERATION",
-		                                               "OPERATIONPARTITION", "TRANSACTION" });
-		this.outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
-		                                                 "Filename to write result metric matrix into.", null, true,
-		                                                 true);
+		settings.setLoggerArg(Requirement.required);
+		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+		this.granularityArg = new EnumArgument<MetricLevel>(settings.getRootArgumentSet(), "genealogy.metric.level",
+		                                                    "The granularity level the metrics should be computed on.",
+		                                                    MetricLevel.CHANGEOPERATION, Requirement.required);
+		this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
+		                                                 "Filename to write result metric matrix into.", null,
+		                                                 Requirement.required, true);
 		new StringArgument(
-		                   settings,
+		                   settings.getRootArgumentSet(),
 		                   "fix.pattern",
 		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
-		                   null, true);
+		                   null, Requirement.required);
 		
-		settings.parseArguments();
+		settings.parse();
 	}
 	
 	/*
@@ -89,7 +92,7 @@ public class GenealogyMetricsToolChain extends Chain {
 		this.genealogy = this.genealogyArgs.getValue();
 		
 		// allow different genealogy layers
-		final String granularity = this.granularityArg.getValue();
+		final MetricLevel granularity = this.granularityArg.getValue();
 		
 		/*
 		 * we always enable all metrics. Otherwise this would require far too many arguments The idea is to load all
@@ -97,7 +100,7 @@ public class GenealogyMetricsToolChain extends Chain {
 		 * the granularity level selected for this run.
 		 */
 		
-		if (granularity.equals("CHANGEOPERATIONPARTITION")) {
+		if (granularity.equals(MetricLevel.CHANGEOPERATIONPARTITION)) {
 			final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
 			                                                                                       this.genealogy,
 			                                                                                       new DefaultPartitionGenerator(
@@ -130,7 +133,7 @@ public class GenealogyMetricsToolChain extends Chain {
 				throw new UnrecoverableError(e);
 			}
 			
-		} else if (granularity.equals("TRANSACTION")) {
+		} else if (granularity.equals(MetricLevel.TRANSACTION)) {
 			final TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(this.genealogy);
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());

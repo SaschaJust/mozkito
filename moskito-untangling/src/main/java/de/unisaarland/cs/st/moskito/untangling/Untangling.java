@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -117,16 +120,19 @@ public class Untangling {
 	
 	/**
 	 * Instantiates a new untangling.
+	 * 
+	 * @throws ArgumentRegistrationException
+	 * @throws SettingsParseError
 	 */
-	public Untangling() {
+	public Untangling() throws ArgumentRegistrationException, SettingsParseError {
 		final UntanglingSettings settings = new UntanglingSettings();
 		
-		this.repositoryArg = settings.setRepositoryArg(true);
-		this.databaseArgs = settings.setDatabaseArgs(true, "untangling");
-		this.untanglingArgs = settings.setUntanglingArgs(true);
-		settings.setLoggerArg(false);
+		this.repositoryArg = settings.setRepositoryArg(Requirement.required);
+		this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
+		this.untanglingArgs = settings.setUntanglingArgs(Requirement.required);
+		settings.setLoggerArg(Requirement.optional);
 		
-		settings.parseArguments();
+		settings.parse();
 		
 		if (this.untanglingArgs.getSeedArg().getValue() != null) {
 			this.seed = this.untanglingArgs.getSeedArg().getValue();
@@ -291,8 +297,7 @@ public class Untangling {
 		final List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
 		
 		if (this.untanglingArgs.getAtomicChangesArg().getValue() != null) {
-			final HashSet<String> atomicTransactions = this.untanglingArgs.getAtomicChangesArg().getValue();
-			for (final String transactionId : atomicTransactions) {
+			for (final String transactionId : this.untanglingArgs.getAtomicChangesArg().getValue()) {
 				final RCSTransaction t = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				
 				// FIXME this is required due to some unknown problem which
@@ -386,7 +391,7 @@ public class Untangling {
 		final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
 		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
-		final UntanglingCollapse collapse = UntanglingCollapse.valueOf(this.untanglingArgs.getCollapseArg().getValue());
+		final UntanglingCollapse collapse = this.untanglingArgs.getCollapseArg().getValue();
 		switch (collapse) {
 			case AVG:
 				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
@@ -400,8 +405,7 @@ public class Untangling {
 		}
 		
 		// create the corresponding score aggregation model
-		final ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(this.untanglingArgs.getScoreModeArg()
-		                                                                                                  .getValue());
+		final ScoreCombinationMode scoreAggregationMode = this.untanglingArgs.getScoreModeArg().getValue();
 		switch (scoreAggregationMode) {
 			case SUM:
 				this.aggregator = new SumAggregation<JavaChangeOperation>();

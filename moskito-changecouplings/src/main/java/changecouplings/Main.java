@@ -28,11 +28,18 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		ChangeCouplings changeCouplings = new ChangeCouplings();
-		changeCouplings.setup();
-		changeCouplings.run();
-		if (Logger.logInfo()) {
-			Logger.info("ChangeCouplings.Main: All done. cerio!");
+		try {
+			final ChangeCouplings changeCouplings = new ChangeCouplings();
+			changeCouplings.setup();
+			changeCouplings.run();
+			if (Logger.logInfo()) {
+				Logger.info("ChangeCouplings.Main: All done. cerio!");
+			}
+		} catch (final Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException(e);
 		}
 	}
 	

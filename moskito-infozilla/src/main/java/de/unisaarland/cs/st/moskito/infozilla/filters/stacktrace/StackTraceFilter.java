@@ -17,6 +17,8 @@ package de.unisaarland.cs.st.moskito.infozilla.filters.stacktrace;
 
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 
 /**
@@ -27,12 +29,33 @@ public abstract class StackTraceFilter extends InfozillaFilter {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#getOutputText()
 	 */
 	@Override
 	public String getOutputText() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/*

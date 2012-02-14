@@ -15,13 +15,14 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.settings;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.SetArgument;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
@@ -36,7 +37,8 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 	
 	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
 	
-	public InfozillaArguments(final ArgumentSet<Boolean> argumentSet, final Requirement requirement) {
+	public InfozillaArguments(final ArgumentSet<Boolean> argumentSet, final Requirement requirement)
+	        throws ArgumentRegistrationException {
 		super(argumentSet, "TODO bla bla", requirement);
 		
 		try {
@@ -46,10 +48,13 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 			                                                                                                                Modifier.ABSTRACT
 			                                                                                                                        | Modifier.INTERFACE
 			                                                                                                                        | Modifier.PRIVATE);
-			
-			addArgument(new ListArgument(argumentSet, "mapping.filters",
-			                             "A list of mapping filters that shall be used.",
-			                             buildFilterList(classesExtendingClass), false));
+			final Collection<InfozillaFilter> collection = ArgumentSet.provideDynamicArguments(this,
+			                                                                                   InfozillaFilter.class,
+			                                                                                   "XYZ", requirement,
+			                                                                                   null, "infozilla",
+			                                                                                   "filter", true);
+			new SetArgument(this, "mapping.filters", "A list of mapping filters that shall be used.",
+			                buildFilterList(classesExtendingClass), Requirement.optional);
 			
 			final String filters = System.getProperty("mapping.filters");
 			final Set<String> filterNames = new HashSet<String>();
@@ -61,19 +66,16 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 				
 			}
 			
-			for (final Class<?> klass : classesExtendingClass) {
-				if (filterNames.isEmpty() || filterNames.contains(klass.getCanonicalName())) {
+			for (final InfozillaFilter filter : collection) {
+				if (filterNames.isEmpty() || filterNames.contains(filter.getClass().getSimpleName())) {
 					if (Logger.logInfo()) {
-						Logger.info("Adding new InfozillaFilter " + klass.getCanonicalName());
+						Logger.info("Adding new InfozillaFilter " + filter.getClass().getSimpleName());
 					}
 					
-					final Constructor<?> constructor = klass.getConstructor(InfozillaSettings.class);
-					final InfozillaFilter filter = (InfozillaFilter) constructor.newInstance(argumentSet);
-					filter.register(argumentSet, this, requirement);
 					this.filters.add(filter);
 				} else {
 					if (Logger.logInfo()) {
-						Logger.info("Not loading available filter: " + klass.getSimpleName());
+						Logger.info("Not loading available filter: " + filter.getClass().getSimpleName());
 					}
 				}
 			}
@@ -100,21 +102,10 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 		return builder.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
-	 */
 	@Override
 	protected boolean init() {
-		final InfozillaFilterChain chain = new InfozillaFilterChain();
-		
-		for (final InfozillaFilter filter : this.filters) {
-			filter.init();
-			chain.addFilter(filter);
-		}
-		
-		setCachedValue(chain);
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

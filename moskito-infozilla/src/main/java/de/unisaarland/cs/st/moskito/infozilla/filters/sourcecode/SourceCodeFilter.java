@@ -17,6 +17,8 @@ package de.unisaarland.cs.st.moskito.infozilla.filters.sourcecode;
 
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 
 /**
@@ -32,6 +34,12 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 		// REMARK Auto-generated constructor stub
 	}
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#getOutputText()
@@ -40,6 +48,12 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 	public String getOutputText() {
 		// REMARK Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/*

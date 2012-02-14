@@ -13,10 +13,12 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.DirectoryArgument;
+import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -24,27 +26,53 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	
-	private DirectoryArgument graphDBArg;
-	private DatabaseArguments dbArgs;
+	private final DirectoryArgument graphDBArg;
+	private final DatabaseArguments dbArgs;
 	
-	public GenealogyArguments(Settings settings, boolean isRequired, String unit) {
-		super();
-		graphDBArg = new DirectoryArgument(
-		                                   settings,
-		                                   "genealogy.graphdb",
-		                                   "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
-		                                   null, true, true);
-		dbArgs = new DatabaseArguments(settings, isRequired, unit);
-	}
-	
-	@Override
-	public CoreChangeGenealogy getValue() {
+	public GenealogyArguments(final ArgumentSet<?> argumentSet, final Requirement requirement, final String unit)
+	        throws ArgumentRegistrationException {
+		super(argumentSet, "GenealogyArguments", requirement);
 		
-		PersistenceUtil persistenceUtil = this.dbArgs.getValue();
-		if (persistenceUtil == null) {
-			throw new UnrecoverableError("Could not connect to database!");
-		}
-		return ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
+		this.graphDBArg = new DirectoryArgument(
+		                                        argumentSet,
+		                                        "genealogy.graphdb",
+		                                        "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
+		                                        null, Requirement.required, true);
+		this.dbArgs = new DatabaseArguments(argumentSet, requirement, unit);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
+	 */
+	@Override
+	protected boolean init() {
+		boolean ret = false;
+		
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						
+						final PersistenceUtil persistenceUtil = this.dbArgs.getValue();
+						if (persistenceUtil == null) {
+							throw new UnrecoverableError("Could not connect to database!");
+						}
+						setCachedValue(ChangeGenealogyUtils.readFromDB(this.graphDBArg.getValue(), persistenceUtil));
+						ret = true;
+					} else {
+						ret = true;
+					}
+				}
+			} else {
+				ret = true;
+			}
+			return ret;
+		} finally {
+			if (ret) {
+				Condition.check(isInitialized(), "If init() returns true, the %s has to be set to initialized.",
+				                getHandle());
+			}
+		}
+	}
 }

@@ -18,6 +18,8 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
@@ -28,6 +30,12 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
  * 
  */
 public class NonAmbigiousFullnameEngine extends MergingEngine {
+	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -40,10 +48,10 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 	public List<PersonBucket> collides(final Person person,
 	                                   final PersonContainer container,
 	                                   final PersonManager manager) {
-		List<PersonBucket> buckets = manager.getBuckets(person);
-		List<PersonBucket> list = new LinkedList<PersonBucket>();
+		final List<PersonBucket> buckets = manager.getBuckets(person);
+		final List<PersonBucket> list = new LinkedList<PersonBucket>();
 		
-		for (PersonBucket bucket : buckets) {
+		for (final PersonBucket bucket : buckets) {
 			// boolean found = false;
 			// if (!person.getUsernames().isEmpty()) {
 			// for (String username : person.getUsernames()) {
@@ -74,7 +82,7 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 			// list.add(bucket);
 			// }
 			// }
-			for (String fullName : person.getFullnames()) {
+			for (final String fullName : person.getFullnames()) {
 				if (bucket.hasFullname(fullName)) {
 					list.add(bucket);
 				}
@@ -90,6 +98,12 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 	@Override
 	public String getDescription() {
 		return "Finds collision on non-ambious full names.";
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

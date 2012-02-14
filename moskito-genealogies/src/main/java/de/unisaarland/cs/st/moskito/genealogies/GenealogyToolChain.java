@@ -13,9 +13,12 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.LoggerArguments;
+import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
@@ -24,18 +27,18 @@ import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
 public class GenealogyToolChain extends Chain {
 	
-	private final Pool         threadPool;
+	private final Pool               threadPool;
 	private final GenealogyArguments genealogyArgs;
 	
-	public GenealogyToolChain() {
+	public GenealogyToolChain() throws ArgumentRegistrationException, SettingsParseError {
 		super(new GenealogySettings());
 		
 		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
-		final LoggerArguments loggerArg = settings.setLoggerArg(false);
+		final LoggerArguments loggerArg = settings.setLoggerArg(Requirement.required);
 		loggerArg.getValue();
-		this.genealogyArgs = settings.setGenealogyArgs(true);
-		settings.parseArguments();
+		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+		settings.parse();
 	}
 	
 	@Override

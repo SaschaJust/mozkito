@@ -19,10 +19,13 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.DirectoryArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -471,33 +474,34 @@ public class ChangeGenealogyUtils {
 		});
 	}
 	
-	public static void run() {
+	public static void run() throws ArgumentRegistrationException, SettingsParseError {
 		
 		final RepositorySettings settings = new RepositorySettings();
 		
-		final DatabaseArguments persistenceArgs = new DatabaseArguments(settings, true, "ppa");
+		final DatabaseArguments persistenceArgs = new DatabaseArguments(settings.getRootArgumentSet(),
+		                                                                Requirement.required, "ppa");
 		
-		final DirectoryArgument graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
+		final DirectoryArgument graphDBArg = new DirectoryArgument(settings.getRootArgumentSet(), "genealogy.graphdb",
 		                                                           "Directory in which to load the GraphDB from.",
-		                                                           null, true, true);
+		                                                           null, Requirement.required, true);
 		
-		final BooleanArgument statsArg = new BooleanArgument(settings, "stats",
+		final BooleanArgument statsArg = new BooleanArgument(settings.getRootArgumentSet(), "stats",
 		                                                     "Print vertex/edge statistic for ChangeGenealogy",
-		                                                     "false", false);
+		                                                     "false", Requirement.optional);
 		
 		final OutputFileArgument graphmlArg = new OutputFileArgument(
-		                                                             settings,
+		                                                             settings.getRootArgumentSet(),
 		                                                             "graphml.out",
 		                                                             "Export the graph as GraphML file into this file.",
-		                                                             null, false, false);
+		                                                             null, Requirement.optional, false);
 		
 		final OutputFileArgument dotArg = new OutputFileArgument(
-		                                                         settings,
+		                                                         settings.getRootArgumentSet(),
 		                                                         "dot.out",
 		                                                         "Export the graph as DOT file (must be processed using graphviz).",
-		                                                         null, false, true);
+		                                                         null, Requirement.optional, true);
 		
-		settings.parseArguments();
+		settings.parse();
 		
 		final PersistenceUtil persistenceUtil = persistenceArgs.getValue();
 		

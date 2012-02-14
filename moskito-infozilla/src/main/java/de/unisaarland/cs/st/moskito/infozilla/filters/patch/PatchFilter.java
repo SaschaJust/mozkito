@@ -15,6 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.filters.patch;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 
 /**
@@ -23,4 +25,15 @@ import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
  */
 public abstract class PatchFilter extends InfozillaFilter {
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -19,8 +19,6 @@ import java.util.regex.MatchResult;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.JavaStacktrace;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.Stacktrace;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 public class JavaStacktraceFilter extends StackTraceFilter {
 	
@@ -318,27 +316,6 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 		}
 		
 		return stackTraces;
-	}
-	
-	/**
-	 * 
-	 */
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/**
-	 * @param settings
-	 * @param infozillaArguments
-	 * @param isRequired
-	 */
-	@Override
-	public void register(final InfozillaSettings settings,
-	                     final InfozillaArguments infozillaArguments,
-	                     final boolean isRequired) {
-		return;
 	}
 	
 	// Auto-generated Message from InfozillaFilter interface

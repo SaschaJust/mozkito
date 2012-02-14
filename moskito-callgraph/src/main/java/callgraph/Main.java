@@ -28,13 +28,18 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		CallGraphToolChain toolChain = new CallGraphToolChain();
-		// toolChain.setName(toolChain.getClass().getSimpleName());
-		// toolChain.start();
-		// toolChain.join();
-		toolChain.run();
-		if (Logger.logInfo()) {
-			Logger.info("PPA.Main: All done. cerio!");
+		CallGraphToolChain toolChain;
+		try {
+			toolChain = new CallGraphToolChain();
+			toolChain.run();
+			if (Logger.logInfo()) {
+				Logger.info("PPA.Main: All done. cerio!");
+			}
+		} catch (final Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException(e);
 		}
 	}
 }

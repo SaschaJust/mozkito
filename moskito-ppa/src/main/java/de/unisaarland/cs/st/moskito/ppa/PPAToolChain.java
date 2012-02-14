@@ -18,14 +18,17 @@ import java.io.FileOutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.ListArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.arguments.SetArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -43,7 +46,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class PPAToolChain extends Chain {
 	
 	/** The thread pool. */
-	private final Pool          threadPool;
+	private final Pool                threadPool;
 	
 	/** The repo settings. */
 	private final RepositoryArguments repoSettings;
@@ -52,7 +55,7 @@ public class PPAToolChain extends Chain {
 	private final DatabaseArguments   databaseSettings;
 	
 	/** The test case transaction arg. */
-	private final ListArgument        testCaseTransactionArg;
+	private final SetArgument         testCaseTransactionArg;
 	
 	private final BooleanArgument     ppaArg;
 	
@@ -67,38 +70,42 @@ public class PPAToolChain extends Chain {
 	
 	/**
 	 * Instantiates a new pPA tool chain.
+	 * 
+	 * @throws ArgumentRegistrationException
+	 * @throws SettingsParseError
 	 */
-	public PPAToolChain() {
+	public PPAToolChain() throws ArgumentRegistrationException, SettingsParseError {
 		super(new RepositorySettings());
 		
 		this.threadPool = new Pool(PPAToolChain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
 		
-		this.repoSettings = settings.setRepositoryArg(true);
-		this.databaseSettings = settings.setDatabaseArgs(false, "ppa");
-		settings.setLoggerArg(true);
-		this.testCaseTransactionArg = new ListArgument(
-		                                               settings,
-		                                               "testCaseTransactions",
-		                                               "List of transactions that will be passed for test case purposes. "
-		                                                       + "If this option is set, this module will start in test case mode. "
-		                                                       + "If will generate change operations to specified transactions, only;"
-		                                                       + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                                                       + "or to specified XML file.", null, false);
+		this.repoSettings = settings.setRepositoryArg(Requirement.required);
+		this.databaseSettings = settings.setDatabaseArgs(Requirement.optional, "ppa");
+		settings.setLoggerArg(Requirement.required);
+		this.testCaseTransactionArg = new SetArgument(
+		                                              settings.getRootArgumentSet(),
+		                                              "testCaseTransactions",
+		                                              "List of transactions that will be passed for test case purposes. "
+		                                                      + "If this option is set, this module will start in test case mode. "
+		                                                      + "If will generate change operations to specified transactions, only;"
+		                                                      + "outputting result as XML either to sdtout (if option -DasXML not set) "
+		                                                      + "or to specified XML file.", null, Requirement.optional);
 		
-		this.ppaArg = new BooleanArgument(settings, "ppa", "If set to true, this module will use the PPA tool.",
-		                                  "false", false);
+		this.ppaArg = new BooleanArgument(settings.getRootArgumentSet(), "ppa",
+		                                  "If set to true, this module will use the PPA tool.", "false",
+		                                  Requirement.optional);
 		
 		this.asXML = new OutputFileArgument(
-		                                    settings,
+		                                    settings.getRootArgumentSet(),
 		                                    "output.xml",
 		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                                    null, false, true);
+		                                    null, Requirement.optional, true);
 		
-		this.startWithArg = new StringArgument(settings, "startTransaction",
-		                                       "Use this transaction ID as the first one.", null, false);
+		this.startWithArg = new StringArgument(settings.getRootArgumentSet(), "startTransaction",
+		                                       "Use this transaction ID as the first one.", null, Requirement.optional);
 		
-		settings.parseArguments();
+		settings.parse();
 		
 	}
 	

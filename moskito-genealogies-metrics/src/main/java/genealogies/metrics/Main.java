@@ -14,6 +14,7 @@
 package genealogies.metrics;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
 
 public class Main {
@@ -25,9 +26,20 @@ public class Main {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain();
-		genealogyMetrics.run();
+	public static void main(final String[] args) {
+		GenealogyMetricsToolChain genealogyMetrics;
+		try {
+			genealogyMetrics = new GenealogyMetricsToolChain();
+			genealogyMetrics.run();
+			if (Logger.logInfo()) {
+				Logger.info("All done. Cerio.");
+			}
+		} catch (final Exception e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException(e);
+		}
 	}
 	
 }
