@@ -23,7 +23,7 @@ import java.util.Set;
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.arguments.ListArgument;
+import net.ownhero.dev.andama.settings.arguments.SetArgument;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
 import net.ownhero.dev.andama.settings.requirements.Contains;
@@ -33,6 +33,7 @@ import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
@@ -46,15 +47,17 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
  */
 public abstract class ArgumentSet<T> implements IArgument<T> {
 	
-	public static <T> Collection<T> provideDynamicArguments(final ArgumentSet<?> argumentSet,
-	                                                        final Class<T> superClass,
-	                                                        final String description,
-	                                                        final Requirement requirement,
-	                                                        final String defaultValue,
-	                                                        final String moduleName,
-	                                                        final String provideGroupName,
-	                                                        final boolean multiEnable) throws ArgumentRegistrationException {
+	@NoneNull
+	public static <T extends ArgumentProvider> Collection<T> provideDynamicArguments(final ArgumentSet<?> argumentSet,
+	                                                                                 final Class<T> superClass,
+	                                                                                 final String description,
+	                                                                                 final Requirement requirement,
+	                                                                                 final String defaultValue,
+	                                                                                 final String moduleName,
+	                                                                                 final String provideGroupName,
+	                                                                                 final boolean multiEnable) throws ArgumentRegistrationException {
 		try {
+			final Settings settings = argumentSet.getSettings();
 			final Collection<T> instances = new LinkedList<T>();
 			final Collection<Class<T>> classes = ClassFinder.getClassesOfInterface(superClass.getPackage(), superClass,
 			                                                                       Modifier.ABSTRACT
@@ -76,14 +79,14 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 				validArguments.append(c.getSimpleName());
 			}
 			
-			ListArgument listArgument = null;
+			SetArgument setArgument = null;
 			StringArgument stringArgument = null;
 			
 			if (multiEnable) {
-				listArgument = new ListArgument(set, moduleName.toLowerCase() + "." + provideGroupName.toLowerCase(),
-				                                "Enables " + provideGroupName + " in the " + moduleName
-				                                        + " module. Valid arguments: " + validArguments, defaultValue,
-				                                requirement);
+				setArgument = new SetArgument(set, moduleName.toLowerCase() + "." + provideGroupName.toLowerCase(),
+				                              "Enables " + provideGroupName + " in the " + moduleName
+				                                      + " module. Valid arguments: " + validArguments, defaultValue,
+				                              requirement);
 			} else {
 				stringArgument = new StringArgument(set, moduleName.toLowerCase() + "."
 				        + provideGroupName.toLowerCase(), "Enables " + provideGroupName + " in the " + moduleName
@@ -93,18 +96,15 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 			for (final Class<?> c : classes) {
 				DynamicArgumentSet<Boolean> specificSet = null;
 				if (multiEnable) {
-					if (listArgument != null) {
-						specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(),
-						        "Bundles the settings for " + c.getSimpleName(), new Contains(listArgument,
-						                                                                      c.getSimpleName()),
-						        provideGroupName, provideGroupName) {
-							
-							@Override
-							protected boolean init() {
-								return true;
-							}
-						};
-					}
+					specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(), "Bundles the settings for "
+					        + c.getSimpleName(), new Contains(setArgument, c.getSimpleName()), provideGroupName,
+					        provideGroupName) {
+						
+						@Override
+						protected boolean init() {
+							return true;
+						}
+					};
 				} else {
 					specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(), "Bundles the settings for "
 					        + c.getSimpleName(), new Equals(stringArgument, c.getSimpleName()), provideGroupName,
@@ -123,6 +123,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 				                                  DynamicArgumentSet.class);
 				method.invoke(o, specificSet);
 				instances.add(o);
+				settings.addArgumentProvider(o);
 			}
 			
 			return instances;

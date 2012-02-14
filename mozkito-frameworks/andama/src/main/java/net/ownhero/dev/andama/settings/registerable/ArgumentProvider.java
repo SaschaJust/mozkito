@@ -21,6 +21,8 @@ import net.ownhero.dev.andama.settings.DynamicArgumentSet;
  */
 public interface ArgumentProvider {
 	
+	void afterParse();
+	
 	boolean initSettings(DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException;
 	
 }

@@ -18,20 +18,11 @@ public class Required extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
 	public Set<IArgument<?>> getDependencies() {
-		Set<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+		final Set<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
 		try {
 			return dependencies;
 		} finally {
@@ -46,6 +37,15 @@ public class Required extends Requirement {
 	@Override
 	public List<Requirement> getMissingRequirements() {
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		return true;
 	}
 	
 	/*

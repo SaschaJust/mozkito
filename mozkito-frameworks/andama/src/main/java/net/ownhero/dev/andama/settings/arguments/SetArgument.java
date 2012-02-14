@@ -1,23 +1,25 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.ownhero.dev.andama.settings.arguments;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.Argument;
 import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Argument;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
@@ -26,13 +28,13 @@ import net.ownhero.dev.kanuni.conditions.StringCondition;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class ListArgument extends Argument<List<String>> {
+public class SetArgument extends Argument<HashSet<String>> {
 	
 	private final String delimiter;
 	
 	/**
-	 * General Arguments as described in RepoSuiteArgument. The string value will be split using delimiter `,` to
-	 * receive the list of values.
+	 * General Arguments as described in RepoSuiteArgument. The string value
+	 * will be split using delimiter `,` to receive the list of values.
 	 * 
 	 * @see Argument
 	 * 
@@ -44,7 +46,7 @@ public class ListArgument extends Argument<List<String>> {
 	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public ListArgument(final ArgumentSet<?> argumentSet, final String name, final String description,
+	public SetArgument(final ArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final Requirement requirements) throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
 		try {
@@ -65,10 +67,11 @@ public class ListArgument extends Argument<List<String>> {
 	 * @param defaultValue
 	 * @param requirements
 	 * @param delimiter
-	 *            The string value will be split using this delimiter to receive the list of values
+	 *            The string value will be split using this delimiter to receive
+	 *            the list of values
 	 * @throws ArgumentRegistrationException
 	 */
-	public ListArgument(final ArgumentSet<?> argumentSet, final String name, final String description,
+	public SetArgument(final ArgumentSet<?> argumentSet, final String name, final String description,
 	        final String defaultValue, final Requirement requirements, final String delimiter)
 	        throws ArgumentRegistrationException {
 		super(argumentSet, name, description, defaultValue, requirements);
@@ -100,7 +103,7 @@ public class ListArgument extends Argument<List<String>> {
 							setCachedValue(null);
 							ret = true;
 						} else {
-							final List<String> result = new LinkedList<String>();
+							final HashSet<String> result = new HashSet<String>();
 							
 							for (final String s : getStringValue().split(this.delimiter)) {
 								result.add(s.trim());

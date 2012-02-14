@@ -32,6 +32,7 @@ import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.MailArguments;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.andama.settings.arguments.URIArgument;
+import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
@@ -53,38 +54,24 @@ public class Settings {
 		return reportThis;
 	}
 	
-	public static void main(final String[] args) {
-		// System.setProperty("mail.password", "test");
-		final Settings settings = new Settings();
-		try {
-			settings.parse();
-			Requirement.printGraph(settings.argumentSets.values());
-			System.err.println(settings.toString());
-			System.err.println(settings.getHelpString());
-		} catch (final SettingsParseError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		}
-		
-	}
+	private final Map<String, ArgumentSet<?>> argumentSets      = new HashMap<String, ArgumentSet<?>>();
 	
-	private final Map<String, ArgumentSet<?>> argumentSets    = new HashMap<String, ArgumentSet<?>>();
-	
-	private final Map<String, String>         toolInformation = new HashMap<String, String>();
+	private final Map<String, String>         toolInformation   = new HashMap<String, String>();
 	private Properties                        commandlineProps;
 	private BooleanArgument                   noDefaultValueArg;
 	private BooleanArgument                   helpArg;
 	private BooleanArgument                   disableCrashArg;
 	private URIArgument                       settingsArg;
-	private MailArguments                     mailArguments   = null;
+	private MailArguments                     mailArguments     = null;
 	
 	private ArgumentSet<Boolean>              rootArgumentSet;
 	private StringArgument                    bugReportArgument;
-	private final Properties                  fileProps       = new Properties();
-	private final Properties                  properties      = new Properties();
+	private final Properties                  fileProps         = new Properties();
+	private final Properties                  properties        = new Properties();
 	
-	private static String                     reportThis      = "Please file a bug report with this error message here: https://dev.own-hero.net";
+	private final Set<ArgumentProvider>       argumentProviders = new HashSet<ArgumentProvider>();
+	
+	private static String                     reportThis        = "Please file a bug report with this error message here: https://dev.own-hero.net";
 	
 	/**
 	 * 
@@ -158,6 +145,13 @@ public class Settings {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * @param argument
+	 */
+	public void addArgumentProvider(final ArgumentProvider provider) {
+		this.argumentProviders.add(provider);
 	}
 	
 	/**
@@ -338,6 +332,11 @@ public class Settings {
 		}
 		
 		reportThis = this.bugReportArgument.getValue();
+		
+		// call after parse
+		for (final ArgumentProvider provider : this.argumentProviders) {
+			provider.afterParse();
+		}
 	}
 	
 	public void parseArguments(final Collection<IArgument<?>> arguments) {
