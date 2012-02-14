@@ -12,8 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -32,12 +34,23 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class CompletedOrderEngine extends MappingEngine {
 	
-	private double scoreReportResolvedBeforeTransaction = -1d;
+	private double         scoreReportResolvedBeforeTransaction = -1d;
+	private DoubleArgument doubleArgument;
 	
 	/**
 	 * 
 	 */
 	public CompletedOrderEngine() {
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setScoreReportResolvedBeforeTransaction(this.doubleArgument.getValue());
+		
 	}
 	
 	/*
@@ -58,25 +71,15 @@ public class CompletedOrderEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setScoreReportResolvedBeforeTransaction((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Score in case the report was resolved before the transaction.",
-		                     this.scoreReportResolvedBeforeTransaction + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.doubleArgument = new DoubleArgument(set, "confidence",
+		                                         "Score in case the report was resolved before the transaction.",
+		                                         this.scoreReportResolvedBeforeTransaction + "", Requirement.required);
+		return true;
 	}
 	
 	/*

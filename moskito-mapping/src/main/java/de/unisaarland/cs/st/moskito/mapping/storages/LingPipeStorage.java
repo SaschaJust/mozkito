@@ -26,6 +26,12 @@ public class LingPipeStorage extends MappingStorage {
 	public LingPipeStorage() {
 	}
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription ()

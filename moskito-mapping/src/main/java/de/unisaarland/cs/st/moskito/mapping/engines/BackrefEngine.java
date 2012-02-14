@@ -12,8 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -29,7 +31,17 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class BackrefEngine extends MappingEngine {
 	
-	private double scoreBackRef = 1d;
+	private double         scoreBackRef = 1d;
+	private DoubleArgument confidenceArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setScoreBackRef(this.confidenceArgument.getValue());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -49,24 +61,15 @@ public class BackrefEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setScoreBackRef((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		registerDoubleOption(settings, arguments, "confidence", "Score for backreference in transaction and report.",
-		                     this.scoreBackRef + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new DoubleArgument(set, "confidence",
+		                                             "Score for backreference in transaction and report.",
+		                                             this.scoreBackRef + "", Requirement.required);
+		return true;
 	}
 	
 	/*

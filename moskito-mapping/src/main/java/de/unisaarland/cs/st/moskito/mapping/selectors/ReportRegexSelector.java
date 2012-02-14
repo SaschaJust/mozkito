@@ -16,10 +16,9 @@ import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.ArgumentSet;
 import net.ownhero.dev.andama.settings.DynamicArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -37,7 +36,17 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class ReportRegexSelector extends MappingSelector {
 	
-	private String pattern;
+	private String         pattern;
+	private StringArgument patternArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setPattern(this.patternArgument.getValue());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -57,17 +66,13 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setPattern((String) getOption("pattern").getSecond().getValue());
-	}
-	
-	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		new StringArgument(set, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
-		                   set.getRequirements());
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.patternArgument = new StringArgument(set, "pattern", "Pattern of report ids to scan for.",
+		                                          "(\\p{XDigit}{7,})", set.getRequirements());
 		return true;
 	}
 	
@@ -117,24 +122,11 @@ public class ReportRegexSelector extends MappingSelector {
 		return list;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#register(de
-	 * .unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		registerStringOption(settings, arguments, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
-		                     true);
-	}
-	
 	/**
 	 * @param pattern
 	 *            the pattern to set
 	 */
-	public void setPattern(final String pattern) {
+	private void setPattern(final String pattern) {
 		this.pattern = pattern;
 	}
 	

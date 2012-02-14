@@ -12,9 +12,11 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.arguments.EnumArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -32,9 +34,23 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Or;
  */
 public class ReportTypeEngine extends MappingEngine {
 	
-	private double confidence;
+	private double             confidence;
 	
-	private Type   type;
+	private Type               type;
+	
+	private EnumArgument<Type> typeArgument;
+	
+	private DoubleArgument     confidenceArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setConfidence(this.confidenceArgument.getValue());
+		setType(this.typeArgument.getValue());
+	}
 	
 	/**
 	 * @return the confidence
@@ -61,27 +77,19 @@ public class ReportTypeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setConfidence((Double) getOption("confidence").getSecond().getValue());
-		setType(Type.valueOf((String) getOption("type").getSecond().getValue()));
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Confidence that is used if the report isn't of the specified type.", "-1", true);
-		registerEnumOption(settings, arguments, "type", "Type the report has to match, e.g. BUG.", null, true,
-		                   JavaUtils.enumToArray(Type.BUG));
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new DoubleArgument(
+		                                             set,
+		                                             "confidence",
+		                                             "Confidence that is used if the report isn't of the specified type.",
+		                                             "-1", Requirement.required);
+		this.typeArgument = new EnumArgument<Type>(set, "type", "Type the report has to match, e.g. BUG.", Type.BUG,
+		                                           Requirement.required);
+		return true;
 	}
 	
 	/*
@@ -119,7 +127,7 @@ public class ReportTypeEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence to set
 	 */
-	public void setConfidence(final double confidence) {
+	private void setConfidence(final double confidence) {
 		this.confidence = confidence;
 	}
 	
@@ -127,7 +135,7 @@ public class ReportTypeEngine extends MappingEngine {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(final Type type) {
+	private void setType(final Type type) {
 		this.type = type;
 	}
 	

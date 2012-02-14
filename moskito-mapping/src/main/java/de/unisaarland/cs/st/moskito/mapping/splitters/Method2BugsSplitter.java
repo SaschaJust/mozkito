@@ -14,8 +14,8 @@ package de.unisaarland.cs.st.moskito.mapping.splitters;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
@@ -26,28 +26,27 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public class Method2BugsSplitter extends MappingSplitter {
 	
 	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	@Override
-	public void init() {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	
 	@Override
 	public List<Annotated> process(final PersistenceUtil util) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

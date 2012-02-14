@@ -72,6 +72,12 @@ public class LuceneStorage extends MappingStorage {
 		}
 	}
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/**
 	 * @return the analyzer
 	 */

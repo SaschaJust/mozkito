@@ -21,6 +21,7 @@ import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
@@ -47,7 +48,7 @@ public class MappingChain extends Chain {
 		super(new MappingSettings(), "mapping");
 		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
 		final MappingSettings settings = getSettings();
-		this.databaseArguments = settings.setDatabaseArgs(new Required(), "mapping");
+		this.databaseArguments = settings.setDatabaseArgs(Requirement.required, "mapping");
 		this.logSettings = settings.setLoggerArg(new Required());
 		this.mappingArguments = settings.setMappingArgs(settings.getRootArgumentSet(), new Required());
 		new BooleanArgument(settings.getRootArgumentSet(), "headless",

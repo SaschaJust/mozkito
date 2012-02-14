@@ -14,8 +14,7 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -23,6 +22,16 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
  * 
  */
 public class LatestFixFilter extends MappingFilter {
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -45,17 +54,15 @@ public class LatestFixFilter extends MappingFilter {
 		return "Filters a mapping if the fix in the transaction wasn't the final fix (e.g. partial fix, reverted change, etc...)";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
 	@Override
-	public void init() {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	
 }

@@ -21,6 +21,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
  */
 public class SVMStrategy extends MappingStrategy {
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy# getDescription()

@@ -14,8 +14,7 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -23,6 +22,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
  * 
  */
 public class ReportFieldFilter extends MappingFilter {
+	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -45,17 +50,15 @@ public class ReportFieldFilter extends MappingFilter {
 		return "Requires certain field values on reports to be mapped";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
 	@Override
-	public void init() {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void register(final Settings settings,
-	                     final ArgumentSet<?> arguments) {
-		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	
 }

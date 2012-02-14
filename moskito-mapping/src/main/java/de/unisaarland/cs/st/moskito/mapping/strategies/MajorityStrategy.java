@@ -24,6 +24,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  */
 public class MajorityStrategy extends MappingStrategy {
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy# getDescription()

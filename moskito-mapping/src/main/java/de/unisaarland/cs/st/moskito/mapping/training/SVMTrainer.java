@@ -94,6 +94,12 @@ public class SVMTrainer extends MappingTrainer {
 		System.exit(1);
 	}
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private void do_cross_validation() {
 		int i;
 		int total_correct = 0;
@@ -127,13 +133,13 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	// read in a problem (in svmlight format)
+	
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	// read in a problem (in svmlight format)
 	
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
