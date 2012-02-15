@@ -19,7 +19,7 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 	private final static String maxParentsFileDiversityName    = "MaxParentsFileDiversity";
 	private final static String minParentsFileDiversityName    = "MinParentsFileDiversity";
 	
-	private final static String avgDependantsFileDiversityName = "AvgParentsFileDiversity";
+	private final static String avgDependantsFileDiversityName = "AvgDependantsFileDiversity";
 	private final static String maxDependantsFileDiversityName = "MaxDependantsFileDiversity";
 	private final static String minDependantsFileDiversityName = "MinDependantsFileDiversity";
 	
