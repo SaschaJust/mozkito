@@ -36,6 +36,9 @@ public class TransactionGenealogyReader extends AndamaSource<GenealogyTransactio
 			
 			@Override
 			public void preExecution() {
+				if (Logger.logInfo()) {
+					Logger.info("Found " + changeGenealogy.vertexSize() + " genealogy vertices.");
+				}
 				TransactionGenealogyReader.this.iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
