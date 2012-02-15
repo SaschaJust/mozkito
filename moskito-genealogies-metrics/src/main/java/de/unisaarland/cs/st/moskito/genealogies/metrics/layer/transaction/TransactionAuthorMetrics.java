@@ -30,6 +30,10 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 	private static final String numDepAuthors    = "NumDepAuthors";
 	private static final String numParentAuthors = "NumParentAuthors";
 	
+	// private static final String avgAuthorPackageDistance = "avgAuthorPackageDistance";
+	// private static final String maxAuthorPackageDistance = "maxAuthorPackageDistance";
+	// private static final String minAuthorPackageDistance = "minAuthorPackageDistance";
+	
 	public TransactionAuthorMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 	}
@@ -39,6 +43,9 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 		final List<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(numDepAuthors);
 		metricNames.add(numParentAuthors);
+		// metricNames.add(avgAuthorPackageDistance);
+		// metricNames.add(maxAuthorPackageDistance);
+		// metricNames.add(minAuthorPackageDistance);
 		return metricNames;
 	}
 	
@@ -66,7 +73,20 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 		
 		metricValues.add(new GenealogyMetricValue(numParentAuthors, nodeId, parentAuthors.size()));
 		
+		// final PersistenceUtil persistenceUtil = this.genealogy.getCore().getPersistenceUtil();
+		// final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class)
+		// .eq("persons", transaction.getPersons())
+		// .oderByDesc("javaTimestamp");
+		// final TreeSet<RCSTransaction> previousTransactions = new TreeSet<RCSTransaction>();
+		// previousTransactions.addAll(persistenceUtil.load(criteria));
+		//
+		// final RCSTransaction previousTransaction = previousTransactions.lower(transaction);
+		//
+		// final DescriptiveStatistics packageStats = new DescriptiveStatistics();
+		// for (final RCSFile file : previousTransaction.getChangedFiles()) {
+		//
+		// }
+		
 		return metricValues;
 	}
-	
 }

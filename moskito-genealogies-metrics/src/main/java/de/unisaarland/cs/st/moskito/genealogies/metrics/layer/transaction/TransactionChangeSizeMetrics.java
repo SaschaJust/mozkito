@@ -67,6 +67,8 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	private static final String   effectiveNumCallOperations    = "effectiveNumCallOperations";
 	private static final String   changedBlocks                 = "numChangedLineBlocks";
 	
+	private static final String   numAffectedPackages           = "numAffectedPackages";
+	
 	private final PersistenceUtil persistenceUtil;
 	
 	public TransactionChangeSizeMetrics(final TransactionChangeGenealogy genealogy) {
@@ -125,6 +127,8 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		final Set<String> changedFiles = new HashSet<String>();
 		final Map<String, Set<Integer>> changedLines = new HashMap<String, Set<Integer>>();
 		
+		final Set<String> packageNames = new HashSet<String>();
+		
 		for (final JavaChangeOperation op : changeOperations) {
 			
 			final String filePath = op.getChangedPath();
@@ -133,6 +137,9 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			}
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
+			
+			final String elementName = element.getFullQualifiedName();
+			packageNames.add(elementName.substring(0, elementName.lastIndexOf(".")));
 			
 			changedFiles.add(filePath);
 			
@@ -243,6 +250,8 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getSum()));
+		
+		metricValues.add(new GenealogyMetricValue(numAffectedPackages, nodeId, packageNames.size()));
 		
 		return metricValues;
 	}
