@@ -59,7 +59,8 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				
 				if (nodeMetricValues.containsKey(metricValue.getMetricId())) {
 					if (Logger.logError()) {
-						Logger.error("Receiving the very same metric for the same node twice. Dropping all values except the first received instance!");
+						Logger.error("Receiving the very same metric `" + metricValue.getMetricId()
+						        + "` for the same node twice. Dropping all values except the first received instance!");
 					}
 				} else {
 					nodeMetricValues.put(metricValue.getMetricId(), metricValue.getValue());
