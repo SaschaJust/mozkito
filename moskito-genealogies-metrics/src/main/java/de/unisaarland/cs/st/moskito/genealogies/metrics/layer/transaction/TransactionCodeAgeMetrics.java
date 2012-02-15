@@ -16,6 +16,7 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -61,8 +62,11 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 		final DescriptiveStatistics numChangesStats = new DescriptiveStatistics();
 		
 		for (final JavaChangeOperation op : changeOperations) {
+			
+			final JavaElement element = op.getChangedElementLocation().getElement();
+			
 			final Criteria<JavaElementLocation> pastLocationsCriteria = this.persistenceUtil.createCriteria(JavaElementLocation.class)
-			                                                                                .eq("element", op);
+			                                                                                .eq("element", element);
 			final List<JavaElementLocation> pastLocations = this.persistenceUtil.load(pastLocationsCriteria);
 			
 			final Criteria<JavaChangeOperation> pastOperationCriteria = this.persistenceUtil.createCriteria(JavaChangeOperation.class)
