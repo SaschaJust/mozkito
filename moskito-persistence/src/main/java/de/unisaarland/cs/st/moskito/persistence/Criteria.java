@@ -80,6 +80,16 @@ public class Criteria<T> {
 		return this;
 	}
 	
+	public Criteria<T> oderByAsc(final String column) {
+		this.query.orderBy(this.builder.asc(this.root.get(column)));
+		return this;
+	}
+	
+	public Criteria<T> oderByDesc(final String column) {
+		this.query.orderBy(this.builder.desc(this.root.get(column)));
+		return this;
+	}
+	
 	/**
 	 * @param builder
 	 *            the builder to set
