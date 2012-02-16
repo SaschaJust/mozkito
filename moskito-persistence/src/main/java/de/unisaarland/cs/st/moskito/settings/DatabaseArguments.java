@@ -51,33 +51,23 @@ public class DatabaseArguments extends ArgumentSet<PersistenceUtil> {
 	public DatabaseArguments(final ArgumentSet<?> argumentSet, final Requirement requirement, final String unit)
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "Specifies connection options for the database connection.", requirement);
-		this.databaseName = new StringArgument(argumentSet, "database.name", "Name of the database", null, requirement);
-		addArgument(this.databaseName);
-		this.databaseUser = new MaskedStringArgument(argumentSet, "database.user",
-		                                             "User name for database. Default: miner", "miner", requirement);
-		addArgument(this.databaseUser);
-		this.databaseHost = new StringArgument(argumentSet, "database.host",
-		                                       "Name of database host. Default: localhost", "localhost", requirement);
-		addArgument(this.databaseHost);
-		this.databasePassword = new MaskedStringArgument(argumentSet, "database.password",
+		this.databaseName = new StringArgument(this, "database.name", "Name of the database", null, requirement);
+		this.databaseUser = new MaskedStringArgument(this, "database.user", "User name for database. Default: miner",
+		                                             "miner", requirement);
+		this.databaseHost = new StringArgument(this, "database.host", "Name of database host. Default: localhost",
+		                                       "localhost", requirement);
+		this.databasePassword = new MaskedStringArgument(this, "database.password",
 		                                                 "Password for database. Default: miner", "miner", requirement);
-		addArgument(this.databasePassword);
-		this.databaseType = new EnumArgument<DatabaseType>(argumentSet, "database.type",
-		                                                   "Defines the type of the database.",
+		this.databaseType = new EnumArgument<DatabaseType>(this, "database.type", "Defines the type of the database.",
 		                                                   DatabaseType.POSTGRESQL, requirement);
-		addArgument(this.databaseType);
-		this.databaseDriver = new StringArgument(argumentSet, "database.driver", "Default: org.postgresql.Driver",
+		this.databaseDriver = new StringArgument(this, "database.driver", "Default: org.postgresql.Driver",
 		                                         "org.postgresql.Driver", requirement);
-		addArgument(this.databaseDriver);
-		this.databaseMiddleware = new StringArgument(argumentSet, "database.middleware", "Default: OpenJPA", "OpenJPA",
+		this.databaseMiddleware = new StringArgument(this, "database.middleware", "Default: OpenJPA", "OpenJPA",
 		                                             requirement);
-		addArgument(this.databaseMiddleware);
-		this.databaseUnit = new StringArgument(argumentSet, "database.unit", "The persistence unit config tag used.",
-		                                       unit, requirement);
-		addArgument(this.databaseUnit);
-		this.databaseOptions = new EnumArgument<ConnectOptions>(argumentSet, "database.options", "Connection options.",
+		this.databaseUnit = new StringArgument(this, "database.unit", "The persistence unit config tag used.", unit,
+		                                       requirement);
+		this.databaseOptions = new EnumArgument<ConnectOptions>(this, "database.options", "Connection options.",
 		                                                        ConnectOptions.CREATE, requirement);
-		addArgument(this.databaseOptions);
 	}
 	
 	/**
