@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -264,8 +265,7 @@ public class SourceforgeTracker extends Tracker {
 				Logger.error("Cannot create XML document!", e);
 			}
 		}
-		
-		return null;
+		throw new UnrecoverableError();
 	}
 	
 	protected Set<Long> getIdsFromHTTPUri(final URI uri) throws SAXException, IOException {
@@ -836,8 +836,8 @@ public class SourceforgeTracker extends Tracker {
 	                  final String cacheDir) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
-		if (overviewURI != null) {
-			getIdsFromURI(overviewURI);
+		if (getOverviewURI() != null) {
+			getIdsFromURI(getOverviewURI());
 		} else {
 			if (startAt == null) {
 				this.startAt = 1l;

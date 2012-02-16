@@ -24,7 +24,6 @@ import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.arguments.MaskedStringArgument;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
 import net.ownhero.dev.andama.settings.arguments.URIArgument;
-import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.UnregisteredTrackerTypeException;
@@ -54,40 +53,31 @@ public class TrackerArguments extends ArgumentSet<Tracker> {
 		super(argumentSet, "Tracker settings.", requirement);
 		
 		this.trackerFetchURI = new URIArgument(
-		                                       argumentSet,
+		                                       this,
 		                                       "tracker.fetchURI",
 		                                       "Basis URI used to fecth the reports (must not contain the bug ID placeholder).",
-		                                       null, requirement);
-		addArgument(this.trackerFetchURI);
+		                                       null, Requirement.required);
 		this.trackerOverviewURI = new URIArgument(
-		                                          argumentSet,
+		                                          this,
 		                                          "tracker.overviewURI",
 		                                          "URI pointing to the overview URL that contains the relevant bug IDs.",
-		                                          null, new Optional());
-		addArgument(this.trackerOverviewURI);
+		                                          null, Requirement.optional);
 		this.trackerPattern = new StringArgument(
-		                                         argumentSet,
+		                                         this,
 		                                         "tracker.pattern",
 		                                         "The filename pattern the bugs have to match to be accepted. Thus will be appended to the fetchURI and should contain the bug ID placeholder.",
-		                                         null, new Optional());
-		addArgument(this.trackerPattern);
-		this.trackerType = new EnumArgument<TrackerType>(argumentSet, "tracker.type",
+		                                         null, Requirement.optional);
+		this.trackerType = new EnumArgument<TrackerType>(this, "tracker.type",
 		                                                 "The type of the bug tracker to analyze.",
-		                                                 TrackerType.BUGZILLA, requirement);
-		addArgument(this.trackerType);
-		this.trackerUser = new MaskedStringArgument(argumentSet, "tracker.user", "Username to access tracker", null,
-		                                            new Optional());
-		addArgument(this.trackerUser);
-		this.trackerPassword = new MaskedStringArgument(argumentSet, "tracker.password", "Password to access tracker",
-		                                                null, new Optional());
-		addArgument(this.trackerPassword);
-		this.trackerStart = new LongArgument(argumentSet, "tracker.start", "BugID to start with", "1", new Optional());
-		addArgument(this.trackerStart);
-		this.trackerStop = new LongArgument(argumentSet, "tracker.stop", "BugID to stop at", null, new Optional());
-		addArgument(this.trackerStop);
-		this.trackerCacheDir = new StringArgument(argumentSet, "tracker.cachedir", "Cache directory to store raw data",
-		                                          null, new Optional());
-		addArgument(this.trackerCacheDir);
+		                                                 TrackerType.BUGZILLA, Requirement.required);
+		this.trackerUser = new MaskedStringArgument(this, "tracker.user", "Username to access tracker", null,
+		                                            Requirement.optional);
+		this.trackerPassword = new MaskedStringArgument(this, "tracker.password", "Password to access tracker", null,
+		                                                Requirement.optional);
+		this.trackerStart = new LongArgument(this, "tracker.start", "BugID to start with", "1", Requirement.optional);
+		this.trackerStop = new LongArgument(this, "tracker.stop", "BugID to stop at", null, Requirement.optional);
+		this.trackerCacheDir = new StringArgument(this, "tracker.cachedir", "Cache directory to store raw data", null,
+		                                          Requirement.optional);
 	}
 	
 	/**
