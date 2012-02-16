@@ -16,7 +16,6 @@
 package de.unisaarland.cs.st.moskito;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
@@ -43,11 +42,10 @@ public class RepositoryToolchain extends Chain {
 	private final RepositoryArguments repoSettings;
 	private final LoggerArguments     logSettings;
 	private final DatabaseArguments   databaseSettings;
-	private boolean                   shutdown;
 	private PersistenceUtil           persistenceUtil;
 	private Repository                repository;
 	
-	public RepositoryToolchain() throws SettingsParseError, ArgumentRegistrationException {
+	public RepositoryToolchain() throws ArgumentRegistrationException {
 		super(new RepositorySettings());
 		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
@@ -62,26 +60,6 @@ public class RepositoryToolchain extends Chain {
 		                 new Required());
 		new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
 		                    "Requires consistency checks on the repository", "false", new Optional());
-		
-		settings.parse();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		if (!this.shutdown) {
-			setup();
-			if (!this.shutdown) {
-				this.threadPool.execute();
-			}
-		}
 	}
 	
 	/*
@@ -193,17 +171,4 @@ public class RepositoryToolchain extends Chain {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		
-		if (Logger.logInfo()) {
-			Logger.info("Toolchain shutdown.");
-		}
-		this.threadPool.shutdown();
-		this.shutdown = true;
-	}
 }

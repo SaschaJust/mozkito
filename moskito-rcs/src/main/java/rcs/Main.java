@@ -49,7 +49,6 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("RCS.Main: All done. cerio!");
 			}
-			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
