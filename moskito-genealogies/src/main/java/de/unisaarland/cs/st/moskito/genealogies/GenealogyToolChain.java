@@ -17,15 +17,15 @@ import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
-public class GenealogyToolChain extends Chain {
+public class GenealogyToolChain extends Chain<Settings> {
 	
 	private final Pool               threadPool;
 	private final GenealogyArguments genealogyArgs;
@@ -38,18 +38,6 @@ public class GenealogyToolChain extends Chain {
 		final LoggerArguments loggerArg = settings.setLoggerArg(Requirement.required);
 		loggerArg.getValue();
 		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
-		settings.parse();
-	}
-	
-	@Override
-	public void run() {
-		
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
 	}
 	
 	@Override

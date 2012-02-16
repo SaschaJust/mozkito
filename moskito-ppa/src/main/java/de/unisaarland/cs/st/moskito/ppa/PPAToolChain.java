@@ -24,6 +24,7 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.andama.settings.arguments.SetArgument;
@@ -43,7 +44,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PPAToolChain extends Chain {
+public class PPAToolChain extends Chain<Settings> {
 	
 	/** The thread pool. */
 	private final Pool                threadPool;
@@ -107,26 +108,6 @@ public class PPAToolChain extends Chain {
 		
 		settings.parse();
 		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		if (Logger.logDebug()) {
-			Logger.debug("Setting up ...");
-		}
-		setup();
-		if (Logger.logDebug()) {
-			Logger.debug("Ececuting ...");
-		}
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating ...");
-		}
 	}
 	
 	/*
@@ -200,14 +181,5 @@ public class PPAToolChain extends Chain {
 			Logger.debug("Setup done.");
 		}
 		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
 	}
 }

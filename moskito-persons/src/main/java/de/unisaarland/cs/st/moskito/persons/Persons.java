@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Persons extends Chain {
+public class Persons extends Chain<PersonsSettings> {
 	
 	private final Pool             threadPool;
 	private DatabaseArguments      databaseArguments;
@@ -72,20 +72,6 @@ public class Persons extends Chain {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#setup()
 	 */
 	@Override
@@ -107,14 +93,4 @@ public class Persons extends Chain {
 		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil, processor);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
-	}
-	
 }
