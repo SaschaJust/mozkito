@@ -72,6 +72,7 @@ public abstract class Chain<T extends Settings> extends Thread {
 	@Override
 	public final void run() {
 		if (!this.shutdown) {
+			parseSettings();
 			setup();
 			if (!this.shutdown) {
 				getPool().execute();
