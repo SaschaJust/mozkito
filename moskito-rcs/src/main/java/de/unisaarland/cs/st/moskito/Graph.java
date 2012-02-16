@@ -63,8 +63,6 @@ public class Graph extends Chain<RepositorySettings> {
 		                 new Required());
 		new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
 		                    "Requires consistency checks on the repository", "false", new Optional());
-		
-		settings.parse();
 	}
 	
 	/*
