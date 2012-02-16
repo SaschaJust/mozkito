@@ -25,10 +25,10 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -76,20 +76,37 @@ public class MantisTracker extends Tracker {
 		throw new UnrecoverableError();
 	}
 	
+	//
+	// /*
+	// * (non-Javadoc)
+	// * @see
+	// de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport)
+	// */
+	// @Override
+	// public Report parse(final XmlReport xmlReport) {
+	// xmlReport.getDocument().getRootElement();
+	// final Report bugReport = new Report(xmlReport.getId());
+	// bugReport.setLastFetch(xmlReport.getFetchTime());
+	// bugReport.setHash(xmlReport.getMd5());
+	//
+	// // parse
+	//
+	// return bugReport;
+	// }
+	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Report parse(final XmlReport xmlReport) {
-		xmlReport.getDocument().getRootElement();
-		final Report bugReport = new Report(xmlReport.getId());
-		bugReport.setLastFetch(xmlReport.getFetchTime());
-		bugReport.setHash(xmlReport.getMd5());
+	public Parser getParser() {
+		// PRECONDITIONS
 		
-		// parse
-		
-		return bugReport;
+		try {
+			return new MantisParser();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

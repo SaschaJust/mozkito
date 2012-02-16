@@ -24,7 +24,6 @@ import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
@@ -35,7 +34,7 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Bugs extends Chain {
+public class Bugs extends Chain<TrackerSettings> {
 	
 	private final Pool              threadPool;
 	private final TrackerArguments  trackerArguments;
@@ -47,10 +46,10 @@ public class Bugs extends Chain {
 	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Bugs() throws SettingsParseError, ArgumentRegistrationException {
+	public Bugs() throws ArgumentRegistrationException {
 		super(new TrackerSettings());
 		this.threadPool = new Pool(Bugs.class.getSimpleName(), this);
-		final TrackerSettings settings = (TrackerSettings) getSettings();
+		final TrackerSettings settings = getSettings();
 		this.trackerArguments = settings.setTrackerArgs(new Required());
 		this.databaseArguments = settings.setDatabaseArgs(new Optional(), this.getClass().getSimpleName().toLowerCase());
 		this.logSettings = settings.setLoggerArg(new Required());
@@ -59,22 +58,6 @@ public class Bugs extends Chain {
 		new LongArgument(settings.getRootArgumentSet(), "cache.size",
 		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
 		                 new Required());
-		
-		settings.parse();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
 	}
 	
 	/*
@@ -86,24 +69,18 @@ public class Bugs extends Chain {
 		final Tracker tracker = this.trackerArguments.getValue();
 		this.logSettings.getValue();
 		
-		new TrackerReader(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
-		new TrackerRAWChecker(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
-		new TrackerXMLTransformer(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
-		new TrackerXMLChecker(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
-		new TrackerParser(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker);
+		new TrackerReader(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		new TrackerRAWChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		new TrackerXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		new TrackerXMLChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		new TrackerParser(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		
 		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		if (persistenceUtil != null) {
-			new TrackerPersister(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings(), tracker,
-			                     persistenceUtil);
+			new TrackerPersister(this.threadPool.getThreadGroup(), getSettings(), tracker, persistenceUtil);
 		} else {
-			new TrackerVoidSink(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings());
+			new TrackerVoidSink(this.threadPool.getThreadGroup(), getSettings());
 		}
-	}
-	
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
 	}
 	
 }

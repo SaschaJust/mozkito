@@ -241,6 +241,8 @@ public abstract class Tracker {
 		return this.overviewURI;
 	}
 	
+	public abstract Parser getParser();
+	
 	/**
 	 * This method returns the tracker type, determined by
 	 * <code>TrackerType.valueOf(this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().length() - Tracker.class.getSimpleName().length()).toUpperCase());</code>
@@ -306,7 +308,36 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public abstract Report parse(XmlReport rawReport);
+	public final Report parse(final XmlReport xmlReport) {
+		final Parser parser = getParser();
+		parser.setTracker(this);
+		parser.setXMLReport(xmlReport);
+		
+		final Long id = parser.getId();
+		Condition.notNull(id, "The bug id returned by the parser may never be null.");
+		
+		final Report report = new Report(id);
+		report.setAssignedTo(parser.getAssignedTo());
+		report.setCategory(parser.getCategory());
+		report.setComponent(parser.getComponent());
+		report.setCreationTimestamp(parser.getCreationTimestamp());
+		report.setDescription(parser.getDescription());
+		report.setHash(xmlReport.getMd5());
+		report.setLastFetch(xmlReport.getFetchTime());
+		report.setPriority(parser.getPriority());
+		report.setProduct(parser.getProduct());
+		report.setResolution(parser.getResolution());
+		report.setResolver(parser.getResolver());
+		report.setSeverity(parser.getSeverity());
+		report.setStatus(parser.getStatus());
+		report.setSubject(parser.getSubject());
+		report.setSubmitter(parser.getSubmitter());
+		report.setSummary(parser.getSummary());
+		report.setType(parser.getType());
+		report.setVersion(parser.getVersion());
+		
+		return report;
+	}
 	
 	/**
 	 * @param uri

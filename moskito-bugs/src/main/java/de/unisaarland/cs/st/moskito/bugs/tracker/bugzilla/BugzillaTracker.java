@@ -18,7 +18,6 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URI;
 import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -32,10 +31,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -56,7 +55,7 @@ public class BugzillaTracker extends Tracker {
 		if (rawReport.getContent().contains("<bug error=\"NotFound\">")) {
 			return false;
 		}
-		Regex regex = new Regex("<head>\\s*<title>Format Not Found</title>");
+		final Regex regex = new Regex("<head>\\s*<title>Format Not Found</title>");
 		if (regex.matches(rawReport.getContent())) {
 			return false;
 		}
@@ -77,7 +76,7 @@ public class BugzillaTracker extends Tracker {
 			return false;
 		}
 		@SuppressWarnings ("unchecked")
-		List<Element> bugs = xmlReport.getDocument().getRootElement().getChildren("bug");
+		final List<Element> bugs = xmlReport.getDocument().getRootElement().getChildren("bug");
 		if (bugs.size() != 1) {
 			return false;
 		}
@@ -91,23 +90,23 @@ public class BugzillaTracker extends Tracker {
 	 */
 	@Override
 	public XmlReport createDocument(@NotNull final RawReport rawReport) {
-		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			Document document = saxBuilder.build(reader);
+			final Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
-		} catch (TransformerFactoryConfigurationError e) {
+		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (JDOMException e) {
+		} catch (final JDOMException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -115,46 +114,19 @@ public class BugzillaTracker extends Tracker {
 		return null;
 	}
 	
-	protected Element getRootElement(@NotNull final XmlReport rawReport) {
-		return rawReport.getDocument().getRootElement().getChild("bug");
-	}
-	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Report parse(@NotNull final XmlReport rawReport) {
-		Report bugReport = new Report(rawReport.getId());
-		Element itemElement = getRootElement(rawReport);
-		BugzillaXMLParser.handleRoot(bugReport, itemElement, this);
-		bugReport.setLastFetch(rawReport.getFetchTime());
-		bugReport.setHash(rawReport.getMd5());
+	public Parser getParser() {
+		// PRECONDITIONS
 		
-		String uriString = rawReport.getUri().toString().replace("show_bug.cgi", "show_activity.cgi");
-		if (uriString.equals(rawReport.getUri().toString())) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not fetch bugzilla report history: could not create neccessary url.");
-			}
-		} else {
-			try {
-				URI historyUri = new URI(uriString);
-				BugzillaXMLParser.handleHistory(historyUri, bugReport);
-			} catch (Exception e) {
-				if (Logger.logError()) {
-					if (bugReport.getId() == -1) {
-						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
-					} else {
-						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-						        + "`. Used uri =`" + uriString + "`.");
-					}
-					Logger.error(e.getMessage(), e);
-				}
-			}
+		try {
+			return new BugzillaParser();
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		return bugReport;
 	}
 	
 }

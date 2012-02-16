@@ -40,6 +40,7 @@ import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
@@ -59,42 +60,42 @@ public class BugzillaXMLParser {
 	protected static Regex     dateRegex    = new Regex("yyyy-MM-dd HH:mm:ss Z");
 	
 	protected static List<AttachmentEntry> extractAttachments(final Element rootElement,
-	                                                          final BugzillaTracker tracker) {
-		List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
+	                                                          final Tracker tracker) {
+		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
 		@SuppressWarnings ("unchecked")
-		List<Element> attachElems = rootElement.getChildren("attachment");
+		final List<Element> attachElems = rootElement.getChildren("attachment");
 		
-		for (Element element : attachElems) {
+		for (final Element element : attachElems) {
 			
-			Element attachIdElem = element.getChild("attachid", element.getNamespace());
+			final Element attachIdElem = element.getChild("attachid", element.getNamespace());
 			if (attachIdElem == null) {
 				continue;
 			}
-			String attachId = attachIdElem.getText();
+			final String attachId = attachIdElem.getText();
 			// https://bugs.eclipse.org/bugs/attachment.cgi?id=82463
 			// String attachURL =
-			AttachmentEntry attachmentEntry = new AttachmentEntry(attachId);
+			final AttachmentEntry attachmentEntry = new AttachmentEntry(attachId);
 			
-			Element attacherElem = element.getChild("attacher", element.getNamespace());
+			final Element attacherElem = element.getChild("attacher", element.getNamespace());
 			if (attacherElem == null) {
 				continue;
 			}
 			attachmentEntry.setAuthor(new Person(attacherElem.getText(), null, null));
 			
-			Element descElem = element.getChild("desc", element.getNamespace());
+			final Element descElem = element.getChild("desc", element.getNamespace());
 			if (descElem == null) {
 				continue;
 			}
 			attachmentEntry.setDescription(descElem.getText());
 			
-			Element filenameElem = element.getChild("filename", element.getNamespace());
+			final Element filenameElem = element.getChild("filename", element.getNamespace());
 			if (filenameElem == null) {
 				continue;
 			}
 			attachmentEntry.setFilename(filenameElem.getText());
 			
-			Element dateElem = element.getChild("date", element.getNamespace());
+			final Element dateElem = element.getChild("date", element.getNamespace());
 			if (dateElem == null) {
 				continue;
 			}
@@ -108,31 +109,31 @@ public class BugzillaXMLParser {
 			
 			try {
 				attachmentEntry.setLink(new URL(uri));
-			} catch (MalformedURLException e1) {
+			} catch (final MalformedURLException e1) {
 				
 			}
 			
-			Element deltaTSElem = element.getChild("delta_ts", element.getNamespace());
+			final Element deltaTSElem = element.getChild("delta_ts", element.getNamespace());
 			if (deltaTSElem == null) {
 				continue;
 			}
 			attachmentEntry.setDeltaTS(DateTimeUtils.parseDate(deltaTSElem.getText()));
 			
-			Element typeElem = element.getChild("type", element.getNamespace());
+			final Element typeElem = element.getChild("type", element.getNamespace());
 			if (typeElem == null) {
 				continue;
 			}
 			attachmentEntry.setMime(typeElem.getText());
 			
-			Element sizeElem = element.getChild("size", element.getNamespace());
+			final Element sizeElem = element.getChild("size", element.getNamespace());
 			if (sizeElem == null) {
 				continue;
 			}
 			
 			try {
-				long size = new Long(sizeElem.getText());
+				final long size = new Long(sizeElem.getText());
 				attachmentEntry.setSize(size);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				
 			}
 			
@@ -147,7 +148,7 @@ public class BugzillaXMLParser {
 	 * @return
 	 */
 	protected static Priority getPriority(final String string) {
-		String priorityString = string.toUpperCase();
+		final String priorityString = string.toUpperCase();
 		if (priorityString.equals("P1")) {
 			return Priority.VERY_HIGH;
 		} else if (priorityString.equals("P2")) {
@@ -168,7 +169,7 @@ public class BugzillaXMLParser {
 	 * @return
 	 */
 	protected static Resolution getResolution(final String string) {
-		String resString = string.toUpperCase();
+		final String resString = string.toUpperCase();
 		if (resString.equals("FIXED")) {
 			return Resolution.RESOLVED;
 		} else if (resString.equals("INVALID")) {
@@ -193,7 +194,7 @@ public class BugzillaXMLParser {
 	}
 	
 	protected static Severity getSeverity(final String string) {
-		String serverityString = string.toLowerCase();
+		final String serverityString = string.toLowerCase();
 		if (serverityString.equals("blocker")) {
 			return Severity.BLOCKER;
 		} else if (serverityString.equals("critical")) {
@@ -221,7 +222,7 @@ public class BugzillaXMLParser {
 	 * @return
 	 */
 	protected static Status getStatus(final String string) {
-		String statusString = string.toUpperCase();
+		final String statusString = string.toUpperCase();
 		if (statusString.equals("UNCONFIRMED")) {
 			return Status.UNCONFIRMED;
 		} else if (statusString.equals("NEW")) {
@@ -259,13 +260,13 @@ public class BugzillaXMLParser {
 	                                                     IOException,
 	                                                     SecurityException,
 	                                                     NoSuchFieldException {
-		RawContent rawContent = IOUtils.fetch(historyUri);
-		BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
-		SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-		Document document = saxBuilder.build(reader);
+		final RawContent rawContent = IOUtils.fetch(historyUri);
+		final BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
+		final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+		final Document document = saxBuilder.build(reader);
 		reader.close();
 		
-		Element rootElement = document.getRootElement();
+		final Element rootElement = document.getRootElement();
 		if (!rootElement.getName().equals("html")) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. Root element expectedto have `<html>` tag as root element. Got <"
@@ -274,7 +275,7 @@ public class BugzillaXMLParser {
 			return;
 		}
 		
-		Element body = rootElement.getChild("body", namespace);
+		final Element body = rootElement.getChild("body", namespace);
 		if (body == null) {
 			if (Logger.logError()) {
 				Logger.error("Error while parsing bugzilla report history. No <body> tag found.");
@@ -282,11 +283,11 @@ public class BugzillaXMLParser {
 			return;
 		}
 		@SuppressWarnings ("unchecked")
-		List<Element> bodyChildren = body.getChildren();
-		for (Element bodyChild : bodyChildren) {
+		final List<Element> bodyChildren = body.getChildren();
+		for (final Element bodyChild : bodyChildren) {
 			if (bodyChild.getName().equals("div") && (bodyChild.getAttribute("id") != null)
 			        && (bodyChild.getAttributeValue("id").equals("bugzilla-body"))) {
-				Element table = bodyChild.getChild("table", namespace);
+				final Element table = bodyChild.getChild("table", namespace);
 				if (table == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing bugzilla report history. No <table> tag found.");
@@ -294,7 +295,7 @@ public class BugzillaXMLParser {
 					return;
 				}
 				
-				Element tbody = table.getChild("tbody", namespace);
+				final Element tbody = table.getChild("tbody", namespace);
 				if (tbody == null) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing bugzilla report history. No <tbody> tag found.");
@@ -303,7 +304,7 @@ public class BugzillaXMLParser {
 				}
 				
 				@SuppressWarnings ("unchecked")
-				List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr", namespace));
+				final List<Element> trs = new ArrayList<Element>(tbody.getChildren("tr", namespace));
 				if (trs.size() > 0) {
 					trs.remove(0);
 				}
@@ -312,10 +313,10 @@ public class BugzillaXMLParser {
 				HistoryElement hElement = null;
 				Person historyAuthor = null;
 				DateTime dateTime = null;
-				for (Element tr : trs) {
+				for (final Element tr : trs) {
 					int whatIndex = 2;
 					@SuppressWarnings ("unchecked")
-					List<Element> tds = tr.getChildren("td", namespace);
+					final List<Element> tds = tr.getChildren("td", namespace);
 					if ((tds.size() < 5) && (rowspan < 1)) {
 						if (Logger.logError()) {
 							Logger.error("Error while parsing bugzilla report history. Expected at least 5 table columns, found :"
@@ -330,8 +331,8 @@ public class BugzillaXMLParser {
 						return;
 					}
 					if (rowspan == 0) {
-						String username = tds.get(0).getText().trim();
-						String rowspanString = tds.get(0).getAttributeValue("rowspan");
+						final String username = tds.get(0).getText().trim();
+						final String rowspanString = tds.get(0).getAttributeValue("rowspan");
 						if (rowspanString != null) {
 							rowspan = Integer.valueOf(rowspanString).intValue() - 1;
 						}
@@ -347,9 +348,9 @@ public class BugzillaXMLParser {
 						whatIndex -= 2;
 					}
 					
-					String what = tds.get(whatIndex).getText().trim().toLowerCase();
-					String removed = tds.get(++whatIndex).getText().trim();
-					String added = tds.get(++whatIndex).getText().trim();
+					final String what = tds.get(whatIndex).getText().trim().toLowerCase();
+					final String removed = tds.get(++whatIndex).getText().trim();
+					final String added = tds.get(++whatIndex).getText().trim();
 					
 					String field = null;
 					if (what.equals("priority")) {
@@ -371,8 +372,8 @@ public class BugzillaXMLParser {
 						continue;
 					} else if (what.equals("assignee")) {
 						field = ("assignedTo");
-						Person oldValue = new Person(removed, null, null);
-						Person newValue = new Person(added, null, null);
+						final Person oldValue = new Person(removed, null, null);
+						final Person newValue = new Person(added, null, null);
 						hElement.addChangedValue(field, oldValue, newValue);
 						continue;
 					} else if (what.equals("target milestone")) {
@@ -421,19 +422,19 @@ public class BugzillaXMLParser {
 	                                   final Element rootElement) {
 		Condition.check(rootElement.getName().equals("long_desc"), "The root element must be 'long_desc'.");
 		
-		Element who = rootElement.getChild("who");
+		final Element who = rootElement.getChild("who");
 		Person author = null;
 		if (who == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Found bugziall comment with no author.");
 			}
 		} else {
-			String authorUsername = who.getText().trim();
-			String authorName = who.getAttributeValue("name").trim();
+			final String authorUsername = who.getText().trim();
+			final String authorName = who.getAttributeValue("name").trim();
 			author = new Person(authorUsername, authorName, null);
 		}
 		
-		Element bug_when = rootElement.getChild("bug_when");
+		final Element bug_when = rootElement.getChild("bug_when");
 		DateTime timestamp = null;
 		if (bug_when == null) {
 			if (Logger.logWarn()) {
@@ -443,7 +444,7 @@ public class BugzillaXMLParser {
 			timestamp = DateTimeUtils.parseDate(bug_when.getText().trim());
 		}
 		
-		Element thetext = rootElement.getChild("thetext");
+		final Element thetext = rootElement.getChild("thetext");
 		String message = "";
 		if (thetext == null) {
 			if (Logger.logWarn()) {
@@ -453,18 +454,18 @@ public class BugzillaXMLParser {
 			message = thetext.getText().trim();
 		}
 		
-		int commentid = report.getComments().size() + 1;
+		final int commentid = report.getComments().size() + 1;
 		
 		if (!message.equals("")) {
-			List<List<RegexGroup>> groupsList = siblingRegex.findAll(message);
+			final List<List<RegexGroup>> groupsList = siblingRegex.findAll(message);
 			if (groupsList != null) {
-				for (List<RegexGroup> groups : groupsList) {
-					for (RegexGroup group : groups) {
+				for (final List<RegexGroup> groups : groupsList) {
+					for (final RegexGroup group : groups) {
 						if (group.getName().equals("sibling")) {
 							try {
-								Long sibling = new Long(group.getMatch());
+								final Long sibling = new Long(group.getMatch());
 								report.addSibling(sibling);
-							} catch (NumberFormatException e) {
+							} catch (final NumberFormatException e) {
 								
 							}
 						}
@@ -487,14 +488,14 @@ public class BugzillaXMLParser {
 	@NoneNull
 	public static void handleRoot(final Report report,
 	                              final Element rootElement,
-	                              final BugzillaTracker tracker) {
+	                              final Tracker tracker) {
 		Condition.check(rootElement.getName().equals("bug"), "The root element must be 'bug'.");
 		
 		report.setType(Type.BUG);
 		
 		@SuppressWarnings ({ "unchecked" })
-		List<Element> elements = rootElement.getChildren();
-		for (Element element : elements) {
+		final List<Element> elements = rootElement.getChildren();
+		for (final Element element : elements) {
 			if (element.getName().equals("bug_id")) {
 				// try {
 				// report.setId(new Long(element.getText()));
@@ -510,7 +511,7 @@ public class BugzillaXMLParser {
 					Logger.debug("Skipping bug id parsing. Already known.");
 				}
 			} else if (element.getName().equals("creation_ts")) {
-				DateTime creationTime = DateTimeUtils.parseDate(element.getText().trim());
+				final DateTime creationTime = DateTimeUtils.parseDate(element.getText().trim());
 				if (creationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla creation time `" + element.getText()
@@ -522,7 +523,7 @@ public class BugzillaXMLParser {
 			} else if (element.getName().equals("short_desc")) {
 				report.setSubject(element.getText().trim());
 			} else if (element.getName().equals("delta_ts")) {
-				DateTime modificationTime = DateTimeUtils.parseDate(element.getText().trim());
+				final DateTime modificationTime = DateTimeUtils.parseDate(element.getText().trim());
 				if (modificationTime == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Bugzilla modification time `" + element.getText()
@@ -544,45 +545,45 @@ public class BugzillaXMLParser {
 			} else if (element.getName().equals("op_sys")) {
 				// TODO shall we add a field to Report
 			} else if (element.getName().equals("bug_status")) {
-				String statusString = element.getText().trim();
+				final String statusString = element.getText().trim();
 				report.setStatus(getStatus(statusString));
 			} else if (element.getName().equals("resolution")) {
-				String resString = element.getText().trim();
+				final String resString = element.getText().trim();
 				report.setResolution(getResolution(resString));
 			} else if (element.getName().equals("priority")) {
-				String priorityString = element.getText().trim();
+				final String priorityString = element.getText().trim();
 				report.setPriority(getPriority(priorityString));
 			} else if (element.getName().equals("bug_severity")) {
-				String serverityString = element.getText().trim().toLowerCase();
+				final String serverityString = element.getText().trim().toLowerCase();
 				report.setSeverity(getSeverity(serverityString));
 			} else if (element.getName().equals("target_milestone")) {
 				// TODO shall we add a field in Report?
 			} else if (element.getName().equals("reporter")) {
-				String username = element.getText().trim();
-				String name = element.getAttributeValue("name").trim();
+				final String username = element.getText().trim();
+				final String name = element.getAttributeValue("name").trim();
 				report.setSubmitter(new Person(username, name, null));
 			} else if (element.getName().equals("assigned_to")) {
-				String username = element.getText().trim();
-				String name = element.getAttributeValue("name").trim();
+				final String username = element.getText().trim();
+				final String name = element.getAttributeValue("name").trim();
 				report.setAssignedTo(new Person(username, name, null));
 			} else if (element.getName().equals("long_desc")) {
 				handleLongDesc(report, element);
 			} else if (element.getName().equals("blocked")) {
 				try {
 					report.addSibling(new Long(element.getText()));
-				} catch (NumberFormatException e) {
+				} catch (final NumberFormatException e) {
 					
 				}
 			} else if (element.getName().equals("dependson")) {
 				try {
 					report.addSibling(new Long(element.getText()));
-				} catch (NumberFormatException e) {
+				} catch (final NumberFormatException e) {
 					
 				}
 			}
 			
-			List<AttachmentEntry> attachments = extractAttachments(rootElement, tracker);
-			for (AttachmentEntry attachment : attachments) {
+			final List<AttachmentEntry> attachments = extractAttachments(rootElement, tracker);
+			for (final AttachmentEntry attachment : attachments) {
 				report.addAttachmentEntry(attachment);
 			}
 		}
