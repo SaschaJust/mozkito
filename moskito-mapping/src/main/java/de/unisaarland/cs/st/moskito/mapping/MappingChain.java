@@ -32,7 +32,7 @@ import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
-public class MappingChain extends Chain {
+public class MappingChain extends Chain<MappingSettings> {
 	
 	private final DatabaseArguments databaseArguments;
 	private final LoggerArguments   logSettings;
@@ -58,29 +58,6 @@ public class MappingChain extends Chain {
 		                 new Required());
 		
 		settings.parse();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#getSettings()
-	 */
-	@Override
-	public MappingSettings getSettings() {
-		return (MappingSettings) super.getSettings();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
 	}
 	
 	/*
@@ -141,14 +118,5 @@ public class MappingChain extends Chain {
 			}
 			shutdown();
 		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
 	}
 }

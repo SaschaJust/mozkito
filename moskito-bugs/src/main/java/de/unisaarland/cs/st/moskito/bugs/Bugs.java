@@ -19,12 +19,12 @@ import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
 import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Bugs extends Chain {
+public class Bugs extends Chain<Settings> {
 	
 	private final Pool              threadPool;
 	private final TrackerArguments  trackerArguments;
@@ -59,22 +59,6 @@ public class Bugs extends Chain {
 		new LongArgument(settings.getRootArgumentSet(), "cache.size",
 		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
 		                 new Required());
-		
-		settings.parse();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
 	}
 	
 	/*
@@ -100,10 +84,4 @@ public class Bugs extends Chain {
 			new TrackerVoidSink(this.threadPool.getThreadGroup(), (TrackerSettings) getSettings());
 		}
 	}
-	
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
-	}
-	
 }

@@ -22,6 +22,7 @@ import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.EnumArgument;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
@@ -45,7 +46,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
-public class GenealogyMetricsToolChain extends Chain {
+public class GenealogyMetricsToolChain extends Chain<Settings> {
 	
 	private final GenealogyArguments        genealogyArgs;
 	private final Pool                      threadPool;
@@ -70,21 +71,6 @@ public class GenealogyMetricsToolChain extends Chain {
 		                   "fix.pattern",
 		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
 		                   null, Requirement.required);
-		
-		settings.parse();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		if (Logger.logInfo()) {
-			Logger.info("Terminating threads.");
-		}
 	}
 	
 	@Override

@@ -88,5 +88,4 @@ public class Graph extends Chain<RepositorySettings> {
 		new GraphReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		new GraphBuilder(this.threadPool.getThreadGroup(), getSettings(), repository, this.persistenceUtil);
 	}
-	
 }
