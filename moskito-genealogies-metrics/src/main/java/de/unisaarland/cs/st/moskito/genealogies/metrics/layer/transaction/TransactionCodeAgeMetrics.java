@@ -83,12 +83,13 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				}
 			}
 			
-			final RCSTransaction firstModified = pastTransactions.first();
-			ageStats.addValue(DaysBetweenUtils.getDaysBetween(firstModified, transaction));
-			
-			final RCSTransaction lastModified = pastTransactions.last();
-			lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
-			
+			if (!pastTransactions.isEmpty()) {
+				final RCSTransaction firstModified = pastTransactions.first();
+				ageStats.addValue(DaysBetweenUtils.getDaysBetween(firstModified, transaction));
+				
+				final RCSTransaction lastModified = pastTransactions.last();
+				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+			}
 			int numPastChanges = 0;
 			for (final RCSTransaction pastTransaction : pastTransactions) {
 				final int daysbetween = DaysBetweenUtils.getDaysBetween(pastTransaction, transaction);
@@ -103,13 +104,31 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		final String nodeId = item.getNodeId();
 		
-		result.add(new GenealogyMetricValue(avgLastModifiedName, nodeId, lastModifiedStats.getMean()));
-		result.add(new GenealogyMetricValue(minLastModifiedName, nodeId, lastModifiedStats.getMin()));
-		result.add(new GenealogyMetricValue(avgAgeName, nodeId, ageStats.getMean()));
-		result.add(new GenealogyMetricValue(minAgeName, nodeId, ageStats.getMin()));
-		result.add(new GenealogyMetricValue(maxAgeName, nodeId, ageStats.getMax()));
-		result.add(new GenealogyMetricValue(avgNumChangesLastMonth, nodeId, lastModifiedStats.getMean()));
-		result.add(new GenealogyMetricValue(maxNumChangesLastMonth, nodeId, lastModifiedStats.getMax()));
+		result.add(new GenealogyMetricValue(avgLastModifiedName, nodeId,
+		                                    lastModifiedStats.getN() > 0
+		                                                                ? lastModifiedStats.getMean()
+		                                                                : 0));
+		result.add(new GenealogyMetricValue(minLastModifiedName, nodeId,
+		                                    lastModifiedStats.getN() > 0
+		                                                                ? lastModifiedStats.getMin()
+		                                                                : 0));
+		result.add(new GenealogyMetricValue(avgAgeName, nodeId, ageStats.getN() > 0
+		                                                                           ? ageStats.getMean()
+		                                                                           : 0));
+		result.add(new GenealogyMetricValue(minAgeName, nodeId, ageStats.getN() > 0
+		                                                                           ? ageStats.getMin()
+		                                                                           : 0));
+		result.add(new GenealogyMetricValue(maxAgeName, nodeId, ageStats.getN() > 0
+		                                                                           ? ageStats.getMax()
+		                                                                           : 0));
+		result.add(new GenealogyMetricValue(avgNumChangesLastMonth, nodeId,
+		                                    lastModifiedStats.getN() > 0
+		                                                                ? lastModifiedStats.getMean()
+		                                                                : 0));
+		result.add(new GenealogyMetricValue(maxNumChangesLastMonth, nodeId,
+		                                    lastModifiedStats.getN() > 0
+		                                                                ? lastModifiedStats.getMax()
+		                                                                : 0));
 		
 		return result;
 	}
