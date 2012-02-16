@@ -35,13 +35,12 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Graph extends Chain {
+public class Graph extends Chain<RepositorySettings> {
 	
 	private final Pool                threadPool;
 	private final RepositoryArguments repoSettings;
 	private final DatabaseArguments   databaseSettings;
 	private final LoggerArguments     logSettings;
-	private boolean                   shutdown;
 	private PersistenceUtil           persistenceUtil;
 	
 	/**
@@ -52,7 +51,7 @@ public class Graph extends Chain {
 	public Graph() throws ArgumentRegistrationException, SettingsParseError {
 		super(new RepositorySettings());
 		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
-		final RepositorySettings settings = (RepositorySettings) getSettings();
+		final RepositorySettings settings = getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(new Required());
 		this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
@@ -66,16 +65,6 @@ public class Graph extends Chain {
 		                    "Requires consistency checks on the repository", "false", new Optional());
 		
 		settings.parse();
-	}
-	
-	@Override
-	public void run() {
-		if (!this.shutdown) {
-			setup();
-			if (!this.shutdown) {
-				this.threadPool.execute();
-			}
-		}
 	}
 	
 	/*
@@ -96,23 +85,8 @@ public class Graph extends Chain {
 		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
 		final Repository repository = this.repoSettings.getValue();
 		
-		new GraphReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.persistenceUtil);
-		new GraphBuilder(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), repository,
-		                 this.persistenceUtil);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		
-		if (Logger.logInfo()) {
-			Logger.info("Toolchain shutdown.");
-		}
-		this.threadPool.shutdown();
-		this.shutdown = true;
+		new GraphReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+		new GraphBuilder(this.threadPool.getThreadGroup(), getSettings(), repository, this.persistenceUtil);
 	}
 	
 }

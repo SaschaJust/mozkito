@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryToolchain extends Chain {
+public class RepositoryToolchain extends Chain<RepositorySettings> {
 	
 	private final Pool                threadPool;
 	private final RepositoryArguments repoSettings;
@@ -48,7 +48,7 @@ public class RepositoryToolchain extends Chain {
 	public RepositoryToolchain() throws ArgumentRegistrationException {
 		super(new RepositorySettings());
 		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
-		final RepositorySettings settings = (RepositorySettings) getSettings();
+		final RepositorySettings settings = getSettings();
 		
 		this.repoSettings = settings.setRepositoryArg(new Required());
 		this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
@@ -159,15 +159,14 @@ public class RepositoryToolchain extends Chain {
 		// }
 		// }
 		
-		new RepositoryReader(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(), this.repository,
+		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
+		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository,
 		                     this.repoSettings.getBranchFactory());
 		
 		if (this.persistenceUtil != null) {
-			new RepositoryPersister(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings(),
-			                        this.persistenceUtil);
+			new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		} else {
-			new RepositoryVoidSink(this.threadPool.getThreadGroup(), (RepositorySettings) getSettings());
+			new RepositoryVoidSink(this.threadPool.getThreadGroup(), getSettings());
 		}
 	}
 	
