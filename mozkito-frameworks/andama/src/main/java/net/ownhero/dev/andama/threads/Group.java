@@ -14,17 +14,17 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link Group} is an extension of the {@link ThreadGroup} and takes care on the internal management of
- * {@link Node}s. The primary reasons for this class are the internal managed thread list and the uncaught
- * exception handling.
+ * {@link Node}s. The primary reasons for this class are the internal managed thread list and the uncaught exception
+ * handling.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public class Group extends ThreadGroup {
 	
-	private final Settings               settings;
+	private final Settings          settings;
 	private final List<INode<?, ?>> threads = new LinkedList<INode<?, ?>>();
-	private final Chain                  toolchain;
+	private final Chain<?>          toolchain;
 	
 	/**
 	 * The only valid constructor of {@link Group}
@@ -33,7 +33,7 @@ public class Group extends ThreadGroup {
 	 *            the name of the thread group. In general, this should be the simple class name of the calling tool
 	 *            chain.
 	 */
-	public Group(final String name, final Chain toolchain) {
+	public Group(final String name, final Chain<?> toolchain) {
 		super(name);
 		CrashHandler.init(toolchain);
 		this.toolchain = toolchain;
@@ -74,7 +74,7 @@ public class Group extends ThreadGroup {
 	/**
 	 * @return the toolchain
 	 */
-	public final Chain getToolchain() {
+	public final Chain<?> getToolchain() {
 		return this.toolchain;
 	}
 	

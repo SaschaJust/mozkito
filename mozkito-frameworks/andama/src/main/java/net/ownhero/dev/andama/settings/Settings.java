@@ -280,7 +280,15 @@ public class Settings {
 		// check to load settings from URI
 		if (System.getProperty("andamaSettings") != null) {
 			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
-			this.settingsArg.parse();
+			try {
+				this.settingsArg.parse();
+			} catch (final SettingsParseError e) {
+				if (Logger.logError()) {
+					Logger.error(getHelpString());
+				}
+				throw e;
+			}
+			
 			if (!this.settingsArg.isInitialized()) {
 				// FIXME ERROR
 			} else {
@@ -305,6 +313,11 @@ public class Settings {
 		// overwrite properties with the one from the command line
 		getProperties().putAll(this.commandlineProps);
 		
+		if (System.getProperty("help") != null) {
+			System.err.println(getHelpString());
+			throw new SettingsParseError(null, null);
+		}
+		
 		for (final Entry<Object, Object> entry : getProperties().entrySet()) {
 			final String argName = entry.getKey().toString().trim();
 			final String value = entry.getValue().toString().trim();
@@ -315,7 +328,14 @@ public class Settings {
 			}
 		}
 		
-		getRootArgumentSet().parse();
+		try {
+			getRootArgumentSet().parse();
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(getHelpString());
+			}
+			throw e;
+		}
 		
 		if (!validateSettings()) {
 			System.err.println(getHelpString());

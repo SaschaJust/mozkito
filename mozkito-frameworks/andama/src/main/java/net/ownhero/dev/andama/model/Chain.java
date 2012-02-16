@@ -3,7 +3,10 @@
  */
 package net.ownhero.dev.andama.model;
 
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link Chain} is a wrapper to a tool chain consisting of {@link AndamaThread}s. It is used to extend
@@ -12,38 +15,74 @@ import net.ownhero.dev.andama.settings.Settings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class Chain extends Thread {
+public abstract class Chain<T extends Settings> extends Thread {
 	
-	private Pool           pool;
-	private final Settings settings;
+	private Pool    pool;
+	private final T settings;
+	private boolean shutdown;
 	
 	/**
 	 * @param settings
 	 */
-	public Chain(final Settings settings) {
+	public Chain(final T settings) {
 		this.settings = settings;
 		setName(this.getClass().getSimpleName());
 		CrashHandler.init(this);
 	}
 	
-	public Chain(final Settings settings, final String chainName) {
+	/**
+	 * @param settings
+	 * @param chainName
+	 */
+	public Chain(final T settings, final String chainName) {
 		this.settings = settings;
 		setName(chainName);
 		CrashHandler.init(this);
 	}
 	
-	public Pool getPool() {
+	/**
+	 * @return
+	 */
+	public final Pool getPool() {
 		return this.pool;
 	}
 	
 	/**
 	 * @return
 	 */
-	public Settings getSettings() {
+	public final T getSettings() {
 		return this.settings;
 	}
 	
-	void setPool(final Pool pool) {
+	public final void parseSettings() {
+		try {
+			getSettings().parse();
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
+	@Override
+	public final void run() {
+		if (!this.shutdown) {
+			setup();
+			if (!this.shutdown) {
+				getPool().execute();
+			}
+		}
+	}
+	
+	/**
+	 * @param pool
+	 */
+	final void setPool(final Pool pool) {
 		this.pool = pool;
 	}
 	
@@ -53,9 +92,16 @@ public abstract class Chain extends Thread {
 	public abstract void setup();
 	
 	/**
-	 * Calls shutdown on all components and shuts down all related threads.
+	 * 
 	 */
-	public void shutdown() {
+	public final void shutdown() {
+		
+		if (Logger.logInfo()) {
+			Logger.info("Toolchain shutdown.");
+		}
+		
 		getPool().shutdown();
+		this.shutdown = true;
 	}
+	
 }

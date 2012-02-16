@@ -16,7 +16,7 @@ public class Stack {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void addChain(final Chain chain) {
+	public void addChain(final Chain<?> chain) {
 		// TODO Auto-generated constructor stub
 	}
 	

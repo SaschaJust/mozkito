@@ -48,18 +48,18 @@ public class Observer {
 	}
 	
 	@SuppressWarnings ("unused")
-	private void registerChain(final Chain chain) {
+	private void registerChain(final Chain<?> chain) {
 		
 	}
 	
 	@SuppressWarnings ("unused")
-	private void spawnChain(final Class<? extends Chain> clazz,
+	private void spawnChain(final Class<? extends Chain<?>> clazz,
 	                        final Properties settings) {
 		
 	}
 	
 	@SuppressWarnings ("unused")
-	private void unregisterChain(final Chain chain) {
+	private void unregisterChain(final Chain<?> chain) {
 		
 	}
 	

@@ -4,16 +4,16 @@
 package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.threads.Graph;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.INode;
-import net.ownhero.dev.andama.threads.Graph;
 import net.ownhero.dev.kisa.Logger;
 
 /**
  * The thread pool manages all threads of the tool chain. Since all {@link AndamaThread}s have to register themselves in
- * the {@link Group} which is owned by the {@link Pool}, the thread pool has control over all threads of the
- * tool chain. Additionally, this class automatically generates a connected graph for the registered threads. See the
- * corresponding methods for details.
+ * the {@link Group} which is owned by the {@link Pool}, the thread pool has control over all threads of the tool chain.
+ * Additionally, this class automatically generates a connected graph for the registered threads. See the corresponding
+ * methods for details.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -28,7 +28,7 @@ public class Pool {
 	 * @param name
 	 *            the name of the {@link Group}
 	 */
-	public Pool(final String name, final Chain toolchain) {
+	public Pool(final String name, final Chain<?> toolchain) {
 		this.threads = new Group(name, toolchain);
 		toolchain.setPool(this);
 	}

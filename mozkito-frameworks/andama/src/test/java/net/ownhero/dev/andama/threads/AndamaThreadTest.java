@@ -18,19 +18,13 @@ public class AndamaThreadTest {
 	@Test
 	public void test() {
 		final Settings settings = new Settings();
-		final ExampleThread1 thread = new ExampleThread1(new Group("me", new Chain(settings) {
+		final ExampleThread1 thread = new ExampleThread1(new Group("me", new Chain<Settings>(settings) {
 			
 			@Override
 			public void setup() {
-				// TODO Auto-generated method stub
 				
 			}
 			
-			@Override
-			public void shutdown() {
-				// TODO Auto-generated method stub
-				
-			}
 		}), settings, false);
 		
 		try {

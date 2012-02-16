@@ -80,11 +80,18 @@ public class ListArgumentTest {
 	public void testRequiredProperties() throws ArgumentRegistrationException, SettingsParseError {
 		final Settings settings = new Settings();
 		new ListArgument(settings.getRootArgumentSet(), name, "test description", null, new Required());
+		boolean failed = false;
 		try {
 			settings.parse();
-			fail();
+			failed = true;
 		} catch (final SettingsParseError e) {
 			
+		} catch (final AssertionError e) {
+			
+		}
+		
+		if (failed) {
+			fail();
 		}
 	}
 	

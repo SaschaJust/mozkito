@@ -29,19 +29,12 @@ public class KimTest {
 	@Test
 	public void test() {
 		final Settings settings = new Settings();
-		final Group group = new Group("me", new Chain(settings) {
+		final Group group = new Group("me", new Chain<Settings>(settings) {
 			
 			@Override
 			public void setup() {
-				// TODO Auto-generated method stub
-				
 			}
 			
-			@Override
-			public void shutdown() {
-				// TODO Auto-generated method stub
-				
-			}
 		});
 		
 		new KimSource(group, settings, false);

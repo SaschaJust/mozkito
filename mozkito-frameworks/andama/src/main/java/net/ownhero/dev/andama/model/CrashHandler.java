@@ -32,26 +32,26 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class CrashHandler extends ThreadGroup {
 	
-	private static boolean                              executed = false;
+	private static boolean                     executed = false;
 	
-	private static Map<Chain, CrashHandler> handlers = new HashMap<Chain, CrashHandler>();
+	private static Map<Chain<?>, CrashHandler> handlers = new HashMap<Chain<?>, CrashHandler>();
 	
 	/**
 	 * @param toolchain
 	 */
-	public static void init(final Chain toolchain) {
+	public static void init(final Chain<?> toolchain) {
 		if (!handlers.containsKey(toolchain)) {
 			handlers.put(toolchain, new CrashHandler(toolchain));
 		}
 	}
 	
-	private Chain application = null;
+	private Chain<?> application = null;
 	
 	/**
 	 * @param application
-	 *            a {@link Chain} instance
+	 *            a {@link Chain<?>} instance
 	 */
-	private CrashHandler(final Chain application) {
+	private CrashHandler(final Chain<?> application) {
 		super(Chain.class.getSimpleName());
 		this.application = application;
 		// this.previousHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -265,7 +265,7 @@ public class CrashHandler extends ThreadGroup {
 	}
 	
 	/**
-	 * @return information provided by the {@link Chain}
+	 * @return information provided by the {@link Chain<?>}
 	 */
 	protected String getToolInformation() {
 		return (this.application != null)

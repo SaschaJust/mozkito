@@ -175,7 +175,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 *            MinerArgument to be added
 	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
-	protected boolean addArgument(@NotNull final Argument<?> argument) {
+	boolean addArgument(@NotNull final Argument<?> argument) {
 		if (!getSettings().frozen()) {
 			if (getSettings().hasSetting(argument.getName())) {
 				// TODO Warn log
@@ -199,7 +199,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 		}
 	}
 	
-	public final boolean addArgument(@NotNull final ArgumentSet<?> argument) {
+	private final boolean addArgument(@NotNull final ArgumentSet<?> argument) {
 		if (!getSettings().frozen()) {
 			if (getSettings().hasSetting(argument.getName())) {
 				// TODO Warn log
