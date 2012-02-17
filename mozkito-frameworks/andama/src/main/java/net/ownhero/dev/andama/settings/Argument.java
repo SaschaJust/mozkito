@@ -202,7 +202,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public String getHelpString() {
-		return String.format("%s-D%s: %s %s%s [value='%s', default='%s', required if=%s, type=%s]",
+		return String.format("%s-D%s: %s %s%s%s [value='%s', default='%s', required if=%s, type=%s]%s",
 		                     required()
 		                               ? "\u001b[0;35m"
 		                               : "", getName(), getDescription(), required()
@@ -210,10 +210,10 @@ public abstract class Argument<T> implements IArgument<T> {
 		                                                                            : "", required()
 		                                                                                            ? "(required!)"
 		                                                                                            : "",
-		                     getStringValue() == null
-		                                             ? "(unset)"
-		                                             : getStringValue(), getDefaultValue(), getRequirements(),
-		                     getHandle());
+		                     "\u001b[0;37m", getStringValue() == null
+		                                                             ? "(unset)"
+		                                                             : getStringValue(), getDefaultValue(),
+		                     getRequirements(), getHandle(), "\u001b[m");
 	}
 	
 	/*
@@ -228,7 +228,7 @@ public abstract class Argument<T> implements IArgument<T> {
 			builder.append("| ");
 		}
 		
-		return "|-" + getHelpString();
+		return "|" + getHelpString();
 	}
 	
 	/*
