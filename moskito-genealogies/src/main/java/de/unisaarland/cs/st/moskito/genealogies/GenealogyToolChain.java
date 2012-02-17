@@ -29,19 +29,20 @@ public class GenealogyToolChain extends Chain<Settings> {
 	
 	private final Pool               threadPool;
 	private final GenealogyArguments genealogyArgs;
+	private final LoggerArguments    loggerArg;
 	
 	public GenealogyToolChain() throws ArgumentRegistrationException, SettingsParseError {
 		super(new GenealogySettings());
 		
 		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
-		final LoggerArguments loggerArg = settings.setLoggerArg(Requirement.required);
-		loggerArg.getValue();
+		this.loggerArg = settings.setLoggerArg(Requirement.required);
 		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
 	}
 	
 	@Override
 	public void setup() {
+		this.loggerArg.getValue();
 		final CoreChangeGenealogy genealogy = this.genealogyArgs.getValue();
 		
 		final BranchFactory branchFactory = new BranchFactory(genealogy.getPersistenceUtil());
