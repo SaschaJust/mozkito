@@ -39,11 +39,15 @@ public class Main {
 			bugs.setName(bugs.getClass().getSimpleName());
 			bugs.start();
 			bugs.join();
-		} catch (final Exception e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new Shutdown();
+		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	

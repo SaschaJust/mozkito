@@ -17,6 +17,7 @@ package de.unisaarland.cs.st.moskito.bugs;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
@@ -24,6 +25,7 @@ import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.LongArgument;
 import net.ownhero.dev.andama.settings.requirements.Optional;
 import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
@@ -46,18 +48,26 @@ public class Bugs extends Chain<TrackerSettings> {
 	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Bugs() throws ArgumentRegistrationException {
+	public Bugs() {
 		super(new TrackerSettings());
 		this.threadPool = new Pool(Bugs.class.getSimpleName(), this);
 		final TrackerSettings settings = getSettings();
-		this.trackerArguments = settings.setTrackerArgs(new Required());
-		this.databaseArguments = settings.setDatabaseArgs(new Optional(), this.getClass().getSimpleName().toLowerCase());
-		this.logSettings = settings.setLoggerArg(new Required());
-		new BooleanArgument(settings.getRootArgumentSet(), "headless",
-		                    "Can be enabled when running without graphical interface", "false", new Optional());
-		new LongArgument(settings.getRootArgumentSet(), "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-		                 new Required());
+		try {
+			this.trackerArguments = settings.setTrackerArgs(new Required());
+			this.databaseArguments = settings.setDatabaseArgs(new Optional(), this.getClass().getSimpleName()
+			                                                                      .toLowerCase());
+			this.logSettings = settings.setLoggerArg(new Required());
+			new BooleanArgument(settings.getRootArgumentSet(), "headless",
+			                    "Can be enabled when running without graphical interface", "false", new Optional());
+			new LongArgument(settings.getRootArgumentSet(), "cache.size",
+			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
+			                 new Required());
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown();
+		}
 	}
 	
 	/*

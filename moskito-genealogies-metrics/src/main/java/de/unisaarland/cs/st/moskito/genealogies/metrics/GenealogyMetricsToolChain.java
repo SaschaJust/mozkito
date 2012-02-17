@@ -18,7 +18,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -54,23 +54,33 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	private final EnumArgument<MetricLevel> granularityArg;
 	private final OutputFileArgument        outputFileArgument;
 	
-	public GenealogyMetricsToolChain() throws SettingsParseError, ArgumentRegistrationException {
+	public GenealogyMetricsToolChain() {
 		super(new GenealogySettings());
 		final GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
-		settings.setLoggerArg(Requirement.required);
-		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
-		this.granularityArg = new EnumArgument<MetricLevel>(settings.getRootArgumentSet(), "genealogy.metric.level",
-		                                                    "The granularity level the metrics should be computed on.",
-		                                                    MetricLevel.CHANGEOPERATION, Requirement.required);
-		this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
-		                                                 "Filename to write result metric matrix into.", null,
-		                                                 Requirement.required, true);
-		new StringArgument(
-		                   settings.getRootArgumentSet(),
-		                   "fix.pattern",
-		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
-		                   null, Requirement.required);
+		try {
+			settings.setLoggerArg(Requirement.required);
+			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+			this.granularityArg = new EnumArgument<MetricLevel>(
+			                                                    settings.getRootArgumentSet(),
+			                                                    "genealogy.metric.level",
+			                                                    "The granularity level the metrics should be computed on.",
+			                                                    MetricLevel.CHANGEOPERATION, Requirement.required);
+			this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
+			                                                 "Filename to write result metric matrix into.", null,
+			                                                 Requirement.required, true);
+			new StringArgument(
+			                   settings.getRootArgumentSet(),
+			                   "fix.pattern",
+			                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
+			                   null, Requirement.required);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
+		
 	}
 	
 	@Override

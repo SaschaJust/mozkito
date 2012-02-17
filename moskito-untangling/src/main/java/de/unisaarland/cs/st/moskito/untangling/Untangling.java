@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
@@ -124,15 +125,29 @@ public class Untangling {
 	 * @throws ArgumentRegistrationException
 	 * @throws SettingsParseError
 	 */
-	public Untangling() throws ArgumentRegistrationException, SettingsParseError {
+	public Untangling() {
 		final UntanglingSettings settings = new UntanglingSettings();
 		
-		this.repositoryArg = settings.setRepositoryArg(Requirement.required);
-		this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
-		this.untanglingArgs = settings.setUntanglingArgs(Requirement.required);
-		settings.setLoggerArg(Requirement.optional);
+		try {
+			this.repositoryArg = settings.setRepositoryArg(Requirement.required);
+			this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
+			this.untanglingArgs = settings.setUntanglingArgs(Requirement.required);
+			settings.setLoggerArg(Requirement.optional);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
-		settings.parse();
+		try {
+			settings.parse();
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
 		if (this.untanglingArgs.getSeedArg().getValue() != null) {
 			this.seed = this.untanglingArgs.getSeedArg().getValue();

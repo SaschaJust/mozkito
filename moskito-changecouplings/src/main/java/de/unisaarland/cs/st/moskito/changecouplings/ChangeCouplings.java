@@ -22,6 +22,7 @@ import java.util.LinkedList;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
 import net.ownhero.dev.andama.settings.arguments.EnumArgument;
@@ -54,37 +55,43 @@ public class ChangeCouplings {
 	private Long                      minSupport;
 	private Double                    minConf;
 	private final OutputFileArgument  outputFileArgument;
+	private final RepositorySettings  settings;
 	
-	public ChangeCouplings() throws SettingsParseError, ArgumentRegistrationException {
-		final RepositorySettings settings = new RepositorySettings();
+	public ChangeCouplings() {
+		this.settings = new RepositorySettings();
 		
-		this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
-		
-		this.levelArgument = new EnumArgument<Level>(settings.getRootArgumentSet(), "changecouplings.level",
-		                                             "The level to compute change couplings on.", Level.FILE,
-		                                             Requirement.required);
-		
-		this.transactionArg = new StringArgument(settings.getRootArgumentSet(), "changecouplings.transaction",
-		                                         "The transaction id to compute change couplings for.", null,
-		                                         Requirement.required);
-		
-		this.minConfArg = new DoubleArgument(
-		                                     settings.getRootArgumentSet(),
-		                                     "changecouplings.minConfidence",
-		                                     "Only compute change couplings exceeding the minimal confidence of this value.",
-		                                     "0.1", Requirement.required);
-		
-		this.minSupportArg = new LongArgument(
-		                                      settings.getRootArgumentSet(),
-		                                      "changecouplings.minSupport",
-		                                      "Only compute change couplings that exceed a minimal support of this value.",
-		                                      "3", Requirement.required);
-		
-		this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "changecouplings.out",
-		                                                 "Write the serialized change couplings to this file.", null,
-		                                                 Requirement.required, true);
-		
-		settings.parse();
+		try {
+			this.databaseArgs = this.settings.setDatabaseArgs(Requirement.required, "untangling");
+			
+			this.levelArgument = new EnumArgument<Level>(this.settings.getRootArgumentSet(), "changecouplings.level",
+			                                             "The level to compute change couplings on.", Level.FILE,
+			                                             Requirement.required);
+			
+			this.transactionArg = new StringArgument(this.settings.getRootArgumentSet(), "changecouplings.transaction",
+			                                         "The transaction id to compute change couplings for.", null,
+			                                         Requirement.required);
+			
+			this.minConfArg = new DoubleArgument(
+			                                     this.settings.getRootArgumentSet(),
+			                                     "changecouplings.minConfidence",
+			                                     "Only compute change couplings exceeding the minimal confidence of this value.",
+			                                     "0.1", Requirement.required);
+			
+			this.minSupportArg = new LongArgument(
+			                                      this.settings.getRootArgumentSet(),
+			                                      "changecouplings.minSupport",
+			                                      "Only compute change couplings that exceed a minimal support of this value.",
+			                                      "3", Requirement.required);
+			
+			this.outputFileArgument = new OutputFileArgument(this.settings.getRootArgumentSet(), "changecouplings.out",
+			                                                 "Write the serialized change couplings to this file.",
+			                                                 null, Requirement.required, true);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getLocalizedMessage(), e);
+		}
 	}
 	
 	public void run() {
@@ -135,6 +142,14 @@ public class ChangeCouplings {
 	
 	public void setup() {
 		
+		try {
+			this.settings.parse();
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getLocalizedMessage(), e);
+		}
 		final PersistenceUtil persistenceUtil = this.databaseArgs.getValue();
 		if (persistenceUtil == null) {
 			throw new UnrecoverableError("Could not connect to database");

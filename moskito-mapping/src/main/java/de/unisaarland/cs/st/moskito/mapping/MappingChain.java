@@ -14,6 +14,7 @@ package de.unisaarland.cs.st.moskito.mapping;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
@@ -44,20 +45,25 @@ public class MappingChain extends Chain<MappingSettings> {
 	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public MappingChain() throws SettingsParseError, ArgumentRegistrationException {
+	public MappingChain() {
 		super(new MappingSettings(), "mapping");
 		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
 		final MappingSettings settings = getSettings();
-		this.databaseArguments = settings.setDatabaseArgs(Requirement.required, "mapping");
-		this.logSettings = settings.setLoggerArg(new Required());
-		this.mappingArguments = settings.setMappingArgs(settings.getRootArgumentSet(), new Required());
-		new BooleanArgument(settings.getRootArgumentSet(), "headless",
-		                    "Can be enabled when running without graphical interface", "false", new Optional());
-		new LongArgument(settings.getRootArgumentSet(), "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-		                 new Required());
-		
-		settings.parse();
+		try {
+			this.databaseArguments = settings.setDatabaseArgs(Requirement.required, "mapping");
+			this.logSettings = settings.setLoggerArg(new Required());
+			this.mappingArguments = settings.setMappingArgs(settings.getRootArgumentSet(), new Required());
+			new BooleanArgument(settings.getRootArgumentSet(), "headless",
+			                    "Can be enabled when running without graphical interface", "false", new Optional());
+			new LongArgument(settings.getRootArgumentSet(), "cache.size",
+			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
+			                 new Required());
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 	}
 	
 	/*

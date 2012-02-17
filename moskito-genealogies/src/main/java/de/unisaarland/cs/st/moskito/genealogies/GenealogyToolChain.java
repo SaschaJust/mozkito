@@ -14,12 +14,13 @@
 package de.unisaarland.cs.st.moskito.genealogies;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
@@ -29,19 +30,28 @@ public class GenealogyToolChain extends Chain<Settings> {
 	
 	private final Pool               threadPool;
 	private final GenealogyArguments genealogyArgs;
+	private final LoggerArguments    loggerArg;
 	
-	public GenealogyToolChain() throws ArgumentRegistrationException, SettingsParseError {
+	public GenealogyToolChain() {
 		super(new GenealogySettings());
 		
 		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
-		final LoggerArguments loggerArg = settings.setLoggerArg(Requirement.required);
-		loggerArg.getValue();
-		this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+		try {
+			this.loggerArg = settings.setLoggerArg(Requirement.required);
+			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
+		
 	}
 	
 	@Override
 	public void setup() {
+		this.loggerArg.getValue();
 		final CoreChangeGenealogy genealogy = this.genealogyArgs.getValue();
 		
 		final BranchFactory branchFactory = new BranchFactory(genealogy.getPersistenceUtil());

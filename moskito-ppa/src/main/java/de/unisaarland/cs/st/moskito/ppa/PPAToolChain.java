@@ -75,38 +75,45 @@ public class PPAToolChain extends Chain<Settings> {
 	 * @throws ArgumentRegistrationException
 	 * @throws SettingsParseError
 	 */
-	public PPAToolChain() throws ArgumentRegistrationException, SettingsParseError {
+	public PPAToolChain() {
 		super(new RepositorySettings());
 		
 		this.threadPool = new Pool(PPAToolChain.class.getSimpleName(), this);
 		final RepositorySettings settings = (RepositorySettings) getSettings();
 		
-		this.repoSettings = settings.setRepositoryArg(Requirement.required);
-		this.databaseSettings = settings.setDatabaseArgs(Requirement.optional, "ppa");
-		settings.setLoggerArg(Requirement.required);
-		this.testCaseTransactionArg = new SetArgument(
-		                                              settings.getRootArgumentSet(),
-		                                              "testCaseTransactions",
-		                                              "List of transactions that will be passed for test case purposes. "
-		                                                      + "If this option is set, this module will start in test case mode. "
-		                                                      + "If will generate change operations to specified transactions, only;"
-		                                                      + "outputting result as XML either to sdtout (if option -DasXML not set) "
-		                                                      + "or to specified XML file.", null, Requirement.optional);
-		
-		this.ppaArg = new BooleanArgument(settings.getRootArgumentSet(), "ppa",
-		                                  "If set to true, this module will use the PPA tool.", "false",
-		                                  Requirement.optional);
-		
-		this.asXML = new OutputFileArgument(
-		                                    settings.getRootArgumentSet(),
-		                                    "output.xml",
-		                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-		                                    null, Requirement.optional, true);
-		
-		this.startWithArg = new StringArgument(settings.getRootArgumentSet(), "startTransaction",
-		                                       "Use this transaction ID as the first one.", null, Requirement.optional);
-		
-		settings.parse();
+		try {
+			this.repoSettings = settings.setRepositoryArg(Requirement.required);
+			this.databaseSettings = settings.setDatabaseArgs(Requirement.optional, "ppa");
+			settings.setLoggerArg(Requirement.required);
+			this.testCaseTransactionArg = new SetArgument(
+			                                              settings.getRootArgumentSet(),
+			                                              "testCaseTransactions",
+			                                              "List of transactions that will be passed for test case purposes. "
+			                                                      + "If this option is set, this module will start in test case mode. "
+			                                                      + "If will generate change operations to specified transactions, only;"
+			                                                      + "outputting result as XML either to sdtout (if option -DasXML not set) "
+			                                                      + "or to specified XML file.", null,
+			                                              Requirement.optional);
+			
+			this.ppaArg = new BooleanArgument(settings.getRootArgumentSet(), "ppa",
+			                                  "If set to true, this module will use the PPA tool.", "false",
+			                                  Requirement.optional);
+			
+			this.asXML = new OutputFileArgument(
+			                                    settings.getRootArgumentSet(),
+			                                    "output.xml",
+			                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+			                                    null, Requirement.optional, true);
+			
+			this.startWithArg = new StringArgument(settings.getRootArgumentSet(), "startTransaction",
+			                                       "Use this transaction ID as the first one.", null,
+			                                       Requirement.optional);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
 	}
 	

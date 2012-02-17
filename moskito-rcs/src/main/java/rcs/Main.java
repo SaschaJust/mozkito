@@ -15,6 +15,7 @@
  */
 package rcs;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.Graph;
@@ -49,12 +50,14 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("RCS.Main: All done. cerio!");
 			}
-		} catch (final Exception e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
-			
+		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
@@ -54,36 +54,39 @@ public class CallGraphToolChain {
 	private final DirectoryArgument   cacheDirArg;
 	private final String              transactionId;
 	
-	public CallGraphToolChain() throws ArgumentRegistrationException, SettingsParseError {
+	public CallGraphToolChain() {
 		final RepositorySettings settings = new RepositorySettings();
 		
-		this.repoSettings = settings.setRepositoryArg(Requirement.required);
-		this.transactionArg = new StringArgument(settings.getRootArgumentSet(), "transaction.id",
-		                                         "The transaction id to create the call graph for.", null,
-		                                         Requirement.optional);
-		this.dirArg = new DirectoryArgument(
-		                                    settings.getRootArgumentSet(),
-		                                    "source.directory",
-		                                    "(Only used when "
-		                                            + this.transactionArg.getName()
-		                                            + " not set) Use files from from.directory to build the call graph on.",
-		                                    null, Requirement.optional, false);
-		this.packageFilterArg = new SetArgument(
-		                                        settings.getRootArgumentSet(),
-		                                        "package.filter",
-		                                        "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-		                                        "", Requirement.optional);
-		
-		this.cacheDirArg = new DirectoryArgument(
-		                                         settings.getRootArgumentSet(),
-		                                         "cache.dir",
-		                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
-		                                         null, Requirement.optional, false);
-		
-		this.outArg = new OutputFileArgument(settings.getRootArgumentSet(), "output",
-		                                     "File to store the serialized CallGraph in.", null, Requirement.required,
-		                                     true);
-		settings.parse();
+		try {
+			this.repoSettings = settings.setRepositoryArg(Requirement.required);
+			this.transactionArg = new StringArgument(settings.getRootArgumentSet(), "transaction.id",
+			                                         "The transaction id to create the call graph for.", null,
+			                                         Requirement.optional);
+			this.dirArg = new DirectoryArgument(settings.getRootArgumentSet(), "source.directory", "(Only used when "
+			        + this.transactionArg.getName()
+			        + " not set) Use files from from.directory to build the call graph on.", null,
+			                                    Requirement.optional, false);
+			this.packageFilterArg = new SetArgument(
+			                                        settings.getRootArgumentSet(),
+			                                        "package.filter",
+			                                        "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
+			                                        "", Requirement.optional);
+			
+			this.cacheDirArg = new DirectoryArgument(
+			                                         settings.getRootArgumentSet(),
+			                                         "cache.dir",
+			                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
+			                                         null, Requirement.optional, false);
+			
+			this.outArg = new OutputFileArgument(settings.getRootArgumentSet(), "output",
+			                                     "File to store the serialized CallGraph in.", null,
+			                                     Requirement.required, true);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getLocalizedMessage(), e);
+		}
 		
 		this.transactionId = this.transactionArg.getValue();
 		
