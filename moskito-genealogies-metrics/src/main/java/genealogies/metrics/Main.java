@@ -13,6 +13,7 @@
 
 package genealogies.metrics;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
@@ -34,7 +35,7 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("All done. Cerio.");
 			}
-		} catch (final Exception e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

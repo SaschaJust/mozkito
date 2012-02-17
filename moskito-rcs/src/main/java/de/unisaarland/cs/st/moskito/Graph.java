@@ -17,6 +17,7 @@ package de.unisaarland.cs.st.moskito;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
@@ -48,21 +49,29 @@ public class Graph extends Chain<RepositorySettings> {
 	 * @throws ArgumentRegistrationException
 	 * @throws SettingsParseError
 	 */
-	public Graph() throws ArgumentRegistrationException, SettingsParseError {
+	public Graph() {
 		super(new RepositorySettings());
 		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		final RepositorySettings settings = getSettings();
 		
-		this.repoSettings = settings.setRepositoryArg(new Required());
-		this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
-		this.logSettings = settings.setLoggerArg(new Required());
-		new BooleanArgument(settings.getRootArgumentSet(), "headless",
-		                    "Can be enabled when running without graphical interface", "false", new Optional());
-		new LongArgument(settings.getRootArgumentSet(), "cache.size",
-		                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-		                 new Required());
-		new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
-		                    "Requires consistency checks on the repository", "false", new Optional());
+		try {
+			this.repoSettings = settings.setRepositoryArg(new Required());
+			this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
+			this.logSettings = settings.setLoggerArg(new Required());
+			new BooleanArgument(settings.getRootArgumentSet(), "headless",
+			                    "Can be enabled when running without graphical interface", "false", new Optional());
+			new LongArgument(settings.getRootArgumentSet(), "cache.size",
+			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
+			                 new Required());
+			new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
+			                    "Requires consistency checks on the repository", "false", new Optional());
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
+		
 	}
 	
 	/*

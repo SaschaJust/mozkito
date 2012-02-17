@@ -15,6 +15,7 @@
  */
 package untangling;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 
@@ -39,7 +40,7 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("All done. Cerio.");
 			}
-		} catch (final Exception e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
