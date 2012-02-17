@@ -82,5 +82,4 @@ public class Bugs extends Chain<TrackerSettings> {
 			new TrackerVoidSink(this.threadPool.getThreadGroup(), getSettings());
 		}
 	}
-	
 }
