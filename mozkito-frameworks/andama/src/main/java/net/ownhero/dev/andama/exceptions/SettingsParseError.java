@@ -30,6 +30,13 @@ public class SettingsParseError extends Exception {
 	}
 	
 	/**
+	 * 
+	 */
+	public SettingsParseError(final String arg0) {
+		super(arg0);
+	}
+	
+	/**
 	 * @param arg0
 	 */
 	public SettingsParseError(final String arg0, final IArgument<?> argument) {
