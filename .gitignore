@@ -23,3 +23,9 @@ de.unisaarland.cs.st.moskito.callgraph.eclipse/lib
 
 
 *.class
+ppa_new.log
+moskito-ppa/ppa_new.log
+moskito-persons/repositorytoolchain.agl/
+moskito-genealogies/ppa_new.log
+moskito-genealogies-metrics/ppa_new.log
+moskito-changecouplings/ppa_new.log
