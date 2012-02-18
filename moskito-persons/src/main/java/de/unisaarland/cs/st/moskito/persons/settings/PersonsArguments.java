@@ -55,9 +55,8 @@ public class PersonsArguments extends ArgumentSet<MergingProcessor> {
 			final Collection<MergingEngine> collection = ArgumentSet.provideDynamicArguments(this,
 			                                                                                 MergingEngine.class,
 			                                                                                 "A list of merging engines that shall be used.",
-			                                                                                 Requirement.required,
-			                                                                                 null, "persons", "merge",
-			                                                                                 true);
+			                                                                                 Requirement.required, "",
+			                                                                                 "persons", "merge", true);
 			
 			final String engines = System.getProperty("persons.engines");
 			final Set<String> engineNames = new HashSet<String>();
