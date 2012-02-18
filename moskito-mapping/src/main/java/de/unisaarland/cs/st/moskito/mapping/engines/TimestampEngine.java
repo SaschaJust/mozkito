@@ -12,14 +12,14 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.ListArgument;
+import net.ownhero.dev.andama.settings.requirements.Required;
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -49,27 +49,15 @@ import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 public class TimestampEngine extends MappingEngine {
 	
 	private org.joda.time.Interval windowReportResolvedAfterTransaction = new Interval(0, 7200000);
-	
-	@Override
-	public String getDescription() {
-		return "Scores based on the relation of close and commit timestamp (1/(1+days(close - upperbound).";
-	}
-	
-	/**
-	 * @return the windowReportResolvedAfterTransaction
-	 */
-	private org.joda.time.Interval getWindowReportResolvedAfterTransaction() {
-		return this.windowReportResolvedAfterTransaction;
-	}
+	private ListArgument           confidenceArgument;
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
 	 */
 	@Override
-	public void init() {
-		@SuppressWarnings ("unchecked")
-		final List<String> list = new LinkedList<String>((Set<String>) getOption("confidence").getSecond().getValue());
+	public void afterParse() {
+		final List<String> list = this.confidenceArgument.getValue();
 		CollectionCheck.minSize(list,
 		                        1,
 		                        "There are 1 to 2 values that have to be specified for a time interval to be valid. If only one is specified, the first one defaults to 0.");
@@ -98,6 +86,28 @@ public class TimestampEngine extends MappingEngine {
 		setWindowReportResolvedAfterTransaction(new Interval(start * 1000, end * 1000));
 	}
 	
+	@Override
+	public String getDescription() {
+		return "Scores based on the relation of close and commit timestamp (1/(1+days(close - upperbound).";
+	}
+	
+	/**
+	 * @return the windowReportResolvedAfterTransaction
+	 */
+	private org.joda.time.Interval getWindowReportResolvedAfterTransaction() {
+		return this.windowReportResolvedAfterTransaction;
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new ListArgument(
+		                                           set,
+		                                           "confidence",
+		                                           "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
+		                                           "-0d 0h 10m 0s,+0d 2h 0m 0s", new Required());
+		return true;
+	}
+	
 	/**
 	 * @param string
 	 * @return
@@ -124,22 +134,6 @@ public class TimestampEngine extends MappingEngine {
 		}
 		
 		return value;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
-	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		registerListOption(settings,
-		                   arguments,
-		                   "confidence",
-		                   "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                   "-0d 0h 10m 0s,+0d 2h 0m 0s", true);
 	}
 	
 	/*

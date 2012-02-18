@@ -34,15 +34,6 @@ import de.unisaarland.cs.st.moskito.mapping.register.Node;
  */
 public abstract class MappingStrategy extends Node {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.strategies", this.getClass().getSimpleName());
-	}
-	
 	/**
 	 * @param mapping
 	 * @return

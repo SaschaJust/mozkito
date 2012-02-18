@@ -14,7 +14,8 @@
 package de.unisaarland.cs.st.moskito.settings;
 
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.junit.Test;
 
@@ -22,19 +23,27 @@ public class DatabaseArgumentsTest {
 	
 	@Test
 	public void test() {
-		final AndamaSettings settings = new AndamaSettings();
-		final DatabaseArguments dbArgs = new DatabaseArguments(settings, true, "persistence");
-		
-		System.setProperty("database.name", "moskito_junit");
-		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
-		System.setProperty("database.user", "miner");
-		System.setProperty("database.password", "miner");
-		System.setProperty("database.options", "DB_DROP_CREATE");
-		settings.parseArguments();
-		
-		if (dbArgs.getValue() == null) {
-			fail();
+		final Settings settings = new Settings();
+		try {
+			final DatabaseArguments dbArgs = new DatabaseArguments(settings.getRootArgumentSet(), new Required(),
+			                                                       "persistence");
+			
+			System.setProperty("database.name", "moskito_junit");
+			System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
+			System.setProperty("database.user", "miner");
+			System.setProperty("database.password", "miner");
+			System.setProperty("database.options", "CREATE");
+			
+			settings.parse();
+			
+			if (dbArgs.getValue() == null) {
+				fail();
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
 		}
+		
 	}
 	
 }

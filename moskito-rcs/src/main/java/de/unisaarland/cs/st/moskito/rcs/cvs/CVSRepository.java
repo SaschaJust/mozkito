@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
@@ -46,7 +46,7 @@ public class CVSRepository extends Repository {
 	public List<AnnotationEntry> annotate(final String filePath,
 	                                      final String revision) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -55,7 +55,7 @@ public class CVSRepository extends Repository {
 	public File checkoutPath(final String relativeRepoPath,
 	                         final String revision) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -65,7 +65,7 @@ public class CVSRepository extends Repository {
 	                              final String baseRevision,
 	                              final String revisedRevision) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -73,7 +73,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public String gatherToolInformation() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -81,7 +81,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -89,7 +89,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public String getFirstRevisionId() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -98,7 +98,7 @@ public class CVSRepository extends Repository {
 	public String getFormerPathName(final String revision,
 	                                final String pathName) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -106,7 +106,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public String getHEADRevisionId() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -115,7 +115,7 @@ public class CVSRepository extends Repository {
 	public String getRelativeTransactionId(final String transactionId,
 	                                       final long index) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -123,7 +123,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -131,7 +131,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public long getTransactionCount() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -139,7 +139,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public String getTransactionId(final long index) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -147,7 +147,7 @@ public class CVSRepository extends Repository {
 	@Override
 	public File getWokingCopyLocation() {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -156,7 +156,7 @@ public class CVSRepository extends Repository {
 	public List<LogEntry> log(final String fromRevision,
 	                          final String toRevision) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -166,7 +166,7 @@ public class CVSRepository extends Repository {
 	                              final String toRevision,
 	                              final int cacheSize) {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -180,7 +180,7 @@ public class CVSRepository extends Repository {
 	                                                    InvalidRepositoryURI,
 	                                                    UnsupportedProtocolType {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 		
@@ -197,7 +197,7 @@ public class CVSRepository extends Repository {
 	                                                    InvalidRepositoryURI,
 	                                                    UnsupportedProtocolType {
 		if (Logger.logError()) {
-			Logger.error("CVS support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 		

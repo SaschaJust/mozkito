@@ -13,8 +13,8 @@
 
 package de.unisaarland.cs.st.moskito.mapping;
 
-import net.ownhero.dev.andama.threads.AndamaFilter;
-import net.ownhero.dev.andama.threads.AndamaGroup;
+import net.ownhero.dev.andama.threads.Filter;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
@@ -26,14 +26,14 @@ import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingStrategyProcessor extends AndamaFilter<Mapping> {
+public class MappingStrategyProcessor extends Filter<Mapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param name
 	 * @param settings
 	 */
-	public MappingStrategyProcessor(final AndamaGroup threadGroup, final MappingSettings settings,
+	public MappingStrategyProcessor(final Group threadGroup, final MappingSettings settings,
 	        final MappingFinder finder, final MappingStrategy strategy) {
 		super(threadGroup, settings, false);
 		new ProcessHook<Mapping, Mapping>(this) {

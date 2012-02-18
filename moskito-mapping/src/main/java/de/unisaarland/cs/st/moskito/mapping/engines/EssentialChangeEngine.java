@@ -12,8 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -27,7 +29,17 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class EssentialChangeEngine extends MappingEngine {
 	
-	private double confidence;
+	private double         confidence = 0d;
+	private DoubleArgument confidenceArguement;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setConfidence(this.confidenceArguement.getValue());
+	}
 	
 	/**
 	 * @return the confidence
@@ -47,27 +59,17 @@ public class EssentialChangeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		// TODO set the values of your registered config options
-		setConfidence((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		// TODO register further config options if you need some
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Confidence that is used if the changes done in the transaction arent essential.",
-		                     this.confidence + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArguement = new DoubleArgument(
+		                                              set,
+		                                              "confidence",
+		                                              "Confidence that is used if the changes done in the transaction are not essential.",
+		                                              this.confidence + "", Requirement.required);
+		return true;
 	}
 	
 	/*
@@ -81,7 +83,8 @@ public class EssentialChangeEngine extends MappingEngine {
 	                  final MappableEntity to,
 	                  final Mapping score) {
 		// TODO Auto-generated method stub
-		
+		// addFeature(score, confidence, fromFieldName, fromFieldContent, fromSubstring, toFieldName, toFieldContent,
+		// toSubstring);
 	}
 	
 	/**

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import net.ownhero.dev.andama.utils.AndamaUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
@@ -47,12 +46,30 @@ public final class MoskitoTestBuilder extends Thread {
 	
 	private final RunNotifier runNotifier;
 	
+	private final String      classPath;
+	private final String      javaBin;
+	private final String      testClassName;
+	private final String      testMethodName;
+	
+	private final String      exampleCommandLine;
+	
+	private final String      testTag;
+	
 	/**
 	 * @param testRun
 	 */
 	public MoskitoTestBuilder(final TestRun testRun, final RunNotifier runNotifier) {
 		this.testRun = testRun;
 		this.runNotifier = runNotifier;
+		this.testTag = "[" + testRun.getDescription().getMethodName() + "] ";
+		
+		this.javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+		this.classPath = System.getProperty("java.class.path") + File.pathSeparator + "src" + File.separator + "main"
+		        + File.separator + "java ";
+		this.testClassName = testRun.getDescription().getTestClass().getCanonicalName();
+		this.testMethodName = testRun.getDescription().getMethodName();
+		this.exampleCommandLine = this.javaBin + " -cp " + this.classPath + " " + MoskitoTest.class.getCanonicalName()
+		        + " " + this.testClassName + " " + this.testMethodName + " <STDOUT_FILE> <STDERR_FILE>";
 	}
 	
 	/**
@@ -60,13 +77,9 @@ public final class MoskitoTestBuilder extends Thread {
 	 * @return
 	 */
 	@NoneNull
-	private TestResult exec(final TestRun run) {
-		final String javaHome = System.getProperty("java.home");
-		final String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
-		final String classpath = System.getProperty("java.class.path");
+	private TestResult exec() {
 		String testStdOut = null;
 		String testStdErr = null;
-		final String testTag = "[" + run.getDescription().getMethodName() + "] ";
 		
 		final File stdOutFile = FileUtils.createRandomFile(FileShutdownAction.KEEP);
 		String stdOutPath = null;
@@ -92,15 +105,12 @@ public final class MoskitoTestBuilder extends Thread {
 			e.printStackTrace();
 		}
 		
-		final ProcessBuilder builder = new ProcessBuilder(javaBin, "-cp", classpath + ":src/main/java",
-		                                                  MoskitoTest.class.getCanonicalName(), run.getDescription()
-		                                                                                           .getTestClass()
-		                                                                                           .getCanonicalName(),
-		                                                  run.getDescription().getMethodName(), stdOutPath, stdErrPath);
+		final ProcessBuilder builder = new ProcessBuilder(this.javaBin, "-cp", this.classPath,
+		                                                  MoskitoTest.class.getCanonicalName(), this.testClassName,
+		                                                  this.testMethodName, stdOutPath, stdErrPath);
 		
 		if (System.getProperty("test.debug") != null) {
-			System.err.println("Launching test: " + run.getDescription().getTestClass().getCanonicalName() + "#"
-			        + run.getDescription().getMethodName());
+			System.err.println("Launching test: " + this.testClassName + "#" + this.testMethodName);
 		}
 		
 		Process process;
@@ -125,17 +135,17 @@ public final class MoskitoTestBuilder extends Thread {
 			final StringWriter sw = new StringWriter();
 			final PrintWriter pw = new PrintWriter(sw);
 			pw.println(e.getMessage());
-			pw.println(AndamaUtils.lineSeparator);
+			pw.println(FileUtils.lineSeparator);
 			e.printStackTrace(pw);
-			pw.println(AndamaUtils.lineSeparator);
+			pw.println(FileUtils.lineSeparator);
 			theError = sw.toString();
 		} catch (final InterruptedException e) {
 			final StringWriter sw = new StringWriter();
 			final PrintWriter pw = new PrintWriter(sw);
 			pw.println(e.getMessage());
-			pw.println(AndamaUtils.lineSeparator);
+			pw.println(FileUtils.lineSeparator);
 			e.printStackTrace(pw);
-			pw.println(AndamaUtils.lineSeparator);
+			pw.println(FileUtils.lineSeparator);
 			theError = sw.toString();
 		}
 		
@@ -144,7 +154,7 @@ public final class MoskitoTestBuilder extends Thread {
 			String line;
 			final StringBuilder sb = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
-				sb.append(testTag).append(line).append(AndamaUtils.lineSeparator);
+				sb.append(this.testTag).append(line).append(FileUtils.lineSeparator);
 			}
 			testStdErr = sb.toString();
 			stdErrFile.delete();
@@ -157,7 +167,7 @@ public final class MoskitoTestBuilder extends Thread {
 			String line;
 			final StringBuilder sb = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
-				sb.append(testTag).append(line).append(AndamaUtils.lineSeparator);
+				sb.append(this.testTag).append(line).append(FileUtils.lineSeparator);
 			}
 			testStdOut = sb.toString();
 			stdOutFile.delete();
@@ -192,9 +202,9 @@ public final class MoskitoTestBuilder extends Thread {
 		this.runNotifier.fireTestStarted(this.testRun.getDescription());
 		try {
 			final String testTag = "[" + this.testRun.getDescription().getMethodName() + "] ";
-			System.err.println(testTag + "Running test.");
+			System.err.println(testTag + "Running test (" + this.exampleCommandLine + ").");
 			final DateTime start = new DateTime();
-			this.testResult = exec(this.testRun);
+			this.testResult = exec();
 			final DateTime end = new DateTime();
 			System.err.println(testTag + "Test " + (this.testResult.getReturnValue() != 0
 			                                                                             ? "failed"

@@ -18,6 +18,8 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
@@ -28,6 +30,12 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
  * 
  */
 public class UniqueEmailEngine extends MergingEngine {
+	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -40,11 +48,11 @@ public class UniqueEmailEngine extends MergingEngine {
 	public List<PersonBucket> collides(final Person person,
 	                                   final PersonContainer container,
 	                                   final PersonManager manager) {
-		List<PersonBucket> buckets = manager.getBuckets(person);
-		List<PersonBucket> list = new LinkedList<PersonBucket>();
+		final List<PersonBucket> buckets = manager.getBuckets(person);
+		final List<PersonBucket> list = new LinkedList<PersonBucket>();
 		
-		for (PersonBucket bucket : buckets) {
-			for (String email : person.getEmailAddresses()) {
+		for (final PersonBucket bucket : buckets) {
+			for (final String email : person.getEmailAddresses()) {
 				if (bucket.hasEmail(email)) {
 					list.add(bucket);
 				}
@@ -60,6 +68,12 @@ public class UniqueEmailEngine extends MergingEngine {
 	@Override
 	public String getDescription() {
 		return "Finds collision on unique email addresses";
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

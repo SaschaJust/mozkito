@@ -58,29 +58,29 @@ public class JiraXMLParser {
 	protected static List<AttachmentEntry> extractAttachments(final Element root,
 	                                                          final JiraTracker tracker) {
 		
-		List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
+		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
-		Element element = root.getChild("attachments", root.getNamespace());
+		final Element element = root.getChild("attachments", root.getNamespace());
 		if (element != null) {
 			@SuppressWarnings ("unchecked")
-			List<Element> attachElems = element.getChildren("attachment", element.getNamespace());
-			for (Element attachElem : attachElems) {
-				String attachId = attachElem.getAttributeValue("id");
-				AttachmentEntry attachment = new AttachmentEntry(attachId);
+			final List<Element> attachElems = element.getChildren("attachment", element.getNamespace());
+			for (final Element attachElem : attachElems) {
+				final String attachId = attachElem.getAttributeValue("id");
+				final AttachmentEntry attachment = new AttachmentEntry(attachId);
 				
 				attachment.setFilename(attachElem.getAttributeValue("name"));
 				try {
 					attachment.setSize(new Long(attachElem.getAttributeValue("size")));
-				} catch (NumberFormatException e) {
+				} catch (final NumberFormatException e) {
 					
 				}
-				String attachAuthor = attachElem.getAttributeValue("author");
+				final String attachAuthor = attachElem.getAttributeValue("author");
 				if (new Regex(Regex.emailPattern).matches(attachAuthor)) {
 					attachment.setAuthor(new Person(null, null, attachAuthor));
 				} else {
 					attachment.setAuthor(new Person(attachAuthor, null, null));
 				}
-				String attachDate = attachElem.getAttributeValue("created");
+				final String attachDate = attachElem.getAttributeValue("created");
 				attachment.setTimestamp(DateTimeUtils.parseDate(attachDate, new Regex(dateTimeFormatRegex.getPattern())));
 				
 				String uri = tracker.getUri().toString();
@@ -91,7 +91,7 @@ public class JiraXMLParser {
 					try {
 						attachment.setLink(new URL(uri + "secure/attachment/" + attachId + "/"
 						        + attachment.getFilename()));
-					} catch (MalformedURLException e) {
+					} catch (final MalformedURLException e) {
 						if (Logger.logWarn()) {
 							Logger.warn("Failed to set Link to attachment. Continue ...");
 						}
@@ -110,8 +110,8 @@ public class JiraXMLParser {
 	                                    final String attribute,
 	                                    final String value) {
 		@SuppressWarnings ("unchecked")
-		List<Element> children = root.getChildren(tag, namespace);
-		for (Element child : children) {
+		final List<Element> children = root.getChildren(tag, namespace);
+		for (final Element child : children) {
 			if ((child.getAttributeValue(attribute) != null) && (child.getAttributeValue(attribute).equals(value))) {
 				return child;
 			}
@@ -184,10 +184,11 @@ public class JiraXMLParser {
 	
 	private static void handleComments(final List<Element> comments,
 	                                   final Report report) {
-		for (Element comment : comments) {
-			Person author = new Person(comment.getAttributeValue("author"), null, null);
-			DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"), dateTimeFormatRegex);
-			String commentText = comment.getText();
+		for (final Element comment : comments) {
+			final Person author = new Person(comment.getAttributeValue("author"), null, null);
+			final DateTime commentDate = DateTimeUtils.parseDate(comment.getAttributeValue("created"),
+			                                                     dateTimeFormatRegex);
+			final String commentText = comment.getText();
 			if ((report.getResolutionTimestamp() != null) && (report.getResolutionTimestamp().isEqual(commentDate))) {
 				report.setResolver(author);
 			}
@@ -204,7 +205,6 @@ public class JiraXMLParser {
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 */
-	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static void handleHistory(final URI historyUri,
 	                                 final Report report) throws UnsupportedProtocolException,
@@ -281,16 +281,16 @@ public class JiraXMLParser {
 	@NoneNull
 	private static void handleIssueLinks(final List<Element> elements,
 	                                     final Report report) {
-		for (Element issueLinkType : elements) {
+		for (final Element issueLinkType : elements) {
 			if (issueLinkType.getName().equals("issuelinktype")) {
-				List<Element> links = issueLinkType.getChildren();
-				for (Element link : links) {
+				final List<Element> links = issueLinkType.getChildren();
+				for (final Element link : links) {
 					if (link.getName().equals("inwardlinks") || link.getName().equals("outwardlinks")) {
-						List<Element> issueLinks = link.getChildren("issuelink", link.getNamespace());
-						for (Element issueLink : issueLinks) {
-							Element issueKey = issueLink.getChild("issuekey", issueLink.getNamespace());
+						final List<Element> issueLinks = link.getChildren("issuelink", link.getNamespace());
+						for (final Element issueLink : issueLinks) {
+							final Element issueKey = issueLink.getChild("issuekey", issueLink.getNamespace());
 							if (issueKey != null) {
-								List<RegexGroup> groups = idRegex.find(issueKey.getText());
+								final List<RegexGroup> groups = idRegex.find(issueKey.getText());
 								if ((groups == null) || (groups.size() != 2)) {
 									if (Logger.logError()) {
 										Logger.error("Error while parsing Jira report " + issueKey.getText()
@@ -315,14 +315,14 @@ public class JiraXMLParser {
 	                              final JiraTracker tracker) {
 		CompareCondition.equals(root.getName(), "item", "The root element has to be 'item'.");
 		
-		List<Element> children = root.getChildren();
-		for (Element element : children) {
+		final List<Element> children = root.getChildren();
+		for (final Element element : children) {
 			if (element.getName().equals("title")) {
 				report.setSubject(element.getText());
 			} else if (element.getName().equals("description")) {
 				report.setDescription(element.getText());
 			} else if (element.getName().equals("key")) {
-				List<RegexGroup> groups = idRegex.find(element.getText());
+				final List<RegexGroup> groups = idRegex.find(element.getText());
 				if ((groups == null) || (groups.size() != 2)) {
 					if (Logger.logError()) {
 						Logger.error("Error while parsing Jira report " + element.getText()
@@ -334,11 +334,11 @@ public class JiraXMLParser {
 			} else if (element.getName().equals("summary")) {
 				report.setSummary(element.getText());
 			} else if (element.getName().equals("type")) {
-				String typeString = element.getText();
+				final String typeString = element.getText();
 				try {
-					Type type = Type.valueOf(typeString.toUpperCase());
+					final Type type = Type.valueOf(typeString.toUpperCase());
 					report.setType(type);
-				} catch (IllegalArgumentException e) {
+				} catch (final IllegalArgumentException e) {
 					if (typeString.equals("Improvement") || typeString.equals("New Feature")) {
 						report.setType(Type.RFE);
 					} else if (typeString.equals("Sub-Task")) {
@@ -349,13 +349,13 @@ public class JiraXMLParser {
 					}
 				}
 			} else if (element.getName().equals("priority")) {
-				String prioString = element.getText();
+				final String prioString = element.getText();
 				report.setPriority(getPriority(prioString));
 			} else if (element.getName().equals("status")) {
-				String statusString = element.getText();
+				final String statusString = element.getText();
 				report.setStatus(getStatus(statusString));
 			} else if (element.getName().equals("resolution")) {
-				String resString = element.getText();
+				final String resString = element.getText();
 				report.setResolution(getResolution(resString));
 			} else if (element.getName().equals("assignee")) {
 				String username = element.getAttributeValue("username");
@@ -386,12 +386,12 @@ public class JiraXMLParser {
 					}
 				}
 			} else if (element.getName().equals("created")) {
-				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
+				final DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setCreationTimestamp(dateTime);
 				}
 			} else if (element.getName().equals("updated")) {
-				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
+				final DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setLastUpdateTimestamp(dateTime);
 				}
@@ -400,7 +400,7 @@ public class JiraXMLParser {
 			} else if (element.getName().equals("issuelinks")) {
 				handleIssueLinks(element.getChildren(), report);
 			} else if (element.getName().equals("resolved")) {
-				DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
+				final DateTime dateTime = DateTimeUtils.parseDate(element.getText(), dateTimeFormatRegex);
 				if (dateTime != null) {
 					report.setResolutionTimestamp(dateTime);
 				}
@@ -410,7 +410,7 @@ public class JiraXMLParser {
 				report.setComponent(element.getText());
 			}
 		}
-		for (AttachmentEntry entry : extractAttachments(root, tracker)) {
+		for (final AttachmentEntry entry : extractAttachments(root, tracker)) {
 			report.addAttachmentEntry(entry);
 		}
 	}

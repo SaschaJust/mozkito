@@ -16,8 +16,6 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.patch.Patch;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 /**
  * This InfozillaFilter class acts as an interface for the PatchParser class that has to be instantiated before using
@@ -54,36 +52,22 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		// Find Patches
 		List<Patch> foundPatches = null;
 		if (isRelaxed()) {
-			RelaxedPatchParser pp = new RelaxedPatchParser();
+			final RelaxedPatchParser pp = new RelaxedPatchParser();
 			foundPatches = (List<Patch>) pp.parseForPatches(text);
 		} else {
-			PatchParser pp = new PatchParser();
+			final PatchParser pp = new PatchParser();
 			foundPatches = (List<Patch>) pp.parseForPatches(text);
 		}
 		
 		// InfozillaFilter them out
-		for (Patch patch : foundPatches) {
+		for (final Patch patch : foundPatches) {
 			this.textRemover.markForDeletion(patch.getStartPosition(), patch.getEndPosition());
 		}
 		return foundPatches;
 	}
 	
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	public boolean isRelaxed() {
 		return this.relaxed;
-	}
-	
-	@Override
-	public void register(final InfozillaSettings settings,
-	                     final InfozillaArguments infozillaArguments,
-	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

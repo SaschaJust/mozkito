@@ -6,9 +6,9 @@ package de.unisaarland.cs.st.moskito.mapping;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -22,9 +22,9 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class ScoringSplitter extends AndamaSink<FilteredMapping> {
+public class ScoringSplitter extends Sink<FilteredMapping> {
 	
-	public ScoringSplitter(final AndamaGroup threadGroup, final AndamaSettings settings, final MappingFinder finder,
+	public ScoringSplitter(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		

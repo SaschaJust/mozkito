@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -562,7 +562,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
 		if (Logger.logError()) {
-			Logger.error("Support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("Support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}

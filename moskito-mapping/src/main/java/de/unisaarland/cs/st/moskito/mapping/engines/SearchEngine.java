@@ -19,11 +19,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.LongArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.requirements.Required;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -41,9 +44,21 @@ import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
  */
 public abstract class SearchEngine extends MappingEngine {
 	
-	private LuceneStorage storage;
-	private String        language;
-	private long          minTokens;
+	private LuceneStorage  storage;
+	private String         language;
+	private long           minTokens;
+	private StringArgument languageArgument;
+	private LongArgument   minTokensArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setMinTokens(this.minTokensArgument.getValue());
+		setLanguage(this.languageArgument.getValue());
+	}
 	
 	/**
 	 * @param queryString
@@ -66,7 +81,7 @@ public abstract class SearchEngine extends MappingEngine {
 			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
 			
-			if (terms.size() < (Long) getOption("minTokens").getSecond().getValue()) {
+			if (terms.size() < getMinTokens()) {
 				return null;
 			}
 		} catch (final ParseException e) {
@@ -97,10 +112,19 @@ public abstract class SearchEngine extends MappingEngine {
 		return this.storage;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
 	@Override
-	public void init() {
-		this.minTokens = (Long) getOption("minTokens").getSecond().getValue();
-		this.language = (String) getOption("language").getSecond().getValue();
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.minTokensArgument = new LongArgument(set, "minTokens", "Minimum number of tokens required for a search.",
+		                                          "3", new Required());
+		this.languageArgument = new StringArgument(set, "language", "Language used for stemming", "en:English",
+		                                           new Required());
+		
+		return true;
 	}
 	
 	/*
@@ -114,7 +138,7 @@ public abstract class SearchEngine extends MappingEngine {
 		this.storage = getStorage(LuceneStorage.class);
 		
 		if (storage != null) {
-			final String value = (String) getOption("language").getSecond().getValue();
+			final String value = getLanguage();
 			final String[] split = value.split(":");
 			Class<?> clazz = null;
 			Constructor<?> constructor = null;
@@ -144,18 +168,20 @@ public abstract class SearchEngine extends MappingEngine {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
+	/**
+	 * @param language
+	 *            the language to set
 	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
-		                   true);
-		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);
+	private final void setLanguage(final String language) {
+		this.language = language;
+	}
+	
+	/**
+	 * @param minTokens
+	 *            the minTokens to set
+	 */
+	private final void setMinTokens(final long minTokens) {
+		this.minTokens = minTokens;
 	}
 	
 	/*

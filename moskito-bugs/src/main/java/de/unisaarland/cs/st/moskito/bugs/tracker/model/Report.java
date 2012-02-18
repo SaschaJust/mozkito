@@ -72,9 +72,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
-	/**
-	 * 
-	 */
 	private static final long     serialVersionUID  = 3241584366125944268L;
 	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
 	private String                category;

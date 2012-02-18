@@ -15,8 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -28,13 +28,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerParser extends AndamaTransformer<XmlReport, Report> {
+public class TrackerParser extends Transformer<XmlReport, Report> {
 	
 	/**
 	 * @param threadGroup
 	 * @param tracker
 	 */
-	public TrackerParser(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker) {
+	public TrackerParser(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<XmlReport, Report>(this) {

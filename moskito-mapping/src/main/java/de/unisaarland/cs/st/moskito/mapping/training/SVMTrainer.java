@@ -24,8 +24,7 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -95,6 +94,12 @@ public class SVMTrainer extends MappingTrainer {
 		System.exit(1);
 	}
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private void do_cross_validation() {
 		int i;
 		int total_correct = 0;
@@ -128,6 +133,8 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	// read in a problem (in svmlight format)
+	
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
@@ -135,11 +142,10 @@ public class SVMTrainer extends MappingTrainer {
 	}
 	
 	@Override
-	public void init() {
-		
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	// read in a problem (in svmlight format)
 	
 	private void parse_command_line(final String argv[]) {
 		int i;
@@ -320,12 +326,6 @@ public class SVMTrainer extends MappingTrainer {
 		}
 		
 		fp.close();
-	}
-	
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		
 	}
 	
 	@SuppressWarnings ("unused")

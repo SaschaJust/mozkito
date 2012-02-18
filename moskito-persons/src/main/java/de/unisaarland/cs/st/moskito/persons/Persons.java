@@ -15,10 +15,13 @@
  */
 package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.LoggerArguments;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -32,50 +35,39 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Persons extends AndamaChain {
+public class Persons extends Chain<PersonsSettings> {
 	
-	private final AndamaPool       threadPool;
+	private final Pool             threadPool;
 	private DatabaseArguments      databaseArguments;
 	private final LoggerArguments  logSettings;
 	private final PersonsArguments personsArguments;
 	private PersistenceUtil        persistenceUtil;
 	
 	/**
+	 * @throws SettingsParseError
+	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Persons() {
+	public Persons() throws SettingsParseError, ArgumentRegistrationException {
 		super(new PersonsSettings());
-		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		
-		final AndamaSettings settings = getSettings();
-		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, "persistence");
-		this.logSettings = settings.setLoggerArg(true);
-		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(true);
+		final Settings settings = getSettings();
+		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(Requirement.required, "persistence");
+		this.logSettings = settings.setLoggerArg(Requirement.required);
+		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.required);
 		
-		settings.parseArguments();
+		settings.parse();
 	}
 	
-	Persons(final PersistenceUtil util) {
+	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException {
 		super(new PersonsSettings());
-		this.threadPool = new AndamaPool(RepositoryToolchain.class.getSimpleName(), this);
-		final AndamaSettings settings = getSettings();
-		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(false);
-		this.logSettings = settings.setLoggerArg(true);
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+		final Settings settings = getSettings();
+		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.optional);
+		this.logSettings = settings.setLoggerArg(Requirement.required);
 		this.persistenceUtil = util;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
+		settings.parse();
 	}
 	
 	/*
@@ -101,14 +93,4 @@ public class Persons extends AndamaChain {
 		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil, processor);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
-	}
-	
 }

@@ -12,8 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -25,6 +24,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  */
 public class HeavyImpactStrategy extends MappingStrategy {
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy# getDescription()
@@ -34,12 +39,10 @@ public class HeavyImpactStrategy extends MappingStrategy {
 		return "Maps according to the highest confidence given by a MappingEngine.";
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
-	 */
 	@Override
-	public void init() {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/*
@@ -67,17 +70,6 @@ public class HeavyImpactStrategy extends MappingStrategy {
 				mapping.addStrategy(getHandle(), null);
 		}
 		return mapping;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
-	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
 	}
 	
 }

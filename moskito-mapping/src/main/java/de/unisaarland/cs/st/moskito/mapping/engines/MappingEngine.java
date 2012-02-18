@@ -131,15 +131,6 @@ public abstract class MappingEngine extends Node {
 		                                                                              : unknown)), getClass());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.engines", this.getClass().getSimpleName());
-	}
-	
 	/**
 	 * @param from
 	 *            the 'from' entity
@@ -157,22 +148,5 @@ public abstract class MappingEngine extends Node {
 	 * @return an instance of {@link Expression} that represents the support of this engine
 	 */
 	public abstract Expression supported();
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("MappingEngine [class=");
-		builder.append(getClass().getSimpleName());
-		builder.append("registered=");
-		builder.append(isRegistered());
-		builder.append(", initialized=");
-		builder.append(isInitialized());
-		builder.append("]");
-		return builder.toString();
-	}
 	
 }

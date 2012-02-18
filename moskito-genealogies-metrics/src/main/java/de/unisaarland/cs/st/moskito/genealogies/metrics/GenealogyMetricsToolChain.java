@@ -16,21 +16,23 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.arguments.EnumArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.arguments.StringArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
@@ -40,54 +42,45 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.Partitio
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
-public class GenealogyMetricsToolChain extends AndamaChain {
+public class GenealogyMetricsToolChain extends Chain<Settings> {
 	
-	private final GenealogyArguments genealogyArgs;
-	private final AndamaPool         threadPool;
-	private CoreChangeGenealogy      genealogy;
-	private final EnumArgument       granularityArg;
-	private final OutputFileArgument outputFileArgument;
-	private GenealogyMetricSink      genealogyMetricSink;
+	private final GenealogyArguments        genealogyArgs;
+	private final Pool                      threadPool;
+	private CoreChangeGenealogy             genealogy;
+	private final EnumArgument<MetricLevel> granularityArg;
+	private final OutputFileArgument        outputFileArgument;
 	
-	public GenealogyMetricsToolChain(final GenealogySettings settings, final EnumArgument granularityArg,
-	        final GenealogyArguments genealogyArgs) {
-		super(settings);
-		this.threadPool = new AndamaPool(GenealogyMetricsToolChain.class.getSimpleName(), this);
-		this.granularityArg = granularityArg;
-		this.outputFileArgument = new OutputFileArgument(settings, "genealogy.metric.out",
-		                                                 "Filename to write result metric matrix into.", null, true,
-		                                                 true);
-		this.genealogyArgs = genealogyArgs;
-		new StringArgument(
-		                   settings,
-		                   "fix.pattern",
-		                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
-		                   null, true);
-	}
-	
-	public Map<String, Map<String, Double>> getMetricsValues() {
-		if (this.genealogyMetricSink == null) {
-			return new HashMap<String, Map<String, Double>>();
+	public GenealogyMetricsToolChain() {
+		super(new GenealogySettings());
+		final GenealogySettings settings = (GenealogySettings) getSettings();
+		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
+		try {
+			settings.setLoggerArg(Requirement.required);
+			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+			this.granularityArg = new EnumArgument<MetricLevel>(
+			                                                    settings.getRootArgumentSet(),
+			                                                    "genealogy.metric.level",
+			                                                    "The granularity level the metrics should be computed on.",
+			                                                    MetricLevel.CHANGEOPERATION, Requirement.required);
+			this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
+			                                                 "Filename to write result metric matrix into.", null,
+			                                                 Requirement.required, true);
+			new StringArgument(
+			                   settings.getRootArgumentSet(),
+			                   "fix.pattern",
+			                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
+			                   null, Requirement.required);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
 		}
-		return this.genealogyMetricSink.getMetricValues();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		if (Logger.logInfo()) {
-			Logger.info("Terminating threads.");
-		}
-		this.genealogy.getTransactionLayer().close();
-		this.genealogy.close();
+		
 	}
 	
 	@Override
@@ -95,7 +88,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		this.genealogy = this.genealogyArgs.getValue();
 		
 		// allow different genealogy layers
-		final String granularity = this.granularityArg.getValue();
+		final MetricLevel granularity = this.granularityArg.getValue();
 		
 		/*
 		 * we always enable all metrics. Otherwise this would require far too many arguments The idea is to load all
@@ -103,7 +96,7 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		 * the granularity level selected for this run.
 		 */
 		
-		if (granularity.equals("CHANGEOPERATIONPARTITION")) {
+		if (granularity.equals(MetricLevel.CHANGEOPERATIONPARTITION)) {
 			final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
 			                                                                                       this.genealogy,
 			                                                                                       new DefaultPartitionGenerator(
@@ -136,9 +129,8 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 				throw new UnrecoverableError(e);
 			}
 			
-		} else if (granularity.equals("TRANSACTION")) {
-			
-			final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
+		} else if (granularity.equals(MetricLevel.TRANSACTION)) {
+			final TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(this.genealogy);
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
@@ -161,7 +153,6 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 						}
 					}
 				}
-				
 			} catch (final Exception e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -201,7 +192,6 @@ public class GenealogyMetricsToolChain extends AndamaChain {
 		// start a demuxer and a sink that receives all the metric values
 		// and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		this.genealogyMetricSink = new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(),
-		                                                   this.outputFileArgument.getValue());
+		new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(), this.outputFileArgument.getValue());
 	}
 }

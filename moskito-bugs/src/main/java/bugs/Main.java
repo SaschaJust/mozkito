@@ -35,15 +35,19 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			Bugs bugs = new Bugs();
+			final Bugs bugs = new Bugs();
 			bugs.setName(bugs.getClass().getSimpleName());
 			bugs.start();
 			bugs.join();
-		} catch (InterruptedException e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new Shutdown();
+		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	

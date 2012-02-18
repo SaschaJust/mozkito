@@ -28,8 +28,7 @@ package de.unisaarland.cs.st.moskito.infozilla.filters;
 
 import java.util.List;
 
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
+import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
 
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
@@ -37,15 +36,9 @@ import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
  * @author Nicolas Bettenburg
  * 
  */
-public abstract class InfozillaFilter {
+public abstract class InfozillaFilter implements ArgumentProvider {
 	
 	public abstract String getOutputText();
-	
-	public abstract void init();
-	
-	public abstract void register(InfozillaSettings settings,
-	                              InfozillaArguments infozillaArguments,
-	                              boolean isRequired);
 	
 	public abstract List<?> runFilter(String inputText);
 	

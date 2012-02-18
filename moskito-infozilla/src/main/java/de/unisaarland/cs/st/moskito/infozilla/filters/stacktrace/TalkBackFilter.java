@@ -22,8 +22,6 @@ import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.TalkbackEntry;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.TalkbackTrace;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 public class TalkBackFilter extends StackTraceFilter {
 	
@@ -35,25 +33,11 @@ public class TalkBackFilter extends StackTraceFilter {
 	}
 	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void register(final InfozillaSettings settings,
-	                     final InfozillaArguments infozillaArguments,
-	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
 	public List<TalkbackTrace> runFilter(final String inputText) {
 		this.textRemover = new FilterTextRemover(inputText);
 		
-		List<TalkbackTrace> foundTraces = new ArrayList<TalkbackTrace>();
-		List<String> talkbackLines = new ArrayList<String>();
+		final List<TalkbackTrace> foundTraces = new ArrayList<TalkbackTrace>();
+		final List<String> talkbackLines = new ArrayList<String>();
 		
 		/*
 		 * This regular expression can be used to filter TalkBackStacktrace expressions ( ([ \\n\\r]*(?:.*)(?:::)(?:.*)[
@@ -62,38 +46,38 @@ public class TalkBackFilter extends StackTraceFilter {
 		 * \\n\\r]*\\([0-9]x[0-9a-zA-Z]+\\)) (?:[ \\n\\r]*[0-9]x[0-9a-zA-Z]+) ){2,}
 		 */
 		
-		String classmethodline = "([ \\n\\r]*(?:.*)(?:::)(?:.*)[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\])";
-		String methodline = "(?:[ \\n\\r]*.*[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\])";
-		String methodcallline = "([ \\n\\r]*[^ ]*?\\(\\)[ ]*[\\n\\r])";
-		String libraryline = "(?:[ \\n\\r]*.*?\\+[ \\n\\r]*[0-9]x[0-9a-zA-Z]+[ \\n\\r]*\\([0-9]x[0-9a-zA-Z]+\\))";
-		String addressline = "(?:[ \\n\\r]*[0-9]x[0-9a-zA-Z]+)";
+		final String classmethodline = "([ \\n\\r]*(?:.*)(?:::)(?:.*)[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\])";
+		final String methodline = "(?:[ \\n\\r]*.*[ \\n\\r]*\\[.*?,?[ \\n\\r]*line[ \\n\\r]*[0-9]+\\])";
+		final String methodcallline = "([ \\n\\r]*[^ ]*?\\(\\)[ ]*[\\n\\r])";
+		final String libraryline = "(?:[ \\n\\r]*.*?\\+[ \\n\\r]*[0-9]x[0-9a-zA-Z]+[ \\n\\r]*\\([0-9]x[0-9a-zA-Z]+\\))";
+		final String addressline = "(?:[ \\n\\r]*[0-9]x[0-9a-zA-Z]+)";
 		
-		String trace = "^(" + classmethodline + "|" + methodcallline + "|" + methodline + "|" + libraryline + "|"
+		final String trace = "^(" + classmethodline + "|" + methodcallline + "|" + methodline + "|" + libraryline + "|"
 		        + addressline + "){2,}";
 		
 		// Compile the patterns for reuse
-		Pattern p_cml = Pattern.compile("^(" + classmethodline + ")", Pattern.MULTILINE);
-		Pattern p_mcl = Pattern.compile("^(" + methodcallline + ")", Pattern.MULTILINE);
-		Pattern p_ml = Pattern.compile("^(" + methodline + ")", Pattern.MULTILINE);
-		Pattern p_ll = Pattern.compile("^(" + libraryline + ")", Pattern.MULTILINE);
-		Pattern p_al = Pattern.compile("^(" + addressline + ")", Pattern.MULTILINE);
+		final Pattern p_cml = Pattern.compile("^(" + classmethodline + ")", Pattern.MULTILINE);
+		final Pattern p_mcl = Pattern.compile("^(" + methodcallline + ")", Pattern.MULTILINE);
+		final Pattern p_ml = Pattern.compile("^(" + methodline + ")", Pattern.MULTILINE);
+		final Pattern p_ll = Pattern.compile("^(" + libraryline + ")", Pattern.MULTILINE);
+		final Pattern p_al = Pattern.compile("^(" + addressline + ")", Pattern.MULTILINE);
 		Pattern.compile(trace, Pattern.MULTILINE);
-		Regex rptl1 = new Regex(trace, Pattern.MULTILINE);
+		final Regex rptl1 = new Regex(trace, Pattern.MULTILINE);
 		
 		// Find all talkback lines
-		List<List<RegexGroup>> list = rptl1.findAll(inputText);
-		for (List<RegexGroup> matches : list) {
+		final List<List<RegexGroup>> list = rptl1.findAll(inputText);
+		for (final List<RegexGroup> matches : list) {
 			talkbackLines.add(matches.get(0).getMatch().trim());
 			this.textRemover.markForDeletion(matches.get(0).start(), matches.get(0).end());
 		}
 		
 		// From each set of talkback lines create a talkback trace
-		for (String line : talkbackLines) {
+		for (final String line : talkbackLines) {
 			String tmp = line;
 			boolean hasMore = true;
 			Matcher m = null;
 			
-			List<TalkbackEntry> entries = new ArrayList<TalkbackEntry>();
+			final List<TalkbackEntry> entries = new ArrayList<TalkbackEntry>();
 			while (hasMore) {
 				// We assume there are no more talkback lines. If there are
 				// matches this will be set to true.
@@ -104,11 +88,11 @@ public class TalkBackFilter extends StackTraceFilter {
 				if (m.find()) {
 					if (m.start() == 0) {
 						// Format the line
-						String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
+						final String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
 						// Split into name and location
-						String[] info = tbline.split("\\[");
-						TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\]", ""),
-						                                          TalkbackEntry.CLASSMETHODLINE);
+						final String[] info = tbline.split("\\[");
+						final TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\]", ""),
+						                                                TalkbackEntry.CLASSMETHODLINE);
 						
 						// Add the entry to the talkback entries list
 						entries.add(anEntry);
@@ -128,9 +112,9 @@ public class TalkBackFilter extends StackTraceFilter {
 				if (m.find()) {
 					if (m.start() == 0) {
 						// Format the line
-						String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
+						final String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
 						
-						TalkbackEntry anEntry = new TalkbackEntry(tbline, tbline, TalkbackEntry.ADDRESSLINE);
+						final TalkbackEntry anEntry = new TalkbackEntry(tbline, tbline, TalkbackEntry.ADDRESSLINE);
 						
 						// Add the entry to the talkback entries list
 						entries.add(anEntry);
@@ -150,9 +134,9 @@ public class TalkBackFilter extends StackTraceFilter {
 				if (m.find()) {
 					if (m.start() == 0) {
 						// Format the line
-						String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
+						final String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
 						
-						TalkbackEntry anEntry = new TalkbackEntry(tbline, "", TalkbackEntry.METHODCALLLINE);
+						final TalkbackEntry anEntry = new TalkbackEntry(tbline, "", TalkbackEntry.METHODCALLLINE);
 						
 						// Add the entry to the talkback entries list
 						entries.add(anEntry);
@@ -172,12 +156,12 @@ public class TalkBackFilter extends StackTraceFilter {
 				if (m.find()) {
 					if (m.start() == 0) {
 						// Format the line
-						String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
+						final String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
 						
 						// Split into name and location
-						String[] info = tbline.split("\\[");
-						TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\]", ""),
-						                                          TalkbackEntry.METHODLINE);
+						final String[] info = tbline.split("\\[");
+						final TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\]", ""),
+						                                                TalkbackEntry.METHODLINE);
 						
 						// Add the entry to the talkback entries list
 						entries.add(anEntry);
@@ -197,12 +181,12 @@ public class TalkBackFilter extends StackTraceFilter {
 				if (m.find()) {
 					if (m.start() == 0) {
 						// Format the line
-						String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
+						final String tbline = m.group().replaceAll("[\\n\\r]", "").trim();
 						
 						// Split into name and location
-						String[] info = tbline.split("\\(");
-						TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\)", ""),
-						                                          TalkbackEntry.LIBRARYLINE);
+						final String[] info = tbline.split("\\(");
+						final TalkbackEntry anEntry = new TalkbackEntry(info[0], info[1].replaceAll("\\)", ""),
+						                                                TalkbackEntry.LIBRARYLINE);
 						
 						// Add the entry to the talkback entries list
 						entries.add(anEntry);
@@ -219,7 +203,7 @@ public class TalkBackFilter extends StackTraceFilter {
 				}
 			}
 			if (entries.size() > 0) {
-				TalkbackTrace tbTrace = new TalkbackTrace(entries);
+				final TalkbackTrace tbTrace = new TalkbackTrace(entries);
 				foundTraces.add(tbTrace);
 			}
 		}

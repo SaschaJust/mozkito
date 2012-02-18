@@ -15,6 +15,7 @@
  */
 package ppa;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.PPAToolChain;
 
@@ -33,20 +34,21 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			PPAToolChain toolChain = new PPAToolChain();
+			final PPAToolChain toolChain = new PPAToolChain();
 			toolChain.setName(toolChain.getClass().getSimpleName());
 			toolChain.start();
 			toolChain.join();
 			if (Logger.logInfo()) {
 				Logger.info("PPA.Main: All done. cerio!");
 			}
-		} catch (InterruptedException e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
+		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
-		// ReposuiteDeltaInfo core = new ReposuiteDeltaInfo();
-		// core.run();
 	}
 }

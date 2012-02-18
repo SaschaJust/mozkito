@@ -51,10 +51,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * The Class JiraTracker.
@@ -268,59 +268,75 @@ public class JiraTracker extends Tracker {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
+	 */
+	@Override
+	public Parser getParser() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return new JiraParser();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	// /*
+	// * (non-Javadoc)
+	// * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
+	// * .cs.st.reposuite.bugs.tracker.XmlReport)
+	// */
+	// @Override
+	// @NoneNull
+	// public Report parse(final XmlReport rawReport) {
+	//
+	// if (Logger.logInfo()) {
+	// Logger.info("Parsing report with id `" + rawReport.getId() + "` ... ");
+	// }
+	//
+	// final Report bugReport = new Report(rawReport.getId());
+	// final Element itemElement = getRootElement(rawReport);
+	// JiraXMLParser.handleRoot(bugReport, itemElement, this);
+	// bugReport.setLastFetch(rawReport.getFetchTime());
+	// bugReport.setHash(rawReport.getMd5());
+	//
+	// // parse history
+	// final String historyUrl = getHistoryURL(rawReport.getUri());
+	// if (historyUrl.equals(rawReport.getUri().toString())) {
+	// if (Logger.logWarn()) {
+	// Logger.warn("Could not fetch jira report history: could not create neccessary url.");
+	// }
+	// } else {
+	// try {
+	// final URI historyUri = new URI(historyUrl);
+	// JiraXMLParser.handleHistory(historyUri, bugReport);
+	// } catch (final Exception e) {
+	// if (Logger.logError()) {
+	// if (bugReport.getId() == -1) {
+	// Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
+	// } else {
+	// Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
+	// + "`. Used uri =`" + historyUrl + "`.");
+	// }
+	// Logger.error(e.getMessage(), e);
+	// }
+	// }
+	// }
+	// if (Logger.logInfo()) {
+	// Logger.info("done");
+	// }
+	//
+	// return bugReport;
+	// }
+	
 	@NoneNull
 	protected Element getRootElement(final XmlReport rawReport) {
 		Element itemElement = rawReport.getDocument().getRootElement();
 		itemElement = itemElement.getChild("channel", itemElement.getNamespace());
 		return itemElement.getChild("item", itemElement.getNamespace());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
-	 */
-	@Override
-	@NoneNull
-	public Report parse(final XmlReport rawReport) {
-		
-		if (Logger.logInfo()) {
-			Logger.info("Parsing report with id `" + rawReport.getId() + "` ... ");
-		}
-		
-		final Report bugReport = new Report(rawReport.getId());
-		final Element itemElement = getRootElement(rawReport);
-		JiraXMLParser.handleRoot(bugReport, itemElement, this);
-		bugReport.setLastFetch(rawReport.getFetchTime());
-		bugReport.setHash(rawReport.getMd5());
-		
-		// parse history
-		final String historyUrl = getHistoryURL(rawReport.getUri());
-		if (historyUrl.equals(rawReport.getUri().toString())) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not fetch jira report history: could not create neccessary url.");
-			}
-		} else {
-			try {
-				final URI historyUri = new URI(historyUrl);
-				JiraXMLParser.handleHistory(historyUri, bugReport);
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					if (bugReport.getId() == -1) {
-						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + historyUrl + "`.");
-					} else {
-						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-						        + "`. Used uri =`" + historyUrl + "`.");
-					}
-					Logger.error(e.getMessage(), e);
-				}
-			}
-		}
-		if (Logger.logInfo()) {
-			Logger.info("done");
-		}
-		
-		return bugReport;
 	}
 	
 	/*

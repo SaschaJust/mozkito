@@ -42,8 +42,6 @@ import net.ownhero.dev.regex.RegexGroup;
 import com.Ostermiller.util.CSVParser;
 
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaArguments;
-import de.unisaarland.cs.st.moskito.infozilla.settings.InfozillaSettings;
 
 /**
  * The JavaSourceCodeFilter class implements the InfozillaFilter interface for JAVA source code structural elements.
@@ -62,18 +60,18 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 */
 	public static List<CodeRegion> makeMinimalSet(final List<CodeRegion> regionList) {
 		// Create a copy of the Code Region List
-		List<CodeRegion> sortedRegionList = new ArrayList<CodeRegion>(regionList);
+		final List<CodeRegion> sortedRegionList = new ArrayList<CodeRegion>(regionList);
 		// Sort it Ascending (by start position)
 		java.util.Collections.sort(sortedRegionList);
 		// This will hold the minimal set
-		List<CodeRegion> minimalSet = new ArrayList<CodeRegion>();
+		final List<CodeRegion> minimalSet = new ArrayList<CodeRegion>();
 		
 		// For each Element, see if it is contained in any previous element
 		for (int i = 0; i < sortedRegionList.size(); i++) {
-			CodeRegion thisRegion = sortedRegionList.get(i);
+			final CodeRegion thisRegion = sortedRegionList.get(i);
 			boolean contained = false;
 			for (int j = 0; j < i; j++) {
-				CodeRegion thatRegion = sortedRegionList.get(j);
+				final CodeRegion thatRegion = sortedRegionList.get(j);
 				if (thatRegion.end >= thisRegion.end) {
 					contained = true;
 				}
@@ -113,7 +111,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		this.codePatternOptions = new HashMap<String, String>();
 		try {
 			readCodePatterns(filename);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("Error while reading Java Source Code Patterns!");
 			e.printStackTrace();
 		}
@@ -130,7 +128,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		this.codePatternOptions = new HashMap<String, String>();
 		try {
 			readCodePatterns(fileurl.openStream());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("Error while reading Java Source Code Patterns!");
 			e.printStackTrace();
 		}
@@ -143,10 +141,10 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	                      final char opening,
 	                      final char closing,
 	                      final int start) {
-		String region = where.substring(start);
+		final String region = where.substring(start);
 		int level = 0;
 		int position = 0;
-		for (char c : region.toCharArray()) {
+		for (final char c : region.toCharArray()) {
 			position = position + 1;
 			if (c == opening) {
 				level = level + 1;
@@ -171,30 +169,31 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 */
 	private List<CodeRegion> getCodeRegions(final String s,
 	                                        final boolean minimalSet) {
-		List<CodeRegion> codeRegions = new ArrayList<CodeRegion>();
+		final List<CodeRegion> codeRegions = new ArrayList<CodeRegion>();
 		// for each keyword-pattern pair find the corresponding occurences!
-		for (String keyword : this.codePatterns.keySet()) {
+		for (final String keyword : this.codePatterns.keySet()) {
 			this.codePatterns.get(keyword);
-			String patternOptions = this.codePatternOptions.get(keyword);
+			final String patternOptions = this.codePatternOptions.get(keyword);
 			if (patternOptions.contains("MATCH")) {
-				Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
-				List<List<RegexGroup>> list = regex.findAll(s);
+				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				final List<List<RegexGroup>> list = regex.findAll(s);
 				
-				for (List<RegexGroup> matches : list) {
-					int offset = findMatch(s, '{', '}', matches.get(0).end());
-					CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end() + offset,
-					                                        keyword, s.substring(matches.get(0).start(), matches.get(0)
-					                                                                                            .end()
-					                                                + offset));
+				for (final List<RegexGroup> matches : list) {
+					final int offset = findMatch(s, '{', '}', matches.get(0).end());
+					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(),
+					                                              matches.get(0).end() + offset, keyword,
+					                                              s.substring(matches.get(0).start(), matches.get(0)
+					                                                                                         .end()
+					                                                      + offset));
 					codeRegions.add(foundRegion);
 				}
 			} else {
-				Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
-				List<List<RegexGroup>> list = regex.findAll(s);
+				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
+				final List<List<RegexGroup>> list = regex.findAll(s);
 				
-				for (List<RegexGroup> matches : list) {
-					CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end(), keyword,
-					                                        matches.get(0).getMatch());
+				for (final List<RegexGroup> matches : list) {
+					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end(),
+					                                              keyword, matches.get(0).getMatch());
 					codeRegions.add(foundRegion);
 				}
 			}
@@ -213,12 +212,6 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		return this.textRemover.doDelete();
 	}
 	
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	/**
 	 * Read in some Code Patterns from an input stream name {@link instream}
 	 * 
@@ -228,7 +221,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *             if something goes wrong with I/O
 	 */
 	private void readCodePatterns(final InputStream instream) throws Exception {
-		BufferedReader fileInput = new BufferedReader(new InputStreamReader(instream));
+		final BufferedReader fileInput = new BufferedReader(new InputStreamReader(instream));
 		// Read patterns from the file
 		String inputLine = null;
 		while ((inputLine = fileInput.readLine()) != null) {
@@ -236,17 +229,17 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			// A line can be commented out by using //
 			if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
 				// we use Ostermillers CSV Parser for sake of ease
-				String[][] parsedLine = CSVParser.parse(inputLine);
-				String keyword = parsedLine[0][0];
-				String pattern = parsedLine[0][1];
+				final String[][] parsedLine = CSVParser.parse(inputLine);
+				final String keyword = parsedLine[0][0];
+				final String pattern = parsedLine[0][1];
 				// Check if we have some options
 				if (parsedLine[0].length == 3) {
-					String options = parsedLine[0][2];
+					final String options = parsedLine[0][2];
 					this.codePatternOptions.put(keyword, options);
 				} else {
 					this.codePatternOptions.put(keyword, "");
 				}
-				Pattern somePattern = Pattern.compile(pattern);
+				final Pattern somePattern = Pattern.compile(pattern);
 				this.codePatterns.put(keyword, somePattern);
 			}
 		}
@@ -261,7 +254,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *             if there did something go wrong with I/O
 	 */
 	private void readCodePatterns(final String filename) throws Exception {
-		BufferedReader fileInput = new BufferedReader(new FileReader(filename));
+		final BufferedReader fileInput = new BufferedReader(new FileReader(filename));
 		// Read patterns from the file
 		String inputLine = null;
 		while ((inputLine = fileInput.readLine()) != null) {
@@ -269,28 +262,20 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			// A line can be commented out by using //
 			if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
 				// we use ostermillers CSV Parser for sake of ease
-				String[][] parsedLine = CSVParser.parse(inputLine);
-				String keyword = parsedLine[0][0];
-				String pattern = parsedLine[0][1];
+				final String[][] parsedLine = CSVParser.parse(inputLine);
+				final String keyword = parsedLine[0][0];
+				final String pattern = parsedLine[0][1];
 				// Check if we have some options
 				if (parsedLine[0].length == 3) {
-					String options = parsedLine[0][2];
+					final String options = parsedLine[0][2];
 					this.codePatternOptions.put(keyword, options);
 				} else {
 					this.codePatternOptions.put(keyword, "");
 				}
-				Pattern somePattern = Pattern.compile(pattern);
+				final Pattern somePattern = Pattern.compile(pattern);
 				this.codePatterns.put(keyword, somePattern);
 			}
 		}
-	}
-	
-	@Override
-	public void register(final InfozillaSettings settings,
-	                     final InfozillaArguments infozillaArguments,
-	                     final boolean isRequired) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -302,10 +287,10 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		// want the minimal set
 		// which means the outer most syntactical elements spanning all the
 		// discovered code.
-		List<CodeRegion> codeRegions = getCodeRegions(inputText, true);
+		final List<CodeRegion> codeRegions = getCodeRegions(inputText, true);
 		
 		// Mark the found Regions for deletion
-		for (CodeRegion region : codeRegions) {
+		for (final CodeRegion region : codeRegions) {
 			this.textRemover.markForDeletion(region.start, region.end);
 		}
 		

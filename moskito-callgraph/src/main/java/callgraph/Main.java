@@ -15,6 +15,7 @@
  */
 package callgraph;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.callgraph.CallGraphToolChain;
 
@@ -28,13 +29,17 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		CallGraphToolChain toolChain = new CallGraphToolChain();
-		// toolChain.setName(toolChain.getClass().getSimpleName());
-		// toolChain.start();
-		// toolChain.join();
-		toolChain.run();
-		if (Logger.logInfo()) {
-			Logger.info("PPA.Main: All done. cerio!");
+		CallGraphToolChain toolChain;
+		try {
+			toolChain = new CallGraphToolChain();
+			toolChain.run();
+			if (Logger.logInfo()) {
+				Logger.info("PPA.Main: All done. cerio!");
+			}
+		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 }

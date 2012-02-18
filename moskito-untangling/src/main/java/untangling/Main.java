@@ -15,6 +15,8 @@
  */
 package untangling;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 
 /**
@@ -31,8 +33,19 @@ public class Main {
 	 *            the arguments
 	 */
 	public static void main(final String[] args) {
-		Untangling untangling = new Untangling();
-		untangling.run();
+		Untangling untangling;
+		try {
+			untangling = new Untangling();
+			untangling.run();
+			if (Logger.logInfo()) {
+				Logger.info("All done. Cerio.");
+			}
+		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException(e);
+		}
 	}
 	
 }

@@ -27,8 +27,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.requirements.Optional;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
 
@@ -55,8 +59,8 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 public class MappingEngineTest {
 	
@@ -126,71 +130,70 @@ public class MappingEngineTest {
 		transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
 		                                               "Fixing bug 84698384.",
 		                                               new DateTime(2012, 01, 16, 19, 32, 12, 0), developer,
-		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938", null);
+		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
+		                                               new BranchFactory(null));
 		mappableTransaction = new MappableTransaction(transaction);
 	}
 	
-	MappingArguments    arguments;
-	MappingSettings     settings;
-	static final String chainName = "test";
+	MappingArguments                  arguments;
+	MappingSettings                   settings;
+	static final String               chainName = "test";
+	private Collection<MappingEngine> engines;
 	
 	@Before
-	public void setup() {
+	public void setup() throws ArgumentRegistrationException, SettingsParseError {
 		final Properties properties = System.getProperties();
 		properties.put(chainName + ".engines", "BackrefEngine");
 		properties.put(chainName + ".engine.backref.confidence", "1.0");
 		System.setProperties(properties);
 		
 		this.settings = new MappingSettings();
-		this.arguments = new MappingArguments(new AndamaChain(this.settings, chainName) {
-			
-			@Override
-			public void setup() {
-				// TODO Auto-generated method stub
-				
-			}
-		}, this.settings, true);
-		this.settings.parseArguments();
+		this.settings.setMappingArgs(this.settings.getRootArgumentSet(), new Optional());
+		
+		this.engines = ArgumentSet.provideDynamicArguments(this.settings.getRootArgumentSet(), MappingEngine.class,
+		                                                   "bleh", Requirement.required, null, "mapping", "engines",
+		                                                   true);
+		
+		this.settings.parse();
 		
 		score = new Mapping(mappableReport, mappableTransaction);
 	}
 	
 	@Test (expected = UnrecoverableError.class)
-	@DatabaseSettings (unit = "mapping")
 	public void testBackrefEngine() {
-		final BackrefEngine engine = new BackrefEngine();
-		System.err.println(this.settings.toString());
-		
-		engine.register(this.settings, this.arguments);
-		engine.init();
-		
-		engine.score(mappableReport, mappableTransaction, score);
-		MappingEngineFeature feature = score.getFeatures().iterator().next();
-		double confidence = feature.getConfidence();
-		System.err.println(confidence);
-		System.err.println(engine.getScoreBackRef());
-		System.err.println(feature.getReportFieldName());
-		System.err.println(feature.getReportSubstring());
-		System.err.println(feature.getTransactionFieldName());
-		System.err.println(feature.getTransactionSubstring());
-		assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
-		
-		score = new Mapping(mappableTransaction, mappableReport);
-		engine.score(mappableTransaction, mappableReport, score);
-		feature = score.getFeatures().iterator().next();
-		confidence = feature.getConfidence();
-		System.err.println(confidence);
-		System.err.println(engine.getScoreBackRef());
-		System.err.println(feature.getReportFieldName());
-		System.err.println(feature.getReportSubstring());
-		System.err.println(feature.getTransactionFieldName());
-		System.err.println(feature.getTransactionSubstring());
-		assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
+		for (final MappingEngine mEngine : this.engines) {
+			if (mEngine.getHandle().equals(BackrefEngine.class.getSimpleName())) {
+				final BackrefEngine engine = new BackrefEngine();
+				System.err.println(this.settings.toString());
+				
+				engine.score(mappableReport, mappableTransaction, score);
+				MappingEngineFeature feature = score.getFeatures().iterator().next();
+				double confidence = feature.getConfidence();
+				System.err.println(confidence);
+				System.err.println(engine.getScoreBackRef());
+				System.err.println(feature.getReportFieldName());
+				System.err.println(feature.getReportSubstring());
+				System.err.println(feature.getTransactionFieldName());
+				System.err.println(feature.getTransactionSubstring());
+				assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
+				
+				score = new Mapping(mappableTransaction, mappableReport);
+				engine.score(mappableTransaction, mappableReport, score);
+				feature = score.getFeatures().iterator().next();
+				confidence = feature.getConfidence();
+				System.err.println(confidence);
+				System.err.println(engine.getScoreBackRef());
+				System.err.println(feature.getReportFieldName());
+				System.err.println(feature.getReportSubstring());
+				System.err.println(feature.getTransactionFieldName());
+				System.err.println(feature.getTransactionSubstring());
+				assertEquals("Confidence differes from expected (match).", engine.getScoreBackRef(), confidence, 0.0001);
+			}
+		}
 	}
 	
 	@SuppressWarnings ({ "deprecation", "serial" })
 	@Test
-	@DatabaseSettings (unit = "mapping")
 	public void testSupported() {
 		int failed = 0;
 		final Set<Class<? extends MappableEntity>> mappableClasses = new HashSet<Class<? extends MappableEntity>>();

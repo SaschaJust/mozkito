@@ -30,11 +30,11 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			Persons persons = new Persons();
+			final Persons persons = new Persons();
 			persons.setName(persons.getClass().getSimpleName());
 			persons.start();
 			persons.join();
-		} catch (InterruptedException e) {
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

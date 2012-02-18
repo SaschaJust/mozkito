@@ -15,8 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -24,9 +24,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerVoidSink extends AndamaSink<Report> {
+public class TrackerVoidSink extends Sink<Report> {
 	
-	public TrackerVoidSink(final AndamaGroup threadGroup, final TrackerSettings settings) {
+	public TrackerVoidSink(final Group threadGroup, final TrackerSettings settings) {
 		super(threadGroup, settings, false);
 	}
 	

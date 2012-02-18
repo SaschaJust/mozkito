@@ -25,15 +25,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * The Class IssuezillaTracker.
@@ -59,23 +58,23 @@ public class IssuezillaTracker extends Tracker {
 	 */
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
-		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			Document document = saxBuilder.build(reader);
+			final Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
-		} catch (TransformerFactoryConfigurationError e) {
+		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (JDOMException e) {
+		} catch (final JDOMException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -83,22 +82,37 @@ public class IssuezillaTracker extends Tracker {
 		return null;
 	}
 	
+	// /*
+	// * (non-Javadoc)
+	// * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
+	// * .cs.st.reposuite.bugs.tracker.XmlReport)
+	// */
+	// @Override
+	// public Report parse(final XmlReport rawReport) {
+	// Report bugReport = new Report(rawReport.getId());
+	//
+	// Element itemElement = rawReport.getDocument().getRootElement().getChild("issue");
+	//
+	// IssuezillaXMLParser.handleRoot(bugReport, itemElement, this, rawReport.getUri());
+	// bugReport.setLastFetch(rawReport.getFetchTime());
+	// bugReport.setHash(rawReport.getMd5());
+	//
+	// return bugReport;
+	// }
+	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Report parse(final XmlReport rawReport) {
-		Report bugReport = new Report(rawReport.getId());
+	public Parser getParser() {
+		// PRECONDITIONS
 		
-		Element itemElement = rawReport.getDocument().getRootElement().getChild("issue");
-		
-		IssuezillaXMLParser.handleRoot(bugReport, itemElement, this, rawReport.getUri());
-		bugReport.setLastFetch(rawReport.getFetchTime());
-		bugReport.setHash(rawReport.getMd5());
-		
-		return bugReport;
+		try {
+			return new IssuezillaParser();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

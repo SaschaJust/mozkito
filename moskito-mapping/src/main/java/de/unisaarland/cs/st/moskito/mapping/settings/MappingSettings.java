@@ -12,22 +12,41 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.ArgumentSet;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
+import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingSettings extends TrackerSettings {
+public class MappingSettings extends Settings {
+	
+	/**
+	 * Add the settings set for the database.
+	 * 
+	 * @param isRequired
+	 *            Set to <code>true</code> if the database settings required.
+	 * @return
+	 * @throws ArgumentRegistrationException
+	 * @throws DuplicateArgumentException
+	 */
+	public DatabaseArguments setDatabaseArgs(final Requirement requirement,
+	                                         final String unit) throws ArgumentRegistrationException {
+		final DatabaseArguments minerDatabaseArguments = new DatabaseArguments(getRootArgumentSet(), requirement, unit);
+		return minerDatabaseArguments;
+	}
 	
 	/**
 	 * @param isRequired
 	 * @return
+	 * @throws ArgumentRegistrationException
 	 */
-	public MappingArguments setMappingArgs(final AndamaChain chain,
-	                                       final boolean isRequired) {
-		final MappingArguments mappingArguments = new MappingArguments(chain, this, isRequired);
+	public MappingArguments setMappingArgs(final ArgumentSet<?> set,
+	                                       final Requirement requirement) throws ArgumentRegistrationException {
+		final MappingArguments mappingArguments = new MappingArguments(set, requirement);
 		return mappingArguments;
 	}
 	

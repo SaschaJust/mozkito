@@ -3,9 +3,9 @@
  */
 package de.unisaarland.cs.st.moskito.mapping;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -14,14 +14,14 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class CandidatesConverter extends AndamaTransformer<Candidate, Mapping> {
+public class CandidatesConverter extends Transformer<Candidate, Mapping> {
 	
 	/**
 	 * @param threadGroup
 	 * @param settings
 	 * @param parallelizable
 	 */
-	public CandidatesConverter(final AndamaGroup threadGroup, final AndamaSettings settings) {
+	public CandidatesConverter(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<Candidate, Mapping>(this) {

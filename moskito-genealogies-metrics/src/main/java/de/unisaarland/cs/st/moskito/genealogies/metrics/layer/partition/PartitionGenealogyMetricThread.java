@@ -19,20 +19,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 
-public class PartitionGenealogyMetricThread extends AndamaTransformer<GenealogyPartitionNode, GenealogyMetricValue> {
+public class PartitionGenealogyMetricThread extends Transformer<GenealogyPartitionNode, GenealogyMetricValue> {
 	
 	Iterator<GenealogyMetricValue>                             iter              = null;
 	static private Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
 	
-	public PartitionGenealogyMetricThread(AndamaGroup threadGroup, AndamaSettings settings,
+	public PartitionGenealogyMetricThread(Group threadGroup, Settings settings,
 	        final GenealogyPartitionMetric metric) {
 		super(threadGroup, settings, false);
 		

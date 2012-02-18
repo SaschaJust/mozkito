@@ -15,6 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.persons.settings;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -26,9 +28,10 @@ public class PersonsSettings extends RepositorySettings {
 	/**
 	 * @param isRequired
 	 * @return
+	 * @throws ArgumentRegistrationException
 	 */
-	public PersonsArguments setPersonsArgs(final boolean isRequired) {
-		PersonsArguments personsArguments = new PersonsArguments(this, isRequired);
+	public PersonsArguments setPersonsArgs(final Requirement requirement) throws ArgumentRegistrationException {
+		final PersonsArguments personsArguments = new PersonsArguments(getRootArgumentSet(), requirement);
 		return personsArguments;
 	}
 	

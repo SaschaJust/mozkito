@@ -15,6 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -23,8 +25,8 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class TrackerSettings extends RepositorySettings {
 	
-	public TrackerArguments setTrackerArgs(final boolean isRequired) {
-		TrackerArguments trackerArguments = new TrackerArguments(this, isRequired);
+	public TrackerArguments setTrackerArgs(final Requirement requirement) throws ArgumentRegistrationException {
+		final TrackerArguments trackerArguments = new TrackerArguments(getRootArgumentSet(), requirement);
 		return trackerArguments;
 	}
 	

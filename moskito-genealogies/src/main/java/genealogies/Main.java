@@ -15,7 +15,9 @@
  */
 package genealogies;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.GenealogyToolChain;
 
 /**
@@ -32,8 +34,18 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		GenealogyToolChain genealogies = new GenealogyToolChain();
-		genealogies.run();
+		GenealogyToolChain genealogies;
+		try {
+			genealogies = new GenealogyToolChain();
+			genealogies.run();
+			if (Logger.logInfo()) {
+				Logger.info("All done. Cerio.");
+			}
+		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new RuntimeException(e);
+		}
 	}
-	
 }

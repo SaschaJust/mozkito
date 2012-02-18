@@ -12,8 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -21,6 +20,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
  * 
  */
 public class SVMStrategy extends MappingStrategy {
+	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -31,13 +36,10 @@ public class SVMStrategy extends MappingStrategy {
 		return "Maps according to the trained model on known mappings with the given feature vectors from the MappingEngines.";
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
-	 */
 	@Override
-	public void init() {
-		
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/**
@@ -56,18 +58,6 @@ public class SVMStrategy extends MappingStrategy {
 	@Override
 	public Mapping map(final Mapping mapping) {
 		return mapping;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
-	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		
 	}
 	
 }

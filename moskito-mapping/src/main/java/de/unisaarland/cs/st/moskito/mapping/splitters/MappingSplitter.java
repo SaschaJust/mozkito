@@ -31,32 +31,6 @@ public abstract class MappingSplitter extends Node {
 	@Override
 	public abstract String getDescription();
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return isEnabled("mapping.splitters", this.getClass().getSimpleName());
-	}
-	
 	public abstract List<Annotated> process(PersistenceUtil util);
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("MappingSplitter [settings=");
-		builder.append(getSettings());
-		builder.append(", initialized=");
-		builder.append(isInitialized());
-		builder.append(", registered=");
-		builder.append(isRegistered());
-		builder.append("]");
-		return builder.toString();
-	}
 	
 }

@@ -12,8 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -31,7 +33,13 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class AuthorEqualityEngine extends MappingEngine {
 	
-	private double scoreAuthorEquality = 0.2d;
+	private double         scoreAuthorEquality = 0.2d;
+	private DoubleArgument confidenceArgument;
+	
+	@Override
+	public void afterParse() {
+		setScoreAuthorEquality(this.confidenceArgument.getValue());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -52,25 +60,15 @@ public class AuthorEqualityEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setScoreAuthorEquality((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
-	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Score for equal authors in transaction and report comments.", this.scoreAuthorEquality
-		                             + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new DoubleArgument(set, "confidence",
+		                                             "Score for equal authors in transaction and report comments.",
+		                                             this.scoreAuthorEquality + "", Requirement.required);
+		return true;
 	}
 	
 	/*

@@ -15,8 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerPersister extends AndamaSink<Report> {
+public class TrackerPersister extends Sink<Report> {
 	
 	private Integer i = 0;
 	
@@ -38,7 +38,7 @@ public class TrackerPersister extends AndamaSink<Report> {
 	 * @param threadGroup
 	 * @param persistenceUtil
 	 */
-	public TrackerPersister(final AndamaGroup threadGroup, final TrackerSettings settings, final Tracker tracker,
+	public TrackerPersister(final Group threadGroup, final TrackerSettings settings, final Tracker tracker,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		

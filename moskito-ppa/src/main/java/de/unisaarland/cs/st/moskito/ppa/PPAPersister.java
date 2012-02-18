@@ -5,9 +5,9 @@ package de.unisaarland.cs.st.moskito.ppa;
 
 import java.util.concurrent.Semaphore;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -19,13 +19,13 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PPAPersister extends AndamaSink<JavaChangeOperation> {
+public class PPAPersister extends Sink<JavaChangeOperation> {
 	
 	protected static final Semaphore available = new Semaphore(1, true);
 	
 	private Integer                  i         = 0;
 	
-	public PPAPersister(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil) {
+	public PPAPersister(Group threadGroup, Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {

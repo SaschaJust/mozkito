@@ -14,8 +14,7 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import java.util.Queue;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -24,6 +23,12 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  * 
  */
 public class LoneWarriorStrategy extends MappingStrategy {
+	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -36,11 +41,13 @@ public class LoneWarriorStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.Registered#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/*
@@ -62,18 +69,6 @@ public class LoneWarriorStrategy extends MappingStrategy {
 		mapping.addStrategy(getHandle(), valid);
 		
 		return mapping;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.registerable.Registered#register(net.ownhero.dev.andama.settings.AndamaSettings,
-	 * net.ownhero.dev.andama.settings.AndamaArgumentSet)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		
 	}
 	
 }

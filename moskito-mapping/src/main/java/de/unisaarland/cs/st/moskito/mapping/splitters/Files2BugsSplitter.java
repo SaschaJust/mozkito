@@ -17,8 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -33,6 +33,12 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
  */
 public class Files2BugsSplitter extends MappingSplitter {
 	
+	@Override
+	public void afterParse() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter# getDescription()
@@ -43,9 +49,9 @@ public class Files2BugsSplitter extends MappingSplitter {
 	}
 	
 	@Override
-	public void init() {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	
 	/*
@@ -90,13 +96,6 @@ public class Files2BugsSplitter extends MappingSplitter {
 		}
 		
 		return ret;
-	}
-	
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

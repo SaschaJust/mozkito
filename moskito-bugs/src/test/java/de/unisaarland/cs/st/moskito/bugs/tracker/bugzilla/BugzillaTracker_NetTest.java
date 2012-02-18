@@ -89,8 +89,10 @@ public class BugzillaTracker_NetTest {
 			e.printStackTrace();
 			fail();
 		}
+		
+		final BugzillaParser parser = new BugzillaParser();
 		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Element rootElement = tracker.getRootElement(xmlReport);
+		final Element rootElement = parser.getRootElement(xmlReport);
 		final List<AttachmentEntry> attachments = BugzillaXMLParser.extractAttachments(rootElement, tracker);
 		assertEquals(11, attachments.size());
 		

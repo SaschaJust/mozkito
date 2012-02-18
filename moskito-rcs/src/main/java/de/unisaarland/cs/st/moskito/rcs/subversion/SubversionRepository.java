@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -273,7 +273,9 @@ public class SubversionRepository extends Repository {
 				return null;
 			}
 			final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
-			if (!checkedOutFile.exists()) { return null; }
+			if (!checkedOutFile.exists()) {
+				return null;
+			}
 			final List<String> lines = FileUtils.fileToLines(checkedOutFile);
 			final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
 			return patch.getDeltas();
@@ -324,7 +326,7 @@ public class SubversionRepository extends Repository {
 						default:
 							if (Logger.logError()) {
 								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
-								        + AndamaSettings.reportThis);
+								        + Settings.getReportThis());
 							}
 					}
 				}
@@ -451,7 +453,7 @@ public class SubversionRepository extends Repository {
 	@Override
 	public RevDependencyIterator getRevDependencyIterator() {
 		if (Logger.logError()) {
-			Logger.error("Support hasn't been implemented yet. " + AndamaSettings.reportThis);
+			Logger.error("Support hasn't been implemented yet. " + Settings.getReportThis());
 		}
 		throw new RuntimeException();
 	}
@@ -588,7 +590,7 @@ public class SubversionRepository extends Repository {
 		this.username = username;
 		this.password = password;
 		
-		if (AndamaSettings.debug) {
+		if (Logger.logDebug()) {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
 		

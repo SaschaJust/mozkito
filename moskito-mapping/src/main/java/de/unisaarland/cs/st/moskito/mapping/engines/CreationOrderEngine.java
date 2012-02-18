@@ -12,8 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 
 import org.joda.time.DateTime;
 
@@ -31,7 +33,17 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class CreationOrderEngine extends MappingEngine {
 	
-	private double scoreReportCreatedAfterTransaction = -1d;
+	private double         scoreReportCreatedAfterTransaction = -1d;
+	private DoubleArgument confidenceArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setScoreReportCreatedAfterTransaction(this.confidenceArgument.getValue());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -51,25 +63,15 @@ public class CreationOrderEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		setScoreReportCreatedAfterTransaction((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet<?> arguments) {
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Score in case the report was created after the transaction.",
-		                     this.scoreReportCreatedAfterTransaction + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new DoubleArgument(set, "condifence",
+		                                             "Score in case the report was created after the transaction.",
+		                                             this.scoreReportCreatedAfterTransaction + "", Requirement.required);
+		return true;
 	}
 	
 	/*

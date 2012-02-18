@@ -15,6 +15,7 @@
  */
 package changecouplings;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplings;
 
@@ -28,11 +29,17 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		ChangeCouplings changeCouplings = new ChangeCouplings();
-		changeCouplings.setup();
-		changeCouplings.run();
-		if (Logger.logInfo()) {
-			Logger.info("ChangeCouplings.Main: All done. cerio!");
+		try {
+			final ChangeCouplings changeCouplings = new ChangeCouplings();
+			changeCouplings.setup();
+			changeCouplings.run();
+			if (Logger.logInfo()) {
+				Logger.info("ChangeCouplings.Main: All done. cerio!");
+			}
+		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	

@@ -12,6 +12,7 @@
  ******************************************************************************/
 package mapping;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.MappingChain;
@@ -31,7 +32,7 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			MappingChain scoring = new MappingChain();
+			final MappingChain scoring = new MappingChain();
 			scoring.setName(scoring.getClass().getSimpleName());
 			scoring.start();
 			scoring.join();
@@ -39,11 +40,14 @@ public class Main {
 			if (Logger.logInfo()) {
 				Logger.info("Mappings.Main: All done. cerio!");
 			}
-		} catch (InterruptedException e) {
+		} catch (final Shutdown e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException(e);
+		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 	

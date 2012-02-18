@@ -20,6 +20,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.SettingsParseError;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
@@ -43,10 +46,13 @@ public class Merge_NetTest extends MoskitoTest {
 	
 	/**
 	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}
+	 * 
+	 * @throws ArgumentRegistrationException
+	 * @throws SettingsParseError
 	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
-	public void testMergePerson() {
+	public void testMergePerson() throws SettingsParseError, ArgumentRegistrationException {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
