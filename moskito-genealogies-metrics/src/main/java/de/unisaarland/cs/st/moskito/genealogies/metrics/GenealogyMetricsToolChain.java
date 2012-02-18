@@ -16,6 +16,7 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
@@ -30,9 +31,9 @@ import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
@@ -53,19 +54,17 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	private CoreChangeGenealogy             genealogy;
 	private final EnumArgument<MetricLevel> granularityArg;
 	private final OutputFileArgument        outputFileArgument;
+	private GenealogyMetricSink             genealogyMetricSink;
 	
-	public GenealogyMetricsToolChain() {
-		super(new GenealogySettings());
+	public GenealogyMetricsToolChain(final GenealogySettings setting, final EnumArgument<MetricLevel> granularityArg,
+	        final GenealogyArguments genealogyArgs) {
+		super(setting);
 		final GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
 			settings.setLoggerArg(Requirement.required);
-			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
-			this.granularityArg = new EnumArgument<MetricLevel>(
-			                                                    settings.getRootArgumentSet(),
-			                                                    "genealogy.metric.level",
-			                                                    "The granularity level the metrics should be computed on.",
-			                                                    MetricLevel.CHANGEOPERATION, Requirement.required);
+			this.genealogyArgs = genealogyArgs;
+			this.granularityArg = granularityArg;
 			this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
 			                                                 "Filename to write result metric matrix into.", null,
 			                                                 Requirement.required, true);
@@ -81,6 +80,10 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
+	}
+	
+	public Map<String, Map<String, Double>> getMetricsValues() {
+		return this.genealogyMetricSink.getMetricValues();
 	}
 	
 	@Override
@@ -130,7 +133,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 			}
 			
 		} else if (granularity.equals(MetricLevel.TRANSACTION)) {
-			final TransactionChangeGenealogy transactionChangeGenealogy = new TransactionChangeGenealogy(this.genealogy);
+			final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 			
@@ -192,6 +195,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 		// start a demuxer and a sink that receives all the metric values
 		// and stores the overall result matrix
 		new GenealogyMetricDemux(this.threadPool.getThreadGroup(), getSettings());
-		new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(), this.outputFileArgument.getValue());
+		this.genealogyMetricSink = new GenealogyMetricSink(this.threadPool.getThreadGroup(), getSettings(),
+		                                                   this.outputFileArgument.getValue());
 	}
 }

@@ -16,13 +16,16 @@ package genealogies.metrics;
 import java.io.File;
 import java.util.Map;
 
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.settings.arguments.EnumArgument;
+import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsAggregateToolChain;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
@@ -39,26 +42,22 @@ public class Main {
 		
 		try {
 			final GenealogySettings settings = new GenealogySettings();
-			settings.setLoggerArg(true);
-			final GenealogyArguments genealogyArgs = settings.setGenealogyArgs(true);
+			settings.setLoggerArg(Requirement.optional);
+			final GenealogyArguments genealogyArgs = settings.setGenealogyArgs(Requirement.required);
 			
 			final OutputFileArgument fileMetricsFileArgument = new OutputFileArgument(
-			                                                                          settings,
+			                                                                          settings.getRootArgumentSet(),
 			                                                                          "genealogy.metric.fileAggregate.out",
 			                                                                          "Filename that will contain genealogy metrics aggregated to RCSFile level as matrix.",
-			                                                                          null, false, true);
-			final EnumArgument granularityArg = new EnumArgument(
-			                                                     settings,
-			                                                     "genealogy.metric.level",
-			                                                     "The granularity level the metrics should be computed on.",
-			                                                     "CHANGEOPERATION", true, new String[] {
-			                                                             "CHANGEOPERATION", "OPERATIONPARTITION",
-			                                                             "TRANSACTION" });
-			
+			                                                                          null, Requirement.optional, true);
+			final EnumArgument<MetricLevel> granularityArg = new EnumArgument<MetricLevel>(
+			                                                                               settings.getRootArgumentSet(),
+			                                                                               "genealogy.metric.level",
+			                                                                               "The granularity level the metrics should be computed on.",
+			                                                                               MetricLevel.CHANGEOPERATION,
+			                                                                               Requirement.required);
 			final GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain(settings, granularityArg,
 			                                                                                 genealogyArgs);
-			
-			settings.parseArguments();
 			
 			genealogyMetrics.setName(genealogyMetrics.getClass().getSimpleName());
 			genealogyMetrics.start();
@@ -95,6 +94,10 @@ public class Main {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new RuntimeException();
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 	}
 }

@@ -16,11 +16,11 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import java.util.Collection;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GenealogyNodePersister extends AndamaTransformer<OperationCollection, JavaChangeOperationProcessQueue> {
+public class GenealogyNodePersister extends Transformer<OperationCollection, JavaChangeOperationProcessQueue> {
 	
 	private int counter        = 0;
 	private int packageCounter = 0;
@@ -49,7 +49,7 @@ public class GenealogyNodePersister extends AndamaTransformer<OperationCollectio
 	 * @param coreGenealogy
 	 *            the core genealogy
 	 */
-	public GenealogyNodePersister(final AndamaGroup threadGroup, final AndamaSettings settings,
+	public GenealogyNodePersister(final Group threadGroup, final Settings settings,
 	        final CoreChangeGenealogy coreGenealogy) {
 		super(threadGroup, settings, false);
 		

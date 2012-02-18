@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -22,12 +22,12 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-public class GenealogyMetricAggregationSink extends AndamaSink<GenealogyMetricValue> {
+public class GenealogyMetricAggregationSink extends Sink<GenealogyMetricValue> {
 	
 	private final Map<String, Map<String, DescriptiveStatistics>> stats = new HashMap<String, Map<String, DescriptiveStatistics>>();
 	
-	public GenealogyMetricAggregationSink(final AndamaGroup threadGroup, final AndamaSettings settings,
-	        final File outputFile, final PersistenceUtil persistenceUtil) {
+	public GenealogyMetricAggregationSink(final Group threadGroup, final Settings settings, final File outputFile,
+	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<GenealogyMetricValue, GenealogyMetricValue>(this) {

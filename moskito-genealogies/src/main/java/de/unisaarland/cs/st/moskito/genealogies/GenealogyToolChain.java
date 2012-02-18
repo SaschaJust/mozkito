@@ -13,40 +13,47 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.LoggerArguments;
+import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
+import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
+import net.ownhero.dev.andama.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 
-public class GenealogyToolChain extends AndamaChain {
+public class GenealogyToolChain extends Chain<GenealogySettings> {
 	
-	private final AndamaPool         threadPool;
+	private final Pool               threadPool;
 	private final GenealogyArguments genealogyArgs;
 	private CoreChangeGenealogy      genealogy;
 	private final BooleanArgument    infoArg;
+	private LoggerArguments          loggerArg;
 	
 	public GenealogyToolChain() {
 		super(new GenealogySettings());
 		
-		this.threadPool = new AndamaPool(GenealogyToolChain.class.getSimpleName(), this);
-		final GenealogySettings settings = (GenealogySettings) getSettings();
-		final LoggerArguments loggerArg = settings.setLoggerArg(false);
+		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
+		final GenealogySettings settings = getSettings();
+		try {
+			this.loggerArg = settings.setLoggerArg(Requirement.optional);
+			this.infoArg = new BooleanArgument(settings.getRootArgumentSet(), "genealogyInfoOnly",
+			                                   "Only prints standard genealogy infos", "false", Requirement.required);
+			
+			this.loggerArg.getValue();
+			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+		} catch (final ArgumentRegistrationException e) {
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
-		this.infoArg = new BooleanArgument(settings, "genealogyInfoOnly", "Only prints standard genealogy infos",
-		                                   "false", false);
-		
-		loggerArg.getValue();
-		this.genealogyArgs = settings.setGenealogyArgs(true);
-		settings.parseArguments();
 	}
 	
 	@Override
-	public void run() {
+	public void setup() {
 		
 		if (this.infoArg.getValue()) {
 			
@@ -60,28 +67,14 @@ public class GenealogyToolChain extends AndamaChain {
 				Logger.info("Number of vertices: " + this.genealogy.getTransactionLayer().vertexSize());
 				Logger.info("Number of edges: " + this.genealogy.getTransactionLayer().edgeSize());
 			}
+		} else {
+			this.genealogy = this.genealogyArgs.getValue();
 			
-			return;
+			final BranchFactory branchFactory = new BranchFactory(this.genealogy.getPersistenceUtil());
+			
+			new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory);
+			new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
+			new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 		}
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
-		this.genealogy.getTransactionLayer().close();
-		this.genealogy.close();
-	}
-	
-	@Override
-	public void setup() {
-		this.genealogy = this.genealogyArgs.getValue();
-		
-		final BranchFactory branchFactory = new BranchFactory(this.genealogy.getPersistenceUtil());
-		
-		new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory);
-		new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
-		new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
-		
 	}
 }

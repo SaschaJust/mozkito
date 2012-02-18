@@ -23,6 +23,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.tooling.GlobalGraphOperations;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -570,7 +571,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	public Set<GenealogyEdgeType> getExistingEdgeTypes() {
 		final Set<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
 		final List<GenealogyEdgeType> values = Arrays.asList(GenealogyEdgeType.values());
-		final Iterable<RelationshipType> relationshipTypes = this.graph.getRelationshipTypes();
+		final Iterable<RelationshipType> relationshipTypes = GlobalGraphOperations.at(getGraphDBService())
+		                                                                          .getAllRelationshipTypes();
 		for (final RelationshipType type : relationshipTypes) {
 			if (values.contains(type)) {
 				final GenealogyEdgeType edgeType = GenealogyEdgeType.valueOf(type.toString());

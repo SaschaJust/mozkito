@@ -13,11 +13,11 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperationProcessQueue> {
+public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProcessQueue> {
 	
 	private final JavaMethodRegistry  registry;
 	private final CoreChangeGenealogy genealogy;
@@ -52,7 +52,7 @@ public class GenealogyDependencyPersister extends AndamaSink<JavaChangeOperation
 	 * @param coreGenealogy
 	 *            the core genealogy
 	 */
-	public GenealogyDependencyPersister(final AndamaGroup threadGroup, final AndamaSettings settings,
+	public GenealogyDependencyPersister(final Group threadGroup, final Settings settings,
 	        final CoreChangeGenealogy coreGenealogy) {
 		super(threadGroup, settings, false);
 		
