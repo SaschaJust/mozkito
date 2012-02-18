@@ -19,7 +19,8 @@ vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/jaxen/
 
 ##### Genealogy Metrics #####
-fix.pattern=JAXEN-(\\d+)
+fix.pattern=JAXEN-({bugids}\\d+)
 genealogy.graphdb=/data/kim/genealogies/jaxen/june2010/
 genealogy.metric.level=TRANSACTION
-genealogy.metric.out=/tmp/jaxen_genealogies_transaction_metrics.csv
+genealogy.metric.out=/data/kim/genealogies/jaxen/jaxen_june2010_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/data/kim/genealogies/jaxen/jaxen_june2010_genealogy_transaction_fileMetrics.csv

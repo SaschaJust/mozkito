@@ -17,3 +17,9 @@ package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/gwt/
+
+#### Moskito Genealogies
+genealogy.graphdb=/data/kim/genealogies/gwt/may2011/
+genealogy.metric.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_fileMetrics.csv
+fix.pattern="(issue number|bug|issue|#|fixes:|issues)\\s*:?\\s*({bugids}\\d+(,\\s*\\d+)*)"

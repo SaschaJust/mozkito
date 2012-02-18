@@ -29,8 +29,8 @@ vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/xstream/
 
 ##### Genealogy Metrics #####
-fix.pattern=XSTR-(\\d+)
+fix.pattern=XSTR-({bugids}\\d+)
 genealogy.graphdb=/data/kim/genealogies/xstream/may2011/
 genealogy.metric.level=TRANSACTION
-genealogy.metric.out=/tmp/xstream_genealogies_transaction_metrics.csv
-
+genealogy.metric.out=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_fileMetrics.csv
