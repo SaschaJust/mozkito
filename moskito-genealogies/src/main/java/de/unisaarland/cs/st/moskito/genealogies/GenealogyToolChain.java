@@ -44,7 +44,6 @@ public class GenealogyToolChain extends Chain<GenealogySettings> {
 			this.infoArg = new BooleanArgument(settings.getRootArgumentSet(), "genealogyInfoOnly",
 			                                   "Only prints standard genealogy infos", "false", Requirement.required);
 			
-			this.loggerArg.getValue();
 			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
 		} catch (final ArgumentRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
@@ -54,7 +53,7 @@ public class GenealogyToolChain extends Chain<GenealogySettings> {
 	
 	@Override
 	public void setup() {
-		
+		this.loggerArg.getValue();
 		if (this.infoArg.getValue()) {
 			
 			this.genealogy = this.genealogyArgs.getValue();
