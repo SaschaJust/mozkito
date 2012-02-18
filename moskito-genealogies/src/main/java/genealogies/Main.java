@@ -45,7 +45,6 @@ public class Main {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException(e);
 		}
 	}
 }
