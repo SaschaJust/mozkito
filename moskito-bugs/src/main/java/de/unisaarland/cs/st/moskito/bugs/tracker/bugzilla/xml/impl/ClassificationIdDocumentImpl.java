@@ -6,7 +6,10 @@
  *
  * Automatically generated - do not modify.
  */
-package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.impl;
+package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.impl;
+
+import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.ClassificationIdDocument;
+
 /**
  * A document containing one classification_id(@) element.
  *

@@ -6,7 +6,10 @@
  *
  * Automatically generated - do not modify.
  */
-package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.impl;
+package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.impl;
+
+import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.CommentidDocument;
+
 /**
  * A document containing one commentid(@) element.
  *

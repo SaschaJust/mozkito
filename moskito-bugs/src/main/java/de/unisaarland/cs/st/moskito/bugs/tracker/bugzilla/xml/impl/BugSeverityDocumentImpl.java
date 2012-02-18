@@ -6,7 +6,10 @@
  *
  * Automatically generated - do not modify.
  */
-package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.impl;
+package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.impl;
+
+import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.BugSeverityDocument;
+
 /**
  * A document containing one bug_severity(@) element.
  *

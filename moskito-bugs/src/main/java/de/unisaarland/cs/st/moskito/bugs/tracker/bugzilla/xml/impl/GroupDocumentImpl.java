@@ -6,7 +6,7 @@
  *
  * Automatically generated - do not modify.
  */
-package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.impl;
+package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.impl;
 /**
  * A document containing one group(@) element.
  *

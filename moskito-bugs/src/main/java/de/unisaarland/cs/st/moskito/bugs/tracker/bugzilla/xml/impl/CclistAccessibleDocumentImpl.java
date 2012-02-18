@@ -6,7 +6,10 @@
  *
  * Automatically generated - do not modify.
  */
-package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.impl;
+package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.impl;
+
+import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.xml.CclistAccessibleDocument;
+
 /**
  * A document containing one cclist_accessible(@) element.
  *
