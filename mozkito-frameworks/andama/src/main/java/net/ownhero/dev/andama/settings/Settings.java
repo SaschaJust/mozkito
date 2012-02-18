@@ -26,7 +26,6 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.SettingsParseError;
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
 import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
 import net.ownhero.dev.andama.settings.arguments.MailArguments;
@@ -110,7 +109,9 @@ public class Settings {
 			this.mailArguments = new MailArguments(getRootArgumentSet(), new Required());
 			
 		} catch (final ArgumentRegistrationException e) {
-			// TODO: handle exception
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 		}
 		
 	}
@@ -290,16 +291,16 @@ public class Settings {
 			}
 			
 			if (!this.settingsArg.isInitialized()) {
-				// FIXME ERROR
+				throw new SettingsParseError("You cannot parse andamaSettings that are not initialized.");
 			} else {
 				try {
 					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
 					this.fileProps.load(stream);
 					
 				} catch (final MalformedURLException e) {
-					// FIXME ERROR
+					throw new SettingsParseError(e.getMessage());
 				} catch (final IOException e) {
-					// FIXME ERROR
+					throw new SettingsParseError(e.getMessage());
 				}
 				
 			}
@@ -360,7 +361,7 @@ public class Settings {
 		}
 	}
 	
-	public void parseArguments(final Collection<IArgument<?>> arguments) {
+	public void parseArguments(final Collection<IArgument<?>> arguments) throws SettingsParseError {
 		
 		final PriorityQueue<IArgument<?>> queue = new PriorityQueue<IArgument<?>>(arguments);
 		IArgument<?> argument = null;
@@ -370,13 +371,10 @@ public class Settings {
 			
 			if (!argument.getRequirements().required()) {
 				
-				if (Logger.logError()) {
-					final String errorMessage = "Could not resolved dependencies. Argument: " + argument
-					        + " has unresolved dependencies: "
-					        + JavaUtils.collectionToString(argument.getRequirements().getMissingRequirements());
-					Logger.error(errorMessage);
-					throw new Shutdown(errorMessage);
-				}
+				final String errorMessage = "Could not resolved dependencies. Argument: " + argument
+				        + " has unresolved dependencies: "
+				        + JavaUtils.collectionToString(argument.getRequirements().getMissingRequirements());
+				throw new SettingsParseError(errorMessage, argument);
 			}
 			
 			boolean initResult = false;
@@ -387,29 +385,20 @@ public class Settings {
 			}
 			
 			if (!initResult) {
-				if (Logger.logError()) {
-					Logger.error("Could not initialize " + argument
-					        + ". Please see error earlier error messages, refer to the argument help information, "
-					        + "or review the init() method of the corresponding " + argument.getHandle() + ".");
-				}
-				System.err.println(getHelpString());
-				throw new Shutdown("Could not initialize " + argument
+				final String message = "Could not initialize " + argument
 				        + ". Please see error earlier error messages, refer to the argument help information, "
-				        + "or review the init() method of the corresponding " + argument.getHandle() + ".");
+				        + "or review the init() method of the corresponding " + argument.getHandle() + ".";
+				throw new SettingsParseError(message, argument);
 			}
 		}
 		
 		if (!validateSettings()) {
-			System.err.println(getHelpString());
-			throw new Shutdown();
+			throw new SettingsParseError("Provided arguments are invalid.");
 		}
 		
 		if (this.helpArg.getValue()) {
 			System.err.println(getHelpString());
-			throw new Shutdown();
-		}
-		
-		if (Logger.logInfo()) {
+		} else if (Logger.logInfo()) {
 			Logger.info("Using settings: ");
 			Logger.info(toString());
 		}
