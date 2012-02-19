@@ -58,9 +58,6 @@ public abstract class Chain<T extends Settings> extends Thread {
 		try {
 			getSettings().parse();
 		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
 			throw new Shutdown(e);
 		}
 	}
