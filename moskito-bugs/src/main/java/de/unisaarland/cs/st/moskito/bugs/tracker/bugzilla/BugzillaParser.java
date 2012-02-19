@@ -22,7 +22,6 @@ import org.jdom.Element;
 import org.joda.time.DateTime;
 
 import schemaorg_apache_xmlbeans.system.sE130CAA0A01A7CDE5A2B4FEB8B311707.TypeSystemHolder;
-
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
@@ -48,7 +47,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
-	@Override
 	public Person getAssignedTo() {
 		// PRECONDITIONS
 		
@@ -64,7 +62,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachment(int)
 	 */
-	@Override
 	public AttachmentEntry getAttachment(final int index) {
 		// PRECONDITIONS
 		
@@ -80,7 +77,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
 	 */
-	@Override
 	public String getCategory() {
 		// PRECONDITIONS
 		
@@ -96,7 +92,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComment(int)
 	 */
-	@Override
 	public Comment getComment(final int index) {
 		// PRECONDITIONS
 		
@@ -112,7 +107,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComments()
 	 */
-	@Override
 	public Set<Comment> getComments() {
 		// PRECONDITIONS
 		
@@ -128,7 +122,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
-	@Override
 	public String getComponent() {
 		// PRECONDITIONS
 		
@@ -144,7 +137,6 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
-	@Override
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
 		
@@ -160,7 +152,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
 	 */
-	@Override
+	
 	public String getDescription() {
 		// PRECONDITIONS
 		
@@ -176,7 +168,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryElement(int)
 	 */
-	@Override
+	
 	public HistoryElement getHistoryElement(final int index) {
 		// PRECONDITIONS
 		
@@ -192,7 +184,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
 	 */
-	@Override
+	
 	public int getHistoryLength() {
 		// PRECONDITIONS
 		
@@ -208,7 +200,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
-	@Override
+	
 	public Long getId() {
 		// PRECONDITIONS
 		
@@ -224,7 +216,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
 	 */
-	@Override
+	
 	public int getNumberOfAttachments() {
 		// PRECONDITIONS
 		
@@ -240,7 +232,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
 	 */
-	@Override
+	
 	public int getNumberOfComments() {
 		// PRECONDITIONS
 		
@@ -256,7 +248,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
-	@Override
+	
 	public Priority getPriority() {
 		// PRECONDITIONS
 		
@@ -272,7 +264,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
 	 */
-	@Override
+	
 	public String getProduct() {
 		// PRECONDITIONS
 		
@@ -288,7 +280,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
 	 */
-	@Override
+	
 	public Resolution getResolution() {
 		// PRECONDITIONS
 		
@@ -304,7 +296,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
-	@Override
+	
 	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
 		
@@ -320,7 +312,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
-	@Override
+	
 	public Person getResolver() {
 		// PRECONDITIONS
 		
@@ -340,7 +332,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
-	@Override
+	
 	public Severity getSeverity() {
 		// PRECONDITIONS
 		
@@ -356,7 +348,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
-	@Override
+	
 	public Set<Long> getSiblings() {
 		// PRECONDITIONS
 		
@@ -372,7 +364,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
-	@Override
+	
 	public Status getStatus() {
 		// PRECONDITIONS
 		
@@ -388,7 +380,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
-	@Override
+	
 	public String getSubject() {
 		// PRECONDITIONS
 		
@@ -404,7 +396,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
-	@Override
+	
 	public Person getSubmitter() {
 		// PRECONDITIONS
 		
@@ -420,7 +412,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
-	@Override
+	
 	public String getSummary() {
 		// PRECONDITIONS
 		
@@ -436,7 +428,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
-	@Override
+	
 	public Type getType() {
 		// PRECONDITIONS
 		
@@ -452,7 +444,7 @@ public class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
-	@Override
+	
 	public String getVersion() {
 		// PRECONDITIONS
 		
@@ -469,7 +461,7 @@ public class BugzillaParser implements Parser {
 	 * @see
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
-	@Override
+	
 	public void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
 		
@@ -485,11 +477,11 @@ public class BugzillaParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
 	 * )
 	 */
-	@Override
+	
 	public void setXMLReport(@NotNull final XmlReport report) {
 		// PRECONDITIONS
 		final SchemaTypeSystem typeSystem = TypeSystemHolder.typeSystem;
-		typeSystem.
+		// typeSystem.
 		
 		try {
 			this.xmlReport = report;

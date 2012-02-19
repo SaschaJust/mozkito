@@ -36,7 +36,6 @@ public class GooglePerson implements Storable {
 		this.name = name;
 	}
 	
-	@Override
 	public boolean cached() {
 		return this.cached;
 	}
@@ -45,7 +44,6 @@ public class GooglePerson implements Storable {
 		return this.email;
 	}
 	
-	@Override
 	public String getFilename() {
 		return this.filename;
 	}
@@ -58,7 +56,6 @@ public class GooglePerson implements Storable {
 		return this.username;
 	}
 	
-	@Override
 	public void setCached(final String filename) {
 		this.filename = filename;
 		this.cached = true;
