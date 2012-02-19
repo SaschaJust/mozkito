@@ -15,9 +15,13 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.xmlbeans.SchemaTypeSystem;
 import org.jdom.Element;
 import org.joda.time.DateTime;
+
+import schemaorg_apache_xmlbeans.system.sE130CAA0A01A7CDE5A2B4FEB8B311707.TypeSystemHolder;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -37,6 +41,8 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * 
  */
 public class BugzillaParser implements Parser {
+	
+	private XmlReport xmlReport;
 	
 	/*
 	 * (non-Javadoc)
@@ -480,10 +486,13 @@ public class BugzillaParser implements Parser {
 	 * )
 	 */
 	@Override
-	public void setXMLReport(final XmlReport report) {
+	public void setXMLReport(@NotNull final XmlReport report) {
 		// PRECONDITIONS
+		final SchemaTypeSystem typeSystem = TypeSystemHolder.typeSystem;
+		typeSystem.
 		
 		try {
+			this.xmlReport = report;
 			// Report bugReport = new Report(report.getId());
 			// Element itemElement = getRootElement(report);
 			// BugzillaXMLParser.handleRoot(bugReport, itemElement, tracker);
@@ -515,8 +524,7 @@ public class BugzillaParser implements Parser {
 			// this.report = bugReport;
 		} finally {
 			// POSTCONDITIONS
-			
+			Condition.notNull(this.xmlReport, "Our source data set may never be null.");
 		}
 	}
-	
 }
