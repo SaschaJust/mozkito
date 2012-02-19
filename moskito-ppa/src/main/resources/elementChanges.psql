@@ -1,0 +1,4 @@
+CREATE OR REPLACE FUNCTION public.elementChanges(int)
+ RETURNS setof rcstransaction AS $$
+  select * from rcstransaction WHERE id IN (select r.transaction_id from javaelementlocation l JOIN javachangeoperation o ON l.id = o.changedelementlocation_id JOIN rcsrevision r ON o.revision_revisionid=r.revisionid where l.element_generatedid = $1) ORDER BY timestamp;
+$$ language sql;
