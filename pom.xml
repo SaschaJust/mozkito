@@ -277,6 +277,7 @@
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
 					<workspace>${basedir}</workspace>
+					<output.dir>eclipse-target</output.dir>
 					<workspaceCodeStylesURL>file://${basedir}/settings/moskito-style.xml</workspaceCodeStylesURL>
 				</configuration>
 			</plugin>

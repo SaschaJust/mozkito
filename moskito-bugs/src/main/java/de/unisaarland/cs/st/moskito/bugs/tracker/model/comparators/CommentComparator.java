@@ -25,7 +25,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
  */
 public class CommentComparator implements Comparator<Comment> {
 	
-	@Override
 	public int compare(final Comment o1,
 	                   final Comment o2) {
 		return o1.compareTo(o2);

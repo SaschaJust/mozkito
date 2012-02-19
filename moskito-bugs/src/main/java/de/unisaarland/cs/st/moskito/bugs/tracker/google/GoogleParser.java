@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
@@ -32,17 +29,17 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class GoogleParser implements Parser {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
-	@Override
+	
 	public Person getAssignedTo() {
 		// PRECONDITIONS
 		
@@ -50,29 +47,31 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachment(int)
 	 */
-	@Override
-	public AttachmentEntry getAttachment(int index) {
+	
+	public AttachmentEntry getAttachment(final int index) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
 	 */
-	@Override
+	
 	public String getCategory() {
 		// PRECONDITIONS
 		
@@ -80,29 +79,31 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComment(int)
 	 */
-	@Override
-	public Comment getComment(int index) {
+	
+	public Comment getComment(final int index) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComments()
 	 */
-	@Override
+	
 	public Set<Comment> getComments() {
 		// PRECONDITIONS
 		
@@ -110,14 +111,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
-	@Override
+	
 	public String getComponent() {
 		// PRECONDITIONS
 		
@@ -125,14 +127,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
-	@Override
+	
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
 		
@@ -140,14 +143,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
 	 */
-	@Override
+	
 	public String getDescription() {
 		// PRECONDITIONS
 		
@@ -155,29 +159,31 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryElement(int)
 	 */
-	@Override
-	public HistoryElement getHistoryElement(int index) {
+	
+	public HistoryElement getHistoryElement(final int index) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
 	 */
-	@Override
+	
 	public int getHistoryLength() {
 		// PRECONDITIONS
 		
@@ -185,14 +191,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return 0;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
-	@Override
+	
 	public Long getId() {
 		// PRECONDITIONS
 		
@@ -200,14 +207,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
 	 */
-	@Override
+	
 	public int getNumberOfAttachments() {
 		// PRECONDITIONS
 		
@@ -215,14 +223,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return 0;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
 	 */
-	@Override
+	
 	public int getNumberOfComments() {
 		// PRECONDITIONS
 		
@@ -230,14 +239,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return 0;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
-	@Override
+	
 	public Priority getPriority() {
 		// PRECONDITIONS
 		
@@ -245,14 +255,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
 	 */
-	@Override
+	
 	public String getProduct() {
 		// PRECONDITIONS
 		
@@ -260,14 +271,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
 	 */
-	@Override
+	
 	public Resolution getResolution() {
 		// PRECONDITIONS
 		
@@ -275,14 +287,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
-	@Override
+	
 	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
 		
@@ -290,14 +303,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
-	@Override
+	
 	public Person getResolver() {
 		// PRECONDITIONS
 		
@@ -305,14 +319,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
-	@Override
+	
 	public Severity getSeverity() {
 		// PRECONDITIONS
 		
@@ -320,14 +335,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
-	@Override
+	
 	public Set<Long> getSiblings() {
 		// PRECONDITIONS
 		
@@ -335,14 +351,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
-	@Override
+	
 	public Status getStatus() {
 		// PRECONDITIONS
 		
@@ -350,14 +367,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
-	@Override
+	
 	public String getSubject() {
 		// PRECONDITIONS
 		
@@ -365,14 +383,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
-	@Override
+	
 	public Person getSubmitter() {
 		// PRECONDITIONS
 		
@@ -380,14 +399,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
-	@Override
+	
 	public String getSummary() {
 		// PRECONDITIONS
 		
@@ -395,14 +415,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
-	@Override
+	
 	public Type getType() {
 		// PRECONDITIONS
 		
@@ -410,14 +431,15 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
-	@Override
+	
 	public String getVersion() {
 		// PRECONDITIONS
 		
@@ -425,35 +447,40 @@ public class GoogleParser implements Parser {
 			// TODO Auto-generated method stub
 			return null;
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
-	@Override
-	public void setTracker(Tracker tracker) {
+	
+	public void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
-	@Override
-	public void setXMLReport(XmlReport report) {
+	
+	public void setXMLReport(final XmlReport report) {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
 		} finally {
-			// POSTCONDITIONS	
+			// POSTCONDITIONS
 		}
 	}
 	

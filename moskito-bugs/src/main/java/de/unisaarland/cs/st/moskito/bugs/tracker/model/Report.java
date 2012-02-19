@@ -200,7 +200,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	@Override
 	public int compareTo(final Report o) {
 		if (getId() > o.getId()) {
 			return 1;

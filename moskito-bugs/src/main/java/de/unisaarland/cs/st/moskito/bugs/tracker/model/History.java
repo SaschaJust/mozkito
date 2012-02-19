@@ -87,7 +87,7 @@ public class History implements Annotated {
 		                        "HistoryElements may never be added to the History of a different report: %s -> %s",
 		                        element, this);
 		boolean ret = false;
-		SortedSet<HistoryElement> elements = getElements();
+		final SortedSet<HistoryElement> elements = getElements();
 		ret = elements.add(element);
 		setElements(elements);
 		return ret;
@@ -99,10 +99,10 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History after(@NotNull final DateTime dateTime) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
+			final HistoryElement element = iterator.next();
 			if (element.getTimestamp().isAfter(dateTime)) {
 				history.add(element);
 			}
@@ -116,10 +116,10 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History before(@NotNull final DateTime dateTime) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
+			final HistoryElement element = iterator.next();
 			if (element.getTimestamp().isBefore(dateTime)) {
 				history.add(element);
 			}
@@ -144,10 +144,10 @@ public class History implements Annotated {
 	@NoneNull
 	public History get(final DateTime from,
 	                   final DateTime to) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
+			final HistoryElement element = iterator.next();
 			if ((element.getTimestamp().compareTo(from) >= 0) && (element.getTimestamp().compareTo(to) <= 0)) {
 				history.add(element);
 			}
@@ -161,10 +161,10 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History get(final long bugId) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
+			final HistoryElement element = iterator.next();
 			if (element.getBugId() == bugId) {
 				history.add(element);
 			}
@@ -178,10 +178,10 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History get(final Person author) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
+			final HistoryElement element = iterator.next();
 			if (element.getAuthor().equals(author)) {
 				history.add(element);
 			}
@@ -197,9 +197,8 @@ public class History implements Annotated {
 	                          final DateTime timestamp) {
 		return (HistoryElement) CollectionUtils.find(getElements(), new Predicate() {
 			
-			@Override
 			public boolean evaluate(final Object object) {
-				HistoryElement element = (HistoryElement) object;
+				final HistoryElement element = (HistoryElement) object;
 				
 				return element.getTimestamp().equals(timestamp) && element.getAuthor().equals(author);
 			}
@@ -212,11 +211,11 @@ public class History implements Annotated {
 	 */
 	@Transient
 	public History get(final String field) {
-		History history = new History(getBugId());
-		Iterator<HistoryElement> iterator = getElements().iterator();
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
 		while (iterator.hasNext()) {
-			HistoryElement element = iterator.next();
-			HistoryElement value = element.getForField(field);
+			final HistoryElement element = iterator.next();
+			final HistoryElement value = element.getForField(field);
 			if (!value.isEmpty()) {
 				history.add(value);
 			}
@@ -256,12 +255,12 @@ public class History implements Annotated {
 	 */
 	public Object getOldValue(final String fieldName,
 	                          final HistoryElement element) {
-		History history = get(fieldName);
-		SortedSet<HistoryElement> elements = history.getElements();
-		ArrayList<HistoryElement> list = new ArrayList<HistoryElement>(elements);
+		final History history = get(fieldName);
+		final SortedSet<HistoryElement> elements = history.getElements();
+		final ArrayList<HistoryElement> list = new ArrayList<HistoryElement>(elements);
 		Object object = null;
 		
-		int index = list.indexOf(element);
+		final int index = list.indexOf(element);
 		
 		if ((index >= 0) && (index < list.size())) {
 			object = list.get(index).get(fieldName).getFirst();
@@ -300,7 +299,7 @@ public class History implements Annotated {
 	 */
 	private boolean remove(final HistoryElement element) {
 		boolean ret;
-		SortedSet<HistoryElement> set = getElements();
+		final SortedSet<HistoryElement> set = getElements();
 		ret = set.remove(element);
 		setElements(set);
 		return ret;
@@ -314,24 +313,24 @@ public class History implements Annotated {
 	                       @NotNull final DateTime timestamp) {
 		if (report.getCreationTimestamp().isBefore(timestamp)) {
 			try {
-				History history = after(timestamp);
-				Report newReport = report.clone();
-				LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
-				ListIterator<HistoryElement> iterator = list.listIterator(list.size());
+				final History history = after(timestamp);
+				final Report newReport = report.clone();
+				final LinkedList<HistoryElement> list = new LinkedList<HistoryElement>(history.getElements());
+				final ListIterator<HistoryElement> iterator = list.listIterator(list.size());
 				
 				while (iterator.hasPrevious()) {
-					HistoryElement element = iterator.previous();
-					Set<String> fields = element.getFields();
-					for (String fieldName : fields) {
+					final HistoryElement element = iterator.previous();
+					final Set<String> fields = element.getFields();
+					for (final String fieldName : fields) {
 						newReport.setField(fieldName, getOldValue(fieldName, element));
 					}
 					newReport.getHistory().remove(element);
 				}
 				
-				SortedSet<Comment> comments = newReport.getComments();
-				SortedSet<Comment> newComments = new TreeSet<Comment>();
+				final SortedSet<Comment> comments = newReport.getComments();
+				final SortedSet<Comment> newComments = new TreeSet<Comment>();
 				
-				for (Comment comment : comments) {
+				for (final Comment comment : comments) {
 					if (!comment.getTimestamp().isAfter(timestamp)) {
 						newComments.add(comment);
 					}
@@ -340,7 +339,7 @@ public class History implements Annotated {
 				newReport.setComments(newComments);
 				
 				return newReport;
-			} catch (CloneNotSupportedException e) {
+			} catch (final CloneNotSupportedException e) {
 			}
 		}
 		
@@ -386,7 +385,7 @@ public class History implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("History [bugId=");
 		builder.append(getBugId());
 		builder.append(", elements=");
@@ -400,8 +399,8 @@ public class History implements Annotated {
 	 * @return
 	 */
 	public History whithin(final Interval interval) {
-		History history = new History(getBugId());
-		for (HistoryElement element : getElements()) {
+		final History history = new History(getBugId());
+		for (final HistoryElement element : getElements()) {
 			if (interval.contains(element.getTimestamp())) {
 				history.add(element);
 			}
