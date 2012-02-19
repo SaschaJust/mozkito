@@ -233,6 +233,7 @@ public class SourceforgeTracker extends Tracker {
 	public boolean checkRAW(final RawReport rawReport) {
 		boolean retValue = super.checkRAW(rawReport);
 		
+		// checking for the report to have at least 1000 characters
 		retValue &= rawReport.getContent().length() > 1000;
 		
 		return retValue;
