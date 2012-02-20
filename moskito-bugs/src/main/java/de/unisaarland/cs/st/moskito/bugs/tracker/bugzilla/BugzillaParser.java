@@ -290,7 +290,6 @@ public class BugzillaParser implements Parser {
 					continue;
 				}
 				try {
-					System.err.println(longDesc.getCommentid());
 					final int id = Integer.valueOf(longDesc.getCommentid()).intValue();
 					final Who who = longDesc.getWho();
 					final String name = who.getName().getStringValue();
