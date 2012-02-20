@@ -12,7 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.joda.time.DateTime;
 
@@ -34,13 +36,11 @@ public interface Parser {
 	
 	Person getAssignedTo();
 	
-	AttachmentEntry getAttachment(int index);
+	List<AttachmentEntry> getAttachmentEntries();
 	
 	String getCategory();
 	
-	Comment getComment(int index);
-	
-	Set<Comment> getComments();
+	SortedSet<Comment> getComments();
 	
 	String getComponent();
 	
@@ -48,15 +48,11 @@ public interface Parser {
 	
 	String getDescription();
 	
-	HistoryElement getHistoryElement(int index);
-	
-	int getHistoryLength();
+	SortedSet<HistoryElement> getHistoryElements();
 	
 	Long getId();
 	
-	int getNumberOfAttachments();
-	
-	int getNumberOfComments();
+	DateTime getLastUpdateTimestamp();
 	
 	Priority getPriority();
 	
