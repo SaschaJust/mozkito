@@ -3,7 +3,9 @@
  */
 package net.ownhero.dev.andama.model;
 
+import net.ownhero.dev.andama.exceptions.InvalidGraphLayoutException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.Graph;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.INode;
@@ -37,7 +39,12 @@ public class Pool {
 	 * 
 	 */
 	private void connectThreads() {
-		new Graph(getThreadGroup()).buildGraph();
+		try {
+			new Graph(getThreadGroup()).buildGraph();
+		} catch (final InvalidGraphLayoutException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+			
+		}
 	}
 	
 	/**
