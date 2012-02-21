@@ -147,7 +147,9 @@ public class Logger {
 		}
 		
 		public String getTag() {
-			return this.tag;
+			return isSupported()
+			                    ? this.tag
+			                    : "";
 		}
 	}
 	
