@@ -12,7 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.joda.time.DateTime;
 
@@ -40,6 +42,7 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
+	@Override
 	public Person getAssignedTo() {
 		// PRECONDITIONS
 		
@@ -53,10 +56,10 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachment(int)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachmentEntries()
 	 */
-	
-	public AttachmentEntry getAttachment(final int index) {
+	@Override
+	public List<AttachmentEntry> getAttachmentEntries() {
 		// PRECONDITIONS
 		
 		try {
@@ -72,6 +75,7 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
 	 */
 	
+	@Override
 	public String getCategory() {
 		// PRECONDITIONS
 		
@@ -104,7 +108,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComments()
 	 */
 	
-	public Set<Comment> getComments() {
+	@Override
+	public SortedSet<Comment> getComments() {
 		// PRECONDITIONS
 		
 		try {
@@ -120,6 +125,7 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
 	
+	@Override
 	public String getComponent() {
 		// PRECONDITIONS
 		
@@ -136,6 +142,7 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	
+	@Override
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
 		
@@ -152,6 +159,7 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
 	 */
 	
+	@Override
 	public String getDescription() {
 		// PRECONDITIONS
 		
@@ -184,6 +192,23 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
 	 */
 	
+	@Override
+	public SortedSet<HistoryElement> getHistoryElements() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
+	 */
+	
 	public int getHistoryLength() {
 		// PRECONDITIONS
 		
@@ -197,9 +222,10 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
 	 */
 	
+	@Override
 	public Long getId() {
 		// PRECONDITIONS
 		
@@ -213,7 +239,24 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
+	 */
+	
+	@Override
+	public DateTime getLastUpdateTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
 	
 	public int getNumberOfAttachments() {
@@ -229,7 +272,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
 	 */
 	
 	public int getNumberOfComments() {
@@ -245,42 +288,11 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
-	 */
-	
-	public Priority getPriority() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
-	 */
-	
-	public String getProduct() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
 	 */
 	
-	public Resolution getResolution() {
+	@Override
+	public Priority getPriority() {
 		// PRECONDITIONS
 		
 		try {
@@ -296,7 +308,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	
-	public DateTime getResolutionTimestamp() {
+	@Override
+	public String getProduct() {
 		// PRECONDITIONS
 		
 		try {
@@ -312,7 +325,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
 	
-	public Person getResolver() {
+	@Override
+	public Resolution getResolution() {
 		// PRECONDITIONS
 		
 		try {
@@ -328,7 +342,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
 	
-	public Severity getSeverity() {
+	@Override
+	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
 		
 		try {
@@ -344,7 +359,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
-	public Set<Long> getSiblings() {
+	@Override
+	public Person getResolver() {
 		// PRECONDITIONS
 		
 		try {
@@ -360,7 +376,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
-	public Status getStatus() {
+	@Override
+	public Severity getSeverity() {
 		// PRECONDITIONS
 		
 		try {
@@ -376,7 +393,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
-	public String getSubject() {
+	@Override
+	public Set<Long> getSiblings() {
 		// PRECONDITIONS
 		
 		try {
@@ -392,7 +410,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
-	public Person getSubmitter() {
+	@Override
+	public Status getStatus() {
 		// PRECONDITIONS
 		
 		try {
@@ -408,7 +427,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
-	public String getSummary() {
+	@Override
+	public String getSubject() {
 		// PRECONDITIONS
 		
 		try {
@@ -424,7 +444,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
-	public Type getType() {
+	@Override
+	public Person getSubmitter() {
 		// PRECONDITIONS
 		
 		try {
@@ -440,7 +461,8 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
-	public String getVersion() {
+	@Override
+	public String getSummary() {
 		// PRECONDITIONS
 		
 		try {
@@ -457,11 +479,13 @@ public class MantisParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
-	public void setTracker(final Tracker tracker) {
+	@Override
+	public Type getType() {
 		// PRECONDITIONS
 		
 		try {
 			// TODO Auto-generated method stub
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -474,6 +498,30 @@ public class MantisParser implements Parser {
 	 * )
 	 */
 	
+	@Override
+	public String getVersion() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public void setTracker(final Tracker tracker) {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public void setXMLReport(final XmlReport report) {
 		// PRECONDITIONS
 		

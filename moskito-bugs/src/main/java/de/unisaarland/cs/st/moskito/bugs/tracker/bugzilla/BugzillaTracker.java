@@ -18,16 +18,18 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
+import noNamespace.BugDocument.Bug;
+import noNamespace.BugzillaDocument;
+import noNamespace.BugzillaDocument.Bugzilla;
 
+import org.apache.xmlbeans.XmlException;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
@@ -59,7 +61,7 @@ public class BugzillaTracker extends Tracker {
 		if (regex.matches(rawReport.getContent())) {
 			return false;
 		}
-		return false;
+		return true;
 	}
 	
 	/*
@@ -69,18 +71,19 @@ public class BugzillaTracker extends Tracker {
 	 */
 	@Override
 	public boolean checkXML(final XmlReport xmlReport) {
-		if (!super.checkXML(xmlReport)) {
+		
+		try {
+			final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xmlReport.getContent());
+			final Bugzilla bugzilla = bugzillaDocument.getBugzilla();
+			final Bug[] bugArray = bugzilla.getBugArray();
+			return bugArray.length == 1;
+		} catch (final XmlException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
 			return false;
 		}
-		if (!xmlReport.getDocument().getRootElement().getName().equals("bugzilla")) {
-			return false;
-		}
-		@SuppressWarnings ("unchecked")
-		final List<Element> bugs = xmlReport.getDocument().getRootElement().getChildren("bug");
-		if (bugs.size() != 1) {
-			return false;
-		}
-		return true;
+		
 	}
 	
 	/*
@@ -123,7 +126,7 @@ public class BugzillaTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			return new BugzillaParser();
+			return new BugzillaParser(this);
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -26,6 +26,11 @@
 			<version>0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>de.unisaarland.cs.st</groupId>
+			<artifactId>moskito-xml-bugzilla</artifactId>
+			<version>4.0.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
@@ -69,13 +74,6 @@
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>openjpa-maven-plugin</artifactId>
