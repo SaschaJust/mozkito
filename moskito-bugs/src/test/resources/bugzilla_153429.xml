@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <!DOCTYPE bugzilla SYSTEM "https://bugs.eclipse.org/bugs/bugzilla.dtd">
 
-<bugzilla version="3.6.3"
+<bugzilla version="4.0.4"
           urlbase="https://bugs.eclipse.org/bugs/"
           
           maintainer="webmaster@eclipse.org"
@@ -26,8 +26,8 @@
           <resolution>FIXED</resolution>
           
           
-          
-          
+          <bug_file_loc></bug_file_loc>
+          <status_whiteboard></status_whiteboard>
           <keywords>plan</keywords>
           <priority>P3</priority>
           <bug_severity>enhancement</bug_severity>
@@ -38,7 +38,6 @@
           <blocked>175251</blocked>
     
     <blocked>244998</blocked>
-          <votes>29</votes>
           <everconfirmed>1</everconfirmed>
           <reporter name="Aodh O&apos;Lionaird">aodholionaird</reporter>
           <assigned_to name="Kim Moir">kmoir</assigned_to>
@@ -122,7 +121,7 @@
     
     <cc>idzelis</cc>
     
-    <cc>ifedorenko</cc>
+    <cc>igor</cc>
     
     <cc>jdmiles</cc>
     
@@ -196,6 +195,7 @@
     
     <cc>vladdu55</cc>
           
+          <votes>28</votes>
 
       
 
@@ -931,7 +931,7 @@ changes to org.junit4 bundle + a new symbolic name org.junit bundle with version
           </long_desc>
           <long_desc isprivate="0">
             <commentid>1628935</commentid>
-            <who name="David M Williams">david_williams</who>
+            <who name="David Williams">david_williams</who>
             <bug_when>2009-11-17 08:35:48 -0500</bug_when>
             <thetext>I don&apos;t quite understand the reasoning behind this change: 
 
@@ -982,7 +982,7 @@ Normally this would be ok, but for very complicated reasons (see comment #17 for
           </long_desc>
           <long_desc isprivate="0">
             <commentid>1629017</commentid>
-            <who name="David M Williams">david_williams</who>
+            <who name="David Williams">david_williams</who>
             <bug_when>2009-11-17 10:29:17 -0500</bug_when>
             <thetext>(In reply to comment #74)
 &gt; (In reply to comment #72)

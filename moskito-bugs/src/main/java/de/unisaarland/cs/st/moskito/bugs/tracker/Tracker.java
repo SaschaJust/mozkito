@@ -242,7 +242,7 @@ public abstract class Tracker {
 		return this.overviewURI;
 	}
 	
-	public abstract Parser getParser();
+	public abstract Parser getParser(XmlReport xmlReport);
 	
 	/**
 	 * This method returns the tracker type, determined by
@@ -310,7 +310,7 @@ public abstract class Tracker {
 	 * This method parses a XML document representing a bug report.
 	 */
 	public final Report parse(final XmlReport xmlReport) {
-		final Parser parser = getParser();
+		final Parser parser = getParser(xmlReport);
 		parser.setTracker(this);
 		parser.setXMLReport(xmlReport);
 		

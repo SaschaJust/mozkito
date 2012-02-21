@@ -176,7 +176,7 @@ public class GoogleTracker extends Tracker {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Parser getParser() {
+	public Parser getParser(final XmlReport xmlReport) {
 		// PRECONDITIONS
 		
 		try {
