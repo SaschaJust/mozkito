@@ -36,11 +36,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
  */
 public class MantisTracker extends Tracker {
 	
+	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
+	
 	/**
 	 * 
 	 */
 	public MantisTracker() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	/*
@@ -75,24 +77,6 @@ public class MantisTracker extends Tracker {
 		
 		throw new UnrecoverableError();
 	}
-	
-	//
-	// /*
-	// * (non-Javadoc)
-	// * @see
-	// de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport)
-	// */
-	// @Override
-	// public Report parse(final XmlReport xmlReport) {
-	// xmlReport.getDocument().getRootElement();
-	// final Report bugReport = new Report(xmlReport.getId());
-	// bugReport.setLastFetch(xmlReport.getFetchTime());
-	// bugReport.setHash(xmlReport.getMd5());
-	//
-	// // parse
-	//
-	// return bugReport;
-	// }
 	
 	/*
 	 * (non-Javadoc)

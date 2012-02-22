@@ -43,6 +43,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -340,6 +341,13 @@ public abstract class Tracker {
 		report.setSummary(parser.getSummary());
 		report.setType(parser.getType());
 		report.setVersion(parser.getVersion());
+		if (parser.getScmFixVersion() != null) {
+			report.setScmFixVersion(parser.getScmFixVersion());
+		}
+		
+		for (final HistoryElement helement : parser.getHistoryElements()) {
+			report.addHistoryElement(helement);
+		}
 		
 		return report;
 	}

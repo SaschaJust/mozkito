@@ -20,7 +20,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
  * 
  */
 public enum Status {
-	UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS, FEEDBACK, REOPENED, REVIEWPENDING, VERIFIED, CLOSED;
+	UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS, FEEDBACK, REOPENED, REVIEWPENDING, VERIFIED, CLOSED, ACKNOWLEDGED;
 	
 	public String getHandle() {
 		return this.getClass().getSimpleName();

@@ -377,7 +377,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Severity getSeverity() {
+	public String getScmFixVersion() {
 		// PRECONDITIONS
 		
 		try {
@@ -394,7 +394,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public Severity getSeverity() {
 		// PRECONDITIONS
 		
 		try {
@@ -411,7 +411,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Status getStatus() {
+	public Set<Long> getSiblings() {
 		// PRECONDITIONS
 		
 		try {
@@ -428,7 +428,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSubject() {
+	public Status getStatus() {
 		// PRECONDITIONS
 		
 		try {
@@ -445,7 +445,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Person getSubmitter() {
+	public String getSubject() {
 		// PRECONDITIONS
 		
 		try {
@@ -462,7 +462,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSummary() {
+	public Person getSubmitter() {
 		// PRECONDITIONS
 		
 		try {
@@ -480,7 +480,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Type getType() {
+	public String getSummary() {
 		// PRECONDITIONS
 		
 		try {
@@ -497,6 +497,18 @@ public class JiraParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
 	 * )
 	 */
+	
+	@Override
+	public Type getType() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	@Override
 	public String getVersion() {
