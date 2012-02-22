@@ -58,17 +58,15 @@ public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 	public GenealogyMetricsToolChain(final GenealogySettings setting, final EnumArgument<MetricLevel> granularityArg,
 	        final GenealogyArguments genealogyArgs) {
 		super(setting);
-		final GenealogySettings settings = getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
-			settings.setLoggerArg(Requirement.required);
 			this.genealogyArgs = genealogyArgs;
 			this.granularityArg = granularityArg;
-			this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
+			this.outputFileArgument = new OutputFileArgument(setting.getRootArgumentSet(), "genealogy.metric.out",
 			                                                 "Filename to write result metric matrix into.", null,
 			                                                 Requirement.required, true);
 			new StringArgument(
-			                   settings.getRootArgumentSet(),
+			                   setting.getRootArgumentSet(),
 			                   "fix.pattern",
 			                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
 			                   null, Requirement.required);
