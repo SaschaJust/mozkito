@@ -17,10 +17,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
@@ -32,7 +30,6 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 
-import org.jdom.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +51,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
-public class BugzillaTracker_NetTest {
+public class BugzillaTracker_4_0_4_Test {
 	
 	private RawReport rawReport1234;
 	private RawReport rawReport114562;
@@ -68,9 +65,9 @@ public class BugzillaTracker_NetTest {
 		                                                         "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")));
 		this.rawReport114562 = new RawReport(
 		                                     1l,
-		                                     IOUtils.fetch(BugzillaTracker_NetTest.class.getResource(FileUtils.fileSeparator
-		                                                                                                 + "bugzilla_114562.xml")
-		                                                                            .toURI()));
+		                                     IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
+		                                                                                                           + "bugzilla_114562.xml")
+		                                                                                      .toURI()));
 	}
 	
 	@After
@@ -81,7 +78,8 @@ public class BugzillaTracker_NetTest {
 	public void testAttachments() {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTracker_NetTest.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml").toString();
+		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
+		                                                .toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		try {
@@ -173,7 +171,8 @@ public class BugzillaTracker_NetTest {
 	public void testParse() {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTracker_NetTest.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml").toString();
+		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml")
+		                                                .toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_114562.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		
@@ -259,9 +258,15 @@ public class BugzillaTracker_NetTest {
 	public void testParseHistory() {
 		
 		try {
-			final URL historyURL = new URL("https://bugs.eclipse.org/bugs/show_activity.cgi?id=114562");
-			final BugzillaHistoryParser historyParser = new BugzillaHistoryParser(historyURL.toURI(), 114562);
-			historyParser.parse();
+			// final URL historyURL = new URL("https://bugs.eclipse.org/bugs/show_activity.cgi?id=114562");
+			
+			final String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
+			                                                                           + "bugzilla_114562_history.html")
+			                                                      .toString();
+			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(new URI(url), 114562);
+			if (!historyParser.parse()) {
+				fail();
+			}
 			final SortedSet<HistoryElement> historyElements = historyParser.getHistory();
 			final History history = new History(114562);
 			for (final HistoryElement hElem : historyElements) {
@@ -302,31 +307,6 @@ public class BugzillaTracker_NetTest {
 			assertEquals("mik.kersten", resolver.getUsernames().iterator().next());
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), resolutionTimestamp);
 		} catch (final SecurityException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final FetchException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final JDOMException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final NoSuchFieldException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
