@@ -23,7 +23,6 @@ import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.settings.arguments.EnumArgument;
 import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.andama.settings.arguments.StringArgument;
@@ -47,7 +46,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
-public class GenealogyMetricsToolChain extends Chain<Settings> {
+public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 	
 	private final GenealogyArguments        genealogyArgs;
 	private final Pool                      threadPool;
@@ -59,7 +58,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	public GenealogyMetricsToolChain(final GenealogySettings setting, final EnumArgument<MetricLevel> granularityArg,
 	        final GenealogyArguments genealogyArgs) {
 		super(setting);
-		final GenealogySettings settings = (GenealogySettings) getSettings();
+		final GenealogySettings settings = getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
 			settings.setLoggerArg(Requirement.required);
