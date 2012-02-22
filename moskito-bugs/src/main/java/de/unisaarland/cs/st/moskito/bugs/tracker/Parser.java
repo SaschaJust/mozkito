@@ -64,6 +64,8 @@ public interface Parser {
 	
 	Person getResolver();
 	
+	String getScmFixVersion();
+	
 	Severity getSeverity();
 	
 	Set<Long> getSiblings();

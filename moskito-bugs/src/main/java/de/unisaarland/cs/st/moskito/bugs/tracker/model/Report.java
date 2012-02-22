@@ -46,8 +46,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -99,6 +101,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                summary;
 	private Type                  type              = Type.UNKNOWN;
 	private String                version;
+	private String                scmFixVersion;
 	
 	private Report() {
 		super();
@@ -200,6 +203,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(final Report o) {
 		if (getId() > o.getId()) {
 			return 1;
@@ -435,6 +439,16 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public Person getResolver() {
 		return getPersonContainer().get("resolver");
+	}
+	
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return this.scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -722,6 +736,18 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setResolver(final Person resolver) {
 		getPersonContainer().add("resolver", resolver);
+	}
+	
+	@NoneNull
+	public void setScmFixVersion(final String scmFixVersion) {
+		// PRECONDITIONS
+		try {
+			this.scmFixVersion = scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.scmFixVersion, scmFixVersion,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/**

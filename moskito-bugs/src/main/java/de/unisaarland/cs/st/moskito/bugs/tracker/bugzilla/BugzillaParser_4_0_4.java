@@ -461,6 +461,22 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 */
 	
 	@Override
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
+	
+	@Override
 	public Severity getSeverity() {
 		// PRECONDITIONS
 		
@@ -473,7 +489,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -534,7 +551,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -547,13 +565,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public String getSubject() {
