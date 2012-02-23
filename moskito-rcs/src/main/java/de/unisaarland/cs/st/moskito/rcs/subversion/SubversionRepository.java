@@ -204,11 +204,11 @@ public class SubversionRepository extends Repository {
 		
 		if (this.tmpDir == null) {
 			this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
-			                                            "reposuite_clone_" + DateTimeUtils.currentTimeMillis(),
+			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
 			                                            FileShutdownAction.DELETE);
 		} else {
 			this.workingDirectory = FileUtils.createDir(this.tmpDir,
-			                                            "reposuite_clone_" + DateTimeUtils.currentTimeMillis(),
+			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
 			                                            FileShutdownAction.DELETE);
 		}
 		
