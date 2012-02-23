@@ -25,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -92,6 +93,20 @@ public class PPAPersistenceUtil {
 		}
 		
 		return result;
+	}
+	
+	public static DateTime getFirstTimestampChangingElement(final PersistenceUtil persistenceUtil,
+	                                                        final JavaElement element) {
+		updateProcedures(persistenceUtil);
+		final StringBuilder query = new StringBuilder();
+		query.append("select timestamp from firstelementchanges WHERE element_generatedid = ");
+		query.append(element.getGeneratedId());
+		final Query q = persistenceUtil.createQuery(query.toString());
+		final Object singleResult = q.getSingleResult();
+		if (singleResult == null) {
+			return null;
+		}
+		return DateTimeUtils.parseDate(singleResult.toString());
 	}
 	
 	/**
