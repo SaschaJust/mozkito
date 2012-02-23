@@ -42,3 +42,11 @@ moskito-changecouplings/pom.xml.versionsBackup
 moskito-callgraph/pom.xml.versionsBackup
 moskito-bugs/pom.xml.versionsBackup
 moskito-bugs/eclipse/
+moskito-changecouplings/eclipse/
+moskito-genealogies/eclipse/
+moskito-infozilla/eclipse/
+moskito-mapping/eclipse/
+moskito-persistence/eclipse/
+moskito-ppa/eclipse/
+moskito-rcs/eclipse/
+moskito-untangling/eclipse/
