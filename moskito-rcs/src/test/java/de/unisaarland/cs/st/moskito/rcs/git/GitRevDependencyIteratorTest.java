@@ -61,7 +61,7 @@ public class GitRevDependencyIteratorTest extends MoskitoTest {
 			branchFactory = new BranchFactory(getPersistenceUtil());
 			repo = new GitRepository();
 			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
-			           null, branchFactory);
+			           null, branchFactory, null);
 		} catch (final Exception e) {
 			fail();
 		}

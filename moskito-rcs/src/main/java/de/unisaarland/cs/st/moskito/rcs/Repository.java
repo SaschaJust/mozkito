@@ -494,6 +494,10 @@ public abstract class Repository {
 	 *            first revision to take into account (may be null)
 	 * @param endRevision
 	 *            last revision to take into account (may be null)
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -506,10 +510,11 @@ public abstract class Repository {
 	public abstract void setup(URI address,
 	                           String startRevision,
 	                           String endRevision,
-	                           BranchFactory branchFactory) throws MalformedURLException,
-	                                                       InvalidProtocolType,
-	                                                       InvalidRepositoryURI,
-	                                                       UnsupportedProtocolType;
+	                           BranchFactory branchFactory,
+	                           File tmpDir) throws MalformedURLException,
+	                                       InvalidProtocolType,
+	                                       InvalidRepositoryURI,
+	                                       UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -524,6 +529,10 @@ public abstract class Repository {
 	 *            the username
 	 * @param password
 	 *            the password
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -538,10 +547,11 @@ public abstract class Repository {
 	                           String endRevision,
 	                           String username,
 	                           String password,
-	                           BranchFactory branchFactory) throws MalformedURLException,
-	                                                       InvalidProtocolType,
-	                                                       InvalidRepositoryURI,
-	                                                       UnsupportedProtocolType;
+	                           BranchFactory branchFactory,
+	                           File tmpDir) throws MalformedURLException,
+	                                       InvalidProtocolType,
+	                                       InvalidRepositoryURI,
+	                                       UnsupportedProtocolType;
 	
 	/**
 	 * @param uri

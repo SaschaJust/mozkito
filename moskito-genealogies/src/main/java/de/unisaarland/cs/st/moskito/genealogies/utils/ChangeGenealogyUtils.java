@@ -196,7 +196,7 @@ public class ChangeGenealogyUtils {
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), null, null, branchFactory);
+			repository.setup(urlFile.toURI(), null, null, branchFactory, null);
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
