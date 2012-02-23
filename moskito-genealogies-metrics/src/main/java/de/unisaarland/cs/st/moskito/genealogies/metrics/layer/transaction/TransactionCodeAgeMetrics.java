@@ -70,13 +70,18 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			                                                                                                element,
 			                                                                                                before,
 			                                                                                                after);
-			numChangesStats.addValue(pastTransactions.size());
 			
-			final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
-			lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+			if (!pastTransactions.isEmpty()) {
+				numChangesStats.addValue(pastTransactions.size());
+				
+				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
+				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+			}
 			final RCSTransaction firstModified = PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
 			                                                                                            element);
-			ageStats.addValue(DaysBetweenUtils.getDaysBetween(transaction, firstModified));
+			if (!firstModified.equals(transaction)) {
+				ageStats.addValue(DaysBetweenUtils.getDaysBetween(transaction, firstModified));
+			}
 		}
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
