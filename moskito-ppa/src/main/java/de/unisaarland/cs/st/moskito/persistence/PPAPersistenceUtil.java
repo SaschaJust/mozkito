@@ -101,12 +101,12 @@ public class PPAPersistenceUtil {
 		final StringBuilder query = new StringBuilder();
 		query.append("select timestamp from firstelementchanges WHERE element_generatedid = ");
 		query.append(element.getGeneratedId());
-		final Query q = persistenceUtil.createQuery(query.toString());
-		final Object singleResult = q.getSingleResult();
-		if (singleResult == null) {
+		@SuppressWarnings ("rawtypes")
+		final List result = persistenceUtil.executeNativeSelectQuery(query.toString());
+		if (result.isEmpty()) {
 			return null;
 		}
-		return DateTimeUtils.parseDate(singleResult.toString());
+		return DateTimeUtils.parseDate(result.get(0).toString());
 	}
 	
 	/**
