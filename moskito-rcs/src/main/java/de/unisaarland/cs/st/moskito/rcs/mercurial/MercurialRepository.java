@@ -739,7 +739,7 @@ public class MercurialRepository extends Repository {
 	private void setup(@NotNull final URI address,
 	                   final String startRevision,
 	                   final String endRevision,
-	                   @NotNull final InputStream inputStream,
+	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir) {
 		
