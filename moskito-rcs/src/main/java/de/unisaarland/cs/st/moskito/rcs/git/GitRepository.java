@@ -36,6 +36,7 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.URIUtils;
 import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -567,13 +568,14 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final BranchFactory branchFactory) {
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, startRevision, endRevision, null, branchFactory);
+		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -588,18 +590,22 @@ public class GitRepository extends Repository {
 	 * @param inputStream
 	 *            the input stream
 	 */
-	private void setup(final URI address,
+	private void setup(@NotNull final URI address,
 	                   final String startRevision,
 	                   final String endRevision,
-	                   final InputStream inputStream,
-	                   final BranchFactory branchFactory) {
+	                   @NotNull final InputStream inputStream,
+	                   @NotNull final BranchFactory branchFactory,
+	                   final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
-		final String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_git_clone_"
-		        + DateTimeUtils.currentTimeMillis();
+		String gitName = FileUtils.tmpDir.getAbsolutePath();
+		if (tmpDir != null) {
+			gitName = tmpDir.getAbsolutePath();
+		}
+		gitName += FileUtils.fileSeparator + "reposuite_git_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
@@ -651,16 +657,17 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final String username,
-	                  final String password,
-	                  final BranchFactory branchFactory) {
+	                  @NotNull final String username,
+	                  @NotNull final String password,
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
 		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory);
+		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
 	}
 }
