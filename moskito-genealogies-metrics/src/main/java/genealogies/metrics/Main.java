@@ -69,7 +69,7 @@ public class Main {
 			
 			if ((aggregateFile != null) && (!metricsValues.isEmpty())) {
 				final CoreChangeGenealogy coreChangeGenealogy = genealogyArgs.getValue();
-				if (granularityArg.getValue().equals("TRANSACTION")) {
+				if (granularityArg.getValue().equals(MetricLevel.TRANSACTION)) {
 					final GenealogyMetricsAggregateToolChain aggregateToolChain = new GenealogyMetricsAggregateToolChain(
 					                                                                                                     settings,
 					                                                                                                     aggregateFile,
