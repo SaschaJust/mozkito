@@ -71,6 +71,10 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 		
 	}
 	
+	public PersistenceUtil getPersistenceUtil() {
+		return this.persistenceUtil;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.RepoSuiteToolchain#setup()
