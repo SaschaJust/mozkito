@@ -75,6 +75,16 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 		return this.persistenceUtil;
 	}
 	
+	public Repository getRepository() {
+		// PRECONDITIONS
+		
+		try {
+			return this.repository;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.RepoSuiteToolchain#setup()

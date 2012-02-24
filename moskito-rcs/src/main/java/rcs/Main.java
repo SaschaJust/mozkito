@@ -47,7 +47,7 @@ public class Main {
 			}
 			
 			Graph graph;
-			graph = new Graph();
+			graph = new Graph(rCS.getSettings(), rCS.getPersistenceUtil(), rCS.getRepository());
 			graph.setName(graph.getClass().getSimpleName());
 			graph.start();
 			graph.join();
