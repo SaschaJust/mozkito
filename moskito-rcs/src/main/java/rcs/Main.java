@@ -40,6 +40,7 @@ public class Main {
 			rCS.setName(rCS.getClass().getSimpleName());
 			rCS.start();
 			rCS.join();
+			rCS.getPersistenceUtil().shutdown();
 			Graph graph;
 			
 			graph = new Graph();
