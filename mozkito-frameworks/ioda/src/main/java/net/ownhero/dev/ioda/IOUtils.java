@@ -235,7 +235,6 @@ public class IOUtils {
 	 */
 	public static RawContent fetchFile(final URI uri) throws FetchException {
 		try {
-			final MessageDigest md = MessageDigest.getInstance("MD5");
 			final StringBuilder builder = new StringBuilder();
 			final File file = new File(uri.getPath());
 			
@@ -251,7 +250,7 @@ public class IOUtils {
 			
 			reader.close();
 			
-			return new RawContent(uri, md.digest(builder.toString().getBytes()), new DateTime(file.lastModified()),
+			return new RawContent(uri, HashUtils.getMD5(builder.toString()), new DateTime(file.lastModified()),
 			                      "xhtml", builder.toString());
 			
 		} catch (final Exception e) {
