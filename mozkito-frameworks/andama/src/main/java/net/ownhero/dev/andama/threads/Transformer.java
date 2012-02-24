@@ -13,12 +13,12 @@
 package net.ownhero.dev.andama.threads;
 
 import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 
 /**
- * The {@link Transformer} class is a component of the {@link Chain} . It takes data from a data source and
- * modifies it. The result is stored as a new instance in the output storage. {@link Transformer}s have to have an
- * input and an output connector.
+ * The {@link Transformer} class is a component of the {@link Chain} . It takes data from a data source and modifies it.
+ * The result is stored as a new instance in the output storage. {@link Transformer}s have to have an input and an
+ * output connector.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -30,7 +30,7 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 * @param name
 	 * @param settings
 	 */
-	public Transformer(final Group threadGroup, final Settings settings, final boolean parallelizable) {
+	public Transformer(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	
@@ -38,10 +38,10 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<? extends Node<K, V>> getBaseType() {
-		return (Class<? extends Node<K, V>>) Transformer.class;
+	public final Class<Transformer> getBaseType() {
+		return Transformer.class;
 	}
 	
 	/*
@@ -74,8 +74,7 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		

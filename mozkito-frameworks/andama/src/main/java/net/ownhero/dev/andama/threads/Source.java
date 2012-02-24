@@ -3,12 +3,12 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 
 /**
- * {@link Source}s are the source elements of a tool chain. In general, these are I/O handlers that read data from
- * some source and provide it to the tool chain. All instances of {@link Source}s must have an output connector
- * but must not have an input connector.
+ * {@link Source}s are the source elements of a tool chain. In general, these are I/O handlers that read data from some
+ * source and provide it to the tool chain. All instances of {@link Source}s must have an output connector but must not
+ * have an input connector.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -21,7 +21,7 @@ public abstract class Source<T> extends Node<T, T> {
 	 * @param name
 	 * @param settings
 	 */
-	public Source(final Group threadGroup, final Settings settings, final boolean parallelizable) {
+	public Source(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	
@@ -29,10 +29,10 @@ public abstract class Source<T> extends Node<T, T> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<? extends Node<T, T>> getBaseType() {
-		return (Class<? extends Node<T, T>>) Source.class;
+	public final Class<Source> getBaseType() {
+		return Source.class;
 	}
 	
 	/*
@@ -65,8 +65,7 @@ public abstract class Source<T> extends Node<T, T> {
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		

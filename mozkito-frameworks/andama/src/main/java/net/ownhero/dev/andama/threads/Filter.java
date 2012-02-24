@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 
 /**
  * {@link Filter}s can be used for two things:
@@ -23,7 +23,7 @@ public abstract class Filter<T> extends Node<T, T> {
 	 * @param name
 	 * @param settings
 	 */
-	public Filter(final Group threadGroup, final Settings settings, final boolean parallelizable) {
+	public Filter(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	
@@ -31,10 +31,10 @@ public abstract class Filter<T> extends Node<T, T> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<? extends Node<T, T>> getBaseType() {
-		return (Class<? extends Node<T, T>>) Filter.class;
+	public final Class<Filter> getBaseType() {
+		return Filter.class;
 	}
 	
 	/*
@@ -67,8 +67,7 @@ public abstract class Filter<T> extends Node<T, T> {
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		

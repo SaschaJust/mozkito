@@ -3,13 +3,13 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 
 /**
- * {@link Sink}s are the end points of a tool chain. In general, they provide a connection to a database back-end
- * (e.g. {@link RepositoryPersister} ). There can also be void sinks in case you don't want to store anything, e.g. if
- * you just want to do some analysis. {@link RepositoryVoidSink} is an example for this. All instances of
- * {@link Sink} must have an input connector, but must not have an output connector.
+ * {@link Sink}s are the end points of a tool chain. In general, they provide a connection to a database back-end (e.g.
+ * {@link RepositoryPersister} ). There can also be void sinks in case you don't want to store anything, e.g. if you
+ * just want to do some analysis. {@link RepositoryVoidSink} is an example for this. All instances of {@link Sink} must
+ * have an input connector, but must not have an output connector.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -22,7 +22,7 @@ public abstract class Sink<T> extends Node<T, T> {
 	 * @param name
 	 * @param settings
 	 */
-	public Sink(final Group threadGroup, final Settings settings, final boolean parallelizable) {
+	public Sink(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 	}
 	
@@ -30,10 +30,10 @@ public abstract class Sink<T> extends Node<T, T> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ({ "rawtypes" })
 	@Override
-	public final Class<? extends Node<T, T>> getBaseType() {
-		return (Class<? extends Node<T, T>>) Sink.class;
+	public final Class<Sink> getBaseType() {
+		return Sink.class;
 	}
 	
 	/*
@@ -66,8 +66,7 @@ public abstract class Sink<T> extends Node<T, T> {
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		

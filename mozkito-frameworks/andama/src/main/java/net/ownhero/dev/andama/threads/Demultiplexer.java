@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -14,8 +14,7 @@ public abstract class Demultiplexer<K> extends Node<K, K> {
 	/**
 	 * 
 	 */
-	public Demultiplexer(final Group threadGroup, final Settings settings,
-	        final boolean parallelizable) {
+	public Demultiplexer(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);
 		
 		new ForwardProcessHook<K>(this);
@@ -25,10 +24,10 @@ public abstract class Demultiplexer<K> extends Node<K, K> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#getBaseType()
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<? extends Node<K, K>> getBaseType() {
-		return (Class<? extends Node<K, K>>) Demultiplexer.class;
+	public final Class<Demultiplexer> getBaseType() {
+		return Demultiplexer.class;
 	}
 	
 	/*
@@ -61,8 +60,7 @@ public abstract class Demultiplexer<K> extends Node<K, K> {
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		

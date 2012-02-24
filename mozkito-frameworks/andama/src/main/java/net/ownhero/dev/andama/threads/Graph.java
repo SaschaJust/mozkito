@@ -28,35 +28,37 @@ import net.ownhero.dev.kanuni.conditions.MapCondition;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
+@SuppressWarnings ("rawtypes")
 public class Graph {
 	
-	private final HashSet<Class<?>>                                                                connectionTypes = new HashSet<Class<?>>();
-	private final HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>> inputTypes      = new HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>>();
+	private final HashSet<Class<?>>                                                    connectionTypes = new HashSet<Class<?>>();
+	private final HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>> inputTypes      = new HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>>();
 	
-	private final HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>> outputTypes     = new HashMap<Class<?>, HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>>();
-	private final List<INode<?, ?>>                                                                transformers    = new LinkedList<INode<?, ?>>();
-	private Group                                                                                  group;
+	private final HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>> outputTypes     = new HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>>();
+	private final List<INode>                                                          transformers    = new LinkedList<INode>();
+	private Group                                                                      group;
 	
 	/**
 	 * @param group
 	 */
+	@SuppressWarnings ("unchecked")
 	public Graph(@NotNull final Group group) {
 		try {
 			this.group = group;
 			CollectionCondition.notEmpty(group.getThreads(), "Cannot build graph on empty thread group.");
 			
-			for (final INode<?, ?> thread : group.getThreads()) {
+			for (final INode thread : group.getThreads()) {
 				if (thread.getInputType() != null) {
 					this.connectionTypes.add(thread.getInputType());
 					
 					if (!this.inputTypes.containsKey(thread.getInputType())) {
 						this.inputTypes.put(thread.getInputType(),
-						                    new HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>());
+						                    new HashMap<Class<? extends Node>, LinkedList<INode>>());
 					}
 					
-					final HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> map = this.inputTypes.get(thread.getInputType());
+					final HashMap<Class<? extends Node>, LinkedList<INode>> map = this.inputTypes.get(thread.getInputType());
 					if (!map.containsKey(thread.getBaseType())) {
-						map.put(thread.getBaseType(), new LinkedList<INode<?, ?>>());
+						map.put(thread.getBaseType(), new LinkedList<INode>());
 					}
 					
 					map.get(thread.getBaseType()).add(thread);
@@ -67,12 +69,12 @@ public class Graph {
 					
 					if (!this.outputTypes.containsKey(thread.getOutputType())) {
 						this.outputTypes.put(thread.getOutputType(),
-						                     new HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>>());
+						                     new HashMap<Class<? extends Node>, LinkedList<INode>>());
 					}
 					
-					final HashMap<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> map = this.outputTypes.get(thread.getOutputType());
+					final HashMap<Class<? extends Node>, LinkedList<INode>> map = this.outputTypes.get(thread.getOutputType());
 					if (!map.containsKey(thread.getBaseType())) {
-						map.put(thread.getBaseType(), new LinkedList<INode<?, ?>>());
+						map.put(thread.getBaseType(), new LinkedList<INode>());
 					}
 					
 					map.get(thread.getBaseType()).add(thread);
@@ -104,18 +106,18 @@ public class Graph {
 	 * 
 	 */
 	public void buildGraph() throws InvalidGraphLayoutException {
-		final List<INode<?, ?>> headThreads = new LinkedList<INode<?, ?>>();
-		final List<INode<?, ?>> tailThreads = new LinkedList<INode<?, ?>>();
+		final List<INode> headThreads = new LinkedList<INode>();
+		final List<INode> tailThreads = new LinkedList<INode>();
 		final Map<Class<?>, Source<?>> orphanedSources = new HashMap<Class<?>, Source<?>>();
 		final Map<Class<?>, Sink<?>> orphanedSinks = new HashMap<Class<?>, Sink<?>>();
-		INode<?, ?> headThread = null;
-		INode<?, ?> tailThread = null;
+		INode headThread = null;
+		INode tailThread = null;
 		
 		for (final Class<?> inputType : this.connectionTypes) {
 			headThread = null;
 			tailThread = null;
-			final Map<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> inputMap = this.inputTypes.get(inputType);
-			final Map<Class<? extends Node<?, ?>>, LinkedList<INode<?, ?>>> outputMap = this.outputTypes.get(inputType);
+			final Map<Class<? extends Node>, LinkedList<INode>> inputMap = this.inputTypes.get(inputType);
+			final Map<Class<? extends Node>, LinkedList<INode>> outputMap = this.outputTypes.get(inputType);
 			
 			// @formatter:off
 			/*
@@ -127,7 +129,7 @@ public class Graph {
 			 */
 			// @formatter:on
 			if (inputMap.containsKey(Multiplexer.class)) {
-				final LinkedList<INode<?, ?>> muxList = inputMap.get(Multiplexer.class);
+				final LinkedList<INode> muxList = inputMap.get(Multiplexer.class);
 				if (muxList.size() > 1) {
 					throw new InvalidGraphLayoutException(
 					                                      String.format("Found %s %ss with the same input type: %s",
@@ -138,7 +140,7 @@ public class Graph {
 				
 				if (inputMap.containsKey(Demultiplexer.class)) {
 					// cross
-					final LinkedList<INode<?, ?>> demuxList = inputMap.get(Demultiplexer.class);
+					final LinkedList<INode> demuxList = inputMap.get(Demultiplexer.class);
 					if (demuxList.size() > 1) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss with the same input type: %s",
@@ -149,14 +151,14 @@ public class Graph {
 					} else {
 						// look back for incoming threads (which should only be transformers and sources; since we don't
 						// use transformers in subgraphs, sources is the only relevant thing here).
-						final INode<?, ?> demux = demuxList.iterator().next();
+						final INode demux = demuxList.iterator().next();
 						headThread = demux;
 						tailThread = demux;
-						final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
+						final LinkedList<INode> sourceList = outputMap.get(Source.class);
 						
 						if ((sourceList != null) && !sourceList.isEmpty()) {
 							// attach all available sources
-							for (final INode<?, ?> source : sourceList) {
+							for (final INode source : sourceList) {
 								connect(source, demux);
 							}
 						}
@@ -169,11 +171,11 @@ public class Graph {
 						 * exists-checked prior to this) we then take the available sinks for that type
 						 */
 						
-						final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
+						final LinkedList<INode> filterList = inputMap.get(Filter.class);
 						
 						if ((filterList != null) && !filterList.isEmpty()) {
 							// attach all available filters
-							for (final INode<?, ?> filter : filterList) {
+							for (final INode filter : filterList) {
 								connect(tailThread, filter);
 								tailThread = filter;
 							}
@@ -190,16 +192,16 @@ public class Graph {
 								                                                                       .toLowerCase()));
 							}
 							
-							for (final INode<?, ?> mux : muxList) {
+							for (final INode mux : muxList) {
 								connect(tailThread, mux);
 								tailThread = mux;
 							}
 						}
 						
-						final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
+						final LinkedList<INode> sinkList = inputMap.get(Sink.class);
 						
 						if ((sinkList != null) && !sinkList.isEmpty()) {
-							for (final INode<?, ?> sink : sinkList) {
+							for (final INode sink : sinkList) {
 								connect(demux, sink);
 							}
 						}
@@ -208,26 +210,26 @@ public class Graph {
 					}
 				} else {
 					// y-open
-					final INode<?, ?> mux = muxList.iterator().next();
+					final INode mux = muxList.iterator().next();
 					headThread = mux;
 					tailThread = mux;
 					
 					// look to the left (filters and sources)
-					final LinkedList<INode<?, ?>> filterList = outputMap.get(Filter.class);
+					final LinkedList<INode> filterList = outputMap.get(Filter.class);
 					
 					if ((filterList != null) && !filterList.isEmpty()) {
 						// attach all available filters
-						for (final INode<?, ?> filter : filterList) {
+						for (final INode filter : filterList) {
 							connect(filter, headThread);
 							headThread = filter;
 						}
 					}
 					
-					final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
+					final LinkedList<INode> sourceList = outputMap.get(Source.class);
 					
 					if ((sourceList != null) && !sourceList.isEmpty()) {
 						// attach all available sources
-						for (final INode<?, ?> source : sourceList) {
+						for (final INode source : sourceList) {
 							connect(source, mux);
 						}
 					}
@@ -235,10 +237,10 @@ public class Graph {
 					headThreads.add(headThread);
 					
 					// look to the right
-					final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
+					final LinkedList<INode> sinkList = inputMap.get(Sink.class);
 					
 					if ((sinkList != null) && !sinkList.isEmpty()) {
-						for (final INode<?, ?> sink : sinkList) {
+						for (final INode sink : sinkList) {
 							connect(tailThread, sink);
 						}
 					}
@@ -248,7 +250,7 @@ public class Graph {
 			} else {
 				if (inputMap.containsKey(Demultiplexer.class)) {
 					// y-close
-					final LinkedList<INode<?, ?>> demuxList = inputMap.get(Demultiplexer.class);
+					final LinkedList<INode> demuxList = inputMap.get(Demultiplexer.class);
 					if (demuxList.size() > 1) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss with the same input type: %s",
@@ -259,14 +261,14 @@ public class Graph {
 					} else {
 						// look back for incoming threads (which should only be transformers and sources; since we don't
 						// use transformers in subgraphs, sources is the only relevant thing here).
-						final INode<?, ?> demux = demuxList.iterator().next();
+						final INode demux = demuxList.iterator().next();
 						headThread = demux;
 						tailThread = demux;
-						final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
+						final LinkedList<INode> sourceList = outputMap.get(Source.class);
 						
 						if ((sourceList != null) && !sourceList.isEmpty()) {
 							// attach all available sources
-							for (final INode<?, ?> source : sourceList) {
+							for (final INode source : sourceList) {
 								connect(source, demux);
 							}
 						}
@@ -277,20 +279,20 @@ public class Graph {
 						// we are currently in a demux which means we look out for filters next
 						// we then take the available sinks for that type
 						
-						final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
+						final LinkedList<INode> filterList = inputMap.get(Filter.class);
 						
 						if ((filterList != null) && !filterList.isEmpty()) {
 							// attach all available filters
-							for (final INode<?, ?> filter : filterList) {
+							for (final INode filter : filterList) {
 								connect(tailThread, filter);
 								tailThread = filter;
 							}
 						}
 						
-						final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
+						final LinkedList<INode> sinkList = inputMap.get(Sink.class);
 						
 						if ((sinkList != null) && !sinkList.isEmpty()) {
-							for (final INode<?, ?> sink : sinkList) {
+							for (final INode sink : sinkList) {
 								connect(demux, sink);
 							}
 						}
@@ -299,7 +301,7 @@ public class Graph {
 					}
 				} else {
 					// flat
-					final LinkedList<INode<?, ?>> sinkList = inputMap.get(Sink.class);
+					final LinkedList<INode> sinkList = inputMap.get(Sink.class);
 					if ((sinkList != null) && (sinkList.size() > 1)) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss but found no corresponding %s with the same input type: %s",
@@ -309,7 +311,7 @@ public class Graph {
 						                                                                     .toLowerCase(), inputType));
 					}
 					
-					final LinkedList<INode<?, ?>> sourceList = outputMap.get(Source.class);
+					final LinkedList<INode> sourceList = outputMap.get(Source.class);
 					if ((sourceList != null) && (sourceList.size() > 1)) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss but found no corresponding %s with the same input type: %s",
@@ -320,9 +322,9 @@ public class Graph {
 						                                                    inputType));
 					}
 					
-					final LinkedList<INode<?, ?>> filterList = inputMap.get(Filter.class);
+					final LinkedList<INode> filterList = inputMap.get(Filter.class);
 					if ((filterList != null) && !filterList.isEmpty()) {
-						for (final INode<?, ?> filter : filterList) {
+						for (final INode filter : filterList) {
 							if (headThread == null) {
 								headThread = filter;
 								tailThread = filter;
@@ -334,7 +336,7 @@ public class Graph {
 					}
 					
 					if ((sourceList != null) && !sourceList.isEmpty()) {
-						final INode<?, ?> source = sourceList.iterator().next();
+						final INode source = sourceList.iterator().next();
 						if (headThread != null) {
 							connect(source, headThread);
 							headThread = null;
@@ -344,7 +346,7 @@ public class Graph {
 					}
 					
 					if ((sinkList != null) && !sinkList.isEmpty()) {
-						final INode<?, ?> sink = sinkList.iterator().next();
+						final INode sink = sinkList.iterator().next();
 						if (tailThread != null) {
 							connect(tailThread, sink);
 							tailThread = null;
@@ -357,13 +359,13 @@ public class Graph {
 			}
 		}
 		
-		for (final INode<?, ?> transformer : this.transformers) {
+		for (final INode transformer : this.transformers) {
 			boolean inputConnected = false;
 			boolean outputConnected = false;
 			final Class<?> outputType = transformer.getOutputType();
 			final Class<?> inputType = transformer.getInputType();
 			
-			for (final INode<?, ?> thread : tailThreads) {
+			for (final INode thread : tailThreads) {
 				if (thread.getOutputType().equals(transformer.getInputType())) {
 					connect(thread, transformer);
 					inputConnected = true;
@@ -378,7 +380,7 @@ public class Graph {
 				inputConnected = true;
 			}
 			
-			for (final INode<?, ?> thread : headThreads) {
+			for (final INode thread : headThreads) {
 				if (thread.getInputType().equals(transformer.getOutputType())) {
 					connect(transformer, thread);
 					outputConnected = true;
@@ -411,7 +413,7 @@ public class Graph {
 			}
 		}
 		
-		for (final INode<?, ?> thread : this.group.getThreads()) {
+		for (final INode thread : this.group.getThreads()) {
 			if (!thread.checkConnections()) {
 				throw new InvalidGraphLayoutException("Generated graph layout is incomplete.");
 			}
@@ -423,10 +425,10 @@ public class Graph {
 	 * @param to
 	 */
 	@SuppressWarnings ("unchecked")
-	private <T> void connect(final INode<?, ?> from,
-	                         final INode<?, ?> to) {
-		final INode<?, T> typedFrom = (INode<?, T>) from;
-		final INode<T, ?> typedTo = (INode<T, ?>) to;
+	private <T> void connect(final INode from,
+	                         final INode to) {
+		final INode<?, T> typedFrom = from;
+		final INode<T, ?> typedTo = to;
 		
 		typedFrom.connectOutput(typedTo);
 	}
