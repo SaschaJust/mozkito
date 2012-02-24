@@ -40,7 +40,7 @@ public abstract class Transformer<K, V> extends Node<K, V> {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<Transformer> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Transformer.class;
 	}
 	

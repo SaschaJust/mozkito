@@ -28,7 +28,7 @@ public abstract class Multiplexer<K> extends Node<K, K> {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<Multiplexer> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Multiplexer.class;
 	}
 	

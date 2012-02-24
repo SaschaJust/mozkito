@@ -31,7 +31,7 @@ public abstract class Source<T> extends Node<T, T> {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<Source> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Source.class;
 	}
 	

@@ -26,7 +26,7 @@ public abstract class Demultiplexer<K> extends Node<K, K> {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<Demultiplexer> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Demultiplexer.class;
 	}
 	

@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.andama.settings.ISettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.ioda.JavaUtils;
@@ -155,45 +155,45 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		}
 	}
 	
-	private final Set<CountDownLatch>                                             awaitingLatches      = new HashSet<CountDownLatch>();
-	private final Map<Node<?, ?>, CountDownLatch>                         dependencies         = new HashMap<Node<?, ?>, CountDownLatch>();
-	private final Map<Class<?>, K>                                                inputCache           = new HashMap<Class<?>, K>();
-	private Tuple<K, CountDownLatch>                                              inputDataTuple;
-	private final Set<InputHook<K, V>>                                            inputHooks           = new HashSet<InputHook<K, V>>();
-	private AndamaDataStorage<K>                                                  inputStorage;
+	private final Set<CountDownLatch>                                  awaitingLatches      = new HashSet<CountDownLatch>();
+	private final Map<Node<?, ?>, CountDownLatch>                      dependencies         = new HashMap<Node<?, ?>, CountDownLatch>();
+	private final Map<Class<?>, K>                                     inputCache           = new HashMap<Class<?>, K>();
+	private Tuple<K, CountDownLatch>                                   inputDataTuple;
+	private final Set<InputHook<K, V>>                                 inputHooks           = new HashSet<InputHook<K, V>>();
+	private AndamaDataStorage<K>                                       inputStorage;
 	private final LinkedBlockingDeque<INode<?, K>>                     inputThreads         = new LinkedBlockingDeque<INode<?, K>>();
 	private final LinkedBlockingDeque<INode<?, ?>>                     knownThreads         = new LinkedBlockingDeque<INode<?, ?>>();
-	private V                                                                     outputData;
-	private final Set<OutputHook<K, V>>                                           outputHooks          = new HashSet<OutputHook<K, V>>();
+	private V                                                          outputData;
+	private final Set<OutputHook<K, V>>                                outputHooks          = new HashSet<OutputHook<K, V>>();
 	
-	private Collection<CountDownLatch>                                            outputLatches        = new LinkedList<CountDownLatch>();
+	private Collection<CountDownLatch>                                 outputLatches        = new LinkedList<CountDownLatch>();
 	
 	private final ConcurrentHashMap<INode<V, ?>, AndamaDataStorage<V>> outputThreads        = new ConcurrentHashMap<INode<V, ?>, AndamaDataStorage<V>>();
-	private boolean                                                               parallelizable       = false;
-	private final Set<PostExecutionHook<K, V>>                                    postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
+	private boolean                                                    parallelizable       = false;
+	private final Set<PostExecutionHook<K, V>>                         postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
 	
-	private final Set<PostInputHook<K, V>>                                        postInputHooks       = new HashSet<PostInputHook<K, V>>();
-	private final Set<PostOutputHook<K, V>>                                       postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
-	private final Set<PostProcessHook<K, V>>                                      postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
+	private final Set<PostInputHook<K, V>>                             postInputHooks       = new HashSet<PostInputHook<K, V>>();
+	private final Set<PostOutputHook<K, V>>                            postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
+	private final Set<PostProcessHook<K, V>>                           postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
 	
 	// hooks
-	private final Set<PreExecutionHook<K, V>>                                     preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
-	private final Set<PreInputHook<K, V>>                                         preInputHooks        = new HashSet<PreInputHook<K, V>>();
-	private final Set<PreOutputHook<K, V>>                                        preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
+	private final Set<PreExecutionHook<K, V>>                          preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
+	private final Set<PreInputHook<K, V>>                              preInputHooks        = new HashSet<PreInputHook<K, V>>();
+	private final Set<PreOutputHook<K, V>>                             preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
 	
-	private final Set<PreProcessHook<K, V>>                                       preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
-	private final Set<ProcessHook<K, V>>                                          processHooks         = new HashSet<ProcessHook<K, V>>();
+	private final Set<PreProcessHook<K, V>>                            preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
+	private final Set<ProcessHook<K, V>>                               processHooks         = new HashSet<ProcessHook<K, V>>();
 	
-	private final Set<CountDownLatch>                                             processLatches       = new HashSet<CountDownLatch>();
-	private final Settings                                                  settings;
+	private final Set<CountDownLatch>                                  processLatches       = new HashSet<CountDownLatch>();
+	private final ISettings                                            settings;
 	
-	private boolean                                                               shutdown;
+	private boolean                                                    shutdown;
 	
-	private boolean                                                               skipData             = false;
-	private final Group                                                     threadGroup;
-	private Integer                                                               threadID             = -1;
-	private final boolean                                                         waitForLatch         = false;
-	private boolean                                                               warningSameInputdata = false;
+	private boolean                                                    skipData             = false;
+	private final Group                                                threadGroup;
+	private Integer                                                    threadID             = -1;
+	private final boolean                                              waitForLatch         = false;
+	private boolean                                                    warningSameInputdata = false;
 	
 	/**
 	 * The constructor of the {@link Node}. This should be called from all extending classes.
@@ -205,8 +205,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
 	 */
-	public Node(@NotNull final Group threadGroup, @NotNull final Settings settings,
-	        final boolean parallelizable) {
+	public Node(@NotNull final Group threadGroup, @NotNull final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, "default");
 		setName(this.getClass().getSimpleName());
 		this.parallelizable = parallelizable;
@@ -563,8 +562,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			Logger.info("All done. Disconnecting from data storages.");
 		}
 		
-		final ArrayList<INode<V, ?>> outputThreadables = new ArrayList<INode<V, ?>>(
-		                                                                                                  this.outputThreads.size());
+		final ArrayList<INode<V, ?>> outputThreadables = new ArrayList<INode<V, ?>>(this.outputThreads.size());
 		outputThreadables.addAll(this.outputThreads.keySet());
 		
 		for (final INode<V, ?> outputThread : outputThreadables) {
@@ -839,7 +837,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/**
 	 * @return the settings
 	 */
-	protected final Settings getSettings() {
+	protected final ISettings getSettings() {
 		return this.settings;
 	}
 	
@@ -962,8 +960,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * @return true if {@link INode#shutdown()} has already been called on this object; false otherwise. The
-	 *         shutdown method can also be called internally, after an error occurred.
+	 * @return true if {@link INode#shutdown()} has already been called on this object; false otherwise. The shutdown
+	 *         method can also be called internally, after an error occurred.
 	 */
 	boolean isShutdown() {
 		return this.shutdown;
@@ -1446,8 +1444,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * Set the current shutdown status. This method only sets the variable. Call {@link Node#shutdown()} to
-	 * initiate a proper shutdown.
+	 * Set the current shutdown status. This method only sets the variable. Call {@link Node#shutdown()} to initiate a
+	 * proper shutdown.
 	 * 
 	 * @param shutdown
 	 */
@@ -1490,8 +1488,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			
 			setShutdown(true);
 			
-			final ArrayList<INode<V, ?>> outputThreadables = new ArrayList<INode<V, ?>>(
-			                                                                                                  this.outputThreads.size());
+			final ArrayList<INode<V, ?>> outputThreadables = new ArrayList<INode<V, ?>>(this.outputThreads.size());
 			outputThreadables.addAll(this.outputThreads.keySet());
 			
 			for (final INode<V, ?> outputThread : outputThreadables) {
@@ -1551,8 +1548,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		
 		builder.append(getHandle());
 		
-		if ((this.getClass().getSuperclass() != null)
-		        && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
+		if ((this.getClass().getSuperclass() != null) && Node.class.isAssignableFrom(this.getClass().getSuperclass())) {
 			builder.append(' ').append(this.getClass().getSuperclass().getSimpleName());
 		}
 		
@@ -1585,8 +1581,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * Writes a chunk to the output storage. Make sure to call this only if {@link Node#hasOutputConnector()} is
-	 * true.
+	 * Writes a chunk to the output storage. Make sure to call this only if {@link Node#hasOutputConnector()} is true.
 	 * 
 	 * @param data
 	 *            a chunk of data, not null

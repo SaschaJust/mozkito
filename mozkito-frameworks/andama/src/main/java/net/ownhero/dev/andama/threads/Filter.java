@@ -33,7 +33,7 @@ public abstract class Filter<T> extends Node<T, T> {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public final Class<Filter> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Filter.class;
 	}
 	

@@ -32,7 +32,7 @@ public abstract class Sink<T> extends Node<T, T> {
 	 */
 	@SuppressWarnings ({ "rawtypes" })
 	@Override
-	public final Class<Sink> getBaseType() {
+	public final Class<? extends Node> getBaseType() {
 		return Sink.class;
 	}
 	
