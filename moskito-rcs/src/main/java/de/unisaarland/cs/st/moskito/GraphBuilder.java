@@ -98,16 +98,15 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 					} else {
 						parentTransaction = cached.get(parent);
 					}
+					
 					if (parentTransaction != null) {
 						rcsTransaction.addParent(parentTransaction);
 					} else {
-						if (Logger.logError()) {
-							Logger.error("Got child `" + rcsTransaction.getId()
-							        + "` of unknown parent. This should not happen.");
+						if (!rcsTransaction.getId().equals(repository.getFirstRevisionId())) {
+							throw new UnrecoverableError(
+							                             new UnrecoverableEntryException(
+							                                                             "Got child of unknown parent. This should not happen."));
 						}
-						throw new UnrecoverableError(
-						                             new UnrecoverableEntryException(
-						                                                             "Got child of unknown parent. This should not happen."));
 					}
 				}
 				
