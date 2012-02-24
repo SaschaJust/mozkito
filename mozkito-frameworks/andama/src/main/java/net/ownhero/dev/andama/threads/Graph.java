@@ -372,7 +372,9 @@ public class Graph {
 			}
 			
 			if (!inputConnected && orphanedSources.containsKey(inputType)) {
-				connect(orphanedSources.get(inputType), transformer);
+				final Source<?> source = orphanedSources.get(inputType);
+				orphanedSources.remove(source);
+				connect(source, transformer);
 				inputConnected = true;
 			}
 			
@@ -385,7 +387,9 @@ public class Graph {
 			}
 			
 			if (!outputConnected && orphanedSinks.containsKey(outputType)) {
-				connect(transformer, orphanedSinks.get(outputType));
+				final Sink<?> sink = orphanedSinks.get(outputType);
+				orphanedSinks.remove(sink);
+				connect(transformer, sink);
 				outputConnected = true;
 			}
 			
@@ -395,6 +399,15 @@ public class Graph {
 				                                                    inputConnected
 				                                                                  ? "output"
 				                                                                  : "input"));
+			}
+		}
+		
+		if ((orphanedSources.size() == 1) && (orphanedSinks.size() == 1)) {
+			final Source<?> source = orphanedSources.values().iterator().next();
+			final Sink<?> sink = orphanedSinks.values().iterator().next();
+			
+			if (source.getOutputType().equals(sink.getInputType())) {
+				connect(source, sink);
 			}
 		}
 		
