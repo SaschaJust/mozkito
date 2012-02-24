@@ -15,7 +15,6 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,9 +102,11 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 						rcsTransaction.addParent(parentTransaction);
 					} else {
 						if (!rcsTransaction.getId().equals(repository.getFirstRevisionId())) {
-							throw new UnrecoverableError(
-							                             new UnrecoverableEntryException(
-							                                                             "Got child of unknown parent. This should not happen."));
+							if (Logger.logError()) {
+								Logger.error("Got child of unknown parent: " + rcsTransaction
+								        + " and it was not the first revision of the repository: "
+								        + repository.getFirstRevisionId() + ". This should not happen.");
+							}
 						}
 					}
 				}
