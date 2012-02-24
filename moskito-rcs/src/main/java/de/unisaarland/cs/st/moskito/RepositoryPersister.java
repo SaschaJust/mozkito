@@ -77,7 +77,7 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 			@Override
 			public void postExecution() {
 				persistenceUtil.commitTransaction();
-				persistenceUtil.shutdown();
+				// persistenceUtil.shutdown();
 			}
 		};
 	}
