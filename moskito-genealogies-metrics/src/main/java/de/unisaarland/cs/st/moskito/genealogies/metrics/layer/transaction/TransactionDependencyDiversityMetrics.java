@@ -61,13 +61,31 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		
-		result.add(new GenealogyMetricValue(avgParentsFileDiversityName, nodeId, parentStat.getMean()));
-		result.add(new GenealogyMetricValue(maxParentsFileDiversityName, nodeId, parentStat.getMax()));
-		result.add(new GenealogyMetricValue(minParentsFileDiversityName, nodeId, parentStat.getMin()));
+		result.add(new GenealogyMetricValue(avgParentsFileDiversityName, nodeId,
+		                                    (parentStat.getN() > 0)
+		                                                           ? parentStat.getMean()
+		                                                           : -1));
+		result.add(new GenealogyMetricValue(maxParentsFileDiversityName, nodeId,
+		                                    (parentStat.getN() > 0)
+		                                                           ? parentStat.getMax()
+		                                                           : -1));
+		result.add(new GenealogyMetricValue(minParentsFileDiversityName, nodeId,
+		                                    (parentStat.getN() > 0)
+		                                                           ? parentStat.getMin()
+		                                                           : -1));
 		
-		result.add(new GenealogyMetricValue(avgDependantsFileDiversityName, nodeId, dependantStat.getMean()));
-		result.add(new GenealogyMetricValue(maxDependantsFileDiversityName, nodeId, dependantStat.getMax()));
-		result.add(new GenealogyMetricValue(minDependantsFileDiversityName, nodeId, dependantStat.getMin()));
+		result.add(new GenealogyMetricValue(avgDependantsFileDiversityName, nodeId,
+		                                    (dependantStat.getN() > 0)
+		                                                              ? dependantStat.getMean()
+		                                                              : -1));
+		result.add(new GenealogyMetricValue(maxDependantsFileDiversityName, nodeId,
+		                                    (dependantStat.getN() > 0)
+		                                                              ? dependantStat.getMax()
+		                                                              : -1));
+		result.add(new GenealogyMetricValue(minDependantsFileDiversityName, nodeId,
+		                                    (dependantStat.getN() > 0)
+		                                                              ? dependantStat.getMin()
+		                                                              : -1));
 		
 		return result;
 	}

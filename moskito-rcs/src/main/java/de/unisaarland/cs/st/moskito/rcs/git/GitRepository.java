@@ -605,7 +605,7 @@ public class GitRepository extends Repository {
 		if (tmpDir != null) {
 			gitName = tmpDir.getAbsolutePath();
 		}
-		gitName += FileUtils.fileSeparator + "reposuite_git_clone_" + DateTimeUtils.currentTimeMillis();
+		gitName += FileUtils.fileSeparator + "moskito_git_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());

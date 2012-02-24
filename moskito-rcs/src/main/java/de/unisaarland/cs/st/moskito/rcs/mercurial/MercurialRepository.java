@@ -749,7 +749,7 @@ public class MercurialRepository extends Repository {
 		if (tmpDir != null) {
 			hgName = tmpDir.getAbsolutePath();
 		}
-		hgName += FileUtils.fileSeparator + "reposuite_hg_clone_" + DateTimeUtils.currentTimeMillis();
+		hgName += FileUtils.fileSeparator + "moskito_hg_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		// clone the remote repository
 		if (!clone(null, hgName)) {
