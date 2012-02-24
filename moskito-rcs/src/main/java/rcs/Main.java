@@ -41,8 +41,12 @@ public class Main {
 			rCS.start();
 			rCS.join();
 			rCS.getPersistenceUtil().shutdown();
-			Graph graph;
 			
+			if (Logger.logInfo()) {
+				Logger.info("RCS.Main: RepositoryToolChain finished. Starting GraphToolChain ...");
+			}
+			
+			Graph graph;
 			graph = new Graph();
 			graph.setName(graph.getClass().getSimpleName());
 			graph.start();
