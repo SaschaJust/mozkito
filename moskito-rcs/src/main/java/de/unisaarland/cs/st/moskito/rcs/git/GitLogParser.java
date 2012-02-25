@@ -229,7 +229,17 @@ class GitLogParser {
 			}
 			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime, original_id));
 		}
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Added " + result.size() + " log entries while parsing log file.");
+		}
+		
 		Collections.reverse(result);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Returning " + result.size() + " log entries in reverse order.");
+		}
+		
 		return result;
 	}
 }
