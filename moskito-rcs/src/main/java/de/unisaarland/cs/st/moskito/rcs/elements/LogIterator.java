@@ -108,8 +108,8 @@ public class LogIterator implements Iterator<LogEntry> {
 			return null;
 		} else {
 			
-			if (Logger.logDebug()) {
-				Logger.debug("LogIterator.currentIndex: " + this.currentIndex);
+			if (Logger.logTrace()) {
+				Logger.trace("LogIterator.currentIndex: " + this.currentIndex);
 			}
 			
 			final LogEntry entry = this.currentEntries.get(this.currentIndex);
