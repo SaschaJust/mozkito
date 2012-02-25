@@ -18,7 +18,6 @@ package de.unisaarland.cs.st.moskito;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -78,19 +77,19 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 				final RCSTransaction rcsTransaction = getInputData();
 				
 				final RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Fecthing cached reverseDepednency for transaction " + rcsTransaction.getId() + ": "
+					        + revdep);
+				}
+				
 				final RCSBranch rcsBranch = revdep.getCommitBranch();
 				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (final String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
 					if (!cached.containsKey(parent)) {
-						try {
-							parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
-						} catch (final ArrayIndexOutOfBoundsException e) {
-							throw new UnrecoverableError(
-							                             "Got child of parent that is not cached an cannot be loaded anymore.",
-							                             e);
-						}
+						parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
 						if (parentTransaction != null) {
 							cached.put(parentTransaction.getId(), parentTransaction);
 						}

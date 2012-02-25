@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 
 public class RevDependency {
@@ -30,7 +32,7 @@ public class RevDependency {
 	
 	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
-		revId = id;
+		this.revId = id;
 		this.commitBranch = commitBranch;
 		this.parents = parents;
 		this.tagNames = tagNames;
@@ -38,23 +40,42 @@ public class RevDependency {
 	}
 	
 	public RCSBranch getCommitBranch() {
-		return commitBranch;
+		return this.commitBranch;
 	}
 	
 	public String getId() {
-		return revId;
+		return this.revId;
 	}
 	
 	public Set<String> getParents() {
-		return parents;
+		return this.parents;
 	}
 	
 	public List<String> getTagNames() {
-		return tagNames;
+		return this.tagNames;
 	}
 	
 	public boolean isMerge() {
-		return isMerge;
+		return this.isMerge;
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(this.getClass().getSimpleName());
+		sb.append(" [");
+		sb.append("revId=");
+		sb.append(this.revId);
+		sb.append(",parents=[");
+		sb.append(StringUtils.join(this.parents.toArray(new String[this.parents.size()]), ","));
+		sb.append("],commitBranch=");
+		sb.append(this.commitBranch);
+		sb.append(",tagNames=[");
+		sb.append(StringUtils.join(this.tagNames.toArray(new String[this.tagNames.size()]), ","));
+		sb.append("],isMerge=");
+		sb.append(this.isMerge);
+		sb.append("]");
+		return sb.toString();
 	}
 	
 }
