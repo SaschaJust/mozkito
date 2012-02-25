@@ -364,14 +364,16 @@ public class GitRepository extends Repository {
 		if (getStartRevision() == null) {
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 			                                                                              "--branches", "--remotes",
-			                                                                              "--pretty=format:%H" },
+			                                                                              "--pretty=format:%H",
+			                                                                              "--topo-order" },
 			                                                                      this.cloneDir, null,
 			                                                                      new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				return null;
 			}
 			if (response.getSecond().isEmpty()) {
-				throw new UnrecoverableError("Command ` git --pretty=format:%H` did not produc any output!");
+				throw new UnrecoverableError(
+				                             "Command ` git log --branches --remotes --pretty=format:%H --topo-order` did not produc any output!");
 			}
 			final List<String> lines = response.getSecond();
 			return lines.get(lines.size() - 1).trim();
