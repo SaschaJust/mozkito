@@ -434,11 +434,24 @@ public class GitRepository extends Repository {
 		}
 		
 		final int fromIndex = this.transactionIDs.indexOf(transactionId);
-		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
-			return this.transactionIDs.get(this.transactionIDs.size() - 1);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Requesting relative transaction id of " + transactionId + " (fromIdex=" + fromIndex
+			        + ") and index " + index);
 		}
 		
-		return this.transactionIDs.get((int) (fromIndex + index));
+		String result = null;
+		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
+			result = this.transactionIDs.get(this.transactionIDs.size() - 1);
+		} else {
+			result = this.transactionIDs.get((int) (fromIndex + index));
+		}
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Returning: " + result);
+		}
+		
+		return result;
 		
 		/*
 		 * else if (index < 0) { String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H",
@@ -640,7 +653,7 @@ public class GitRepository extends Repository {
 			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=format:%H --branches --remotes");
+			Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
 		}
 		this.transactionIDs = response.getSecond();
 		Collections.reverse(this.transactionIDs);
