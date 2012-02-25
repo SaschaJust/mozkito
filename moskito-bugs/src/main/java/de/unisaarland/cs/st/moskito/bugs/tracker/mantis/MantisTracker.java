@@ -20,6 +20,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -43,6 +44,19 @@ public class MantisTracker extends Tracker {
 	 */
 	public MantisTracker() {
 		
+	}
+	
+	@Override
+	public boolean checkRAW(final RawReport rawReport) {
+		if (!super.checkRAW(rawReport)) {
+			return false;
+		}
+		final Regex regex = new Regex(
+		                              "<p\\s+class=\"center\"\\s+style=\"color:red\">\\s+Issue\\s+\\d+\\s+not\\s+found.\\s+</p>");
+		if (regex.matches(rawReport.getContent())) {
+			return false;
+		}
+		return true;
 	}
 	
 	/*
