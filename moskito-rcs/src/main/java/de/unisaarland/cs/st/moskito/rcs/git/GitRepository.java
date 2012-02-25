@@ -529,7 +529,7 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order" + revisionSelection);
+			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order " + revisionSelection);
 		}
 		for (final LogEntry e : GitLogParser.parse(response.getSecond())) {
 			this.logCache.put(e.getRevision(), e);
@@ -551,7 +551,7 @@ public class GitRepository extends Repository {
 					return null;
 				}
 				if (Logger.logDebug()) {
-					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order"
+					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order "
 					        + revisionSelection);
 				}
 				result.addAll(GitLogParser.parse(response.getSecond()));

@@ -73,7 +73,7 @@ public class RepositoryReader extends Source<LogEntry> {
 					final LogEntry entry = RepositoryReader.this.logIterator.next();
 					
 					if (Logger.logDebug()) {
-						Logger.debug("with entry: " + entry);
+						Logger.debug("Processing: " + entry);
 					}
 					
 					if (entry == null) {
