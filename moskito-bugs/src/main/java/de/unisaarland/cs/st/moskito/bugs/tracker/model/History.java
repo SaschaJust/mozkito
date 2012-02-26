@@ -197,6 +197,7 @@ public class History implements Annotated {
 	                          final DateTime timestamp) {
 		return (HistoryElement) CollectionUtils.find(getElements(), new Predicate() {
 			
+			@Override
 			public boolean evaluate(final Object object) {
 				final HistoryElement element = (HistoryElement) object;
 				

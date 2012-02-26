@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
@@ -42,6 +43,7 @@ public class MantisTrackerTest {
 	
 	private RawReport report19810;
 	private RawReport report18828;
+	private RawReport report8468;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -52,6 +54,9 @@ public class MantisTrackerTest {
 		this.report18828 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
 		                                                                                  + "open-bravo-18828.html")
 		                                                             .toURI()));
+		this.report8468 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
+		                                                                                 + "open-bravo-8468.html")
+		                                                            .toURI()));
 	}
 	
 	@Test
@@ -174,6 +179,39 @@ public class MantisTrackerTest {
 		
 		assertTrue(xmlReport19810 != null);
 		assertTrue(xmlReport18828 != null);
+	}
+	
+	@Test
+	public void testKeywords() {
+		final MantisTracker tracker = new MantisTracker();
+		String url = this.report8468.getUri().toASCIIString();
+		url = url.substring(0, url.lastIndexOf("open-bravo-8468.html"));
+		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
+		try {
+			tracker.setup(new URI(url), null, pattern, null, null, 8468l, 8468l, null);
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
+		RawReport rawReport = null;
+		try {
+			rawReport = tracker.fetchSource(tracker.getLinkFromId(8468l));
+		} catch (final FetchException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final UnsupportedProtocolException e) {
+			e.printStackTrace();
+			fail();
+		}
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Report report = tracker.parse(xmlReport);
+		final Set<String> keywords = report.getKeywords();
+		assertEquals(2, keywords.size());
+		assertTrue(keywords.contains("main"));
+		assertTrue(keywords.contains("tictech"));
 	}
 	
 	@Test
@@ -315,7 +353,7 @@ public class MantisTrackerTest {
 		assertEquals("0019810: ViewComponent memory leak", report.getSummary());
 		assertEquals(Type.BUG, report.getType());
 		assertEquals("", report.getVersion());
-		
+		assertTrue(report.getKeywords().isEmpty());
 	}
 	
 	@Test

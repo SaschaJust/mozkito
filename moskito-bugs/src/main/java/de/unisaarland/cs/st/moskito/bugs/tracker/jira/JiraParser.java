@@ -243,7 +243,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public DateTime getLastUpdateTimestamp() {
+	public Set<String> getKeywords() {
 		// PRECONDITIONS
 		
 		try {
@@ -259,6 +259,23 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
 	
+	@Override
+	public DateTime getLastUpdateTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
+	 */
+	
 	public int getNumberOfAttachments() {
 		// PRECONDITIONS
 		
@@ -272,7 +289,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
 	 */
 	
 	public int getNumberOfComments() {
@@ -288,7 +305,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	
 	@Override
@@ -305,7 +322,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
 	
 	@Override
@@ -322,7 +339,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	@Override
@@ -339,7 +356,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	@Override
@@ -356,7 +373,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -373,7 +390,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
@@ -390,7 +407,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	@Override
@@ -407,7 +424,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -424,7 +441,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -441,28 +458,11 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
-	 */
-	
-	@Override
-	public String getSubject() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
-	public Person getSubmitter() {
+	public String getSubject() {
 		// PRECONDITIONS
 		
 		try {
@@ -480,7 +480,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSummary() {
+	public Person getSubmitter() {
 		// PRECONDITIONS
 		
 		try {
@@ -497,6 +497,18 @@ public class JiraParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
 	 * )
 	 */
+	
+	@Override
+	public String getSummary() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	@Override
 	public Type getType() {

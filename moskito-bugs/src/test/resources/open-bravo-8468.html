@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/css/default.css" />
+	<link rel="stylesheet" type="text/css" href="/css/ob-mantis.css" />
+	<script type="text/javascript" language="JavaScript"><!--
+		if(document.layers) {document.write("<style>td{padding:0px;}<\/style>")}
+	// --></script>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma-directive" content="no-cache" />
+	<meta http-equiv="Cache-Directive" content="no-cache" />
+	<meta http-equiv="Expires" content="Sun, 26 Feb 2012 15:42:31 GMT" />
+	<link rel="shortcut icon" href="/images/img-corp/icon/favicon.ico" type="image/x-icon" />
+	<title>0008468: Create Lines From in Cash Journal - Openbravo Issue Tracking System</title>
+<script type="text/javascript" src="/javascript/min/common.js"></script>
+<script type="text/javascript" src="/javascript/min/ajax.js"></script>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-880726-11']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+</head>
+<body>
+ <div class="top_page_menu">
+  <div class="web_options">
+   <div class="option-off-last">
+Anonymous | <a href="login_page.php?return=%2Fview.php%3Fid%3D8468">Login</a>   </div>
+  </div>
+  <div class="web_ring">
+   <div class="menu-off-first"><a title="Openbravo Web" target="_blank" href="http://www.openbravo.com/">Openbravo.com</a></div>
+   <div class="menu-off"><a title="Openbravo Wiki" target="_blank" href="http://wiki.openbravo.com">Wiki</a></div>
+   <div class="menu-off"><a title="Openbravo Code" target="_blank" href="http://code.openbravo.com/">Code</a></div>
+   <div class="menu-off"><a title="Openbravo Blogs" target="_blank" href="http://planet.openbravo.com/">Blogs</a></div>
+   <div class="menu-off"><a href="http://forge.openbravo.com/"title="Openbravo Forge" target="_blank" >Forge</a></li></div>
+   <div class="menu-off"><a href="http://exchange.openbravo.com/"title="Openbravo Exchange" target="_blank" >Exchange</a></li></div>
+   <div class="menu-off"><a title="Openbravo University" target="_blank" href="https://university.openbravo.com/login/index.php">University</a></div>
+   <div class="menu-off"><a class="orange" title="Openbravo Downloads" target="_blank" href="http://www.openbravo.com/downloads/">Downloads</a></div>
+  </div>
+ </div>
+ <div class="top_page2">
+  <a href="/." target="_self" title="Openbravo Issues" class="logo_corp"></a>
+  <div class="main_sub_menu">
+<div style="display: block; float: right; padding: 2px 0px 0px 0px; z-index: 1;">
+<span style="color: #9A9999; font-size: 11px; z-index: 1;">Project:</span> 	<form method="post" name="form_set_project" action="set_project.php"><select name="project_id" class="small" onchange="document.forms.form_set_project.submit();"><option value="0">All Projects</option>
+<option value="21">Contribution Requests</option>
+<option value="22">Documentation</option>
+<option value="17">ERP Extensions</option>
+<option value="17;18">&nbsp;&raquo; Localization Pack: Spain</option>
+<option value="17;20">&nbsp;&raquo; Modules</option>
+<option value="17;25">&nbsp;&raquo; Pentaho Integration</option>
+<option value="3">ERP Professional Subscription</option>
+<option value="14">Localizers Support</option>
+<option value="1" selected="selected" >Openbravo ERP</option>
+<option value="27">Openbravo ERP QuickStart</option>
+<option value="30">Openbravo ERP QuickStart 2</option>
+<option value="2">Openbravo POS</option>
+<option value="11">Tools</option>
+<option value="11;28">&nbsp;&raquo; Infrastructure</option>
+<option value="11;7">&nbsp;&raquo; Mantis @ OB</option>
+<option value="11;15">&nbsp;&raquo; QA</option>
+</select> <input type="submit" class="search_button" value="Switch" />	</form>
+</div>
+<div style="display: block; float: right; padding: 8px 0px 0px;">
+<a href="https://issues.openbravo.com/issues_rss.php?"><img src="images/img-corp/icon/rss.gif" alt="RSS" style="border-style: none; padding-top: 1px; float: right;" /></a><form method="post" action="jump_to_bug.php" style="float: right;"><input type="text" name="bug_id" size="10" class="small" value="Issue #" onfocus="if (this.value == 'Issue #') this.value = ''" onblur="if (this.value == '') this.value = 'Issue #'" />&nbsp;<input type="submit" class="search_button" value="Jump" />&nbsp;</form></div>  </div>
+ </div>
+<!--div align="left"><a href="http://www.mantisbt.org" title="Free Web Based Bug Tracker"><img border="0" width="242" height="102" alt="Mantis Bugtracker" src="images/mantis_logo.gif" /></a></div--><div class="subme"><a href="/main_page.php">News</a> | <a href="/my_view_page.php">My View</a> | <a href="/view_all_bug_page.php">View Issues</a> | <a href="/roadmap_page.php">Roadmap</a> | <a href="/summary_page.php">Summary</a></div><br /><table class="width100" cellspacing="1"><tr><td class="form-title" colspan="3">View Issue Details<span class="small"><span class="bracket-link">[&nbsp;<a href="#bugnotes">Jump to Notes</a>&nbsp;]</span> </span></td><td class="center"><span class="small"></span></td><td class="right" colspan="2"><span class="small"><span class="bracket-link">[&nbsp;<a href="view.php?id=8468&amp;history=1#history">Issue History</a>&nbsp;]</span> </span><span class="small"><span class="bracket-link">[&nbsp;<a href="print_bug_page.php?bug_id=8468">Print</a>&nbsp;]</span> </span></td></tr><tr class="row-category"><td class="category" width="15%">ID</td></tr><tr class="row-1"><td>0008468</td></tr><tr class="row-category"><td class="category" width="15%">Type</td><td class="category" width="20%">Category</td><td class="category" width="15%">Severity</td><td class="category" width="20%">Reproducibility</td><td class="category" width="15%">Date Submitted</td><td class="category" width="15%">Last Update</td></tr><tr class="row-2"><td>feature request</td><td>[Openbravo ERP] 09. Financial management</td><td>minor</td><td>always</td><td>2009-04-06 18:39</td><td>2009-08-06 17:16</td></tr><tr class="spacer"><td colspan="6"></td></tr><tr class="row-1"><td class="category">Reporter</td><td>pmagnin</td><td class="category">View Status</td><td>public</td><td colspan="2">&nbsp;</td></tr><tr class="row-2"><td class="category">Assigned To</td><td>rmorley</td><td colspan="4">&nbsp;</td></tr><tr class="row-1"><td class="category">Priority</td><td>normal</td><td class="category">Resolution</td><td>fixed</td><td class="category">Fixed in Version</td><td></td></tr><tr class="row-2"><td class="category">Status</td><td bgcolor="#fff870">acknowledged</td><td class="category">Fix in branch</td><td></td><td class="category">Fixed in SCM revision</td><td><a href="175">175</a></td></tr><tr class="row-1"><td class="category">Projection</td><td>none</td><td class="category">ETA</td><td>none</td><td class="category">Target Version</td><td>pi</td></tr><tr class="spacer"><td colspan="6"></td></tr><tr class="row-2"><td class="category">OS</td><td>Any</td><td class="category">Database</td><td>Any</td><td class="category">Java version</td><td></td></tr><tr class="row-1"><td class="category">OS Version</td><td></td><td class="category">Database version</td><td></td><td class="category">Ant version</td><td></td></tr><tr class="row-2"><td class="category">Product Version</td><td>2.40</td><td class="category">SCM revision</td><td></td><td colspan="2">&nbsp;</td></tr><tr class="spacer"><td colspan="6"></td></tr><tr class="row-1"><td class="category">Web browser</td><td colspan="5"></td></tr><tr class="row-2"><td class="category">Modules</td><td colspan="5">Core</td></tr><tr class="spacer"><td colspan="6"></td></tr><tr class="row-1"><td class="category">Summary</td><td colspan="5">0008468: Create Lines From in Cash Journal</td></tr><tr class="row-2"><td class="category">Description</td><td colspan="5">The button “Create line from” will allows to select several Debt-Payment and they will create a line per Debt-Payment in this cash journal. <br />
+No group of Debt-Payment is needed but a more agile use of Debt-Payment using Cash journal like bank statement.</td></tr><tr class="row-1"><td class="category">Tags</td><td colspan="5"><a href='tag_view_page.php?tag_id=75' title=''>main</a>, <a href='tag_view_page.php?tag_id=67' title=''>tictech</a></td></tr><tr class="spacer"><td colspan="6"></td></tr><tr class="row-2"><td class="category"><a name="attachments" id="attachments" />Attached Files</td><td colspan="5"></td></tr><tr align="center"><td align="center" colspan="6"><table><tr class="vcenter"><td class="center"></td><td class="center"></td><td class="center"></td><td class="center"></td><td class="center"></td><td class="center"></td></tr></table></td></tr></table><br/>
+
+<div id="relationships_open"><table class="width100" cellspacing="1">
+<tr class="row-2" valign="top">
+	<td width="15%" class="form-title" colspan="2">
+		<a href="" onclick="ToggleDiv( 'relationships' ); return false;"
+			><img border="0" src="images/minus.png" alt="-" /></a>&nbsp;Relationships		<span class="small"><span class="bracket-link">[&nbsp;<a href="bug_relationship_graph.php?bug_id=8468&amp;graph=relation">Relation Graph</a>&nbsp;]</span> </span>
+		<span class="small"><span class="bracket-link">[&nbsp;<a href="bug_relationship_graph.php?bug_id=8468&amp;graph=dependency">Dependency Graph</a>&nbsp;]</span> </span>
+			</td>
+</tr>
+<tr>
+	<td colspan="2"></td>
+</tr>
+</table>
+
+</div><div id="relationships_closed" class="hidden"><table class="width100" cellspacing="1">
+<tr>
+	<td class="form-title">
+		<a href="" onclick="ToggleDiv( 'relationships' ); return false;"
+			><img border="0" src="images/plus.png" alt="+" /></a>&nbsp;Relationships	</td>
+</tr>
+</table>
+
+</div>
+<a name="bugnotes" id="bugnotes" /><br />
+
+<div id="bugnotes_open"><table class="width100" cellspacing="1">
+<tr>
+	<td class="form-title" colspan="2">
+<a href="" onclick="ToggleDiv( 'bugnotes' ); return false;"
+			><img border="0" src="images/minus.png" alt="-" /></a>&nbsp;		Notes	</td>
+</tr>
+<tr class="bugnote" id="c15229">
+        <td class="bugnote-public">
+				<span class="small">(<a href="view.php?id=8468#c15229" title="Direct link to note">0015229)</a></span><br />
+		<a href="https://issues.openbravo.com/view_user_page.php?id=46">pmagnin</a>		<span class="small">(reporter)</span>
+				<br />
+		<span class="small">2009-04-06 18:44</span><br />
+				<br /><div class="small">
+				</div>
+	</td>
+	<td class="bugnote-note-public">
+		PMA: The Idea is to develop this FR as a module for the 250 version and apply it in the specific client 240 brunch. <br />
+<br />
+NO BACKPORT TO 240 BRUNCH	</td>
+</tr>
+<tr class="spacer">
+	<td colspan="2"></td>
+</tr>
+<tr class="bugnote" id="c15448">
+        <td class="bugnote-public">
+				<span class="small">(<a href="view.php?id=8468#c15448" title="Direct link to note">0015448)</a></span><br />
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>		<span class="small">(developer)</span>
+				<br />
+		<span class="small">2009-04-20 17:41</span><br />
+				<br /><div class="small">
+				</div>
+	</td>
+	<td class="bugnote-note-public">
+		Fix done in partners branch	</td>
+</tr>
+<tr class="spacer">
+	<td colspan="2"></td>
+</tr>
+<tr class="bugnote" id="c18868">
+        <td class="bugnote-public">
+				<span class="small">(<a href="view.php?id=8468#c18868" title="Direct link to note">0018868)</a></span><br />
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>		<span class="small">(manager)</span>
+				<br />
+		<span class="small">2009-08-06 17:16</span><br />
+				<br /><div class="small">
+				</div>
+	</td>
+	<td class="bugnote-note-public">
+		Re-opened and set to feature request to be included in Openbravo Core.	</td>
+</tr>
+<tr class="spacer">
+	<td colspan="2"></td>
+</tr>
+</table>
+
+</div><div id="bugnotes_closed" class="hidden">
+<table class="width100" cellspacing="1">
+<tr>
+	<td class="form-title" colspan="2">
+		<a href="" onclick="ToggleDiv( 'bugnotes' ); return false;"
+			><img border="0" src="images/plus.png" alt="+" /></a>&nbsp;		Notes	</td>
+</tr>
+</table>
+</div>
+<a name="history" id="history" /><br />
+
+<div id="history_open"><table class="width100" cellspacing="0">
+<tr>
+	<td class="form-title" colspan="4">
+<a href="" onclick="ToggleDiv( 'history' ); return false;"
+			><img border="0" src="images/minus.png" alt="-" /></a>&nbsp;Issue History	</td>
+</tr>
+<tr class="row-category-history">
+	<td class="small-caption">
+		Date Modified	</td>
+	<td class="small-caption">
+		Username	</td>
+	<td class="small-caption">
+		Field	</td>
+	<td class="small-caption">
+		Change	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-06 18:39	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=46">pmagnin</a>	</td>
+	<td class="small-caption">
+		New Issue	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-06 18:39	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=46">pmagnin</a>	</td>
+	<td class="small-caption">
+		Assigned To	</td>
+	<td class="small-caption">
+		 =&gt; eduardo_Argal	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-06 18:44	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=46">pmagnin</a>	</td>
+	<td class="small-caption">
+		Note Added: 0015229	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-20 17:40	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Status	</td>
+	<td class="small-caption">
+		new =&gt; scheduled	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-20 17:40	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Note Added: 0015447	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-20 17:40	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		fix_in_branch	</td>
+	<td class="small-caption">
+		 =&gt; pi	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-20 17:41	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Status	</td>
+	<td class="small-caption">
+		scheduled =&gt; resolved	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-20 17:41	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Fixed in SCM revision	</td>
+	<td class="small-caption">
+		 =&gt; 175	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-20 17:41	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Resolution	</td>
+	<td class="small-caption">
+		open =&gt; fixed	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-20 17:41	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=26">eduardo_Argal</a>	</td>
+	<td class="small-caption">
+		Note Added: 0015448	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-22 11:23	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=12">psarobe</a>	</td>
+	<td class="small-caption">
+		Tag Attached: main	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-04-25 12:13	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=12">psarobe</a>	</td>
+	<td class="small-caption">
+		Status	</td>
+	<td class="small-caption">
+		resolved =&gt; closed	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-04-26 00:00	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=15">anonymous</a>	</td>
+	<td class="small-caption">
+		sf_bug_id	</td>
+	<td class="small-caption">
+		0 =&gt; 2781344	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Note Added: 0018868	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Assigned To	</td>
+	<td class="small-caption">
+		eduardo_Argal =&gt; rmorley	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Priority	</td>
+	<td class="small-caption">
+		immediate =&gt; normal	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Severity	</td>
+	<td class="small-caption">
+		trivial =&gt; minor	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Status	</td>
+	<td class="small-caption">
+		closed =&gt; new	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Type	</td>
+	<td class="small-caption">
+		defect =&gt; feature request	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		fix_in_branch	</td>
+	<td class="small-caption">
+		pi =&gt; 	</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Status	</td>
+	<td class="small-caption">
+		new =&gt; acknowledged	</td>
+</tr>
+<tr class="row-2">
+	<td class="small-caption">
+		2009-08-06 17:16	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Note Deleted: 0015447	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+<tr class="row-1">
+	<td class="small-caption">
+		2009-08-06 17:17	</td>
+	<td class="small-caption">
+		<a href="https://issues.openbravo.com/view_user_page.php?id=36">rafaroda</a>	</td>
+	<td class="small-caption">
+		Tag Attached: tictech	</td>
+	<td class="small-caption">
+			</td>
+</tr>
+</table>
+</div><div id="history_closed" class="hidden"><table class="width100" cellspacing="0">
+<tr>
+	<td class="form-title" colspan="4">
+	<a href="" onclick="ToggleDiv( 'history' ); return false;"
+			><img border="0" src="images/plus.png" alt="+" /></a>&nbsp;Issue History	</td>
+</tr>
+</table>
+
+</div>	<br />
+	<hr size="1" />
+<table border="0" width="100%" cellspacing="0" cellpadding="0"><tr valign="top"><td>	<address>Copyright &copy; 2000 - 2009 MantisBT Group</address>
+</td><td>
+	<div align="right"><a href="http://www.mantisbt.org" title="Free Web Based Bug Tracker"><img src="/images/img-corp/icon/mantis-icon.png" width="80" height="15" alt="Powered by Mantis Bugtracker" border="0" /></a></div>
+</td></tr></table>
+</body>
+</html>

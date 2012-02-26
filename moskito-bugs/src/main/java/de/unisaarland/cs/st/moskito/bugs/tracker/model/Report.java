@@ -20,9 +20,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -103,6 +105,8 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                version;
 	private String                scmFixVersion;
 	
+	private Set<String>           keywords          = new HashSet<String>();
+	
 	private Report() {
 		super();
 	}
@@ -156,6 +160,11 @@ public class Report implements Annotated, Comparable<Report> {
 		setHistory(history);
 		historyElement.setBugId(getId());
 		return ret;
+	}
+	
+	@Transient
+	public boolean addKeyword(final String keyword) {
+		return this.keywords.add(keyword);
 	}
 	
 	/**
@@ -338,6 +347,16 @@ public class Report implements Annotated, Comparable<Report> {
 	@Id
 	public long getId() {
 		return this.id;
+	}
+	
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			return this.keywords;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -645,6 +664,17 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	private void setId(final long id) {
 		this.id = id;
+	}
+	
+	public void setKeywords(final Set<String> keywords) {
+		// PRECONDITIONS
+		try {
+			this.keywords = keywords;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.keywords, keywords,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/**

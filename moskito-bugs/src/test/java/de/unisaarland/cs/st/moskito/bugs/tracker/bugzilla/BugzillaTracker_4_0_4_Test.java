@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
@@ -55,6 +56,7 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	private RawReport rawReport1234;
 	private RawReport rawReport114562;
+	private RawReport rawReport153429;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -66,8 +68,15 @@ public class BugzillaTracker_4_0_4_Test {
 		this.rawReport114562 = new RawReport(
 		                                     1l,
 		                                     IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-		                                                                                                           + "bugzilla_114562.xml")
-		                                                                                      .toURI()));
+		                                                                                                        + "bugzilla_114562.xml")
+		                                                                                   .toURI()));
+		
+		this.rawReport153429 = new RawReport(
+		                                     1l,
+		                                     IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
+		                                                                                                        + "bugzilla_153429.xml")
+		                                                                                   .toURI()));
+		
 	}
 	
 	@After
@@ -79,7 +88,7 @@ public class BugzillaTracker_4_0_4_Test {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
 		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
-		                                                .toString();
+		                                             .toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		try {
@@ -168,11 +177,45 @@ public class BugzillaTracker_4_0_4_Test {
 	}
 	
 	@Test
+	public void testKeywords() {
+		final BugzillaTracker tracker = new BugzillaTracker();
+		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
+		                                             .toString();
+		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
+		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
+		
+		try {
+			tracker.setup(new URI(url), null, pattern, null, null, 153429l, 153429l, null);
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
+		RawReport rawReport = null;
+		try {
+			rawReport = tracker.fetchSource(tracker.getLinkFromId(153429l));
+		} catch (final FetchException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final UnsupportedProtocolException e) {
+			e.printStackTrace();
+			fail();
+		}
+		final XmlReport xmlReport = tracker.createDocument(rawReport);
+		final Report report = tracker.parse(xmlReport);
+		final Set<String> keywords = report.getKeywords();
+		assertEquals(1, keywords.size());
+		assertTrue(keywords.contains("plan"));
+	}
+	
+	@Test
 	public void testParse() {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
 		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml")
-		                                                .toString();
+		                                             .toString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_114562.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		
@@ -251,6 +294,10 @@ public class BugzillaTracker_4_0_4_Test {
 		assertEquals(null, report.getSummary());
 		assertEquals(Type.RFE, report.getType());
 		assertEquals("unspecified", report.getVersion());
+		for (final String keyword : report.getKeywords()) {
+			System.err.println("`" + keyword + "`");
+		}
+		assertTrue(report.getKeywords().isEmpty());
 		
 	}
 	
@@ -261,8 +308,8 @@ public class BugzillaTracker_4_0_4_Test {
 			// final URL historyURL = new URL("https://bugs.eclipse.org/bugs/show_activity.cgi?id=114562");
 			
 			final String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-			                                                                           + "bugzilla_114562_history.html")
-			                                                      .toString();
+			                                                                        + "bugzilla_114562_history.html")
+			                                                   .toString();
 			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(new URI(url), 114562);
 			if (!historyParser.parse()) {
 				fail();

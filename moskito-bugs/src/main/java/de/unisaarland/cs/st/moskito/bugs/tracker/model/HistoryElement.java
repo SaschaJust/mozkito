@@ -268,6 +268,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Annotated)
 	 */
+	@Override
 	@Transient
 	public int compareTo(final HistoryElement object) {
 		if (object == null) {
@@ -357,6 +358,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * @return
 	 */
+	@Override
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Transient
 	public Person getAuthor() {
@@ -477,6 +479,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.model.TextElement#getText()
 	 */
+	@Override
 	@Transient
 	public String getText() {
 		// FIXME
@@ -486,6 +489,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * @return the timestamp
 	 */
+	@Override
 	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;

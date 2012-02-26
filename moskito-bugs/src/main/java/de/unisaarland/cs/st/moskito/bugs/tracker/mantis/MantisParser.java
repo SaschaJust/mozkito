@@ -177,6 +177,7 @@ public class MantisParser implements Parser {
 	
 	private final Regex                     projectRegex      = new Regex("\\[({PRJECT}[^\\]]+)\\]");
 	
+	@SuppressWarnings ("unused")
 	private Tracker                         tracker;
 	
 	private final SortedSet<HistoryElement> historyElements   = null;
@@ -251,7 +252,10 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element td = getMainTableCell(6, 1);
+			final Element td = getMainTableCell("Assigned To", 1);
+			if (td == null) {
+				return null;
+			}
 			return new Person(td.text(), null, null);
 		} finally {
 			// POSTCONDITIONS
@@ -267,7 +271,10 @@ public class MantisParser implements Parser {
 			
 			getHistoryElements();
 			
-			final Element cell = getMainTableCell(24, 1);
+			final Element cell = getMainTableCell("Attached Files", 1);
+			if (cell == null) {
+				return null;
+			}
 			final Elements aTags = cell.getElementsByTag("a");
 			AttachmentEntry attachmentEntry = null;
 			
@@ -479,7 +486,10 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(17, 1);
+			final Element cell = getMainTableCell("Modules", 1);
+			if (cell == null) {
+				return null;
+			}
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
@@ -513,7 +523,12 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(20, 1);
+			final Element cell = getMainTableCell("Description", 1);
+			if (cell == null) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not detect description of bug report " + getId());
+				}
+			}
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
@@ -619,6 +634,26 @@ public class MantisParser implements Parser {
 	 */
 	
 	@Override
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			final Element cell = getMainTableCell("Tags", 1);
+			final String content = cell.text().trim();
+			final Set<String> result = new HashSet<String>();
+			if (!content.toLowerCase().equals("no tags attached.")) {
+				final String[] tags = content.split(",");
+				for (final String tag : tags) {
+					result.add(tag.trim());
+				}
+			}
+			return result;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
 		
@@ -629,6 +664,11 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
+	 */
 	
 	private Element getMainTableCell(final int row,
 	                                 final int column) {
@@ -645,9 +685,30 @@ public class MantisParser implements Parser {
 		return tdTags.get(column);
 	}
 	
+	private Element getMainTableCell(final String rowName,
+	                                 final int column) {
+		final Elements trTags = this.mainContentTable.getElementsByTag("tr");
+		
+		for (final Element trTag : trTags) {
+			final Elements tdTags = trTag.getElementsByTag("td");
+			
+			if (tdTags.get(0).text().toLowerCase().trim().equals(rowName.toLowerCase())) {
+				if (tdTags.size() <= column) {
+					throw new UnrecoverableError("Requested column " + column + " in mainContentTable row " + rowName
+					        + " but the column does not exist in this row.");
+				}
+				return tdTags.get(column);
+			}
+		}
+		if (Logger.logDebug()) {
+			Logger.debug("Requested row " + rowName + " in mainContentTable does not exist.");
+		}
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	/*
@@ -659,7 +720,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(8, 1);
+			final Element cell = getMainTableCell("Priority", 1);
 			return getPriority(cell.text().trim());
 		} finally {
 			// POSTCONDITIONS
@@ -668,7 +729,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	@Override
@@ -692,7 +753,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -700,7 +761,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(8, 3);
+			final Element cell = getMainTableCell("Priority", 3);
 			return getResolution(cell.text().trim());
 		} finally {
 			// POSTCONDITIONS
@@ -709,7 +770,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
@@ -726,7 +787,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	@Override
@@ -743,7 +804,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -751,7 +812,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(9, 5);
+			final Element cell = getMainTableCell("Status", 5);
 			final Elements aTags = cell.getElementsByTag("a");
 			if (aTags.isEmpty()) {
 				return null;
@@ -764,7 +825,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -778,11 +839,6 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
-	 */
 	
 	@Override
 	public Set<Long> getSiblings() {
@@ -851,30 +907,18 @@ public class MantisParser implements Parser {
 		}
 	}
 	
-	@Override
-	public Status getStatus() {
-		// PRECONDITIONS
-		
-		try {
-			final Element cell = getMainTableCell(9, 1);
-			return getStatus(cell.text().trim());
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
-	public String getSubject() {
+	public Status getStatus() {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(19, 1);
-			return cell.text().trim();
+			final Element cell = getMainTableCell("Status", 1);
+			return getStatus(cell.text().trim());
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -887,12 +931,12 @@ public class MantisParser implements Parser {
 	 */
 	
 	@Override
-	public Person getSubmitter() {
+	public String getSubject() {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(6, 1);
-			return new Person(cell.text().trim(), null, null);
+			final Element cell = getMainTableCell("Summary", 1);
+			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -906,11 +950,23 @@ public class MantisParser implements Parser {
 	 */
 	
 	@Override
+	public Person getSubmitter() {
+		// PRECONDITIONS
+		
+		try {
+			final Element cell = getMainTableCell("Reporter", 1);
+			return new Person(cell.text().trim(), null, null);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public String getSummary() {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(19, 1);
+			final Element cell = getMainTableCell("Summary", 1);
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
@@ -934,7 +990,7 @@ public class MantisParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Element cell = getMainTableCell(14, 1);
+			final Element cell = getMainTableCell("Product Version", 1);
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
@@ -962,6 +1018,7 @@ public class MantisParser implements Parser {
 			this.document = Jsoup.parse(report.getContent());
 			tables = this.document.getElementsByClass("width100");
 			this.mainContentTable = tables.get(0);
+			
 		} finally {
 			// POSTCONDITIONS
 			Condition.check(tables.size() > 1, "There must be two tables within bug report.");
@@ -969,5 +1026,4 @@ public class MantisParser implements Parser {
 			Condition.notNull(this.mainContentTable, "The mainContentTable must not be null");
 		}
 	}
-	
 }
