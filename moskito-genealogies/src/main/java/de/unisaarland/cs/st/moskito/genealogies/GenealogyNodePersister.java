@@ -16,11 +16,11 @@ package de.unisaarland.cs.st.moskito.genealogies;
 import java.util.Collection;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;

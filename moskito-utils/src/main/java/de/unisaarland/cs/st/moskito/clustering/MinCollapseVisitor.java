@@ -14,7 +14,7 @@ package de.unisaarland.cs.st.moskito.clustering;
 
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 public class MinCollapseVisitor<T> implements MultilevelClusteringCollapseVisitor<T> {
 	
@@ -24,8 +24,8 @@ public class MinCollapseVisitor<T> implements MultilevelClusteringCollapseVisito
 	                       final Map<T, Map<T, Double>> originalScoreMatrix) {
 		
 		double min = Double.MAX_VALUE;
-		for (T t1 : newCluster.getAllElements()) {
-			for (T t2 : otherCluster.getAllElements()) {
+		for (final T t1 : newCluster.getAllElements()) {
+			for (final T t2 : otherCluster.getAllElements()) {
 				double d = Double.MAX_VALUE;
 				if ((originalScoreMatrix.containsKey(t1)) && (originalScoreMatrix.get(t1).containsKey(t2))) {
 					d = originalScoreMatrix.get(t1).get(t2);

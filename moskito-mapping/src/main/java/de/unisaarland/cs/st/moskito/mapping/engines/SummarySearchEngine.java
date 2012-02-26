@@ -12,7 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;

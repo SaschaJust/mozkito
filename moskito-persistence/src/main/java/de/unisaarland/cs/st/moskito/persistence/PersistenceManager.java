@@ -26,7 +26,7 @@ import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.InstantiationError;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -55,14 +55,15 @@ public class PersistenceManager {
 	                                  final String driver) throws SQLException {
 		try {
 			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new SQLException("Could not load JDBC driver " + driver, e);
 		}
 		
 		// FIXME determine default database other than postgres
-		Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, password);
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		                                                          password);
 		if (connection != null) {
-			Statement statement = connection.createStatement();
+			final Statement statement = connection.createStatement();
 			if (statement != null) {
 				statement.executeUpdate("CREATE DATABASE " + database + ";");
 				statement.close();
@@ -160,13 +161,14 @@ public class PersistenceManager {
 		
 		try {
 			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new SQLException("Could not load JDBC driver " + driver, e);
 		}
 		
-		Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, password);
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		                                                          password);
 		if (connection != null) {
-			Statement statement = connection.createStatement();
+			final Statement statement = connection.createStatement();
 			if (statement != null) {
 				statement.executeUpdate("DROP DATABASE " + database + ";");
 				statement.close();

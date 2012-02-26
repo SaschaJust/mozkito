@@ -14,8 +14,8 @@
 package de.unisaarland.cs.st.moskito.settings;
 
 import static org.junit.Assert.fail;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.requirements.Required;
 
 import org.junit.Test;
 

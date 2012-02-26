@@ -24,7 +24,7 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

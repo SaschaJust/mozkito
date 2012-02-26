@@ -12,10 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -75,7 +74,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	 * DynamicArgumentSet)
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		this.doubleArgument = new DoubleArgument(set, "confidence",
 		                                         "Score in case the report was resolved before the transaction.",
 		                                         this.scoreReportResolvedBeforeTransaction + "", Requirement.required);

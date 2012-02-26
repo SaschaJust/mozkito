@@ -20,8 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;

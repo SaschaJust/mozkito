@@ -15,13 +15,13 @@
  */
 package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;

@@ -14,12 +14,12 @@ package de.unisaarland.cs.st.moskito.settings;
 
 import java.sql.SQLException;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.MaskedStringArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.MaskedStringArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;

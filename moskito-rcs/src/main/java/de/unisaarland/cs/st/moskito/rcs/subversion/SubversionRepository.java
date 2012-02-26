@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;

@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
@@ -432,7 +431,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		// TODO Auto-generated method stub
 		return false;
 	}

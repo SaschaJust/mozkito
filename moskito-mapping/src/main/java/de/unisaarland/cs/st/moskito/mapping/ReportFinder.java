@@ -6,11 +6,11 @@ package de.unisaarland.cs.st.moskito.mapping;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;

@@ -3,17 +3,17 @@
  */
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
-import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.InputFileArgument;
-import net.ownhero.dev.andama.settings.arguments.ListArgument;
-import net.ownhero.dev.andama.settings.arguments.LongArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.InputFileArgument;
+import net.ownhero.dev.hiari.settings.arguments.ListArgument;
+import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;

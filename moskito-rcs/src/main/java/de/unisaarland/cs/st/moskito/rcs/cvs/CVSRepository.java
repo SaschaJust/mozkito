@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;

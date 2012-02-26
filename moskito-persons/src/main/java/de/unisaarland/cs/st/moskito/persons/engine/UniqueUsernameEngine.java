@@ -18,8 +18,8 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
