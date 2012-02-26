@@ -15,6 +15,7 @@ package net.ownhero.dev.hiari.settings.arguments;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import net.ownhero.dev.hiari.settings.Argument;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -106,6 +107,35 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T> {
 			                             "The size of the set of possible values for %s must be exactly the same as the one given in the constructor.",
 			                             getHandle());
 		}
+	}
+	
+	@Override
+	public String getHelpString() {
+		
+		String color = "";
+		if (required() && (getDefaultValue() == null)) {
+			color = "\u001b[4;35m";
+		} else if (required()) {
+			color = "\u001b[0;35m";
+		}
+		
+		final StringBuilder pValues = new StringBuilder();
+		final Iterator<T> iterator = this.possibleValues.iterator();
+		while (iterator.hasNext()) {
+			pValues.append(iterator.next().toString());
+			if (iterator.hasNext()) {
+				pValues.append(", ");
+			}
+		}
+		
+		return String.format("%s-D%s: %s %s%s%s [value='%s', default='%s', possibleValues=[%s], required if=%s, type=%s]%s",
+		                     color, getName(), getDescription(), color, required()
+		                                                                          ? "(required!)"
+		                                                                          : "", "\u001b[0;37m",
+		                     getStringValue() == null
+		                                             ? "(unset)"
+		                                             : getStringValue(), getDefaultValue(), pValues.toString(),
+		                     getRequirements(), getHandle(), "\u001b[m");
 	}
 	
 	/*
