@@ -203,16 +203,17 @@ public abstract class Argument<T> implements IArgument<T> {
 	@Override
 	public String getHelpString() {
 		
-		final boolean color = required() && (getDefaultValue() == null);
+		String color = "";
+		if (required() && (getDefaultValue() == null)) {
+			color = "\u001b[4;35m";
+		} else if (required()) {
+			color = "\u001b[0;35m";
+		}
 		
-		return String.format("%s-D%s: %s %s%s%s [value='%s', default='%s', required if=%s, type=%s]%s",
-		                     color
-		                          ? "\u001b[0;35m"
-		                          : "", getName(), getDescription(), color
-		                                                                  ? "\u001b[m"
-		                                                                  : "", required()
-		                                                                                  ? "(required!)"
-		                                                                                  : "", "\u001b[0;37m",
+		return String.format("%s-D%s: %s %s%s%s [value='%s', default='%s', required if=%s, type=%s]%s", color,
+		                     getName(), getDescription(), color, required()
+		                                                                   ? "(required!)"
+		                                                                   : "", "\u001b[0;37m",
 		                     getStringValue() == null
 		                                             ? "(unset)"
 		                                             : getStringValue(), getDefaultValue(), getRequirements(),
