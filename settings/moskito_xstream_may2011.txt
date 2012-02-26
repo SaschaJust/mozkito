@@ -30,7 +30,8 @@ datadependency.cache.dir = /data/kim/cache.datadependency/xstream/
 
 ##### Genealogy Metrics #####
 fix.pattern=XSTR-({bugids}\\d+)
-genealogy.graphdb=/data/kim/genealogies/xstream/may2011/
+#genealogy.graphdb=/data/kim/genealogies/xstream/may2011/
+genealogy.graphdb=/tmpfs/xstream/may2011/
 genealogy.metric.level=TRANSACTION
 genealogy.metric.out=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_metrics.csv
 genealogy.metric.fileAggregate.out=/data/kim/genealogies/xstream/xstream_may2011_genealogy_transaction_fileMetrics.csv
