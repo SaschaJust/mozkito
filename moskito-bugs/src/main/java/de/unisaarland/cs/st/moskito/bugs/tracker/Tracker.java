@@ -341,6 +341,7 @@ public abstract class Tracker {
 		report.setSummary(parser.getSummary());
 		report.setType(parser.getType());
 		report.setVersion(parser.getVersion());
+		report.setKeywords(parser.getKeywords());
 		if (parser.getScmFixVersion() != null) {
 			report.setScmFixVersion(parser.getScmFixVersion());
 		}

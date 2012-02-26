@@ -52,6 +52,8 @@ public interface Parser {
 	
 	Long getId();
 	
+	Set<String> getKeywords();
+	
 	DateTime getLastUpdateTimestamp();
 	
 	Priority getPriority();

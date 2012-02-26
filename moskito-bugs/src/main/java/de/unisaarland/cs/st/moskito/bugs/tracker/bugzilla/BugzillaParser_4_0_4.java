@@ -334,6 +334,29 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	}
 	
 	@Override
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			final String[] keywords = getXmlBug().getKeywordsArray();
+			final Set<String> result = new HashSet<String>();
+			for (final String keyword : keywords) {
+				if ((keyword != null) && (!keyword.trim().equals(""))) {
+					result.add(keyword);
+				}
+			}
+			return result;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 */
+	
+	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
 		
@@ -347,7 +370,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	/*
@@ -367,7 +390,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -383,7 +406,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
@@ -399,7 +422,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	@Override
@@ -420,7 +443,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -441,7 +464,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	/**
@@ -457,7 +480,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
@@ -473,7 +496,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -490,7 +514,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -547,13 +572,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			Condition.notNull(result, "You should return an empty set instead of NULL.");
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public Status getStatus() {
