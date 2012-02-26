@@ -44,7 +44,7 @@ import net.ownhero.dev.kisa.Logger;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class Settings {
+public class Settings implements ISettings {
 	
 	/**
 	 * @return
@@ -138,6 +138,7 @@ public class Settings {
 		
 	}
 	
+	@Override
 	public boolean addArgumentMapping(final String name,
 	                                  final ArgumentSet<?> argument) {
 		if (!this.argumentSets.containsKey(name)) {
@@ -151,6 +152,7 @@ public class Settings {
 	/**
 	 * @param argument
 	 */
+	@Override
 	public void addArgumentProvider(final ArgumentProvider provider) {
 		this.argumentProviders.add(provider);
 	}
@@ -159,6 +161,7 @@ public class Settings {
 	 * @param tool
 	 * @param information
 	 */
+	@Override
 	public void addToolInformation(final String tool,
 	                               final String information) {
 		this.toolInformation.put(tool, information);
@@ -185,6 +188,7 @@ public class Settings {
 	 * 
 	 * @return
 	 */
+	@Override
 	public Collection<ArgumentSet<?>> getArguments() {
 		return this.argumentSets.values();
 	}
@@ -201,6 +205,7 @@ public class Settings {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getHelpString() {
 		final StringBuilder ss = new StringBuilder();
 		ss.append("Available JavaVM arguments:");
@@ -219,6 +224,7 @@ public class Settings {
 	/**
 	 * @return the properties
 	 */
+	@Override
 	public Properties getProperties() {
 		return this.properties;
 	}
@@ -234,6 +240,7 @@ public class Settings {
 	 * @param name
 	 * @return
 	 */
+	@Override
 	public IArgument<?> getSetting(final String name) {
 		final ArgumentSet<?> argumentSet = this.argumentSets.get(name);
 		if (argumentSet.getArgument(name) == null) {
@@ -246,6 +253,7 @@ public class Settings {
 	/**
 	 * @return
 	 */
+	@Override
 	public String getToolInformation() {
 		final StringBuilder builder = new StringBuilder();
 		
@@ -262,6 +270,7 @@ public class Settings {
 		return builder.toString();
 	}
 	
+	@Override
 	public boolean hasSetting(final String name) {
 		return this.argumentSets.containsKey(name);
 	}
@@ -277,6 +286,7 @@ public class Settings {
 	 * @throws SettingsParseError
 	 * 
 	 */
+	@Override
 	public void parse() throws SettingsParseError {
 		// check to load settings from URI
 		if (System.getProperty("andamaSettings") != null) {
@@ -361,6 +371,7 @@ public class Settings {
 		}
 	}
 	
+	@Override
 	public void parseArguments(final Collection<IArgument<?>> arguments) throws SettingsParseError {
 		
 		final PriorityQueue<IArgument<?>> queue = new PriorityQueue<IArgument<?>>(arguments);
