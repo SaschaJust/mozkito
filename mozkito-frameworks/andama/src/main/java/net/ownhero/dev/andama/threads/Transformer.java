@@ -13,7 +13,7 @@
 package net.ownhero.dev.andama.threads;
 
 import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.settings.ISettings;
+import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
  * The {@link Transformer} class is a component of the {@link Chain} . It takes data from a data source and modifies it.

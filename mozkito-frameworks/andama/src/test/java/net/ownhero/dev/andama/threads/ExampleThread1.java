@@ -5,7 +5,7 @@ package net.ownhero.dev.andama.threads;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
 
 /**
  * @author just

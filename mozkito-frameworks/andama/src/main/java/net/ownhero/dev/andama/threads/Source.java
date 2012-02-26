@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.ISettings;
+import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
  * {@link Source}s are the source elements of a tool chain. In general, these are I/O handlers that read data from some

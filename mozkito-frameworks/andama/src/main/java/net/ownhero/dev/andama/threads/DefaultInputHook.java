@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -33,7 +33,7 @@ public class DefaultInputHook<K, V> extends InputHook<K, V> {
 			}
 			
 			setCompleted();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new UnrecoverableError(e);
 		}
 	}

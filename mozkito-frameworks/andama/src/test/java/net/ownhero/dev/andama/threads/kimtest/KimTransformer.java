@@ -13,9 +13,9 @@
 
 package net.ownhero.dev.andama.threads.kimtest;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 
 public class KimTransformer extends Transformer<Integer, Double> {
 	

@@ -15,12 +15,12 @@ package net.ownhero.dev.andama.threads;
 
 import static org.junit.Assert.fail;
 import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.kimtest.KimDemux;
 import net.ownhero.dev.andama.threads.kimtest.KimMux;
 import net.ownhero.dev.andama.threads.kimtest.KimSink;
 import net.ownhero.dev.andama.threads.kimtest.KimSource;
 import net.ownhero.dev.andama.threads.kimtest.KimTransformer;
+import net.ownhero.dev.hiari.settings.Settings;
 
 import org.junit.Test;
 

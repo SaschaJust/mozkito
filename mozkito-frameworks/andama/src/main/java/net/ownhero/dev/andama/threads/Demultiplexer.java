@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.ISettings;
+import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

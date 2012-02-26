@@ -5,10 +5,10 @@ package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.exceptions.InvalidGraphLayoutException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.Graph;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.INode;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**

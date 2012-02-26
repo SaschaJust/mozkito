@@ -6,7 +6,7 @@ package net.ownhero.dev.andama.threads;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -19,7 +19,7 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 	 * @return
 	 */
 	public static <K, V> boolean allCompleted(final Collection<? extends Hook<K, V>> hooks) {
-		for (IHook<K, V> hook : hooks) {
+		for (final IHook<K, V> hook : hooks) {
 			if (!hook.completed()) {
 				return false;
 			}
@@ -28,7 +28,7 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 		return true;
 	}
 	
-	private boolean                  completed = true;
+	private boolean          completed = true;
 	
 	private final Node<K, V> thread;
 	
@@ -49,12 +49,12 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 		}
 		
 		@SuppressWarnings ("unchecked")
-		Class<? extends Hook<K, V>> superclass = (Class<? extends Hook<K, V>>) clazz;
+		final Class<? extends Hook<K, V>> superclass = (Class<? extends Hook<K, V>>) clazz;
 		
 		try {
-			Method method = Node.class.getDeclaredMethod("add" + superclass.getSimpleName(), superclass);
+			final Method method = Node.class.getDeclaredMethod("add" + superclass.getSimpleName(), superclass);
 			method.invoke(thread, this);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 	}

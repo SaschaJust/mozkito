@@ -8,9 +8,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -18,8 +18,7 @@ import net.ownhero.dev.andama.threads.Source;
  */
 public class TextSource extends Source<String> {
 	
-	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
-	        final File file) {
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final File file) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process File
 		// FILE (txt, zip, gz, bz2, 7z, tar)
@@ -33,16 +32,14 @@ public class TextSource extends Source<String> {
 		addHooks();
 	}
 	
-	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
-	        final URI uri) {
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URI uri) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URI
 		// HTTP, HTTPS, FTP, FTPS, FILE
 		addHooks();
 	}
 	
-	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
-	        final URL url) {
+	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URL url) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URL
 		// HTTP, HTTPS, FTP, FTPS, FILE

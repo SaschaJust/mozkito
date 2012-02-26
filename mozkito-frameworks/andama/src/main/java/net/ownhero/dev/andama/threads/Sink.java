@@ -3,7 +3,7 @@
  */
 package net.ownhero.dev.andama.threads;
 
-import net.ownhero.dev.andama.settings.ISettings;
+import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
  * {@link Sink}s are the end points of a tool chain. In general, they provide a connection to a database back-end (e.g.

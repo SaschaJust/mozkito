@@ -6,10 +6,10 @@ package net.ownhero.dev.andama.threads;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.CrashHandler;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**

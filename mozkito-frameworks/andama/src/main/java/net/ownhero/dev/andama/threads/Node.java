@@ -30,9 +30,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import net.ownhero.dev.andama.model.Chain;
-import net.ownhero.dev.andama.settings.ISettings;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
+import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
