@@ -15,12 +15,12 @@
  */
 package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
@@ -37,8 +37,8 @@ public class PersonsMerger extends Sink<PersonContainer> {
 	 * @param persistenceUtil
 	 * @param processor
 	 */
-	public PersonsMerger(final Group threadGroup, final Settings settings,
-	        final PersistenceUtil persistenceUtil, final MergingProcessor processor) {
+	public PersonsMerger(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
+	        final MergingProcessor processor) {
 		super(threadGroup, settings, false);
 		
 		new PostExecutionHook<PersonContainer, PersonContainer>(this) {

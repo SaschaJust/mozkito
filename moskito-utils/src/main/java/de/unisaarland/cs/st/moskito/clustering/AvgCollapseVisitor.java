@@ -14,7 +14,7 @@ package de.unisaarland.cs.st.moskito.clustering;
 
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -25,9 +25,9 @@ public class AvgCollapseVisitor<T> implements MultilevelClusteringCollapseVisito
 	                       final Cluster<T> otherCluster,
 	                       final Map<T, Map<T, Double>> originalScoreMatrix) {
 		
-		DescriptiveStatistics stats = new DescriptiveStatistics();
-		for (T t1 : newCluster.getAllElements()) {
-			for (T t2 : otherCluster.getAllElements()) {
+		final DescriptiveStatistics stats = new DescriptiveStatistics();
+		for (final T t1 : newCluster.getAllElements()) {
+			for (final T t2 : otherCluster.getAllElements()) {
 				double d = 0;
 				if ((originalScoreMatrix.containsKey(t1)) && (originalScoreMatrix.get(t1).containsKey(t2))) {
 					d = originalScoreMatrix.get(t1).get(t2);

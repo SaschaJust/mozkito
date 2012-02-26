@@ -18,11 +18,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.utils.OperationCollection;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
@@ -35,8 +35,7 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public ChangeOperationReader(final Group threadGroup, final Settings settings,
-	        final BranchFactory branchFactory) {
+	public ChangeOperationReader(final Group threadGroup, final Settings settings, final BranchFactory branchFactory) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {

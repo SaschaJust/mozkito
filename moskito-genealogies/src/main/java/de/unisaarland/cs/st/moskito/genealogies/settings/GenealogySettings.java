@@ -13,9 +13,9 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 public class GenealogySettings extends Settings {
 	
@@ -27,7 +27,7 @@ public class GenealogySettings extends Settings {
 	 * @return the genealogy arguments
 	 * @throws ArgumentRegistrationException
 	 */
-	public GenealogyArguments setGenealogyArgs(final Requirement requirement) throws ArgumentRegistrationException {
+	public GenealogyArguments setGenealogyArgs(final Requirement requirement) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		return new GenealogyArguments(getRootArgumentSet(), requirement, "ppa");
 	}
 	

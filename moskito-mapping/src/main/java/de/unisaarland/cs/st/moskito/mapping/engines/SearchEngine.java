@@ -19,14 +19,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.LongArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Required;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;

@@ -13,14 +13,14 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Multiplexer;
+import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
 
 public class TransactionGenealogyMetricMux extends Multiplexer<GenealogyTransactionNode> {
 	
-	public TransactionGenealogyMetricMux(Group threadGroup, Settings settings) {
+	public TransactionGenealogyMetricMux(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 		
 	}

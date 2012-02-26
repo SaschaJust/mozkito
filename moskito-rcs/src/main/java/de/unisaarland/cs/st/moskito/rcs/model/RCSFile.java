@@ -32,7 +32,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -100,7 +100,7 @@ public class RCSFile implements Annotated, Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		RCSFile other = (RCSFile) obj;
+		final RCSFile other = (RCSFile) obj;
 		if (getGeneratedId() != other.getGeneratedId()) {
 			return false;
 		}
@@ -146,19 +146,19 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return
 	 */
 	@Transient
-	public String getPath(RCSTransaction transaction) {
+	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		
 		while ((current != null) && !getChangedNames().containsKey(current.getId())) {
 			
 			// if current transaction is a merge
-			Set<RCSTransaction> currentParents = current.getParents();
+			final Set<RCSTransaction> currentParents = current.getParents();
 			if (currentParents.size() > 1) {
-				TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
+				final TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
 				// for each merged branch check if it contains any of the
 				// transaction ids
-				for (RCSTransaction p : currentParents) {
-					RCSBranch parentBranch = p.getBranch();
+				for (final RCSTransaction p : currentParents) {
+					final RCSBranch parentBranch = p.getBranch();
 					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.isMasterBranch())) {
 						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
 					}
@@ -174,7 +174,7 @@ public class RCSFile implements Annotated, Serializable {
 			
 			RCSTransaction parentTransaction = current.getParent(current.getBranch());
 			if ((parentTransaction == null) && (!current.getBranch().isMasterBranch())) {
-				Set<RCSTransaction> parents = current.getParents();
+				final Set<RCSTransaction> parents = current.getParents();
 				if (parents.isEmpty()) {
 					throw new UnrecoverableError(
 					                             "Detected a transaction that has no parent within it's branch nor any parent at all: "

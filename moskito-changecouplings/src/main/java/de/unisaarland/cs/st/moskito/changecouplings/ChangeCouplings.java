@@ -20,16 +20,15 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.LongArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.changecouplings.elements.Level;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
@@ -86,7 +85,7 @@ public class ChangeCouplings {
 			this.outputFileArgument = new OutputFileArgument(this.settings.getRootArgumentSet(), "changecouplings.out",
 			                                                 "Write the serialized change couplings to this file.",
 			                                                 null, Requirement.required, true);
-		} catch (final ArgumentRegistrationException e) {
+		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

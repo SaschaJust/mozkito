@@ -13,14 +13,14 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Multiplexer;
+import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 
 public class PartitionGenealogyMetricMux extends Multiplexer<GenealogyPartitionNode> {
 	
-	public PartitionGenealogyMetricMux(Group threadGroup, Settings settings) {
+	public PartitionGenealogyMetricMux(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 		
 	}

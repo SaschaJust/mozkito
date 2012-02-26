@@ -5,12 +5,12 @@ package de.unisaarland.cs.st.moskito.ppa;
 
 import java.util.concurrent.Semaphore;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -25,7 +25,7 @@ public class PPAPersister extends Sink<JavaChangeOperation> {
 	
 	private Integer                  i         = 0;
 	
-	public PPAPersister(Group threadGroup, Settings settings, final PersistenceUtil persistenceUtil) {
+	public PPAPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {
@@ -40,7 +40,7 @@ public class PPAPersister extends Sink<JavaChangeOperation> {
 			
 			@Override
 			public void process() {
-				JavaChangeOperation data = getInputData();
+				final JavaChangeOperation data = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
@@ -48,10 +48,10 @@ public class PPAPersister extends Sink<JavaChangeOperation> {
 				
 				try {
 					available.acquire();
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					available.release();
 				}
-				if ((++i % 5000) == 0) {
+				if ((++PPAPersister.this.i % 5000) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}

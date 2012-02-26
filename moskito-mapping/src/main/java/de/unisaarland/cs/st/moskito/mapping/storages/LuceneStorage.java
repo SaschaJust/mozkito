@@ -15,8 +15,8 @@ package de.unisaarland.cs.st.moskito.mapping.storages;
 import java.util.HashMap;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;

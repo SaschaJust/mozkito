@@ -12,7 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.storages;
 
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

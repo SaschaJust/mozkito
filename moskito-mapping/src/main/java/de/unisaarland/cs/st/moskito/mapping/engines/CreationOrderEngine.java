@@ -12,10 +12,9 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.DoubleArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.joda.time.DateTime;
 
@@ -67,7 +66,7 @@ public class CreationOrderEngine extends MappingEngine {
 	 * DynamicArgumentSet)
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		this.confidenceArgument = new DoubleArgument(set, "condifence",
 		                                             "Score in case the report was created after the transaction.",
 		                                             this.scoreReportCreatedAfterTransaction + "", Requirement.required);

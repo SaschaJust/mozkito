@@ -18,14 +18,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.arguments.SetArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.arguments.SetArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
@@ -81,7 +80,7 @@ public class CallGraphToolChain {
 			this.outArg = new OutputFileArgument(settings.getRootArgumentSet(), "output",
 			                                     "File to store the serialized CallGraph in.", null,
 			                                     Requirement.required, true);
-		} catch (final ArgumentRegistrationException e) {
+		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

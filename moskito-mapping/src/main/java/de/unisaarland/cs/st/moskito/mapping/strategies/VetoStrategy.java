@@ -14,10 +14,9 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import java.util.Collection;
 
-import net.ownhero.dev.andama.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
-
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
