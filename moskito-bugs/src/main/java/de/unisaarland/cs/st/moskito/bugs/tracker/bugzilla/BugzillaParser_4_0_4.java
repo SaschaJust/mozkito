@@ -73,7 +73,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 *            the tracker
 	 */
 	public BugzillaParser_4_0_4() {
-		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4" })));
+		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
 	}
 	
 	/*
@@ -86,6 +86,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final AssignedTo assignedTo = getXmlBug().getAssignedTo();
+			if ((assignedTo == null) || (assignedTo.getName() == null)) {
+				return null;
+			}
 			final String name = assignedTo.getName().getStringValue();
 			final String username = assignedTo.getDomNode().getFirstChild().getNodeValue().toString();
 			return new Person(username, name, null);
@@ -246,6 +249,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final LongDesc description = getXmlBug().getLongDescArray(0);
+			if (description == null) {
+				return null;
+			}
 			return description.getThetext();
 		} finally {
 			// POSTCONDITIONS
@@ -362,6 +368,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final SortedSet<Comment> comments = getComments();
+			if (comments.isEmpty()) {
+				return null;
+			}
 			return comments.last().getTimestamp();
 		} finally {
 			// POSTCONDITIONS
@@ -601,6 +610,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final Reporter reporter = getXmlBug().getReporter();
+			if ((reporter == null) || (reporter.getName() == null)) {
+				return null;
+			}
 			final String name = reporter.getName().getStringValue();
 			final String username = reporter.getDomNode().getFirstChild().getNodeValue().toString();
 			return new Person(username, name, null);
@@ -633,8 +645,11 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		// PRECONDITIONS
 		
 		try {
-			final String bugSeverity = getXmlBug().getBugSeverity().toLowerCase();
-			if (bugSeverity.equals("enhancement")) {
+			final String bugSeverity = getXmlBug().getBugSeverity();
+			if (bugSeverity == null) {
+				return null;
+			}
+			if (bugSeverity.toLowerCase().equals("enhancement")) {
 				return Type.RFE;
 			}
 			return Type.BUG;

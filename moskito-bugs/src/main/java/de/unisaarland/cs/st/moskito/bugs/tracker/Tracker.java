@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -312,6 +313,10 @@ public abstract class Tracker {
 	 */
 	public final Report parse(final XmlReport xmlReport) {
 		final Parser parser = getParser(xmlReport);
+		if (parser == null) {
+			throw new UnrecoverableError(
+			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
+		}
 		parser.setTracker(this);
 		parser.setXMLReport(xmlReport);
 		
