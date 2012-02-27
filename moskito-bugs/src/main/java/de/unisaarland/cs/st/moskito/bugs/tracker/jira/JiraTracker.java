@@ -51,6 +51,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -268,17 +269,15 @@ public class JiraTracker extends Tracker {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
-	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return new JiraParser();
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -331,6 +330,22 @@ public class JiraTracker extends Tracker {
 	//
 	// return bugReport;
 	// }
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
+	 */
+	@Override
+	public Parser getParser(final XmlReport xmlReport) {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return new JiraParser();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	@NoneNull
 	protected Element getRootElement(final XmlReport rawReport) {

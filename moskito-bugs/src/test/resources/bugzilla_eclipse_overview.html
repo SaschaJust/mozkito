@@ -1,0 +1,1583 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>Bug List</title>
+
+
+<link rel="Top" href="https://bugs.eclipse.org/bugs/">
+
+
+
+    
+    
+    <link href="skins/standard/global.css?1324670656"
+          rel="alternate stylesheet" 
+          title="Classic"><link href="js/yui/assets/skins/sam/autocomplete.css?1288570725" rel="stylesheet"
+        type="text/css" ><link href="js/yui/assets/skins/sam/calendar.css?1288570725" rel="stylesheet"
+        type="text/css" ><link href="skins/standard/global.css?1324670656" rel="stylesheet"
+        type="text/css" ><link href="skins/standard/buglist.css?1324670656" rel="stylesheet"
+        type="text/css" ><!--[if lte IE 7]>
+      
+
+
+
+  <link href="skins/standard/IE-fixes.css?1324670656" rel="stylesheet"
+        type="text/css" >
+<![endif]-->
+
+    
+<link href="skins/contrib/Dusk/global.css?1299743203" rel="alternate stylesheet"
+        type="text/css" title="Dusk"><link href="skins/contrib/Dusk/buglist.css?1219140198" rel="alternate stylesheet"
+        type="text/css" title="Dusk">
+
+    
+
+    <link href="skins/custom/global.css?1185713956" rel="stylesheet"
+        type="text/css" ><link href="skins/custom/buglist.css?1130789806" rel="stylesheet"
+        type="text/css" ><!--[if lte IE 7]>
+      
+
+
+
+  <link href="skins/custom/IE-fixes.css?1185712323" rel="stylesheet"
+        type="text/css" >
+<![endif]-->
+
+    
+<script type="text/javascript" src="js/yui/yahoo-dom-event/yahoo-dom-event.js?1288570745"></script><script type="text/javascript" src="js/yui/cookie/cookie-min.js?1288570729"></script><script type="text/javascript" src="js/yui/datasource/datasource-min.js?1288570729"></script><script type="text/javascript" src="js/yui/connection/connection-min.js?1288570728"></script><script type="text/javascript" src="js/yui/json/json-min.js?1288570736"></script><script type="text/javascript" src="js/yui/autocomplete/autocomplete-min.js?1288570725"></script><script type="text/javascript" src="js/yui/calendar/calendar-min.js?1288570726"></script><script type="text/javascript" src="js/global.js?1324670649"></script>
+
+    <script type="text/javascript">
+    <!--
+        YAHOO.namespace('bugzilla');
+        YAHOO.util.Event.addListener = function (el, sType, fn, obj, overrideContext) {
+               if ( ("onpagehide" in window || YAHOO.env.ua.gecko) && sType === "unload") { sType = "pagehide"; };
+               var capture = ((sType == "focusin" || sType == "focusout") && !YAHOO.env.ua.ie) ? true : false;
+               return this._addListener(el, this._getType(sType), fn, obj, overrideContext, capture);
+         };
+        if ( "onpagehide" in window || YAHOO.env.ua.gecko) {
+            YAHOO.util.Event._simpleRemove(window, "unload", 
+                                           YAHOO.util.Event._unload);
+        }
+        
+        function unhide_language_selector() { 
+            YAHOO.util.Dom.removeClass(
+                'lang_links_container', 'bz_default_hidden'
+            ); 
+        } 
+        YAHOO.util.Event.onDOMReady(unhide_language_selector);
+
+        
+        var BUGZILLA = {
+            param: {
+                cookiepath: '\/bugs',
+                maxusermatches: 10
+            },
+
+            string: {
+                
+
+                attach_desc_required:
+                    'You must enter a Description for this attachment.',
+                component_required:
+                    'You must select a Component for this bug.',
+                description_required:
+                    'You must enter a Description for this bug.',
+                short_desc_required:
+                    'You must enter a Summary for this bug.',
+                version_required:
+                    'You must select a Version for this bug.'
+            }
+        };
+
+    // -->
+    </script>
+<script type="text/javascript" src="js/util.js?1324670649"></script><script type="text/javascript" src="js/field.js?1328302864"></script>
+
+    
+       <link rel="alternate" 
+             type="application/atom+xml" title="Atom feed" 
+             href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;title=Bug List&amp;ctype=atom">
+
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+                       title="Bugzilla" href="./search_plugin.cgi">
+    <link rel="shortcut icon" href="images/favicon.ico" >
+  </head>
+
+
+
+  <body onload=""
+        class="bugs-eclipse-org-bugs yui-skin-sam">
+
+
+
+<div id="header">
+<!-- 1.0@bugzilla.org -->
+
+
+
+
+<link media="screen" href="/bz.css" type="text/css" rel="stylesheet">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-image: url(/header_bg.jpg);"><tr><td><img src="/header_logo.gif" width="240" height="68" border="0" /></td>
+<td width="360" valign="top" align="right" style="background-image: url(/header_right_bg.jpg); background-repeat: no-repeat;">
+<a href="http://www.eclipse.org/org/foundation/contact.php" class="header-global-links" style="color: #3D4A68;">Contact</a> &#160; <img src="/eclipse.org-common/themes/Phoenix/images/global_links_divider.gif" height="10" width="3" /> &#160; <a href="http://www.eclipse.org/legal/" class="header-global-links" style="color: #3D4A68;">Legal</a> &#160; &#160; &#160;</td></tr></table>
+<div id="header-icons"><a href="http://www.eclipse.org/"><img src="/eclipse_home_icon.png" width="28" height="28" alt="Eclipse Home" title="Eclipse Home"/></a><a href="http://wiki.eclipse.org/"><img src="/eclipse.org-common/themes/Phoenix/images/Icon_wiki.png" width="28" height="28" alt="Eclipse Wiki"/></a><a href="http://marketplace.eclipse.org/"><img src="/plugin_icon.png" width="28" height="28" alt="Eclipse Marketplace" title="Eclipse Marketplace"/></a></div>
+
+<table border="0" cellspacing="0" cellpadding="0" id="titles">
+<tr>
+    <td id="title">
+      <p>Bugzilla &ndash; Bug List</p>
+    </td>
+
+
+</tr>
+</table>
+
+<table id="lang_links_container" cellpadding="0" cellspacing="0"
+       class="bz_default_hidden"><tr><td>
+</td></tr></table>
+<ul class="links">
+  <li><a href="./">Home</a></li>
+  <li><span class="separator">| </span><a href="enter_bug.cgi">New</a></li>
+  <li><span class="separator">| </span><a href="query.cgi">Search</a></li>
+
+  <li class="form">
+    <span class="separator">| </span>
+    <form action="buglist.cgi" method="get"
+        onsubmit="if (this.quicksearch.value == '')
+                  { alert('Please enter one or more search terms first.');
+                    return false; } return true;">
+    <input class="txt" type="text" id="quicksearch_top" name="quicksearch" 
+           value="">
+    <input class="btn" type="submit" value="Search" 
+           id="find_top"></form>
+  <a href="page.cgi?id=quicksearch.html" title="Quicksearch Help">[?]</a></li>
+
+  <li><span class="separator">| </span><a href="report.cgi">Reports</a></li>
+
+  <li>
+      <span class="separator">| </span>
+        <a href="request.cgi">Requests</a></li>
+
+
+
+  <li>
+        <span class="separator">| </span>
+        <a href="http://www.bugzilla.org/docs/3.4/en/html/query.html#list" target="_blank">Help</a>
+      </li>
+    
+
+    <li id="mini_login_container_top">
+  <span class="separator">| </span>
+  <a id="login_link_top" href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2&amp;GoAheadAndLogIn=1"
+     onclick="return show_mini_login_form('_top')">Log In</a>
+  <form action="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2" method="POST" 
+        class="mini_login bz_default_hidden"
+        id="mini_login_top"
+        onsubmit="return check_mini_login_fields( '_top' );"
+  >
+    <input id="Bugzilla_login_top" 
+           class="bz_login"
+           name="Bugzilla_login"
+           onfocus="mini_login_on_focus('_top')"
+    >
+    <input class="bz_password" 
+           id="Bugzilla_password_top" 
+           name="Bugzilla_password"
+           type="password"
+    >
+    <input class="bz_password bz_default_hidden bz_mini_login_help" type="text" 
+           id="Bugzilla_password_dummy_top" value="password"
+           onfocus="mini_login_on_focus('_top')"
+    >
+    <input type="submit" name="GoAheadAndLogIn" value="Log in" 
+            id="log_in_top">
+    <script type="text/javascript">
+      mini_login_constants = {
+          "login" : "login",
+          "warning" : "You must set the login and password before logging in."
+      };
+      
+      if (YAHOO.env.ua.gecko || YAHOO.env.ua.ie || YAHOO.env.ua.opera) {
+          YAHOO.util.Event.onDOMReady(function() {
+              init_mini_login_form('_top');
+          });
+      }
+      else {
+          YAHOO.util.Event.on(window, 'load', function () {
+              window.setTimeout(function() {
+                  init_mini_login_form('_top');
+              }, 200);
+          });
+    }
+    </script>
+    <a href="#" onclick="return hide_mini_login_form('_top')">[x]</a>
+  </form>
+</li>
+<li id="forgot_container_top">
+  <span class="separator">| </span>
+  <a id="forgot_link_top" href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2&amp;GoAheadAndLogIn=1#forgot"
+     onclick="return show_forgot_form('_top')">Forgot Password</a>
+  <form action="token.cgi" method="post" id="forgot_form_top"
+        class="mini_forgot bz_default_hidden">
+    <label>Login: <input type="text" name="loginname" size="20"></label>
+    <input id="forgot_button_top" value="Reset Password" 
+           type="submit">
+    <input type="hidden" name="a" value="reqpw">
+    <a href="#" onclick="return hide_forgot_form('_top')">[x]</a>
+  </form>
+</li>
+  <span class="separator">| </span>
+  <li><a href="http://www.eclipse.org/legal/termsofuse.php">Terms of Use</a></li>
+  <span class="separator">| </span>
+  <li><a href="http://www.eclipse.org/legal/copyright.php">Copyright Agent</a></li>
+</ul>
+</div> 
+
+<div id="bugzilla-body">
+
+<div class="bz_query_head" align="center">
+  <span class="bz_query_timestamp">
+    <b>Mon Feb 27 2012 08:44:32 EST</b><br>
+  </span>
+
+
+
+</div>
+
+
+<ul class="search_description">
+  <li>
+    <strong>Classification:</strong>
+      Eclipse
+  </li>
+  <li>
+    <strong>Target Milestone:</strong>
+      4.2
+  </li>
+</ul>
+
+<hr>
+
+
+
+
+
+  <span class="bz_result_count">22 bugs found.
+  </span>
+
+
+
+
+
+
+
+
+
+<table class="bz_buglist" cellspacing="0" cellpadding="4" width="100%">
+    <tr class="bz_buglist_header bz_first_buglist_header">
+      <th colspan="1" class="first-child">
+        <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=bug_id&amp;query_based_on=">ID</a>
+      </th>
+
+<th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=bug_severity%20DESC%2Cpriority%2C&amp;query_based_on=">Sev<span class="bz_sort_order_secondary">&#x25B2;</span></a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=priority%20DESC%2Cbug_severity&amp;query_based_on=">Pri<span class="bz_sort_order_primary">&#x25B2;</span></a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=op_sys%2Cpriority%2Cbug_severity&amp;query_based_on=">OS</a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=assigned_to%2Cpriority%2Cbug_severity&amp;query_based_on=">Assignee</a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=bug_status%2Cpriority%2Cbug_severity&amp;query_based_on=">Status</a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=resolution%2Cpriority%2Cbug_severity&amp;query_based_on=">Resolution</a>
+  </th><th colspan="1">
+    <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=short_desc%2Cpriority%2Cbug_severity&amp;query_based_on=">Summary</a>
+  </th>
+
+
+    </tr>
+
+
+  <tr id="b314163" class="bz_bugitem
+             bz_major             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=314163">314163</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="major">maj
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows 7">Windows 7
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=314163">perspective switcher docking behavior        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b334854" class="bz_bugitem
+             bz_major             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=334854">334854</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="major">maj
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=334854">Contributed 'Navigate' menu items reordered and in wrong groups        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b340088" class="bz_bugitem
+             bz_major             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=340088">340088</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="major">maj
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=340088">[Compatibility] Investigate API tooling errors on 4.1 against 3.7 baseline        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b345762" class="bz_bugitem
+             bz_major             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=345762">345762</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="major">maj
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows XP">Windows XP
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=345762">Tool bar in the photo demo's tab folder looks awful        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b361133" class="bz_bugitem
+             bz_major             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=361133">361133</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="major">maj
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=361133">[Compatibility] WorkbenchWindowAdvisor.createWindowContents(Shell) not called any more        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b330117" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=330117">330117</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="gheorghe">gheorghe
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=330117">No separation between view toolbar, view description and view content        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b332499" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=332499">332499</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=332499">Injecting IStatusLineManager throws an InjectionException        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b335765" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=335765">335765</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Mac OS X">Mac OS X
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=335765">We should not depend on E4XMIResource in our internal code        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b338470" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=338470">338470</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows XP">Windows XP
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=338470">Minimized stacks break lazy loading rules        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b340889" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=340889">340889</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=340889">JUnit view results background color on 4.1SDK        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b345564" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=345564">345564</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Linux">Linux
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=345564">testKeyDispatcherReset failed        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b348560" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=348560">348560</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Linux">Linux
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="pwebster">pwebster
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=348560">RunAndTracks that always return true        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b355085" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=355085">355085</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows 7">Windows 7
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-doc-inbox">platform-doc-inbox
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=355085">Document required/supported properties for styling and UI model in product extension        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b355426" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=355426">355426</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="remysuen">remysuen
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=355426">[Compatibility] Isolate all model relative searching code into one method        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b355430" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=355430">355430</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows XP">Windows XP
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="kmoir">kmoir
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=355430">change primary builder to 4.2        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b357861" class="bz_bugitem
+             bz_normal             bz_P3             bz_REOPENED                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=357861">357861</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Windows 7">Windows 7
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="obesedin">obesedin
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="REOPENED">REOP
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=357861">PartServiceImpl#activate() is called twice on every activation request        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b357947" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=357947">357947</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=357947">ResourceHandler should inject its instance of IModelReconcilingService        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b358018" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=358018">358018</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Mac OS X">Mac OS X
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="platform-ui-triaged">platform-ui-triaged
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=358018">[KeyBindings] CMD+C not working in (JDT-)popups        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b363069" class="bz_bugitem
+             bz_normal             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=363069">363069</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="normal">nor
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="All">All
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="Platform-UI-Inbox">Platform-UI-Inbox
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=363069">[Compatibility] multi-stroke key bindings should provide status line indication        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b158394" class="bz_bugitem
+             bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=158394">158394</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="enhancement">enh
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Linux-GTK">Linux-GTK
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="Carolyn_MacLeod">Carolyn_MacLeod
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="RESOLVED">RESO
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="FIXED">FIXE
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=158394">Add accessible relations        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b158762" class="bz_bugitem
+             bz_enhancement             bz_P3             bz_NEW                                                    bz_row_odd             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=158762">158762</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="enhancement">enh
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Linux-GTK">Linux-GTK
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="Carolyn_MacLeod">Carolyn_MacLeod
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="NEW">NEW
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="---">---
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=158762">Add accessible selection        </a>
+    </td>
+
+  </tr>
+
+
+
+  <tr id="b158767" class="bz_bugitem
+             bz_enhancement             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+
+    <td class="first-child bz_id_column">
+      <a href="show_bug.cgi?id=158767">158767</a>
+      <span style="display: none"></span>
+    </td>
+
+    <td style="white-space: nowrap"
+        class="bz_bug_severity_column">
+        <span title="enhancement">enh
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_priority_column">
+        <span title="P3">P3
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_op_sys_column">
+        <span title="Linux-GTK">Linux-GTK
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_assigned_to_column">
+        <span title="Carolyn_MacLeod">Carolyn_MacLeod
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_bug_status_column">
+        <span title="RESOLVED">RESO
+        </span>
+    </td>
+    <td style="white-space: nowrap"
+        class="bz_resolution_column">
+        <span title="FIXED">FIXE
+        </span>
+    </td>
+    <td 
+        class="bz_short_desc_column">
+        <a href="show_bug.cgi?id=158767">Add accessible action        </a>
+    </td>
+
+  </tr>
+
+
+
+</table>
+
+
+
+
+
+<span class="bz_result_count">22 bugs found.
+</span>
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<table>
+  <tr>
+      <td valign="middle" class="bz_query_buttons">
+        <form method="post" action="show_bug.cgi">
+            <input type="hidden" name="id" value="314163">
+            <input type="hidden" name="id" value="334854">
+            <input type="hidden" name="id" value="340088">
+            <input type="hidden" name="id" value="345762">
+            <input type="hidden" name="id" value="361133">
+            <input type="hidden" name="id" value="330117">
+            <input type="hidden" name="id" value="332499">
+            <input type="hidden" name="id" value="335765">
+            <input type="hidden" name="id" value="338470">
+            <input type="hidden" name="id" value="340889">
+            <input type="hidden" name="id" value="345564">
+            <input type="hidden" name="id" value="348560">
+            <input type="hidden" name="id" value="355085">
+            <input type="hidden" name="id" value="355426">
+            <input type="hidden" name="id" value="355430">
+            <input type="hidden" name="id" value="357861">
+            <input type="hidden" name="id" value="357947">
+            <input type="hidden" name="id" value="358018">
+            <input type="hidden" name="id" value="363069">
+            <input type="hidden" name="id" value="158394">
+            <input type="hidden" name="id" value="158762">
+            <input type="hidden" name="id" value="158767">
+          <input type="hidden" name="format" value="multiple">
+          <input type="submit" id="long_format" value="Long Format">
+        </form>
+        <form method="post" action="show_bug.cgi">
+            <input type="hidden" name="ctype" value="xml">
+            <input type="hidden" name="id" value="314163">
+            <input type="hidden" name="id" value="334854">
+            <input type="hidden" name="id" value="340088">
+            <input type="hidden" name="id" value="345762">
+            <input type="hidden" name="id" value="361133">
+            <input type="hidden" name="id" value="330117">
+            <input type="hidden" name="id" value="332499">
+            <input type="hidden" name="id" value="335765">
+            <input type="hidden" name="id" value="338470">
+            <input type="hidden" name="id" value="340889">
+            <input type="hidden" name="id" value="345564">
+            <input type="hidden" name="id" value="348560">
+            <input type="hidden" name="id" value="355085">
+            <input type="hidden" name="id" value="355426">
+            <input type="hidden" name="id" value="355430">
+            <input type="hidden" name="id" value="357861">
+            <input type="hidden" name="id" value="357947">
+            <input type="hidden" name="id" value="358018">
+            <input type="hidden" name="id" value="363069">
+            <input type="hidden" name="id" value="158394">
+            <input type="hidden" name="id" value="158762">
+            <input type="hidden" name="id" value="158767">
+            <input type="hidden" name="excludefield" value="attachmentdata">
+            <input type="submit" value="XML" id="xml">
+        </form>
+
+      </td>
+      
+      <td>&nbsp;</td>
+      
+      <td valign="middle" class="bz_query_links">
+        <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;ctype=csv">CSV</a> |
+        <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;title=Bug List&amp;ctype=atom">Feed</a> |
+        <a href="buglist.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;ctype=ics">iCalendar</a> |
+        <a href="colchange.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;query_based_on=">Change&nbsp;Columns</a> |
+
+
+
+        
+      </td>
+    
+    <td valign="middle" class="bz_query_edit">
+      <a href="query.cgi?classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2">Edit&nbsp;Search</a>
+    </td>
+      
+      <td>&nbsp;</td>
+      
+      <td valign="middle" class="bz_query_remember">
+        <form method="get" action="buglist.cgi">
+          <input type="submit" id="remember" value="Remember search"> as 
+          <input type="hidden" name="newquery" 
+                 value="classification=Eclipse&amp;query_format=advanced&amp;target_milestone=4.2&amp;order=priority%2Cbug_severity">
+          <input type="hidden" name="cmdtype" value="doit">
+          <input type="hidden" name="remtype" value="asnamed">
+          <input type="hidden" name="token" value="1330350272-b543ad86df1232a36661e19bf82c0a81">
+          <input type="text" id="save_newqueryname" name="newqueryname" size="20"
+                 value=""> 
+        </form> 
+      </td>  
+  </tr>
+</table>
+
+  <p class="bz_query_single_product"><a href="enter_bug.cgi?product=Platform">File
+    a new bug
+     in the "Platform" product</a>
+  </p>
+
+
+
+
+</div>
+
+
+
+<div id="footer">
+  <div class="intro"></div>
+
+
+
+
+<ul id="useful-links">
+  <li id="links-actions"><ul class="links">
+  <li><a href="./">Home</a></li>
+  <li><span class="separator">| </span><a href="enter_bug.cgi">New</a></li>
+  <li><span class="separator">| </span><a href="query.cgi">Search</a></li>
+
+  <li class="form">
+    <span class="separator">| </span>
+    <form action="buglist.cgi" method="get"
+        onsubmit="if (this.quicksearch.value == '')
+                  { alert('Please enter one or more search terms first.');
+                    return false; } return true;">
+    <input class="txt" type="text" id="quicksearch_bottom" name="quicksearch" 
+           value="">
+    <input class="btn" type="submit" value="Search" 
+           id="find_bottom"></form>
+  <a href="page.cgi?id=quicksearch.html" title="Quicksearch Help">[?]</a></li>
+
+  <li><span class="separator">| </span><a href="report.cgi">Reports</a></li>
+
+  <li>
+      <span class="separator">| </span>
+        <a href="request.cgi">Requests</a></li>
+
+
+
+  <li>
+        <span class="separator">| </span>
+        <a href="http://www.bugzilla.org/docs/3.4/en/html/query.html#list" target="_blank">Help</a>
+      </li>
+    
+
+    <li id="mini_login_container_bottom">
+  <span class="separator">| </span>
+  <a id="login_link_bottom" href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2&amp;GoAheadAndLogIn=1"
+     onclick="return show_mini_login_form('_bottom')">Log In</a>
+  <form action="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2" method="POST" 
+        class="mini_login bz_default_hidden"
+        id="mini_login_bottom"
+        onsubmit="return check_mini_login_fields( '_bottom' );"
+  >
+    <input id="Bugzilla_login_bottom" 
+           class="bz_login"
+           name="Bugzilla_login"
+           onfocus="mini_login_on_focus('_bottom')"
+    >
+    <input class="bz_password" 
+           id="Bugzilla_password_bottom" 
+           name="Bugzilla_password"
+           type="password"
+    >
+    <input class="bz_password bz_default_hidden bz_mini_login_help" type="text" 
+           id="Bugzilla_password_dummy_bottom" value="password"
+           onfocus="mini_login_on_focus('_bottom')"
+    >
+    <input type="submit" name="GoAheadAndLogIn" value="Log in" 
+            id="log_in_bottom">
+    <script type="text/javascript">
+      mini_login_constants = {
+          "login" : "login",
+          "warning" : "You must set the login and password before logging in."
+      };
+      
+      if (YAHOO.env.ua.gecko || YAHOO.env.ua.ie || YAHOO.env.ua.opera) {
+          YAHOO.util.Event.onDOMReady(function() {
+              init_mini_login_form('_bottom');
+          });
+      }
+      else {
+          YAHOO.util.Event.on(window, 'load', function () {
+              window.setTimeout(function() {
+                  init_mini_login_form('_bottom');
+              }, 200);
+          });
+    }
+    </script>
+    <a href="#" onclick="return hide_mini_login_form('_bottom')">[x]</a>
+  </form>
+</li>
+<li id="forgot_container_bottom">
+  <span class="separator">| </span>
+  <a id="forgot_link_bottom" href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;classification=Eclipse;target_milestone=4.2&amp;GoAheadAndLogIn=1#forgot"
+     onclick="return show_forgot_form('_bottom')">Forgot Password</a>
+  <form action="token.cgi" method="post" id="forgot_form_bottom"
+        class="mini_forgot bz_default_hidden">
+    <label>Login: <input type="text" name="loginname" size="20"></label>
+    <input id="forgot_button_bottom" value="Reset Password" 
+           type="submit">
+    <input type="hidden" name="a" value="reqpw">
+    <a href="#" onclick="return hide_forgot_form('_bottom')">[x]</a>
+  </form>
+</li>
+  <span class="separator">| </span>
+  <li><a href="http://www.eclipse.org/legal/termsofuse.php">Terms of Use</a></li>
+  <span class="separator">| </span>
+  <li><a href="http://www.eclipse.org/legal/copyright.php">Copyright Agent</a></li>
+</ul>
+  </li>
+
+  
+    
+
+  
+
+
+  
+</ul>
+
+  <div class="outro"></div>
+</div>
+
+
+</body>
+</html>

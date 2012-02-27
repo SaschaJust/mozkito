@@ -237,6 +237,8 @@ public abstract class Tracker {
 		}
 	}
 	
+	public abstract OverviewParser getOverviewParser(RawContent overviewContent);
+	
 	/**
 	 * @return the overviewURI
 	 */
@@ -427,7 +429,6 @@ public abstract class Tracker {
 			this.stopAt = stopAt;
 			this.initialized = true;
 			if (cacheDirPath != null) {
-				// FIXME use new IOUtils function
 				this.cacheDir = new File(cacheDirPath);
 				try {
 					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.WRITABLE_DIR);
@@ -443,7 +444,27 @@ public abstract class Tracker {
 		
 		this.bugIds = new LinkedBlockingDeque<Long>();
 		
-		// TODO when this method ends, bugIds must be filled
+		RawContent overviewContent;
+		try {
+			overviewContent = IOUtils.fetch(getOverviewURI());
+		} catch (final UnsupportedProtocolException e) {
+			throw new UnrecoverableError(e);
+		} catch (final FetchException e) {
+			throw new UnrecoverableError(e);
+		}
+		
+		// when this method ends, bugIds must be filled
+		final OverviewParser overviewParser = getOverviewParser(overviewContent);
+		if (overviewParser != null) {
+			if (!overviewParser.parse(overviewContent.getContent())) {
+				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
+			}
+			this.bugIds.addAll(overviewParser.getBugIds());
+		} else {
+			for (long l = startAt; l <= stopAt; ++l) {
+				this.bugIds.add(l);
+			}
+		}
 	}
 	
 	/**

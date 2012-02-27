@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -37,6 +38,7 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -119,6 +121,18 @@ public class BugzillaTracker extends Tracker {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			// TODO detect bugzilla version
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
