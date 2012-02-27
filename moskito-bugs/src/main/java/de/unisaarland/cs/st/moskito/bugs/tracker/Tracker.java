@@ -24,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -43,6 +44,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -235,6 +237,8 @@ public abstract class Tracker {
 		}
 	}
 	
+	public abstract OverviewParser getOverviewParser(RawContent overviewContent);
+	
 	/**
 	 * @return the overviewURI
 	 */
@@ -311,6 +315,10 @@ public abstract class Tracker {
 	 */
 	public final Report parse(final XmlReport xmlReport) {
 		final Parser parser = getParser(xmlReport);
+		if (parser == null) {
+			throw new UnrecoverableError(
+			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
+		}
 		parser.setTracker(this);
 		parser.setXMLReport(xmlReport);
 		
@@ -340,6 +348,14 @@ public abstract class Tracker {
 		report.setSummary(parser.getSummary());
 		report.setType(parser.getType());
 		report.setVersion(parser.getVersion());
+		report.setKeywords(parser.getKeywords());
+		if (parser.getScmFixVersion() != null) {
+			report.setScmFixVersion(parser.getScmFixVersion());
+		}
+		
+		for (final HistoryElement helement : parser.getHistoryElements()) {
+			report.addHistoryElement(helement);
+		}
 		
 		return report;
 	}
@@ -413,7 +429,6 @@ public abstract class Tracker {
 			this.stopAt = stopAt;
 			this.initialized = true;
 			if (cacheDirPath != null) {
-				// FIXME use new IOUtils function
 				this.cacheDir = new File(cacheDirPath);
 				try {
 					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.WRITABLE_DIR);
@@ -429,7 +444,27 @@ public abstract class Tracker {
 		
 		this.bugIds = new LinkedBlockingDeque<Long>();
 		
-		// TODO when this method ends, bugIds must be filled
+		RawContent overviewContent;
+		try {
+			overviewContent = IOUtils.fetch(getOverviewURI());
+		} catch (final UnsupportedProtocolException e) {
+			throw new UnrecoverableError(e);
+		} catch (final FetchException e) {
+			throw new UnrecoverableError(e);
+		}
+		
+		// when this method ends, bugIds must be filled
+		final OverviewParser overviewParser = getOverviewParser(overviewContent);
+		if (overviewParser != null) {
+			if (!overviewParser.parse(overviewContent.getContent())) {
+				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
+			}
+			this.bugIds.addAll(overviewParser.getBugIds());
+		} else {
+			for (long l = startAt; l <= stopAt; ++l) {
+				this.bugIds.add(l);
+			}
+		}
 	}
 	
 	/**

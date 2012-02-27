@@ -243,7 +243,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public DateTime getLastUpdateTimestamp() {
+	public Set<String> getKeywords() {
 		// PRECONDITIONS
 		
 		try {
@@ -259,6 +259,23 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
 	
+	@Override
+	public DateTime getLastUpdateTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
+	 */
+	
 	public int getNumberOfAttachments() {
 		// PRECONDITIONS
 		
@@ -272,7 +289,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
 	 */
 	
 	public int getNumberOfComments() {
@@ -288,7 +305,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	
 	@Override
@@ -305,7 +322,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
 	
 	@Override
@@ -322,7 +339,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
 	
 	@Override
@@ -339,7 +356,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	@Override
@@ -356,7 +373,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -373,28 +390,11 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
-	 */
-	
-	@Override
-	public Severity getSeverity() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public String getScmFixVersion() {
 		// PRECONDITIONS
 		
 		try {
@@ -411,7 +411,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Status getStatus() {
+	public Severity getSeverity() {
 		// PRECONDITIONS
 		
 		try {
@@ -428,7 +428,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSubject() {
+	public Set<Long> getSiblings() {
 		// PRECONDITIONS
 		
 		try {
@@ -445,7 +445,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Person getSubmitter() {
+	public Status getStatus() {
 		// PRECONDITIONS
 		
 		try {
@@ -462,7 +462,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSummary() {
+	public String getSubject() {
 		// PRECONDITIONS
 		
 		try {
@@ -480,7 +480,7 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public Type getType() {
+	public Person getSubmitter() {
 		// PRECONDITIONS
 		
 		try {
@@ -497,6 +497,30 @@ public class JiraParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
 	 * )
 	 */
+	
+	@Override
+	public String getSummary() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public Type getType() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	@Override
 	public String getVersion() {

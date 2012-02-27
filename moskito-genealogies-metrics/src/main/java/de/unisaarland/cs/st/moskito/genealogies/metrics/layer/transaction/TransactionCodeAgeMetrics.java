@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
@@ -70,13 +73,26 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			                                                                                                element,
 			                                                                                                before,
 			                                                                                                after);
-			numChangesStats.addValue(pastTransactions.size());
 			
-			final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
-			lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
-			final RCSTransaction firstModified = PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
-			                                                                                            element);
-			ageStats.addValue(DaysBetweenUtils.getDaysBetween(transaction, firstModified));
+			if (!pastTransactions.isEmpty()) {
+				numChangesStats.addValue(pastTransactions.size());
+				
+				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
+				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+			}
+			// final RCSTransaction firstModified =
+			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
+			// element);
+			final DateTime firstModified = PPAPersistenceUtil.getFirstTimestampChangingElement(this.persistenceUtil,
+			                                                                                   element);
+			if (firstModified == null) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not determine timestamp for transaction firat modifying javaelement "
+					        + element.getGeneratedId());
+				}
+				continue;
+			}
+			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, transaction.getTimestamp()).getDays()));
 		}
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();

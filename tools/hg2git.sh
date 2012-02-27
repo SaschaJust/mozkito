@@ -59,7 +59,7 @@ function check_targetdir() {
 			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXX")
 			ret=$?
 			rm -f "${TESTFILE}"
-			retrun $ret
+			return $ret
 		else
 			echo "Eror: target directory exists, but is not of type file."
 			echo "Aborting..."

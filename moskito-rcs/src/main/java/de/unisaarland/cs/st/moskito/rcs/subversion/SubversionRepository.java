@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -94,6 +94,7 @@ public class SubversionRepository extends Repository {
 	private ProtocolType  type;
 	private String        username;
 	private File          workingDirectory;
+	private File          tmpDir;
 	
 	/**
 	 * Instantiates a new subversion repository.
@@ -201,9 +202,15 @@ public class SubversionRepository extends Repository {
 	                         @NotEmpty final String revision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
-		
-		"reposuite_clone_" + DateTimeUtils.currentTimeMillis(), FileShutdownAction.DELETE);
+		if (this.tmpDir == null) {
+			this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
+			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
+			                                            FileShutdownAction.DELETE);
+		} else {
+			this.workingDirectory = FileUtils.createDir(this.tmpDir,
+			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
+			                                            FileShutdownAction.DELETE);
+		}
 		
 		Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
 		
@@ -562,14 +569,15 @@ public class SubversionRepository extends Repository {
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final BranchFactory branchFactory) throws MalformedURLException,
-	                                                    InvalidProtocolType,
-	                                                    InvalidRepositoryURI,
-	                                                    UnsupportedProtocolType {
-		setup(address, startRevision, endRevision, null, null, branchFactory);
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) throws MalformedURLException,
+	                                    InvalidProtocolType,
+	                                    InvalidRepositoryURI,
+	                                    UnsupportedProtocolType {
+		setup(address, startRevision, endRevision, null, null, branchFactory, tmpDir);
 	}
 	
 	/*
@@ -582,10 +590,11 @@ public class SubversionRepository extends Repository {
 	                  final String endRevision,
 	                  final String username,
 	                  final String password,
-	                  final BranchFactory branchFactory) throws MalformedURLException,
-	                                                    InvalidProtocolType,
-	                                                    InvalidRepositoryURI,
-	                                                    UnsupportedProtocolType {
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) throws MalformedURLException,
+	                                    InvalidProtocolType,
+	                                    InvalidRepositoryURI,
+	                                    UnsupportedProtocolType {
 		setUri(address);
 		this.username = username;
 		this.password = password;
@@ -593,6 +602,8 @@ public class SubversionRepository extends Repository {
 		if (Logger.logDebug()) {
 			SVNDebugLog.setDefaultLog(new SubversionLogger());
 		}
+		
+		this.tmpDir = tmpDir;
 		
 		this.type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
 		if (this.type != null) {

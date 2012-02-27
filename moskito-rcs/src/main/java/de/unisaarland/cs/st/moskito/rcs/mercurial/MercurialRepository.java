@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.settings.Settings;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -719,8 +719,9 @@ public class MercurialRepository extends Repository {
 	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final BranchFactory branchFactory) {
-		setup(address, startRevision, endRevision, null, branchFactory);
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
+		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -735,16 +736,20 @@ public class MercurialRepository extends Repository {
 	 * @param inputStream
 	 *            the input stream
 	 */
-	private void setup(final URI address,
+	private void setup(@NotNull final URI address,
 	                   final String startRevision,
 	                   final String endRevision,
 	                   final InputStream inputStream,
-	                   final BranchFactory branchFactory) {
+	                   @NotNull final BranchFactory branchFactory,
+	                   final File tmpDir) {
 		
 		setUri(address);
 		
-		final String hgName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_hg_clone_"
-		        + DateTimeUtils.currentTimeMillis();
+		String hgName = FileUtils.tmpDir.getAbsolutePath();
+		if (tmpDir != null) {
+			hgName = tmpDir.getAbsolutePath();
+		}
+		hgName += FileUtils.fileSeparator + "moskito_hg_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		// clone the remote repository
 		if (!clone(null, hgName)) {
@@ -774,13 +779,14 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	@NoneNull
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final String username,
-	                  final String password,
-	                  final BranchFactory branchFactory) {
+	                  @NotNull final String username,
+	                  @NotNull final String password,
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
 		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory);
+		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
 	}
 }

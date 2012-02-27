@@ -20,9 +20,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -46,8 +48,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -99,6 +103,9 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                summary;
 	private Type                  type              = Type.UNKNOWN;
 	private String                version;
+	private String                scmFixVersion;
+	
+	private Set<String>           keywords          = new HashSet<String>();
 	
 	private Report() {
 		super();
@@ -155,6 +162,11 @@ public class Report implements Annotated, Comparable<Report> {
 		return ret;
 	}
 	
+	@Transient
+	public boolean addKeyword(final String keyword) {
+		return this.keywords.add(keyword);
+	}
+	
 	/**
 	 * @param sibling
 	 * @return
@@ -200,6 +212,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(final Report o) {
 		if (getId() > o.getId()) {
 			return 1;
@@ -336,6 +349,16 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.id;
 	}
 	
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			return this.keywords;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * @return the lastFetch
 	 */
@@ -435,6 +458,16 @@ public class Report implements Annotated, Comparable<Report> {
 	@Transient
 	public Person getResolver() {
 		return getPersonContainer().get("resolver");
+	}
+	
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return this.scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -633,6 +666,17 @@ public class Report implements Annotated, Comparable<Report> {
 		this.id = id;
 	}
 	
+	public void setKeywords(final Set<String> keywords) {
+		// PRECONDITIONS
+		try {
+			this.keywords = keywords;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.keywords, keywords,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
+	}
+	
 	/**
 	 * @param lastFetch
 	 *            the lastFetch to set
@@ -722,6 +766,18 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setResolver(final Person resolver) {
 		getPersonContainer().add("resolver", resolver);
+	}
+	
+	@NoneNull
+	public void setScmFixVersion(final String scmFixVersion) {
+		// PRECONDITIONS
+		try {
+			this.scmFixVersion = scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.scmFixVersion, scmFixVersion,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/**

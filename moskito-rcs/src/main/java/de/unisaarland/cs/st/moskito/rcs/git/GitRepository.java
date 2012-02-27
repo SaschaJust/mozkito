@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -36,6 +36,7 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.URIUtils;
 import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -363,14 +364,16 @@ public class GitRepository extends Repository {
 		if (getStartRevision() == null) {
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 			                                                                              "--branches", "--remotes",
-			                                                                              "--pretty=format:%H" },
+			                                                                              "--pretty=format:%H",
+			                                                                              "--topo-order" },
 			                                                                      this.cloneDir, null,
 			                                                                      new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				return null;
 			}
 			if (response.getSecond().isEmpty()) {
-				throw new UnrecoverableError("Command ` git --pretty=format:%H` did not produc any output!");
+				throw new UnrecoverableError(
+				                             "Command ` git log --branches --remotes --pretty=format:%H --topo-order` did not produc any output!");
 			}
 			final List<String> lines = response.getSecond();
 			return lines.get(lines.size() - 1).trim();
@@ -433,11 +436,24 @@ public class GitRepository extends Repository {
 		}
 		
 		final int fromIndex = this.transactionIDs.indexOf(transactionId);
-		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
-			return this.transactionIDs.get(this.transactionIDs.size() - 1);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Requesting relative transaction id of " + transactionId + " (fromIdex=" + fromIndex
+			        + ") and index " + index);
 		}
 		
-		return this.transactionIDs.get((int) (fromIndex + index));
+		String result = null;
+		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
+			result = this.transactionIDs.get(this.transactionIDs.size() - 1);
+		} else {
+			result = this.transactionIDs.get((int) (fromIndex + index));
+		}
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Returning: " + result);
+		}
+		
+		return result;
 		
 		/*
 		 * else if (index < 0) { String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H",
@@ -528,7 +544,7 @@ public class GitRepository extends Repository {
 			return null;
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order" + revisionSelection);
+			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order " + revisionSelection);
 		}
 		for (final LogEntry e : GitLogParser.parse(response.getSecond())) {
 			this.logCache.put(e.getRevision(), e);
@@ -550,7 +566,7 @@ public class GitRepository extends Repository {
 					return null;
 				}
 				if (Logger.logDebug()) {
-					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order"
+					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order "
 					        + revisionSelection);
 				}
 				result.addAll(GitLogParser.parse(response.getSecond()));
@@ -567,13 +583,14 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI)
 	 */
 	@Override
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final BranchFactory branchFactory) {
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, startRevision, endRevision, null, branchFactory);
+		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -588,18 +605,22 @@ public class GitRepository extends Repository {
 	 * @param inputStream
 	 *            the input stream
 	 */
-	private void setup(final URI address,
+	private void setup(@NotNull final URI address,
 	                   final String startRevision,
 	                   final String endRevision,
 	                   final InputStream inputStream,
-	                   final BranchFactory branchFactory) {
+	                   @NotNull final BranchFactory branchFactory,
+	                   final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
-		final String gitName = FileUtils.tmpDir + FileUtils.fileSeparator + "reposuite_git_clone_"
-		        + DateTimeUtils.currentTimeMillis();
+		String gitName = FileUtils.tmpDir.getAbsolutePath();
+		if (tmpDir != null) {
+			gitName = tmpDir.getAbsolutePath();
+		}
+		gitName += FileUtils.fileSeparator + "moskito_git_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		if (!clone(inputStream, gitName)) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
@@ -634,7 +655,7 @@ public class GitRepository extends Repository {
 			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
 		}
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=format:%H --branches --remotes");
+			Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
 		}
 		this.transactionIDs = response.getSecond();
 		Collections.reverse(this.transactionIDs);
@@ -651,16 +672,17 @@ public class GitRepository extends Repository {
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setup(final URI address,
+	public void setup(@NotNull final URI address,
 	                  final String startRevision,
 	                  final String endRevision,
-	                  final String username,
-	                  final String password,
-	                  final BranchFactory branchFactory) {
+	                  @NotNull final String username,
+	                  @NotNull final String password,
+	                  @NotNull final BranchFactory branchFactory,
+	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
 		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory);
+		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
 	}
 }

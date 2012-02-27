@@ -18,13 +18,16 @@ import java.io.StringReader;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -36,11 +39,26 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
  */
 public class MantisTracker extends Tracker {
 	
+	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
+	
 	/**
 	 * 
 	 */
 	public MantisTracker() {
-		// TODO Auto-generated constructor stub
+		
+	}
+	
+	@Override
+	public boolean checkRAW(final RawReport rawReport) {
+		if (!super.checkRAW(rawReport)) {
+			return false;
+		}
+		final Regex regex = new Regex(
+		                              "<p\\s+class=\"center\"\\s+style=\"color:red\">\\s+Issue\\s+\\d+\\s+not\\s+found.\\s+</p>");
+		if (regex.matches(rawReport.getContent())) {
+			return false;
+		}
+		return true;
 	}
 	
 	/*
@@ -76,23 +94,20 @@ public class MantisTracker extends Tracker {
 		throw new UnrecoverableError();
 	}
 	
-	//
-	// /*
-	// * (non-Javadoc)
-	// * @see
-	// de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport)
-	// */
-	// @Override
-	// public Report parse(final XmlReport xmlReport) {
-	// xmlReport.getDocument().getRootElement();
-	// final Report bugReport = new Report(xmlReport.getId());
-	// bugReport.setLastFetch(xmlReport.getFetchTime());
-	// bugReport.setHash(xmlReport.getMd5());
-	//
-	// // parse
-	//
-	// return bugReport;
-	// }
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			// TODO
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)

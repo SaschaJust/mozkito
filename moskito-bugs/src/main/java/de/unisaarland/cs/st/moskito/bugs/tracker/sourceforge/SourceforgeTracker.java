@@ -36,10 +36,11 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -58,6 +59,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -411,6 +413,20 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
@@ -425,6 +441,31 @@ public class SourceforgeTracker extends Tracker {
 			// POSTCONDITIONS
 		}
 	}
+	
+	// @Override
+	// public Report parse(final XmlReport xmlReport) {
+	// // System.err.println(document);
+	// // Content content = document.getContent(1);
+	// // Element element = content.getDocument().getRootElement();
+	// final Element element = xmlReport.getDocument().getRootElement();
+	// final Report bugReport = new Report(xmlReport.getId());
+	// bugReport.setLastFetch(xmlReport.getFetchTime());
+	// bugReport.setHash(xmlReport.getMd5());
+	// hangle(bugReport, element, null);
+	//
+	// // check if there is a non-added
+	// if (this.lastHistoryElement != null) {
+	// if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
+	// if (Logger.logWarn()) {
+	// Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
+	// }
+	// }
+	// }
+	//
+	// bugReport.setType(Type.BUG);
+	//
+	// return bugReport;
+	// }
 	
 	/**
 	 * @param bugReport
@@ -789,31 +830,6 @@ public class SourceforgeTracker extends Tracker {
 			
 		}
 	}
-	
-	// @Override
-	// public Report parse(final XmlReport xmlReport) {
-	// // System.err.println(document);
-	// // Content content = document.getContent(1);
-	// // Element element = content.getDocument().getRootElement();
-	// final Element element = xmlReport.getDocument().getRootElement();
-	// final Report bugReport = new Report(xmlReport.getId());
-	// bugReport.setLastFetch(xmlReport.getFetchTime());
-	// bugReport.setHash(xmlReport.getMd5());
-	// hangle(bugReport, element, null);
-	//
-	// // check if there is a non-added
-	// if (this.lastHistoryElement != null) {
-	// if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
-	// if (Logger.logWarn()) {
-	// Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
-	// }
-	// }
-	// }
-	//
-	// bugReport.setType(Type.BUG);
-	//
-	// return bugReport;
-	// }
 	
 	@SuppressWarnings ("unchecked")
 	private void hangle(final Report bugReport,

@@ -88,6 +88,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(final Comment arg0) {
 		if (arg0 == null) {
 			return 1;
@@ -103,6 +104,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	/**
 	 * @return the author
 	 */
+	@Override
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getAuthor() {
@@ -166,6 +168,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.model.TextElement#getText()
 	 */
+	@Override
 	@Transient
 	public String getText() {
 		return getMessage();
@@ -174,6 +177,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	/**
 	 * @return the timestamp
 	 */
+	@Override
 	@Transient
 	public DateTime getTimestamp() {
 		return this.timestamp;

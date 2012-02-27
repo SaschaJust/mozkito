@@ -6,12 +6,12 @@ package de.unisaarland.cs.st.moskito.mapping;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;

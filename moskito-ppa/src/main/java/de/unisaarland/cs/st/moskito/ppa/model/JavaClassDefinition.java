@@ -21,7 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -60,14 +60,14 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
 			}
 			return null;
 		}
-		String name = nameElement.getText();
+		final String name = nameElement.getText();
 		
 		return new JavaClassDefinition(name);
 	}
@@ -106,7 +106,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			anonymClass = true;
+			this.anonymClass = true;
 		}
 		setParent(parent);
 	}
@@ -132,12 +132,12 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Transient
 	private HashMap<Integer, Integer> getAnonCounters() {
-		return anonCounters;
+		return this.anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return the super class name
 	 */
 	public String getSuperClassName() {
-		return superClassName;
+		return this.superClassName;
 	}
 	
 	/*
@@ -156,8 +156,8 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	@Override
 	@NoneNull
 	public Element getXMLRepresentation() {
-		Element thisElement = new Element(JAVA_CLASS_DEFINITION);
-		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
+		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
@@ -169,7 +169,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return true, if is anonym class
 	 */
 	public boolean isAnonymClass() {
-		return anonymClass;
+		return this.anonymClass;
 	}
 	
 	/**
@@ -186,7 +186,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 		if (isAnonymClass()) {
 			return getParent().nextAnonCounter(v);
 		} else {
-			int vId = System.identityHashCode(v);
+			final int vId = System.identityHashCode(v);
 			if (!getAnonCounters().containsKey(vId)) {
 				getAnonCounters().put(vId, 0);
 			}
@@ -230,7 +230,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	public String toLongString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
 		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
@@ -248,7 +248,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
 		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");

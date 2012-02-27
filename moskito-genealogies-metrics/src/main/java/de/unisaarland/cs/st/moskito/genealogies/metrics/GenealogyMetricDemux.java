@@ -13,13 +13,13 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Demultiplexer;
 import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.hiari.settings.Settings;
 
 public class GenealogyMetricDemux extends Demultiplexer<GenealogyMetricValue> {
 	
-	public GenealogyMetricDemux(Group threadGroup, Settings settings) {
+	public GenealogyMetricDemux(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 	}
 	

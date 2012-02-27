@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
@@ -27,7 +26,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MergingEngine implements ArgumentProvider {
+public abstract class MergingEngine implements net.ownhero.dev.hiari.settings.registerable.ArgumentProvider {
 	
 	public MergingEngine() {
 		

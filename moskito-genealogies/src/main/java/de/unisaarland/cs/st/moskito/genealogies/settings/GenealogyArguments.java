@@ -13,11 +13,10 @@
 
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
@@ -36,7 +35,7 @@ public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	 * @throws ArgumentRegistrationException
 	 */
 	public GenealogyArguments(final ArgumentSet<?> argumentSet, final Requirement requirement, final String unit)
-	        throws ArgumentRegistrationException {
+	        throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		super(argumentSet, "GenealogyArguments", requirement);
 		
 		this.graphDBArg = new DirectoryArgument(

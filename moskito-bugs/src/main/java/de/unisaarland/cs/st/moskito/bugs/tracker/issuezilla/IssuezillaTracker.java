@@ -22,6 +22,7 @@ import java.net.URI;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Document;
@@ -29,6 +30,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -99,6 +101,20 @@ public class IssuezillaTracker extends Tracker {
 	//
 	// return bugReport;
 	// }
+	
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)

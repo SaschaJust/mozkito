@@ -19,13 +19,12 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.exceptions.SettingsParseError;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
-import net.ownhero.dev.andama.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -196,7 +195,7 @@ public class ChangeGenealogyUtils {
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), null, null, branchFactory);
+			repository.setup(urlFile.toURI(), null, null, branchFactory, null);
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
@@ -474,7 +473,8 @@ public class ChangeGenealogyUtils {
 		});
 	}
 	
-	public static void run() throws ArgumentRegistrationException, SettingsParseError {
+	public static void run() throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException,
+	                        SettingsParseError {
 		
 		final RepositorySettings settings = new RepositorySettings();
 		

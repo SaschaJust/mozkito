@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE bugzilla SYSTEM "https://bugzilla.mozilla.org/page.cgi?id=bugzilla.dtd">
+
+<bugzilla version="4.0.5+"
+          urlbase="https://bugzilla.mozilla.org/"
+          
+          maintainer="bugzilla-admin@mozilla.org"
+>
+
+    <bug>
+          <bug_id>642368</bug_id>
+          
+          <creation_ts>2011-03-16 21:04:00 -0700</creation_ts>
+          <short_desc>Envjs.connection Can&apos;t find method java.io.FilterInputStream.read([C,number,number) (env.rhino.js#1631)</short_desc>
+          <delta_ts>2011-03-16 21:08:29 -0700</delta_ts>
+          <reporter_accessible>1</reporter_accessible>
+          <cclist_accessible>1</cclist_accessible>
+          <classification_id>3</classification_id>
+          <classification>Components</classification>
+          <product>Rhino</product>
+          <component>Core</component>
+          <version>1.7R1</version>
+          <rep_platform>x86</rep_platform>
+          <op_sys>Windows XP</op_sys>
+          <bug_status>UNCONFIRMED</bug_status>
+          <resolution></resolution>
+          
+          
+          <bug_file_loc></bug_file_loc>
+          <status_whiteboard></status_whiteboard>
+          <keywords></keywords>
+          <priority>--</priority>
+          <bug_severity>critical</bug_severity>
+          <target_milestone>---</target_milestone>
+          
+          
+          <everconfirmed>0</everconfirmed>
+          <reporter name="rhino">rhino</reporter>
+          <assigned_to>general</assigned_to>
+          
+          <qa_contact>general</qa_contact>
+          <cf_tracking_firefox5>---</cf_tracking_firefox5>
+          <cf_status_firefox5>---</cf_status_firefox5>
+          <cf_tracking_firefox6>---</cf_tracking_firefox6>
+          <cf_status_firefox6>---</cf_status_firefox6>
+          <cf_tracking_firefox7>---</cf_tracking_firefox7>
+          <cf_status_firefox7>---</cf_status_firefox7>
+          <cf_tracking_firefox8>---</cf_tracking_firefox8>
+          <cf_status_firefox8>---</cf_status_firefox8>
+          <cf_tracking_firefox9>---</cf_tracking_firefox9>
+          <cf_status_firefox9>---</cf_status_firefox9>
+          <cf_tracking_firefox10>---</cf_tracking_firefox10>
+          <cf_status_firefox10>---</cf_status_firefox10>
+          <cf_tracking_firefox11>---</cf_tracking_firefox11>
+          <cf_status_firefox11>---</cf_status_firefox11>
+          <cf_tracking_firefox12>---</cf_tracking_firefox12>
+          <cf_status_firefox12>---</cf_status_firefox12>
+          <cf_tracking_firefox13>---</cf_tracking_firefox13>
+          <cf_status_firefox13>---</cf_status_firefox13>
+          <cf_tracking_esr10>---</cf_tracking_esr10>
+          <cf_status_esr10>---</cf_status_esr10>
+          <cf_blocking_20>---</cf_blocking_20>
+          <cf_status_20>---</cf_status_20>
+          <cf_blocking_192>---</cf_blocking_192>
+          <cf_status_192>---</cf_status_192>
+          <cf_blocking_191>---</cf_blocking_191>
+          <cf_status_191>---</cf_status_191>
+          <cf_blocking_fennec10>---</cf_blocking_fennec10>
+          <cf_blocking_fennec>---</cf_blocking_fennec>
+          <cf_blocking_thunderbird33>---</cf_blocking_thunderbird33>
+          <cf_status_thunderbird33>---</cf_status_thunderbird33>
+          <cf_blocking_thunderbird32>---</cf_blocking_thunderbird32>
+          <cf_status_thunderbird32>---</cf_status_thunderbird32>
+          <cf_blocking_thunderbird31>---</cf_blocking_thunderbird31>
+          <cf_status_thunderbird31>---</cf_status_thunderbird31>
+          <cf_blocking_thunderbird30>---</cf_blocking_thunderbird30>
+          <cf_status_thunderbird30>---</cf_status_thunderbird30>
+          <cf_tracking_thunderbird6>---</cf_tracking_thunderbird6>
+          <cf_status_thunderbird6>---</cf_status_thunderbird6>
+          <cf_tracking_thunderbird7>---</cf_tracking_thunderbird7>
+          <cf_status_thunderbird7>---</cf_status_thunderbird7>
+          <cf_tracking_thunderbird8>---</cf_tracking_thunderbird8>
+          <cf_status_thunderbird8>---</cf_status_thunderbird8>
+          <cf_tracking_thunderbird9>---</cf_tracking_thunderbird9>
+          <cf_status_thunderbird9>---</cf_status_thunderbird9>
+          <cf_tracking_thunderbird10>---</cf_tracking_thunderbird10>
+          <cf_status_thunderbird10>---</cf_status_thunderbird10>
+          <cf_tracking_thunderbird11>---</cf_tracking_thunderbird11>
+          <cf_status_thunderbird11>---</cf_status_thunderbird11>
+          <cf_tracking_thunderbird12>---</cf_tracking_thunderbird12>
+          <cf_status_thunderbird12>---</cf_status_thunderbird12>
+          <cf_tracking_thunderbird13>---</cf_tracking_thunderbird13>
+          <cf_status_thunderbird13>---</cf_status_thunderbird13>
+          <cf_tracking_thunderbird_esr10>---</cf_tracking_thunderbird_esr10>
+          <cf_status_thunderbird_esr10>---</cf_status_thunderbird_esr10>
+          <cf_blocking_seamonkey21>---</cf_blocking_seamonkey21>
+          <cf_status_seamonkey21>---</cf_status_seamonkey21>
+          <cf_tracking_seamonkey22>---</cf_tracking_seamonkey22>
+          <cf_status_seamonkey22>---</cf_status_seamonkey22>
+          <cf_tracking_seamonkey23>---</cf_tracking_seamonkey23>
+          <cf_status_seamonkey23>---</cf_status_seamonkey23>
+          <cf_tracking_seamonkey24>---</cf_tracking_seamonkey24>
+          <cf_status_seamonkey24>---</cf_status_seamonkey24>
+          <cf_tracking_seamonkey25>---</cf_tracking_seamonkey25>
+          <cf_status_seamonkey25>---</cf_status_seamonkey25>
+          <cf_tracking_seamonkey26>---</cf_tracking_seamonkey26>
+          <cf_status_seamonkey26>---</cf_status_seamonkey26>
+          <cf_tracking_seamonkey27>---</cf_tracking_seamonkey27>
+          <cf_status_seamonkey27>---</cf_status_seamonkey27>
+          <cf_tracking_seamonkey28>---</cf_tracking_seamonkey28>
+          <cf_status_seamonkey28>---</cf_status_seamonkey28>
+          <cf_tracking_seamonkey29>---</cf_tracking_seamonkey29>
+          <cf_status_seamonkey29>---</cf_status_seamonkey29>
+          <cf_tracking_seamonkey210>---</cf_tracking_seamonkey210>
+          <cf_status_seamonkey210>---</cf_status_seamonkey210>
+          <cf_colo_site>---</cf_colo_site>
+          <cf_office>---</cf_office>
+          
+          
+          <votes>0</votes>
+
+      
+
+      
+
+      
+
+          <long_desc isprivate="0">
+            <commentid>5350178</commentid>
+            <who name="rhino">rhino</who>
+            <bug_when>2011-03-16 21:04:59 -0700</bug_when>
+            <thetext>User-Agent:       Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.134 Safari/534.16
+Build Identifier: Envjs/1.6 (Rhino; U; Windows XP x86 5.1; en-US; rv:1.7.0.rc2) Resig/20070309 PilotFish/1.2.13
+
+I traced this down to Envjs.connection (env.js#1631) being executed after an exception was not handled properly.  If the else (#1614) branch was taken, the outstream and buffer are of type Writer, but the instream (#1628) is of type InputStream.
+
+1605:        try{
+1606:            //console.log(&apos;contentEncoding %s&apos;, contentEncoding);
+1607:            if( contentEncoding.equalsIgnoreCase(&quot;gzip&quot;) ||
+1608:                contentEncoding.equalsIgnoreCase(&quot;decompress&quot;)){
+1609:                //zipped content
+1610:                binary = true;
+1611:                outstream = new java.io.ByteArrayOutputStream();
+1612:                buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024);
+1613:                instream = new java.util.zip.GZIPInputStream(connection.getInputStream())
+1614:            }else{
+1615:                //this is a text file
+1616:                outstream = new java.io.StringWriter();
+1617                buffer = java.lang.reflect.Array.newInstance(java.lang.Character.TYPE, 1024);
+1618:                instream = new java.io.InputStreamReader(connection.getInputStream());
+1619:            }
+1620:        }catch(e){
+1621:            if (connection.getResponseCode() == 404){
+1622:                console.log(&apos;failed to open connection stream \n %s %s&apos;,
+1623:                            e.toString(), e);
+1624:            }else{
+1625:                console.log(&apos;failed to open connection stream \n %s %s&apos;,
+1626:                            e.toString(), e);
+1627:            }
+1628:            instream = connection.getErrorStream();
+1629:        }
+1630:
+1631:        while ((length = instream.read(buffer, 0, 1024)) != -1) {
+1632:            outstream.write(buffer, 0, length);
+1633:        }
+
+The fix is to insert these after #1628:
+
+
+1628:            instream = connection.getErrorStream();
+                 if (!binary) {
+                     outstream = new java.io.ByteArrayOutputStream();
+                     buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024);
+                 }
+1629:        }
+
+Reproducible: Always
+
+Steps to Reproduce:
+1) start rhino shell
+2) load env.js
+3) window.location=&apos;http://isohunt.com/torrents/?ihq=anime&apos;
+
+Actual Results:  
+env.js spits out:
+
+failed to open connection stream 
+  JavaException: java.io.IOException: Server returned HTTP response code: 403 for URL: http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit   JavaException: java.io.IOException: Server returned HTTP response code: 403 for URL: http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit 
+could not load script  http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit  
+  InternalError: Can&apos;t find method java.io.FilterInputStream.read([C,number,number). (env.rhino.js#1631) 
+error loading script  [object HTMLScriptElement]   InternalError: Can&apos;t find method java.io.FilterInputStream.read([C,number,number). (env.rhino.js#1631) 
+ ReferenceError: &quot;adblock&quot; is not defined.</thetext>
+          </long_desc>
+      
+      
+
+    </bug>
+
+</bugzilla>

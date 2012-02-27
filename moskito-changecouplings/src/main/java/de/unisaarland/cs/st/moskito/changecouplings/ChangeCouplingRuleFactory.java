@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
@@ -65,7 +65,7 @@ public class ChangeCouplingRuleFactory {
 		
 		updateProcedures(persistenceUtil);
 		
-		LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
+		final LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
@@ -78,17 +78,17 @@ public class ChangeCouplingRuleFactory {
 		
 		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
 		        + tablename + "')");
-		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
+		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
 		if (list == null) {
 			return null;
 		}
-		for (Object[] row : list) {
-			int support = (Integer) row[2];
-			double confidence = (Double) row[3];
+		for (final Object[] row : list) {
+			final int support = (Integer) row[2];
+			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
-				String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
-				Integer[] premise = new Integer[premises.length];
+				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
+				final Integer[] premise = new Integer[premises.length];
 				for (int i = 0; i < premises.length; ++i) {
 					premise[i] = Integer.valueOf(premises[i]);
 				}
@@ -125,7 +125,7 @@ public class ChangeCouplingRuleFactory {
 	                                                                        final PersistenceUtil persistenceUtil) {
 		updateProcedures(persistenceUtil);
 		
-		LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
+		final LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
@@ -136,7 +136,7 @@ public class ChangeCouplingRuleFactory {
 		tablename = "reposuite_method_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		StringBuilder query = new StringBuilder();
+		final StringBuilder query = new StringBuilder();
 		query.append("select reposuite_method_changecouplings('");
 		query.append(transaction.getId());
 		query.append("','");
@@ -152,19 +152,19 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.executeNativeQuery(query.toString());
 		
 		@SuppressWarnings ("unchecked")
-		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
+		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
 		if (list == null) {
 			return null;
 		}
-		for (Object[] row : list) {
-			int support = (Integer) row[2];
-			double confidence = (Double) row[3];
+		for (final Object[] row : list) {
+			final int support = (Integer) row[2];
+			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
 				
 				// {org.joda.time.convert.ConverterManager.ConverterManager(),org.joda.time.convert.ReadableIntervalConverter.getDurationMillis(Object)}
 				
-				String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
+				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
 				result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence, persistenceUtil));
 			}
 		}
@@ -205,7 +205,7 @@ public class ChangeCouplingRuleFactory {
 				}
 				persistenceUtil.executeNativeQuery(query.toString());
 				
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
 					        + e.getMessage());

@@ -16,11 +16,11 @@ package de.unisaarland.cs.st.moskito.genealogies.metrics;
 import java.util.Collection;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -29,7 +29,7 @@ public class PartitionGenealogyReader extends Source<GenealogyPartitionNode> {
 	
 	private Iterator<Collection<JavaChangeOperation>> iterator;
 	
-	public PartitionGenealogyReader(Group threadGroup, Settings settings,
+	public PartitionGenealogyReader(final Group threadGroup, final Settings settings,
 	        final PartitionChangeGenealogy changeGenealogy) {
 		super(threadGroup, settings, false);
 		
@@ -37,7 +37,7 @@ public class PartitionGenealogyReader extends Source<GenealogyPartitionNode> {
 			
 			@Override
 			public void preExecution() {
-				iterator = changeGenealogy.vertexSet().iterator();
+				PartitionGenealogyReader.this.iterator = changeGenealogy.vertexSet().iterator();
 			}
 		};
 		
@@ -45,21 +45,21 @@ public class PartitionGenealogyReader extends Source<GenealogyPartitionNode> {
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					Collection<JavaChangeOperation> t = iterator.next();
+				if (PartitionGenealogyReader.this.iterator.hasNext()) {
+					final Collection<JavaChangeOperation> t = PartitionGenealogyReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
 					}
 					
 					GenealogyPartitionNode node = null;
-					if (iterator.hasNext()) {
+					if (PartitionGenealogyReader.this.iterator.hasNext()) {
 						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t));
 					} else {
 						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t), true);
 					}
 					providePartialOutputData(node);
-					if (!iterator.hasNext()) {
+					if (!PartitionGenealogyReader.this.iterator.hasNext()) {
 						setCompleted();
 					}
 				}

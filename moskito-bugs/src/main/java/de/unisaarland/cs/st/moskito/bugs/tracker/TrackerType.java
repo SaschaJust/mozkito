@@ -20,7 +20,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker;
  * 
  */
 public enum TrackerType {
-	BUGZILLA, ISSUEZILLA, JIRA, SOURCEFORGE, GOOGLE;
+	BUGZILLA, ISSUEZILLA, JIRA, SOURCEFORGE, GOOGLE, MANTIS;
 	
 	public static String getHandle() {
 		return TrackerType.class.getSimpleName();

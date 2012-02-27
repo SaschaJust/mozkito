@@ -6,10 +6,10 @@ package de.unisaarland.cs.st.moskito.ppa;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -24,8 +24,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
 	
-	public PPATransformer(Group threadGroup, Settings settings, final Repository repository,
-	        final Boolean usePPA, JavaElementFactory factory) {
+	public PPATransformer(final Group threadGroup, final Settings settings, final Repository repository,
+	        final Boolean usePPA, final JavaElementFactory factory) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
@@ -38,9 +38,9 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 			@Override
 			public void process() {
 				
-				if ((iterator == null) || (!iterator.hasNext())) {
+				if ((this.iterator == null) || (!this.iterator.hasNext())) {
 					
-					RCSTransaction transaction = getInputData();
+					final RCSTransaction transaction = getInputData();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
@@ -48,7 +48,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 					
 					try {
 						PPAPersister.available.acquire();
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						PPAPersister.available.release();
 					}
 					if (usePPA) {
@@ -75,18 +75,18 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 					}
 					PPAPersister.available.release();
 					
-					iterator = visitor.getIterator();
+					this.iterator = visitor.getIterator();
 				}
 				
-				if (iterator.hasNext()) {
+				if (this.iterator.hasNext()) {
 					
-					JavaChangeOperation operation = iterator.next();
+					final JavaChangeOperation operation = this.iterator.next();
 					
 					if (Logger.logDebug()) {
 						Logger.debug("providing JavaChangeOperation: " + operation.toString());
 					}
 					
-					if (iterator.hasNext()) {
+					if (this.iterator.hasNext()) {
 						providePartialOutputData(operation);
 					} else {
 						provideOutputData(operation);

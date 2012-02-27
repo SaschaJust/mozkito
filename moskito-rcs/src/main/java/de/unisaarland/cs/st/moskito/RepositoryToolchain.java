@@ -15,15 +15,15 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
-import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
-import net.ownhero.dev.andama.settings.arguments.LongArgument;
-import net.ownhero.dev.andama.settings.requirements.Optional;
-import net.ownhero.dev.andama.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
+import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Optional;
+import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -69,6 +69,20 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
+	}
+	
+	public PersistenceUtil getPersistenceUtil() {
+		return this.persistenceUtil;
+	}
+	
+	public Repository getRepository() {
+		// PRECONDITIONS
+		
+		try {
+			return this.repository;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

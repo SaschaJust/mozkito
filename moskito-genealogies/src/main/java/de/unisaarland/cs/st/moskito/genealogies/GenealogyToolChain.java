@@ -13,13 +13,12 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.arguments.BooleanArgument;
-import net.ownhero.dev.andama.settings.arguments.LoggerArguments;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
+import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
@@ -45,7 +44,7 @@ public class GenealogyToolChain extends Chain<GenealogySettings> {
 			                                   "Only prints standard genealogy infos", "false", Requirement.required);
 			
 			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
-		} catch (final ArgumentRegistrationException e) {
+		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
 		

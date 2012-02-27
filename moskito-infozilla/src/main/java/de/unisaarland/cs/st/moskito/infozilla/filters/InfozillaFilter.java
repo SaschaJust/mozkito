@@ -28,15 +28,13 @@ package de.unisaarland.cs.st.moskito.infozilla.filters;
 
 import java.util.List;
 
-import net.ownhero.dev.andama.settings.registerable.ArgumentProvider;
-
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
  * 
  * @author Nicolas Bettenburg
  * 
  */
-public abstract class InfozillaFilter implements ArgumentProvider {
+public abstract class InfozillaFilter implements net.ownhero.dev.hiari.settings.registerable.ArgumentProvider {
 	
 	public abstract String getOutputText();
 	

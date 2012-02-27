@@ -20,10 +20,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.SetArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.SetArgument;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
@@ -38,7 +37,7 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
 	
 	public InfozillaArguments(final ArgumentSet<Boolean> argumentSet, final Requirement requirement)
-	        throws ArgumentRegistrationException {
+	        throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		super(argumentSet, "TODO bla bla", requirement);
 		
 		try {

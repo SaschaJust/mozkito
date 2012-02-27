@@ -18,16 +18,14 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -47,7 +45,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
 
-public class GenealogyMetricsToolChain extends Chain<Settings> {
+public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 	
 	private final GenealogyArguments        genealogyArgs;
 	private final Pool                      threadPool;
@@ -59,21 +57,19 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	public GenealogyMetricsToolChain(final GenealogySettings setting, final EnumArgument<MetricLevel> granularityArg,
 	        final GenealogyArguments genealogyArgs) {
 		super(setting);
-		final GenealogySettings settings = (GenealogySettings) getSettings();
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
-			settings.setLoggerArg(Requirement.required);
 			this.genealogyArgs = genealogyArgs;
 			this.granularityArg = granularityArg;
-			this.outputFileArgument = new OutputFileArgument(settings.getRootArgumentSet(), "genealogy.metric.out",
+			this.outputFileArgument = new OutputFileArgument(setting.getRootArgumentSet(), "genealogy.metric.out",
 			                                                 "Filename to write result metric matrix into.", null,
 			                                                 Requirement.required, true);
 			new StringArgument(
-			                   settings.getRootArgumentSet(),
+			                   setting.getRootArgumentSet(),
 			                   "fix.pattern",
 			                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
 			                   null, Requirement.required);
-		} catch (final ArgumentRegistrationException e) {
+		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

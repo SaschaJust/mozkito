@@ -73,7 +73,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 *            the tracker
 	 */
 	public BugzillaParser_4_0_4() {
-		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4" })));
+		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
 	}
 	
 	/*
@@ -86,6 +86,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final AssignedTo assignedTo = getXmlBug().getAssignedTo();
+			if ((assignedTo == null) || (assignedTo.getName() == null)) {
+				return null;
+			}
 			final String name = assignedTo.getName().getStringValue();
 			final String username = assignedTo.getDomNode().getFirstChild().getNodeValue().toString();
 			return new Person(username, name, null);
@@ -246,6 +249,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final LongDesc description = getXmlBug().getLongDescArray(0);
+			if (description == null) {
+				return null;
+			}
 			return description.getThetext();
 		} finally {
 			// POSTCONDITIONS
@@ -334,12 +340,18 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	}
 	
 	@Override
-	public DateTime getLastUpdateTimestamp() {
+	public Set<String> getKeywords() {
 		// PRECONDITIONS
 		
 		try {
-			final SortedSet<Comment> comments = getComments();
-			return comments.last().getTimestamp();
+			final String[] keywords = getXmlBug().getKeywordsArray();
+			final Set<String> result = new HashSet<String>();
+			for (final String keyword : keywords) {
+				if ((keyword != null) && (!keyword.trim().equals(""))) {
+					result.add(keyword);
+				}
+			}
+			return result;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -348,6 +360,26 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 */
+	
+	@Override
+	public DateTime getLastUpdateTimestamp() {
+		// PRECONDITIONS
+		
+		try {
+			final SortedSet<Comment> comments = getComments();
+			if (comments.isEmpty()) {
+				return null;
+			}
+			return comments.last().getTimestamp();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
 	/*
@@ -367,7 +399,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	
 	@Override
@@ -383,7 +415,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	
 	@Override
@@ -399,7 +431,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	@Override
@@ -420,7 +452,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -441,7 +473,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	/**
@@ -457,7 +489,24 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
+	
+	@Override
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -473,7 +522,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -531,12 +582,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
-	
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -547,13 +592,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public String getSubject() {
@@ -572,6 +610,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			final Reporter reporter = getXmlBug().getReporter();
+			if ((reporter == null) || (reporter.getName() == null)) {
+				return null;
+			}
 			final String name = reporter.getName().getStringValue();
 			final String username = reporter.getDomNode().getFirstChild().getNodeValue().toString();
 			return new Person(username, name, null);
@@ -604,8 +645,11 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		// PRECONDITIONS
 		
 		try {
-			final String bugSeverity = getXmlBug().getBugSeverity().toLowerCase();
-			if (bugSeverity.equals("enhancement")) {
+			final String bugSeverity = getXmlBug().getBugSeverity();
+			if (bugSeverity == null) {
+				return null;
+			}
+			if (bugSeverity.toLowerCase().equals("enhancement")) {
 				return Type.RFE;
 			}
 			return Type.BUG;

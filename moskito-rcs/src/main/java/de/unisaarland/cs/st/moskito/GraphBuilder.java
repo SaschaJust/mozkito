@@ -15,11 +15,9 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import java.security.UnrecoverableEntryException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -79,35 +77,36 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 				final RCSTransaction rcsTransaction = getInputData();
 				
 				final RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Fecthing cached reverseDepednency for transaction " + rcsTransaction.getId() + ": "
+					        + revdep);
+				}
+				
 				final RCSBranch rcsBranch = revdep.getCommitBranch();
 				rcsTransaction.setBranch(rcsBranch);
 				rcsTransaction.addAllTags(revdep.getTagNames());
 				for (final String parent : revdep.getParents()) {
 					RCSTransaction parentTransaction = null;
 					if (!cached.containsKey(parent)) {
-						try {
-							parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
-						} catch (final ArrayIndexOutOfBoundsException e) {
-							throw new UnrecoverableError(
-							                             "Got child of parent that is not cached an cannot be loaded anymore.",
-							                             e);
-						}
+						parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
 						if (parentTransaction != null) {
 							cached.put(parentTransaction.getId(), parentTransaction);
 						}
 					} else {
 						parentTransaction = cached.get(parent);
 					}
+					
 					if (parentTransaction != null) {
 						rcsTransaction.addParent(parentTransaction);
 					} else {
-						if (Logger.logError()) {
-							Logger.error("Got child `" + rcsTransaction.getId()
-							        + "` of unknown parent. This should not happen.");
+						if (!rcsTransaction.getId().equals(repository.getFirstRevisionId())) {
+							if (Logger.logError()) {
+								Logger.error("Got child of unknown parent: " + rcsTransaction
+								        + " and it was not the first revision of the repository: "
+								        + repository.getFirstRevisionId() + ". This should not happen.");
+							}
 						}
-						throw new UnrecoverableError(
-						                             new UnrecoverableEntryException(
-						                                                             "Got child of unknown parent. This should not happen."));
 					}
 				}
 				

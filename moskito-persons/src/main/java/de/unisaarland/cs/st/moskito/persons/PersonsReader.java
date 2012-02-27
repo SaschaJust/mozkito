@@ -18,11 +18,11 @@ package de.unisaarland.cs.st.moskito.persons;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.ownhero.dev.andama.settings.Settings;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -42,8 +42,7 @@ public class PersonsReader extends Source<PersonContainer> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public PersonsReader(final Group threadGroup, final Settings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public PersonsReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<PersonContainer, PersonContainer>(this) {

@@ -16,10 +16,10 @@ package genealogies.metrics;
 import java.io.File;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -69,7 +69,7 @@ public class Main {
 			
 			if ((aggregateFile != null) && (!metricsValues.isEmpty())) {
 				final CoreChangeGenealogy coreChangeGenealogy = genealogyArgs.getValue();
-				if (granularityArg.getValue().equals("TRANSACTION")) {
+				if (granularityArg.getValue().equals(MetricLevel.TRANSACTION)) {
 					final GenealogyMetricsAggregateToolChain aggregateToolChain = new GenealogyMetricsAggregateToolChain(
 					                                                                                                     settings,
 					                                                                                                     aggregateFile,

@@ -40,6 +40,12 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	@NoneNull
 	public static BugzillaParser getParser(final String bugzillaVersion) {
+		if (!parserVersions.containsKey(bugzillaVersion)) {
+			if (Logger.logError()) {
+				Logger.error("Bugzilla version " + bugzillaVersion
+				        + " not yet supported! Please contact moskito dev team.");
+			}
+		}
 		return parserVersions.get(bugzillaVersion);
 	}
 	
@@ -94,6 +100,8 @@ public abstract class BugzillaParser implements Parser {
 			return Resolution.DUPLICATE;
 		} else if (resString.equals("NOT_ECLIPSE")) {
 			return Resolution.INVALID;
+		} else if (resString.equals("") || resString.equals("---")) {
+			return Resolution.UNRESOLVED;
 		} else {
 			return Resolution.UNKNOWN;
 		}

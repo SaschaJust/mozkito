@@ -19,7 +19,7 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
@@ -40,20 +40,20 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 			persistenceUtil.beginTransaction();
 			commit = true;
 		}
-		for (String p : premise) {
+		for (final String p : premise) {
 			
-			Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-			                                                         .eq("fullQualifiedName", p);
-			List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
+			final Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
+			                                                               .eq("fullQualifiedName", p);
+			final List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 			if ((defs == null) || (defs.size() != 1)) {
 				throw new UnrecoverableError("Could not retrieve RCSFile with id " + p);
 			}
 			this.premise.add(defs.get(0));
 		}
 		
-		Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
-		                                                         .eq("fullQualifiedName", implication);
-		List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
+		final Criteria<JavaMethodDefinition> criteria = persistenceUtil.createCriteria(JavaMethodDefinition.class)
+		                                                               .eq("fullQualifiedName", implication);
+		final List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 		if ((defs == null) || (defs.size() != 1)) {
 			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
 		}
@@ -89,27 +89,28 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	}
 	
 	public Double getConfidence() {
-		return confidence;
+		return this.confidence;
 	}
 	
 	public JavaMethodDefinition getImplication() {
-		return implication;
+		return this.implication;
 	}
 	
 	@Id
 	public Set<JavaMethodDefinition> getPremise() {
-		return premise;
+		return this.premise;
 	}
 	
 	public Integer getSupport() {
-		return support;
+		return this.support;
 	}
 	
 	@Override
 	public String toString() {
 		return "ChangeCouplingRule [premise="
-		        + Arrays.toString(premise.toArray(new JavaMethodDefinition[premise.size()])) + ", implication="
-		        + implication + ", support=" + support + ", confidence=" + confidence + "]";
+		        + Arrays.toString(this.premise.toArray(new JavaMethodDefinition[this.premise.size()]))
+		        + ", implication=" + this.implication + ", support=" + this.support + ", confidence=" + this.confidence
+		        + "]";
 	}
 	
 }

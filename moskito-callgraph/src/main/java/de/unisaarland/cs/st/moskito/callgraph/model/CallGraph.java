@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import edu.uci.ics.jung.graph.AbstractGraph;
@@ -49,21 +49,21 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	
 	public static CallGraph unserialize(final File file) {
 		try {
-			ObjectInputStream objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
-			CallGraph graph = (CallGraph) objIn.readObject();
+			final ObjectInputStream objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+			final CallGraph graph = (CallGraph) objIn.readObject();
 			objIn.close();
 			return graph;
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
 				        + FileUtils.lineSeparator + e.getMessage());
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
 				        + FileUtils.lineSeparator + e.getMessage());
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot unserialize call graph from file " + file.getAbsolutePath()
 				        + FileUtils.lineSeparator + e.getMessage());
@@ -96,8 +96,8 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		if (!this.methodCallGraph.addEdge(edge, endpoints)) {
 			edge.addOccurrence();
 		}
-		ClassVertex from = VertexFactory.createClassVertex(endpoints.getFirst());
-		ClassVertex to = VertexFactory.createClassVertex(endpoints.getSecond());
+		final ClassVertex from = VertexFactory.createClassVertex(endpoints.getFirst());
+		final ClassVertex to = VertexFactory.createClassVertex(endpoints.getSecond());
 		
 		if (!this.classCallGraph.containsVertex(from)) {
 			this.classCallGraph.addVertex(from);
@@ -106,7 +106,7 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 			this.classCallGraph.addVertex(to);
 		}
 		
-		CallGraphEdge classEdge = this.classCallGraph.findEdge(from, to);
+		final CallGraphEdge classEdge = this.classCallGraph.findEdge(from, to);
 		if (classEdge != null) {
 			classEdge.addOccurrence();
 		} else {
@@ -143,7 +143,7 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	 */
 	public boolean addEdge(final MethodVertex from,
 	                       final MethodVertex to) {
-		CallGraphEdge edge = this.methodCallGraph.findEdge(from, to);
+		final CallGraphEdge edge = this.methodCallGraph.findEdge(from, to);
 		if (edge != null) {
 			return this.addEdge(edge, new Pair<MethodVertex>(from, to));
 		} else {
@@ -162,7 +162,7 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 			return false;
 		}
 		
-		ClassVertex classVertex = VertexFactory.createClassVertex(vertex);
+		final ClassVertex classVertex = VertexFactory.createClassVertex(vertex);
 		this.classCallGraph.addVertex(classVertex);
 		return true;
 	}
@@ -196,32 +196,32 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		CallGraph other = (CallGraph) obj;
-		if (classCallGraph == null) {
+		final CallGraph other = (CallGraph) obj;
+		if (this.classCallGraph == null) {
 			if (other.classCallGraph != null) {
 				return false;
 			}
-		} else if (methodCallGraph == null) {
+		} else if (this.methodCallGraph == null) {
 			if (other.methodCallGraph != null) {
 				return false;
 			}
 		} else {
 			boolean equal = true;
-			DirectedSparseGraph<ClassVertex, CallGraphEdge> otherClassCallGraph = other.getClassCallGraph();
-			equal &= classCallGraph.getVertices().containsAll(otherClassCallGraph.getVertices());
+			final DirectedSparseGraph<ClassVertex, CallGraphEdge> otherClassCallGraph = other.getClassCallGraph();
+			equal &= this.classCallGraph.getVertices().containsAll(otherClassCallGraph.getVertices());
 			
-			for (ClassVertex v : classCallGraph.getVertices()) {
-				for (CallGraphEdge e : classCallGraph.getOutEdges(v)) {
-					ClassVertex n = classCallGraph.getDest(e);
+			for (final ClassVertex v : this.classCallGraph.getVertices()) {
+				for (final CallGraphEdge e : this.classCallGraph.getOutEdges(v)) {
+					final ClassVertex n = this.classCallGraph.getDest(e);
 					equal &= (otherClassCallGraph.findEdge(v, n) != null);
 				}
 			}
 			
-			equal &= methodCallGraph.getVertices().containsAll(other.getVertices());
+			equal &= this.methodCallGraph.getVertices().containsAll(other.getVertices());
 			
-			for (MethodVertex v : getVertices()) {
-				for (CallGraphEdge e : getOutEdges(v)) {
-					MethodVertex n = getDest(e);
+			for (final MethodVertex v : getVertices()) {
+				for (final CallGraphEdge e : getOutEdges(v)) {
+					final MethodVertex n = getDest(e);
 					equal &= (other.findEdge(v, n) != null);
 				}
 			}
@@ -397,12 +397,12 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((classCallGraph == null)
-		                                                     ? 0
-		                                                     : classCallGraph.hashCode());
-		result = (prime * result) + ((methodCallGraph == null)
-		                                                      ? 0
-		                                                      : methodCallGraph.hashCode());
+		result = (prime * result) + ((this.classCallGraph == null)
+		                                                          ? 0
+		                                                          : this.classCallGraph.hashCode());
+		result = (prime * result) + ((this.methodCallGraph == null)
+		                                                           ? 0
+		                                                           : this.methodCallGraph.hashCode());
 		return result;
 	}
 	
@@ -433,18 +433,18 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	@Override
 	@Deprecated
 	public boolean removeEdge(final CallGraphEdge edge) {
-		if (!this.containsEdge(edge)) {
+		if (!containsEdge(edge)) {
 			return false;
 		}
-		ClassVertex source = VertexFactory.createClassVertex(this.getSource(edge));
-		ClassVertex dest = VertexFactory.createClassVertex(this.getDest(edge));
+		final ClassVertex source = VertexFactory.createClassVertex(getSource(edge));
+		final ClassVertex dest = VertexFactory.createClassVertex(getDest(edge));
 		if (edge.getOccurrence() > 1) {
 			edge.addOccurrence(-1);
 		} else {
 			this.methodCallGraph.removeEdge(edge);
 		}
 		
-		CallGraphEdge classEdge = this.classCallGraph.findEdge(source, dest);
+		final CallGraphEdge classEdge = this.classCallGraph.findEdge(source, dest);
 		if (classEdge != null) {
 			if (classEdge.getOccurrence() > 1) {
 				classEdge.addOccurrence(-1);
@@ -466,10 +466,10 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	 */
 	public boolean removeEdge(final MethodVertex from,
 	                          final MethodVertex to) {
-		if ((!this.containsVertex(from)) || (!this.containsVertex(to))) {
+		if ((!containsVertex(from)) || (!containsVertex(to))) {
 			return false;
 		}
-		CallGraphEdge e = this.findEdge(from, to);
+		final CallGraphEdge e = findEdge(from, to);
 		if (e != null) {
 			return this.removeEdge(e);
 		} else {
@@ -483,16 +483,16 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 			return;
 		}
 		outEdges = new HashSet<CallGraphEdge>(outEdges);
-		for (CallGraphEdge e : outEdges) {
+		for (final CallGraphEdge e : outEdges) {
 			this.classCallGraph.removeEdge(e);
 		}
-		for (MethodVertex v : vertex.getChildren()) {
+		for (final MethodVertex v : vertex.getChildren()) {
 			Collection<CallGraphEdge> childOutEdges = this.methodCallGraph.getOutEdges(v);
 			if (childOutEdges == null) {
 				continue;
 			}
 			childOutEdges = new HashSet<CallGraphEdge>(this.methodCallGraph.getOutEdges(v));
-			for (CallGraphEdge e : childOutEdges) {
+			for (final CallGraphEdge e : childOutEdges) {
 				this.methodCallGraph.removeEdge(e);
 			}
 		}
@@ -504,15 +504,15 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	 */
 	@Override
 	public boolean removeVertex(final MethodVertex vertex) {
-		Collection<MethodVertex> successors = this.methodCallGraph.getSuccessors(vertex);
+		final Collection<MethodVertex> successors = this.methodCallGraph.getSuccessors(vertex);
 		if (!this.methodCallGraph.removeVertex(vertex)) {
 			return false;
 		}
 		
-		ClassVertex toRemove = VertexFactory.createClassVertex(vertex);
-		for (MethodVertex successor : successors) {
-			ClassVertex classVertex = VertexFactory.createClassVertex(successor);
-			CallGraphEdge edge = this.classCallGraph.findEdge(toRemove, classVertex);
+		final ClassVertex toRemove = VertexFactory.createClassVertex(vertex);
+		for (final MethodVertex successor : successors) {
+			final ClassVertex classVertex = VertexFactory.createClassVertex(successor);
+			final CallGraphEdge edge = this.classCallGraph.findEdge(toRemove, classVertex);
 			if (edge.getOccurrence() > 1) {
 				edge.addOccurrence(-1);
 			} else {
@@ -529,12 +529,14 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	
 	public void serialize(final File file) {
 		try {
-			ObjectOutputStream objOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+			final ObjectOutputStream objOut = new ObjectOutputStream(
+			                                                         new BufferedOutputStream(
+			                                                                                  new FileOutputStream(file)));
 			objOut.writeObject(this);
 			objOut.close();
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			throw new UnrecoverableError(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UnrecoverableError(e);
 		}
 	}

@@ -21,7 +21,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
@@ -40,6 +41,7 @@ import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -171,16 +173,15 @@ public class GoogleTracker extends Tracker {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
-	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
 		// PRECONDITIONS
 		
 		try {
-			return new GoogleParser();
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -558,6 +559,21 @@ public class GoogleTracker extends Tracker {
 	// report.setResolver(resolver);
 	// }
 	// }
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
+	 */
+	@Override
+	public Parser getParser(final XmlReport xmlReport) {
+		// PRECONDITIONS
+		
+		try {
+			return new GoogleParser();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/**
 	 * Gets the project name.

@@ -52,6 +52,8 @@ public interface Parser {
 	
 	Long getId();
 	
+	Set<String> getKeywords();
+	
 	DateTime getLastUpdateTimestamp();
 	
 	Priority getPriority();
@@ -63,6 +65,8 @@ public interface Parser {
 	DateTime getResolutionTimestamp();
 	
 	Person getResolver();
+	
+	String getScmFixVersion();
 	
 	Severity getSeverity();
 	

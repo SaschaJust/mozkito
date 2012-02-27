@@ -17,10 +17,10 @@ package de.unisaarland.cs.st.moskito.bugs;
 
 import java.net.URI;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -43,7 +43,7 @@ public class TrackerReader extends Source<RawReport> {
 			
 			@Override
 			public void process() {
-				Long bugId = tracker.getNextId();
+				final Long bugId = tracker.getNextId();
 				
 				try {
 					if (bugId != null) {
@@ -52,8 +52,8 @@ public class TrackerReader extends Source<RawReport> {
 							Logger.debug("Fetching " + bugId + ".");
 						}
 						
-						URI newURI = tracker.getLinkFromId(bugId);
-						RawReport source = tracker.fetchSource(newURI);
+						final URI newURI = tracker.getLinkFromId(bugId);
+						final RawReport source = tracker.fetchSource(newURI);
 						
 						if (source == null) {
 							
@@ -73,7 +73,7 @@ public class TrackerReader extends Source<RawReport> {
 					} else {
 						setCompleted();
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					throw new UnrecoverableError(e);
 				}
 			}

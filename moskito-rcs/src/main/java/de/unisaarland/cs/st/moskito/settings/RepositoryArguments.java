@@ -14,14 +14,15 @@ package de.unisaarland.cs.st.moskito.settings;
 
 import java.net.URI;
 
-import net.ownhero.dev.andama.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.andama.settings.ArgumentSet;
-import net.ownhero.dev.andama.settings.arguments.EnumArgument;
-import net.ownhero.dev.andama.settings.arguments.MaskedStringArgument;
-import net.ownhero.dev.andama.settings.arguments.StringArgument;
-import net.ownhero.dev.andama.settings.arguments.URIArgument;
-import net.ownhero.dev.andama.settings.requirements.Optional;
-import net.ownhero.dev.andama.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.MaskedStringArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.arguments.URIArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Optional;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -45,6 +46,7 @@ public class RepositoryArguments extends ArgumentSet<Repository> {
 	
 	PersistenceUtil                            persistenceUtil;
 	private BranchFactory                      branchFactory;
+	private final DirectoryArgument            tmpDirArg;
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the repositories.
@@ -69,6 +71,9 @@ public class RepositoryArguments extends ArgumentSet<Repository> {
 		                                        new Optional());
 		this.endRevision = new StringArgument(this, "repository.transaction.stop", "Revision to stop at", "HEAD",
 		                                      new Optional());
+		this.tmpDirArg = new DirectoryArgument(this, "reposiotory.tmp.dir",
+		                                       "Directory to be used to clone instances of repository.", null,
+		                                       Requirement.optional, false);
 	}
 	
 	public BranchFactory getBranchFactory() {
@@ -136,9 +141,11 @@ public class RepositoryArguments extends ArgumentSet<Repository> {
 			}
 			
 			if ((username == null) && (password == null)) {
-				repository.setup(repositoryURI, startRevision, endRevision, getBranchFactory());
+				repository.setup(repositoryURI, startRevision, endRevision, getBranchFactory(),
+				                 this.tmpDirArg.getValue());
 			} else {
-				repository.setup(repositoryURI, startRevision, endRevision, username, password, getBranchFactory());
+				repository.setup(repositoryURI, startRevision, endRevision, username, password, getBranchFactory(),
+				                 this.tmpDirArg.getValue());
 			}
 			
 			getSettings().addToolInformation(repository.getHandle(), repository.gatherToolInformation());
