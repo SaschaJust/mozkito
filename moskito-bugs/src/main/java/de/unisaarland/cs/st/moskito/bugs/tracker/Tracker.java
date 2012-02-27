@@ -444,23 +444,25 @@ public abstract class Tracker {
 		
 		this.bugIds = new LinkedBlockingDeque<Long>();
 		
-		RawContent overviewContent;
-		try {
-			overviewContent = IOUtils.fetch(getOverviewURI());
-		} catch (final UnsupportedProtocolException e) {
-			throw new UnrecoverableError(e);
-		} catch (final FetchException e) {
-			throw new UnrecoverableError(e);
+		if (getOverviewURI() != null) {
+			try {
+				final RawContent overviewContent = IOUtils.fetch(getOverviewURI());
+				final OverviewParser overviewParser = getOverviewParser(overviewContent);
+				if (overviewParser != null) {
+					if (!overviewParser.parse(overviewContent.getContent())) {
+						throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
+					}
+					this.bugIds.addAll(overviewParser.getBugIds());
+				}
+			} catch (final UnsupportedProtocolException e) {
+				throw new UnrecoverableError(e);
+			} catch (final FetchException e) {
+				throw new UnrecoverableError(e);
+			}
 		}
 		
 		// when this method ends, bugIds must be filled
-		final OverviewParser overviewParser = getOverviewParser(overviewContent);
-		if (overviewParser != null) {
-			if (!overviewParser.parse(overviewContent.getContent())) {
-				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
-			}
-			this.bugIds.addAll(overviewParser.getBugIds());
-		} else {
+		if (this.bugIds.isEmpty()) {
 			for (long l = startAt; l <= stopAt; ++l) {
 				this.bugIds.add(l);
 			}
