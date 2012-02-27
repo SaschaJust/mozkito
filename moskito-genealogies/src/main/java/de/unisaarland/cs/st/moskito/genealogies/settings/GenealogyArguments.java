@@ -29,12 +29,18 @@ public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	private final DirectoryArgument graphDBArg;
 	private final DatabaseArguments dbArgs;
 	
+	/**
+	 * @param argumentSet
+	 * @param requirement
+	 * @param unit
+	 * @throws ArgumentRegistrationException
+	 */
 	public GenealogyArguments(final ArgumentSet<?> argumentSet, final Requirement requirement, final String unit)
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "GenealogyArguments", requirement);
 		
 		this.graphDBArg = new DirectoryArgument(
-		                                        argumentSet,
+		                                        this,
 		                                        "genealogy.graphdb",
 		                                        "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
 		                                        null, Requirement.required, true);
@@ -53,7 +59,6 @@ public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 			if (!isInitialized()) {
 				synchronized (this) {
 					if (!isInitialized()) {
-						
 						final PersistenceUtil persistenceUtil = this.dbArgs.getValue();
 						if (persistenceUtil == null) {
 							throw new UnrecoverableError("Could not connect to database!");
@@ -67,6 +72,7 @@ public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 			} else {
 				ret = true;
 			}
+			
 			return ret;
 		} finally {
 			if (ret) {
