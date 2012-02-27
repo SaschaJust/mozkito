@@ -43,8 +43,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
-import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleRawContent;
-import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleTracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 public class GoogleTracker_NetTest {
@@ -55,17 +53,17 @@ public class GoogleTracker_NetTest {
 	@AfterClass
 	public static void afterClass() {
 		// delete all reposuite directories and files
-		Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
-		Set<File> set = openFiles.get(FileShutdownAction.DELETE);
+		final Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
+		final Set<File> set = openFiles.get(FileShutdownAction.DELETE);
 		if (set != null) {
-			for (File f : set) {
+			for (final File f : set) {
 				try {
 					if (f.isFile()) {
 						FileUtils.forceDelete(f);
 					} else {
 						FileUtils.deleteDirectory(f);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -83,7 +81,7 @@ public class GoogleTracker_NetTest {
 	@Test
 	public void testFetchRegex() {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
-		Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
+		final Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
 		List<RegexGroup> groups = regex.find(fetchURI);
 		assertTrue(groups.size() > 1);
 		assertEquals("webtoolkit", regex.getGroup("project"));
@@ -96,26 +94,26 @@ public class GoogleTracker_NetTest {
 	
 	@Test
 	public void testTracker() {
-		File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);
+		final File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);
 		try {
 			if (System.getProperties().contains("test.skipnet")) {
 				return;
 			}
 			
-			GoogleTracker tracker = new GoogleTracker();
+			final GoogleTracker tracker = new GoogleTracker();
 			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
-			              null, null, 4380l, 4380l, cacheDir.getAbsolutePath());
+			              null, null, 4380l, 4380l, cacheDir);
 			
-			Long nextId = tracker.getNextId();
+			final Long nextId = tracker.getNextId();
 			assertEquals(4380, nextId, 0);
-			URI linkFromId = tracker.getLinkFromId(nextId);
+			final URI linkFromId = tracker.getLinkFromId(nextId);
 			assertEquals(new URI("4380"), linkFromId);
-			RawReport rawReport = tracker.fetchSource(linkFromId);
+			final RawReport rawReport = tracker.fetchSource(linkFromId);
 			assert (rawReport instanceof GoogleRawContent);
-			XmlReport xmlReport = tracker.createDocument(rawReport);
+			final XmlReport xmlReport = tracker.createDocument(rawReport);
 			assertEquals(rawReport, xmlReport);
 			assert (xmlReport instanceof GoogleRawContent);
-			Report report = tracker.parse(xmlReport);
+			final Report report = tracker.parse(xmlReport);
 			assertEquals(4380, report.getId());
 			assertEquals(1, report.getAssignedTo().getUsernames().size());
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));
@@ -152,22 +150,22 @@ public class GoogleTracker_NetTest {
 			assertTrue(report.getDescription().length() > 0);
 			assertTrue(report.getDescription().contains("Firefox keeps saying the page needs a plugin when passing"));
 			
-		} catch (InvalidParameterException e) {
+		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
-		} catch (FetchException e) {
+		} catch (final FetchException e) {
 			e.printStackTrace();
 			fail();
-		} catch (UnsupportedProtocolException e) {
+		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		} finally {
 			try {
 				FileUtils.deleteDirectory(cacheDir);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}

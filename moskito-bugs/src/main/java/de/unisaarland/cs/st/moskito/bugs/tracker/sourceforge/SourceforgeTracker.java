@@ -866,7 +866,7 @@ public class SourceforgeTracker extends Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDir) throws InvalidParameterException {
+	                  final File cacheDir) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		if (getOverviewURI() != null) {

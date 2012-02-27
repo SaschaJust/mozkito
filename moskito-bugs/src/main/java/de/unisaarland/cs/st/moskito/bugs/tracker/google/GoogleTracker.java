@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -597,7 +598,7 @@ public class GoogleTracker extends Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
+	                  final File cacheDir) throws InvalidParameterException {
 		
 		final Regex fetchRegex = new Regex(fetchRegexPattern);
 		final List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
@@ -614,7 +615,7 @@ public class GoogleTracker extends Tracker {
 				throw new UnrecoverableError(e.getMessage(), e);
 			}
 		}
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		try {
 			this.service = new ProjectHostingService("unisaarland-reposuite-0.1");

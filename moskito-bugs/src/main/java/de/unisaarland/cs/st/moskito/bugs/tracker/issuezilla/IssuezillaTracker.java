@@ -16,6 +16,7 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.issuezilla;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -144,9 +145,9 @@ public class IssuezillaTracker extends Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
+	                  final File cacheDir) throws InvalidParameterException {
 		
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		// TODO authentication not supported. For that we would have to use
 		// the API but the examples don;t even work. -.-
 		

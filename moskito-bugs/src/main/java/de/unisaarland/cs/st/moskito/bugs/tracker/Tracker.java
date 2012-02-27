@@ -410,7 +410,7 @@ public abstract class Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
+	                  final File cacheDir) throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
 		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
 		                username, password);
@@ -428,14 +428,6 @@ public abstract class Tracker {
 			this.startAt = startAt;
 			this.stopAt = stopAt;
 			this.initialized = true;
-			if (cacheDirPath != null) {
-				this.cacheDir = new File(cacheDirPath);
-				try {
-					FileUtils.ensureFilePermissions(this.cacheDir, FileUtils.WRITABLE_DIR);
-				} catch (final FilePermissionException e) {
-					throw new InvalidParameterException("The cache directory is not valid. " + e.getMessage(), e);
-				}
-			}
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");

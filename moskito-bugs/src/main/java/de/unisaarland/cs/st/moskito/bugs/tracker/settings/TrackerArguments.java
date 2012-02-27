@@ -17,6 +17,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
 import net.ownhero.dev.andama.exceptions.InstantiationError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
 import net.ownhero.dev.hiari.settings.arguments.LongArgument;
 import net.ownhero.dev.hiari.settings.arguments.MaskedStringArgument;
@@ -46,7 +47,7 @@ public class TrackerArguments extends ArgumentSet<Tracker> {
 	private final LongArgument              trackerStart;
 	private final LongArgument              trackerStop;
 	
-	private final StringArgument            trackerCacheDir;
+	private final DirectoryArgument         trackerCacheDir;
 	
 	protected TrackerArguments(final ArgumentSet<?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
@@ -76,14 +77,14 @@ public class TrackerArguments extends ArgumentSet<Tracker> {
 		                                                Requirement.optional);
 		this.trackerStart = new LongArgument(this, "tracker.start", "BugID to start with", "1", Requirement.optional);
 		this.trackerStop = new LongArgument(this, "tracker.stop", "BugID to stop at", null, Requirement.optional);
-		this.trackerCacheDir = new StringArgument(this, "tracker.cachedir", "Cache directory to store raw data", null,
-		                                          Requirement.optional);
+		this.trackerCacheDir = new DirectoryArgument(this, "tracker.cachedir", "Cache directory to store raw data",
+		                                             null, Requirement.optional, true);
 	}
 	
 	/**
 	 * @return the trackerCacheDir
 	 */
-	public final StringArgument getTrackerCacheDir() {
+	public final DirectoryArgument getTrackerCacheDir() {
 		return this.trackerCacheDir;
 	}
 	

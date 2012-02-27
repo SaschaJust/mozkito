@@ -15,16 +15,47 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
+import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class TrackerSettings.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class TrackerSettings extends RepositorySettings {
+public class TrackerSettings extends Settings {
 	
+	/** The Constant debug. */
+	public static final boolean debug = Boolean.parseBoolean(System.getProperty("debug"));
+	
+	/**
+	 * Add the settings set for the database.
+	 * 
+	 * @param requirement
+	 *            the requirement
+	 * @param unit
+	 *            the unit
+	 * @return the database arguments
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 */
+	public DatabaseArguments setDatabaseArgs(final Requirement requirement,
+	                                         final String unit) throws ArgumentRegistrationException {
+		final DatabaseArguments minerDatabaseArguments = new DatabaseArguments(getRootArgumentSet(), requirement, unit);
+		return minerDatabaseArguments;
+	}
+	
+	/**
+	 * Sets the tracker args.
+	 * 
+	 * @param requirement
+	 *            the requirement
+	 * @return the tracker arguments
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 */
 	public TrackerArguments setTrackerArgs(final Requirement requirement) throws ArgumentRegistrationException {
 		final TrackerArguments trackerArguments = new TrackerArguments(getRootArgumentSet(), requirement);
 		return trackerArguments;

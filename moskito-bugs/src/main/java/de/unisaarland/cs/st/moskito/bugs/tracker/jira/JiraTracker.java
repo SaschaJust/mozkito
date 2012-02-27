@@ -375,8 +375,8 @@ public class JiraTracker extends Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDirPath) throws InvalidParameterException {
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDirPath);
+	                  final File cacheDir) throws InvalidParameterException {
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
 		Condition.notNull(stopAt, "stopAt cannot be null");
 		Condition.check(stopAt.longValue() >= 0l, "stopAt value must be larger or equal than zero");

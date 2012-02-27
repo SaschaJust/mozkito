@@ -1,0 +1,12 @@
+database.name=moskito_openbravo_februar2012
+database.host=grid1.st.cs.uni-saarland.de
+database.user=miner
+database.password=miner
+log.level=info
+headless
+tracker.fetchURI=https://issues.openbravo.com/
+tracker.pattern=view.php?id=<BUGID>
+tracker.type=MANTIS
+tracker.cachedir=/tmp/mantis_cache/
+tracker.start=106
+tracker.stop=19872

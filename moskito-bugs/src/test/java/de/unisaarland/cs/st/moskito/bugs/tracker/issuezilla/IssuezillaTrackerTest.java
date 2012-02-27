@@ -66,7 +66,7 @@ public class IssuezillaTrackerTest {
 		                                                 FileShutdownAction.DELETE);
 		try {
 			tracker.setup(new URI("http://argouml.tigris.org/issues/"), null, "xml.cgi?id=<BUGID>", null, null, 6297l,
-			              6297l, randomDir.getAbsolutePath());
+			              6297l, randomDir);
 			final URI uri = tracker.getLinkFromId(6297l);
 			assertEquals("http://argouml.tigris.org/issues/xml.cgi?id=6297", uri.toString());
 			final RawReport rawReport = tracker.fetchSource(uri);
