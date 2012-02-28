@@ -414,6 +414,9 @@ public abstract class Tracker {
 		Condition.check((username == null) == (password == null),
 		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
 		                username, password);
+		// FIXME this should be handled at Settings level.
+		Condition.check((overviewURI != null) || ((startAt != null) && (stopAt != null)),
+		                "You must either specify a valid [startAt,stopAt] interval or provide a valid overviewURI. ");
 		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
 		                "`startAt` must be null or > 0, but is: %s", startAt);
 		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
