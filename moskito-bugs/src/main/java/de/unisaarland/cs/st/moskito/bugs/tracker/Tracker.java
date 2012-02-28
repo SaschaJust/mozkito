@@ -162,6 +162,7 @@ public abstract class Tracker {
 	 */
 	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
 		RawReport source = null;
+		final Long bugId = reverseURI(uri);
 		
 		if (this.cacheDir != null) {
 			
@@ -170,22 +171,21 @@ public abstract class Tracker {
 			filename = filename.substring(index + 1);
 			
 			final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
-			final Long bugId = reverseURI(uri);
 			if (cacheFile.exists()) {
 				if (Logger.logInfo()) {
 					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
 					        + " from cache directory ... ");
 				}
-				source = new RawReport(bugId, fetchSource(cacheFile.toURI()));
+				source = new RawReport(bugId, IOUtils.fetch(uri));
 				
 			} else {
 				
-				source = new RawReport(reverseURI(uri), IOUtils.fetch(uri));
+				source = new RawReport(bugId, IOUtils.fetch(uri));
 				writeContentToFile(source, filename);
 			}
 		} else {
 			
-			source = new RawReport(reverseURI(uri), IOUtils.fetch(uri));
+			source = new RawReport(bugId, IOUtils.fetch(uri));
 		}
 		return source;
 	}
