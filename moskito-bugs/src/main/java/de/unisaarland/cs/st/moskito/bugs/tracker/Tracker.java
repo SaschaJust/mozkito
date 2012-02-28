@@ -449,6 +449,11 @@ public abstract class Tracker {
 						throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
 					}
 					this.bugIds.addAll(overviewParser.getBugIds());
+					if (Logger.logDebug()) {
+						Logger.debug("Added " + this.bugIds.size() + " bug IDs while parsing overviewURI.");
+					}
+				} else {
+					throw new UnrecoverableError("Could not parse bug overview URI. No suitable overview parser found.");
 				}
 			} catch (final UnsupportedProtocolException e) {
 				throw new UnrecoverableError(e);
