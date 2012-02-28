@@ -190,9 +190,17 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 					final String name = who.getName().getStringValue();
 					final String username = who.getDomNode().getFirstChild().getNodeValue();
 					final DateTime timestamp = DateTimeUtils.parseDate(longDesc.getBugWhen());
-					final Comment comment = new Comment(id, new Person(username, name, null), timestamp,
-					                                    longDesc.getThetext().trim());
+					Person person = null;
+					if ((username == null) && (name == null)) {
+						person = Tracker.unknownPerson;
+					} else {
+						person = new Person(username, name, null);
+					}
+					final Comment comment = new Comment(id, person, timestamp, longDesc.getThetext().trim());
 					result.add(comment);
+					if (Logger.logDebug()) {
+						Logger.debug("Created comment for bug report " + getId() + ": " + comment);
+					}
 				} catch (final NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not interpret comment id " + longDesc.getCommentid()

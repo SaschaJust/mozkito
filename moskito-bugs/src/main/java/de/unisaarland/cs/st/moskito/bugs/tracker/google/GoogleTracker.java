@@ -47,7 +47,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class GoogleTracker.
@@ -59,8 +58,6 @@ public class GoogleTracker extends Tracker {
 	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
 	private String                projectName;
 	private ProjectHostingService service;
-	
-	private final static Person   unknownPerson     = new Person("<unknown>", null, null);
 	
 	/*
 	 * (non-Javadoc)

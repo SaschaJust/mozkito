@@ -34,6 +34,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import net.ownhero.dev.ioda.StringUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
@@ -260,11 +261,11 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		builder.append(", author=");
 		builder.append(getAuthor());
 		builder.append(", message=");
-		builder.append(getMessage().length() > 10
-		                                         ? getMessage().substring(0, 10)
-		                                         : getMessage());
+		builder.append(StringUtils.truncate(getMessage(), 10));
 		builder.append(", bugReport=");
-		builder.append(getBugReport().getId());
+		builder.append(getBugReport() == null
+		                                     ? null
+		                                     : getBugReport().getId());
 		builder.append("]");
 		return builder.toString();
 	}

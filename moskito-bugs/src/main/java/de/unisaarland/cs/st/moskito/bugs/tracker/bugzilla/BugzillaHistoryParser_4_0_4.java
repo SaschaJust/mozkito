@@ -24,6 +24,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
@@ -198,7 +199,11 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					}
 					
 					// get who
-					final Person who = new Person(tds.get(0).text().trim(), null, null);
+					final String whoString = tds.get(0).text().trim();
+					Person who = new Person(whoString, null, null);
+					if (whoString.equals("")) {
+						who = Tracker.unknownPerson;
+					}
 					
 					// get when
 					final DateTime when = DateTimeUtils.parseDate(tds.get(1).text().trim());
@@ -247,7 +252,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				} else if (what.equals("target milestone")) {
 					
 				} else if (what.equals("cc")) {
-					
+					// TODO to be implemented
 				} else if (what.equals("component")) {
 					field = ("component");
 					hElement.addChangedValue(field, removed, added);

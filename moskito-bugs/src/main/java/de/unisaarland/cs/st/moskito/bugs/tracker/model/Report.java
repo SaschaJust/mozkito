@@ -353,7 +353,6 @@ public class Report implements Annotated, Comparable<Report> {
 		// PRECONDITIONS
 		
 		try {
-			System.err.println("getKeywords: " + this.keywords);
 			return this.keywords;
 		} finally {
 			// POSTCONDITIONS
@@ -465,7 +464,6 @@ public class Report implements Annotated, Comparable<Report> {
 		// PRECONDITIONS
 		
 		try {
-			System.err.println("getScmFixRevision: " + this.scmFixVersion);
 			return this.scmFixVersion;
 		} finally {
 			// POSTCONDITIONS
@@ -567,9 +565,13 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the comments.
+	 * 
 	 * @param comments
 	 *            the comments to set
+	 * @Deprecetd use addComment instead
 	 */
+	@Deprecated
 	public void setComments(final SortedSet<Comment> comments) {
 		this.comments = comments;
 	}

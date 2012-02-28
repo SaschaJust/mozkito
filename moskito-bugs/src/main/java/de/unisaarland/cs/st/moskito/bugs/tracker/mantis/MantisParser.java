@@ -12,7 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import java.util.TreeSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -213,8 +211,15 @@ public class MantisParser implements Parser {
 			} else if (field.toLowerCase().equals("severity")) {
 				historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
 			} else if (field.toLowerCase().equals("assigned to")) {
-				historyElement.addChangedValue("assignedto", new Person(oldValue, null, null), new Person(newValue,
-				                                                                                          null, null));
+				Person oldPerson = new Person(oldValue, null, null);
+				if ((oldValue == null) | oldValue.equals("")) {
+					oldPerson = Tracker.unknownPerson;
+				}
+				Person newPerson = new Person(newValue, null, null);
+				if ((newValue == null) | newValue.equals("")) {
+					newPerson = Tracker.unknownPerson;
+				}
+				historyElement.addChangedValue("assignedto", oldPerson, newPerson);
 			} else if (field.toLowerCase().equals("priority")) {
 				historyElement.addChangedValue(field, getPriority(oldValue), getPriority(newValue));
 			} else if (field.toLowerCase().equals("resolution")) {
@@ -225,8 +230,12 @@ public class MantisParser implements Parser {
 					this.resolver = historyElement.getAuthor();
 				}
 			} else if (field.toLowerCase().equals("fixed in scm revision")) {
-				oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
-				newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
+				if (oldValue != null) {
+					oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
+				}
+				if (newValue != null) {
+					newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
+				}
 				historyElement.addChangedValue("scmFixVersion", oldValue, newValue);
 			} else if (field.toLowerCase().equals("product version")) {
 				historyElement.addChangedValue(field, oldValue, newValue);
@@ -255,6 +264,10 @@ public class MantisParser implements Parser {
 			final Element td = getMainTableCell("Assigned To", 1);
 			if (td == null) {
 				return null;
+			}
+			final String username = td.text().trim();
+			if (username.equals("")) {
+				return Tracker.unknownPerson;
 			}
 			return new Person(td.text(), null, null);
 		} finally {
@@ -286,8 +299,9 @@ public class MantisParser implements Parser {
 				link = reportLink.substring(0, index + 1) + link;
 				if ((attachmentEntry == null) || (!attachmentEntry.getLink().equals(link))) {
 					final List<List<RegexGroup>> attachmentIdGroups = this.attachmentIdRegex.findAll(link);
-					if (attachmentIdGroups.size() != 1) {
-						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
+					if ((attachmentIdGroups == null) || (attachmentIdGroups.size() != 1)) {
+						// throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
+						continue;
 					}
 					if (attachmentIdGroups.get(0).size() != 1) {
 						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
@@ -300,16 +314,16 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find filenameTag for attachmentEntry.");
 					}
 					attachmentEntry.setFilename(filenameTag.text());
-					try {
-						System.err.println(attachmentEntry.getLink());
-						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
-					} catch (final Exception e) {
-						if (Logger.logError()) {
-							Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
-							             e);
-						}
-						
-					}
+					// try {
+					// FIXME Sascha told me to ignore this (he did use the words, but anyway).
+					// attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
+					// } catch (final Exception e) {
+					// if (Logger.logError()) {
+					// Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
+					// e);
+					// }
+					//
+					// }
 					
 					final Person person = this.attachters.get(attachmentEntry.getFilename());
 					if (person == null) {
@@ -444,7 +458,12 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError(
 						                             "Could not extract comment author. Could not find <a> nor <font> tag.");
 					}
-					final Person author = new Person(developerTag.text().trim(), null, null);
+					
+					final String developerString = developerTag.text().trim();
+					Person author = new Person(developerString, null, null);
+					if (developerString.equals("")) {
+						author = Tracker.unknownPerson;
+					}
 					
 					final Element spanTag = developerTag.nextElementSibling();
 					if (spanTag == null) {
@@ -567,7 +586,7 @@ public class MantisParser implements Parser {
 			}
 			historyEntry = historyEntry.nextElementSibling();
 			
-			while (true) {
+			while (historyEntry != null) {
 				
 				final Element dateChild = historyEntry.child(0);
 				if (dateChild == null) {
@@ -580,7 +599,12 @@ public class MantisParser implements Parser {
 				}
 				
 				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
-					result.add(new HistoryElement(getId(), new Person(authorChild.text().trim(), null, null), timestamp));
+					final String authorString = authorChild.text().trim();
+					Person author = new Person(authorString, null, null);
+					if ((authorString == null) || authorString.equals("")) {
+						author = Tracker.unknownPerson;
+					}
+					result.add(new HistoryElement(getId(), author, timestamp));
 				}
 				
 				final Element fieldChild = historyEntry.child(2);
@@ -595,9 +619,6 @@ public class MantisParser implements Parser {
 				addChangeField(result.last(), fieldChild.text().trim(), change);
 				
 				historyEntry = historyEntry.nextElementSibling();
-				if (historyEntry == null) {
-					break;
-				}
 			}
 			return result;
 		} finally {
@@ -859,7 +880,8 @@ public class MantisParser implements Parser {
 					}
 					final Elements openTdTags = openTrTag.getElementsByTag("td");
 					if (openTdTags.isEmpty() || (openTdTags.size() < 3)) {
-						throw new UnrecoverableError("Could not find any column in open relationship table row.");
+						// throw new UnrecoverableError("Could not find any column in open relationship table row.");
+						continue;
 					}
 					final Element openTdTag = openTdTags.get(2);
 					if (openTdTag == null) {
@@ -955,6 +977,10 @@ public class MantisParser implements Parser {
 		
 		try {
 			final Element cell = getMainTableCell("Reporter", 1);
+			final String username = cell.text().trim();
+			if (username.equals("")) {
+				return Tracker.unknownPerson;
+			}
 			return new Person(cell.text().trim(), null, null);
 		} finally {
 			// POSTCONDITIONS
@@ -991,6 +1017,9 @@ public class MantisParser implements Parser {
 		
 		try {
 			final Element cell = getMainTableCell("Product Version", 1);
+			if (cell == null) {
+				return null;
+			}
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS

@@ -44,10 +44,12 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
@@ -80,6 +82,8 @@ public abstract class Tracker {
 	
 	private static final String bugIdPlaceholder = "<BUGID>";
 	private static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
+	
+	public final static Person  unknownPerson    = new Person("<unknown>", null, null);
 	
 	/**
 	 * @return
@@ -352,7 +356,11 @@ public abstract class Tracker {
 		}
 		report.setCategory(parser.getCategory());
 		report.setComponent(parser.getComponent());
-		report.setComments(parser.getComments());
+		
+		for (final Comment comment : parser.getComments()) {
+			report.addComment(comment);
+		}
+		
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
 		report.setHash(xmlReport.getMd5());
