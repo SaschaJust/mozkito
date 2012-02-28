@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>ioda</artifactId>
@@ -55,7 +56,7 @@
 				<version>2.8</version>
 				<configuration>
 					<systemPropertyVariables>
-						<key/>
+						<key />
 					</systemPropertyVariables>
 					<skip>false</skip>
 				</configuration>
@@ -105,12 +106,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>org.umlgraph</groupId>
-						<artifactId>doclet</artifactId>
-						<version>5.3</version>
-					</docletArtifact> -->
+					<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet> <docletArtifact> 
+						<groupId>org.umlgraph</groupId> <artifactId>doclet</artifactId> <version>5.3</version> 
+						</docletArtifact> -->
 					<!-- <useStandardDocletOptions>true</useStandardDocletOptions> -->
 					<minmemory>64m</minmemory>
 					<maxmemory>512m</maxmemory>
@@ -140,16 +138,16 @@
 		</repository>
 		<repository>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
+				<enabled>true</enabled>
+				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-			<id>dev.own-hero.net</id>
-			<name>Dev//own-hero.net</name>
-			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
+			<id>own-hero.net-snapshots</id>
+			<name>own-hero.net snapshots</name>
+			<url>https://nexus.own-hero.net/content/groups/snapshots</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
@@ -158,12 +156,26 @@
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
+				<enabled>false</enabled>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>own-hero.net-releases</id>
+			<name>own-hero.net releases</name>
+			<url>https://nexus.own-hero.net/content/groups/releases</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
 				<enabled>true</enabled>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-			<id>own-hero.net</id>
-			<name>own-hero.net local Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
+			<id>own-hero.net-dev</id>
+			<name>own-hero.net dev</name>
+			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
@@ -191,10 +203,10 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			    <groupId>commons-io</groupId>
-			    <artifactId>commons-io</artifactId>
-			    <version>2.0.1</version>
-			</dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
@@ -245,7 +257,12 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.1</version>
 		</dependency>
-		</dependencies>
+		<dependency>
+			<groupId>jmimemagic</groupId>
+			<artifactId>jmimemagic</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
