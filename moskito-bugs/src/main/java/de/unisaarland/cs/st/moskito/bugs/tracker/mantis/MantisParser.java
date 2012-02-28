@@ -299,8 +299,9 @@ public class MantisParser implements Parser {
 				link = reportLink.substring(0, index + 1) + link;
 				if ((attachmentEntry == null) || (!attachmentEntry.getLink().equals(link))) {
 					final List<List<RegexGroup>> attachmentIdGroups = this.attachmentIdRegex.findAll(link);
-					if (attachmentIdGroups.size() != 1) {
-						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
+					if ((attachmentIdGroups == null) || (attachmentIdGroups.size() != 1)) {
+						// throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
+						continue;
 					}
 					if (attachmentIdGroups.get(0).size() != 1) {
 						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
