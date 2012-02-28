@@ -29,28 +29,33 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.Intercepted;
-import net.ownhero.dev.ioda.JavaUtils;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class PersonContainer.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 public class PersonContainer implements Intercepted<Person>, Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = -5061178255449904475L;
+	
+	/** The map. */
 	private Map<String, Person> map              = new HashMap<String, Person>();
+	
+	/** The generated id. */
 	private long                generatedId;
 	
 	/**
-	 * 
+	 * Instantiates a new person container.
 	 */
 	public PersonContainer() {
 	}
@@ -61,17 +66,20 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	@Transient
-	public Person add(final String id,
-	                  final Person person) {
-		Map<String, Person> map = getMap();
-		Person ret = map.put(id.toLowerCase(), person);
+	public Person add(@NotNull final String id,
+	                  @NotNull final Person person) {
+		final Map<String, Person> map = getMap();
+		final Person ret = map.put(id.toLowerCase(), person);
 		setMap(map);
 		return ret;
 	}
 	
 	/**
+	 * Contains.
+	 * 
 	 * @param key
-	 * @return
+	 *            the key
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean contains(final String key) {
@@ -89,6 +97,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Gets the generated id.
+	 * 
 	 * @return the generatedId
 	 */
 	@Id
@@ -100,6 +110,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Gets the map.
+	 * 
 	 * @return the map
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -108,7 +120,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the persons.
+	 * 
+	 * @return the persons
 	 */
 	@Transient
 	public Collection<Person> getPersons() {
@@ -125,7 +139,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
 	 */
 	@Transient
 	public boolean isEmpty() {
@@ -139,7 +155,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	public void replace(final Person from,
 	                    final Person to) {
-		for (String key : getMap().keySet()) {
+		for (final String key : getMap().keySet()) {
 			if (getMap().get(key).getGeneratedId() == from.getGeneratedId()) {
 				getMap().put(key, to);
 			}
@@ -147,6 +163,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Sets the generated id.
+	 * 
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
@@ -155,6 +173,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Sets the map.
+	 * 
 	 * @param map
 	 *            the map to set
 	 */
@@ -163,7 +183,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Size.
+	 * 
+	 * @return the int
 	 */
 	@Transient
 	public int size() {
@@ -176,7 +198,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("PersonContainer [generatedId=");
 		builder.append(getGeneratedId());
 		builder.append(", map=");
@@ -186,10 +208,13 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Update.
+	 * 
 	 * @param reference
+	 *            the reference
 	 */
 	public void update(final Person reference) {
-		for (String key : getMap().keySet()) {
+		for (final String key : getMap().keySet()) {
 			if (getMap().get(key).matches(reference)) {
 				getMap().put(key, reference);
 			}
