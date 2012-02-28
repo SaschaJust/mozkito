@@ -883,7 +883,8 @@ public class MantisParser implements Parser {
 					}
 					final Elements openTdTags = openTrTag.getElementsByTag("td");
 					if (openTdTags.isEmpty() || (openTdTags.size() < 3)) {
-						throw new UnrecoverableError("Could not find any column in open relationship table row.");
+						// throw new UnrecoverableError("Could not find any column in open relationship table row.");
+						continue;
 					}
 					final Element openTdTag = openTdTags.get(2);
 					if (openTdTag == null) {
