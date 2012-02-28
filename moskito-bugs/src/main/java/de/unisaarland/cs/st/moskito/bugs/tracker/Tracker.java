@@ -176,7 +176,7 @@ public abstract class Tracker {
 					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
 					        + " from cache directory ... ");
 				}
-				source = new RawReport(bugId, IOUtils.fetch(uri));
+				source = new RawReport(bugId, IOUtils.fetch(cacheFile.toURI()));
 				
 			} else {
 				
