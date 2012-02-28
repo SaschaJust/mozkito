@@ -44,6 +44,7 @@ public class MantisTrackerTest {
 	private RawReport report19810;
 	private RawReport report18828;
 	private RawReport report8468;
+	private RawReport report107;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -56,6 +57,9 @@ public class MantisTrackerTest {
 		                                                             .toURI()));
 		this.report8468 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
 		                                                                                 + "open-bravo-8468.html")
+		                                                            .toURI()));
+		this.report107 = new RawReport(107, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
+		                                                                                 + "open-bravo-107.html")
 		                                                            .toURI()));
 	}
 	
@@ -161,6 +165,7 @@ public class MantisTrackerTest {
 		final MantisTracker tracker = new MantisTracker();
 		assertTrue(tracker.checkRAW(this.report19810));
 		assertTrue(tracker.checkRAW(this.report18828));
+		assertFalse(tracker.checkRAW(this.report107));
 	}
 	
 	@Test

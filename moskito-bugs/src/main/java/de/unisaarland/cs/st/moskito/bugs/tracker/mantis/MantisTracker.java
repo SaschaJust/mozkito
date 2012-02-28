@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -22,6 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -53,9 +55,13 @@ public class MantisTracker extends Tracker {
 		if (!super.checkRAW(rawReport)) {
 			return false;
 		}
-		final Regex regex = new Regex(
-		                              "<p\\s+class=\"center\"\\s+style=\"color:red\">\\s+Issue\\s+\\d+\\s+not\\s+found.\\s+</p>");
-		if (regex.matches(rawReport.getContent())) {
+		final Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
+		final List<List<RegexGroup>> findAll = regex.findAll(rawReport.getContent());
+		if (findAll != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+				        + ". checkRaw() failed: issue seems not to exist.");
+			}
 			return false;
 		}
 		return true;
