@@ -1017,6 +1017,10 @@ public class MantisParser implements Parser {
 			this.report = report;
 			this.document = Jsoup.parse(report.getContent());
 			tables = this.document.getElementsByClass("width100");
+			if (tables.isEmpty()) {
+				throw new UnrecoverableError("Could not find main table tag for report with id "
+				        + report.getUri().toASCIIString());
+			}
 			this.mainContentTable = tables.get(0);
 			
 		} finally {
