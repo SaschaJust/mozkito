@@ -44,6 +44,7 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
@@ -355,7 +356,11 @@ public abstract class Tracker {
 		}
 		report.setCategory(parser.getCategory());
 		report.setComponent(parser.getComponent());
-		report.setComments(parser.getComments());
+		
+		for (final Comment comment : parser.getComments()) {
+			report.addComment(comment);
+		}
+		
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
 		report.setHash(xmlReport.getMd5());

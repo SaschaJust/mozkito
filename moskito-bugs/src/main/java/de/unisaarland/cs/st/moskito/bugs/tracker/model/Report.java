@@ -565,9 +565,13 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the comments.
+	 * 
 	 * @param comments
 	 *            the comments to set
+	 * @Deprecetd use addComment instead
 	 */
+	@Deprecated
 	public void setComments(final SortedSet<Comment> comments) {
 		this.comments = comments;
 	}
