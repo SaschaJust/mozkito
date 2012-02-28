@@ -4,17 +4,18 @@
 
 package de.unisaarland.cs.st.moskito.bugs.tracker.model;
 
+import java.util.Date;
+
+import javax.persistence.metamodel.ListAttribute;
+import javax.persistence.metamodel.SetAttribute;
+import javax.persistence.metamodel.SingularAttribute;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
-
-import java.util.Date;
-import javax.persistence.metamodel.ListAttribute;
-import javax.persistence.metamodel.SetAttribute;
-import javax.persistence.metamodel.SingularAttribute;
 
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.bugs.tracker.model.Report.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
@@ -30,6 +31,7 @@ public class Report_ {
 	public static volatile ListAttribute<Report, Byte>                hash;
 	public static volatile SingularAttribute<Report, History>         history;
 	public static volatile SingularAttribute<Report, Long>            id;
+	public static volatile SetAttribute<Report, String>               keywords;
 	public static volatile SingularAttribute<Report, Date>            lastFetchJava;
 	public static volatile SingularAttribute<Report, Date>            lastUpdateJavaTimestamp;
 	public static volatile SingularAttribute<Report, PersonContainer> personContainer;
