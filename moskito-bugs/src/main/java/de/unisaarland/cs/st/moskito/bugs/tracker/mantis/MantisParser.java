@@ -586,7 +586,7 @@ public class MantisParser implements Parser {
 			}
 			historyEntry = historyEntry.nextElementSibling();
 			
-			while (true) {
+			while (historyEntry != null) {
 				
 				final Element dateChild = historyEntry.child(0);
 				if (dateChild == null) {
@@ -619,9 +619,6 @@ public class MantisParser implements Parser {
 				addChangeField(result.last(), fieldChild.text().trim(), change);
 				
 				historyEntry = historyEntry.nextElementSibling();
-				if (historyEntry == null) {
-					break;
-				}
 			}
 			return result;
 		} finally {
