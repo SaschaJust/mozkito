@@ -230,8 +230,12 @@ public class MantisParser implements Parser {
 					this.resolver = historyElement.getAuthor();
 				}
 			} else if (field.toLowerCase().equals("fixed in scm revision")) {
-				oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
-				newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
+				if (oldValue != null) {
+					oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
+				}
+				if (newValue != null) {
+					newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
+				}
 				historyElement.addChangedValue("scmFixVersion", oldValue, newValue);
 			} else if (field.toLowerCase().equals("product version")) {
 				historyElement.addChangedValue(field, oldValue, newValue);
