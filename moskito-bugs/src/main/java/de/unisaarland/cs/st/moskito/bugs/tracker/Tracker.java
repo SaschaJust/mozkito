@@ -48,6 +48,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
@@ -80,6 +81,8 @@ public abstract class Tracker {
 	
 	private static final String bugIdPlaceholder = "<BUGID>";
 	private static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
+	
+	public final static Person  unknownPerson    = new Person("<unknown>", null, null);
 	
 	/**
 	 * @return
