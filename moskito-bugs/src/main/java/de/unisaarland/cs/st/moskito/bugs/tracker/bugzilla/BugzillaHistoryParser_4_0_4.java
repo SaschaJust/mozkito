@@ -2,6 +2,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -12,6 +13,8 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -52,6 +55,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	
 	/** The parsed. */
 	private boolean                         parsed    = false;
+	
+	private static Regex                    skipRegex = new Regex("No changes have been made to this bug yet.");
 	
 	/**
 	 * Instantiates a new bugzilla history parser.
@@ -130,6 +135,16 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		
 		try {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
+			
+			final List<List<RegexGroup>> findAll = skipRegex.findAll(rawContent.getContent());
+			if ((findAll != null) && !findAll.isEmpty()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Skipping history for bug report " + this.reportId
+					        + ". No changes have been made to this bug yet.");
+				}
+				return true;
+			}
+			
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Element bugzillaBody = document.getElementById("bugzilla-body");
 			if (bugzillaBody == null) {
