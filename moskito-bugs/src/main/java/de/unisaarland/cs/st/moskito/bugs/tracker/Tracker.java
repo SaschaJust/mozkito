@@ -428,6 +428,7 @@ public abstract class Tracker {
 			this.startAt = startAt;
 			this.stopAt = stopAt;
 			this.initialized = true;
+			this.cacheDir = cacheDir;
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
