@@ -212,11 +212,11 @@ public class MantisParser implements Parser {
 				historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
 			} else if (field.toLowerCase().equals("assigned to")) {
 				Person oldPerson = new Person(oldValue, null, null);
-				if ((oldValue == null) | oldValue.equals("")) {
+				if ((oldValue == null) || oldValue.equals("")) {
 					oldPerson = Tracker.unknownPerson;
 				}
 				Person newPerson = new Person(newValue, null, null);
-				if ((newValue == null) | newValue.equals("")) {
+				if ((newValue == null) || newValue.equals("")) {
 					newPerson = Tracker.unknownPerson;
 				}
 				historyElement.addChangedValue("assignedto", oldPerson, newPerson);
