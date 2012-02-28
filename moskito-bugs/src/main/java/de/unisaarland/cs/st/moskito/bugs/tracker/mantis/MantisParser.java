@@ -12,7 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import java.util.TreeSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -311,15 +309,16 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find filenameTag for attachmentEntry.");
 					}
 					attachmentEntry.setFilename(filenameTag.text());
-					try {
-						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
-					} catch (final Exception e) {
-						if (Logger.logError()) {
-							Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
-							             e);
-						}
-						
-					}
+					// try {
+					// FIXME Sascha told me to ignore this (he did use the words, but anyway).
+					// attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
+					// } catch (final Exception e) {
+					// if (Logger.logError()) {
+					// Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
+					// e);
+					// }
+					//
+					// }
 					
 					final Person person = this.attachters.get(attachmentEntry.getFilename());
 					if (person == null) {
