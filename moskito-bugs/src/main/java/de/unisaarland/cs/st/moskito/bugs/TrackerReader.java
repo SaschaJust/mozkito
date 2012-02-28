@@ -21,6 +21,8 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -73,7 +75,9 @@ public class TrackerReader extends Source<RawReport> {
 					} else {
 						setCompleted();
 					}
-				} catch (final Exception e) {
+				} catch (final FetchException e) {
+					throw new UnrecoverableError(e);
+				} catch (final UnsupportedProtocolException e) {
 					throw new UnrecoverableError(e);
 				}
 			}

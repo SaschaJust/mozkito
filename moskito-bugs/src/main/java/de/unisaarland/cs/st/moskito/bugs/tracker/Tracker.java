@@ -170,11 +170,13 @@ public abstract class Tracker {
 			filename = filename.substring(index + 1);
 			
 			final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
+			final Long bugId = reverseURI(uri);
 			if (cacheFile.exists()) {
 				if (Logger.logInfo()) {
-					Logger.info("Fetching report `" + uri.toString() + "` from cache directory ... ");
+					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
+					        + " from cache directory ... ");
 				}
-				source = new RawReport(reverseURI(uri), fetchSource(cacheFile.toURI()));
+				source = new RawReport(bugId, fetchSource(cacheFile.toURI()));
 				
 			} else {
 				
