@@ -347,7 +347,9 @@ public abstract class Tracker {
 		
 		final Report report = new Report(id);
 		report.setAttachmentEntries(parser.getAttachmentEntries());
-		report.setAssignedTo(parser.getAssignedTo());
+		if (parser.getAssignedTo() != null) {
+			report.setAssignedTo(parser.getAssignedTo());
+		}
 		report.setCategory(parser.getCategory());
 		report.setComponent(parser.getComponent());
 		report.setComments(parser.getComments());
@@ -359,12 +361,16 @@ public abstract class Tracker {
 		report.setPriority(parser.getPriority());
 		report.setProduct(parser.getProduct());
 		report.setResolution(parser.getResolution());
-		report.setResolver(parser.getResolver());
+		if (parser.getResolver() != null) {
+			report.setResolver(parser.getResolver());
+		}
 		report.setSiblings(new TreeSet<Long>(parser.getSiblings()));
 		report.setSeverity(parser.getSeverity());
 		report.setStatus(parser.getStatus());
 		report.setSubject(parser.getSubject());
-		report.setSubmitter(parser.getSubmitter());
+		if (parser.getSubmitter() != null) {
+			report.setSubmitter(parser.getSubmitter());
+		}
 		report.setSummary(parser.getSummary());
 		report.setType(parser.getType());
 		report.setVersion(parser.getVersion());
