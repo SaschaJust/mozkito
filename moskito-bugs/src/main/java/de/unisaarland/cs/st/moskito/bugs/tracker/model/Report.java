@@ -349,6 +349,7 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.id;
 	}
 	
+	@ElementCollection
 	public Set<String> getKeywords() {
 		// PRECONDITIONS
 		
