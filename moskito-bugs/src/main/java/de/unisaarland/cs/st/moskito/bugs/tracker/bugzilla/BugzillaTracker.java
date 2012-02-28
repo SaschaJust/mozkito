@@ -129,7 +129,7 @@ public class BugzillaTracker extends Tracker {
 		
 		try {
 			// TODO detect bugzilla version
-			return null;
+			return new BugzillaOverviewParser();
 		} finally {
 			// POSTCONDITIONS
 		}
