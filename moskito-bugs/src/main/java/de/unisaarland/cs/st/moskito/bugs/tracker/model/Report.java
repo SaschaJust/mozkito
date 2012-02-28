@@ -48,7 +48,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -771,15 +770,12 @@ public class Report implements Annotated, Comparable<Report> {
 		getPersonContainer().add("resolver", resolver);
 	}
 	
-	@NoneNull
 	public void setScmFixVersion(final String scmFixVersion) {
 		// PRECONDITIONS
 		try {
 			this.scmFixVersion = scmFixVersion;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.scmFixVersion, scmFixVersion,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	
