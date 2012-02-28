@@ -126,20 +126,22 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			return true;
 		}
 		
+		final String errorHeader = "Could not parse bugzilla report history for report " + this.reportId + ": ";
+		
 		try {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Element bugzillaBody = document.getElementById("bugzilla-body");
 			if (bugzillaBody == null) {
 				if (Logger.logError()) {
-					Logger.error("Could not parse bugzilla report history: Could not find bugzills-body.");
+					Logger.error(errorHeader + "Could not find bugzills-body.");
 				}
 				return false;
 			}
 			final Elements tables = bugzillaBody.getElementsByTag("table");
 			if (tables.isEmpty()) {
 				if (Logger.logError()) {
-					Logger.error("Could not parse bugzilla report history: Could not find bugzill-body table.");
+					Logger.error(errorHeader + "Could not find bugzill-body table.");
 				}
 				return false;
 			}
@@ -152,7 +154,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				final Elements tds = tr.getElementsByTag("td");
 				if (tds.size() < 3) {
 					if (Logger.logError()) {
-						Logger.error("Could not parse bugzilla report history: at least 3 columns in a mozilla body table are expected in every row.");
+						Logger.error(errorHeader
+						        + "at least 3 columns in a mozilla body table are expected in every row.");
 					}
 					return false;
 				}
@@ -164,7 +167,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				if (rowspan < 2) {
 					if (tds.size() < 5) {
 						if (Logger.logError()) {
-							Logger.error("Could not parse bugzilla report history: at least 5 columns in a mozilla body table are expected in new history element rows.");
+							Logger.error(errorHeader
+							        + "at least 5 columns in a mozilla body table are expected in new history element rows.");
 						}
 						return false;
 					}
@@ -188,7 +192,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				}
 				if (hElement == null) {
 					if (Logger.logError()) {
-						Logger.error("Could not parse bugzilla report history: current history element must not be null at this point.");
+						Logger.error(errorHeader + "current history element must not be null at this point.");
 					}
 					return false;
 				}
