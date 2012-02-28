@@ -126,6 +126,7 @@ public class IOUtils {
 			final HttpGet request = new HttpGet(uri);
 			final HttpResponse response = httpClient.execute(request);
 			final HttpEntity entity = response.getEntity();
+			httpClient.getConnectionManager().shutdown();
 			return readbinaryData(entity);
 		} catch (final Exception e) {
 			throw new FetchException("Providing the binary data of `" + uri.toString() + "` failed.", e);
