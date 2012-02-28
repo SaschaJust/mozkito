@@ -1014,6 +1014,9 @@ public class MantisParser implements Parser {
 		
 		try {
 			final Element cell = getMainTableCell("Product Version", 1);
+			if (cell == null) {
+				return null;
+			}
 			return cell.text().trim();
 		} finally {
 			// POSTCONDITIONS
