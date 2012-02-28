@@ -319,6 +319,11 @@ public abstract class Tracker {
 			throw new UnrecoverableError(
 			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
 		}
+		
+		if (Logger.logInfo()) {
+			Logger.info("Parsing issue report " + xmlReport.getId() + " ... ");
+		}
+		
 		parser.setTracker(this);
 		parser.setXMLReport(xmlReport);
 		
