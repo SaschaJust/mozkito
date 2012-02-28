@@ -16,10 +16,10 @@
 package de.unisaarland.cs.st.moskito.bugs;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
@@ -54,13 +54,13 @@ public class TrackerPersister extends Sink<Report> {
 			
 			@Override
 			public void process() {
-				Report bugReport = getInputData();
+				final Report bugReport = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + bugReport);
 				}
 				
-				if ((++TrackerPersister.this.i % 15) == 0) {
+				if ((++TrackerPersister.this.i % 1) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}
