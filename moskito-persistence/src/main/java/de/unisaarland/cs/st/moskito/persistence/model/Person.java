@@ -68,7 +68,7 @@ public class Person implements Annotated {
 	@NoneNull ("When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
 	public static Person merge(final Person keeper,
 	                           @NotEmpty ("Merging with an empty collection makes no sense.") @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Collection<Person> collisions) {
-		for (Person merged : collisions) {
+		for (final Person merged : collisions) {
 			merge(keeper, merged);
 		}
 		
@@ -120,8 +120,8 @@ public class Person implements Annotated {
 	@Transient
 	public boolean addAllEmails(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> emails) {
 		boolean ret = true;
-		Set<String> backup = getEmailAddresses();
-		for (String email : emails) {
+		final Set<String> backup = getEmailAddresses();
+		for (final String email : emails) {
 			ret &= addEmail(email);
 		}
 		if (!ret) {
@@ -136,7 +136,7 @@ public class Person implements Annotated {
 	@Transient
 	public boolean addAllFullnames(@NotNull @net.ownhero.dev.kanuni.annotations.simple.NoneNull final Set<String> fullnames) {
 		boolean ret = false;
-		Set<String> names = getFullnames();
+		final Set<String> names = getFullnames();
 		ret = names.addAll(fullnames);
 		setFullnames(names);
 		return ret;
@@ -148,7 +148,7 @@ public class Person implements Annotated {
 	@Transient
 	public boolean addAllUsernames(@NotNull final Set<String> usernames) {
 		boolean ret = false;
-		Set<String> names = getUsernames();
+		final Set<String> names = getUsernames();
 		ret = names.addAll(usernames);
 		setUsernames(names);
 		return ret;
@@ -161,7 +161,7 @@ public class Person implements Annotated {
 	public boolean addEmail(@Trimmed final String email) {
 		boolean ret = false;
 		if (email != null) {
-			Set<String> addresses = getEmailAddresses();
+			final Set<String> addresses = getEmailAddresses();
 			ret = addresses.add(email);
 			setEmailAddresses(addresses);
 		}
@@ -175,7 +175,7 @@ public class Person implements Annotated {
 	public boolean addFullname(final String fullname) {
 		boolean ret = false;
 		if (fullname != null) {
-			Set<String> names = getFullnames();
+			final Set<String> names = getFullnames();
 			ret = names.add(fullname);
 			setFullnames(names);
 		}
@@ -189,7 +189,7 @@ public class Person implements Annotated {
 	public boolean addUsername(final String username) {
 		boolean ret = false;
 		if (username != null) {
-			Set<String> names = getUsernames();
+			final Set<String> names = getUsernames();
 			ret = names.add(username);
 			setUsernames(names);
 		}
@@ -211,7 +211,7 @@ public class Person implements Annotated {
 		if (!(obj instanceof Person)) {
 			return false;
 		}
-		Person other = (Person) obj;
+		final Person other = (Person) obj;
 		
 		return hashCode() == other.hashCode();
 	}
@@ -322,7 +322,7 @@ public class Person implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("Person [generatedId=");
 		builder.append(getGeneratedId());
 		builder.append(", usernames=");
