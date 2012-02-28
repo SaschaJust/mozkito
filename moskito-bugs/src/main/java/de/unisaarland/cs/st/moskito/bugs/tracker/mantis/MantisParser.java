@@ -213,8 +213,15 @@ public class MantisParser implements Parser {
 			} else if (field.toLowerCase().equals("severity")) {
 				historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
 			} else if (field.toLowerCase().equals("assigned to")) {
-				historyElement.addChangedValue("assignedto", new Person(oldValue, null, null), new Person(newValue,
-				                                                                                          null, null));
+				Person oldPerson = new Person(oldValue, null, null);
+				if ((oldValue == null) | oldValue.equals("")) {
+					oldPerson = Tracker.unknownPerson;
+				}
+				Person newPerson = new Person(newValue, null, null);
+				if ((newValue == null) | newValue.equals("")) {
+					newPerson = Tracker.unknownPerson;
+				}
+				historyElement.addChangedValue("assignedto", oldPerson, newPerson);
 			} else if (field.toLowerCase().equals("priority")) {
 				historyElement.addChangedValue(field, getPriority(oldValue), getPriority(newValue));
 			} else if (field.toLowerCase().equals("resolution")) {
@@ -255,6 +262,10 @@ public class MantisParser implements Parser {
 			final Element td = getMainTableCell("Assigned To", 1);
 			if (td == null) {
 				return null;
+			}
+			final String username = td.text().trim();
+			if (username.equals("")) {
+				return Tracker.unknownPerson;
 			}
 			return new Person(td.text(), null, null);
 		} finally {
@@ -301,7 +312,6 @@ public class MantisParser implements Parser {
 					}
 					attachmentEntry.setFilename(filenameTag.text());
 					try {
-						System.err.println(attachmentEntry.getLink());
 						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
 					} catch (final Exception e) {
 						if (Logger.logError()) {
@@ -444,7 +454,12 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError(
 						                             "Could not extract comment author. Could not find <a> nor <font> tag.");
 					}
-					final Person author = new Person(developerTag.text().trim(), null, null);
+					
+					final String developerString = developerTag.text().trim();
+					Person author = new Person(developerString, null, null);
+					if (developerString.equals("")) {
+						author = Tracker.unknownPerson;
+					}
 					
 					final Element spanTag = developerTag.nextElementSibling();
 					if (spanTag == null) {
@@ -580,7 +595,12 @@ public class MantisParser implements Parser {
 				}
 				
 				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
-					result.add(new HistoryElement(getId(), new Person(authorChild.text().trim(), null, null), timestamp));
+					final String authorString = authorChild.text().trim();
+					Person author = new Person(authorString, null, null);
+					if ((authorString == null) || authorString.equals("")) {
+						author = Tracker.unknownPerson;
+					}
+					result.add(new HistoryElement(getId(), author, timestamp));
 				}
 				
 				final Element fieldChild = historyEntry.child(2);
@@ -955,6 +975,10 @@ public class MantisParser implements Parser {
 		
 		try {
 			final Element cell = getMainTableCell("Reporter", 1);
+			final String username = cell.text().trim();
+			if (username.equals("")) {
+				return Tracker.unknownPerson;
+			}
 			return new Person(cell.text().trim(), null, null);
 		} finally {
 			// POSTCONDITIONS
