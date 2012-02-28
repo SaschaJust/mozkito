@@ -176,10 +176,23 @@ public abstract class Tracker {
 					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
 					        + " from cache directory ... ");
 				}
-				source = new RawReport(bugId, IOUtils.fetch(cacheFile.toURI()));
+				try {
+					source = (RawReport) IOUtils.load(cacheFile);
+				} catch (final LoadingException e) {
+					if (Logger.logWarn()) {
+						Logger.warn("Could not load cached file. Refetching original report", e);
+					}
+					source = new RawReport(bugId, IOUtils.fetch(uri));
+					writeContentToFile(source, filename);
+				} catch (final FilePermissionException e) {
+					if (Logger.logWarn()) {
+						Logger.warn("Could not load cached file. Refetching original report", e);
+					}
+					source = new RawReport(bugId, IOUtils.fetch(uri));
+					writeContentToFile(source, filename);
+				}
 				
 			} else {
-				
 				source = new RawReport(bugId, IOUtils.fetch(uri));
 				writeContentToFile(source, filename);
 			}
