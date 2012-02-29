@@ -19,6 +19,9 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.kisa.Logger;
+
+import org.jdom.IllegalDataException;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
@@ -43,7 +46,15 @@ public class TrackerXMLTransformer extends Transformer<RawReport, XmlReport> {
 					Logger.debug("Converting " + rawReport + " to XML.");
 				}
 				
-				final XmlReport xmlReport = tracker.createDocument(rawReport);
+				XmlReport xmlReport = null;
+				try {
+					xmlReport = tracker.createDocument(rawReport);
+				} catch (final IllegalDataException e) {
+					if (Logger.logError()) {
+						Logger.error("Received an IllegaDataException!", e);
+					}
+				}
+				
 				if (xmlReport == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Skipping report " + rawReport.getId() + " diue to XML transformation errors.");
