@@ -545,6 +545,7 @@ public class IOUtils {
 			object.setCached(file.getAbsolutePath());
 			oos.writeObject(object);
 			oos.close();
+			fout.close();
 		} catch (final FileNotFoundException e) {
 			throw new StoringException("Could not create file `" + fileName + "`.", e);
 		} catch (final IOException e) {
