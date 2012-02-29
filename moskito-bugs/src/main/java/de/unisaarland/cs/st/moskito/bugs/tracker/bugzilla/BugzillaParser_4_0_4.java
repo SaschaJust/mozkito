@@ -355,8 +355,13 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			final String[] keywords = getXmlBug().getKeywordsArray();
 			final Set<String> result = new HashSet<String>();
 			for (final String keyword : keywords) {
-				if ((keyword != null) && (!keyword.trim().equals(""))) {
-					result.add(keyword);
+				if ((keyword != null)) {
+					final String[] keywordParts = keyword.split(",");
+					for (final String kw : keywordParts) {
+						if (!kw.trim().equals("")) {
+							result.add(kw);
+						}
+					}
 				}
 			}
 			return result;
