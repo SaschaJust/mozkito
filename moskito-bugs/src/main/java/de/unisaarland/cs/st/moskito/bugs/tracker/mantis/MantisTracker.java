@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -55,8 +54,8 @@ public class MantisTracker extends Tracker {
 		if (!super.checkRAW(rawReport)) {
 			return false;
 		}
-		final Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
-		final List<List<RegexGroup>> findAll = regex.findAll(rawReport.getContent());
+		Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
+		List<List<RegexGroup>> findAll = regex.findAll(rawReport.getContent());
 		if (findAll != null) {
 			if (Logger.logInfo()) {
 				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
@@ -64,6 +63,16 @@ public class MantisTracker extends Tracker {
 			}
 			return false;
 		}
+		regex = new Regex("Access Denied.");
+		findAll = regex.findAll(rawReport.getContent());
+		if (findAll != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+				        + ". checkRaw() failed: issue requires special permission.");
+			}
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -96,8 +105,7 @@ public class MantisTracker extends Tracker {
 				Logger.error("Cannot create XML document!", e);
 			}
 		}
-		
-		throw new UnrecoverableError();
+		return null;
 	}
 	
 	@Override

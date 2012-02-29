@@ -16,8 +16,8 @@
 package de.unisaarland.cs.st.moskito.bugs;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -37,14 +37,21 @@ public class TrackerXMLTransformer extends Transformer<RawReport, XmlReport> {
 			
 			@Override
 			public void process() {
-				RawReport rawReport = getInputData();
+				final RawReport rawReport = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Converting " + rawReport + " to XML.");
 				}
 				
-				provideOutputData(tracker.createDocument(rawReport));
-				
+				final XmlReport xmlReport = tracker.createDocument(rawReport);
+				if (xmlReport == null) {
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping report " + rawReport.getId() + " diue to XML transformation errors.");
+					}
+					skipOutputData();
+				} else {
+					provideOutputData(xmlReport);
+				}
 			}
 		};
 	}
