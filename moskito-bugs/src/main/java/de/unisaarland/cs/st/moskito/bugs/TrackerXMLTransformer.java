@@ -50,8 +50,8 @@ public class TrackerXMLTransformer extends Transformer<RawReport, XmlReport> {
 				try {
 					xmlReport = tracker.createDocument(rawReport);
 				} catch (final IllegalDataException e) {
-					if (Logger.logError()) {
-						Logger.error("Received an IllegaDataException!", e);
+					if (Logger.logWarn()) {
+						Logger.warn("Received an IllegaDataException!");
 					}
 				}
 				

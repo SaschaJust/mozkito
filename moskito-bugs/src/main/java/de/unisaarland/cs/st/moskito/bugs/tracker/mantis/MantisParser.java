@@ -202,7 +202,8 @@ public class MantisParser implements Parser {
 		} else if (changedValues.length > 0) {
 			newValue = changedValues[0].trim();
 		}
-		if (((oldValue == null) && (newValue == null)) || (oldValue.equals("") && newValue.equals(""))) {
+		if (((oldValue == null) && (newValue == null))
+		        || ((oldValue != null) && (newValue != null) && (oldValue.equals("") && newValue.equals("")))) {
 			return;
 		}
 		
