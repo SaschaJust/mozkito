@@ -202,6 +202,9 @@ public class MantisParser implements Parser {
 		} else if (changedValues.length > 0) {
 			newValue = changedValues[0].trim();
 		}
+		if (((oldValue == null) && (newValue == null)) || (oldValue.equals("") && newValue.equals(""))) {
+			return;
+		}
 		
 		try {
 			if (field.toLowerCase().equals("category")) {
@@ -236,7 +239,7 @@ public class MantisParser implements Parser {
 				if (newValue != null) {
 					newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
 				}
-				historyElement.addChangedValue("scmFixVersion", oldValue, newValue);
+				historyElement.addChangedValue("scmfixversion", oldValue, newValue);
 			} else if (field.toLowerCase().equals("product version")) {
 				historyElement.addChangedValue(field, oldValue, newValue);
 			} else if (field.toLowerCase().equals("modules")) {
