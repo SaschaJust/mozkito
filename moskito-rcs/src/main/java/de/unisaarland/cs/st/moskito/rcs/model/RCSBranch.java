@@ -177,6 +177,7 @@ public class RCSBranch implements Annotated {
 	 * 
 	 * @return the transactions
 	 */
+	@Transient
 	public Iterable<RCSTransaction> getTransactions() {
 		return new PreviousTransactionIterator(getHead());
 	}
