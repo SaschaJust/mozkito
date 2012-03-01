@@ -16,19 +16,27 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * The Class PreviousTransactionItareator.
+ * The Class TransactionIterator.
  * 
- * @author kim
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PreviousTransactionIterator implements Iterator<RCSTransaction>, Iterable<RCSTransaction> {
+public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<RCSTransaction> {
 	
-	private final RCSTransaction        root;
-	private RCSTransaction              current;
-	private final Set<RCSTransaction>   branchLine = new HashSet<RCSTransaction>();
-	private PreviousTransactionIterator delegate   = null;
+	/** The root. */
+	private final RCSTransaction      root;
+	
+	/** The current. */
+	private RCSTransaction            current;
+	
+	/** The branch line. */
+	private final Set<RCSTransaction> branchLine = new HashSet<RCSTransaction>();
+	
+	/** The delegate. */
+	private TransactionIterator       delegate   = null;
 	
 	/**
 	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
@@ -36,7 +44,8 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction>, It
 	 * @param root
 	 *            the root
 	 */
-	public PreviousTransactionIterator(final RCSTransaction root) {
+	@NoneNull
+	public TransactionIterator(final RCSTransaction root) {
 		this.root = root;
 		this.current = this.root;
 		
@@ -45,9 +54,26 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction>, It
 			inBranch = inBranch.getBranchParent();
 			this.branchLine.add(inBranch);
 		}
+	}
+	
+	/**
+	 * Instantiates a new transaction iterator.
+	 * 
+	 * @param root
+	 *            the root
+	 * @param stopAt
+	 *            the stop at
+	 */
+	@NoneNull
+	private TransactionIterator(final RCSTransaction root, final Set<RCSTransaction> stopAt) {
+		this.root = root;
+		this.current = this.root;
 		
-		if (this.current.getMergeParent() != null) {
-			this.delegate = new PreviousTransactionIterator(this.current.getMergeParent());
+		this.branchLine.addAll(stopAt);
+		RCSTransaction inBranch = this.root;
+		while (inBranch != null) {
+			inBranch = inBranch.getBranchParent();
+			this.branchLine.add(inBranch);
 		}
 	}
 	
@@ -57,14 +83,18 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction>, It
 	 */
 	@Override
 	public boolean hasNext() {
-		if (this.delegate != null) {
+		if (this.current != null) {
+			return true;
+		} else if (this.delegate != null) {
 			return this.delegate.hasNext();
 		}
-		return this.current.getBranchParent() == null
-		                                             ? false
-		                                             : true;
+		return false;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator<RCSTransaction> iterator() {
 		// PRECONDITIONS
@@ -90,8 +120,12 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction>, It
 				return next;
 			}
 		}
+		final RCSTransaction result = this.current;
+		if (this.current.getMergeParent() != null) {
+			this.delegate = new TransactionIterator(this.current.getMergeParent(), this.branchLine);
+		}
 		this.current = this.current.getBranchParent();
-		return this.current;
+		return result;
 	}
 	
 	/*
