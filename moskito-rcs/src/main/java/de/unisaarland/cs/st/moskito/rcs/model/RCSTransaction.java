@@ -15,6 +15,7 @@
  */
 package de.unisaarland.cs.st.moskito.rcs.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -53,7 +54,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
-import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
+import de.unisaarland.cs.st.moskito.rcs.elements.TransactionIterator;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object
@@ -428,7 +429,13 @@ public class RCSTransaction implements Annotated {
 	
 	@Transient
 	public Iterator<RCSTransaction> getPreviousTransactions() {
-		return new PreviousTransactionIterator(this);
+		final TransactionIterator iter = new TransactionIterator(this);
+		if (iter.hasNext()) {
+			iter.next();
+			return iter;
+		} else {
+			return new ArrayList<RCSTransaction>(0).iterator();
+		}
 	}
 	
 	/**
@@ -623,9 +630,17 @@ public class RCSTransaction implements Annotated {
 		string.append(", author=");
 		string.append(getAuthor());
 		string.append(", branchParents=");
-		string.append(this.branchParent.toString());
+		if (this.branchParent == null) {
+			string.append("null");
+		} else {
+			string.append(this.branchParent.getId());
+		}
 		string.append(", mergeParents=");
-		string.append(this.mergeParent.toString());
+		if (this.mergeParent == null) {
+			string.append("null");
+		} else {
+			string.append(this.mergeParent.getId());
+		}
 		string.append(", children=");
 		string.append("[");
 		final StringBuilder builder2 = new StringBuilder();

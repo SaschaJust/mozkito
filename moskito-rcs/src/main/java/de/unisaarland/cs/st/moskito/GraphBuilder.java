@@ -22,6 +22,7 @@ import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
@@ -32,13 +33,30 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class GraphBuilder.
  * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class GraphBuilder extends Sink<RCSTransaction> {
 	
+	/** The counter. */
 	private int counter;
 	
+	/**
+	 * Instantiates a new graph builder.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param repository
+	 *            the repository
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param branchFactory
+	 *            the branch factory
+	 */
+	@NoneNull
 	public GraphBuilder(final Group threadGroup, final RepositorySettings settings, final Repository repository,
 	        final PersistenceUtil persistenceUtil, final BranchFactory branchFactory) {
 		super(threadGroup, settings, false);

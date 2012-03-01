@@ -11,6 +11,8 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
 import org.neo4j.graphdb.Direction;
@@ -28,16 +30,41 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 
+/**
+ * The Class GitRevDependencyGraph.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 class GitRevDependencyGraph implements IRevDependencyGraph {
 	
+	/** The Constant NODE_ID. */
 	private static final String        NODE_ID = "revhash";
+	
+	/** The Constant BRANCH. */
 	private static final String        BRANCH  = "branch";
+	
+	/** The Constant TAG. */
 	private static final String        TAG     = "tag";
+	
+	/** The graph. */
 	private final GraphDatabaseService graph;
+	
+	/** The index manager. */
 	private final IndexManager         indexManager;
+	
+	/** The node index. */
 	private final Index<Node>          nodeIndex;
+	
+	/** The repository. */
 	private final GitRepository        repository;
 	
+	/**
+	 * Instantiates a new git rev dependency graph.
+	 * 
+	 * @param repository
+	 *            the repository
+	 */
+	@NoneNull
 	GitRevDependencyGraph(final GitRepository repository) {
 		this.repository = repository;
 		final File dbFile = FileUtils.createRandomDir("moskito", "git_rev_dep_graph", FileShutdownAction.DELETE);
@@ -54,8 +81,18 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		});
 	}
 	
-	private boolean addBranch(final String v,
-	                          final String branchName) {
+	/**
+	 * Adds the branch.
+	 * 
+	 * @param v
+	 *            the v
+	 * @param branchName
+	 *            the branch name
+	 * @return true, if successful
+	 */
+	@NoneNull
+	private boolean addBranch(@NotEmptyString final String v,
+	                          @NotEmptyString final String branchName) {
 		// PRECONDITIONS
 		
 		try {
@@ -73,8 +110,20 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	protected boolean addEdge(final String parent,
-	                          final String child,
+	/**
+	 * Adds the edge.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param child
+	 *            the child
+	 * @param edgeType
+	 *            the edge type
+	 * @return true, if successful
+	 */
+	@NoneNull
+	protected boolean addEdge(@NotEmptyString final String parent,
+	                          @NotEmptyString final String child,
 	                          final GitRevDependencyType edgeType) {
 		// PRECONDITIONS
 		
@@ -111,7 +160,15 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	protected boolean addVertex(final String v) {
+	/**
+	 * Adds the vertex.
+	 * 
+	 * @param v
+	 *            the v
+	 * @return true, if successful
+	 */
+	@NoneNull
+	protected boolean addVertex(@NotEmptyString final String v) {
 		// PRECONDITIONS
 		
 		try {
@@ -140,8 +197,18 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	private boolean containsEdge(final String node,
-	                             final String parent) {
+	/**
+	 * Contains edge.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param parent
+	 *            the parent
+	 * @return true, if successful
+	 */
+	@NoneNull
+	private boolean containsEdge(@NotEmptyString final String node,
+	                             @NotEmptyString final String parent) {
 		// PRECONDITIONS
 		
 		try {
@@ -152,6 +219,10 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#createFromRepository()
+	 */
 	@Override
 	public boolean createFromRepository() {
 		// PRECONDITIONS
@@ -225,6 +296,10 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#getBranchParent(java.lang.String)
+	 */
 	@Override
 	public String getBranchParent(final String hash) {
 		// PRECONDITIONS
@@ -255,9 +330,18 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/**
+	 * Gets the edge.
+	 * 
+	 * @param node
+	 *            the node
+	 * @param parent
+	 *            the parent
+	 * @return the edge
+	 */
 	@NoneNull
-	public GitRevDependencyType getEdge(final String node,
-	                                    final String parent) {
+	public GitRevDependencyType getEdge(@NotEmptyString final String node,
+	                                    @NotEmptyString final String parent) {
 		final Node nodeNode = getNode(node);
 		final Node parentNode = getNode(parent);
 		if ((nodeNode == null) || (parentNode == null)) {
@@ -280,8 +364,13 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#getMergeParent(java.lang.String)
+	 */
 	@Override
-	public String getMergeParent(final String hash) {
+	@NoneNull
+	public String getMergeParent(@NotEmptyString final String hash) {
 		// PRECONDITIONS
 		
 		try {
@@ -310,8 +399,15 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/**
+	 * Gets the node.
+	 * 
+	 * @param node
+	 *            the node
+	 * @return the node
+	 */
 	@NoneNull
-	private Node getNode(final String node) {
+	private Node getNode(@NotEmptyString final String node) {
 		// PRECONDITIONS
 		
 		try {
@@ -328,8 +424,13 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#getTags(java.lang.String)
+	 */
 	@Override
-	public Set<String> getTags(final String hash) {
+	@NoneNull
+	public Set<String> getTags(@NotEmptyString final String hash) {
 		// PRECONDITIONS
 		
 		try {
@@ -350,9 +451,13 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#hasVertex(java.lang.String)
+	 */
 	@Override
 	@NoneNull
-	public boolean hasVertex(final String hash) {
+	public boolean hasVertex(@NotEmptyString final String hash) {
 		// PRECONDITIONS
 		
 		try {
@@ -362,8 +467,13 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#isBranchHead(java.lang.String)
+	 */
 	@Override
-	public String isBranchHead(final String hash) {
+	@NoneNull
+	public String isBranchHead(@NotEmptyString final String hash) {
 		// PRECONDITIONS
 		
 		try {
@@ -381,7 +491,13 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph#readFromDB(de.unisaarland.cs.st.moskito.persistence.
+	 * PersistenceUtil)
+	 */
 	@Override
+	@NoneNull
 	public boolean readFromDB(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
 		
@@ -393,8 +509,18 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	protected boolean setTags(final String v,
-	                          final String[] tagNames) {
+	/**
+	 * Sets the tags.
+	 * 
+	 * @param v
+	 *            the v
+	 * @param tagNames
+	 *            the tag names
+	 * @return true, if successful
+	 */
+	@NoneNull
+	protected boolean setTags(@NotEmptyString final String v,
+	                          @NotEmpty final String[] tagNames) {
 		final Node node = getNode(v);
 		if (node == null) {
 			return false;

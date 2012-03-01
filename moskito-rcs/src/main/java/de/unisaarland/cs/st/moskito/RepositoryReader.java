@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
 public class RepositoryReader extends Source<LogEntry> {

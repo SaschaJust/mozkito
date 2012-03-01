@@ -33,7 +33,7 @@ import javax.persistence.Transient;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
+import de.unisaarland.cs.st.moskito.rcs.elements.TransactionIterator;
 
 /**
  * The Class RCSBranch.
@@ -179,7 +179,7 @@ public class RCSBranch implements Annotated {
 	 */
 	@Transient
 	public Iterable<RCSTransaction> getTransactions() {
-		return new PreviousTransactionIterator(getHead());
+		return new TransactionIterator(getHead());
 	}
 	
 	@Override
