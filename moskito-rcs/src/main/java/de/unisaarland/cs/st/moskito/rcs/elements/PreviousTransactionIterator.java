@@ -12,15 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.elements;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -28,16 +23,12 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * 
  * @author kim
  */
-public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
+public class PreviousTransactionIterator implements Iterator<RCSTransaction>, Iterable<RCSTransaction> {
 	
-	/** The root. */
-	@SuppressWarnings ("unused")
-	private final RCSTransaction                      root;
-	
-	private final Map<RCSTransaction, Set<RCSBranch>> elementLocks    = new HashMap<RCSTransaction, Set<RCSBranch>>();
-	private Set<RCSTransaction>                       currentChildren = new LinkedHashSet<RCSTransaction>();
-	private Iterator<RCSTransaction>                  currentListIter = this.currentChildren.iterator();
-	private final HashSet<RCSBranch>                  currentBranches = new HashSet<RCSBranch>();
+	private final RCSTransaction        root;
+	private RCSTransaction              current;
+	private final Set<RCSTransaction>   branchLine = new HashSet<RCSTransaction>();
+	private PreviousTransactionIterator delegate   = null;
 	
 	/**
 	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
@@ -47,22 +38,16 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 	 */
 	public PreviousTransactionIterator(final RCSTransaction root) {
 		this.root = root;
-		this.currentChildren.add(root);
-		this.currentBranches.add(root.getBranch());
-		final Set<RCSTransaction> nextChildren = nextChildren();
-		this.currentChildren = nextChildren;
-		this.currentListIter = this.currentChildren.iterator();
-	}
-	
-	private void addLock(final RCSTransaction branchOpeningTransaction) {
-		if (!this.elementLocks.containsKey(branchOpeningTransaction)) {
-			this.elementLocks.put(branchOpeningTransaction, new HashSet<RCSBranch>());
-			for (final RCSTransaction tmpChild : branchOpeningTransaction.getChildren()) {
-				if (!tmpChild.getBranch().equals(branchOpeningTransaction.getBranch())
-				        && (!this.currentBranches.contains(tmpChild.getBranch()))) {
-					this.elementLocks.get(branchOpeningTransaction).add(tmpChild.getBranch());
-				}
-			}
+		this.current = this.root;
+		
+		RCSTransaction inBranch = this.root;
+		while (inBranch != null) {
+			inBranch = inBranch.getBranchParent();
+			this.branchLine.add(inBranch);
+		}
+		
+		if (this.current.getMergeParent() != null) {
+			this.delegate = new PreviousTransactionIterator(this.current.getMergeParent());
 		}
 	}
 	
@@ -72,12 +57,23 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 	 */
 	@Override
 	public boolean hasNext() {
-		if (!this.currentListIter.hasNext()) {
-			final Set<RCSTransaction> nextChildren = nextChildren();
-			this.currentChildren = nextChildren;
-			this.currentListIter = this.currentChildren.iterator();
+		if (this.delegate != null) {
+			return this.delegate.hasNext();
 		}
-		return this.currentListIter.hasNext();
+		return this.current.getBranchParent() == null
+		                                             ? false
+		                                             : true;
+	}
+	
+	@Override
+	public Iterator<RCSTransaction> iterator() {
+		// PRECONDITIONS
+		
+		try {
+			return this;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -86,110 +82,16 @@ public class PreviousTransactionIterator implements Iterator<RCSTransaction> {
 	 */
 	@Override
 	public RCSTransaction next() {
-		if (!hasNext()) {
-			return null;
-		}
-		final RCSTransaction next = this.currentListIter.next();
-		if (this.elementLocks.containsKey(next) && (!this.elementLocks.get(next).isEmpty())) {
-			return next();
-		}
-		return next;
-		
-	}
-	
-	private Set<RCSTransaction> nextChildren() {
-		final Set<RCSTransaction> nextChildren = new LinkedHashSet<RCSTransaction>();
-		
-		for (final RCSTransaction t : this.currentChildren) {
-			
-			// if there is a lock on the element, add the element again
-			if (this.elementLocks.containsKey(t) && (!this.elementLocks.get(t).isEmpty())) {
-				nextChildren.add(t);
-				continue;
-			}
-			
-			// if there is no lock
-			
-			RCSTransaction parent = t.getParent(t.getBranch());
-			if ((parent == null) && (!t.getBranch().isMasterBranch())) {
-				final Set<RCSTransaction> parents = t.getParents();
-				if (parents.isEmpty()) {
-					throw new UnrecoverableError(
-					                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-					                                     + t.toString());
-				}
-				parent = parents.iterator().next();
-			}
-			
-			if (parent == null) {
-				continue;
-			}
-			
-			// add the parent within the current branch. If the parent is not
-			// within the same branch (this was the begin of the current
-			// branch), check if the branch of the parent is processed already.
-			
-			if (parent.getBranch().equals(t.getBranch())) {
-				nextChildren.add(parent);
+		if (this.delegate != null) {
+			final RCSTransaction next = this.delegate.next();
+			if (this.branchLine.contains(next)) {
+				this.delegate = null;
 			} else {
-				// if this is not the case, the current branch just opened
-				if (!this.currentBranches.contains(parent.getBranch())) {
-					nextChildren.add(parent);
-					this.currentBranches.add(parent.getBranch());
-				}
-				// and remove the lock
-				if (this.elementLocks.containsKey(parent)) {
-					this.elementLocks.get(parent).remove(t.getBranch());
-				}
-			}
-			
-			// now process all other parents (not within the same branch, this t
-			// is a merge)
-			
-			final Set<RCSTransaction> parents = t.getParents();
-			if (parents.size() > 1) {
-				// remove already processed parent
-				parents.remove(parent);
-				// for all other check if these are already pointing to open
-				// branches.
-				for (final RCSTransaction p : parents) {
-					if (!this.currentBranches.contains(p.getBranch())) {
-						
-						if (p.getBranch().getBegin() != null) {
-							
-							final RCSTransaction beginOfBranch = p.getBranch().getBegin();
-							final Set<RCSTransaction> beginOfBranchParents = beginOfBranch.getParents();
-							if (beginOfBranchParents.isEmpty()) {
-								throw new UnrecoverableError(
-								                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-								                                     + beginOfBranch.toString());
-							}
-							final RCSTransaction branchOpeningTransaction = beginOfBranchParents.iterator().next();
-							
-							if (branchOpeningTransaction != null) {
-								// add lock to branchOpeningTransaction
-								addLock(branchOpeningTransaction);
-							}
-						}
-						if (!this.currentBranches.contains(p.getBranch())) {
-							nextChildren.add(p);
-							this.currentBranches.add(p.getBranch());
-						}
-					}
-				}
+				return next;
 			}
 		}
-		
-		// now we know all next children. BUT we need to open locks for all
-		// nextChildren which have multiple children but no lock so far.
-		
-		for (final RCSTransaction nextChild : nextChildren) {
-			if ((nextChild.getChildren().size() > 1) && (!this.elementLocks.containsKey(nextChild))) {
-				addLock(nextChild);
-			}
-		}
-		
-		return nextChildren;
+		this.current = this.current.getBranchParent();
+		return this.current;
 	}
 	
 	/*

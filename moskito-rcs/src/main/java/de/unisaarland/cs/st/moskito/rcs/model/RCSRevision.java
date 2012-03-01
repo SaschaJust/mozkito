@@ -25,14 +25,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -41,7 +40,7 @@ import net.ownhero.dev.kisa.Logger;
 @Entity
 @Table (name = "rcsrevision",
         uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
-public class RCSRevision implements Annotated, Comparable<RCSRevision> {
+public class RCSRevision implements Annotated {
 	
 	/**
 	 * 
@@ -81,7 +80,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
 		
-		boolean success = getTransaction().addRevision(this);
+		final boolean success = getTransaction().addRevision(this);
 		Condition.check(success, "Revision could not be registered at transaction.");
 		
 		if (Logger.logTrace()) {
@@ -90,17 +89,6 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		
 		Condition.notNull(getTransaction(), "Transaction may never be null after creation.");
 		Condition.notNull(getChangedFile(), "Changed file may never be null after creation.");
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	@Transient
-	public int compareTo(final RCSRevision rcsRevision) {
-		Condition.notNull(rcsRevision, "Compare to (null) makes no sense.");
-		return getTransaction().compareTo(rcsRevision.getTransaction());
 	}
 	
 	/*
@@ -118,7 +106,7 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 		if (!(obj instanceof RCSRevision)) {
 			return false;
 		}
-		RCSRevision other = (RCSRevision) obj;
+		final RCSRevision other = (RCSRevision) obj;
 		if (getChangeType() != other.getChangeType()) {
 			return false;
 		}
@@ -185,18 +173,18 @@ public class RCSRevision implements Annotated, Comparable<RCSRevision> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getChangeType() == null)
-		                                                    ? 0
-		                                                    : getChangeType().hashCode());
-		result = prime * result + ((getChangedFile() == null)
-		                                                     ? 0
-		                                                     : getChangedFile().hashCode());
+		result = (prime * result) + ((getChangeType() == null)
+		                                                      ? 0
+		                                                      : getChangeType().hashCode());
+		result = (prime * result) + ((getChangedFile() == null)
+		                                                       ? 0
+		                                                       : getChangedFile().hashCode());
 		// result = prime * result + ((getPrimaryKey() == null)
 		// ? 0
 		// : getPrimaryKey().hashCode());
-		result = prime * result + ((getTransaction() == null)
-		                                                     ? 0
-		                                                     : getTransaction().hashCode());
+		result = (prime * result) + ((getTransaction() == null)
+		                                                       ? 0
+		                                                       : getTransaction().hashCode());
 		return result;
 	}
 	

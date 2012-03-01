@@ -29,6 +29,7 @@ import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -64,15 +65,16 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.ProtocolType;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -458,11 +460,25 @@ public class SubversionRepository extends Repository {
 	}
 	
 	@Override
-	public RevDependencyIterator getRevDependencyIterator() {
-		if (Logger.logError()) {
-			Logger.error("Support hasn't been implemented yet. " + Settings.getReportThis());
+	public IRevDependencyGraph getRevDependencyGraph() {
+		// PRECONDITIONS
+		
+		try {
+			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
+		} finally {
+			// POSTCONDITIONS
 		}
-		throw new RuntimeException();
+	}
+	
+	@Override
+	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+		// PRECONDITIONS
+		
+		try {
+			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

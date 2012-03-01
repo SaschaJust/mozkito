@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -49,13 +50,14 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -134,6 +136,7 @@ public class MercurialRepository extends Repository {
 	}
 	
 	private File           cloneDir;
+	
 	protected List<String> hashes = new ArrayList<String>();
 	
 	/*
@@ -560,11 +563,25 @@ public class MercurialRepository extends Repository {
 	}
 	
 	@Override
-	public RevDependencyIterator getRevDependencyIterator() {
-		if (Logger.logError()) {
-			Logger.error("Support hasn't been implemented yet. " + Settings.getReportThis());
+	public IRevDependencyGraph getRevDependencyGraph() {
+		// PRECONDITIONS
+		
+		try {
+			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
+		} finally {
+			// POSTCONDITIONS
 		}
-		throw new RuntimeException();
+	}
+	
+	@Override
+	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+		// PRECONDITIONS
+		
+		try {
+			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

@@ -24,7 +24,6 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -49,12 +48,10 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryParser(final Group threadGroup, final RepositorySettings settings, final Repository repository,
-	        final BranchFactory bFactory) {
+	public RepositoryParser(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();
-		final BranchFactory branchFactory = bFactory;
 		
 		new ProcessHook<LogEntry, RCSTransaction>(this) {
 			
@@ -75,8 +72,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 				                                                                       data.getMessage(),
 				                                                                       data.getDateTime(),
 				                                                                       data.getAuthor(),
-				                                                                       data.getOriginalId(),
-				                                                                       branchFactory);
+				                                                                       data.getOriginalId());
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {

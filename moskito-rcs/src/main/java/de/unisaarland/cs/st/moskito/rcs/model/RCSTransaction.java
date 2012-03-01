@@ -16,13 +16,12 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -42,14 +41,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
@@ -57,7 +53,6 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
 
 /**
@@ -68,14 +63,12 @@ import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
  */
 @Entity
 @Table (name = "rcstransaction")
-public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
+public class RCSTransaction implements Annotated {
 	
 	/**
 	 * 
 	 */
-	private static final long                        serialVersionUID = -7619009648634901112L;
-	
-	private static Map<String, Map<String, Integer>> comparisonCache  = new HashMap<String, Map<String, Integer>>();
+	private static final long serialVersionUID = -7619009648634901112L;
 	
 	/**
 	 * Creates the transaction.
@@ -95,10 +88,8 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	                                               final String message,
 	                                               final DateTime timestamp,
 	                                               final Person author,
-	                                               final String originalId,
-	                                               final BranchFactory branchFactory) {
+	                                               final String originalId) {
 		final RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
-		transaction.setBranch(branchFactory.getMasterBranch());
 		return transaction;
 	}
 	
@@ -112,17 +103,18 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return RCSTransaction.class.getSimpleName();
 	}
 	
-	private PersonContainer         persons   = new PersonContainer();
+	private PersonContainer         persons      = new PersonContainer();
 	private String                  id;
 	private String                  message;
-	private Set<RCSTransaction>     children  = new HashSet<RCSTransaction>();
-	private Set<RCSTransaction>     parents   = new HashSet<RCSTransaction>();
-	private RCSBranch               branch    = null;
-	private Collection<RCSRevision> revisions = new LinkedList<RCSRevision>();
+	private Set<RCSTransaction>     children     = new HashSet<RCSTransaction>();
+	private RCSTransaction          branchParent = null;
+	private RCSTransaction          mergeParent  = null;
+	private Collection<RCSRevision> revisions    = new LinkedList<RCSRevision>();
 	private DateTime                javaTimestamp;
-	private Set<String>             tags      = new HashSet<String>();
+	private Set<String>             tags         = new HashSet<String>();
 	private String                  originalId;
-	private boolean                 atomic    = false;
+	private boolean                 atomic       = false;
+	private Set<RCSBranch>          branches     = null;
 	
 	/**
 	 * used by PersistenceUtil to create RCSTransaction instance.
@@ -190,23 +182,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * @param parentTransaction
-	 */
-	@Transient
-	public boolean addParent(final RCSTransaction parentTransaction) {
-		CompareCondition.notEquals(parentTransaction, this, "a transaction may never be a parent of its own: %s", this);
-		boolean ret = false;
-		
-		if (!getParents().contains(parentTransaction)) {
-			final Set<RCSTransaction> parents = getParents();
-			ret = parents.add(parentTransaction);
-			setParents(parents);
-		}
-		
-		return ret;
-	}
-	
-	/**
 	 * Adds the revision. Is automatically called from the constructor of RCSRevision
 	 * 
 	 * @param revision
@@ -236,135 +211,94 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		return ret;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(final RCSTransaction transaction) {
-		if (transaction == null) {
-			return 1;
-		}
-		if (getBranch() == null) {
-			throw new UnrecoverableError("Branch of a transaction should never be NULL");
-		}
-		if (transaction.getBranch() == null) {
-			throw new UnrecoverableError("Branch of a transaction to be compared should never be NULL");
-		}
-		if (Logger.logTrace()) {
-			Logger.trace("Comparing transactions: `" + getId() + "` and `" + transaction.getId() + "`");
-		}
-		if (equals(transaction)) {
-			return 0;
-		} else {
-			final String id1 = getId();
-			final String id2 = transaction.getId();
-			if ((comparisonCache.containsKey(id1)) && (comparisonCache.get(id1).containsKey(id2))) {
-				return comparisonCache.get(id1).get(id2);
-			} else if ((comparisonCache.containsKey(id2)) && (comparisonCache.get(id2).containsKey(id1))) {
-				return -1 * comparisonCache.get(id2).get(id1);
-			}
-			if (comparisonCache.size() > 10000) {
-				comparisonCache.clear();
-			}
-			final int result = compareToTransaction(transaction);
-			if (!comparisonCache.containsKey(id1)) {
-				comparisonCache.put(id1, new HashMap<String, Integer>());
-			}
-			if (!comparisonCache.get(id1).containsKey(id2)) {
-				comparisonCache.get(id1).put(id2, result);
-			}
-			return result;
-		}
-	}
-	
 	@Transient
 	private int compareToTransaction(final RCSTransaction transaction) {
-		if (getBranch().equals(transaction.getBranch())) {
-			
-			// /IF BOTH TRANSACTIONS ARE IN THE SAME BRANCH
-			
-			if (getBranch().getBegin() == null) {
-				// if any of the branches has no begin transaction, we must quit. The data model is broken.
-				throw new UnrecoverableError(
-				                             "The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
-				                                     + getBranch());
-			}
-			if (getBranch().getBegin().equals(this)) {
-				// if this transaction is the begin of the current branch
-				return -1;
-			} else if (getBranch().getBegin().equals(transaction)) {
-				// if the other transaction is the begin of the current branch
-				return 1;
-			} else {
-				// both transactions are somewhere within the same branch
-				RCSTransaction cache = getParent(getBranch());
-				if (cache == null) {
-					// this can only happen when this transaction is the begin transaction of the current branch
-					// DEADCODE
-					throw new UnrecoverableError(
-					                             "Detected null parent of transaction that is not the begin of the current branch: "
-					                                     + toString());
-				}
-				while ((cache != null) && (!cache.equals(getBranch().getBegin()))) {
-					// as long as there are more parents to fetch from the current branch ...
-					if (cache.equals(transaction)) {
-						// we found the transaction as one of our parents.
-						return 1;
-					}
-					// get next ancestor
-					cache = cache.getParent(cache.getBranch());
-				}
-				return -1;
-			}
-		} else if (getBranch().isMasterBranch()) {
-			
-			// BOTH TRANSACTIONS ARE WITHIN DIFFERENT BRANCHES
-			
-			if (Logger.logDebug()) {
-				Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
-			}
-			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
-				return -1;
-			}
-			final int subresult = compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
-			if (subresult >= 0) {
-				return 1;
-			} else {
-				return -1;
-			}
-		} else if (transaction.getBranch().isMasterBranch()) {
-			if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
-				return 1;
-			}
-			final int sub_result = getBranch().getEnd().getChild(getBranch()).compareTo(transaction);
-			if (sub_result <= 0) {
-				return -1;
-			} else {
-				return 1;
-			}
-		} else {
-			if ((transaction.getBranch().getEnd() == null)
-			        || (transaction.getBranch().getEnd().getChild(transaction.getBranch()) == null)) {
-				return -1;
-			} else if ((getBranch().getEnd() == null) || (getBranch().getEnd().getChild(getBranch()) == null)) {
-				return 1;
-			} else {
-				final int r = getBranch().getEnd().getChild(getBranch())
-				                         .compareTo(transaction.getBranch().getEnd().getChild(transaction.getBranch()));
-				if (r != 0) {
-					return r;
-				} else {
-					if (getTimestamp().isBefore(transaction.getTimestamp())) {
-						return -1;
-					} else if (getTimestamp().isAfter(transaction.getTimestamp())) {
-						return 1;
-					}
-					return 0;
-				}
-			}
-		}
+		// if (getBranch().equals(transaction.getBranch())) {
+		
+		// /IF BOTH TRANSACTIONS ARE IN THE SAME BRANCH
+		// TODO
+		return 0;
+		// if (getBranch().getBegin() == null) {
+		// // if any of the branches has no begin transaction, we must quit. The data model is broken.
+		// throw new UnrecoverableError(
+		// "The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
+		// + getBranch());
+		// }
+		// if (getBranch().getBegin().equals(this)) {
+		// // if this transaction is the begin of the current branch
+		// return -1;
+		// } else if (getBranch().getBegin().equals(transaction)) {
+		// // if the other transaction is the begin of the current branch
+		// return 1;
+		// } else {
+		// // both transactions are somewhere within the same branch
+		// RCSTransaction cache = getParent(getBranch());
+		// if (cache == null) {
+		// // this can only happen when this transaction is the begin transaction of the current branch
+		// // DEADCODE
+		// throw new UnrecoverableError(
+		// "Detected null parent of transaction that is not the begin of the current branch: "
+		// + toString());
+		// }
+		// while ((cache != null) && (!cache.equals(getBranch().getBegin()))) {
+		// // as long as there are more parents to fetch from the current branch ...
+		// if (cache.equals(transaction)) {
+		// // we found the transaction as one of our parents.
+		// return 1;
+		// }
+		// // get next ancestor
+		// cache = cache.getParent(cache.getBranch());
+		// }
+		// return -1;
+		// }
+		// } else if (getBranch().isMasterBranch()) {
+		//
+		// // BOTH TRANSACTIONS ARE WITHIN DIFFERENT BRANCHES
+		//
+		// if (Logger.logDebug()) {
+		// Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
+		// }
+		// if ((transaction.getBranch().getHead() == null)
+		// || (transaction.getBranch().getHead().getChild(transaction.getBranch()) == null)) {
+		// return -1;
+		// }
+		// final int subresult = compareTo(transaction.getBranch().getHead().getChild(transaction.getBranch()));
+		// if (subresult >= 0) {
+		// return 1;
+		// } else {
+		// return -1;
+		// }
+		// } else if (transaction.getBranch().isMasterBranch()) {
+		// if ((getBranch().getHead() == null) || (getBranch().getHead().getChild(getBranch()) == null)) {
+		// return 1;
+		// }
+		// final int sub_result = getBranch().getHead().getChild(getBranch()).compareTo(transaction);
+		// if (sub_result <= 0) {
+		// return -1;
+		// } else {
+		// return 1;
+		// }
+		// } else {
+		// if ((transaction.getBranch().getHead() == null)
+		// || (transaction.getBranch().getHead().getChild(transaction.getBranch()) == null)) {
+		// return -1;
+		// } else if ((getBranch().getHead() == null) || (getBranch().getHead().getChild(getBranch()) == null)) {
+		// return 1;
+		// } else {
+		// final int r = getBranch().getHead().getChild(getBranch())
+		// .compareTo(transaction.getBranch().getHead().getChild(transaction.getBranch()));
+		// if (r != 0) {
+		// return r;
+		// } else {
+		// if (getTimestamp().isBefore(transaction.getTimestamp())) {
+		// return -1;
+		// } else if (getTimestamp().isAfter(transaction.getTimestamp())) {
+		// return 1;
+		// }
+		// return 0;
+		// }
+		// }
+		// }
 	}
 	
 	/**
@@ -376,14 +310,30 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * @return the branch
+	 * Gets the branches.
+	 * 
+	 * @return the branches
+	 * @deprecated this methode is not implemented yet.
 	 */
-	@ManyToOne (fetch = FetchType.LAZY,
-	            cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-	            optional = false)
-	@JoinColumn (nullable = false)
-	public RCSBranch getBranch() {
-		return this.branch;
+	@Deprecated
+	public Set<RCSBranch> getBranches() {
+		// PRECONDITIONS
+		
+		try {
+			return this.branches;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param branch
+	 * @return
+	 */
+	@Transient
+	@NoneNull
+	public RCSTransaction getBranchParent() {
+		return this.branchParent;
 	}
 	
 	/**
@@ -401,28 +351,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	}
 	
 	/**
-	 * @param branch
-	 * @return
-	 */
-	@Transient
-	public RCSTransaction getChild(final RCSBranch branch) {
-		if ((branch.getEnd() != null) && (branch.getEnd().equals(this))) {
-			return getChildren().isEmpty()
-			                              ? null
-			                              : getChildren().iterator().next();
-		} else {
-			return (RCSTransaction) CollectionUtils.find(getChildren(), new Predicate() {
-				
-				@Override
-				public boolean evaluate(final Object object) {
-					final RCSTransaction transaction = (RCSTransaction) object;
-					return transaction.getBranch().equals(branch);
-				}
-			});
-		}
-	}
-	
-	/**
 	 * @return the children
 	 */
 	// @Transient
@@ -430,6 +358,12 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
 		return this.children;
+	}
+	
+	@NoneNull
+	public Comparator<RCSTransaction> getComparator(final RCSBranch branch) {
+		// TODO implement this
+		return null;
 	}
 	
 	/**
@@ -457,6 +391,16 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		                             : null;
 	}
 	
+	public RCSTransaction getMergeParent() {
+		// PRECONDITIONS
+		
+		try {
+			return this.mergeParent;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the message.
 	 * 
@@ -472,43 +416,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	public String getOriginalId() {
 		return this.originalId;
-	}
-	
-	/**
-	 * @param branch
-	 * @return
-	 */
-	@Transient
-	@NoneNull
-	public RCSTransaction getParent(final RCSBranch branch) {
-		if (branch == null) {
-			return null;
-		}
-		
-		if ((branch.getBegin() != null) && branch.getBegin().equals(this)) {
-			return null;
-		} else {
-			return (RCSTransaction) CollectionUtils.find(getParents(), new Predicate() {
-				
-				@Override
-				public boolean evaluate(final Object object) {
-					final RCSTransaction transaction = (RCSTransaction) object;
-					if (transaction.getBranch() == null) {
-						return false;
-					}
-					return transaction.getBranch().equals(branch);
-				}
-			});
-		}
-	}
-	
-	/**
-	 * @return the parents
-	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
-	@JoinTable (name = "rcstransaction_parents", joinColumns = { @JoinColumn (nullable = true, name = "parentsid") })
-	public Set<RCSTransaction> getParents() {
-		return this.parents;
 	}
 	
 	/**
@@ -586,12 +493,22 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		getPersons().add("author", author);
 	}
 	
-	/**
-	 * @param branch
-	 *            the branch to set
-	 */
-	public void setBranch(final RCSBranch branch) {
-		this.branch = branch;
+	public void setBranches(final Set<RCSBranch> branches) {
+		// PRECONDITIONS
+		try {
+			this.branches = branches;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public void setBranchParent(final RCSTransaction branchParent) {
+		// PRECONDITIONS
+		try {
+			this.branchParent = branchParent;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -624,6 +541,15 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		                                 : null;
 	}
 	
+	public void setMergeParent(final RCSTransaction mergeParent) {
+		// PRECONDITIONS
+		try {
+			this.mergeParent = mergeParent;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Sets the message.
 	 * 
@@ -639,14 +565,6 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 	 */
 	protected void setOriginalId(final String originalId) {
 		this.originalId = originalId;
-	}
-	
-	/**
-	 * @param parents
-	 *            the parents to set
-	 */
-	public void setParents(final Set<RCSTransaction> parents) {
-		this.parents = parents;
 	}
 	
 	/**
@@ -704,19 +622,10 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		string.append(getRevisions().size());
 		string.append(", author=");
 		string.append(getAuthor());
-		string.append(", parents=");
-		string.append("[");
-		final StringBuilder builder = new StringBuilder();
-		
-		for (final RCSTransaction transaction : getParents()) {
-			if (builder.length() > 0) {
-				builder.append(", ");
-			}
-			builder.append(transaction.getId());
-		}
-		string.append(builder.toString());
-		string.append("]");
-		
+		string.append(", branchParents=");
+		string.append(this.branchParent.toString());
+		string.append(", mergeParents=");
+		string.append(this.mergeParent.toString());
 		string.append(", children=");
 		string.append("[");
 		final StringBuilder builder2 = new StringBuilder();
@@ -730,12 +639,7 @@ public class RCSTransaction implements Annotated, Comparable<RCSTransaction> {
 		string.append(builder2.toString());
 		string.append("]");
 		
-		if (getBranch() != null) {
-			string.append(", branch=");
-			string.append(getBranch());
-		}
 		string.append("]");
 		return string.toString();
 	}
-	
 }

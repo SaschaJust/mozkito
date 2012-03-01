@@ -38,11 +38,11 @@ import org.jfree.data.xy.DefaultXYDataset;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import difflib.Delta;
@@ -342,12 +342,9 @@ public abstract class Repository {
 		                                                     - Repository.class.getSimpleName().length()).toUpperCase());
 	}
 	
-	/**
-	 * Gets the rev dependency iterator.
-	 * 
-	 * @return the rev dependency iterator
-	 */
-	public abstract RevDependencyIterator getRevDependencyIterator();
+	public abstract IRevDependencyGraph getRevDependencyGraph();
+	
+	public abstract IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
 	
 	/**
 	 * @return the startRevision

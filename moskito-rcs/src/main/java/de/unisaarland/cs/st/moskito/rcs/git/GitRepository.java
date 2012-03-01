@@ -49,12 +49,13 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -77,12 +78,12 @@ public class GitRepository extends Repository {
 	protected static Regex                  regex           = new Regex(
 	                                                                    ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
 	protected static Regex                  formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
-	private GitRevDependencyIterator        revDepIter;
 	private File                            cloneDir;
 	private List<String>                    transactionIDs  = new LinkedList<String>();
 	
 	private final HashMap<String, LogEntry> logCache        = new HashMap<String, LogEntry>();
 	private BranchFactory                   branchFactory;
+	private GitRevDependencyGraph           revDepGraph;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -287,6 +288,16 @@ public class GitRepository extends Repository {
 		return builder.toString();
 	}
 	
+	public BranchFactory getBranchFactory() {
+		// PRECONDITIONS
+		
+		try {
+			return this.branchFactory;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getChangedPaths()
@@ -426,6 +437,30 @@ public class GitRepository extends Repository {
 		return response.getSecond().get(0).trim();
 	}
 	
+	public List<String> getLsRemote() {
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "ls-remote", "." },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not get ls-remote.");
+		}
+		return response.getSecond();
+	}
+	
+	public List<String> getMerges() {
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
+		                                                                              "--branches", "--remotes",
+		                                                                              "--parents", "--merges" },
+		                                                                      this.cloneDir, null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not get rev-list --merges.");
+		}
+		return response.getSecond();
+	}
+	
 	@Override
 	public String getRelativeTransactionId(final String transactionId,
 	                                       final long index) {
@@ -470,11 +505,47 @@ public class GitRepository extends Repository {
 	}
 	
 	@Override
-	public RevDependencyIterator getRevDependencyIterator() {
-		if (this.revDepIter == null) {
-			this.revDepIter = new GitRevDependencyIterator(this.cloneDir, getEndRevision(), this.branchFactory);
+	public IRevDependencyGraph getRevDependencyGraph() {
+		// PRECONDITIONS
+		
+		try {
+			if (this.revDepGraph == null) {
+				this.revDepGraph = new GitRevDependencyGraph(this);
+				this.revDepGraph.createFromRepository();
+			}
+			return this.revDepGraph;
+		} finally {
+			// POSTCONDITIONS
 		}
-		return this.revDepIter;
+	}
+	
+	@Override
+	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+		// PRECONDITIONS
+		
+		try {
+			if (this.revDepGraph == null) {
+				this.revDepGraph = new GitRevDependencyGraph(this);
+				this.revDepGraph.readFromDB(persistenceUtil);
+			}
+			return this.revDepGraph;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public List<String> getRevListParents() {
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
+		                                                                              "--encoding=UTF-8", "--parents",
+		                                                                              "--branches", "--remotes",
+		                                                                              "--topo-order" }, this.cloneDir,
+		                                                                      null,
+		                                                                      new HashMap<String, String>(),
+		                                                                      GitRepository.charset);
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not get rev-list --children.");
+		}
+		return response.getSecond();
 	}
 	
 	@Override

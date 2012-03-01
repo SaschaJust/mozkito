@@ -15,19 +15,18 @@
  */
 package de.unisaarland.cs.st.moskito;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
-import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependency;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
@@ -38,33 +37,14 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class GraphBuilder extends Sink<RCSTransaction> {
 	
+	private int counter;
+	
 	public GraphBuilder(final Group threadGroup, final RepositorySettings settings, final Repository repository,
-	        final PersistenceUtil persistenceUtil) {
+	        final PersistenceUtil persistenceUtil, final BranchFactory branchFactory) {
 		super(threadGroup, settings, false);
-		final Map<String, RevDependency> reverseDependencies = new HashMap<String, RevDependency>();
-		final Map<String, String> latest = new HashMap<String, String>();
-		final Map<String, RCSTransaction> cached = new HashMap<String, RCSTransaction>();
-		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
-			
-			@Override
-			public void preExecution() {
-				if (Logger.logInfo()) {
-					Logger.info("Fetching reverse dependencies. This could take a while...");
-				}
-				
-				for (final RevDependencyIterator revdep = repository.getRevDependencyIterator(); revdep.hasNext();) {
-					final RevDependency rd = revdep.next();
-					reverseDependencies.put(rd.getId(), rd);
-				}
-				
-				if (Logger.logInfo()) {
-					Logger.info("Reverse dependencies ready.");
-				}
-				
-				persistenceUtil.beginTransaction();
-			}
-		};
+		final IRevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
+		this.counter = 0;
+		persistenceUtil.beginTransaction();
 		
 		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
@@ -75,110 +55,42 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 				}
 				
 				final RCSTransaction rcsTransaction = getInputData();
+				final String hash = rcsTransaction.getId();
 				
-				final RevDependency revdep = reverseDependencies.get(rcsTransaction.getId());
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Fecthing cached reverseDepednency for transaction " + rcsTransaction.getId() + ": "
-					        + revdep);
+				if (!revDepGraph.hasVertex(hash)) {
+					throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
 				}
 				
-				final RCSBranch rcsBranch = revdep.getCommitBranch();
-				rcsTransaction.setBranch(rcsBranch);
-				rcsTransaction.addAllTags(revdep.getTagNames());
-				for (final String parent : revdep.getParents()) {
-					RCSTransaction parentTransaction = null;
-					if (!cached.containsKey(parent)) {
-						parentTransaction = persistenceUtil.loadById(parent, RCSTransaction.class);
-						if (parentTransaction != null) {
-							cached.put(parentTransaction.getId(), parentTransaction);
-						}
-					} else {
-						parentTransaction = cached.get(parent);
-					}
-					
-					if (parentTransaction != null) {
-						rcsTransaction.addParent(parentTransaction);
-					} else {
-						if (!rcsTransaction.getId().equals(repository.getFirstRevisionId())) {
-							if (Logger.logError()) {
-								Logger.error("Got child of unknown parent: " + rcsTransaction
-								        + " and it was not the first revision of the repository: "
-								        + repository.getFirstRevisionId() + ". This should not happen.");
-							}
-						}
-					}
+				// set parents
+				final String branchParentHash = revDepGraph.getBranchParent(hash);
+				if (branchParentHash != null) {
+					final RCSTransaction branchParent = persistenceUtil.loadById(branchParentHash, RCSTransaction.class);
+					rcsTransaction.setBranchParent(branchParent);
+				}
+				final String mergeParentHash = revDepGraph.getMergeParent(hash);
+				if (mergeParentHash != null) {
+					final RCSTransaction mergeParent = persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
+					rcsTransaction.setMergeParent(mergeParent);
 				}
 				
-				// detect new branch
-				if (rcsTransaction.getParents().isEmpty()) {
-					rcsTransaction.getBranch().setBegin(rcsTransaction);
-					if (Logger.logDebug()) {
-						Logger.debug("Setting transaction " + rcsTransaction.getId()
-						        + " as begin transaction of branch " + rcsTransaction.getBranch().getName());
-						persistenceUtil.saveOrUpdate(rcsTransaction.getBranch());
-					}
-				} else {
-					final RCSBranch branch = rcsTransaction.getBranch();
-					boolean foundParentInBranch = false;
-					for (final RCSTransaction parent : rcsTransaction.getParents()) {
-						if (parent.getBranch().equals(branch)) {
-							foundParentInBranch = true;
-							break;
-						}
-					}
-					if (!foundParentInBranch) {
-						branch.setBegin(rcsTransaction);
-						if (Logger.logDebug()) {
-							Logger.debug("Setting transaction " + rcsTransaction.getId()
-							        + " as begin transaction of branch " + rcsTransaction.getBranch().getName());
-						}
-						persistenceUtil.saveOrUpdate(rcsTransaction.getBranch());
-					}
+				// set tags
+				final Set<String> tags = revDepGraph.getTags(hash);
+				if (tags != null) {
+					rcsTransaction.addAllTags(tags);
 				}
 				
-				// detect branch merge
-				if (revdep.getParents().size() > 1) {
-					for (final String parent : revdep.getParents()) {
-						final RCSTransaction parentTransaction = cached.get(parent);
-						
-						if (!parentTransaction.getBranch().getName().equals(rcsTransaction.getBranch().getName())) {
-							// closed branch
-							// remove parent transaction from cache
-							
-							parentTransaction.addChild(rcsTransaction);
-							
-							// persistenceUtil.update(cached.remove(parentTransaction.getId()));
-							cached.remove(parentTransaction.getId());
-							persistenceUtil.commitTransaction();
-							persistenceUtil.beginTransaction();
-							// remove branch from cache
-							latest.remove(parentTransaction.getBranch().getName());
-							
-							// FIXME this must not be true. Fix me after MSR deadline
-							parentTransaction.getBranch().setEnd(parentTransaction);
-							persistenceUtil.saveOrUpdate(parentTransaction.getBranch());
-						}
-					}
+				// persist branches
+				final String branchName = revDepGraph.isBranchHead(hash);
+				if (branchName != null) {
+					final RCSBranch branch = branchFactory.getBranch(branchName);
+					branch.setHead(rcsTransaction);
+					persistenceUtil.saveOrUpdate(branch);
 				}
-				
-				// ++++++ Update caches ++++++
-				// remove old "latest transaction" from cache
-				if (cached.containsKey(latest.get(revdep.getCommitBranch().getName()))) {
-					cached.get(latest.get(revdep.getCommitBranch().getName())).addChild(rcsTransaction);
-					
-					// persistenceUtil.update(cached.remove(latest.get(revdep.getCommitBranch().getName())));
-					cached.remove(latest.get(revdep.getCommitBranch().getName()));
+				persistenceUtil.saveOrUpdate(rcsTransaction);
+				if ((++GraphBuilder.this.counter % 15) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}
-				
-				// add transaction to cache
-				cached.put(rcsTransaction.getId(), rcsTransaction);
-				
-				// set new "latest transaction" to active branch cache
-				latest.put(revdep.getCommitBranch().getName(), rcsTransaction.getId());
-				// ------ Update caches ------
 			}
 		};
 		
@@ -187,10 +99,8 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 			@Override
 			public void postExecution() {
 				persistenceUtil.commitTransaction();
-				cached.clear();
 			}
 		};
 		
 	}
-	
 }

@@ -47,29 +47,26 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 	public void testRCSBranch() {
 		
 		final RCSBranch branch = new RCSBranch("testBranch");
-		branch.addMergedIn("0123456789abcde");
 		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
 		                                                                         "committed begin",
 		                                                                         new DateTime(),
 		                                                                         new Person("just", "Sascha Just",
 		                                                                                    "sascha.just@st.cs.uni-saarland.de"),
-		                                                                         "000000000000000", this.branchFactory);
+		                                                                         "000000000000000");
 		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
 		                                                                       "committed end",
 		                                                                       new DateTime(),
 		                                                                       new Person("just", "Sascha Just",
 		                                                                                  "sascha.just@st.cs.uni-saarland.de"),
-		                                                                       "0123456789abcde", this.branchFactory);
+		                                                                       "0123456789abcde");
 		
-		beginTransaction.setBranch(branch);
-		endTransaction.setBranch(branch);
+		branch.setHead(endTransaction);
 		
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(beginTransaction);
 		getPersistenceUtil().save(endTransaction);
-		branch.setBegin(beginTransaction);
-		branch.setEnd(endTransaction);
 		beginTransaction.addChild(endTransaction);
+		endTransaction.setBranchParent(beginTransaction);
 		getPersistenceUtil().commitTransaction();
 		
 		final List<RCSBranch> list = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSBranch.class));
@@ -78,18 +75,22 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		assertEquals(2, list.size());
 		assertTrue(list.contains(branch));
 		assertTrue(list.contains(this.branchFactory.getMasterBranch()));
+		for (final RCSBranch b : list) {
+			if (b.getName().equals(branch.getName())) {
+				assertEquals(endTransaction, branch.getHead());
+			}
+		}
 	}
 	
 	@Test
 	public void testRCSRevision() {
 		final Person person = new Person("just", null, null);
-		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
-		                                                                    this.branchFactory);
+		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
 		final RCSFile file = new RCSFileManager().createFile("test.java", transaction);
 		final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
 		
 		assertTrue(transaction.getRevisions().contains(revision));
-		transaction.setBranch(this.branchFactory.getMasterBranch());
+		this.branchFactory.getMasterBranch().setHead(transaction);
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(transaction);
 		getPersistenceUtil().commitTransaction();
@@ -141,14 +142,15 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 	public void testSaveRCSFile() {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "",
-		                                                                       this.branchFactory);
+		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
 		
 		final RCSFile file = fileManager.createFile("test.java", rcsTransaction);
 		file.assignTransaction(rcsTransaction, "formerTest.java");
 		final RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
 		getPersistenceUtil().beginTransaction();
-		rcsTransaction.setBranch(this.branchFactory.getMasterBranch());
+		
+		this.branchFactory.getMasterBranch().setHead(rcsTransaction);
+		
 		getPersistenceUtil().saveOrUpdate(rcsTransaction);
 		getPersistenceUtil().commitTransaction();
 		

@@ -183,8 +183,7 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 		// }
 		
 		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository,
-		                     this.repoSettings.getBranchFactory());
+		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 		
 		if (this.persistenceUtil != null) {
 			new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);

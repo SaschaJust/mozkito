@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
+import de.unisaarland.cs.st.moskito.rcs.elements.PreviousTransactionIterator;
 
 /**
  * The Class RCSBranch.
@@ -41,14 +42,12 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  */
 @Entity
 @Table (name = "rcsbranch")
-public class RCSBranch implements Annotated, Comparable<RCSBranch> {
+public class RCSBranch implements Annotated {
 	
 	private static final long  serialVersionUID   = 5419737140470855522L;
 	
 	private String             name;
-	private RCSBranch          parent             = null;
-	private RCSTransaction     begin              = null;
-	private RCSTransaction     end                = null;
+	private RCSTransaction     head               = null;
 	private Set<String>        mergedIn           = new HashSet<String>();
 	
 	public static final String MASTER_BRANCH_NAME = "master";
@@ -68,45 +67,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	public RCSBranch(final String name) {
 		setName(name);
-	}
-	
-	/**
-	 * @param mergedIn
-	 */
-	@Transient
-	public void addMergedIn(final String mergedIn) {
-		getMergedIn().add(mergedIn);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(final RCSBranch other) {
-		RCSBranch p = getParent();
-		if (equals(other)) {
-			return 0;
-		}
-		if (other.isMasterBranch()) {
-			return 1;
-		} else if (isMasterBranch()) {
-			return -1;
-		}
-		while ((p != null) && (!p.isMasterBranch())) {
-			if (p.equals(other)) {
-				return 1;
-			}
-			p = p.getParent();
-		}
-		RCSBranch c = other.getParent();
-		while ((c != null) && (!c.isMasterBranch())) {
-			if (c.equals(this)) {
-				return -1;
-			}
-			c = c.getParent();
-		}
-		return 0;
 	}
 	
 	/**
@@ -138,16 +98,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public RCSTransaction containsTransaction(final String tId) {
-		if (getBegin().getId().equals(tId)) {
-			return getBegin();
-		}
-		
-		RCSTransaction current = getEnd();
-		while ((current != null) && (!current.equals(getBegin()))) {
+		RCSTransaction current = getHead();
+		while (current != null) {
 			if (current.getId().equals(tId)) {
 				return current;
 			}
-			current = current.getParent(this);
+			current = current.getBranchParent();
 		}
 		return null;
 	}
@@ -175,26 +131,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
-	 * Gets the begin.
-	 * 
-	 * @return the begin
-	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	public RCSTransaction getBegin() {
-		return this.begin;
-	}
-	
-	/**
-	 * Gets the end.
-	 * 
-	 * @return the end
-	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	public RCSTransaction getEnd() {
-		return this.end;
-	}
-	
-	/**
 	 * Gets the handle.
 	 * 
 	 * @return the handle
@@ -205,9 +141,21 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
+	 * Gets the end.
+	 * 
+	 * @return the end
+	 */
+	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	public RCSTransaction getHead() {
+		return this.head;
+	}
+	
+	/**
 	 * @return the name of the branch this branch was merged in (if any)
+	 * @deprecated this is not yet implement
 	 */
 	@ElementCollection
+	@Deprecated
 	public Set<String> getMergedIn() {
 		return this.mergedIn;
 	}
@@ -225,13 +173,12 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	}
 	
 	/**
-	 * Gets the parent.
+	 * Return the transactions within this branch in topological order.
 	 * 
-	 * @return the parent
+	 * @return the transactions
 	 */
-	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	public RCSBranch getParent() {
-		return this.parent;
+	public Iterable<RCSTransaction> getTransactions() {
+		return new PreviousTransactionIterator(getHead());
 	}
 	
 	@Override
@@ -244,14 +191,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		return result;
 	}
 	
-	/**
-	 * @return
-	 */
-	@Transient
-	public boolean hasParent() {
-		return getParent() != null;
-	}
-	
 	@Transient
 	public boolean isMasterBranch() {
 		return getName().equals(MASTER_BRANCH_NAME);
@@ -262,17 +201,7 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 */
 	@Transient
 	public boolean isOpen() {
-		return getEnd() == null;
-	}
-	
-	/**
-	 * Sets the begin.
-	 * 
-	 * @param begin
-	 *            the begin to set
-	 */
-	public void setBegin(final RCSTransaction begin) {
-		this.begin = begin;
+		return getHead() == null;
 	}
 	
 	/**
@@ -281,8 +210,8 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 	 * @param end
 	 *            the end to set
 	 */
-	public void setEnd(final RCSTransaction end) {
-		this.end = end;
+	public void setHead(final RCSTransaction end) {
+		this.head = end;
 	}
 	
 	/**
@@ -302,16 +231,6 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		this.name = name;
 	}
 	
-	/**
-	 * Sets the parent.
-	 * 
-	 * @param parent
-	 *            the parent to set
-	 */
-	public void setParent(final RCSBranch parent) {
-		this.parent = parent;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -322,14 +241,9 @@ public class RCSBranch implements Annotated, Comparable<RCSBranch> {
 		sb.append("RCSBranch [name=");
 		sb.append(getName());
 		sb.append(", parent=");
-		if (getParent() != null) {
-			sb.append(getParent());
-		} else {
-			sb.append("null");
-		}
-		sb.append(", end=");
-		if (getEnd() != null) {
-			sb.append(getEnd().getId());
+		sb.append(", head=");
+		if (getHead() != null) {
+			sb.append(getHead().getId());
 		} else {
 			sb.append("null");
 		}

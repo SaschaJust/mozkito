@@ -18,7 +18,6 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
@@ -32,7 +31,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -150,39 +148,7 @@ public class RCSFile implements Annotated, Serializable {
 		RCSTransaction current = transaction;
 		
 		while ((current != null) && !getChangedNames().containsKey(current.getId())) {
-			
-			// if current transaction is a merge
-			final Set<RCSTransaction> currentParents = current.getParents();
-			if (currentParents.size() > 1) {
-				final TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
-				// for each merged branch check if it contains any of the
-				// transaction ids
-				for (final RCSTransaction p : currentParents) {
-					final RCSBranch parentBranch = p.getBranch();
-					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.isMasterBranch())) {
-						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
-					}
-				}
-				// if we found a branch that contains a transaction and got
-				// merged here
-				if (hits.size() > 0) {
-					// mark it as hit and continue
-					current = hits.last();
-					continue;
-				}
-			}
-			
-			RCSTransaction parentTransaction = current.getParent(current.getBranch());
-			if ((parentTransaction == null) && (!current.getBranch().isMasterBranch())) {
-				final Set<RCSTransaction> parents = current.getParents();
-				if (parents.isEmpty()) {
-					throw new UnrecoverableError(
-					                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-					                                     + current.toString());
-				}
-				parentTransaction = parents.iterator().next();
-			}
-			current = parentTransaction;
+			current = current.getBranchParent();
 		}
 		
 		if (current != null) {

@@ -20,6 +20,7 @@ import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
@@ -32,6 +33,7 @@ public class Graph extends Chain<RepositorySettings> {
 	private final Pool            threadPool;
 	private final PersistenceUtil persistenceUtil;
 	private final Repository      repository;
+	private final BranchFactory   branchFactory;
 	
 	/**
 	 * @param settings
@@ -43,6 +45,7 @@ public class Graph extends Chain<RepositorySettings> {
 		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		this.persistenceUtil = persistenceUtil;
 		this.repository = repository;
+		this.branchFactory = new BranchFactory(persistenceUtil);
 	}
 	
 	/*
@@ -52,6 +55,7 @@ public class Graph extends Chain<RepositorySettings> {
 	@Override
 	public void setup() {
 		new GraphReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
-		new GraphBuilder(this.threadPool.getThreadGroup(), getSettings(), this.repository, this.persistenceUtil);
+		new GraphBuilder(this.threadPool.getThreadGroup(), getSettings(), this.repository, this.persistenceUtil,
+		                 this.branchFactory);
 	}
 }

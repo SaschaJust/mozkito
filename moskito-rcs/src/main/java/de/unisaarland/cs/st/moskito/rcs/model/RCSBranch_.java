@@ -12,8 +12,7 @@ import javax.persistence.metamodel.SingularAttribute;
                              date = "Thu Jan 26 23:21:00 CET 2012")
 public class RCSBranch_ {
 	
-	public static volatile SingularAttribute<RCSBranch, RCSTransaction>                                   begin;
-	public static volatile SingularAttribute<RCSBranch, RCSTransaction>                                   end;
+	public static volatile SingularAttribute<RCSBranch, RCSTransaction>                                   head;
 	public static volatile SetAttribute<RCSBranch, String>                                                mergedIn;
 	public static volatile SingularAttribute<RCSBranch, String>                                           name;
 	public static volatile SingularAttribute<RCSBranch, de.unisaarland.cs.st.moskito.rcs.model.RCSBranch> parent;
