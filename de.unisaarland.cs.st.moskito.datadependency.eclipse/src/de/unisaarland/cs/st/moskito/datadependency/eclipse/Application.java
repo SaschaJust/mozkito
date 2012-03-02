@@ -19,9 +19,10 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.settings.Settings;
-import net.ownhero.dev.andama.settings.InputFileArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.arguments.InputFileArgument;
+import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,12 +48,12 @@ public class Application implements IApplication {
 	public Object start(final IApplicationContext context) throws Exception {
 		Settings settings = new Settings();
 		
-		InputFileArgument inArg = new InputFileArgument(settings, "in", "The file to be analyzed (full qualified path",
-		                                                null, true);
-		OutputFileArgument outArg = new OutputFileArgument(settings, "out", "The file to write the output to", null,
-		                                                   true, true);
+		InputFileArgument inArg = new InputFileArgument(settings.getRootArgumentSet(), "in", "The file to be analyzed (full qualified path",
+		                                                null, Requirement.required);
+		OutputFileArgument outArg = new OutputFileArgument(settings.getRootArgumentSet(), "out", "The file to write the output to", null,
+		                                                   Requirement.required,true);
 		
-		settings.parseArguments();
+		settings.parse();
 		
 		CompilationUnit cu = PPAUtils.getCU(inArg.getValue(), new PPAOptions());
 		DataDependencyVisitor visitor = new DataDependencyVisitor(cu);
