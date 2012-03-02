@@ -243,12 +243,14 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				if (branchName.startsWith("refs/heads/")) {
 					branchName = branchName.substring(11);
 					if (branchName.equals("master")) {
-						branchName = RCSBranch.MASTER_BRANCH_NAME;
+						continue;
 					}
 				} else if (branchName.startsWith("refs/remotes/")) {
 					branchName = branchName.substring(13);
-					if (branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
+					if (branchName.equals("origin/HEAD")) {
 						continue;
+					if(branchName.equals("origin/master")){
+						branchName = RCSBranch.MASTER_BRANCH_NAME;
 					}
 				} else if (branchName.startsWith("refs/pull/")) {
 					branchName = branchName.substring(10);
@@ -264,6 +266,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				}
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch head for " + branchName + ": " + lineParts[0]);
+				}
+				if((branchHeads.containsKey(lineParts[0])) && branchHeads.get(lineParts[0]).equals(RCSBranch.MASTER_BRANCH_NAME)){
+					continue;
 				}
 				branchHeads.put(lineParts[0], branchName);
 			}

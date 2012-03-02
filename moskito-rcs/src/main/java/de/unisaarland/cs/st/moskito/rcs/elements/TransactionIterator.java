@@ -127,7 +127,7 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 		}
 		this.current = this.current.getBranchParent();
 		if (Logger.logDebug()) {
-			Logger.debug(getClass().getSimpleName() + ".next(): " + result.getId());
+			Logger.debug(getClass().getSimpleName() + ".next() with root " + this.root.getId() + ": " + result.getId());
 		}
 		return result;
 	}
