@@ -762,17 +762,22 @@ public class MercurialRepository extends Repository {
 		
 		setUri(address);
 		
-		String hgName = FileUtils.tmpDir.getAbsolutePath();
-		if (tmpDir != null) {
-			hgName = tmpDir.getAbsolutePath();
+		File cloneDir = null;
+		if (tmpDir == null) {
+			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			
+			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+		} else {
+			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			
+			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
-		hgName += FileUtils.fileSeparator + "moskito_hg_clone_" + DateTimeUtils.currentTimeMillis();
 		
 		// clone the remote repository
-		if (!clone(null, hgName)) {
+		if (!clone(null, cloneDir.getAbsolutePath())) {
 			if (Logger.logError()) {
-				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `" + hgName
-				        + "`");
+				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
+				        + cloneDir.getAbsolutePath() + "`");
 				throw new RuntimeException();
 			}
 		}

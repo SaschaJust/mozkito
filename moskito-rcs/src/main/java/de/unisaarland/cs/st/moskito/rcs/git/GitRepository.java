@@ -687,20 +687,25 @@ public class GitRepository extends Repository {
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
-		String gitName = FileUtils.tmpDir.getAbsolutePath();
-		if (tmpDir != null) {
-			gitName = tmpDir.getAbsolutePath();
+		File cloneDir = null;
+		if (tmpDir == null) {
+			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			
+			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+		} else {
+			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			
+			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
-		gitName += FileUtils.fileSeparator + "moskito_git_clone_" + DateTimeUtils.currentTimeMillis();
 		
-		if (!clone(inputStream, gitName)) {
+		if (!clone(inputStream, cloneDir.getAbsolutePath())) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
 		}
 		
 		final String innerPath = ((getUri().getFragment()) != null)
 		                                                           ? (getUri().getFragment())
 		                                                           : "/";
-		this.cloneDir = new File(gitName + FileUtils.fileSeparator + innerPath);
+		this.cloneDir = new File(cloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
 		if (!this.cloneDir.exists()) {
 			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}

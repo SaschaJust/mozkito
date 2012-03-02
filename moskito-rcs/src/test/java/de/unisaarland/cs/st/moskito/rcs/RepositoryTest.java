@@ -41,6 +41,7 @@ import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeExcepti
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySetting;
 import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
@@ -50,7 +51,7 @@ import difflib.Delta;
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
-public class RepositoryTest {
+public class RepositoryTest extends MoskitoTest {
 	
 	private static List<Repository>         repositories = new LinkedList<Repository>();
 	private static Map<RepositoryType, URI> repoMap;
