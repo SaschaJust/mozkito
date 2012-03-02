@@ -133,12 +133,13 @@ public class GraphBuilder implements Runnable {
 				if (mergeParent == null) {
 					throw new UnrecoverableError("Could not load transaction " + mergeParentHash + " from DB.");
 				}
-				final Set<RCSBranch> branches = mergeParent.getBranches();
-				if ((branches == null) || (branches.isEmpty())) {
+				final Set<String> branchNames = mergeParent.getBranchNames();
+				if ((branchNames == null) || (branchNames.isEmpty())) {
 					throw new UnrecoverableError("Branches of transaction " + mergeParentHash
 					        + " are NULL or empty. Both is a fatal error.");
 				}
-				for (final RCSBranch branch : mergeParent.getBranches()) {
+				for (final String branchName : branchNames) {
+					final RCSBranch branch = this.persistenceUtil.loadById(branchName, RCSBranch.class);
 					branch.addMergedIn(hash);
 					this.persistenceUtil.saveOrUpdate(branch);
 					if ((++counter % commitLimit) == 0) {

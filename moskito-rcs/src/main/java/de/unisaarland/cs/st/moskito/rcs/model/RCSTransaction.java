@@ -115,7 +115,7 @@ public class RCSTransaction implements Annotated {
 	private Set<String>             tags          = new HashSet<String>();
 	private String                  originalId;
 	private boolean                 atomic        = false;
-	private Map<RCSBranch, Long>    branchIndices = null;
+	private Map<String, Long>       branchIndices = null;
 	
 	/**
 	 * used by PersistenceUtil to create RCSTransaction instance.
@@ -168,10 +168,10 @@ public class RCSTransaction implements Annotated {
 	@Transient
 	public boolean addBranch(final RCSBranch branch,
 	                         final Long index) {
-		if (this.branchIndices.containsKey(branch)) {
+		if (this.branchIndices.containsKey(branch.getName())) {
 			return false;
 		}
-		this.branchIndices.put(branch, index);
+		this.branchIndices.put(branch.getName(), index);
 		return true;
 	}
 	
@@ -230,28 +230,28 @@ public class RCSTransaction implements Annotated {
 		return getPersons().get("author");
 	}
 	
+	@ElementCollection
+	public Map<String, Long> getBranchIndices() {
+		// PRECONDITIONS
+		
+		try {
+			return this.branchIndices;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the branches.
 	 * 
 	 * @return the branches
 	 */
 	@Transient
-	public Set<RCSBranch> getBranches() {
+	public Set<String> getBranchNames() {
 		// PRECONDITIONS
 		
 		try {
 			return this.branchIndices.keySet();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	@ManyToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	public Map<RCSBranch, Long> getBranchIndices() {
-		// PRECONDITIONS
-		
-		try {
-			return this.branchIndices;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -424,7 +424,7 @@ public class RCSTransaction implements Annotated {
 		getPersons().add("author", author);
 	}
 	
-	public void setBranchIndices(final Map<RCSBranch, Long> branchIndices) {
+	public void setBranchIndices(final Map<String, Long> branchIndices) {
 		// PRECONDITIONS
 		try {
 			this.branchIndices = branchIndices;
