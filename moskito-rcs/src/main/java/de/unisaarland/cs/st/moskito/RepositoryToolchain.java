@@ -21,6 +21,8 @@ import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
 import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
 import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Required;
@@ -68,7 +70,11 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 			}
 			throw new Shutdown(e.getMessage(), e);
 		}
-		
+		try {
+			settings.parse();
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		}
 	}
 	
 	public PersistenceUtil getPersistenceUtil() {
@@ -105,83 +111,6 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 		
 		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
 		this.repository = this.repoSettings.getValue();
-		// i din't think we can resume repository mining at all.
-		// if (this.persistenceUtil != null) {
-		// String start = repository.getStartRevision().equalsIgnoreCase("HEAD")
-		// ? repository.getHEAD()
-		// : repository.getStartRevision();
-		// String end = repository.getEndRevision().equalsIgnoreCase("HEAD")
-		// ? repository.getHEAD()
-		// : repository.getEndRevision();
-		//
-		// if (Logger.logInfo()) {
-		// Logger.info("Checking for persistent transactions (" + start + ".." +
-		// end + ").");
-		// }
-		//
-		// RCSTransaction startTransaction =
-		// persistenceUtil.fetchRCSTransaction(start);
-		// if (startTransaction != null) {
-		//
-		// if (Logger.logDebug()) {
-		// Logger.debug("Found start transaction in persistence storage.");
-		// }
-		//
-		// criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-		// criteria.add(Restrictions.eq("id", end));
-		// @SuppressWarnings ("unchecked")
-		// List<RCSTransaction> endTransactions = criteria.list();
-		//
-		// if ((endTransactions != null) && (endTransactions.size() > 0) &&
-		// (endTransactions.get(0) != null)) {
-		// if (Logger.logDebug()) {
-		// Logger.debug("Found end transaction in persistence storage.");
-		// }
-		// if (Logger.logWarn()) {
-		// Logger.warn("Nothing to do. Transactions from " + start + " to " +
-		// end
-		// + " are already persisten.");
-		// }
-		// shutdown();
-		// } else {
-		// criteria = this.persistenceUtil.createCriteria(RCSTransaction.class);
-		// criteria.addOrder(Order.desc("id"));
-		// @SuppressWarnings ("unchecked")
-		// List<RCSTransaction> maxTransactions = criteria.list();
-		// if ((maxTransactions != null) && (maxTransactions.size() > 0)) {
-		// RCSTransaction maxPersistentTransaction = maxTransactions.get(0);
-		// repository.setStartRevision(maxPersistentTransaction.getId());
-		//
-		// if (Logger.logWarn()) {
-		// Logger.warn("Transactions known from " + startTransaction.getId() +
-		// " to "
-		// + maxPersistentTransaction.getId() + ". Skipping and fetching "
-		// + maxPersistentTransaction.getId() + " to " +
-		// repository.getEndRevision() + ".");
-		// }
-		//
-		// if (Logger.logError()) {
-		// Logger.error("UNSUPPORTED RESUME FOUND. PLEASE FIX THE CODE.");
-		// }
-		//
-		// throw new UnrecoverableError();
-		// //
-		// repository.setStartTransaction(maxPersistentTransaction.getParents());
-		// // persistenceUtil.delete(maxPersistentTransaction);
-		// } else {
-		//
-		// if (Logger.logError()) {
-		// Logger.error("Could not find max transaction although persitent transactions were found. Aborting.");
-		// }
-		//
-		// shutdown();
-		// }
-		// }
-		//
-		//
-		// }
-		// }
-		
 		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 		
