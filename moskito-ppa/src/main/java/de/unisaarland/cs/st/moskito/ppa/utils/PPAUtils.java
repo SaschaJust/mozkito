@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Query;
@@ -316,15 +315,10 @@ public class PPAUtils {
 		
 		final String requestName = Thread.currentThread().getName();
 		final IJavaProject javaProject = getProject(requestName);
-		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
-		if ((parentTransaction == null) && (!transaction.getBranch().isMasterBranch())) {
-			final Set<RCSTransaction> parents = transaction.getParents();
-			if (parents.isEmpty()) {
-				throw new UnrecoverableError(
-				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-				                                     + transaction.toString());
-			}
-			parentTransaction = parents.iterator().next();
+		
+		final RCSTransaction parentTransaction = transaction.getBranchParent();
+		if (parentTransaction == null) {
+			return;
 		}
 		
 		for (final RCSRevision rev : transaction.getRevisions()) {
@@ -551,15 +545,9 @@ public class PPAUtils {
 	                                                              final String changedPath,
 	                                                              final Collection<ChangeOperationVisitor> visitors) {
 		
-		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
-		if ((parentTransaction == null) && (!transaction.getBranch().isMasterBranch())) {
-			final Set<RCSTransaction> parents = transaction.getParents();
-			if (parents.isEmpty()) {
-				throw new UnrecoverableError(
-				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-				                                     + transaction.toString());
-			}
-			parentTransaction = parents.iterator().next();
+		final RCSTransaction parentTransaction = transaction.getBranchParent();
+		if (parentTransaction == null) {
+			return;
 		}
 		
 		// generate diff
@@ -741,15 +729,9 @@ public class PPAUtils {
 		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
 		final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
 		
-		RCSTransaction parentTransaction = transaction.getParent(transaction.getBranch());
-		if ((parentTransaction == null) && (!transaction.getBranch().isMasterBranch())) {
-			final Set<RCSTransaction> parents = transaction.getParents();
-			if (parents.isEmpty()) {
-				throw new UnrecoverableError(
-				                             "Detected a transaction that has no parent within it's branch nor any parent at all: "
-				                                     + transaction.toString());
-			}
-			parentTransaction = parents.iterator().next();
+		final RCSTransaction parentTransaction = transaction.getBranchParent();
+		if (parentTransaction == null) {
+			return;
 		}
 		
 		for (final RCSRevision rev : transaction.getRevisions()) {

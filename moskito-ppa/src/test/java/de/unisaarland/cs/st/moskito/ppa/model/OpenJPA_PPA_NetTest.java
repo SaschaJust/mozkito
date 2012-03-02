@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -44,9 +45,11 @@ public class OpenJPA_PPA_NetTest extends MoskitoTest {
 		
 		final Person p = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		final RCSBranch masterBranch = branchFactory.getMasterBranch();
 		
-		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1", branchFactory);
-		transaction.setBranch(branchFactory.getMasterBranch());
+		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1");
+		masterBranch.setHead(transaction);
+		
 		final RCSFile file = new RCSFileManager().createFile("a.java", transaction);
 		final RCSRevision rev = new RCSRevision(transaction, file, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
