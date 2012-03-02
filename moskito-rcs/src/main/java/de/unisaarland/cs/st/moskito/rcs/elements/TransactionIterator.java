@@ -35,6 +35,7 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 	
 	/** The branch line. */
 	private final Set<RCSTransaction> branchLine = new HashSet<RCSTransaction>();
+	private final Set<RCSTransaction> merges     = new HashSet<RCSTransaction>();
 	
 	/** The delegate. */
 	private TransactionIterator       delegate   = null;
@@ -52,6 +53,9 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 		
 		RCSTransaction inBranch = this.root;
 		while (inBranch != null) {
+			if (inBranch.getMergeParent() != null) {
+				this.merges.add(inBranch.getMergeParent());
+			}
 			inBranch = inBranch.getBranchParent();
 			this.branchLine.add(inBranch);
 		}
@@ -115,7 +119,7 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 	public RCSTransaction next() {
 		if (this.delegate != null) {
 			final RCSTransaction next = this.delegate.next();
-			if (this.branchLine.contains(next)) {
+			if (this.branchLine.contains(next) || this.merges.contains(next)) {
 				this.delegate = null;
 			} else {
 				return next;
@@ -123,7 +127,11 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 		}
 		final RCSTransaction result = this.current;
 		if (this.current.getMergeParent() != null) {
-			this.delegate = new TransactionIterator(this.current.getMergeParent(), this.branchLine);
+			this.merges.remove(this.current.getMergeParent());
+			final Set<RCSTransaction> stopAt = new HashSet<RCSTransaction>();
+			stopAt.addAll(this.branchLine);
+			stopAt.addAll(this.merges);
+			this.delegate = new TransactionIterator(this.current.getMergeParent(), stopAt);
 		}
 		this.current = this.current.getBranchParent();
 		if (Logger.logDebug()) {

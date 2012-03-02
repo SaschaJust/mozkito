@@ -28,9 +28,11 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 
+import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
@@ -115,6 +117,114 @@ public class PreviousTransactionIteratorTest {
 				branchMap.put(branchName, branch);
 			}
 		}
+		
+	}
+	
+	@Test
+	public void regressionTestRhino() {
+		/* 
+		 * @formatter:off
+		 *       * 17d6198f9c31d608d985ff4c9ce1dcc162dc8133
+         *       *   8222f6b8a291bf938f96d9560fd1d61638c1689c
+         *       |\  
+         *       | * 4a9e26c821ba113d9f36c95128b4184dc724750f
+         *       * | 8e98f10673bae3345844c36eee2e9b21e8fed2d0
+         *       * |   f51eba1d874d3fa5bb892d4dad8039d89dc8eee7
+         *       |\ \  
+         *       | |/  
+         *       | * f5831260561a73cf26194eec3a3f8147050a2753
+         *       * | 196075b582116f50b915e6e0508ec8812b92bcc6
+         *       * |   2fe888ece150487c5ba43264094dcb696c800216
+         *       |\ \  
+         *       | * | 7ecdf2c2bd15e19704c7e4f6c4e128357aafdcd2
+         *       * | | 1c0592306d9cfd1d19aa0133983c38448d167d69
+         *       | |/  
+         *       |/|   
+         *       * | e4e75c53fd4f66c19c594aa3dfcc683407f44093
+         *       * | c997bb0d0e45920993b576f83c657c4a532c9b95
+         *       |/  
+         *       * 34195982cb52661e5498ff880dd7b5b5b3230790
+	     *
+		 * 
+		 * 
+		 */
+		
+		//@formatter:on
+		final RCSTransaction t17d6198 = RCSTransaction.createTransaction("17d6198", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t8222f6b = RCSTransaction.createTransaction("8222f6b", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t4a9e26c = RCSTransaction.createTransaction("4a9e26c", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t8e98f10 = RCSTransaction.createTransaction("8e98f10", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction tf51eba1 = RCSTransaction.createTransaction("f51eba1", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction tf583126 = RCSTransaction.createTransaction("f583126", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t196075b = RCSTransaction.createTransaction("196075b", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t2fe888e = RCSTransaction.createTransaction("2fe888e", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t7ecdf2c = RCSTransaction.createTransaction("7ecdf2c", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t1c05923 = RCSTransaction.createTransaction("1c05923", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction te4e75c5 = RCSTransaction.createTransaction("e4e75c5", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction tc997bb0 = RCSTransaction.createTransaction("c997bb0", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		final RCSTransaction t3419598 = RCSTransaction.createTransaction("3419598", "", new DateTime(),
+		                                                                 new Person("kim", null, null), null);
+		
+		t17d6198.setBranchParent(t8222f6b);
+		t8222f6b.setBranchParent(t8e98f10);
+		t8222f6b.setMergeParent(t4a9e26c);
+		t4a9e26c.setBranchParent(tf583126);
+		t8e98f10.setBranchParent(tf51eba1);
+		tf51eba1.setBranchParent(t196075b);
+		tf51eba1.setMergeParent(tf583126);
+		tf583126.setBranchParent(te4e75c5);
+		t196075b.setBranchParent(t2fe888e);
+		t2fe888e.setBranchParent(t1c05923);
+		t2fe888e.setMergeParent(t7ecdf2c);
+		t7ecdf2c.setBranchParent(t3419598);
+		t1c05923.setBranchParent(te4e75c5);
+		te4e75c5.setBranchParent(tc997bb0);
+		tc997bb0.setBranchParent(t3419598);
+		
+		final BranchFactory branchFactory = new BranchFactory(null);
+		final RCSBranch masterBranch = branchFactory.getMasterBranch();
+		masterBranch.setHead(t17d6198);
+		
+		final Iterator<RCSTransaction> iter = masterBranch.getTransactions().iterator();
+		assertTrue(iter.hasNext());
+		assertEquals(t17d6198, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t8222f6b, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t4a9e26c, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t8e98f10, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(tf51eba1, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(tf583126, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t196075b, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t2fe888e, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t7ecdf2c, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t1c05923, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(te4e75c5, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(tc997bb0, iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(t3419598, iter.next());
+		assertFalse(iter.hasNext());
 		
 	}
 	
