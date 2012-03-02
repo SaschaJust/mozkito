@@ -19,7 +19,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 public class RCSTransaction_ {
 	
 	public static volatile SingularAttribute<RCSTransaction, Boolean>                                               atomic;
-	public static volatile SetAttribute<RCSTransaction, RCSBranch>                                                  branches;
 	public static volatile SetAttribute<RCSTransaction, de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction>      children;
 	public static volatile SingularAttribute<RCSTransaction, String>                                                id;
 	public static volatile SingularAttribute<RCSTransaction, Date>                                                  javaTimestamp;
