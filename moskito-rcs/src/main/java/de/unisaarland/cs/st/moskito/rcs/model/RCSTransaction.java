@@ -246,6 +246,7 @@ public class RCSTransaction implements Annotated {
 		}
 	}
 	
+	@ManyToMany (cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	public Map<RCSBranch, Long> getBranchIndices() {
 		// PRECONDITIONS
 		
