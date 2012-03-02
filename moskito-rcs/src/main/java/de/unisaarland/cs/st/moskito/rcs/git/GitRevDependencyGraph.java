@@ -237,30 +237,35 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			for (final String line : lsRemote) {
 				final String[] lineParts = line.split("\\s+");
 				String branchName = lineParts[1];
+				if (Logger.logDebug()) {
+					Logger.debug("Found branch reference: " + branchName);
+				}
 				if (branchName.startsWith("refs/heads/")) {
 					branchName = branchName.substring(11);
 					if (branchName.equals("master")) {
 						branchName = RCSBranch.MASTER_BRANCH_NAME;
 					}
-					branchHeads.put(lineParts[0], branchName);
 				} else if (branchName.startsWith("refs/remotes/")) {
 					branchName = branchName.substring(13);
 					if (branchName.equals("origin/HEAD") || branchName.equals("origin/master")) {
 						continue;
 					}
-					branchHeads.put(lineParts[0], branchName);
 				} else if (branchName.startsWith("refs/pull/")) {
 					branchName = branchName.substring(10);
-					branchHeads.put(lineParts[0], branchName);
 				} else if (branchName.startsWith("refs/tags/")) {
 					branchName = branchName.substring(10).replace("^{}", "");
 					if (!tags.containsKey(lineParts[0])) {
 						tags.put(lineParts[0], new HashSet<String>());
 					}
 					tags.get(lineParts[0]).add(branchName);
+					continue;
 				} else {
 					continue;
 				}
+				if (Logger.logDebug()) {
+					Logger.debug("Adding branch head for " + branchName + ": " + lineParts[0]);
+				}
+				branchHeads.put(lineParts[0], branchName);
 			}
 			
 			// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>

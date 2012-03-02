@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -125,6 +126,9 @@ public class TransactionIterator implements Iterator<RCSTransaction>, Iterable<R
 			this.delegate = new TransactionIterator(this.current.getMergeParent(), this.branchLine);
 		}
 		this.current = this.current.getBranchParent();
+		if (Logger.logDebug()) {
+			Logger.debug(getClass().getSimpleName() + ".next(): " + result.getId());
+		}
 		return result;
 	}
 	
