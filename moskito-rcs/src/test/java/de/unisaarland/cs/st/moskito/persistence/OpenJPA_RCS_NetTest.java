@@ -73,9 +73,8 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		final List<RCSBranch> list = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSBranch.class));
 		
 		assertFalse(list.isEmpty());
-		assertEquals(2, list.size());
+		assertEquals(1, list.size());
 		assertTrue(list.contains(branch));
-		assertTrue(list.contains(this.branchFactory.getMasterBranch()));
 		for (final RCSBranch b : list) {
 			if (b.getName().equals(branch.getName())) {
 				assertEquals(endTransaction, branch.getHead());
