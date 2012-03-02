@@ -175,6 +175,9 @@ public class GraphBuilder implements Runnable {
 		}
 		
 		for (final RCSBranch branch : branches) {
+			if (Logger.logDebug()) {
+				Logger.debug("Handling branch " + branch.getName() + " with headId=" + branch.getHead().getId());
+			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
 			for (final RCSTransaction transaction : branch.getTransactions()) {
