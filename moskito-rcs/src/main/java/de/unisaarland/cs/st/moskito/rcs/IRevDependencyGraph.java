@@ -12,6 +12,11 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public interface IRevDependencyGraph {
 	
 	/**
+	 * Close.
+	 */
+	public void close();
+	
+	/**
 	 * Creates the from repository.
 	 * 
 	 * @return true, if successful

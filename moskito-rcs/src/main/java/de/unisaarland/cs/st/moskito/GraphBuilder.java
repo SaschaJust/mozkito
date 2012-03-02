@@ -205,5 +205,6 @@ public class GraphBuilder implements Runnable {
 		phaseOne();
 		phaseTwo();
 		phaseThree();
+		this.revDepGraph.close();
 	}
 }

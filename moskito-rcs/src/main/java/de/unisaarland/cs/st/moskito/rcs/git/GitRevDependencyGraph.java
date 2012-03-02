@@ -209,6 +209,17 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	@Override
+	public void close() {
+		// PRECONDITIONS
+		
+		try {
+			this.graph.shutdown();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Contains edge.
 	 * 
