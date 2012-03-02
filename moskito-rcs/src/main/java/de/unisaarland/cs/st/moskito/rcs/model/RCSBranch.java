@@ -30,6 +30,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -38,18 +40,25 @@ import de.unisaarland.cs.st.moskito.rcs.elements.TransactionIterator;
 /**
  * The Class RCSBranch.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
 @Table (name = "rcsbranch")
 public class RCSBranch implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long  serialVersionUID   = 5419737140470855522L;
 	
+	/** The name. */
 	private String             name;
+	
+	/** The head. */
 	private RCSTransaction     head               = null;
+	
+	/** The merged in. */
 	private Set<String>        mergedIn           = new HashSet<String>();
 	
+	/** The Constant MASTER_BRANCH_NAME. */
 	public static final String MASTER_BRANCH_NAME = "master";
 	
 	/**
@@ -67,6 +76,18 @@ public class RCSBranch implements Annotated {
 	 */
 	public RCSBranch(final String name) {
 		setName(name);
+	}
+	
+	/**
+	 * Adds the merged in.
+	 * 
+	 * @param mergedIn
+	 *            the merged in
+	 */
+	@Transient
+	@NoneNull
+	public void addMergedIn(final String mergedIn) {
+		this.mergedIn.add(mergedIn);
 	}
 	
 	/**
@@ -108,6 +129,10 @@ public class RCSBranch implements Annotated {
 		return null;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -151,6 +176,8 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Gets the merged in.
+	 * 
 	 * @return the name of the branch this branch was merged in (if any)
 	 * @deprecated this is not yet implement
 	 */
@@ -182,6 +209,10 @@ public class RCSBranch implements Annotated {
 		return new TransactionIterator(getHead());
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -192,13 +223,20 @@ public class RCSBranch implements Annotated {
 		return result;
 	}
 	
+	/**
+	 * Checks if is master branch.
+	 * 
+	 * @return true, if is master branch
+	 */
 	@Transient
 	public boolean isMasterBranch() {
 		return getName().equals(MASTER_BRANCH_NAME);
 	}
 	
 	/**
-	 * @return
+	 * Checks if is open.
+	 * 
+	 * @return true, if is open
 	 */
 	@Transient
 	public boolean isOpen() {
@@ -216,7 +254,10 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
+	 * Sets the merged in.
+	 * 
 	 * @param mergedIn
+	 *            the new merged in
 	 */
 	public void setMergedIn(final Set<String> mergedIn) {
 		this.mergedIn = mergedIn;

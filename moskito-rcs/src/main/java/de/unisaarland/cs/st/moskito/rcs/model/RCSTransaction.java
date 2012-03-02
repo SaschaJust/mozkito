@@ -17,12 +17,12 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -104,18 +104,18 @@ public class RCSTransaction implements Annotated {
 		return RCSTransaction.class.getSimpleName();
 	}
 	
-	private PersonContainer         persons      = new PersonContainer();
+	private PersonContainer         persons       = new PersonContainer();
 	private String                  id;
 	private String                  message;
-	private Set<RCSTransaction>     children     = new HashSet<RCSTransaction>();
-	private RCSTransaction          branchParent = null;
-	private RCSTransaction          mergeParent  = null;
-	private Collection<RCSRevision> revisions    = new LinkedList<RCSRevision>();
+	private Set<RCSTransaction>     children      = new HashSet<RCSTransaction>();
+	private RCSTransaction          branchParent  = null;
+	private RCSTransaction          mergeParent   = null;
+	private Collection<RCSRevision> revisions     = new LinkedList<RCSRevision>();
 	private DateTime                javaTimestamp;
-	private Set<String>             tags         = new HashSet<String>();
+	private Set<String>             tags          = new HashSet<String>();
 	private String                  originalId;
-	private boolean                 atomic       = false;
-	private Set<RCSBranch>          branches     = null;
+	private boolean                 atomic        = false;
+	private Map<RCSBranch, Long>    branchIndices = null;
 	
 	/**
 	 * used by PersistenceUtil to create RCSTransaction instance.
@@ -165,6 +165,16 @@ public class RCSTransaction implements Annotated {
 		return ret;
 	}
 	
+	@Transient
+	public boolean addBranch(final RCSBranch branch,
+	                         final Long index) {
+		if (this.branchIndices.containsKey(branch)) {
+			return false;
+		}
+		this.branchIndices.put(branch, index);
+		return true;
+	}
+	
 	/**
 	 * @param rcsTransaction
 	 */
@@ -212,96 +222,6 @@ public class RCSTransaction implements Annotated {
 		return ret;
 	}
 	
-	@Transient
-	private int compareToTransaction(final RCSTransaction transaction) {
-		// if (getBranch().equals(transaction.getBranch())) {
-		
-		// /IF BOTH TRANSACTIONS ARE IN THE SAME BRANCH
-		// TODO
-		return 0;
-		// if (getBranch().getBegin() == null) {
-		// // if any of the branches has no begin transaction, we must quit. The data model is broken.
-		// throw new UnrecoverableError(
-		// "The data model seem to be broken. Detected branch that got not begin transaction set. This would lead to serious errors: "
-		// + getBranch());
-		// }
-		// if (getBranch().getBegin().equals(this)) {
-		// // if this transaction is the begin of the current branch
-		// return -1;
-		// } else if (getBranch().getBegin().equals(transaction)) {
-		// // if the other transaction is the begin of the current branch
-		// return 1;
-		// } else {
-		// // both transactions are somewhere within the same branch
-		// RCSTransaction cache = getParent(getBranch());
-		// if (cache == null) {
-		// // this can only happen when this transaction is the begin transaction of the current branch
-		// // DEADCODE
-		// throw new UnrecoverableError(
-		// "Detected null parent of transaction that is not the begin of the current branch: "
-		// + toString());
-		// }
-		// while ((cache != null) && (!cache.equals(getBranch().getBegin()))) {
-		// // as long as there are more parents to fetch from the current branch ...
-		// if (cache.equals(transaction)) {
-		// // we found the transaction as one of our parents.
-		// return 1;
-		// }
-		// // get next ancestor
-		// cache = cache.getParent(cache.getBranch());
-		// }
-		// return -1;
-		// }
-		// } else if (getBranch().isMasterBranch()) {
-		//
-		// // BOTH TRANSACTIONS ARE WITHIN DIFFERENT BRANCHES
-		//
-		// if (Logger.logDebug()) {
-		// Logger.debug(transaction.getId() + " in " + transaction.getBranch().toString());
-		// }
-		// if ((transaction.getBranch().getHead() == null)
-		// || (transaction.getBranch().getHead().getChild(transaction.getBranch()) == null)) {
-		// return -1;
-		// }
-		// final int subresult = compareTo(transaction.getBranch().getHead().getChild(transaction.getBranch()));
-		// if (subresult >= 0) {
-		// return 1;
-		// } else {
-		// return -1;
-		// }
-		// } else if (transaction.getBranch().isMasterBranch()) {
-		// if ((getBranch().getHead() == null) || (getBranch().getHead().getChild(getBranch()) == null)) {
-		// return 1;
-		// }
-		// final int sub_result = getBranch().getHead().getChild(getBranch()).compareTo(transaction);
-		// if (sub_result <= 0) {
-		// return -1;
-		// } else {
-		// return 1;
-		// }
-		// } else {
-		// if ((transaction.getBranch().getHead() == null)
-		// || (transaction.getBranch().getHead().getChild(transaction.getBranch()) == null)) {
-		// return -1;
-		// } else if ((getBranch().getHead() == null) || (getBranch().getHead().getChild(getBranch()) == null)) {
-		// return 1;
-		// } else {
-		// final int r = getBranch().getHead().getChild(getBranch())
-		// .compareTo(transaction.getBranch().getHead().getChild(transaction.getBranch()));
-		// if (r != 0) {
-		// return r;
-		// } else {
-		// if (getTimestamp().isBefore(transaction.getTimestamp())) {
-		// return -1;
-		// } else if (getTimestamp().isAfter(transaction.getTimestamp())) {
-		// return 1;
-		// }
-		// return 0;
-		// }
-		// }
-		// }
-	}
-	
 	/**
 	 * @return
 	 */
@@ -314,14 +234,23 @@ public class RCSTransaction implements Annotated {
 	 * Gets the branches.
 	 * 
 	 * @return the branches
-	 * @deprecated this methode is not implemented yet.
 	 */
-	@Deprecated
+	@Transient
 	public Set<RCSBranch> getBranches() {
 		// PRECONDITIONS
 		
 		try {
-			return this.branches;
+			return this.branchIndices.keySet();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public Map<RCSBranch, Long> getBranchIndices() {
+		// PRECONDITIONS
+		
+		try {
+			return this.branchIndices;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -359,12 +288,6 @@ public class RCSTransaction implements Annotated {
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
 		return this.children;
-	}
-	
-	@NoneNull
-	public Comparator<RCSTransaction> getComparator(final RCSBranch branch) {
-		// TODO implement this
-		return null;
 	}
 	
 	/**
@@ -500,10 +423,10 @@ public class RCSTransaction implements Annotated {
 		getPersons().add("author", author);
 	}
 	
-	public void setBranches(final Set<RCSBranch> branches) {
+	public void setBranchIndices(final Map<RCSBranch, Long> branchIndices) {
 		// PRECONDITIONS
 		try {
-			this.branches = branches;
+			this.branchIndices = branchIndices;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -18,7 +18,7 @@ package rcs;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.Graph;
+import de.unisaarland.cs.st.moskito.GraphBuilder;
 import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 
 /**
@@ -45,11 +45,10 @@ public class Main {
 				Logger.info("RCS.Main: RepositoryToolChain finished. Starting GraphToolChain ...");
 			}
 			
-			Graph graph;
-			graph = new Graph(rCS.getSettings(), rCS.getPersistenceUtil(), rCS.getRepository());
-			graph.setName(graph.getClass().getSimpleName());
-			graph.start();
-			graph.join();
+			final Thread graphBuilderThread = new Thread(
+			                                             new GraphBuilder(rCS.getRepository(), rCS.getPersistenceUtil()));
+			graphBuilderThread.start();
+			graphBuilderThread.join();
 			
 			if (Logger.logInfo()) {
 				Logger.info("RCS.Main: All done. cerio!");

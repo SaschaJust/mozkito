@@ -3,6 +3,7 @@ package de.unisaarland.cs.st.moskito.rcs.git;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -446,6 +447,37 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				}
 			}
 			return resultSet;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public Iterable<String> getVertices() {
+		// PRECONDITIONS
+		
+		try {
+			final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
+			
+			final Set<String> result = new HashSet<String>();
+			for (final Node node : indexHits) {
+				result.add(node.getProperty(NODE_ID).toString());
+			}
+			indexHits.close();
+			return new Iterable<String>() {
+				
+				@Override
+				public Iterator<String> iterator() {
+					// PRECONDITIONS
+					
+					try {
+						return result.iterator();
+					} finally {
+						// POSTCONDITIONS
+					}
+				}
+				
+			};
 		} finally {
 			// POSTCONDITIONS
 		}

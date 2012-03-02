@@ -46,6 +46,13 @@ public interface IRevDependencyGraph {
 	Set<String> getTags(String hash);
 	
 	/**
+	 * Gets the vertices.
+	 * 
+	 * @return the vertices
+	 */
+	Iterable<String> getVertices();
+	
+	/**
 	 * Checks for vertex.
 	 * 
 	 * @param hash

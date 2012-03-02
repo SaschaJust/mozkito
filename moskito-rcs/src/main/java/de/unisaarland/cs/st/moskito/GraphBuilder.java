@@ -15,12 +15,9 @@
  */
 package de.unisaarland.cs.st.moskito;
 
+import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
-import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -30,17 +27,20 @@ import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The Class GraphBuilder.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GraphBuilder extends Sink<RCSTransaction> {
+public class GraphBuilder implements Runnable {
+	
+	private static int                commitLimit = 15;
 	
 	/** The counter. */
-	private int counter;
+	private final IRevDependencyGraph revDepGraph;
+	private final PersistenceUtil     persistenceUtil;
+	private final BranchFactory       branchFactory;
 	
 	/**
 	 * Instantiates a new graph builder.
@@ -57,68 +57,145 @@ public class GraphBuilder extends Sink<RCSTransaction> {
 	 *            the branch factory
 	 */
 	@NoneNull
-	public GraphBuilder(final Group threadGroup, final RepositorySettings settings, final Repository repository,
-	        final PersistenceUtil persistenceUtil, final BranchFactory branchFactory) {
-		super(threadGroup, settings, false);
-		final IRevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
-		this.counter = 0;
-		persistenceUtil.beginTransaction();
-		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {
+		this.revDepGraph = repository.getRevDependencyGraph();
+		this.persistenceUtil = persistenceUtil;
+		this.branchFactory = new BranchFactory(persistenceUtil);
+	}
+	
+	/**
+	 * Phase one: iterate over all transactions and set parents, tags, and branchHEADs
+	 */
+	public void phaseOne() {
+		if (Logger.logInfo()) {
+			Logger.info("Phase I: Computing and persisting transaction and branch dependencies ...");
+		}
+		this.persistenceUtil.beginTransaction();
+		int counter = 0;
+		for (final String hash : this.revDepGraph.getVertices()) {
+			final RCSTransaction rcsTransaction = this.persistenceUtil.loadById(hash, RCSTransaction.class);
+			if (!this.revDepGraph.hasVertex(hash)) {
+				throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
+			}
 			
-			@Override
-			public void process() {
-				if (Logger.logDebug()) {
-					Logger.debug("Updating graph for " + getInputData());
+			// set parents
+			final String branchParentHash = this.revDepGraph.getBranchParent(hash);
+			if (branchParentHash != null) {
+				final RCSTransaction branchParent = this.persistenceUtil.loadById(branchParentHash,
+				                                                                  RCSTransaction.class);
+				rcsTransaction.setBranchParent(branchParent);
+			}
+			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
+			if (mergeParentHash != null) {
+				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
+				rcsTransaction.setMergeParent(mergeParent);
+			}
+			
+			// set tags
+			final Set<String> tags = this.revDepGraph.getTags(hash);
+			if (tags != null) {
+				rcsTransaction.addAllTags(tags);
+			}
+			
+			// persist branches
+			final String branchName = this.revDepGraph.isBranchHead(hash);
+			if (branchName != null) {
+				final RCSBranch branch = this.branchFactory.getBranch(branchName);
+				branch.setHead(rcsTransaction);
+				this.persistenceUtil.saveOrUpdate(branch);
+			}
+			this.persistenceUtil.saveOrUpdate(rcsTransaction);
+			if ((++counter % commitLimit) == 0) {
+				this.persistenceUtil.commitTransaction();
+				this.persistenceUtil.beginTransaction();
+			}
+		}
+		this.persistenceUtil.commitTransaction();
+		if (Logger.logInfo()) {
+			Logger.info("done");
+		}
+	}
+	
+	/**
+	 * Phase three: Setting mergedIn values within branches.
+	 */
+	public void phaseThree() {
+		if (Logger.logInfo()) {
+			Logger.info("Phase III: Determine and persisting branch merges ...");
+		}
+		
+		int counter = 0;
+		this.persistenceUtil.beginTransaction();
+		for (final String hash : this.revDepGraph.getVertices()) {
+			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
+			if (mergeParentHash != null) {
+				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
+				if (mergeParent == null) {
+					throw new UnrecoverableError("Could not load transaction " + mergeParentHash + " from DB.");
 				}
-				
-				final RCSTransaction rcsTransaction = getInputData();
-				final String hash = rcsTransaction.getId();
-				
-				if (!revDepGraph.hasVertex(hash)) {
-					throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
+				final Set<RCSBranch> branches = mergeParent.getBranches();
+				if ((branches == null) || (branches.isEmpty())) {
+					throw new UnrecoverableError("Branches of transaction " + mergeParentHash
+					        + " are NULL or empty. Both is a fatal error.");
 				}
-				
-				// set parents
-				final String branchParentHash = revDepGraph.getBranchParent(hash);
-				if (branchParentHash != null) {
-					final RCSTransaction branchParent = persistenceUtil.loadById(branchParentHash, RCSTransaction.class);
-					rcsTransaction.setBranchParent(branchParent);
-				}
-				final String mergeParentHash = revDepGraph.getMergeParent(hash);
-				if (mergeParentHash != null) {
-					final RCSTransaction mergeParent = persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
-					rcsTransaction.setMergeParent(mergeParent);
-				}
-				
-				// set tags
-				final Set<String> tags = revDepGraph.getTags(hash);
-				if (tags != null) {
-					rcsTransaction.addAllTags(tags);
-				}
-				
-				// persist branches
-				final String branchName = revDepGraph.isBranchHead(hash);
-				if (branchName != null) {
-					final RCSBranch branch = branchFactory.getBranch(branchName);
-					branch.setHead(rcsTransaction);
-					persistenceUtil.saveOrUpdate(branch);
-				}
-				persistenceUtil.saveOrUpdate(rcsTransaction);
-				if ((++GraphBuilder.this.counter % 15) == 0) {
-					persistenceUtil.commitTransaction();
-					persistenceUtil.beginTransaction();
+				for (final RCSBranch branch : mergeParent.getBranches()) {
+					branch.addMergedIn(hash);
+					this.persistenceUtil.saveOrUpdate(branch);
+					if ((++counter % commitLimit) == 0) {
+						this.persistenceUtil.commitTransaction();
+						this.persistenceUtil.beginTransaction();
+					}
 				}
 			}
-		};
+		}
+		this.persistenceUtil.commitTransaction();
 		
-		new PostExecutionHook<RCSTransaction, RCSTransaction>(this) {
-			
-			@Override
-			public void postExecution() {
-				persistenceUtil.commitTransaction();
+		if (Logger.logInfo()) {
+			Logger.info("done");
+		}
+	}
+	
+	/**
+	 * Phase two: Iterate over all branches and add branch references to transactions contained by branch and their
+	 * branch index.
+	 */
+	public void phaseTwo() {
+		if (Logger.logInfo()) {
+			Logger.info("Phase II: Persisting branch transaction relationships ...");
+		}
+		
+		final List<RCSBranch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(RCSBranch.class));
+		
+		if (branches.isEmpty()) {
+			throw new UnrecoverableError("Could not load any transactions from DB. This is a fatal error!");
+		}
+		
+		for (final RCSBranch branch : branches) {
+			long index = 0l;
+			this.persistenceUtil.beginTransaction();
+			for (final RCSTransaction transaction : branch.getTransactions()) {
+				if (!transaction.addBranch(branch, index)) {
+					throw new UnrecoverableError("Could not add branch index to transaction: " + transaction.getId()
+					        + ". Fatal error.");
+				}
+				--index;
+				if ((index % commitLimit) == 0) {
+					this.persistenceUtil.commitTransaction();
+					this.persistenceUtil.beginTransaction();
+				}
 			}
-		};
+			this.persistenceUtil.commitTransaction();
+		}
 		
+		if (Logger.logInfo()) {
+			Logger.info("done");
+		}
+	}
+	
+	@Override
+	public void run() {
+		phaseOne();
+		phaseTwo();
+		phaseThree();
 	}
 }
