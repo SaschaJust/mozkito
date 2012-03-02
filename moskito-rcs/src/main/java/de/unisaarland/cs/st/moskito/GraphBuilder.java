@@ -101,6 +101,9 @@ public class GraphBuilder implements Runnable {
 			final String branchName = this.revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
 				final RCSBranch branch = this.branchFactory.getBranch(branchName);
+				if (Logger.logDebug()) {
+					Logger.debug("Adding branch " + branchName);
+				}
 				branch.setHead(rcsTransaction);
 				this.persistenceUtil.saveOrUpdate(branch);
 			}
@@ -176,8 +179,8 @@ public class GraphBuilder implements Runnable {
 			this.persistenceUtil.beginTransaction();
 			for (final RCSTransaction transaction : branch.getTransactions()) {
 				if (!transaction.addBranch(branch, index)) {
-					throw new UnrecoverableError("Could not add branch index to transaction: " + transaction.getId()
-					        + ". Fatal error.");
+					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
+					        + transaction.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
 				if ((index % commitLimit) == 0) {

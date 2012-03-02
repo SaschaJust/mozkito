@@ -47,6 +47,7 @@ public class Main {
 			
 			final Thread graphBuilderThread = new Thread(
 			                                             new GraphBuilder(rCS.getRepository(), rCS.getPersistenceUtil()));
+			graphBuilderThread.setName(GraphBuilder.class.getSimpleName());
 			graphBuilderThread.start();
 			graphBuilderThread.join();
 			
