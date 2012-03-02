@@ -375,13 +375,6 @@ public abstract class Repository {
 	 */
 	public abstract String getTransactionId(long index);
 	
-	/**
-	 * @return
-	 */
-	public URI getUri() {
-		return this.uri;
-	}
-	
 	// /**
 	// * This method extracts the fragment of the URI, saves the given uri
 	// without
@@ -420,6 +413,13 @@ public abstract class Repository {
 	// ? fragment
 	// : "");
 	// }
+	
+	/**
+	 * @return
+	 */
+	public URI getUri() {
+		return this.uri;
+	}
 	
 	/**
 	 * Returns the path of the directory that contains the local copy/clone/checkout of the repository (the working

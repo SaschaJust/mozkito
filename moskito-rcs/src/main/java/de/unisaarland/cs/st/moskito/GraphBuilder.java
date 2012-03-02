@@ -180,7 +180,8 @@ public class GraphBuilder implements Runnable {
 			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
-			for (final RCSTransaction transaction : branch.getTransactions()) {
+			for (final String transactionId : this.revDepGraph.getBranchTransactions(branch.getName())) {
+				final RCSTransaction transaction = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				if (!transaction.addBranch(branch, index)) {
 					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
 					        + transaction.getId() + ". It appreas to be set before. Fatal error.");

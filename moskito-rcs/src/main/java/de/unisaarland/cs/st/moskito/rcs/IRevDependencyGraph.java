@@ -18,6 +18,9 @@ public interface IRevDependencyGraph {
 	 */
 	boolean createFromRepository();
 	
+	boolean existsPath(String fromHash,
+	                   String toHash);
+	
 	/**
 	 * Gets the branch parent.
 	 * 
@@ -27,6 +30,8 @@ public interface IRevDependencyGraph {
 	 */
 	String getBranchParent(String hash);
 	
+	Iterable<String> getBranchTransactions(String branchName);
+	
 	/**
 	 * Gets the merge parent.
 	 * 
@@ -35,6 +40,8 @@ public interface IRevDependencyGraph {
 	 * @return the merge parent
 	 */
 	String getMergeParent(String hash);
+	
+	Iterable<String> getPreviousTransactions(String hash);
 	
 	/**
 	 * Gets the tags.

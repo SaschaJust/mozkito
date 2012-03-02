@@ -15,12 +15,10 @@
  */
 package de.unisaarland.cs.st.moskito.rcs.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +53,6 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
-import de.unisaarland.cs.st.moskito.rcs.elements.TransactionIterator;
 
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object
@@ -350,17 +347,6 @@ public class RCSTransaction implements Annotated {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public PersonContainer getPersons() {
 		return this.persons;
-	}
-	
-	@Transient
-	public Iterator<RCSTransaction> getPreviousTransactions() {
-		final TransactionIterator iter = new TransactionIterator(this);
-		if (iter.hasNext()) {
-			iter.next();
-			return iter;
-		} else {
-			return new ArrayList<RCSTransaction>(0).iterator();
-		}
 	}
 	
 	/**

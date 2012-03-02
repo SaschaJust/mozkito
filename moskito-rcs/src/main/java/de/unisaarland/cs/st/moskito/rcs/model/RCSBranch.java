@@ -35,7 +35,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
-import de.unisaarland.cs.st.moskito.rcs.elements.TransactionIterator;
 
 /**
  * The Class RCSBranch.
@@ -197,16 +196,6 @@ public class RCSBranch implements Annotated {
 	@Index (name = "idx_name")
 	public String getName() {
 		return this.name;
-	}
-	
-	/**
-	 * Return the transactions within this branch in topological order.
-	 * 
-	 * @return the transactions
-	 */
-	@Transient
-	public Iterable<RCSTransaction> getTransactions() {
-		return new TransactionIterator(getHead());
 	}
 	
 	/*

@@ -1,12 +1,14 @@
 package de.unisaarland.cs.st.moskito.rcs.git;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.Iterator;
 
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -45,6 +47,99 @@ public class GitRevDependencyGraphTest {
 		} catch (final Exception e) {
 			fail();
 		}
+	}
+	
+	@Test
+	public void regressionTestRhino() {
+		/* 
+		 * @formatter:off
+		 *       * 17d6198f9c31d608d985ff4c9ce1dcc162dc8133
+         *       *   8222f6b8a291bf938f96d9560fd1d61638c1689c
+         *       |\  
+         *       | * 4a9e26c821ba113d9f36c95128b4184dc724750f
+         *       * | 8e98f10673bae3345844c36eee2e9b21e8fed2d0
+         *       * |   f51eba1d874d3fa5bb892d4dad8039d89dc8eee7
+         *       |\ \  
+         *       | |/  
+         *       | * f5831260561a73cf26194eec3a3f8147050a2753
+         *       * | 196075b582116f50b915e6e0508ec8812b92bcc6
+         *       * |   2fe888ece150487c5ba43264094dcb696c800216
+         *       |\ \  
+         *       | * | 7ecdf2c2bd15e19704c7e4f6c4e128357aafdcd2
+         *       * | | 1c0592306d9cfd1d19aa0133983c38448d167d69
+         *       | |/  
+         *       |/|   
+         *       * | e4e75c53fd4f66c19c594aa3dfcc683407f44093
+         *       * | c997bb0d0e45920993b576f83c657c4a532c9b95
+         *       |/  
+         *       * 34195982cb52661e5498ff880dd7b5b5b3230790
+	     *
+		 * 
+		 * 
+		 */
+		
+		//@formatter:on
+		
+		final GitRevDependencyGraph revGraph = new GitRevDependencyGraph(new GitRepository());
+		revGraph.addEdge("8222f6b8a291bf938f96d9560fd1d61638c1689c", "17d6198f9c31d608d985ff4c9ce1dcc162dc8133",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("8e98f10673bae3345844c36eee2e9b21e8fed2d0", "8222f6b8a291bf938f96d9560fd1d61638c1689c",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("4a9e26c821ba113d9f36c95128b4184dc724750f", "8222f6b8a291bf938f96d9560fd1d61638c1689c",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("f5831260561a73cf26194eec3a3f8147050a2753", "4a9e26c821ba113d9f36c95128b4184dc724750f",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("f51eba1d874d3fa5bb892d4dad8039d89dc8eee7", "8e98f10673bae3345844c36eee2e9b21e8fed2d0",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("196075b582116f50b915e6e0508ec8812b92bcc6", "f51eba1d874d3fa5bb892d4dad8039d89dc8eee7",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("f5831260561a73cf26194eec3a3f8147050a2753", "f51eba1d874d3fa5bb892d4dad8039d89dc8eee7",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("e4e75c53fd4f66c19c594aa3dfcc683407f44093", "f5831260561a73cf26194eec3a3f8147050a2753",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("2fe888ece150487c5ba43264094dcb696c800216", "196075b582116f50b915e6e0508ec8812b92bcc6",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("1c0592306d9cfd1d19aa0133983c38448d167d69", "2fe888ece150487c5ba43264094dcb696c800216",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("7ecdf2c2bd15e19704c7e4f6c4e128357aafdcd2", "2fe888ece150487c5ba43264094dcb696c800216",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("34195982cb52661e5498ff880dd7b5b5b3230790", "7ecdf2c2bd15e19704c7e4f6c4e128357aafdcd2",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("e4e75c53fd4f66c19c594aa3dfcc683407f44093", "1c0592306d9cfd1d19aa0133983c38448d167d69",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("c997bb0d0e45920993b576f83c657c4a532c9b95", "e4e75c53fd4f66c19c594aa3dfcc683407f44093",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("34195982cb52661e5498ff880dd7b5b5b3230790", "c997bb0d0e45920993b576f83c657c4a532c9b95",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		
+		final Iterator<String> iterator = revGraph.getPreviousTransactions("17d6198f9c31d608d985ff4c9ce1dcc162dc8133")
+		                                          .iterator();
+		assertTrue(iterator.hasNext());
+		assertEquals("8222f6b8a291bf938f96d9560fd1d61638c1689c", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("4a9e26c821ba113d9f36c95128b4184dc724750f", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("8e98f10673bae3345844c36eee2e9b21e8fed2d0", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("f51eba1d874d3fa5bb892d4dad8039d89dc8eee7", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("f5831260561a73cf26194eec3a3f8147050a2753", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("196075b582116f50b915e6e0508ec8812b92bcc6", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("2fe888ece150487c5ba43264094dcb696c800216", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("7ecdf2c2bd15e19704c7e4f6c4e128357aafdcd2", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("1c0592306d9cfd1d19aa0133983c38448d167d69", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("e4e75c53fd4f66c19c594aa3dfcc683407f44093", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("c997bb0d0e45920993b576f83c657c4a532c9b95", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("34195982cb52661e5498ff880dd7b5b5b3230790", iterator.next());
+		assertFalse(iterator.hasNext());
+		
 	}
 	
 	@Test
@@ -206,6 +301,11 @@ public class GitRevDependencyGraphTest {
 		assertEquals("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2", graph.getBranchParent(hash));
 		assertTrue(graph.getMergeParent(hash) == null);
 		assertEquals("origin/maintenance", graph.isBranchHead(hash));
+		
+		assertTrue(graph.existsPath("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6",
+		                            "41a40fb23b54a49e91eb4cee510533eef810ec68"));
+		assertFalse(graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
+		                             "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
 		
 	}
 	

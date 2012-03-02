@@ -1,11 +1,13 @@
 package de.unisaarland.cs.st.moskito.rcs.git;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -16,9 +18,13 @@ import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
+import org.neo4j.graphalgo.GraphAlgoFactory;
+import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Expander;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
@@ -26,6 +32,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.Traversal;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
@@ -58,6 +65,10 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 	
 	/** The repository. */
 	private final GitRepository        repository;
+	
+	private Map<String, String>        branchHeads;
+	
+	private Map<String, Set<String>>   tags;
 	
 	/**
 	 * Instantiates a new git rev dependency graph.
@@ -123,9 +134,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 	 * @return true, if successful
 	 */
 	@NoneNull
-	protected boolean addEdge(@NotEmptyString final String parent,
-	                          @NotEmptyString final String child,
-	                          final GitRevDependencyType edgeType) {
+	public boolean addEdge(@NotEmptyString final String parent,
+	                       @NotEmptyString final String child,
+	                       final GitRevDependencyType edgeType) {
 		// PRECONDITIONS
 		
 		try {
@@ -228,8 +239,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 	public boolean createFromRepository() {
 		// PRECONDITIONS
 		
-		final Map<String, String> branchHeads = new HashMap<String, String>();
-		final Map<String, Set<String>> tags = new HashMap<String, Set<String>>();
+		this.branchHeads = new HashMap<String, String>();
+		this.tags = new HashMap<String, Set<String>>();
 		
 		try {
 			// use `git ls-remote .` to get all branches and their HEADs
@@ -257,10 +268,10 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					branchName = branchName.substring(10);
 				} else if (branchName.startsWith("refs/tags/")) {
 					branchName = branchName.substring(10).replace("^{}", "");
-					if (!tags.containsKey(lineParts[0])) {
-						tags.put(lineParts[0], new HashSet<String>());
+					if (!this.tags.containsKey(lineParts[0])) {
+						this.tags.put(lineParts[0], new HashSet<String>());
 					}
-					tags.get(lineParts[0]).add(branchName);
+					this.tags.get(lineParts[0]).add(branchName);
 					continue;
 				} else {
 					continue;
@@ -268,11 +279,11 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch head for " + branchName + ": " + lineParts[0]);
 				}
-				if ((branchHeads.containsKey(lineParts[0]))
-				        && branchHeads.get(lineParts[0]).equals(RCSBranch.MASTER_BRANCH_NAME)) {
+				if ((this.branchHeads.containsKey(lineParts[0]))
+				        && this.branchHeads.get(lineParts[0]).equals(RCSBranch.MASTER_BRANCH_NAME)) {
 					continue;
 				}
-				branchHeads.put(lineParts[0], branchName);
+				this.branchHeads.put(lineParts[0], branchName);
 			}
 			
 			// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
@@ -287,11 +298,11 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					addVertex(child);
 				}
 				
-				if (tags.containsKey(child)) {
-					setTags(child, tags.get(child).toArray(new String[tags.get(child).size()]));
+				if (this.tags.containsKey(child)) {
+					setTags(child, this.tags.get(child).toArray(new String[this.tags.get(child).size()]));
 				}
-				if (branchHeads.containsKey(child)) {
-					addBranch(child, branchHeads.get(child));
+				if (this.branchHeads.containsKey(child)) {
+					addBranch(child, this.branchHeads.get(child));
 				}
 				
 				if (lineParts.length > 1) {
@@ -304,6 +315,21 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			}
 			
 			return true;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public boolean existsPath(final String fromHash,
+	                          final String toHash) {
+		// PRECONDITIONS
+		
+		try {
+			final Expander expander = Traversal.expanderForTypes(GitRevDependencyType.BRANCH_EDGE, Direction.OUTGOING,
+			                                                     GitRevDependencyType.MERGE_EDGE, Direction.OUTGOING);
+			final PathFinder<Path> pathFinder = GraphAlgoFactory.shortestPath(expander, 1000000);
+			return (pathFinder.findSinglePath(getNode(fromHash), getNode(toHash)) != null);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -338,6 +364,22 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				        + " has more than one branch parent. This should never occur.");
 			}
 			return result;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public Iterable<String> getBranchTransactions(final String branchName) {
+		// PRECONDITIONS
+		
+		try {
+			for (final Entry<String, String> branches : this.branchHeads.entrySet()) {
+				if (branches.getValue().equals(branchName)) {
+					return new GitTransactionIterator(branches.getKey(), this);
+				}
+			}
+			return new ArrayList<String>(0);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -432,6 +474,23 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			final Node nodeNode = indexHits.next();
 			indexHits.close();
 			return nodeNode;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public Iterable<String> getPreviousTransactions(final String hash) {
+		// PRECONDITIONS
+		
+		try {
+			final GitTransactionIterator iter = new GitTransactionIterator(hash, this);
+			if (iter.hasNext()) {
+				iter.next();
+				return iter;
+			} else {
+				return new ArrayList<String>(0);
+			}
 		} finally {
 			// POSTCONDITIONS
 		}
