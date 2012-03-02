@@ -10,7 +10,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.rcs.model.RCSBranch.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Thu Mar 01 23:42:05 CET 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 02 12:03:07 CET 2012")
 public class RCSBranch_ {
     public static volatile SingularAttribute<RCSBranch,RCSTransaction> head;
     public static volatile SetAttribute<RCSBranch,String> mergedIn;
