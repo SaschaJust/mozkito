@@ -18,6 +18,7 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -115,7 +116,7 @@ public class RCSTransaction implements Annotated {
 	private Set<String>             tags          = new HashSet<String>();
 	private String                  originalId;
 	private boolean                 atomic        = false;
-	private Map<String, Long>       branchIndices = null;
+	private Map<String, Long>       branchIndices = new HashMap<String, Long>();
 	
 	/**
 	 * used by PersistenceUtil to create RCSTransaction instance.
@@ -261,8 +262,7 @@ public class RCSTransaction implements Annotated {
 	 * @param branch
 	 * @return
 	 */
-	@Transient
-	@NoneNull
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSTransaction getBranchParent() {
 		return this.branchParent;
 	}
@@ -316,6 +316,7 @@ public class RCSTransaction implements Annotated {
 		                             : null;
 	}
 	
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public RCSTransaction getMergeParent() {
 		// PRECONDITIONS
 		

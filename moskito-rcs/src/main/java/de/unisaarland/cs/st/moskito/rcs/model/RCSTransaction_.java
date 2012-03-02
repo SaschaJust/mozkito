@@ -14,10 +14,11 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 02 12:18:51 CET 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 02 12:50:26 CET 2012")
 public class RCSTransaction_ {
     public static volatile SingularAttribute<RCSTransaction,Boolean> atomic;
     public static volatile MapAttribute<RCSTransaction,String,Long> branchIndices;
+    public static volatile SingularAttribute<RCSTransaction,de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction> branchParent;
     public static volatile SetAttribute<RCSTransaction,de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction> children;
     public static volatile SingularAttribute<RCSTransaction,String> id;
     public static volatile SingularAttribute<RCSTransaction,Date> javaTimestamp;
