@@ -52,10 +52,6 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 		this.current = this.root;
 		this.revGraph = revGraph;
 		this.beforeDelegates = new HashSet<String>();
-		final String branchParent = revGraph.getBranchParent(this.current);
-		if (branchParent != null) {
-			this.beforeDelegates.add(branchParent);
-		}
 	}
 	
 	public GitTransactionIterator(final String root, final IRevDependencyGraph revGraph,
@@ -65,10 +61,6 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 		this.revGraph = revGraph;
 		this.beforeDelegates = new HashSet<String>();
 		this.beforeDelegates.addAll(beforeDelegates);
-		final String branchParent = revGraph.getBranchParent(this.current);
-		if (branchParent != null) {
-			this.beforeDelegates.add(branchParent);
-		}
 	}
 	
 	/*
@@ -106,33 +98,32 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	 */
 	@Override
 	public String next() {
+		
 		if (this.delegate != null) {
-			final String next = this.delegate.next();
+			final String delegateNext = this.delegate.next();
 			
-			if (skip(next)) {
+			if (skip(delegateNext)) {
 				this.delegate = null;
 			} else {
-				return next;
+				return delegateNext;
 			}
+		}
+		
+		final String branchParent = this.revGraph.getBranchParent(this.current);
+		final String mergeParent = this.revGraph.getMergeParent(this.current);
+		this.beforeDelegates.remove(this.current);
+		this.beforeDelegates.add(branchParent);
+		if (mergeParent != null) {
+			final Set<String> stopAt = new HashSet<String>();
+			stopAt.addAll(this.beforeDelegates);
+			this.delegate = new GitTransactionIterator(mergeParent, this.revGraph, stopAt);
+		}
+		
+		if (Logger.logDebug()) {
+			Logger.debug(getClass().getSimpleName() + ".next() with root " + this.root + ": " + this.current);
 		}
 		final String result = this.current;
-		final String mergeParent = this.revGraph.getMergeParent(this.current);
-		if (mergeParent != null) {
-			if (!skip(mergeParent)) {
-				this.delegate = new GitTransactionIterator(mergeParent, this.revGraph, this.beforeDelegates);
-			}
-		}
-		this.current = this.revGraph.getBranchParent(this.current);
-		if (this.current != null) {
-			this.beforeDelegates.remove(this.current);
-			final String branchParent = this.revGraph.getBranchParent(this.current);
-			if (branchParent != null) {
-				this.beforeDelegates.add(branchParent);
-			}
-		}
-		if (Logger.logDebug()) {
-			Logger.debug(getClass().getSimpleName() + ".next() with root " + this.root + ": " + result);
-		}
+		this.current = branchParent;
 		return result;
 	}
 	

@@ -143,6 +143,86 @@ public class GitRevDependencyGraphTest {
 	}
 	
 	@Test
+	public void regressionTestRhino2() {
+		/*
+		 * @formatter:off
+		 * 
+		 *    *   280b1b8695286699770c5da85204e1718f7f4b66
+         *    |\
+         *    | * 702abfed3f8ca043b2636efd31c14ba7552603dd
+         *    | *   cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2
+         *    | |\
+         *    | | * 94f8b9f16e9f3d423225b28619281a5ecf877275
+         *    | * | 5813ab7d15c9c97ff45a44e051f8e9776a1f7e42
+         *    | * | 8bc0679ca73760e68c0c27b54dc2855de34c1bdb
+         *    | |/
+         *    | *   9f6f106cdc16effd8c093defd47f1626195d03db
+         *    | |\
+         *    | | * 6bfee30b10fb0498f3d70f383814a669939bb1c7
+         *    | |/
+         *    | * 45702d2a094554789dc51bd23869ed5ddd8822a6
+         *    * | 9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59
+         *    |/
+         *    * d522956171853fc2d7ca106d9c8d2b93e82df9d3
+		 * 
+		 */
+		
+		//@formatter:on
+		
+		final GitRevDependencyGraph revGraph = new GitRevDependencyGraph(new GitRepository());
+		revGraph.addEdge("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", "280b1b8695286699770c5da85204e1718f7f4b66",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("702abfed3f8ca043b2636efd31c14ba7552603dd", "280b1b8695286699770c5da85204e1718f7f4b66",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", "702abfed3f8ca043b2636efd31c14ba7552603dd",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", "cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("94f8b9f16e9f3d423225b28619281a5ecf877275", "cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("9f6f106cdc16effd8c093defd47f1626195d03db", "94f8b9f16e9f3d423225b28619281a5ecf877275",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("8bc0679ca73760e68c0c27b54dc2855de34c1bdb", "5813ab7d15c9c97ff45a44e051f8e9776a1f7e42",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("9f6f106cdc16effd8c093defd47f1626195d03db", "8bc0679ca73760e68c0c27b54dc2855de34c1bdb",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("45702d2a094554789dc51bd23869ed5ddd8822a6", "9f6f106cdc16effd8c093defd47f1626195d03db",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("6bfee30b10fb0498f3d70f383814a669939bb1c7", "9f6f106cdc16effd8c093defd47f1626195d03db",
+		                 GitRevDependencyType.MERGE_EDGE);
+		revGraph.addEdge("45702d2a094554789dc51bd23869ed5ddd8822a6", "6bfee30b10fb0498f3d70f383814a669939bb1c7",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("d522956171853fc2d7ca106d9c8d2b93e82df9d3", "45702d2a094554789dc51bd23869ed5ddd8822a6",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		revGraph.addEdge("d522956171853fc2d7ca106d9c8d2b93e82df9d3", "9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59",
+		                 GitRevDependencyType.BRANCH_EDGE);
+		final Iterator<String> iterator = revGraph.getPreviousTransactions("280b1b8695286699770c5da85204e1718f7f4b66")
+		                                          .iterator();
+		
+		assertTrue(iterator.hasNext());
+		assertEquals("702abfed3f8ca043b2636efd31c14ba7552603dd", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("94f8b9f16e9f3d423225b28619281a5ecf877275", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("8bc0679ca73760e68c0c27b54dc2855de34c1bdb", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("9f6f106cdc16effd8c093defd47f1626195d03db", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("6bfee30b10fb0498f3d70f383814a669939bb1c7", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("45702d2a094554789dc51bd23869ed5ddd8822a6", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", iterator.next());
+		assertTrue(iterator.hasNext());
+		assertEquals("d522956171853fc2d7ca106d9c8d2b93e82df9d3", iterator.next());
+		assertFalse(iterator.hasNext());
+	}
+	
+	@Test
 	public void test() {
 		final IRevDependencyGraph graph = repo.getRevDependencyGraph();
 		
