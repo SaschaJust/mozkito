@@ -65,6 +65,7 @@ public class OpenJPA_RCS_NetTest extends MoskitoTest {
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(beginTransaction);
 		getPersistenceUtil().save(endTransaction);
+		getPersistenceUtil().save(branch);
 		beginTransaction.addChild(endTransaction);
 		endTransaction.setBranchParent(beginTransaction);
 		getPersistenceUtil().commitTransaction();
