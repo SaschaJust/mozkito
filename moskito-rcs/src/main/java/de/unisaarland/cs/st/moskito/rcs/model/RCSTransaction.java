@@ -41,7 +41,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -82,11 +81,10 @@ public class RCSTransaction implements Annotated {
 	 *            the author
 	 * @return the rCS transaction
 	 */
-	@NoneNull
-	public static RCSTransaction createTransaction(final String id,
-	                                               final String message,
-	                                               final DateTime timestamp,
-	                                               final Person author,
+	public static RCSTransaction createTransaction(@NotNull final String id,
+	                                               @NotNull final String message,
+	                                               @NotNull final DateTime timestamp,
+	                                               @NotNull final Person author,
 	                                               final String originalId) {
 		final RCSTransaction transaction = new RCSTransaction(id, message, timestamp, author, originalId);
 		return transaction;
@@ -135,9 +133,8 @@ public class RCSTransaction implements Annotated {
 	 * @param previousRcsTransaction
 	 *            the previous rcs transaction
 	 */
-	@NoneNull
-	protected RCSTransaction(final String id, final String message, final DateTime timestamp, final Person author,
-	        final String originalId) {
+	protected RCSTransaction(@NotNull final String id, @NotNull final String message,
+	        @NotNull final DateTime timestamp, @NotNull final Person author, final String originalId) {
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
