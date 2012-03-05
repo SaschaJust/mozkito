@@ -130,7 +130,7 @@ public class TransactionSetTest {
 		try {
 			tSet.add(this.otherT);
 			fail();
-		} catch (final ClassCastException e) {
+		} catch (final IllegalArgumentException e) {
 			
 		}
 	}
