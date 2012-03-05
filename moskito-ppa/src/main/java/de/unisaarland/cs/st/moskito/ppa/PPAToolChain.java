@@ -96,7 +96,7 @@ public class PPAToolChain extends Chain<Settings> {
 			                                              Requirement.optional);
 			
 			this.ppaArg = new BooleanArgument(settings.getRootArgumentSet(), "ppa",
-			                                  "If set to true, this module will use the PPA tool.", "false",
+			                                  "If set to true, this module will use the PPA tool.", "true",
 			                                  Requirement.optional);
 			
 			this.asXML = new OutputFileArgument(
