@@ -13,11 +13,14 @@
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -52,7 +55,9 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 */
 	@Override
 	public int compareTo(final AtomicTransaction other) {
-		return transaction.compareTo(other.getTransaction()) * -1;
+		
+		final Comparator<? super RCSTransaction> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
+		return comparator.compare(other.getTransaction(), this.transaction);
 	}
 	
 	/*
@@ -70,22 +75,22 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AtomicTransaction other = (AtomicTransaction) obj;
-		if (transaction == null) {
+		final AtomicTransaction other = (AtomicTransaction) obj;
+		if (this.transaction == null) {
 			if (other.transaction != null) {
 				return false;
 			}
-		} else if (!transaction.equals(other.transaction)) {
+		} else if (!this.transaction.equals(other.transaction)) {
 			return false;
 		}
 		return true;
 	}
 	
 	public Set<JavaChangeOperation> getChangeOperation(final Class<? extends JavaElement> clazz) {
-		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		
-		for (JavaChangeOperation op : this.getOperations()) {
-			JavaElement element = op.getChangedElementLocation().getElement();
+		for (final JavaChangeOperation op : getOperations()) {
+			final JavaElement element = op.getChangedElementLocation().getElement();
 			if (element.getClass().equals(clazz)) {
 				result.add(op);
 			}
@@ -99,7 +104,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @return the operations
 	 */
 	public Collection<JavaChangeOperation> getOperations() {
-		return operations;
+		return this.operations;
 	}
 	
 	/**
@@ -108,7 +113,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @return the transaction
 	 */
 	public RCSTransaction getTransaction() {
-		return transaction;
+		return this.transaction;
 	}
 	
 	/*
@@ -119,9 +124,9 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((transaction == null)
-		                                                  ? 0
-		                                                  : transaction.hashCode());
+		result = (prime * result) + ((this.transaction == null)
+		                                                       ? 0
+		                                                       : this.transaction.hashCode());
 		return result;
 	}
 	

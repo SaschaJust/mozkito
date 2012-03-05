@@ -41,6 +41,7 @@ public class PPASource extends Source<RCSTransaction> {
 			
 			@Override
 			public void preExecution() {
+				
 				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
 				if (Logger.logDebug()) {

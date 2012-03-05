@@ -97,8 +97,6 @@ public class ChangeCouplings {
 		final RCSTransaction transaction = this.persistenceUtil.loadById(this.transactionArg.getValue(),
 		                                                                 RCSTransaction.class);
 		
-		transaction.getParents();
-		
 		if (this.levelArgument.getValue().equals("FILE")) {
 			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
 			                                                                                                            this.minSupport.intValue(),

@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +31,9 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
 
@@ -44,7 +48,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 	                                                      final Untangling untangling) {
 		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
+		final List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		// get random 30% of the transactions
@@ -54,12 +58,12 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			Logger.info("Using " + numSamples + " samples as positive training set.");
 		}
 		
-		Map<AtomicTransaction, Set<JavaChangeOperation>> selectedTransactions = new HashMap<AtomicTransaction, Set<JavaChangeOperation>>();
+		final Map<AtomicTransaction, Set<JavaChangeOperation>> selectedTransactions = new HashMap<AtomicTransaction, Set<JavaChangeOperation>>();
 		for (int i = 0; i < numSamples; ++i) {
-			int r = Untangling.random.nextInt(transactions.size());
+			final int r = Untangling.random.nextInt(transactions.size());
 			
-			AtomicTransaction t = transactions.get(r);
-			Set<JavaChangeOperation> changeOperations = t.getChangeOperation(JavaMethodDefinition.class);
+			final AtomicTransaction t = transactions.get(r);
+			final Set<JavaChangeOperation> changeOperations = t.getChangeOperation(JavaMethodDefinition.class);
 			
 			if (changeOperations.size() < 2) {
 				numSamples = Math.min(numSamples + 1, transactions.size());
@@ -67,17 +71,18 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			selectedTransactions.put(t, changeOperations);
 		}
 		
-		List<List<Double>> positiveValues = new LinkedList<List<Double>>();
+		final List<List<Double>> positiveValues = new LinkedList<List<Double>>();
 		
 		// generate the positive examples
-		for (Entry<AtomicTransaction, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
-			AtomicTransaction t = e.getKey();
-			JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue().size()]);
+		for (final Entry<AtomicTransaction, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
+			final AtomicTransaction t = e.getKey();
+			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
+			                                                                                           .size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
-					List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
-					for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+					final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
+					final List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
+					for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 						values.add(v.getScore(operationArray[i], operationArray[j]));
 					}
 					positiveValues.add(values);
@@ -85,14 +90,16 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
-		Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
+		final Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
+		
+		final Comparator<? super RCSTransaction> transactionComparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
 		
 		// generate the negative examples
-		List<List<Double>> negativeValues = new LinkedList<List<Double>>();
-		List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
+		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
+		final List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
 		selectedTransactionList.addAll(selectedTransactions.keySet());
-		int k = positiveValues.size();
-		long factorial = ((k - 1) * k) / 2;
+		final int k = positiveValues.size();
+		final long factorial = ((k - 1) * k) / 2;
 		for (int i = 0; (i < k) && (seenCombinations.size() < factorial); ++i) {
 			int t1Index = -1;
 			int t2Index = -1;
@@ -102,8 +109,8 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 			
 			// get two random atomic transactions from the selected transaction
-			AtomicTransaction t1 = selectedTransactionList.get(t1Index);
-			AtomicTransaction t2 = selectedTransactionList.get(t2Index);
+			final AtomicTransaction t1 = selectedTransactionList.get(t1Index);
+			final AtomicTransaction t2 = selectedTransactionList.get(t2Index);
 			
 			if (t1Index < t2Index) {
 				seenCombinations.add(new Tuple<Integer, Integer>(t1Index, t2Index));
@@ -111,17 +118,17 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 				seenCombinations.add(new Tuple<Integer, Integer>(t2Index, t1Index));
 			}
 			
-			List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
+			final List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
 			t1Ops.addAll(selectedTransactions.get(t1));
 			
-			List<JavaChangeOperation> t2Ops = new LinkedList<JavaChangeOperation>();
+			final List<JavaChangeOperation> t2Ops = new LinkedList<JavaChangeOperation>();
 			t2Ops.addAll(selectedTransactions.get(t2));
 			
-			int t1OpIndex = Untangling.random.nextInt(t1Ops.size());
-			int t2OpIndex = Untangling.random.nextInt(t2Ops.size());
+			final int t1OpIndex = Untangling.random.nextInt(t1Ops.size());
+			final int t2OpIndex = Untangling.random.nextInt(t2Ops.size());
 			
-			JavaChangeOperation op1 = t1Ops.get(t1OpIndex);
-			JavaChangeOperation op2 = t2Ops.get(t2OpIndex);
+			final JavaChangeOperation op1 = t1Ops.get(t1OpIndex);
+			final JavaChangeOperation op2 = t2Ops.get(t2OpIndex);
 			
 			if (op1.equals(op2)) {
 				--i;
@@ -130,21 +137,21 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			
 			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
 			
-			if (t1.getTransaction().compareTo(t2.getTransaction()) > 0) {
+			if (transactionComparator.compare(t1.getTransaction(), t2.getTransaction()) > 0) {
 				scoreVisitors = untangling.generateScoreVisitors(t1.getTransaction());
 			} else {
 				scoreVisitors = untangling.generateScoreVisitors(t2.getTransaction());
 			}
 			
-			List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
-			for (MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-				double value = v.getScore(op1, op2);
+			final List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
+			for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+				final double value = v.getScore(op1, op2);
 				values.add(value);
 			}
 			negativeValues.add(values);
 		}
 		
-		Map<SampleType, List<List<Double>>> result = new HashMap<SampleType, List<List<Double>>>();
+		final Map<SampleType, List<List<Double>>> result = new HashMap<SampleType, List<List<Double>>>();
 		
 		result.put(SampleType.POSITIVE, positiveValues);
 		result.put(SampleType.NEGATIVE, positiveValues);

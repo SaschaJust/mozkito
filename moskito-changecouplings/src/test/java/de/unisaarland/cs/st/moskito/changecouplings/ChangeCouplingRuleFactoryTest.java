@@ -31,7 +31,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
@@ -75,8 +74,6 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 	@DatabaseSettings (unit = "rcs")
 	public void testChangeCouplings() {
 		
-		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		
 		persistenceUtil.beginTransaction();
 		
 		final RCSFileManager fileManager = new RCSFileManager();
@@ -85,8 +82,7 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		// ###transaction 1
 		
 		final DateTime now = new DateTime();
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "", branchFactory);
-		rcsTransaction.setBranch(branchFactory.getMasterBranch());
+		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "");
 		final RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
 		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
@@ -103,9 +99,7 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		
 		// ### transaction 2
 		
-		final RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", now.plus(10000), person, "",
-		                                                                        branchFactory);
-		rcsTransaction2.setBranch(branchFactory.getMasterBranch());
+		final RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", now.plus(10000), person, "");
 		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
 		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
@@ -115,9 +109,7 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		
 		// ### transaction 3
 		
-		final RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", now.plus(20000), person, "",
-		                                                                        branchFactory);
-		rcsTransaction3.setBranch(branchFactory.getMasterBranch());
+		final RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", now.plus(20000), person, "");
 		new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
 		
 		fileC.assignTransaction(rcsTransaction3, "C.java");
@@ -127,9 +119,7 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		
 		// ### transaction 4
 		
-		final RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", now.plus(30000), person, "",
-		                                                                        branchFactory);
-		rcsTransaction4.setBranch(branchFactory.getMasterBranch());
+		final RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", now.plus(30000), person, "");
 		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);

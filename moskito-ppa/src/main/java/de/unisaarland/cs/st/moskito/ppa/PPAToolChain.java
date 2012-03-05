@@ -90,7 +90,7 @@ public class PPAToolChain extends Chain<Settings> {
 			                                              "testCaseTransactions",
 			                                              "List of transactions that will be passed for test case purposes. "
 			                                                      + "If this option is set, this module will start in test case mode. "
-			                                                      + "If will generate change operations to specified transactions, only;"
+			                                                      + "It will generate change operations to specified transactions, only;"
 			                                                      + "outputting result as XML either to sdtout (if option -DasXML not set) "
 			                                                      + "or to specified XML file.", null,
 			                                              Requirement.optional);
