@@ -256,7 +256,7 @@ public class RCSTransaction implements Annotated {
 	 * @param branch
 	 * @return
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public RCSTransaction getBranchParent() {
 		return this.branchParent;
 	}
@@ -310,7 +310,7 @@ public class RCSTransaction implements Annotated {
 		                             : null;
 	}
 	
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public RCSTransaction getMergeParent() {
 		// PRECONDITIONS
 		
