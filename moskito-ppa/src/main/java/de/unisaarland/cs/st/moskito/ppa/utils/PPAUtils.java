@@ -318,9 +318,6 @@ public class PPAUtils {
 		final IJavaProject javaProject = getProject(requestName);
 		
 		final RCSTransaction parentTransaction = transaction.getBranchParent();
-		if (parentTransaction == null) {
-			return;
-		}
 		
 		for (final RCSRevision rev : transaction.getRevisions()) {
 			
