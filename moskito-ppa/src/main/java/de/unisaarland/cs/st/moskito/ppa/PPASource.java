@@ -32,11 +32,6 @@ public class PPASource extends Source<RCSTransaction> {
 	        final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
-		if (Logger.logDebug()) {
-			Logger.debug("transactionLimit: "
-			        + StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
-		}
-		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
