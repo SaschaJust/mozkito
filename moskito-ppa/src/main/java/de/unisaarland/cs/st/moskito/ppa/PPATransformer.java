@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
 	
 	public PPATransformer(final Group threadGroup, final Settings settings, final Repository repository,
-	        final Boolean usePPA, final JavaElementFactory factory) {
+	        final Boolean usePPA, final JavaElementFactory factory, final String[] packageFilter) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
@@ -61,7 +61,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 							                                  {
 								                                  add(visitor);
 							                                  }
-						                                  }, elementFactory);
+						                                  }, elementFactory, packageFilter);
 					} else {
 						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
 						                                       new HashSet<ChangeOperationVisitor>() {
@@ -71,7 +71,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 							                                       {
 								                                       add(visitor);
 							                                       }
-						                                       }, elementFactory);
+						                                       }, elementFactory, packageFilter);
 					}
 					PPAPersister.available.release();
 					

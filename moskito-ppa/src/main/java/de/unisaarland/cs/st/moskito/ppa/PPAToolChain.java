@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.ppa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -23,6 +24,7 @@ import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
+import net.ownhero.dev.hiari.settings.arguments.ListArgument;
 import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.arguments.SetArgument;
 import net.ownhero.dev.hiari.settings.arguments.StringArgument;
@@ -69,6 +71,8 @@ public class PPAToolChain extends Chain<Settings> {
 	/** The start with. */
 	private final StringArgument      startWithArg;
 	
+	private ListArgument              packageFilterArg;
+	
 	/**
 	 * Instantiates a new pPA tool chain.
 	 * 
@@ -104,6 +108,12 @@ public class PPAToolChain extends Chain<Settings> {
 			                                    "output.xml",
 			                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
 			                                    null, Requirement.optional, true);
+			
+			this.packageFilterArg = new ListArgument(
+			                                         settings.getRootArgumentSet(),
+			                                         "ppa.package.filter",
+			                                         "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
+			                                         null, Requirement.optional);
 			
 			this.startWithArg = new StringArgument(settings.getRootArgumentSet(), "startTransaction",
 			                                       "Use this transaction ID as the first one.", null,
@@ -178,11 +188,17 @@ public class PPAToolChain extends Chain<Settings> {
 			new PPAPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
 		}
 		
+		String[] packageFilter = new String[0];
+		final List<String> packageFilterList = this.packageFilterArg.getValue();
+		if (packageFilterList != null) {
+			packageFilter = packageFilterList.toArray(new String[packageFilterList.size()]);
+		}
+		
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil,
 		              this.startWithArg.getValue(), this.testCaseTransactionArg.getValue());
 		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
-		                   elementFactory);
+		                   elementFactory, packageFilter);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Setup done.");

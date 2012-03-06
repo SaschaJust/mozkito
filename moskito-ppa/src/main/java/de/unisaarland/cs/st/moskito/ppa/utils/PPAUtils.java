@@ -307,7 +307,8 @@ public class PPAUtils {
 	public static void generateChangeOperations(final Repository repository,
 	                                            final RCSTransaction transaction,
 	                                            final Collection<ChangeOperationVisitor> visitors,
-	                                            final JavaElementFactory elementFactory) {
+	                                            final JavaElementFactory elementFactory,
+	                                            final String[] packageFilter) {
 		
 		final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -390,7 +391,7 @@ public class PPAUtils {
 				final CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
 				                                                                                         .getSecond(),
-				                                       visitors, elementFactory);
+				                                       visitors, elementFactory, packageFilter);
 			}
 		}
 		
@@ -427,7 +428,7 @@ public class PPAUtils {
 			final CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue()
 			                                                                                       .getSecond(),
-			                                     visitors, elementFactory);
+			                                     visitors, elementFactory, packageFilter);
 		}
 		
 		// handle modified files
@@ -444,7 +445,7 @@ public class PPAUtils {
 			        + entry.getValue());
 			final CompilationUnit oldCU = getCU(oldFile, new PPAOptions());
 			final JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),
-			                                                                           new String[0], elementFactory);
+			                                                                           packageFilter, elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -455,7 +456,7 @@ public class PPAUtils {
 			        + entry.getValue());
 			final CompilationUnit newCU = getCU(newFile, new PPAOptions());
 			final JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(),
-			                                                                           new String[0], elementFactory);
+			                                                                           packageFilter, elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 			                                        entry.getValue(), visitors);
 		}
@@ -467,9 +468,10 @@ public class PPAUtils {
 	                                                         final CompilationUnit cu,
 	                                                         final String changedPath,
 	                                                         final Collection<ChangeOperationVisitor> visitors,
-	                                                         final JavaElementFactory elementFactory) {
+	                                                         final JavaElementFactory elementFactory,
+	                                                         final String[] packageFilter) {
 		final ChangeOperations operations = new ChangeOperations();
-		final JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
+		final JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, packageFilter,
 		                                                                           elementFactory);
 		for (final JavaElementLocation classDef : newElems.getClassDefs(changedPath)) {
 			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
@@ -498,11 +500,12 @@ public class PPAUtils {
 	                                                             final CompilationUnit cu,
 	                                                             final String changedPath,
 	                                                             final Collection<ChangeOperationVisitor> visitors,
-	                                                             final JavaElementFactory elementFactory) {
+	                                                             final JavaElementFactory elementFactory,
+	                                                             final String[] packageFilter) {
 		
 		final ChangeOperations operations = new ChangeOperations();
 		
-		final JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, new String[0],
+		final JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, packageFilter,
 		                                                                           elementFactory);
 		
 		for (final JavaElementLocation classDef : oldElems.getClassDefs(changedPath)) {
@@ -723,7 +726,8 @@ public class PPAUtils {
 	public static void generateChangeOperationsNOPPA(final Repository repository,
 	                                                 final RCSTransaction transaction,
 	                                                 final Collection<ChangeOperationVisitor> visitors,
-	                                                 final JavaElementFactory elementFactory) {
+	                                                 final JavaElementFactory elementFactory,
+	                                                 final String[] packageFilter) {
 		
 		final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
 		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
@@ -777,7 +781,7 @@ public class PPAUtils {
 				        + entry.getValue());
 				final CompilationUnit cu = getCUNoPPA(file);
 				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-				                                       visitors, elementFactory);
+				                                       visitors, elementFactory, packageFilter);
 			}
 		}
 		
@@ -792,7 +796,7 @@ public class PPAUtils {
 			final File file = new File(newCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
 			final CompilationUnit cu = getCUNoPPA(file);
 			generateChangeOperationsForAddedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-			                                     visitors, elementFactory);
+			                                     visitors, elementFactory, packageFilter);
 		}
 		
 		// handle modified files
@@ -809,7 +813,7 @@ public class PPAUtils {
 			        + entry.getValue());
 			final CompilationUnit oldCU = getCUNoPPA(oldFile);
 			final JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),
-			                                                                           new String[0], elementFactory);
+			                                                                           packageFilter, elementFactory);
 			
 			newCheckoutFile = repository.checkoutPath("/", transaction.getId());
 			if (!newCheckoutFile.exists()) {
@@ -820,7 +824,7 @@ public class PPAUtils {
 			        + entry.getValue());
 			final CompilationUnit newCU = getCUNoPPA(newFile);
 			final JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(newCU, entry.getValue(),
-			                                                                           new String[0], elementFactory);
+			                                                                           packageFilter, elementFactory);
 			generateChangeOperationsForModifiedFile(repository, transaction, entry.getKey(), oldElems, newElems,
 			                                        entry.getValue(), visitors);
 		}

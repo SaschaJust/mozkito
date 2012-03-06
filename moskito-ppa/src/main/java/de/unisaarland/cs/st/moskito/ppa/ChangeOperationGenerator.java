@@ -37,15 +37,19 @@ public class ChangeOperationGenerator {
 	private final Repository                  repo;
 	private final JavaElementFactory          elementFactory;
 	
+	private final String[]                    packageFilter;
+	
 	/**
 	 * Instantiates a new change operation generator.
 	 * 
 	 * @param repository
 	 *            the repository
 	 */
-	public ChangeOperationGenerator(final Repository repository, final JavaElementFactory elementFactory) {
+	public ChangeOperationGenerator(final Repository repository, final JavaElementFactory elementFactory,
+	        final String[] packageFilter) {
 		this.repo = repository;
 		this.elementFactory = elementFactory;
+		this.packageFilter = packageFilter;
 	}
 	
 	/**
@@ -55,11 +59,11 @@ public class ChangeOperationGenerator {
 	 *            the transactions
 	 */
 	public void handleTransactions(final List<RCSTransaction> transactions) {
-		int size = transactions.size();
+		final int size = transactions.size();
 		int counter = 0;
-		for (RCSTransaction transaction : transactions) {
+		for (final RCSTransaction transaction : transactions) {
 			
-			for (ChangeOperationVisitor visitor : this.visitors) {
+			for (final ChangeOperationVisitor visitor : this.visitors) {
 				visitor.visit(transaction);
 			}
 			
@@ -68,9 +72,10 @@ public class ChangeOperationGenerator {
 				        + "/" + size + ")");
 			}
 			
-			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors, elementFactory);
+			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors, this.elementFactory,
+			                                  this.packageFilter);
 		}
-		for (ChangeOperationVisitor visitor : this.visitors) {
+		for (final ChangeOperationVisitor visitor : this.visitors) {
 			visitor.endVisit();
 		}
 	}
