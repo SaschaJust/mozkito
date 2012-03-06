@@ -360,7 +360,7 @@ public class PPAUtils {
 			final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldCheckoutFile.getAbsolutePath() + ".");
 			}
 			
 			// first copy files!

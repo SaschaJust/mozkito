@@ -5,7 +5,6 @@ package de.unisaarland.cs.st.moskito.ppa;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.TreeSet;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -55,12 +54,8 @@ public class PPASource extends Source<RCSTransaction> {
 					}
 					criteria.in("id", transactionLimit);
 				}
-				final TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
-				list.addAll(persistenceUtil.load(criteria));
-				if (Logger.logDebug()) {
-					Logger.debug("Loaded " + list.size() + " transactions as tool chain input.");
-				}
-				PPASource.this.iterator = list.iterator();
+				
+				PPASource.this.iterator = persistenceUtil.load(criteria).iterator();
 				
 				if (startWith != null) {
 					while (PPASource.this.iterator.hasNext()
