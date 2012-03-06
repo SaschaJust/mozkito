@@ -27,8 +27,6 @@ import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
 import net.ownhero.dev.hiari.settings.arguments.ListArgument;
 import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.arguments.SetArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -60,6 +58,7 @@ public class PPAToolChain extends Chain<Settings> {
 	/** The test case transaction arg. */
 	private final SetArgument         testCaseTransactionArg;
 	
+	/** The ppa arg. */
 	private final BooleanArgument     ppaArg;
 	
 	/** The as xml. */
@@ -68,16 +67,12 @@ public class PPAToolChain extends Chain<Settings> {
 	/** The persistence middleware util. */
 	private PersistenceUtil           persistenceUtil;
 	
-	/** The start with. */
-	private final StringArgument      startWithArg;
-	
+	/** The package filter arg. */
 	private ListArgument              packageFilterArg;
 	
 	/**
 	 * Instantiates a new pPA tool chain.
 	 * 
-	 * @throws ArgumentRegistrationException
-	 * @throws SettingsParseError
 	 */
 	public PPAToolChain() {
 		super(new RepositorySettings());
@@ -114,10 +109,6 @@ public class PPAToolChain extends Chain<Settings> {
 			                                         "ppa.package.filter",
 			                                         "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
 			                                         null, Requirement.optional);
-			
-			this.startWithArg = new StringArgument(settings.getRootArgumentSet(), "startTransaction",
-			                                       "Use this transaction ID as the first one.", null,
-			                                       Requirement.optional);
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -196,7 +187,7 @@ public class PPAToolChain extends Chain<Settings> {
 		
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil,
-		              this.startWithArg.getValue(), this.testCaseTransactionArg.getValue());
+		              this.testCaseTransactionArg.getValue());
 		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
 		                   elementFactory, packageFilter);
 		

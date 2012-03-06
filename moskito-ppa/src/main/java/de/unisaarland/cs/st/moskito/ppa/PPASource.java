@@ -17,6 +17,7 @@ import org.apache.maven.surefire.shade.org.codehaus.plexus.util.StringUtils;
 
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -28,7 +29,7 @@ public class PPASource extends Source<RCSTransaction> {
 	private Iterator<RCSTransaction> iterator;
 	
 	public PPASource(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
-	        final String startWith, final HashSet<String> transactionLimit) {
+	        final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
 		if (Logger.logDebug()) {
@@ -56,13 +57,6 @@ public class PPASource extends Source<RCSTransaction> {
 				}
 				
 				PPASource.this.iterator = persistenceUtil.load(criteria).iterator();
-				
-				if (startWith != null) {
-					while (PPASource.this.iterator.hasNext()
-					        && !(PPASource.this.iterator.next().getId().equals(startWith))) {
-						// drop
-					}
-				}
 			}
 		};
 		
@@ -73,11 +67,19 @@ public class PPASource extends Source<RCSTransaction> {
 				if (PPASource.this.iterator.hasNext()) {
 					final RCSTransaction transaction = PPASource.this.iterator.next();
 					
-					if (Logger.logDebug()) {
-						Logger.debug("Providing " + transaction);
+					final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
+					                                                                  .in("revision",
+					                                                                      transaction.getRevisions());
+					if (!persistenceUtil.load(skipCriteria).isEmpty()) {
+						skipOutputData();
+					} else {
+						
+						if (Logger.logDebug()) {
+							Logger.debug("Providing " + transaction);
+						}
+						
+						providePartialOutputData(transaction);
 					}
-					
-					providePartialOutputData(transaction);
 				} else {
 					provideOutputData(null, true);
 					setCompleted();
