@@ -246,7 +246,7 @@ public class RCSTransaction implements Annotated {
 		// PRECONDITIONS
 		
 		try {
-			return this.branchIndices.keySet();
+			return getBranchIndices().keySet();
 		} finally {
 			// POSTCONDITIONS
 		}

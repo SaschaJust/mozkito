@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -64,6 +65,11 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 		// PRECONDITIONS
 		
 		try {
+			
+			if (Logger.logTrace()) {
+				Logger.trace("Adding " + e + " into TransactionSet.");
+			}
+			
 			final Set<String> branchNames = e.getBranchNames();
 			if (this.branchIntersection.isEmpty()) {
 				this.branchIntersection.addAll(branchNames);
