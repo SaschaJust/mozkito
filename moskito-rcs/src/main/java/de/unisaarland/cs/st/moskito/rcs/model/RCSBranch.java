@@ -178,10 +178,8 @@ public class RCSBranch implements Annotated {
 	 * Gets the merged in.
 	 * 
 	 * @return the name of the branch this branch was merged in (if any)
-	 * @deprecated this is not yet implement
 	 */
 	@ElementCollection
-	@Deprecated
 	public Set<String> getMergedIn() {
 		return this.mergedIn;
 	}
@@ -278,8 +276,6 @@ public class RCSBranch implements Annotated {
 		} else {
 			sb.append("null");
 		}
-		sb.append(", mergedIn=");
-		sb.append(getMergedIn());
 		sb.append("]");
 		return sb.toString();
 	}
