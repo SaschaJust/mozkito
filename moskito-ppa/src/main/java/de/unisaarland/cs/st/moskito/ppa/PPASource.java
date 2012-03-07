@@ -22,6 +22,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -106,10 +107,16 @@ public class PPASource extends Source<RCSTransaction> {
 						final RCSTransaction transaction = PPASource.this.tIterator.next();
 						
 						// test if seen already
-						final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
-						                                                                  .in("revision",
-						                                                                      transaction.getRevisions());
-						if (!persistenceUtil.load(skipCriteria).isEmpty()) {
+						boolean skip = false;
+						for (final RCSRevision revision : transaction.getRevisions()) {
+							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
+							                                                                  .eq("revision", revision);
+							if (!persistenceUtil.load(skipCriteria).isEmpty()) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
 							skipOutputData();
 						}
 						

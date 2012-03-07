@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.moskito.persistence;
 
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Predicate;
@@ -72,24 +71,19 @@ public class RCSPersistenceUtil {
 	 * @return the transactions
 	 * 
 	 */
-	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static TransactionSet getTransactions(final PersistenceUtil persistenceUtil,
 	                                             final RCSBranch branch,
 	                                             final TransactionSetOrder order) {
 		
-		final String queryString = "select t.* from rcstransaction t JOIN rcstransaction_branchindices i ON t.id = i.rcstransaction_id WHERE i.key0 = '"
-		        + branch.getName() + "';";
-		final Query nativeQuery = persistenceUtil.createNativeQuery(queryString, RCSTransaction.class);
-		
-		// final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-		// final MapJoin<RCSTransaction, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
-		// final CriteriaQuery<RCSTransaction> query = criteria.getQuery();
-		// query.where(criteria.getBuilder().equal(branchRoot.key(), branch.getName()));
-		// criteria.setQuery(query);
+		final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+		final MapJoin<RCSTransaction, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
+		final CriteriaQuery<RCSTransaction> query = criteria.getQuery();
+		query.where(criteria.getBuilder().equal(branchRoot.key(), branch.getName()));
+		criteria.setQuery(query);
 		
 		final TransactionSet result = new TransactionSet(order);
-		result.addAll(nativeQuery.getResultList());
+		result.addAll(persistenceUtil.load(criteria));
 		return result;
 	}
 }
