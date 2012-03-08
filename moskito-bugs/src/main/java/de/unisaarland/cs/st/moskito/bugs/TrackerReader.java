@@ -20,11 +20,6 @@ import java.net.URI;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -32,7 +27,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends Source<RawReport> {
+public class TrackerReader extends Source<URI> {
 	
 	/**
 	 * @param threadGroup
@@ -41,42 +36,16 @@ public class TrackerReader extends Source<RawReport> {
 	public TrackerReader(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<RawReport, RawReport>(this) {
+		new ProcessHook<URI, URI>(this) {
 			
 			@Override
 			public void process() {
 				final URI bugURI = tracker.getNextURI();
 				
-				try {
-					if (bugURI != null) {
-						
-						if (Logger.logDebug()) {
-							Logger.debug("Fetching " + bugURI.toASCIIString() + ".");
-						}
-						
-						final RawReport source = tracker.fetchSource(bugURI);
-						
-						if (source == null) {
-							
-							if (Logger.logWarn()) {
-								Logger.warn("Skipping " + bugURI.toASCIIString() + ". Fetch returned null.");
-							}
-							
-							skipOutputData(source);
-						} else {
-							
-							if (Logger.logDebug()) {
-								Logger.debug("Providing " + source + ".");
-							}
-							providePartialOutputData(source);
-						}
-					} else {
-						setCompleted();
-					}
-				} catch (final FetchException e) {
-					throw new UnrecoverableError(e);
-				} catch (final UnsupportedProtocolException e) {
-					throw new UnrecoverableError(e);
+				if (bugURI != null) {
+					providePartialOutputData(bugURI);
+				} else {
+					setCompleted();
 				}
 			}
 		};

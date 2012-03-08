@@ -24,7 +24,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -57,9 +56,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
-	
-	/** The tracker. */
-	private Tracker               tracker      = null;
 	
 	private BugzillaHistoryParser historyParser;
 	
@@ -681,22 +677,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			return getXmlBug().getVersion();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
-	@Override
-	@NoneNull
-	public void setTracker(final Tracker tracker) {
-		// PRECONDITIONS
-		this.tracker = tracker;
-		try {
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -15,6 +15,7 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.jdom.Document;
@@ -23,7 +24,7 @@ import org.jdom.Document;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class XmlReport extends RawReport {
+public class XmlReport extends RawContent {
 	
 	private static final long serialVersionUID = 6524458006854786132L;
 	private final Document    document;
@@ -33,8 +34,9 @@ public class XmlReport extends RawReport {
 	 * @param document
 	 */
 	@NoneNull
-	public XmlReport(final RawReport rawReport, final Document document) {
-		super(rawReport.getId(), rawReport);
+	public XmlReport(final RawContent rawContent, final Document document) {
+		super(rawContent.getUri(), rawContent.getMd5(), rawContent.getFetchTime(), rawContent.getFormat(),
+		      rawContent.getContent());
 		this.document = document;
 	}
 	

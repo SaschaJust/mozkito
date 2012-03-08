@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -48,6 +49,8 @@ public interface Parser {
 	
 	String getDescription();
 	
+	DateTime getFetchTime();
+	
 	SortedSet<HistoryElement> getHistoryElements();
 	
 	Long getId();
@@ -55,6 +58,8 @@ public interface Parser {
 	Set<String> getKeywords();
 	
 	DateTime getLastUpdateTimestamp();
+	
+	byte[] getMd5();
 	
 	Priority getPriority();
 	
@@ -86,5 +91,5 @@ public interface Parser {
 	
 	void setTracker(Tracker tracker);
 	
-	void setXMLReport(XmlReport report);
+	boolean setURI(URI uri);
 }

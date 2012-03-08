@@ -4,7 +4,10 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
@@ -35,10 +38,27 @@ public class BugzillaOverviewParser implements OverviewParser {
 	}
 	
 	@Override
-	public boolean parseOverview(final RawContent content) {
+	public boolean parseOverview() {
 		// PRECONDITIONS
 		
 		try {
+			
+			// FIXME replace by Bugzilla overview URI DYNAMIC ARGUMENT
+			RawContent content;
+			try {
+				content = IOUtils.fetch(this.tracker.getOverviewURI());
+			} catch (final UnsupportedProtocolException e1) {
+				if (Logger.logError()) {
+					Logger.error(e1.getMessage(), e1);
+				}
+				return false;
+			} catch (final FetchException e1) {
+				if (Logger.logError()) {
+					Logger.error(e1.getMessage(), e1);
+				}
+				return false;
+			}
+			
 			final Document document = Jsoup.parse(content.getContent());
 			final Element bugzillabody = document.getElementById("bugzilla-body");
 			if (bugzillabody == null) {

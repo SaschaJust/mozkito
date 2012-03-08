@@ -27,11 +27,9 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -118,95 +116,6 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * The method takes a string containing one bug report and analyzes its content. If this method returns false, the
-	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents,
-	 * etc...
-	 * 
-	 * @param rawString
-	 *            the bug report without further processing
-	 * @return true if no error occurred
-	 */
-	public boolean checkRAW(@NotNull final RawReport rawReport) {
-		final boolean retval = true;
-		return retval;
-	}
-	
-	/**
-	 * The method takes a XML document representing a bug report and checks this document for consistency, i.e. if all
-	 * required nodes are available or if the document matches a given XML scheme. If this method returns false, the
-	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents or
-	 * unsupported versions.
-	 * 
-	 * @param xmlReport
-	 *            the XML document representing a bug report
-	 * @return true if no error occurred
-	 */
-	public boolean checkXML(@NotNull final XmlReport xmlReport) {
-		return xmlReport.getDocument().getRootElement() != null;
-	}
-	
-	/**
-	 * The method takes a bug report in raw format and creates the corresponding XML document.
-	 * 
-	 * @param rawReport
-	 *            the raw bug report
-	 * @return the bug report as XML document
-	 */
-	public abstract XmlReport createDocument(RawReport rawReport);
-	
-	/**
-	 * This is method takes a {@link URI} and fetches the content to a string.
-	 * 
-	 * @param fetchURI
-	 *            the fetchURI to the bug report
-	 * @return a {@link RawReport}
-	 * @throws UnsupportedProtocolException
-	 * @throws FetchException
-	 */
-	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
-		RawReport source = null;
-		final Long bugId = reverseURI(uri);
-		
-		if (this.cacheDir != null) {
-			
-			String filename = uri.toString();
-			final int index = filename.lastIndexOf('/');
-			filename = filename.substring(index + 1);
-			
-			final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
-			if (cacheFile.exists()) {
-				if (Logger.logInfo()) {
-					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
-					        + " from cache directory ... ");
-				}
-				try {
-					source = (RawReport) IOUtils.load(cacheFile);
-				} catch (final LoadingException e) {
-					if (Logger.logWarn()) {
-						Logger.warn("Could not load cached file. Refetching original report", e);
-					}
-					source = new RawReport(bugId, IOUtils.fetch(uri));
-					writeContentToFile(source, filename);
-				} catch (final FilePermissionException e) {
-					if (Logger.logWarn()) {
-						Logger.warn("Could not load cached file. Refetching original report", e);
-					}
-					source = new RawReport(bugId, IOUtils.fetch(uri));
-					writeContentToFile(source, filename);
-				}
-				
-			} else {
-				source = new RawReport(bugId, IOUtils.fetch(uri));
-				writeContentToFile(source, filename);
-			}
-		} else {
-			
-			source = new RawReport(bugId, IOUtils.fetch(uri));
-		}
-		return source;
-	}
-	
-	/**
 	 * @param id
 	 * @return
 	 */
@@ -238,7 +147,7 @@ public abstract class Tracker {
 		}
 	}
 	
-	public abstract OverviewParser getOverviewParser(RawContent overviewContent);
+	public abstract OverviewParser getOverviewParser();
 	
 	/**
 	 * @return the overviewURI
@@ -247,7 +156,7 @@ public abstract class Tracker {
 		return this.overviewURI;
 	}
 	
-	public abstract Parser getParser(XmlReport xmlReport);
+	public abstract Parser getParser();
 	
 	/**
 	 * This method returns the tracker type, determined by
@@ -314,19 +223,24 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public final Report parse(final XmlReport xmlReport) {
-		final Parser parser = getParser(xmlReport);
+	public final Report parse(final URI uri) {
+		final Parser parser = getParser();
 		if (parser == null) {
 			throw new UnrecoverableError(
 			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Parsing issue report " + xmlReport.getId() + " ... ");
+			Logger.info("Parsing issue report " + uri.toASCIIString() + " ... ");
 		}
 		
 		parser.setTracker(this);
-		parser.setXMLReport(xmlReport);
+		if (!parser.setURI(uri)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not parse report " + uri.toASCIIString() + ". See earlier error messages.");
+			}
+			return null;
+		}
 		
 		final Long id = parser.getId();
 		Condition.notNull(id, "The bug id returned by the parser may never be null.");
@@ -345,8 +259,8 @@ public abstract class Tracker {
 		
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
-		report.setHash(xmlReport.getMd5());
-		report.setLastFetch(xmlReport.getFetchTime());
+		report.setHash(parser.getMd5());
+		report.setLastFetch(parser.getFetchTime());
 		report.setLastUpdateTimestamp(parser.getLastUpdateTimestamp());
 		report.setPriority(parser.getPriority());
 		report.setProduct(parser.getProduct());
@@ -463,25 +377,14 @@ public abstract class Tracker {
 		
 		this.bugURIs = new LinkedBlockingDeque<URI>();
 		
-		if (getOverviewURI() != null) {
-			try {
-				final RawContent overviewContent = IOUtils.fetch(getOverviewURI());
-				final OverviewParser overviewParser = getOverviewParser(overviewContent);
-				if (overviewParser != null) {
-					if (!overviewParser.parseOverview(overviewContent)) {
-						throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
-					}
-					this.bugURIs.addAll(overviewParser.getBugURIs());
-					if (Logger.logInfo()) {
-						Logger.info("Added " + this.bugURIs.size() + " bug IDs while parsing overviewURI.");
-					}
-				} else {
-					throw new UnrecoverableError("Could not parse bug overview URI. No suitable overview parser found.");
-				}
-			} catch (final UnsupportedProtocolException e) {
-				throw new UnrecoverableError(e);
-			} catch (final FetchException e) {
-				throw new UnrecoverableError(e);
+		final OverviewParser overviewParser = getOverviewParser();
+		if (overviewParser != null) {
+			if (!overviewParser.parseOverview()) {
+				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
+			}
+			this.bugURIs.addAll(overviewParser.getBugURIs());
+			if (Logger.logInfo()) {
+				Logger.info("Added " + this.bugURIs.size() + " bug IDs while parsing overviewURI.");
 			}
 		} else {
 			// what if no overviewParser?
