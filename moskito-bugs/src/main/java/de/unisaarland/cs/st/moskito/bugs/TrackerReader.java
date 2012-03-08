@@ -45,31 +45,29 @@ public class TrackerReader extends Source<RawReport> {
 			
 			@Override
 			public void process() {
-				final Long bugId = tracker.getNextId();
+				final URI bugURI = tracker.getNextURI();
 				
 				try {
-					if (bugId != null) {
+					if (bugURI != null) {
 						
 						if (Logger.logDebug()) {
-							Logger.debug("Fetching " + bugId + ".");
+							Logger.debug("Fetching " + bugURI.toASCIIString() + ".");
 						}
 						
-						final URI newURI = tracker.getLinkFromId(bugId);
-						final RawReport source = tracker.fetchSource(newURI);
+						final RawReport source = tracker.fetchSource(bugURI);
 						
 						if (source == null) {
 							
 							if (Logger.logWarn()) {
-								Logger.warn("Skipping " + bugId + ". Fetch returned null.");
+								Logger.warn("Skipping " + bugURI.toASCIIString() + ". Fetch returned null.");
 							}
 							
 							skipOutputData(source);
 						} else {
 							
 							if (Logger.logDebug()) {
-								Logger.debug("Providing " + bugId + ".");
+								Logger.debug("Providing " + source + ".");
 							}
-							
 							providePartialOutputData(source);
 						}
 					} else {

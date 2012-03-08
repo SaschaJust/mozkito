@@ -15,6 +15,8 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -109,11 +111,28 @@ public class MantisTracker extends Tracker {
 	}
 	
 	@Override
+	public URI getLinkFromId(final Long bugId) {
+		// PRECONDITIONS
+		
+		try {
+			try {
+				return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
+			} catch (final URISyntaxException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public OverviewParser getOverviewParser(final RawContent overviewContent) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO
 			if (Logger.logError()) {
 				Logger.error("Overview parsing not supported yet.");
 			}

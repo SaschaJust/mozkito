@@ -104,7 +104,7 @@ public class GoogleTracker_NetTest {
 			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
 			              null, null, 4380l, 4380l, cacheDir);
 			
-			final Long nextId = tracker.getNextId();
+			final Long nextId = tracker.getNextURI();
 			assertEquals(4380, nextId, 0);
 			final URI linkFromId = tracker.getLinkFromId(nextId);
 			assertEquals(new URI("4380"), linkFromId);

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -104,6 +105,24 @@ public class IssuezillaTracker extends Tracker {
 	// }
 	
 	@Override
+	public URI getLinkFromId(final Long bugId) {
+		// PRECONDITIONS
+		
+		try {
+			try {
+				return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
+			} catch (final URISyntaxException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public OverviewParser getOverviewParser(final RawContent overviewContent) {
 		// PRECONDITIONS
 		
@@ -148,13 +167,5 @@ public class IssuezillaTracker extends Tracker {
 	                  final File cacheDir) throws InvalidParameterException {
 		
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
-		// TODO authentication not supported. For that we would have to use
-		// the API but the examples don;t even work. -.-
-		
-		// TODO just iterating over all possible IDs. This is not clever but so
-		// far I did not found a clever solution
-		for (long i = startAt; i <= stopAt; ++i) {
-			super.addBugId(i);
-		}
 	}
 }

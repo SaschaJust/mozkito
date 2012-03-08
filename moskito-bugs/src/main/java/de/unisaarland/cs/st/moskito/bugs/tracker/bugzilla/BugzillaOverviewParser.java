@@ -1,8 +1,10 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
@@ -14,29 +16,30 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 
 public class BugzillaOverviewParser implements OverviewParser {
 	
-	private final Set<Long> bugIds = new HashSet<Long>();
+	private final Set<URI>        bugURIs = new HashSet<URI>();
+	private final BugzillaTracker tracker;
 	
-	public BugzillaOverviewParser() {
-		
+	public BugzillaOverviewParser(final BugzillaTracker tracker) {
+		this.tracker = tracker;
 	}
 	
 	@Override
-	public Set<? extends Long> getBugIds() {
+	public Set<? extends URI> getBugURIs() {
 		// PRECONDITIONS
 		
 		try {
-			return this.bugIds;
+			return this.bugURIs;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	@Override
-	public boolean parse(final String content) {
+	public boolean parseOverview(final RawContent content) {
 		// PRECONDITIONS
 		
 		try {
-			final Document document = Jsoup.parse(content);
+			final Document document = Jsoup.parse(content.getContent());
 			final Element bugzillabody = document.getElementById("bugzilla-body");
 			if (bugzillabody == null) {
 				if (Logger.logError()) {
@@ -72,7 +75,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 						if (td.attr("class").contains("bz_id_column")) {
 							try {
 								final Long id = Long.parseLong(td.text().trim());
-								this.bugIds.add(id);
+								this.bugURIs.add(this.tracker.getLinkFromId(id));
 							} catch (final NumberFormatException e) {
 								if (Logger.logError()) {
 									Logger.error("Could not interprete bug id " + td.text().trim()

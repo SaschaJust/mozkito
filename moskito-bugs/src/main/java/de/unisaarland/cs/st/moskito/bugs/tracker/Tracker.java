@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
@@ -59,31 +58,31 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType type             = TrackerType.valueOf(this.getClass()
-	                                                                       .getSimpleName()
-	                                                                       .substring(0,
-	                                                                                  this.getClass().getSimpleName()
-	                                                                                      .length()
-	                                                                                          - Tracker.class.getSimpleName()
-	                                                                                                         .length())
-	                                                                       .toUpperCase());
-	protected DateTime          lastUpdate;
-	protected String            baseURL;
-	protected String            pattern;
-	protected URI               fetchURI;
-	protected String            username;
-	protected String            password;
-	protected Long              startAt;
-	protected Long              stopAt;
-	protected boolean           initialized      = false;
-	private URI                 overviewURI;
-	private BlockingQueue<Long> bugIds           = new LinkedBlockingQueue<Long>();
-	protected File              cacheDir;
+	protected final TrackerType   type             = TrackerType.valueOf(this.getClass()
+	                                                                         .getSimpleName()
+	                                                                         .substring(0,
+	                                                                                    this.getClass().getSimpleName()
+	                                                                                        .length()
+	                                                                                            - Tracker.class.getSimpleName()
+	                                                                                                           .length())
+	                                                                         .toUpperCase());
+	protected DateTime            lastUpdate;
+	protected String              baseURL;
+	protected String              pattern;
+	protected URI                 fetchURI;
+	protected String              username;
+	protected String              password;
+	protected Long                startAt;
+	protected Long                stopAt;
+	protected boolean             initialized      = false;
+	private URI                   overviewURI;
+	private BlockingQueue<URI>    bugURIs          = new LinkedBlockingQueue<URI>();
+	protected File                cacheDir;
 	
-	private static final String bugIdPlaceholder = "<BUGID>";
-	private static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
+	protected static final String bugIdPlaceholder = "<BUGID>";
+	protected static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
 	
-	public final static Person  unknownPerson    = new Person("<unknown>", null, null);
+	public final static Person    unknownPerson    = new Person("<unknown>", null, null);
 	
 	/**
 	 * @return
@@ -104,7 +103,7 @@ public abstract class Tracker {
 	 */
 	public Tracker() {
 		Condition.check(!this.initialized, "The tracker must NOT be initialized at this point in time.");
-		Condition.notNull(this.bugIds, "The bugId container must be initialized.");
+		Condition.notNull(this.bugURIs, "The bugId container must be initialized.");
 		Condition.notNull(bugIdPlaceholder, "bugIdPlaceholder must be set.");
 		StringCondition.notEmpty(bugIdPlaceholder, "bugIdPlaceholder must not be empty");
 		Condition.notNull(bugIdRegex, "bugIdRegex must be set.");
@@ -114,8 +113,8 @@ public abstract class Tracker {
 	/**
 	 * @param id
 	 */
-	public void addBugId(final Long id) {
-		this.bugIds.add(id);
+	public void addBugURI(final URI uri) {
+		this.bugURIs.add(uri);
 	}
 	
 	/**
@@ -224,33 +223,16 @@ public abstract class Tracker {
 		
 	}
 	
-	/**
-	 * Creates an {@link URI} that corresponds to the given bugId. This method is used to create {@link URI}s for the
-	 * {@link Tracker#fetchSource(URI)} method.
-	 * 
-	 * @param bugId
-	 *            the id of the bug an URI shall be created to
-	 * @return the URI to the bug report.
-	 */
-	public URI getLinkFromId(final Long bugId) {
-		try {
-			return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
-		} catch (final URISyntaxException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+	public abstract URI getLinkFromId(final Long bugId);
 	
 	/**
 	 * this method should be synchronized
 	 * 
 	 * @return the next id that hasn't been requested.
 	 */
-	public final synchronized Long getNextId() {
-		if (!this.bugIds.isEmpty()) {
-			return this.bugIds.poll();
+	public final synchronized URI getNextURI() {
+		if (!this.bugURIs.isEmpty()) {
+			return this.bugURIs.poll();
 		} else {
 			return null;
 		}
@@ -459,32 +441,39 @@ public abstract class Tracker {
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
 			this.overviewURI = overviewURI;
-			this.pattern = pattern;
 			this.username = username;
 			this.password = password;
 			this.startAt = startAt;
 			this.stopAt = stopAt;
 			this.initialized = true;
 			this.cacheDir = cacheDir;
+			this.pattern = pattern;
+			
+			if (startAt == null) {
+				this.startAt = 1l;
+			}
+			if (stopAt == null) {
+				this.stopAt = Long.MAX_VALUE;
+			}
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
 			}
 		}
 		
-		this.bugIds = new LinkedBlockingDeque<Long>();
+		this.bugURIs = new LinkedBlockingDeque<URI>();
 		
 		if (getOverviewURI() != null) {
 			try {
 				final RawContent overviewContent = IOUtils.fetch(getOverviewURI());
 				final OverviewParser overviewParser = getOverviewParser(overviewContent);
 				if (overviewParser != null) {
-					if (!overviewParser.parse(overviewContent.getContent())) {
+					if (!overviewParser.parseOverview(overviewContent)) {
 						throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
 					}
-					this.bugIds.addAll(overviewParser.getBugIds());
+					this.bugURIs.addAll(overviewParser.getBugURIs());
 					if (Logger.logInfo()) {
-						Logger.info("Added " + this.bugIds.size() + " bug IDs while parsing overviewURI.");
+						Logger.info("Added " + this.bugURIs.size() + " bug IDs while parsing overviewURI.");
 					}
 				} else {
 					throw new UnrecoverableError("Could not parse bug overview URI. No suitable overview parser found.");
@@ -494,12 +483,13 @@ public abstract class Tracker {
 			} catch (final FetchException e) {
 				throw new UnrecoverableError(e);
 			}
-		}
-		
-		// when this method ends, bugIds must be filled
-		if (this.bugIds.isEmpty()) {
-			for (long l = startAt; l <= stopAt; ++l) {
-				this.bugIds.add(l);
+		} else {
+			// what if no overviewParser?
+			for (long i = startAt; i <= stopAt; ++i) {
+				final URI uri = getLinkFromId(i);
+				if (uri != null) {
+					this.bugURIs.add(uri);
+				}
 			}
 		}
 	}

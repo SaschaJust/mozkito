@@ -20,7 +20,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -53,11 +55,12 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GoogleTracker extends Tracker {
+public class GoogleTracker extends Tracker implements OverviewParser {
 	
 	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
 	private String                projectName;
 	private ProjectHostingService service;
+	private Set<URI>              overviewURIs;
 	
 	/*
 	 * (non-Javadoc)
@@ -158,6 +161,18 @@ public class GoogleTracker extends Tracker {
 		return null;
 	}
 	
+	@Override
+	public Set<? extends URI> getBugURIs() {
+		// PRECONDITIONS
+		
+		try {
+			
+			return this.overviewURIs;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java .lang.Long)
@@ -168,20 +183,6 @@ public class GoogleTracker extends Tracker {
 			return new URI(bugId.toString());
 		} catch (final URISyntaxException e) {
 			throw new UnrecoverableError("Could not convert long to URI");
-		}
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser(final RawContent overviewContent) {
-		// PRECONDITIONS
-		
-		try {
-			if (Logger.logError()) {
-				Logger.error("Overview parsing not supported yet.");
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
 		}
 	}
 	
@@ -558,6 +559,17 @@ public class GoogleTracker extends Tracker {
 	// }
 	// }
 	
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			return this;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
@@ -580,6 +592,70 @@ public class GoogleTracker extends Tracker {
 	 */
 	public String getProjectName() {
 		return this.projectName;
+	}
+	
+	@Override
+	public boolean parseOverview(final RawContent content) {
+		// PRECONDITIONS
+		
+		try {
+			this.overviewURIs = new HashSet<URI>();
+			try {
+				this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+				if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
+					this.service.setUserCredentials(this.username, this.password);
+				}
+				
+				int startIndex = 1;
+				final int maxResults = 100;
+				
+				IssuesFeed resultFeed = this.service.getFeed(new URL(this.fetchURI.toString() + "?start-index="
+				        + startIndex + "&max-results=" + maxResults), IssuesFeed.class);
+				if (Logger.logDebug()) {
+					Logger.debug(this.fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
+					        + maxResults);
+				}
+				List<IssuesEntry> feedEntries = resultFeed.getEntries();
+				while (feedEntries.size() > 0) {
+					for (int i = 0; i < feedEntries.size(); i++) {
+						final IssuesEntry entry = feedEntries.get(i);
+						final long bugId = entry.getIssueId().getValue().longValue();
+						if ((bugId >= this.startAt) && (bugId <= this.stopAt)) {
+							this.overviewURIs.add(getLinkFromId(bugId));
+							if (Logger.logDebug()) {
+								Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
+							}
+						}
+					}
+					startIndex += maxResults;
+					resultFeed = this.service.getFeed(new URL(this.fetchURI.toString() + "?start-index=" + startIndex
+					        + "&max-results=" + maxResults), IssuesFeed.class);
+					if (Logger.logDebug()) {
+						Logger.debug(this.fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
+						        + maxResults);
+					}
+					feedEntries = resultFeed.getEntries();
+				}
+			} catch (final AuthenticationException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return false;
+			} catch (final IOException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return false;
+			} catch (final ServiceException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return false;
+			}
+			return true;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -613,54 +689,5 @@ public class GoogleTracker extends Tracker {
 			}
 		}
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
-		
-		try {
-			this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
-			if ((username != null) && (password != null) && (!username.trim().equals(""))) {
-				this.service.setUserCredentials(username, password);
-			}
-			
-			int startIndex = 1;
-			final int maxResults = 100;
-			
-			IssuesFeed resultFeed = this.service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-			        + "&max-results=" + maxResults), IssuesFeed.class);
-			if (Logger.logDebug()) {
-				Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
-			}
-			List<IssuesEntry> feedEntries = resultFeed.getEntries();
-			while (feedEntries.size() > 0) {
-				for (int i = 0; i < feedEntries.size(); i++) {
-					final IssuesEntry entry = feedEntries.get(i);
-					final long bugId = entry.getIssueId().getValue().longValue();
-					if ((bugId >= startAt) && (bugId <= stopAt)) {
-						addBugId(bugId);
-						if (Logger.logDebug()) {
-							Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
-						}
-					}
-				}
-				startIndex += maxResults;
-				resultFeed = this.service.getFeed(new URL(fetchURI.toString() + "?start-index=" + startIndex
-				        + "&max-results=" + maxResults), IssuesFeed.class);
-				if (Logger.logDebug()) {
-					Logger.debug(fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
-				}
-				feedEntries = resultFeed.getEntries();
-			}
-			
-		} catch (final AuthenticationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final ServiceException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
 	}
 }

@@ -31,11 +31,11 @@
 			<artifactId>moskito-xml-bugzilla</artifactId>
 			<version>4.0.4</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-xml-bugzilla</artifactId>
-			<version>4.0.5PLUS</version>
-		</dependency> -->
+		<dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client</artifactId>
+            <version>0.4</version>
+        </dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
