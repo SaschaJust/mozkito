@@ -84,7 +84,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                description;
 	private byte[]                hash              = new byte[33];
 	private History               history;
-	private long                  id                = -1l;
+	private String                id;
 	private DateTime              lastFetch;
 	private DateTime              lastUpdateTimestamp;
 	// assignedTo
@@ -96,7 +96,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private Resolution            resolution        = Resolution.UNKNOWN;
 	private DateTime              resolutionTimestamp;
 	private Severity              severity          = Severity.UNKNOWN;
-	private SortedSet<Long>       siblings          = new TreeSet<Long>();
+	private SortedSet<String>     siblings          = new TreeSet<String>();
 	private Status                status            = Status.UNKNOWN;
 	private String                subject;
 	private String                summary;
@@ -113,7 +113,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @param id
 	 */
-	public Report(final long id) {
+	public Report(final String id) {
 		this();
 		setId(id);
 		setHistory(new History(getId()));
@@ -171,9 +171,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return
 	 */
 	@Transient
-	public boolean addSibling(@NotNull final Long sibling) {
+	public boolean addSibling(@NotNull final String sibling) {
 		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
-		final SortedSet<Long> siblings = getSiblings();
+		final SortedSet<String> siblings = getSiblings();
 		final boolean ret = siblings.add(sibling);
 		setSiblings(siblings);
 		return ret;
@@ -213,12 +213,11 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Override
 	public int compareTo(final Report o) {
-		if (getId() > o.getId()) {
-			return 1;
-		} else if (getId() < o.getId()) {
-			return -1;
+		final int comp = Integer.valueOf(this.id.length()).compareTo(Integer.valueOf(o.id.length()));
+		if (comp == 0) {
+			return this.id.compareTo(o.id);
 		} else {
-			return 0;
+			return comp;
 		}
 	}
 	
@@ -344,7 +343,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @return the id
 	 */
 	@Id
-	public long getId() {
+	public String getId() {
 		return this.id;
 	}
 	
@@ -483,7 +482,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@ElementCollection
 	@OrderBy
-	public SortedSet<Long> getSiblings() {
+	public SortedSet<String> getSiblings() {
 		return this.siblings;
 	}
 	
@@ -666,7 +665,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param id
 	 *            the id to set
 	 */
-	private void setId(final long id) {
+	private void setId(final String id) {
 		this.id = id;
 	}
 	
@@ -793,7 +792,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final SortedSet<Long> siblings) {
+	public void setSiblings(final SortedSet<String> siblings) {
 		this.siblings = siblings;
 	}
 	

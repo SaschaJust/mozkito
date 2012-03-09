@@ -15,40 +15,26 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Regex;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
+import com.atlassian.jira.rest.client.AuthenticationHandler;
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.NullProgressMonitor;
 import com.atlassian.jira.rest.client.RestClientException;
+import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
+import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 
 /**
  * The Class JiraTracker.
@@ -57,157 +43,14 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
  */
 public class JiraTracker extends Tracker implements OverviewParser {
 	
-	private static Regex doesNotExistRegex = new Regex(
-	                                                   "<title>Issue\\s+Does\\s+Not\\s+Exist\\s+-\\s+jira.codehaus.org\\s+</title>");
+	private final Set<ReportLink> overviewURIs = new HashSet<ReportLink>();
 	
-	private static Regex errorRegex        = new Regex(
-	                                                   "<title>\\s+Oops\\s+-\\s+an\\s+error\\s+has\\s+occurred\\s+</title>");
+	private NullProgressMonitor   pm;
 	
-	protected static String getHistoryURL(final URI uri) {
-		final String xmlUrl = uri.toString();
-		final int index = xmlUrl.lastIndexOf("/");
-		final String suffix = xmlUrl.substring(index, xmlUrl.length());
-		final String historyUrl = xmlUrl.replace("si/jira.issueviews:issue-xml/", "browse/");
-		return historyUrl.replace(suffix,
-		                          "?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
-	}
-	
-	private final Set<URI>      overviewURIs = new HashSet<URI>();
-	
-	private NullProgressMonitor pm;
-	
-	private JiraRestClient      restClient;
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(java.lang .String)
-	 */
-	@Override
-	@NoneNull
-	public boolean checkRAW(final RawReport rawReport) {
-		if (!super.checkRAW(rawReport)) {
-			return false;
-		}
-		if (doesNotExistRegex.matches(rawReport.getContent())) {
-			return false;
-		}
-		if (errorRegex.matches(rawReport.getContent())) {
-			return false;
-		}
-		if (!(rawReport.getUri().toString().endsWith(".xml") || (rawReport.getUri().toString().endsWith(".xhtml")))) {
-			if (Logger.logWarn()) {
-				Logger.warn("The Jira rawRepo uri is not an xml file.");
-			}
-			return false;
-		}
-		return true;
-	}
+	private JiraRestClient        restClient;
 	
 	@Override
-	public boolean checkXML(final XmlReport xmlReport) {
-		if (!super.checkXML(xmlReport)) {
-			return false;
-		}
-		
-		final Element rootElement = xmlReport.getDocument().getRootElement();
-		
-		if (rootElement == null) {
-			if (Logger.logError()) {
-				Logger.error("Root element is <null>");
-			}
-			return false;
-		}
-		
-		if (!rootElement.getName().equals("rss")) {
-			if (Logger.logError()) {
-				Logger.error("Name of root element is not `rss`");
-			}
-			return false;
-		}
-		
-		@SuppressWarnings ("rawtypes")
-		final List children = rootElement.getChildren("channel", rootElement.getNamespace());
-		
-		if (children == null) {
-			if (Logger.logError()) {
-				Logger.error("No `channel` children.");
-			}
-			return false;
-		}
-		
-		if (children.size() != 1) {
-			if (Logger.logError()) {
-				Logger.error("No `channel` children.");
-			}
-			return false;
-		}
-		
-		@SuppressWarnings ("unchecked")
-		final List<Element> items = rootElement.getChildren("channel", rootElement.getNamespace());
-		if (items.get(0).getChildren("item", rootElement.getNamespace()).size() != 1) {
-			if (Logger.logError()) {
-				Logger.error("No `item` children.");
-			}
-			return false;
-		}
-		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
-	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
-	 */
-	@Override
-	@NoneNull
-	public XmlReport createDocument(final RawReport rawReport) {
-		
-		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
-		try {
-			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-			final Document document = saxBuilder.build(reader);
-			reader.close();
-			return new XmlReport(rawReport, document);
-		} catch (final TransformerFactoryConfigurationError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final JDOMException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#fetchSource(java. net.URI)
-	 */
-	@Override
-	@NoneNull
-	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
-		// FIXME
-		return null;
-	}
-	
-	@Override
-	public Set<? extends URI> getBugURIs() {
-		// PRECONDITIONS
-		try {
-			
-			return this.overviewURIs;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	@Override
-	public URI getLinkFromId(final Long bugId) {
+	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
 		try {
@@ -224,14 +67,15 @@ public class JiraTracker extends Tracker implements OverviewParser {
 					        + ". Using first.");
 				}
 			}
-			return searchJql.getIssues().iterator().next().getSelf();
+			final BasicIssue issue = searchJql.getIssues().iterator().next();
+			return new ReportLink(issue.getSelf(), bugId);
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	@Override
-	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+	public OverviewParser getOverviewParser() {
 		// PRECONDITIONS
 		
 		try {
@@ -246,30 +90,50 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public Parser getParser() {
 		// PRECONDITIONS
 		
 		try {
-			return new JiraParser();
+			return new JiraParser(this.restClient);
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	@Override
-	public boolean parseOverview(final RawContent content) {
+	public Set<ReportLink> getReportLinks() {
+		// PRECONDITIONS
+		
+		try {
+			return this.overviewURIs;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public boolean parseOverview() {
 		// PRECONDITIONS
 		
 		try {
 			final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
+			
+			final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
 			// TODO support PROXYs
-			this.restClient = factory.createWithBasicHttpAuthentication(this.fetchURI, this.username, this.password);
+			// cc.getProperties().put(DefaultApacheHttpClientConfig.PROPERTY_PROXY_URI,"proxy.ergogroup.no:3128");
+			
+			AuthenticationHandler authenticationHandler = new AnonymousAuthenticationHandler();
+			if (this.username != null) {
+				authenticationHandler = new BasicHttpAuthenticationHandler(this.username, this.password);
+			}
+			authenticationHandler.configure(cc);
+			this.restClient = factory.create(this.fetchURI, authenticationHandler);
 			this.pm = new NullProgressMonitor();
 			try {
 				final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.pattern,
 				                                                                           this.pm);
 				for (final BasicIssue issue : searchJql.getIssues()) {
-					this.overviewURIs.add(issue.getSelf());
+					this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
 				}
 			} catch (final RestClientException e) {
 				if (Logger.logError()) {

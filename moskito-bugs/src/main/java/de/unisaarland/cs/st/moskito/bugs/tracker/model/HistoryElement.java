@@ -74,7 +74,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	private Map<String, PersonTuple>   changedPersonValues = new HashMap<String, PersonTuple>();
 	
 	private DateTime                   timestamp;
-	private long                       bugId;
+	private String                     bugId;
 	private PersonContainer            personContainer     = new PersonContainer();
 	
 	/**
@@ -91,7 +91,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @param timestamp
 	 */
 	@NoneNull
-	public HistoryElement(final long bugId, final Person author, final DateTime timestamp) {
+	public HistoryElement(final String bugId, final Person author, final DateTime timestamp) {
 		setBugId(bugId);
 		setAuthor(author);
 		setTimestamp(timestamp);
@@ -108,7 +108,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		for (final String fieldName : values.keySet()) {
 			final String lowerFieldName = fieldName.toLowerCase();
 			
-			final Report report = new Report(0);
+			final Report report = new Report("<unknown>");
 			Class<?> type = null;
 			
 			if (values.get(fieldName).getFirst() == null) {
@@ -368,7 +368,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	/**
 	 * @return the bugId
 	 */
-	public long getBugId() {
+	public String getBugId() {
 		return this.bugId;
 	}
 	
@@ -503,7 +503,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + (int) (getBugId() ^ (getBugId() >>> 32));
+		result = (prime * result) + getBugId().hashCode();
 		result = (prime * result) + ((getTimestamp() == null)
 		                                                     ? 0
 		                                                     : getTimestamp().hashCode());
@@ -530,7 +530,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * @param bugId
 	 *            the bugId to set
 	 */
-	public void setBugId(final long bugId) {
+	public void setBugId(final String bugId) {
 		this.bugId = bugId;
 	}
 	

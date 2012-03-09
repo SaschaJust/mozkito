@@ -14,9 +14,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +23,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -47,6 +44,7 @@ import com.google.gdata.data.projecthosting.Updates;
 import com.google.gdata.util.ServiceException;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
@@ -533,11 +531,11 @@ public class GoogleParser implements Parser {
 	 */
 	
 	@Override
-	public Long getId() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			return this.issuesEntry.getIssueId().getValue().longValue();
+			return this.issuesEntry.getIssueId().getValue().toString();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -586,31 +584,6 @@ public class GoogleParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
-	 */
-	
-	@Override
-	public byte[] getMd5() {
-		// PRECONDITIONS
-		
-		try {
-			try {
-				return HashUtils.getMD5(this.issuesEntry.toString());
-			} catch (final NoSuchAlgorithmException e) {
-				throw new UnrecoverableError(e);
-			}
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
-	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -893,14 +866,14 @@ public class GoogleParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(java.net.URI)
 	 */
 	@Override
-	public boolean setURI(final URI uri) {
+	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		try {
 			try {
-				final Long bugId = Long.valueOf(uri.toString());
+				final String bugId = reportLink.getBugId();
 				final IssuesQuery iQuery = new IssuesQuery(this.tracker.getUri().toURL());
-				iQuery.setId(bugId.intValue());
+				iQuery.setId(Integer.valueOf(bugId));
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Fetching RawReport form url: " + iQuery.getFeedUrl().toString()

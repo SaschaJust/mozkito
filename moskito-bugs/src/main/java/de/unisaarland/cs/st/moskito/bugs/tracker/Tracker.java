@@ -56,31 +56,32 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType   type             = TrackerType.valueOf(this.getClass()
-	                                                                         .getSimpleName()
-	                                                                         .substring(0,
-	                                                                                    this.getClass().getSimpleName()
-	                                                                                        .length()
-	                                                                                            - Tracker.class.getSimpleName()
-	                                                                                                           .length())
-	                                                                         .toUpperCase());
-	protected DateTime            lastUpdate;
-	protected String              baseURL;
-	protected String              pattern;
-	protected URI                 fetchURI;
-	protected String              username;
-	protected String              password;
-	protected Long                startAt;
-	protected Long                stopAt;
-	protected boolean             initialized      = false;
-	private URI                   overviewURI;
-	private BlockingQueue<URI>    bugURIs          = new LinkedBlockingQueue<URI>();
-	protected File                cacheDir;
+	protected final TrackerType       type             = TrackerType.valueOf(this.getClass()
+	                                                                             .getSimpleName()
+	                                                                             .substring(0,
+	                                                                                        this.getClass()
+	                                                                                            .getSimpleName()
+	                                                                                            .length()
+	                                                                                                - Tracker.class.getSimpleName()
+	                                                                                                               .length())
+	                                                                             .toUpperCase());
+	protected DateTime                lastUpdate;
+	protected String                  baseURL;
+	protected String                  pattern;
+	protected URI                     fetchURI;
+	protected String                  username;
+	protected String                  password;
+	protected Long                    startAt;
+	protected Long                    stopAt;
+	protected boolean                 initialized      = false;
+	private URI                       overviewURI;
+	private BlockingQueue<ReportLink> reportLinks      = new LinkedBlockingQueue<ReportLink>();
+	protected File                    cacheDir;
 	
-	protected static final String bugIdPlaceholder = "<BUGID>";
-	protected static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
+	protected static final String     bugIdPlaceholder = "<BUGID>";
+	protected static final Regex      bugIdRegex       = new Regex("({bugid}<BUGID>)");
 	
-	public final static Person    unknownPerson    = new Person("<unknown>", null, null);
+	public final static Person        unknownPerson    = new Person("<unknown>", null, null);
 	
 	/**
 	 * @return
@@ -101,18 +102,11 @@ public abstract class Tracker {
 	 */
 	public Tracker() {
 		Condition.check(!this.initialized, "The tracker must NOT be initialized at this point in time.");
-		Condition.notNull(this.bugURIs, "The bugId container must be initialized.");
+		Condition.notNull(this.reportLinks, "The bugId container must be initialized.");
 		Condition.notNull(bugIdPlaceholder, "bugIdPlaceholder must be set.");
 		StringCondition.notEmpty(bugIdPlaceholder, "bugIdPlaceholder must not be empty");
 		Condition.notNull(bugIdRegex, "bugIdRegex must be set.");
 		StringCondition.notEmpty(bugIdRegex.getPattern(), "bugIdRegex must not be empty");
-	}
-	
-	/**
-	 * @param id
-	 */
-	public void addBugURI(final URI uri) {
-		this.bugURIs.add(uri);
 	}
 	
 	/**
@@ -132,16 +126,16 @@ public abstract class Tracker {
 		
 	}
 	
-	public abstract URI getLinkFromId(final Long bugId);
+	public abstract ReportLink getLinkFromId(final String bugId);
 	
 	/**
 	 * this method should be synchronized
 	 * 
 	 * @return the next id that hasn't been requested.
 	 */
-	public final synchronized URI getNextURI() {
-		if (!this.bugURIs.isEmpty()) {
-			return this.bugURIs.poll();
+	public final synchronized ReportLink getNextReportLink() {
+		if (!this.reportLinks.isEmpty()) {
+			return this.reportLinks.poll();
 		} else {
 			return null;
 		}
@@ -223,7 +217,7 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public final Report parse(final URI uri) {
+	public final Report parse(final ReportLink reportLink) {
 		final Parser parser = getParser();
 		if (parser == null) {
 			throw new UnrecoverableError(
@@ -231,18 +225,18 @@ public abstract class Tracker {
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Parsing issue report " + uri.toASCIIString() + " ... ");
+			Logger.info("Parsing issue report " + reportLink.toString() + " ... ");
 		}
 		
 		parser.setTracker(this);
-		if (!parser.setURI(uri)) {
+		if (!parser.setURI(reportLink)) {
 			if (Logger.logWarn()) {
-				Logger.warn("Could not parse report " + uri.toASCIIString() + ". See earlier error messages.");
+				Logger.warn("Could not parse report " + reportLink.toString() + ". See earlier error messages.");
 			}
 			return null;
 		}
 		
-		final Long id = parser.getId();
+		final String id = parser.getId();
 		Condition.notNull(id, "The bug id returned by the parser may never be null.");
 		
 		final Report report = new Report(id);
@@ -259,7 +253,6 @@ public abstract class Tracker {
 		
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
-		report.setHash(parser.getMd5());
 		report.setLastFetch(parser.getFetchTime());
 		report.setLastUpdateTimestamp(parser.getLastUpdateTimestamp());
 		report.setPriority(parser.getPriority());
@@ -268,7 +261,7 @@ public abstract class Tracker {
 		if (parser.getResolver() != null) {
 			report.setResolver(parser.getResolver());
 		}
-		report.setSiblings(new TreeSet<Long>(parser.getSiblings()));
+		report.setSiblings(new TreeSet<String>(parser.getSiblings()));
 		report.setSeverity(parser.getSeverity());
 		report.setStatus(parser.getStatus());
 		report.setSubject(parser.getSubject());
@@ -375,23 +368,23 @@ public abstract class Tracker {
 			}
 		}
 		
-		this.bugURIs = new LinkedBlockingDeque<URI>();
+		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		
 		final OverviewParser overviewParser = getOverviewParser();
 		if (overviewParser != null) {
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
 			}
-			this.bugURIs.addAll(overviewParser.getBugURIs());
+			this.reportLinks.addAll(overviewParser.getReportLinks());
 			if (Logger.logInfo()) {
-				Logger.info("Added " + this.bugURIs.size() + " bug IDs while parsing overviewURI.");
+				Logger.info("Added " + this.reportLinks.size() + " bug IDs while parsing overviewURI.");
 			}
 		} else {
 			// what if no overviewParser?
 			for (long i = startAt; i <= stopAt; ++i) {
-				final URI uri = getLinkFromId(i);
+				final ReportLink uri = getLinkFromId(String.valueOf(i));
 				if (uri != null) {
-					this.bugURIs.add(uri);
+					this.reportLinks.add(uri);
 				}
 			}
 		}

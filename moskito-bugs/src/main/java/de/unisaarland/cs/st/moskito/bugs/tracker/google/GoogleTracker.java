@@ -35,6 +35,7 @@ import com.google.gdata.util.ServiceException;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 
 /**
@@ -47,31 +48,15 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
 	private String                projectName;
 	private ProjectHostingService service;
-	private Set<URI>              overviewURIs;
-	
-	@Override
-	public Set<? extends URI> getBugURIs() {
-		// PRECONDITIONS
-		
-		try {
-			
-			return this.overviewURIs;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	private Set<ReportLink>       overviewURIs;
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java .lang.Long)
 	 */
 	@Override
-	public URI getLinkFromId(final Long bugId) {
-		try {
-			return new URI(bugId.toString());
-		} catch (final URISyntaxException e) {
-			throw new UnrecoverableError("Could not convert long to URI");
-		}
+	public ReportLink getLinkFromId(final String bugId) {
+		return new ReportLink(null, bugId);
 	}
 	
 	@Override
@@ -110,11 +95,23 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 	}
 	
 	@Override
+	public Set<ReportLink> getReportLinks() {
+		// PRECONDITIONS
+		
+		try {
+			
+			return this.overviewURIs;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
 		
 		try {
-			this.overviewURIs = new HashSet<URI>();
+			this.overviewURIs = new HashSet<ReportLink>();
 			try {
 				this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 				if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
@@ -134,12 +131,10 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 				while (feedEntries.size() > 0) {
 					for (int i = 0; i < feedEntries.size(); i++) {
 						final IssuesEntry entry = feedEntries.get(i);
-						final long bugId = entry.getIssueId().getValue().longValue();
-						if ((bugId >= this.startAt) && (bugId <= this.stopAt)) {
-							this.overviewURIs.add(getLinkFromId(bugId));
-							if (Logger.logDebug()) {
-								Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
-							}
+						final String bugId = entry.getIssueId().getValue().toString();
+						this.overviewURIs.add(getLinkFromId(bugId));
+						if (Logger.logDebug()) {
+							Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
 						}
 					}
 					startIndex += maxResults;

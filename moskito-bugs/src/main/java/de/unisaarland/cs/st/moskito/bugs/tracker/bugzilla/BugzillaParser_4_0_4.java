@@ -325,13 +325,13 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
 	@Override
-	public Long getId() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			Long bugId = null;
+			String bugId = null;
 			try {
-				bugId = Long.valueOf(getXmlBug().getBugId());
+				bugId = getXmlBug().getBugId();
 			} catch (final NumberFormatException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -537,26 +537,20 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
-		final Set<Long> result = new HashSet<Long>();
+		final Set<String> result = new HashSet<String>();
 		try {
 			// first check for dependencies and blocking bugs
 			final String[] dependsOn = getXmlBug().getDependsonArray();
 			for (final String dep : dependsOn) {
-				try {
-					result.add(Long.valueOf(dep));
-				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
-					}
-				}
+				result.add(dep);
 			}
 			
 			final String[] blockedArray = getXmlBug().getBlockedArray();
 			for (final String dep : blockedArray) {
 				try {
-					result.add(Long.valueOf(dep));
+					result.add(dep);
 				} catch (final NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
@@ -572,13 +566,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 					for (final List<RegexGroup> groups : groupsList) {
 						for (final RegexGroup group : groups) {
 							if (group.getName().equals("sibling")) {
-								try {
-									final Long sibling = Long.valueOf(group.getMatch());
-									result.add(sibling);
-								} catch (final NumberFormatException e) {
-									Logger.error("Could not intepret bug reference as a Long: " + group.getMatch()
-									        + ". Ignoring sibling.");
-								}
+								result.add(group.getMatch());
 							}
 						}
 					}

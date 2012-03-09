@@ -1,6 +1,5 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,10 +15,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
 public class BugzillaOverviewParser implements OverviewParser {
 	
-	private final Set<URI>        bugURIs = new HashSet<URI>();
+	private final Set<ReportLink> bugURIs = new HashSet<ReportLink>();
 	private final BugzillaTracker tracker;
 	
 	public BugzillaOverviewParser(final BugzillaTracker tracker) {
@@ -27,7 +27,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 	}
 	
 	@Override
-	public Set<? extends URI> getBugURIs() {
+	public Set<ReportLink> getReportLinks() {
 		// PRECONDITIONS
 		
 		try {
@@ -94,7 +94,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 					for (final Element td : tr.getElementsByTag("td")) {
 						if (td.attr("class").contains("bz_id_column")) {
 							try {
-								final Long id = Long.parseLong(td.text().trim());
+								final String id = td.text().trim();
 								this.bugURIs.add(this.tracker.getLinkFromId(id));
 							} catch (final NumberFormatException e) {
 								if (Logger.logError()) {

@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 
 /**
@@ -36,12 +37,13 @@ public class MantisTracker extends Tracker {
 	}
 	
 	@Override
-	public URI getLinkFromId(final Long bugId) {
+	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
 		try {
 			try {
-				return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
+				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
+				                                                            bugId + "")), bugId);
 			} catch (final URISyntaxException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);

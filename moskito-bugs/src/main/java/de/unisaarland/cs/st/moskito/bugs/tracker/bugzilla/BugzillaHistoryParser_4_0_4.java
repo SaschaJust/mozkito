@@ -43,7 +43,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	private final URI                       historyUri;
 	
 	/** The report id. */
-	private final long                      reportId;
+	private final String                    reportId;
 	
 	/** The resolver. */
 	private Person                          resolver;
@@ -67,7 +67,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	 * @param reportId
 	 *            the report id
 	 */
-	public BugzillaHistoryParser_4_0_4(final URI historyUri, final long reportId) {
+	public BugzillaHistoryParser_4_0_4(final URI historyUri, final String reportId) {
 		this.historyUri = historyUri;
 		this.reportId = reportId;
 		

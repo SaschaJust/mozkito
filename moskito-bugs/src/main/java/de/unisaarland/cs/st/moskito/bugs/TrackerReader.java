@@ -15,11 +15,10 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import java.net.URI;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -27,7 +26,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends Source<URI> {
+public class TrackerReader extends Source<ReportLink> {
 	
 	/**
 	 * @param threadGroup
@@ -36,11 +35,11 @@ public class TrackerReader extends Source<URI> {
 	public TrackerReader(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<URI, URI>(this) {
+		new ProcessHook<ReportLink, ReportLink>(this) {
 			
 			@Override
 			public void process() {
-				final URI bugURI = tracker.getNextURI();
+				final ReportLink bugURI = tracker.getNextReportLink();
 				
 				if (bugURI != null) {
 					providePartialOutputData(bugURI);

@@ -4,15 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -30,6 +27,7 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
@@ -285,21 +283,6 @@ public abstract class BugzillaParser implements Parser {
 	
 	protected abstract BugzillaHistoryParser getHistoryParser();
 	
-	@Override
-	public final byte[] getMd5() {
-		// PRECONDITIONS
-		
-		try {
-			try {
-				return HashUtils.getMD5(this.xmlReport.getContent());
-			} catch (final NoSuchAlgorithmException e) {
-				throw new UnrecoverableError(e);
-			}
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 	/**
 	 * Gets the supoorted versions.
 	 * 
@@ -334,10 +317,16 @@ public abstract class BugzillaParser implements Parser {
 	}
 	
 	@Override
-	public final boolean setURI(final URI uri) {
+	public final boolean setURI(final ReportLink reportLink) {
 		
 		try {
-			
+			final URI uri = reportLink.getUri();
+			if (uri == null) {
+				if (Logger.logError()) {
+					Logger.error("Got URI from reportLink that is NULL!");
+				}
+				return false;
+			}
 			final RawContent rawContent = IOUtils.fetch(uri);
 			if (!checkRAW(rawContent.getContent())) {
 				if (Logger.logError()) {
