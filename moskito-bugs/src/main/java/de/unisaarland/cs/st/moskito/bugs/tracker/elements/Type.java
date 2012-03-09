@@ -20,7 +20,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
  * 
  */
 public enum Type {
-	BUG, RFE, TASK, TEST, OTHER, UNKNOWN, DESIGN_DEFECT, BACKPORT;
+	BUG, RFE, TASK, TEST, OTHER, UNKNOWN, DESIGN_DEFECT, BACKPORT, IMPROVEMENT;
 	
 	public String getHandle() {
 		return this.getClass().getSimpleName();

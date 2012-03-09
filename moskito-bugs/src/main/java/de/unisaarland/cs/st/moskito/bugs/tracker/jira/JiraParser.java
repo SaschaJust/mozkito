@@ -32,11 +32,14 @@ import com.atlassian.jira.rest.client.NullProgressMonitor;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.domain.Attachment;
 import com.atlassian.jira.rest.client.domain.BasicComponent;
+import com.atlassian.jira.rest.client.domain.BasicIssueType;
 import com.atlassian.jira.rest.client.domain.BasicResolution;
+import com.atlassian.jira.rest.client.domain.BasicStatus;
 import com.atlassian.jira.rest.client.domain.BasicUser;
 import com.atlassian.jira.rest.client.domain.Field;
 import com.atlassian.jira.rest.client.domain.Issue;
 import com.atlassian.jira.rest.client.domain.IssueLink;
+import com.atlassian.jira.rest.client.domain.Version;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -462,15 +465,15 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final Set<String> result = new HashSet<String>();
 			for (final IssueLink link : this.issue.getIssueLinks()) {
-				
+				result.add(link.getTargetIssueKey());
 			}
-			return null;
+			return result;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -487,7 +490,27 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicStatus basicStatus = this.issue.getStatus();
+			if ((basicStatus != null) && (!basicStatus.getName().isEmpty())) {
+				final String statusStr = basicStatus.getName().toLowerCase();
+				if (statusStr.equals("open")) {
+					return Status.NEW;
+				} else if (statusStr.equals("in progress")) {
+					return Status.IN_PROGRESS;
+				} else if (statusStr.equals("reopened")) {
+					return Status.REOPENED;
+				} else if (statusStr.equals("resolved")) {
+					return Status.VERIFIED;
+				} else if (statusStr.equals("closed")) {
+					return Status.CLOSED;
+				} else if (statusStr.equals("patch reviewed")) {
+					return Status.VERIFIED;
+				} else if (statusStr.equals("ready to review")) {
+					return Status.REVIEWPENDING;
+				} else {
+					return Status.UNKNOWN;
+				}
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -506,8 +529,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.issue.getSummary();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -518,7 +540,10 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicUser reporter = this.issue.getReporter();
+			if (reporter != null) {
+				return new Person(reporter.getDisplayName(), reporter.getName(), null);
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -530,7 +555,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getSummary();
+			return this.issue.getDescription();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -541,7 +566,23 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicIssueType issueType = this.issue.getIssueType();
+			if (issueType != null) {
+				final String typeStr = issueType.getName().toLowerCase();
+				if (typeStr.equals("bug")) {
+					return Type.BUG;
+				} else if (typeStr.equals("new feature")) {
+					return Type.RFE;
+				} else if (typeStr.equals("task")) {
+					return Type.TASK;
+				} else if (typeStr.equals("improvement")) {
+					return Type.IMPROVEMENT;
+				} else if (typeStr.equals("test")) {
+					return Type.TEST;
+				} else if (typeStr.equals("")) {
+					return Type.OTHER;
+				}
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -553,7 +594,17 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final StringBuilder result = new StringBuilder();
+			final Iterator<Version> iterator = this.issue.getAffectedVersions().iterator();
+			while (iterator.hasNext()) {
+				result.append(iterator.next().getName());
+				if (iterator.hasNext()) {
+					result.append(",");
+				}
+			}
+			if (result.length() > 0) {
+				return result.toString();
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -565,7 +616,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			
 		} finally {
 			// POSTCONDITIONS
 		}
