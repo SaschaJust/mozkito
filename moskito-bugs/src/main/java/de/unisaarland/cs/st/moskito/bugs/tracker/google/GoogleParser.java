@@ -714,19 +714,19 @@ public class GoogleParser implements Parser {
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
 		
 		try {
-			final Set<Long> siblings = new HashSet<Long>();
+			final Set<String> siblings = new HashSet<String>();
 			for (final BlockedOn b : this.issuesEntry.getBlockedOns()) {
 				if (b.hasId()) {
-					siblings.add(b.getId().getValue().longValue());
+					siblings.add(b.getId().getValue().toString());
 				}
 			}
 			for (final Blocking b : this.issuesEntry.getBlockings()) {
 				if (b.hasId()) {
-					siblings.add(b.getId().getValue().longValue());
+					siblings.add(b.getId().getValue().toString());
 				}
 			}
 			return siblings;
