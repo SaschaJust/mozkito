@@ -122,9 +122,28 @@ public class Logger {
 	}
 	
 	public static enum TerminalColor {
-		BLACK ("\u001b[0;30m"), RED ("\u001b[0;31m"), GREEN ("\u001b[0;32m"), YELLOW ("\u001b[0;33m"), BLUE (
-		        "\u001b[0;34m"), MAGENTA ("\u001b[0;35m"), CYAN ("\u001b[0;36m"), WHITE ("\u001b[0;37m"), NONE (
-		        "\u001b[m");
+		BLACK ("\u001b[30m"),
+		BGBLACK ("\u001b[40m"),
+		RED ("\u001b[31m"),
+		BGRED ("\u001b[41m"),
+		GREEN ("\u001b[32m"),
+		BGGREEN ("\u001b[42m"),
+		YELLOW ("\u001b[33m"),
+		BGYELLOW ("\u001b[43m"),
+		BLUE ("\u001b[34m"),
+		BGBLUE ("\u001b[44m"),
+		MAGENTA ("\u001b[35m"),
+		BGMAGENTA ("\u001b[45m"),
+		CYAN ("\u001b[36m"),
+		BGCYAN ("\u001b[46m"),
+		WHITE ("\u001b[37m"),
+		BGWHITE ("\u001b[47m"),
+		BOLD ("\u001b[1m"),
+		UNDERLINE ("\u001b[4m"),
+		BLINK ("\u001b[5m"),
+		INVERT ("\u001b[7m"),
+		NONE ("\u001b[m"),
+		BGNONE ("\u001b[48m");
 		
 		public static boolean isSupported() {
 			if (System.getProperty("disableTermColors") == null) {
