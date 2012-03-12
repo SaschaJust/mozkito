@@ -13,6 +13,8 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,9 +67,98 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
-	private JiraRestClient restClient;
-	private Issue          issue;
-	private DateTime       fetchTime;
+	public static Resolution resolveResolution(final String resolutionString) {
+		// PRECONDITIONS
+		
+		try {
+			if (resolutionString.equals("unresolved")) {
+				return Resolution.UNRESOLVED;
+			} else if (resolutionString.equals("fixed")) {
+				return Resolution.RESOLVED;
+			} else if (resolutionString.equals("won't fix")) {
+				return Resolution.WONT_FIX;
+			} else if (resolutionString.equals("duplicate")) {
+				return Resolution.DUPLICATE;
+			} else if (resolutionString.equals("incomplete")) {
+				return Resolution.UNRESOLVED;
+			} else if (resolutionString.equals("cannot reproduce")) {
+				return Resolution.WORKS_FOR_ME;
+			} else if (resolutionString.equals("not a bug")) {
+				return Resolution.INVALID;
+			} else {
+				return Resolution.UNKNOWN;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public static Severity resolveSeverity(final String severity) {
+		if (severity.equals("blocker")) {
+			return Severity.BLOCKER;
+		} else if (severity.equals("critical")) {
+			return Severity.CRITICAL;
+		} else if (severity.equals("major")) {
+			return Severity.MAJOR;
+		} else if (severity.equals("minor")) {
+			return Severity.MINOR;
+		} else if (severity.equals("trivial")) {
+			return Severity.TRIVIAL;
+		} else if (severity.equals("")) {
+			return null;
+		} else {
+			return Severity.UNKNOWN;
+		}
+	}
+	
+	public static Status resolveStatus(final String statusStr) {
+		if (statusStr.equals("open")) {
+			return Status.NEW;
+		} else if (statusStr.equals("in progress")) {
+			return Status.IN_PROGRESS;
+		} else if (statusStr.equals("reopened")) {
+			return Status.REOPENED;
+		} else if (statusStr.equals("resolved")) {
+			return Status.VERIFIED;
+		} else if (statusStr.equals("closed")) {
+			return Status.CLOSED;
+		} else if (statusStr.equals("patch reviewed")) {
+			return Status.VERIFIED;
+		} else if (statusStr.equals("ready to review")) {
+			return Status.REVIEWPENDING;
+		} else {
+			return Status.UNKNOWN;
+		}
+	}
+	
+	public static Type resolveType(final String typeStr) {
+		if (typeStr.equals("bug")) {
+			return Type.BUG;
+		} else if (typeStr.equals("new feature")) {
+			return Type.RFE;
+		} else if (typeStr.equals("task")) {
+			return Type.TASK;
+		} else if (typeStr.equals("improvement")) {
+			return Type.IMPROVEMENT;
+		} else if (typeStr.equals("test")) {
+			return Type.TEST;
+		} else if (typeStr.equals("")) {
+			return Type.OTHER;
+		}
+		return null;
+	}
+	
+	private JiraRestClient            restClient;
+	
+	private Issue                     issue;
+	
+	private DateTime                  fetchTime;
+	
+	private Tracker                   tracker;
+	
+	private SortedSet<HistoryElement> history = null;
+	
+	private Person                    resolver;
 	
 	public JiraParser(final JiraRestClient restClient) {
 		// PRECONDITIONS
@@ -78,6 +169,11 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
+	 */
 	
 	@Override
 	public Person getAssignedTo() {
@@ -91,6 +187,11 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -164,11 +265,6 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
-	 */
-	
 	@Override
 	public String getComponent() {
 		// PRECONDITIONS
@@ -191,11 +287,6 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
-	 */
 	
 	@Override
 	public DateTime getCreationTimestamp() {
@@ -247,8 +338,24 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// FIXME use HTML parser
-			return null;
+			if (this.history == null) {
+				final StringBuilder historyUrlBuilder = new StringBuilder();
+				historyUrlBuilder.append(this.tracker.getUri());
+				historyUrlBuilder.append("/browse/");
+				historyUrlBuilder.append(getId());
+				historyUrlBuilder.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+				final JiraHistoryParser jiraHistoryParser = new JiraHistoryParser(getId(),
+				                                                                  new URI(historyUrlBuilder.toString()));
+				jiraHistoryParser.parse();
+				this.history = jiraHistoryParser.getHistory();
+				this.resolver = jiraHistoryParser.getResolver();
+			}
+			return this.history;
+		} catch (final URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return new TreeSet<HistoryElement>();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -350,23 +457,7 @@ public class JiraParser implements Parser {
 			final BasicResolution basicResolution = this.issue.getResolution();
 			if ((basicResolution != null) && (!basicResolution.getName().isEmpty())) {
 				final String resolutionString = basicResolution.getName().toLowerCase();
-				if (resolutionString.equals("unresolved")) {
-					return Resolution.UNRESOLVED;
-				} else if (resolutionString.equals("fixed")) {
-					return Resolution.RESOLVED;
-				} else if (resolutionString.equals("won't fix")) {
-					return Resolution.WONT_FIX;
-				} else if (resolutionString.equals("duplicate")) {
-					return Resolution.DUPLICATE;
-				} else if (resolutionString.equals("incomplete")) {
-					return Resolution.UNRESOLVED;
-				} else if (resolutionString.equals("cannot reproduce")) {
-					return Resolution.WORKS_FOR_ME;
-				} else if (resolutionString.equals("not a bug")) {
-					return Resolution.INVALID;
-				} else {
-					return Resolution.UNKNOWN;
-				}
+				return resolveResolution(resolutionString);
 			}
 			return null;
 		} finally {
@@ -405,8 +496,8 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// FIXME requires history parsing
-			return null;
+			getHistoryElements();
+			return this.resolver;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -429,6 +520,12 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	@Override
@@ -438,21 +535,7 @@ public class JiraParser implements Parser {
 		try {
 			if ((this.issue.getPriority() != null) && (!this.issue.getPriority().getName().isEmpty())) {
 				final String priority = this.issue.getPriority().getName().toLowerCase();
-				if (priority.equals("blocker")) {
-					return Severity.BLOCKER;
-				} else if (priority.equals("critical")) {
-					return Severity.CRITICAL;
-				} else if (priority.equals("major")) {
-					return Severity.MAJOR;
-				} else if (priority.equals("minor")) {
-					return Severity.MINOR;
-				} else if (priority.equals("trivial")) {
-					return Severity.TRIVIAL;
-				} else if (priority.equals("")) {
-					return null;
-				} else {
-					return Severity.UNKNOWN;
-				}
+				return resolveSeverity(priority);
 			}
 			return null;
 		} finally {
@@ -482,7 +565,8 @@ public class JiraParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -493,36 +577,13 @@ public class JiraParser implements Parser {
 			final BasicStatus basicStatus = this.issue.getStatus();
 			if ((basicStatus != null) && (!basicStatus.getName().isEmpty())) {
 				final String statusStr = basicStatus.getName().toLowerCase();
-				if (statusStr.equals("open")) {
-					return Status.NEW;
-				} else if (statusStr.equals("in progress")) {
-					return Status.IN_PROGRESS;
-				} else if (statusStr.equals("reopened")) {
-					return Status.REOPENED;
-				} else if (statusStr.equals("resolved")) {
-					return Status.VERIFIED;
-				} else if (statusStr.equals("closed")) {
-					return Status.CLOSED;
-				} else if (statusStr.equals("patch reviewed")) {
-					return Status.VERIFIED;
-				} else if (statusStr.equals("ready to review")) {
-					return Status.REVIEWPENDING;
-				} else {
-					return Status.UNKNOWN;
-				}
+				return resolveStatus(statusStr);
 			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public String getSubject() {
@@ -569,19 +630,7 @@ public class JiraParser implements Parser {
 			final BasicIssueType issueType = this.issue.getIssueType();
 			if (issueType != null) {
 				final String typeStr = issueType.getName().toLowerCase();
-				if (typeStr.equals("bug")) {
-					return Type.BUG;
-				} else if (typeStr.equals("new feature")) {
-					return Type.RFE;
-				} else if (typeStr.equals("task")) {
-					return Type.TASK;
-				} else if (typeStr.equals("improvement")) {
-					return Type.IMPROVEMENT;
-				} else if (typeStr.equals("test")) {
-					return Type.TEST;
-				} else if (typeStr.equals("")) {
-					return Type.OTHER;
-				}
+				return resolveType(typeStr);
 			}
 			return null;
 		} finally {
@@ -616,7 +665,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
