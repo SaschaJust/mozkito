@@ -54,12 +54,22 @@
 		<dependency>
 			<groupId>com.google.gdata</groupId>
 			<artifactId>gdata-projecthosting-2.1</artifactId>
-			<version>1.41.5</version>
+			<version>1.41.5.guava</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.api.client</groupId>
-			<artifactId>google-api-client</artifactId>
-			<version>1.4.1-beta</version>
+			<groupId>com.google.gdata</groupId>
+			<artifactId>gdata-core-1.0</artifactId>
+			<version>1.41.5.guava</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gdata</groupId>
+			<artifactId>gdata-core-1.0</artifactId>
+			<version>1.41.5.guava</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
