@@ -49,14 +49,14 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 	public boolean add(final JavaChangeOperation operation) {
 		if (operation.getChangedElementLocation() == null) {
 			if (Logger.logDebug()) {
-				Logger.debug("Skipping JavaChangeOperation: " + operation.toString()
-				        + ". ChangedElementLocation == null.");
+				Logger.debug("Skipping JavaChangeOperation: " + operation.getId() + ". ChangedElementLocation == null.");
 			}
 			return false;
 		}
 		if (operation.getChangedElementLocation().getElement() == null) {
 			if (Logger.logDebug()) {
-				Logger.debug("Skipping JavaChangeOperation: " + operation.toString() + ". ChangedElement == null.");
+				Logger.debug("Skipping JavaChangeOperation: " + operation.getId() + " with location "
+				        + operation.getChangedElementLocation().getId() + ". ChangedElement == null.");
 			}
 			return false;
 		}

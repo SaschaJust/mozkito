@@ -333,10 +333,14 @@ public class JavaChangeOperation implements Annotated {
 		sb.append(getId());
 		sb.append(": ");
 		sb.append(getChangeType().toString());
-		sb.append(" <path = ");
-		sb.append(getChangedElementLocation().getFilePath());
-		sb.append(", element: ");
-		sb.append(getChangedElementLocation().getElement().getFullQualifiedName());
+		if (getChangedElementLocation() != null) {
+			sb.append(" <path = ");
+			sb.append(getChangedElementLocation().getFilePath());
+			if (getChangedElementLocation().getElement() != null) {
+				sb.append(", element: ");
+				sb.append(getChangedElementLocation().getElement().getFullQualifiedName());
+			}
+		}
 		sb.append(", transaction: ");
 		sb.append(getRevision().getTransaction().getId());
 		sb.append(">");
