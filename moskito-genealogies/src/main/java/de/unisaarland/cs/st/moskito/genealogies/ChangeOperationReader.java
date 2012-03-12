@@ -15,8 +15,6 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -25,10 +23,13 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.utils.OperationCollection;
-import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.RCSPersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class ChangeOperationReader extends Source<OperationCollection> {
@@ -43,20 +44,15 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 			@Override
 			public void preExecution() {
 				
-				final Criteria<RCSTransaction> criteria = branchFactory.getPersistenceUtil()
-				                                                       .createCriteria(RCSTransaction.class)
-				                                                       .eq("branch", branchFactory.getMasterBranch());
+				final RCSBranch masterBranch = branchFactory.getMasterBranch();
+				final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(branchFactory.getPersistenceUtil(),
+				                                                                             masterBranch,
+				                                                                             TransactionSetOrder.ASC);
 				
-				final TreeSet<RCSTransaction> list = new TreeSet<RCSTransaction>();
-				
-				final List<RCSTransaction> masterTransactions = branchFactory.getPersistenceUtil().load(criteria);
-				
-				list.addAll(masterTransactions);
-				
-				ChangeOperationReader.this.iterator = list.iterator();
+				ChangeOperationReader.this.iterator = masterTransactions.iterator();
 				
 				if (Logger.logInfo()) {
-					Logger.info("Added " + list.size()
+					Logger.info("Added " + masterTransactions.size()
 					        + " RCSTransactions that were found in MASTER branch to build the change genealogy.");
 				}
 			}
