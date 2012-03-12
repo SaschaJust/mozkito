@@ -310,6 +310,7 @@ public class History implements Annotated {
 	 * @param report
 	 * @return
 	 */
+	@SuppressWarnings ("deprecation")
 	public Report rollback(@NotNull final Report report,
 	                       @NotNull final DateTime timestamp) {
 		if (report.getCreationTimestamp().isBefore(timestamp)) {
