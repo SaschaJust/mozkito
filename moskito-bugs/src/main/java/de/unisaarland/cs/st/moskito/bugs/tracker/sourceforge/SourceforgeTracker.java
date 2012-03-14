@@ -16,11 +16,15 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -28,153 +32,58 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.RegexGroup;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
-import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
-import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
-import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
-import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class SourceforgeTracker.
  * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class SourceforgeTracker extends Tracker {
+public class SourceforgeTracker extends Tracker implements OverviewParser {
 	
-	private static String   submittedPattern   = "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)";
+	/** The group id pattern. */
+	protected static Regex        groupIdPattern = new Regex("group_id=({group_id}\\d+)");
 	
-	protected static String groupIdPattern     = "group_id=({group_id}\\d+)";
-	protected static String atIdPattern        = "atid=({atid}\\d+)";
-	protected static String fileIdPattern      = "file_id=({fileid}\\d+)";
-	protected static String offsetPattern      = "offset=({offset}\\d+)";
-	protected static String limitPattern       = "limit=({limit}\\d+)";
-	protected static String htmlCommentPattern = "(?#special condition to check wether we got a new line after or before the match to remove one of them)(?(?=<!--.*?-->$\\s)(?#used if condition was true)<!--.*?-->\\s|(?#used if condition was false)\\s?<!--.*?-->)";
+	/** The at id regex. */
+	protected static Regex        atIdRegex      = new Regex("atid=({atid}\\d+)");
 	
-	private static Priority buildPriority(final String value) {
-		// 1..9;
-		// UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
-		final int priority = Integer.parseInt(value);
-		switch (priority) {
-			case 1:
-			case 2:
-				return Priority.VERY_LOW;
-			case 3:
-			case 4:
-				return Priority.LOW;
-			case 5:
-				return Priority.NORMAL;
-			case 6:
-			case 7:
-				return Priority.HIGH;
-			case 8:
-			case 9:
-				return Priority.VERY_HIGH;
-			default:
-				return Priority.UNKNOWN;
-		}
-	}
+	/** The a id regex. */
+	protected static Regex        aIdRegex       = new Regex("aid=({atid}\\d+)");
 	
-	private static Resolution buildResolution(final String value) {
-		// from: ACCEPTED, DUPLICATE, FIXED, INVALID, LATER, NONE,
-		// OUT_OF_DATE, POSTPONED, REJECTED, REMIND, WONT_FIX,
-		// WORKS_FOR_ME;
-		// to: UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID,
-		// WONT_FIX, WORKS_FOR_ME;
-		if (value.equalsIgnoreCase("ACCEPTED")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("DUPLICATE")) {
-			return Resolution.DUPLICATE;
-		} else if (value.equalsIgnoreCase("FIXED")) {
-			return Resolution.RESOLVED;
-		} else if (value.equalsIgnoreCase("INVALID")) {
-			return Resolution.INVALID;
-		} else if (value.equalsIgnoreCase("LATER")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("NONE")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("OUT_OF_DATE")) {
-			return Resolution.UNKNOWN;
-		} else if (value.equalsIgnoreCase("POSTPONED")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("REJECTED")) {
-			return Resolution.INVALID;
-		} else if (value.equalsIgnoreCase("REMIND")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("WONT_FIX")) {
-			return Resolution.WONT_FIX;
-		} else if (value.equalsIgnoreCase("WORKS_FOR_ME")) {
-			return Resolution.WORKS_FOR_ME;
-		} else {
-			return Resolution.UNKNOWN;
-		}
-	}
+	/** The offset pattern. */
+	protected static Regex        offsetPattern  = new Regex("offset=({offset}\\d+)");
 	
-	private static Severity buildSeverity(final String value) {
-		return Severity.UNKNOWN;
-	}
+	/** The limit pattern. */
+	protected static Regex        limitPattern   = new Regex("limit=({limit}\\d+)");
 	
-	private static Status buildStatus(final String value) {
-		// from: CLOSED, DELETED, OPEN, PENDING
-		// to: UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS,
-		// REOPENED, RESOLVED, VERIFIED, CLOSED
-		if (value.equalsIgnoreCase("CLOSED")) {
-			return Status.CLOSED;
-		} else if (value.equalsIgnoreCase("DELETED")) {
-			return Status.CLOSED;
-		} else if (value.equalsIgnoreCase("OPEN")) {
-			return Status.NEW;
-		} else if (value.equalsIgnoreCase("PENDING")) {
-			return Status.IN_PROGRESS;
-		} else {
-			return Status.UNKNOWN;
-		}
-	}
+	/** The issue links. */
+	private final Set<ReportLink> issueLinks     = new HashSet<ReportLink>();
 	
-	private static Type buildType(final String value) {
-		if (value.equalsIgnoreCase("BUG")) {
-			return Type.BUG;
-		} else if (value.equalsIgnoreCase("RFE")) {
-			return Type.RFE;
-		} else if (value.equalsIgnoreCase("TASK")) {
-			return Type.TASK;
-		} else if (value.equalsIgnoreCase("TEST")) {
-			return Type.TEST;
-		} else {
-			return Type.OTHER;
-		}
-	}
-	
-	private final Regex subjectRegex = new Regex("({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
-	
-	@Override
-	public boolean checkRAW(final RawReport rawReport) {
-		boolean retValue = super.checkRAW(rawReport);
-		
-		// checking for the report to have at least 1000 characters
-		retValue &= rawReport.getContent().length() > 1000;
-		
-		return retValue;
-	}
-	
-	@Override
-	public boolean checkXML(final XmlReport xmlReport) {
-		final boolean retValue = super.checkXML(xmlReport);
-		
-		return retValue;
-	}
-	
-	@Override
-	public XmlReport createDocument(final RawReport rawReport) {
+	/**
+	 * Creates the document.
+	 * 
+	 * @param rawReport
+	 *            the raw report
+	 * @return the xml report
+	 */
+	public XmlReport createDocument(final RawContent rawReport) {
 		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
 			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
@@ -197,13 +106,18 @@ public class SourceforgeTracker extends Tracker {
 		throw new UnrecoverableError();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java.lang.String)
+	 */
 	@Override
-	public URI getLinkFromId(final Long bugId) {
+	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
 		try {
 			try {
-				return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
+				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
+				                                                            bugId + "")), bugId);
 			} catch (final URISyntaxException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -215,15 +129,16 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getOverviewParser()
+	 */
 	@Override
-	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+	public OverviewParser getOverviewParser() {
 		// PRECONDITIONS
 		
 		try {
-			if (Logger.logError()) {
-				Logger.error("Overview parsing not supported yet.");
-			}
-			return null;
+			return this;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -234,7 +149,7 @@ public class SourceforgeTracker extends Tracker {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public Parser getParser() {
 		// PRECONDITIONS
 		
 		try {
@@ -244,17 +159,130 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#getReportLinks()
+	 */
 	@Override
-	public void setup(final URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
-	                  final String username,
-	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final File cacheDir) throws InvalidParameterException {
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
+	public Set<ReportLink> getReportLinks() {
+		// PRECONDITIONS
 		
-		this.initialized = true;
+		try {
+			return this.issueLinks;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public boolean parseOverview() {
+		// PRECONDITIONS
+		
+		try {
+			
+			// FIXME require own argument for atid
+			final List<List<RegexGroup>> findAll = atIdRegex.findAll(getPattern());
+			if ((findAll == null) || (findAll.isEmpty())) {
+				throw new UnrecoverableError(
+				                             "Could not extract sourceforge ATID from tracker pattern. This is required! Please check your tracker pattern: "
+				                                     + getPattern());
+			}
+			
+			String atid = null;
+			for (final List<RegexGroup> groupList : findAll) {
+				for (final RegexGroup group : groupList) {
+					if ((group.getName() != null) && (group.getName().equals(atid))) {
+						atid = group.getMatch().trim();
+					}
+				}
+			}
+			
+			if (atid == null) {
+				throw new UnrecoverableError(
+				                             "Could not extract sourceforge ATID from tracker pattern. This is required! Please check your tracker pattern: "
+				                                     + getPattern());
+			}
+			StringBuilder overviewURLBuilder = new StringBuilder();
+			overviewURLBuilder.append("http://sourceforge.net/api/artifact/index/tracker-id/");
+			overviewURLBuilder.append(atid);
+			overviewURLBuilder.append("/limit/200/rss");
+			URL feedUrl = new URL(overviewURLBuilder.toString());
+			
+			final SyndFeedInput input = new SyndFeedInput();
+			SyndFeed feed = null;
+			try {
+				feed = input.build(new XmlReader(feedUrl));
+			} catch (final FeedException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return false;
+			} catch (final IllegalArgumentException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return false;
+			}
+			List<SyndEntry> entries = feed.getEntries();
+			int counter = 0;
+			while ((entries != null) && (!entries.isEmpty())) {
+				String aid = null;
+				for (final SyndEntry entry : entries) {
+					final String issuelink = StringEscapeUtils.unescapeHtml(entry.getLink());
+					if (issuelink != null) {
+						final List<List<RegexGroup>> atidHits = aIdRegex.findAll(issuelink);
+						for (final List<RegexGroup> regexGroups : atidHits) {
+							for (final RegexGroup group : regexGroups) {
+								if ((group.getName() != null) & (group.getName().equals("atid"))) {
+									aid = group.getMatch();
+								}
+							}
+						}
+					}
+					if (aid != null) {
+						this.issueLinks.add(new ReportLink(new URI(issuelink), aid));
+					}
+				}
+				overviewURLBuilder = new StringBuilder();
+				overviewURLBuilder.append("http://sourceforge.net/api/artifact/index/tracker-id/");
+				overviewURLBuilder.append(atid);
+				overviewURLBuilder.append("/limit/200");
+				overviewURLBuilder.append("/offset/");
+				overviewURLBuilder.append(++counter * 200);
+				overviewURLBuilder.append("/rss");
+				feedUrl = new URL(overviewURLBuilder.toString());
+				try {
+					feed = input.build(new XmlReader(feedUrl));
+				} catch (final FeedException e) {
+					break;
+				} catch (final IllegalArgumentException e) {
+					break;
+				}
+				entries = feed.getEntries();
+			}
+			return true;
+		} catch (final MalformedURLException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (final URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 }

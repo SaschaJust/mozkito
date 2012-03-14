@@ -152,6 +152,10 @@ public abstract class Tracker {
 	
 	public abstract Parser getParser();
 	
+	public String getPattern() {
+		return this.pattern;
+	}
+	
 	/**
 	 * This method returns the tracker type, determined by
 	 * <code>TrackerType.valueOf(this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().length() - Tracker.class.getSimpleName().length()).toUpperCase());</code>
