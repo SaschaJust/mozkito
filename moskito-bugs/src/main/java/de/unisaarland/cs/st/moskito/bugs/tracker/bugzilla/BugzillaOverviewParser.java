@@ -45,6 +45,9 @@ public class BugzillaOverviewParser implements OverviewParser {
 			
 			// FIXME replace by Bugzilla overview URI DYNAMIC ARGUMENT
 			RawContent content;
+			if (this.tracker.getOverviewURI() == null) {
+				return false;
+			}
 			try {
 				content = IOUtils.fetch(this.tracker.getOverviewURI());
 			} catch (final UnsupportedProtocolException e1) {

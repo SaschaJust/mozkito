@@ -29,9 +29,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
@@ -62,7 +59,7 @@ public class HistoryTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.report = new Report(1);
+		this.report = new Report("1");
 		this.report.setCreationTimestamp(this.formatter.parseDateTime("2010-01-10 13:23:12"));
 		this.report.setComponent("Model");
 		this.report.setDescription("Some default description");
@@ -78,13 +75,13 @@ public class HistoryTest {
 		HistoryElement element = new HistoryElement(this.report.getId(), new Person("doe", "John Doe", "foo@bar.com"),
 		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
 		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@cs.uni-saarland.de"));
-		element.addChangedValue("priority", new Report(0).getPriority(), Priority.HIGH);
-		element.addChangedValue("status", new Report(0).getStatus(), Status.NEW);
+		element.addChangedValue("priority", new Report("0").getPriority(), Priority.HIGH);
+		element.addChangedValue("status", new Report("0").getStatus(), Status.NEW);
 		this.report.addHistoryElement(element);
 		
 		element = new HistoryElement(this.report.getId(), new Person("kim", "Kim Herzig", null),
 		                             this.formatter.parseDateTime("2010-01-15 01:59:26"));
-		element.addChangedValue("resolution", new Report(0).getResolution(), Resolution.RESOLVED);
+		element.addChangedValue("resolution", new Report("0").getResolution(), Resolution.RESOLVED);
 		element.addChangedValue("status", Status.NEW, Status.FEEDBACK);
 		this.report.addHistoryElement(element);
 	}
@@ -118,7 +115,7 @@ public class HistoryTest {
 	 */
 	@Test
 	public final void testTimewarpTimestamp() {
-		Report warpedReport = this.report.timewarp(this.formatter.parseDateTime("2010-01-12 10:44:00"));
+		final Report warpedReport = this.report.timewarp(this.formatter.parseDateTime("2010-01-12 10:44:00"));
 		assertEquals(1, warpedReport.getComments().size());
 		assertEquals(Status.NEW, warpedReport.getStatus());
 	}

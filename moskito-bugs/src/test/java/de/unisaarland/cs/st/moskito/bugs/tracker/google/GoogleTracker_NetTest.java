@@ -21,25 +21,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
@@ -49,34 +41,6 @@ public class GoogleTracker_NetTest {
 	
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
 	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
-	
-	@AfterClass
-	public static void afterClass() {
-		// delete all reposuite directories and files
-		final Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
-		final Set<File> set = openFiles.get(FileShutdownAction.DELETE);
-		if (set != null) {
-			for (final File f : set) {
-				try {
-					if (f.isFile()) {
-						FileUtils.forceDelete(f);
-					} else {
-						FileUtils.deleteDirectory(f);
-					}
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
 	
 	@Test
 	public void testFetchRegex() {
@@ -104,16 +68,10 @@ public class GoogleTracker_NetTest {
 			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
 			              null, null, 4380l, 4380l, cacheDir);
 			
-			final Long nextId = tracker.getNextURI();
-			assertEquals(4380, nextId, 0);
-			final URI linkFromId = tracker.getLinkFromId(nextId);
-			assertEquals(new URI("4380"), linkFromId);
-			final RawReport rawReport = tracker.fetchSource(linkFromId);
-			assert (rawReport instanceof GoogleRawContent);
-			final XmlReport xmlReport = tracker.createDocument(rawReport);
-			assertEquals(rawReport, xmlReport);
-			assert (xmlReport instanceof GoogleRawContent);
-			final Report report = tracker.parse(xmlReport);
+			final ReportLink reportLink = tracker.getNextReportLink();
+			assertEquals("4380", reportLink.getBugId());
+			
+			final Report report = tracker.parse(reportLink);
 			assertEquals(4380, report.getId());
 			assertEquals(1, report.getAssignedTo().getUsernames().size());
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));
@@ -128,16 +86,15 @@ public class GoogleTracker_NetTest {
 			assertTrue(report.getHistory() != null);
 			assertEquals(2, report.getHistory().size());
 			
-			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
-			assertEquals(new Report(0).getPriority(), report.getPriority());
-			assertEquals(new Report(0).getProduct(), report.getProduct());
+			assertEquals(new Report("0").getPriority(), report.getPriority());
+			assertEquals(new Report("0").getProduct(), report.getProduct());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z", dateTimeHistoryFormatRegex)
 			                        .isEqual(report.getResolutionTimestamp()));
 			assertTrue(report.getResolver() != null);
 			assertEquals(1, report.getResolver().getUsernames().size());
 			assertTrue(report.getResolver().getUsernames().contains("jat@google.com"));
-			assertEquals(new Report(0).getSeverity(), report.getSeverity());
+			assertEquals(new Report("0").getSeverity(), report.getSeverity());
 			report.getSiblings();
 			assertEquals(Status.CLOSED, report.getStatus());
 			assertEquals("DevMode plug-in doesn't work in Firefox 3.6", report.getSubject());
@@ -154,12 +111,6 @@ public class GoogleTracker_NetTest {
 			e.printStackTrace();
 			fail();
 		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
 			e.printStackTrace();
 			fail();
 		} finally {

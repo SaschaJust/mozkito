@@ -375,15 +375,22 @@ public abstract class Tracker {
 		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		
 		final OverviewParser overviewParser = getOverviewParser();
+		boolean parsedOverview = false;
+		
 		if (overviewParser != null) {
 			if (!overviewParser.parseOverview()) {
-				throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
+				if (Logger.logError()) {
+					Logger.error("Could not parse bug overview URI. See earlier errors.");
+				}
+			} else {
+				this.reportLinks.addAll(overviewParser.getReportLinks());
+				if (Logger.logInfo()) {
+					Logger.info("Added " + this.reportLinks.size() + " bug IDs while parsing overviewURI.");
+				}
+				parsedOverview = true;
 			}
-			this.reportLinks.addAll(overviewParser.getReportLinks());
-			if (Logger.logInfo()) {
-				Logger.info("Added " + this.reportLinks.size() + " bug IDs while parsing overviewURI.");
-			}
-		} else {
+		}
+		if (!parsedOverview) {
 			// what if no overviewParser?
 			for (long i = startAt; i <= stopAt; ++i) {
 				final ReportLink uri = getLinkFromId(String.valueOf(i));

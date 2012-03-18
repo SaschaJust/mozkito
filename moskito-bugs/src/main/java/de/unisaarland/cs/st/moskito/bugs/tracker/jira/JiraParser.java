@@ -182,7 +182,10 @@ public class JiraParser implements Parser {
 		try {
 			//
 			final BasicUser assignee = this.issue.getAssignee();
-			return new Person(assignee.getDisplayName(), assignee.getName(), null);
+			if (assignee != null) {
+				return new Person(assignee.getDisplayName(), assignee.getName(), null);
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -204,15 +207,23 @@ public class JiraParser implements Parser {
 		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
 		try {
-			int counter = 0;
 			for (final Attachment attachment : this.issue.getAttachments()) {
-				final AttachmentEntry aEntry = new AttachmentEntry(String.valueOf(counter++));
+				final URI link = attachment.getSelf();
+				final String[] linkParts = link.toASCIIString().split("/");
+				int idIndex = 0;
+				for (idIndex = 0; idIndex < linkParts.length; ++idIndex) {
+					if (linkParts[idIndex].equals("attachment")) {
+						break;
+					}
+				}
+				
+				final AttachmentEntry aEntry = new AttachmentEntry(linkParts[++idIndex]);
 				final BasicUser author = attachment.getAuthor();
-				aEntry.setAuthor(new Person(author.getDisplayName(), author.getName(), null));
+				aEntry.setAuthor(new Person(null, author.getDisplayName(), author.getName()));
 				aEntry.setFilename(attachment.getFilename());
 				aEntry.setTimestamp(attachment.getCreationDate());
 				try {
-					aEntry.setLink(attachment.getSelf().toURL());
+					aEntry.setLink(attachment.getContentUri().toURL());
 				} catch (final MalformedURLException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
@@ -256,7 +267,7 @@ public class JiraParser implements Parser {
 			int counter = 0;
 			for (final com.atlassian.jira.rest.client.domain.Comment comment : this.issue.getComments()) {
 				final BasicUser jiraAuthor = comment.getAuthor();
-				final Person author = new Person(jiraAuthor.getDisplayName(), jiraAuthor.getName(), null);
+				final Person author = new Person(jiraAuthor.getName(), jiraAuthor.getDisplayName(), null);
 				result.add(new Comment(counter++, author, comment.getCreationDate(), comment.getBody()));
 			}
 			return result;
@@ -308,7 +319,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getSummary();
+			return this.issue.getDescription();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -389,7 +400,8 @@ public class JiraParser implements Parser {
 			final Field field = this.issue.getField("labels");
 			if (field.getValue() != null) {
 				final String fields = field.getValue().toString();
-				final String[] split = fields.replaceAll("[", "").replaceAll("]", "").replaceAll("\"", "").split(",");
+				final String[] split = fields.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "")
+				                             .split(",");
 				for (final String s : split) {
 					result.add(s);
 				}
@@ -424,7 +436,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return Priority.NORMAL;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -512,7 +524,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return getScmFixVersion();
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -603,7 +615,7 @@ public class JiraParser implements Parser {
 		try {
 			final BasicUser reporter = this.issue.getReporter();
 			if (reporter != null) {
-				return new Person(reporter.getDisplayName(), reporter.getName(), null);
+				return new Person(reporter.getName(), reporter.getDisplayName(), null);
 			}
 			return null;
 		} finally {
@@ -678,6 +690,7 @@ public class JiraParser implements Parser {
 		try {
 			
 			final IssueRestClient issueClient = this.restClient.getIssueClient();
+			System.err.println(reportLink.getBugId());
 			this.issue = issueClient.getIssue(reportLink.getBugId(), new NullProgressMonitor());
 			if (this.issue == null) {
 				return false;

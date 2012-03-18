@@ -113,10 +113,6 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 		try {
 			this.overviewURIs = new HashSet<ReportLink>();
 			try {
-				this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
-				if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
-					this.service.setUserCredentials(this.username, this.password);
-				}
 				
 				int startIndex = 1;
 				final int maxResults = 100;
@@ -200,5 +196,14 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 		}
 		
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
+		
+		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+		try {
+			if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
+				this.service.setUserCredentials(this.username, this.password);
+			}
+		} catch (final AuthenticationException e) {
+			throw new UnrecoverableError(e.getMessage(), e);
+		}
 	}
 }

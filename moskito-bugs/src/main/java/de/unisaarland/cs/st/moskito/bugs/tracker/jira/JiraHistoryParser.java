@@ -141,15 +141,17 @@ public class JiraHistoryParser {
 								continue;
 							}
 							final String fieldString = tr.child(0).text().replaceAll("\"", "").trim().toLowerCase();
-							final String oldValue = tr.child(1).text().replaceAll("\"", "").trim().toLowerCase();
-							final String newValue = tr.child(2).text().replaceAll("\"", "").trim().toLowerCase();
+							final String oldValue = tr.child(1).text().replaceAll("\"", "")
+							                          .replaceAll("\\[[^\\]]+\\]", "").trim().toLowerCase();
+							final String newValue = tr.child(2).text().replaceAll("\"", "")
+							                          .replaceAll("\\[[^\\]]+\\]", "").trim().toLowerCase();
 							if (fieldString.equals("type")) {
 								historyElement.addChangedValue("type", JiraParser.resolveType(oldValue),
 								                               JiraParser.resolveType(newValue));
 							} else if (fieldString.equals("priority")) {
 								historyElement.addChangedValue("severity", JiraParser.resolveSeverity(oldValue),
 								                               JiraParser.resolveSeverity(newValue));
-							} else if (fieldString.startsWith("affected version")) {
+							} else if (fieldString.startsWith("affects version")) {
 								historyElement.addChangedValue("version", oldValue, newValue);
 							} else if (fieldString.startsWith("component")) {
 								historyElement.addChangedValue("component", oldValue, newValue);

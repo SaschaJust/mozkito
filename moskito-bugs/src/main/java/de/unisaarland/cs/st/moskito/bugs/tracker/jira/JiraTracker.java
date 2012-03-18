@@ -15,9 +15,12 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
+import java.io.File;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import com.atlassian.jira.rest.client.AuthenticationHandler;
@@ -31,6 +34,7 @@ import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
 import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
+import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -68,7 +72,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				}
 			}
 			final BasicIssue issue = searchJql.getIssues().iterator().next();
-			return new ReportLink(issue.getSelf(), bugId);
+			return new ReportLink(issue.getSelf(), this.pattern + "-" + bugId);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -116,34 +120,47 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
-			
-			final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
-			// TODO support PROXYs
-			// cc.getProperties().put(DefaultApacheHttpClientConfig.PROPERTY_PROXY_URI,"proxy.ergogroup.no:3128");
-			
-			AuthenticationHandler authenticationHandler = new AnonymousAuthenticationHandler();
-			if (this.username != null) {
-				authenticationHandler = new BasicHttpAuthenticationHandler(this.username, this.password);
-			}
-			authenticationHandler.configure(cc);
-			this.restClient = factory.create(this.fetchURI, authenticationHandler);
-			this.pm = new NullProgressMonitor();
-			try {
-				final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.pattern,
-				                                                                           this.pm);
-				for (final BasicIssue issue : searchJql.getIssues()) {
-					this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
-				}
-			} catch (final RestClientException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return false;
+			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.pattern,
+			                                                                           this.pm);
+			for (final BasicIssue issue : searchJql.getIssues()) {
+				this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
 			}
 			return true;
+		} catch (final RestClientException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	@Override
+	public void setup(@NotNull final URI fetchURI,
+	                  final URI overviewURI,
+	                  final String pattern,
+	                  final String username,
+	                  final String password,
+	                  final Long startAt,
+	                  final Long stopAt,
+	                  final File cacheDir) throws InvalidParameterException {
+		
+		final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
+		
+		final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
+		// TODO support PROXYs
+		// cc.getProperties().put(DefaultApacheHttpClientConfig.PROPERTY_PROXY_URI,"proxy.ergogroup.no:3128");
+		
+		AuthenticationHandler authenticationHandler = new AnonymousAuthenticationHandler();
+		if (username != null) {
+			authenticationHandler = new BasicHttpAuthenticationHandler(username, password);
+		}
+		authenticationHandler.configure(cc);
+		this.restClient = factory.create(fetchURI, authenticationHandler);
+		this.pm = new NullProgressMonitor();
+		
+		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
+		
 	}
 }
