@@ -59,7 +59,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class SourceForgeParser implements Parser {
+public class SourceforgeParser implements Parser {
 	
 	private class AttachmentHistoryEntry {
 		
@@ -246,7 +246,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.rightGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Assigned:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Assigned:")) {
 					final String name = child.nextElementSibling().text();
 					return new Person(null, name, null);
 				}
@@ -351,7 +351,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.rightGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Categroy:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Category:")) {
 					return child.nextElementSibling().text().trim();
 				}
 			}
@@ -439,9 +439,9 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Submitted:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = SourceForgeParser.submittedRegex.findAll(pElement.text()
+					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
 					                                                                                        .trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
 						final List<RegexGroup> groups = findAll.get(0);
@@ -474,7 +474,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.gBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Details:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Details:")) {
 					final String description = child.nextElementSibling().text().trim();
 					return htmlCommentRegex.removeAll(description);
 				}
@@ -537,7 +537,9 @@ public class SourceForgeParser implements Parser {
 					
 					if ((lastHistoryElement == null) || (!lastHistoryElement.getTimestamp().isEqual(timestamp))) {
 						final HistoryElement newHistoryElement = new HistoryElement(getId(), author, timestamp);
-						this.history.add(newHistoryElement);
+						if ((lastHistoryElement != null) && (!lastHistoryElement.isEmpty())) {
+							this.history.add(lastHistoryElement);
+						}
 						lastHistoryElement = newHistoryElement;
 					}
 					
@@ -568,7 +570,7 @@ public class SourceForgeParser implements Parser {
 						status = oldStatus;
 					} else if (fieldname.equals("priority")) {
 						final Priority oldPriority = resolvePriority(oldValue);
-						lastHistoryElement.addChangedValue("status", oldPriority, priority);
+						lastHistoryElement.addChangedValue("priority", oldPriority, priority);
 						priority = oldPriority;
 					} else if (fieldname.equals("File Added")) {
 						final String[] split = oldValue.split(":");
@@ -580,6 +582,9 @@ public class SourceForgeParser implements Parser {
 							this.attachmentHistory.put(filename, new AttachmentHistoryEntry(author, timestamp));
 						}
 					}
+				}
+				if ((lastHistoryElement != null) && (!lastHistoryElement.isEmpty())) {
+					this.history.add(lastHistoryElement);
 				}
 			}
 			
@@ -653,7 +658,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Priority:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Priority:")) {
 					final String priorityStr = child.nextElementSibling().text();
 					return resolvePriority(priorityStr);
 				}
@@ -689,7 +694,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Resolution:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Resolution:")) {
 					final String str = child.nextElementSibling().text();
 					return resolveResolution(str);
 				}
@@ -787,7 +792,7 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Status:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Status:")) {
 					final String str = child.nextElementSibling().text();
 					return resolveStatus(str);
 				}
@@ -834,9 +839,9 @@ public class SourceForgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().equals("label") && child.text().trim().equals("Submitted:")) {
+				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = SourceForgeParser.submittedRegex.findAll(pElement.text()
+					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
 					                                                                                        .trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
 						String name = null;
@@ -870,7 +875,7 @@ public class SourceForgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return getSubject();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -939,7 +944,7 @@ public class SourceForgeParser implements Parser {
 			final Elements errorElements = document.getElementsByClass("error");
 			if (!errorElements.isEmpty()) {
 				for (final Element errorElem : errorElements) {
-					if ((errorElem.tag().equals("h4"))
+					if ((errorElem.tag().getName().equals("h4"))
 					        && (errorElem.text().trim().replaceAll("\"", "").trim().equals("Error"))) {
 						return false;
 					}
@@ -953,52 +958,95 @@ public class SourceForgeParser implements Parser {
 				return false;
 			}
 			
-			Elements headerBoxes = this.mainElement.getElementsByClass("yui-gc box");
+			Elements headerBoxes = this.mainElement.getElementsByClass("yui-gc");
 			if ((headerBoxes == null) || (headerBoxes.isEmpty())) {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-gc box\">");
 				}
 				return false;
 			}
-			headerBoxes = headerBoxes.get(0).getElementsByClass("yui-u first");
+			Element yui_gc_box = null;
+			for (final Element tmp : headerBoxes) {
+				if (tmp.classNames().contains("box")) {
+					yui_gc_box = tmp;
+					break;
+				}
+			}
+			if (yui_gc_box == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not find <div class=\"yui-gc box\">");
+				}
+				return false;
+			}
+			
+			headerBoxes = yui_gc_box.getElementsByClass("yui-u");
 			if ((headerBoxes == null) || (headerBoxes.isEmpty())) {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
 				return false;
 			}
-			this.headerBox = headerBoxes.get(0);
+			Element yui_u_first = null;
+			for (final Element tmp : headerBoxes) {
+				if (tmp.classNames().contains("first")) {
+					yui_u_first = tmp;
+					break;
+				}
+			}
+			if (yui_u_first == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not find <div class=\"yui-u first\">");
+				}
+				return false;
+			}
 			
-			final Elements gBoxes = this.mainElement.getElementsByClass("yui-g box");
+			this.headerBox = yui_u_first;
+			
+			final Elements gBoxes = this.mainElement.getElementsByClass("yui-g");
 			if ((gBoxes == null) || (gBoxes.isEmpty())) {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-g box\">");
 				}
 				return false;
 			}
-			this.gBox = gBoxes.get(0);
+			for (final Element tmp : gBoxes) {
+				if (tmp.classNames().contains("box")) {
+					this.gBox = tmp;
+					break;
+				}
+			}
+			if (this.gBox == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not find <div class=\"yui-g box\">");
+				}
+				return false;
+			}
 			
-			final Elements leftGBoxes = this.gBox.getElementsByClass("yui-u first");
+			final Elements leftGBoxes = this.gBox.getElementsByClass("yui-u");
 			if ((leftGBoxes == null) || (leftGBoxes.isEmpty())) {
 				if (Logger.logError()) {
 					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
 				return false;
 			}
-			this.leftGBox = leftGBoxes.get(0);
-			
-			final Elements rightGBoxes = this.gBox.getElementsByClass("yui-u");
-			if ((rightGBoxes == null) || (rightGBoxes.isEmpty())) {
+			for (final Element tmp : leftGBoxes) {
+				if (tmp.classNames().contains("first")) {
+					this.leftGBox = tmp;
+					break;
+				}
+			}
+			if (this.leftGBox == null) {
 				if (Logger.logError()) {
-					Logger.error("Could not find <div class=\"yui-u\">");
+					Logger.error("Could not find <div class=\"yui-u first\">");
 				}
 				return false;
 			}
-			this.rightGBox = rightGBoxes.get(0);
+			
+			this.rightGBox = this.leftGBox.nextElementSibling();
 			
 			final Element commentTableContainer = this.mainElement.getElementById("comment_table_container");
 			this.commentTable = commentTableContainer.child(0);
-			if ((this.commentTable == null) || (!this.commentTable.tag().equals("table"))) {
+			if ((this.commentTable == null) || (!this.commentTable.tag().getName().equals("table"))) {
 				if (Logger.logError()) {
 					Logger.error("Could not find comment table.");
 				}

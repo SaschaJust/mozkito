@@ -17,33 +17,32 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
@@ -59,22 +58,22 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 public class SourceforgeTracker extends Tracker implements OverviewParser {
 	
 	/** The group id pattern. */
-	protected static Regex        groupIdPattern = new Regex("group_id=({group_id}\\d+)");
+	protected static Regex        groupIdRegex = new Regex("group_id=({group_id}\\d+)");
 	
 	/** The at id regex. */
-	protected static Regex        atIdRegex      = new Regex("atid=({atid}\\d+)");
+	protected static Regex        atIdRegex    = new Regex("atid=({atid}\\d+)");
 	
 	/** The a id regex. */
-	protected static Regex        aIdRegex       = new Regex("aid=({atid}\\d+)");
+	protected static Regex        aIdRegex     = new Regex("aid=({atid}\\d+)");
 	
 	/** The offset pattern. */
-	protected static Regex        offsetPattern  = new Regex("offset=({offset}\\d+)");
+	protected static Regex        offsetRegex  = new Regex("offset=({offset}\\d+)");
 	
 	/** The limit pattern. */
-	protected static Regex        limitPattern   = new Regex("limit=({limit}\\d+)");
+	protected static Regex        limitRegex   = new Regex("limit=({limit}\\d+)");
 	
 	/** The issue links. */
-	private final Set<ReportLink> issueLinks     = new HashSet<ReportLink>();
+	private final Set<ReportLink> issueLinks   = new HashSet<ReportLink>();
 	
 	/**
 	 * Creates the document.
@@ -153,7 +152,7 @@ public class SourceforgeTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			return new SourceForgeParser();
+			return new SourceforgeParser();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -178,7 +177,6 @@ public class SourceforgeTracker extends Tracker implements OverviewParser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
@@ -186,84 +184,114 @@ public class SourceforgeTracker extends Tracker implements OverviewParser {
 		try {
 			
 			// FIXME require own argument for atid
-			final List<List<RegexGroup>> findAll = atIdRegex.findAll(getPattern());
-			if ((findAll == null) || (findAll.isEmpty())) {
-				throw new UnrecoverableError(
-				                             "Could not extract sourceforge ATID from tracker pattern. This is required! Please check your tracker pattern: "
-				                                     + getPattern());
-			}
 			
-			String atid = null;
-			for (final List<RegexGroup> groupList : findAll) {
-				for (final RegexGroup group : groupList) {
-					if ((group.getName() != null) && (group.getName().equals(atid))) {
-						atid = group.getMatch().trim();
-					}
-				}
-			}
-			
-			if (atid == null) {
-				throw new UnrecoverableError(
-				                             "Could not extract sourceforge ATID from tracker pattern. This is required! Please check your tracker pattern: "
-				                                     + getPattern());
-			}
-			StringBuilder overviewURLBuilder = new StringBuilder();
-			overviewURLBuilder.append("http://sourceforge.net/api/artifact/index/tracker-id/");
-			overviewURLBuilder.append(atid);
-			overviewURLBuilder.append("/limit/200/rss");
-			URL feedUrl = new URL(overviewURLBuilder.toString());
-			
-			final SyndFeedInput input = new SyndFeedInput();
-			SyndFeed feed = null;
-			try {
-				feed = input.build(new XmlReader(feedUrl));
-			} catch (final FeedException e) {
+			if (getOverviewURI() == null) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return false;
-			} catch (final IllegalArgumentException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error("No overview URI specified.");
 				}
 				return false;
 			}
-			List<SyndEntry> entries = feed.getEntries();
-			int counter = 0;
-			while ((entries != null) && (!entries.isEmpty())) {
-				String aid = null;
-				for (final SyndEntry entry : entries) {
-					final String issuelink = StringEscapeUtils.unescapeHtml(entry.getLink());
-					if (issuelink != null) {
-						final List<List<RegexGroup>> atidHits = aIdRegex.findAll(issuelink);
-						for (final List<RegexGroup> regexGroups : atidHits) {
-							for (final RegexGroup group : regexGroups) {
-								if ((group.getName() != null) & (group.getName().equals("atid"))) {
-									aid = group.getMatch();
-								}
-							}
+			
+			final String uri = getOverviewURI().toASCIIString();
+			
+			groupIdRegex.find(getOverviewURI().toASCIIString());
+			final String groupId = groupIdRegex.getGroup("group_id");
+			if (groupId == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not extract group_id from uri: " + uri.toString());
+				}
+			}
+			atIdRegex.find(uri.toString());
+			final String atId = atIdRegex.getGroup("atid");
+			if (atId == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not extract atid from uri: " + uri.toString());
+				}
+			}
+			
+			String baseUriString = uri.toString();
+			
+			limitRegex.find(uri.toString());
+			final String limit = limitRegex.getGroup("limit");
+			if (limit == null) {
+				baseUriString += "&limit=100";
+			} else {
+				baseUriString = limitRegex.replaceAll(uri.toString(), "limit=100");
+			}
+			
+			offsetRegex.find(uri.toString());
+			final String offsetString = offsetRegex.getGroup("offset");
+			if (offsetString != null) {
+				baseUriString = offsetRegex.replaceAll(uri.toString(), "");
+			}
+			baseUriString += "&offset=";
+			
+			int offset = 0;
+			boolean running = true;
+			while (running) {
+				final String nextUri = baseUriString + offset;
+				offset += 100;
+				final URL url = new URL(nextUri);
+				final SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
+				
+				final StringBuilder htmlSB = new StringBuilder();
+				// write file to disk
+				String line = "";
+				while ((line = br.readLine()) != null) {
+					htmlSB.append(line);
+					htmlSB.append(FileUtils.lineSeparator);
+				}
+				br.close();
+				
+				final String html = htmlSB.toString();
+				
+				if ((html.contains("There was an error processing your request ..."))
+				        || (html.contains("No results were found to match your current search criteria."))) {
+					running = false;
+					break;
+				}
+				
+				final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+				try {
+					final Document document = saxBuilder.build(new StringReader(html));
+					final XMLOutputter outp = new XMLOutputter();
+					outp.setFormat(Format.getPrettyFormat());
+					final String xml = outp.outputString(document);
+					
+					br = new BufferedReader(new StringReader(xml));
+					final XMLReader parser = XMLReaderFactory.createXMLReader();
+					parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+					parser.setContentHandler(parseHandler);
+					final InputSource inputSource = new InputSource(br);
+					parser.parse(inputSource);
+					
+					final Set<String> idSet = parseHandler.getIDs();
+					if (idSet.size() < 1) {
+						running = false;
+					} else {
+						for (final String id : idSet) {
+							this.issueLinks.add(new ReportLink(new URI(getUri().toASCIIString() + getPattern()
+							        + "&aid=" + id), id));
 						}
 					}
-					if (aid != null) {
-						this.issueLinks.add(new ReportLink(new URI(issuelink), aid));
+				} catch (final JDOMException e) {
+					if (Logger.logError()) {
+						Logger.error("Could not convert overview to XHTML!", e);
 					}
+					return false;
+				} catch (final SAXException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+					return false;
+				} catch (final URISyntaxException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+					return false;
 				}
-				overviewURLBuilder = new StringBuilder();
-				overviewURLBuilder.append("http://sourceforge.net/api/artifact/index/tracker-id/");
-				overviewURLBuilder.append(atid);
-				overviewURLBuilder.append("/limit/200");
-				overviewURLBuilder.append("/offset/");
-				overviewURLBuilder.append(++counter * 200);
-				overviewURLBuilder.append("/rss");
-				feedUrl = new URL(overviewURLBuilder.toString());
-				try {
-					feed = input.build(new XmlReader(feedUrl));
-				} catch (final FeedException e) {
-					break;
-				} catch (final IllegalArgumentException e) {
-					break;
-				}
-				entries = feed.getEntries();
 			}
 			return true;
 		} catch (final MalformedURLException e) {
@@ -272,11 +300,6 @@ public class SourceforgeTracker extends Tracker implements OverviewParser {
 			}
 			return false;
 		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return false;
-		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

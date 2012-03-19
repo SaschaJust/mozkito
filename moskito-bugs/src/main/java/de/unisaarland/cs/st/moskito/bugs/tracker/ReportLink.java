@@ -22,4 +22,15 @@ public class ReportLink {
 		return this.uri;
 	}
 	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append("[ uri=");
+		sb.append(this.uri.toASCIIString());
+		sb.append(", budId=");
+		sb.append(this.bugId);
+		sb.append("]");
+		return sb.toString();
+	}
 }
