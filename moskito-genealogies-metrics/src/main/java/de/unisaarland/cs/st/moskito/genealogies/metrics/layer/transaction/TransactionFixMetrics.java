@@ -35,29 +35,6 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	public TransactionFixMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
-	}
-	
-	private List<String> getBugId(final Regex regex,
-	                              final String message) {
-		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
-		if (findAll == null) {
-			return new ArrayList<String>(0);
-		}
-		final List<String> result = new LinkedList<String>();
-		for (final List<RegexGroup> regexGroups : findAll) {
-			for (final RegexGroup regexGroup : regexGroups) {
-				if (regexGroup.getName().equals("bugids")) {
-					if (regexGroup.getMatch() != null) {
-						final String[] bugids = regexGroup.getMatch().split(",");
-						for (final String bugid : bugids) {
-							result.add(bugid.trim());
-						}
-					}
-				}
-			}
-		}
-		
-		// TODO make this an own command line argument
 		final String fixClassFilePath = System.getProperty("fix.classify.file", null);
 		if (fixClassFilePath != null) {
 			final File fixClassifyFile = new File(fixClassFilePath);
@@ -87,6 +64,27 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 				throw new UnrecoverableError(e);
 			}
 			
+		}
+	}
+	
+	private List<String> getBugId(final Regex regex,
+	                              final String message) {
+		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
+		if (findAll == null) {
+			return new ArrayList<String>(0);
+		}
+		final List<String> result = new LinkedList<String>();
+		for (final List<RegexGroup> regexGroups : findAll) {
+			for (final RegexGroup regexGroup : regexGroups) {
+				if (regexGroup.getName().equals("bugids")) {
+					if (regexGroup.getMatch() != null) {
+						final String[] bugids = regexGroup.getMatch().split(",");
+						for (final String bugid : bugids) {
+							result.add(bugid.trim());
+						}
+					}
+				}
+			}
 		}
 		
 		return result;
