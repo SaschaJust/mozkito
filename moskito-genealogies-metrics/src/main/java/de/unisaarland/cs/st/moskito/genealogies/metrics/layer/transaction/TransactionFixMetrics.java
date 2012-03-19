@@ -78,6 +78,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 						this.classifyMap.put(lineParts[0], 100);
 					}
 				}
+				if (Logger.logInfo()) {
+					Logger.info("Added " + this.classifyMap.size() + " external bug classifications.");
+				}
 			} catch (final FileNotFoundException e) {
 				throw new UnrecoverableError(e);
 			} catch (final IOException e) {
