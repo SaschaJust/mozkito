@@ -21,13 +21,14 @@ import net.ownhero.dev.andama.threads.kimtest.KimSink;
 import net.ownhero.dev.andama.threads.kimtest.KimSource;
 import net.ownhero.dev.andama.threads.kimtest.KimTransformer;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 import org.junit.Test;
 
 public class KimTest {
 	
 	@Test
-	public void test() {
+	public void test() throws SettingsParseError {
 		final Settings settings = new Settings();
 		final Group group = new Group("me", new Chain<Settings>(settings) {
 			

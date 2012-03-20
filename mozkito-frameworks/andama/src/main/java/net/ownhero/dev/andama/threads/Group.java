@@ -82,7 +82,7 @@ public class Group extends ThreadGroup {
 	 * @return
 	 */
 	protected String getToolInformation() {
-		return this.settings.getToolInformation();
+		return this.settings.getInformation();
 	}
 	
 	/**

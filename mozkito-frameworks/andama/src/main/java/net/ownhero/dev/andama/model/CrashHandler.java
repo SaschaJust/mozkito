@@ -269,7 +269,7 @@ public class CrashHandler extends ThreadGroup {
 	 */
 	protected String getToolInformation() {
 		return (this.application != null)
-		                                 ? this.application.getSettings().getToolInformation()
+		                                 ? this.application.getSettings().getInformation()
 		                                 : "";
 	}
 	

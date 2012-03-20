@@ -3,9 +3,7 @@
  */
 package net.ownhero.dev.andama.model;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -54,14 +52,6 @@ public abstract class Chain<T extends Settings> extends Thread {
 		return this.settings;
 	}
 	
-	public final void parseSettings() {
-		try {
-			getSettings().parse();
-		} catch (final SettingsParseError e) {
-			throw new Shutdown(e);
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#run()
@@ -69,7 +59,6 @@ public abstract class Chain<T extends Settings> extends Thread {
 	@Override
 	public final void run() {
 		if (!this.shutdown) {
-			parseSettings();
 			setup();
 			if (!this.shutdown) {
 				getPool().execute();
