@@ -51,10 +51,10 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 						continue;
 					}
 					
-					final Type bugType = Type.valueOf(lineParts[1]);
-					if (bugType != null) {
+					try {
+						final Type bugType = Type.valueOf(lineParts[1]);
 						this.classifyMap.put(lineParts[0], bugType.ordinal());
-					} else {
+					} catch (final IllegalArgumentException e) {
 						if (Logger.logWarn()) {
 							Logger.warn("Could not map `" + lineParts[1]
 							        + "` to bug TYPE. Storing artificial bug type 100.");
