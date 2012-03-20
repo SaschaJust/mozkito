@@ -18,6 +18,9 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
+
+import org.eclipse.jgit.diff.Edit.Type;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
@@ -47,10 +50,10 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 					if (lineParts.length < 2) {
 						continue;
 					}
-					if (lineParts[1].equals("BUG")) {
-						this.classifyMap.put(lineParts[0], 0);
-					} else if (lineParts[1].equals("RFE")) {
-						this.classifyMap.put(lineParts[0], 1);
+					
+					final Type bugType = Type.valueOf(lineParts[1]);
+					if (bugType != null) {
+						this.classifyMap.put(lineParts[0], bugType.ordinal());
 					} else {
 						this.classifyMap.put(lineParts[0], 100);
 					}
@@ -128,7 +131,6 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 					continue;
 				}
 				
-				// TODO allow external classificaton file
 				typeOrdinal = report.getType().ordinal();
 				
 				if (!this.classifyMap.isEmpty()) {
@@ -136,13 +138,19 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 					if (this.classifyMap.containsKey(sId)) {
 						typeOrdinal = this.classifyMap.get(sId);
 					} else {
-						typeOrdinal = 100;
+						if (Logger.logInfo()) {
+							Logger.info("Could not find " + sId + " in external classification map.");
+						}
+						typeOrdinal = 200;
 					}
 				}
 				
 				if ((fixType == -1) || (fixType == typeOrdinal)) {
 					fixType = typeOrdinal;
 				} else {
+					if (Logger.logInfo()) {
+						Logger.info("transaction " + rcsTransaction.getId() + " fixes multiple bugs.");
+					}
 					fixType = 100;
 				}
 				++numFixes;
