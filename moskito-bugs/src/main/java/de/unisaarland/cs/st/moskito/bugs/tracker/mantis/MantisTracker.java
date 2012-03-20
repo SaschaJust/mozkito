@@ -12,27 +12,14 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
-
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -50,70 +37,29 @@ public class MantisTracker extends Tracker {
 	}
 	
 	@Override
-	public boolean checkRAW(final RawReport rawReport) {
-		if (!super.checkRAW(rawReport)) {
-			return false;
-		}
-		Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
-		List<List<RegexGroup>> findAll = regex.findAll(rawReport.getContent());
-		if (findAll != null) {
-			if (Logger.logInfo()) {
-				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
-				        + ". checkRaw() failed: issue seems not to exist.");
-			}
-			return false;
-		}
-		regex = new Regex("Access Denied.");
-		findAll = regex.findAll(rawReport.getContent());
-		if (findAll != null) {
-			if (Logger.logInfo()) {
-				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
-				        + ". checkRaw() failed: issue requires special permission.");
-			}
-			return false;
-		}
-		
-		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de.unisaarland.cs.st.moskito.bugs.tracker.RawReport
-	 * )
-	 */
-	@Override
-	public XmlReport createDocument(final RawReport rawReport) {
-		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
-		
-		try {
-			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-			final Document document = saxBuilder.build(reader);
-			reader.close();
-			
-			return new XmlReport(rawReport, document);
-		} catch (final TransformerFactoryConfigurationError e) {
-			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
-			}
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
-			}
-		} catch (final JDOMException e) {
-			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO
+			try {
+				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
+				                                                            bugId + "")), bugId);
+			} catch (final URISyntaxException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public OverviewParser getOverviewParser() {
+		// PRECONDITIONS
+		
+		try {
 			if (Logger.logError()) {
 				Logger.error("Overview parsing not supported yet.");
 			}
@@ -128,7 +74,7 @@ public class MantisTracker extends Tracker {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public Parser getParser() {
 		// PRECONDITIONS
 		
 		try {

@@ -60,7 +60,7 @@ public class History implements Annotated {
 	 */
 	private static final long         serialVersionUID = 1720480073428317973L;
 	private long                      id;
-	private long                      bugId;
+	private String                    bugId;
 	
 	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>(new HistoryElementComparator());
 	
@@ -74,7 +74,7 @@ public class History implements Annotated {
 	/**
 	 * @param bugId
 	 */
-	public History(@NotNegative final long bugId) {
+	public History(@NotNegative final String bugId) {
 		setBugId(bugId);
 	}
 	
@@ -156,23 +156,6 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param bugId
-	 * @return
-	 */
-	@Transient
-	public History get(final long bugId) {
-		final History history = new History(getBugId());
-		final Iterator<HistoryElement> iterator = getElements().iterator();
-		while (iterator.hasNext()) {
-			final HistoryElement element = iterator.next();
-			if (element.getBugId() == bugId) {
-				history.add(element);
-			}
-		}
-		return history;
-	}
-	
-	/**
 	 * @param author
 	 * @return
 	 */
@@ -227,8 +210,25 @@ public class History implements Annotated {
 	/**
 	 * @return the bugId
 	 */
-	public long getBugId() {
+	public String getBugId() {
 		return this.bugId;
+	}
+	
+	/**
+	 * @param bugId
+	 * @return
+	 */
+	@Transient
+	public History getByBugId(final String bugId) {
+		final History history = new History(getBugId());
+		final Iterator<HistoryElement> iterator = getElements().iterator();
+		while (iterator.hasNext()) {
+			final HistoryElement element = iterator.next();
+			if (element.getBugId().equals(bugId)) {
+				history.add(element);
+			}
+		}
+		return history;
 	}
 	
 	/**
@@ -266,7 +266,7 @@ public class History implements Annotated {
 		if ((index >= 0) && (index < list.size())) {
 			object = list.get(index).get(fieldName).getFirst();
 		} else {
-			object = new Report(0).getField(fieldName);
+			object = new Report("unknown").getField(fieldName);
 		}
 		
 		return object;
@@ -310,6 +310,7 @@ public class History implements Annotated {
 	 * @param report
 	 * @return
 	 */
+	@SuppressWarnings ("deprecation")
 	public Report rollback(@NotNull final Report report,
 	                       @NotNull final DateTime timestamp) {
 		if (report.getCreationTimestamp().isBefore(timestamp)) {
@@ -351,7 +352,7 @@ public class History implements Annotated {
 	 * @param bugId
 	 *            the bugId to set
 	 */
-	private void setBugId(final long bugId) {
+	private void setBugId(final String bugId) {
 		this.bugId = bugId;
 	}
 	

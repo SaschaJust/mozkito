@@ -40,14 +40,14 @@ public class OpenJPA_NetTest extends MoskitoTest {
 		final Person historyAuthor2 = new Person(null, "Yoko Harada", null);
 		final Person commentAuthor2 = new Person("yokolet", null, null);
 		
-		final Report report = new Report(1);
+		final Report report = new Report("1");
 		report.setSubmitter(submitter);
 		
 		HistoryElement element = new HistoryElement(report.getId(), historyAuthor1, new DateTime());
-		element.addChangedValue("status", new Report(0).getStatus(), Status.ASSIGNED);
+		element.addChangedValue("status", new Report("0").getStatus(), Status.ASSIGNED);
 		report.addHistoryElement(element);
 		
-		element = new HistoryElement(1, historyAuthor2, new DateTime());
+		element = new HistoryElement("1", historyAuthor2, new DateTime());
 		element.addChangedValue("status", Status.ASSIGNED, Status.CLOSED);
 		report.addHistoryElement(element);
 		

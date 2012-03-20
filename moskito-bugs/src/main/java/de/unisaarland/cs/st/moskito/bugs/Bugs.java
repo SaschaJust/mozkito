@@ -80,9 +80,9 @@ public class Bugs extends Chain<TrackerSettings> {
 		this.logSettings.getValue();
 		
 		new TrackerReader(this.threadPool.getThreadGroup(), getSettings(), tracker);
-		new TrackerRAWChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
-		new TrackerXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), tracker);
-		new TrackerXMLChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		// new TrackerRAWChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		// new TrackerXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		// new TrackerXMLChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		new TrackerParser(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		
 		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();

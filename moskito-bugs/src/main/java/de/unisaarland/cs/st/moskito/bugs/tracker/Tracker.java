@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
@@ -28,11 +27,9 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -59,31 +56,32 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType type             = TrackerType.valueOf(this.getClass()
-	                                                                       .getSimpleName()
-	                                                                       .substring(0,
-	                                                                                  this.getClass().getSimpleName()
-	                                                                                      .length()
-	                                                                                          - Tracker.class.getSimpleName()
-	                                                                                                         .length())
-	                                                                       .toUpperCase());
-	protected DateTime          lastUpdate;
-	protected String            baseURL;
-	protected String            pattern;
-	protected URI               fetchURI;
-	protected String            username;
-	protected String            password;
-	protected Long              startAt;
-	protected Long              stopAt;
-	protected boolean           initialized      = false;
-	private URI                 overviewURI;
-	private BlockingQueue<Long> bugIds           = new LinkedBlockingQueue<Long>();
-	protected File              cacheDir;
+	protected final TrackerType       type             = TrackerType.valueOf(this.getClass()
+	                                                                             .getSimpleName()
+	                                                                             .substring(0,
+	                                                                                        this.getClass()
+	                                                                                            .getSimpleName()
+	                                                                                            .length()
+	                                                                                                - Tracker.class.getSimpleName()
+	                                                                                                               .length())
+	                                                                             .toUpperCase());
+	protected DateTime                lastUpdate;
+	protected String                  baseURL;
+	protected String                  pattern;
+	protected URI                     fetchURI;
+	protected String                  username;
+	protected String                  password;
+	protected Long                    startAt;
+	protected Long                    stopAt;
+	protected boolean                 initialized      = false;
+	private URI                       overviewURI;
+	private BlockingQueue<ReportLink> reportLinks      = new LinkedBlockingQueue<ReportLink>();
+	protected File                    cacheDir;
 	
-	private static final String bugIdPlaceholder = "<BUGID>";
-	private static final Regex  bugIdRegex       = new Regex("({bugid}<BUGID>)");
+	protected static final String     bugIdPlaceholder = "<BUGID>";
+	protected static final Regex      bugIdRegex       = new Regex("({bugid}<BUGID>)");
 	
-	public final static Person  unknownPerson    = new Person("<unknown>", null, null);
+	public final static Person        unknownPerson    = new Person("<unknown>", null, null);
 	
 	/**
 	 * @return
@@ -104,107 +102,11 @@ public abstract class Tracker {
 	 */
 	public Tracker() {
 		Condition.check(!this.initialized, "The tracker must NOT be initialized at this point in time.");
-		Condition.notNull(this.bugIds, "The bugId container must be initialized.");
+		Condition.notNull(this.reportLinks, "The bugId container must be initialized.");
 		Condition.notNull(bugIdPlaceholder, "bugIdPlaceholder must be set.");
 		StringCondition.notEmpty(bugIdPlaceholder, "bugIdPlaceholder must not be empty");
 		Condition.notNull(bugIdRegex, "bugIdRegex must be set.");
 		StringCondition.notEmpty(bugIdRegex.getPattern(), "bugIdRegex must not be empty");
-	}
-	
-	/**
-	 * @param id
-	 */
-	public void addBugId(final Long id) {
-		this.bugIds.add(id);
-	}
-	
-	/**
-	 * The method takes a string containing one bug report and analyzes its content. If this method returns false, the
-	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents,
-	 * etc...
-	 * 
-	 * @param rawString
-	 *            the bug report without further processing
-	 * @return true if no error occurred
-	 */
-	public boolean checkRAW(@NotNull final RawReport rawReport) {
-		final boolean retval = true;
-		return retval;
-	}
-	
-	/**
-	 * The method takes a XML document representing a bug report and checks this document for consistency, i.e. if all
-	 * required nodes are available or if the document matches a given XML scheme. If this method returns false, the
-	 * report will be dropped from the corresponding {@link RepoSuiteToolchain}. Applications are broken documents or
-	 * unsupported versions.
-	 * 
-	 * @param xmlReport
-	 *            the XML document representing a bug report
-	 * @return true if no error occurred
-	 */
-	public boolean checkXML(@NotNull final XmlReport xmlReport) {
-		return xmlReport.getDocument().getRootElement() != null;
-	}
-	
-	/**
-	 * The method takes a bug report in raw format and creates the corresponding XML document.
-	 * 
-	 * @param rawReport
-	 *            the raw bug report
-	 * @return the bug report as XML document
-	 */
-	public abstract XmlReport createDocument(RawReport rawReport);
-	
-	/**
-	 * This is method takes a {@link URI} and fetches the content to a string.
-	 * 
-	 * @param fetchURI
-	 *            the fetchURI to the bug report
-	 * @return a {@link RawReport}
-	 * @throws UnsupportedProtocolException
-	 * @throws FetchException
-	 */
-	public RawReport fetchSource(final URI uri) throws FetchException, UnsupportedProtocolException {
-		RawReport source = null;
-		final Long bugId = reverseURI(uri);
-		
-		if (this.cacheDir != null) {
-			
-			String filename = uri.toString();
-			final int index = filename.lastIndexOf('/');
-			filename = filename.substring(index + 1);
-			
-			final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + filename);
-			if (cacheFile.exists()) {
-				if (Logger.logInfo()) {
-					Logger.info("Fetching report `" + uri.toString() + "` with bugid " + bugId
-					        + " from cache directory ... ");
-				}
-				try {
-					source = (RawReport) IOUtils.load(cacheFile);
-				} catch (final LoadingException e) {
-					if (Logger.logWarn()) {
-						Logger.warn("Could not load cached file. Refetching original report", e);
-					}
-					source = new RawReport(bugId, IOUtils.fetch(uri));
-					writeContentToFile(source, filename);
-				} catch (final FilePermissionException e) {
-					if (Logger.logWarn()) {
-						Logger.warn("Could not load cached file. Refetching original report", e);
-					}
-					source = new RawReport(bugId, IOUtils.fetch(uri));
-					writeContentToFile(source, filename);
-				}
-				
-			} else {
-				source = new RawReport(bugId, IOUtils.fetch(uri));
-				writeContentToFile(source, filename);
-			}
-		} else {
-			
-			source = new RawReport(bugId, IOUtils.fetch(uri));
-		}
-		return source;
 	}
 	
 	/**
@@ -224,39 +126,22 @@ public abstract class Tracker {
 		
 	}
 	
-	/**
-	 * Creates an {@link URI} that corresponds to the given bugId. This method is used to create {@link URI}s for the
-	 * {@link Tracker#fetchSource(URI)} method.
-	 * 
-	 * @param bugId
-	 *            the id of the bug an URI shall be created to
-	 * @return the URI to the bug report.
-	 */
-	public URI getLinkFromId(final Long bugId) {
-		try {
-			return new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern, bugId + ""));
-		} catch (final URISyntaxException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+	public abstract ReportLink getLinkFromId(final String bugId);
 	
 	/**
 	 * this method should be synchronized
 	 * 
 	 * @return the next id that hasn't been requested.
 	 */
-	public final synchronized Long getNextId() {
-		if (!this.bugIds.isEmpty()) {
-			return this.bugIds.poll();
+	public final synchronized ReportLink getNextReportLink() {
+		if (!this.reportLinks.isEmpty()) {
+			return this.reportLinks.poll();
 		} else {
 			return null;
 		}
 	}
 	
-	public abstract OverviewParser getOverviewParser(RawContent overviewContent);
+	public abstract OverviewParser getOverviewParser();
 	
 	/**
 	 * @return the overviewURI
@@ -265,7 +150,11 @@ public abstract class Tracker {
 		return this.overviewURI;
 	}
 	
-	public abstract Parser getParser(XmlReport xmlReport);
+	public abstract Parser getParser();
+	
+	public String getPattern() {
+		return this.pattern;
+	}
 	
 	/**
 	 * This method returns the tracker type, determined by
@@ -332,21 +221,26 @@ public abstract class Tracker {
 	/**
 	 * This method parses a XML document representing a bug report.
 	 */
-	public final Report parse(final XmlReport xmlReport) {
-		final Parser parser = getParser(xmlReport);
+	public final Report parse(final ReportLink reportLink) {
+		final Parser parser = getParser();
 		if (parser == null) {
 			throw new UnrecoverableError(
 			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Parsing issue report " + xmlReport.getId() + " ... ");
+			Logger.info("Parsing issue report " + reportLink.toString() + " ... ");
 		}
 		
 		parser.setTracker(this);
-		parser.setXMLReport(xmlReport);
+		if (!parser.setURI(reportLink)) {
+			if (Logger.logWarn()) {
+				Logger.warn("Could not parse report " + reportLink.toString() + ". See earlier error messages.");
+			}
+			return null;
+		}
 		
-		final Long id = parser.getId();
+		final String id = parser.getId();
 		Condition.notNull(id, "The bug id returned by the parser may never be null.");
 		
 		final Report report = new Report(id);
@@ -363,8 +257,7 @@ public abstract class Tracker {
 		
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
-		report.setHash(xmlReport.getMd5());
-		report.setLastFetch(xmlReport.getFetchTime());
+		report.setLastFetch(parser.getFetchTime());
 		report.setLastUpdateTimestamp(parser.getLastUpdateTimestamp());
 		report.setPriority(parser.getPriority());
 		report.setProduct(parser.getProduct());
@@ -372,7 +265,7 @@ public abstract class Tracker {
 		if (parser.getResolver() != null) {
 			report.setResolver(parser.getResolver());
 		}
-		report.setSiblings(new TreeSet<Long>(parser.getSiblings()));
+		report.setSiblings(new TreeSet<String>(parser.getSiblings()));
 		report.setSeverity(parser.getSeverity());
 		report.setStatus(parser.getStatus());
 		report.setSubject(parser.getSubject());
@@ -459,47 +352,51 @@ public abstract class Tracker {
 		if (!this.initialized) {
 			this.fetchURI = fetchURI;
 			this.overviewURI = overviewURI;
-			this.pattern = pattern;
 			this.username = username;
 			this.password = password;
 			this.startAt = startAt;
 			this.stopAt = stopAt;
 			this.initialized = true;
 			this.cacheDir = cacheDir;
+			this.pattern = pattern;
+			
+			if (startAt == null) {
+				this.startAt = 1l;
+			}
+			if (stopAt == null) {
+				this.stopAt = Long.MAX_VALUE;
+			}
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
 			}
 		}
 		
-		this.bugIds = new LinkedBlockingDeque<Long>();
+		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		
-		if (getOverviewURI() != null) {
-			try {
-				final RawContent overviewContent = IOUtils.fetch(getOverviewURI());
-				final OverviewParser overviewParser = getOverviewParser(overviewContent);
-				if (overviewParser != null) {
-					if (!overviewParser.parse(overviewContent.getContent())) {
-						throw new UnrecoverableError("Could not parse bug overview URI. See earlier errors.");
-					}
-					this.bugIds.addAll(overviewParser.getBugIds());
-					if (Logger.logInfo()) {
-						Logger.info("Added " + this.bugIds.size() + " bug IDs while parsing overviewURI.");
-					}
-				} else {
-					throw new UnrecoverableError("Could not parse bug overview URI. No suitable overview parser found.");
+		final OverviewParser overviewParser = getOverviewParser();
+		boolean parsedOverview = false;
+		
+		if (overviewParser != null) {
+			if (!overviewParser.parseOverview()) {
+				if (Logger.logError()) {
+					Logger.error("Could not parse bug overview URI. See earlier errors.");
 				}
-			} catch (final UnsupportedProtocolException e) {
-				throw new UnrecoverableError(e);
-			} catch (final FetchException e) {
-				throw new UnrecoverableError(e);
+			} else {
+				this.reportLinks.addAll(overviewParser.getReportLinks());
+				if (Logger.logInfo()) {
+					Logger.info("Added " + this.reportLinks.size() + " bug IDs while parsing overviewURI.");
+				}
+				parsedOverview = true;
 			}
 		}
-		
-		// when this method ends, bugIds must be filled
-		if (this.bugIds.isEmpty()) {
-			for (long l = startAt; l <= stopAt; ++l) {
-				this.bugIds.add(l);
+		if (!parsedOverview) {
+			// what if no overviewParser?
+			for (long i = startAt; i <= stopAt; ++i) {
+				final ReportLink uri = getLinkFromId(String.valueOf(i));
+				if (uri != null) {
+					this.reportLinks.add(uri);
+				}
 			}
 		}
 	}

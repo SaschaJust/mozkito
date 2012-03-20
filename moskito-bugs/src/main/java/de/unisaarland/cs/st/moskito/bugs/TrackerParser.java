@@ -16,11 +16,11 @@
 package de.unisaarland.cs.st.moskito.bugs;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerParser extends Transformer<XmlReport, Report> {
+public class TrackerParser extends Transformer<ReportLink, Report> {
 	
 	/**
 	 * @param threadGroup
@@ -37,19 +37,22 @@ public class TrackerParser extends Transformer<XmlReport, Report> {
 	public TrackerParser(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<XmlReport, Report>(this) {
+		new ProcessHook<ReportLink, Report>(this) {
 			
 			@Override
 			public void process() {
-				XmlReport xmlReport = getInputData();
+				final ReportLink reportLink = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Parsing " + xmlReport + ".");
+					Logger.debug("Parsing " + reportLink.toString() + ".");
 				}
 				
-				Report report = tracker.parse(xmlReport);
-				
-				provideOutputData(report);
+				final Report report = tracker.parse(reportLink);
+				if (report == null) {
+					skipOutputData(report);
+				} else {
+					provideOutputData(report);
+				}
 			}
 		};
 	}

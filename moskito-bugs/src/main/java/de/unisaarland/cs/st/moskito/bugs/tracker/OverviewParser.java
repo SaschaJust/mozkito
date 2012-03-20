@@ -4,8 +4,8 @@ import java.util.Set;
 
 public interface OverviewParser {
 	
-	Set<? extends Long> getBugIds();
+	Set<ReportLink> getReportLinks();
 	
-	boolean parse(String content);
+	boolean parseOverview();
 	
 }

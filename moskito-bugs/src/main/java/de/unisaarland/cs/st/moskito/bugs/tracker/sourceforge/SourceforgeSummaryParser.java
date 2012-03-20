@@ -25,15 +25,15 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		DEFAULT, TABLE, TR, TD
 	}
 	
-	private StringBuffer        content = null;
-	private SummaryParserMode   currentMode;
+	private StringBuffer          content = null;
+	private SummaryParserMode     currentMode;
 	
-	private final HashSet<Long> ids;            ;
+	private final HashSet<String> ids;            ;
 	
 	public SourceforgeSummaryParser() {
 		this.content = new StringBuffer();
 		this.currentMode = SummaryParserMode.DEFAULT;
-		this.ids = new HashSet<Long>();
+		this.ids = new HashSet<String>();
 	}
 	
 	@Override
@@ -53,13 +53,13 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		if (localName.equals("tfoot")) {
 			this.currentMode = SummaryParserMode.TABLE;
 		} else if ((this.currentMode == SummaryParserMode.TD) && (localName.equals("td"))) {
-			String idString = this.content.toString().trim();
-			this.ids.add(new Long(idString));
+			final String idString = this.content.toString().trim();
+			this.ids.add(idString);
 			this.currentMode = SummaryParserMode.TABLE;
 		}
 	}
 	
-	public Set<Long> getIDs() {
+	public Set<String> getIDs() {
 		return this.ids;
 	}
 	

@@ -43,7 +43,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	private final URI                       historyUri;
 	
 	/** The report id. */
-	private final long                      reportId;
+	private final String                    reportId;
 	
 	/** The resolver. */
 	private Person                          resolver;
@@ -67,7 +67,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	 * @param reportId
 	 *            the report id
 	 */
-	public BugzillaHistoryParser_4_0_4(final URI historyUri, final long reportId) {
+	public BugzillaHistoryParser_4_0_4(final URI historyUri, final String reportId) {
 		this.historyUri = historyUri;
 		this.reportId = reportId;
 		
@@ -150,7 +150,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			final Element bugzillaBody = document.getElementById("bugzilla-body");
 			if (bugzillaBody == null) {
 				if (Logger.logError()) {
-					Logger.error(errorHeader + "Could not find bugzills-body.");
+					Logger.error(errorHeader + "Could not find bugzilla-body.");
 				}
 				return false;
 			}
@@ -255,6 +255,9 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					// TODO to be implemented
 				} else if (what.equals("component")) {
 					field = ("component");
+					hElement.addChangedValue(field, removed, added);
+				} else if (what.equals("version")) {
+					field = ("version");
 					hElement.addChangedValue(field, removed, added);
 				} else if (what.equals("summary")) {
 					field = ("summary");

@@ -25,6 +25,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
  */
 public class HistoryElementComparator implements Comparator<HistoryElement> {
 	
+	@Override
 	public int compare(final HistoryElement arg0,
 	                   final HistoryElement arg1) {
 		return arg0.compareTo(arg1);

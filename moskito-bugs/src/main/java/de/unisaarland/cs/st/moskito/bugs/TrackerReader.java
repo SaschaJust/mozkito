@@ -15,16 +15,10 @@
  */
 package de.unisaarland.cs.st.moskito.bugs;
 
-import java.net.URI;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
@@ -32,7 +26,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class TrackerReader extends Source<RawReport> {
+public class TrackerReader extends Source<ReportLink> {
 	
 	/**
 	 * @param threadGroup
@@ -41,44 +35,16 @@ public class TrackerReader extends Source<RawReport> {
 	public TrackerReader(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<RawReport, RawReport>(this) {
+		new ProcessHook<ReportLink, ReportLink>(this) {
 			
 			@Override
 			public void process() {
-				final Long bugId = tracker.getNextId();
+				final ReportLink bugURI = tracker.getNextReportLink();
 				
-				try {
-					if (bugId != null) {
-						
-						if (Logger.logDebug()) {
-							Logger.debug("Fetching " + bugId + ".");
-						}
-						
-						final URI newURI = tracker.getLinkFromId(bugId);
-						final RawReport source = tracker.fetchSource(newURI);
-						
-						if (source == null) {
-							
-							if (Logger.logWarn()) {
-								Logger.warn("Skipping " + bugId + ". Fetch returned null.");
-							}
-							
-							skipOutputData(source);
-						} else {
-							
-							if (Logger.logDebug()) {
-								Logger.debug("Providing " + bugId + ".");
-							}
-							
-							providePartialOutputData(source);
-						}
-					} else {
-						setCompleted();
-					}
-				} catch (final FetchException e) {
-					throw new UnrecoverableError(e);
-				} catch (final UnsupportedProtocolException e) {
-					throw new UnrecoverableError(e);
+				if (bugURI != null) {
+					providePartialOutputData(bugURI);
+				} else {
+					setCompleted();
 				}
 			}
 		};

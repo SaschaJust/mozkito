@@ -48,9 +48,11 @@ public interface Parser {
 	
 	String getDescription();
 	
+	DateTime getFetchTime();
+	
 	SortedSet<HistoryElement> getHistoryElements();
 	
-	Long getId();
+	String getId();
 	
 	Set<String> getKeywords();
 	
@@ -70,7 +72,7 @@ public interface Parser {
 	
 	Severity getSeverity();
 	
-	Set<Long> getSiblings();
+	Set<String> getSiblings();
 	
 	Status getStatus();
 	
@@ -86,5 +88,5 @@ public interface Parser {
 	
 	void setTracker(Tracker tracker);
 	
-	void setXMLReport(XmlReport report);
+	boolean setURI(ReportLink reportLink);
 }

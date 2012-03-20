@@ -16,17 +16,15 @@ import java.util.SortedSet;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.ioda.container.RawContent;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
@@ -41,26 +39,19 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonTuple;
 
 public class MantisTrackerTest {
 	
-	private RawReport report19810;
-	private RawReport report18828;
-	private RawReport report8468;
-	private RawReport report107;
+	private RawContent report19810;
+	private RawContent report18828;
+	private RawContent report8468;
 	
 	@Before
 	public void setUp() throws Exception {
 		
-		this.report19810 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
-		                                                                                  + "open-bravo-19810.html")
-		                                                             .toURI()));
-		this.report18828 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
-		                                                                                  + "open-bravo-18828.html")
-		                                                             .toURI()));
-		this.report8468 = new RawReport(1l, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
-		                                                                                 + "open-bravo-8468.html")
-		                                                            .toURI()));
-		this.report107 = new RawReport(107, IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator
-		                                                                                 + "open-bravo-107.html")
-		                                                            .toURI()));
+		this.report19810 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-19810.html")
+		                                           .toURI());
+		this.report18828 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-18828.html")
+		                                           .toURI());
+		this.report8468 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-8468.html")
+		                                          .toURI());
 	}
 	
 	@Test
@@ -79,18 +70,8 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(18828l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		
+		final Report report = tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		assertTrue(attachments.isEmpty());
 	}
@@ -111,21 +92,10 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(19810l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final Report report = tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		
-		final String reportLink = xmlReport.getUri().toASCIIString();
+		final String reportLink = this.report19810.getUri().toASCIIString();
 		final int index = reportLink.lastIndexOf("/");
 		
 		assertEquals(3, attachments.size());
@@ -161,32 +131,6 @@ public class MantisTrackerTest {
 	}
 	
 	@Test
-	public void testCheckRAW() {
-		final MantisTracker tracker = new MantisTracker();
-		assertTrue(tracker.checkRAW(this.report19810));
-		assertTrue(tracker.checkRAW(this.report18828));
-		assertFalse(tracker.checkRAW(this.report107));
-	}
-	
-	@Test
-	public void testCheckXML() {
-		final MantisTracker tracker = new MantisTracker();
-		final XmlReport xmlReport19810 = tracker.createDocument(this.report19810);
-		assertTrue(tracker.checkXML(xmlReport19810));
-	}
-	
-	@Test
-	public void testCreateDocument() {
-		final MantisTracker tracker = new MantisTracker();
-		
-		final XmlReport xmlReport19810 = tracker.createDocument(this.report19810);
-		final XmlReport xmlReport18828 = tracker.createDocument(this.report18828);
-		
-		assertTrue(xmlReport19810 != null);
-		assertTrue(xmlReport18828 != null);
-	}
-	
-	@Test
 	public void testKeywords() {
 		final MantisTracker tracker = new MantisTracker();
 		String url = this.report8468.getUri().toASCIIString();
@@ -201,18 +145,7 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(8468l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final Report report = tracker.parse(new ReportLink(this.report8468.getUri(), "8468"));
 		final Set<String> keywords = report.getKeywords();
 		assertEquals(2, keywords.size());
 		assertTrue(keywords.contains("main"));
@@ -237,20 +170,9 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(19810l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final Report report = tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
 		
-		assertEquals(19810, report.getId());
+		assertEquals("0019810", report.getId());
 		assertEquals("alostale", report.getAssignedTo().getUsernames().iterator().next());
 		
 		assertEquals("[Openbravo ERP] A. Platform", report.getCategory());
@@ -341,7 +263,6 @@ public class MantisTrackerTest {
 		assertEquals(Status.CLOSED, hElement.getChangedEnumValues().get("status").getNewValue());
 		assertTrue(hElement.getChangedPersonValues().isEmpty());
 		
-		assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 		assertTrue(DateTimeUtils.parseDate("2012-02-21 17:24").isEqual(report.getLastUpdateTimestamp()));
 		
 		assertEquals(Priority.VERY_HIGH, report.getPriority());
@@ -377,22 +298,11 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(18828l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
-		final SortedSet<Long> siblings = report.getSiblings();
+		final Report report = tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
+		final SortedSet<String> siblings = report.getSiblings();
 		assertEquals(2, siblings.size());
-		assertTrue(siblings.contains(19022l));
-		assertTrue(siblings.contains(18893l));
+		assertTrue(siblings.contains("0019022"));
+		assertTrue(siblings.contains("0018893"));
 	}
 	
 }

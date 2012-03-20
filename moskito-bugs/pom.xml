@@ -31,11 +31,11 @@
 			<artifactId>moskito-xml-bugzilla</artifactId>
 			<version>4.0.4</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-xml-bugzilla</artifactId>
-			<version>4.0.5PLUS</version>
-		</dependency> -->
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-rest-java-client</artifactId>
+			<version>0.5-m6</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
@@ -54,12 +54,27 @@
 		<dependency>
 			<groupId>com.google.gdata</groupId>
 			<artifactId>gdata-projecthosting-2.1</artifactId>
-			<version>1.41.5</version>
+			<version>1.41.5.guava</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.api.client</groupId>
-			<artifactId>google-api-client</artifactId>
-			<version>1.4.1-beta</version>
+			<groupId>com.google.gdata</groupId>
+			<artifactId>gdata-core-1.0</artifactId>
+			<version>1.41.5.guava</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gdata</groupId>
+			<artifactId>gdata-core-1.0</artifactId>
+			<version>1.41.5.guava</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>11.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome-fetcher</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>

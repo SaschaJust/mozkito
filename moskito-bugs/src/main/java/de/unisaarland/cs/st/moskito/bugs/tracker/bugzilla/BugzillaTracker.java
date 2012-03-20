@@ -15,34 +15,18 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
-
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Regex;
-import noNamespace.BugDocument.Bug;
-import noNamespace.BugzillaDocument;
-import noNamespace.BugzillaDocument.Bugzilla;
-
-import org.apache.xmlbeans.XmlException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -50,86 +34,31 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
  */
 public class BugzillaTracker extends Tracker {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.RawReport)
-	 */
 	@Override
-	public boolean checkRAW(final RawReport rawReport) {
-		if (!super.checkRAW(rawReport)) {
-			return false;
-		}
-		if (rawReport.getContent().contains("<bug error=\"NotFound\">")) {
-			return false;
-		}
-		final Regex regex = new Regex("<head>\\s*<title>Format Not Found</title>");
-		if (regex.matches(rawReport.getContent())) {
-			return false;
-		}
-		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
-	 */
-	@Override
-	public boolean checkXML(final XmlReport xmlReport) {
-		
-		try {
-			final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xmlReport.getContent());
-			final Bugzilla bugzilla = bugzillaDocument.getBugzilla();
-			final Bug[] bugArray = bugzilla.getBugArray();
-			return bugArray.length == 1;
-		} catch (final XmlException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			return false;
-		}
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
-	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
-	 */
-	@Override
-	public XmlReport createDocument(@NotNull final RawReport rawReport) {
-		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
-		try {
-			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
-			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			final Document document = saxBuilder.build(reader);
-			reader.close();
-			return new XmlReport(rawReport, document);
-		} catch (final TransformerFactoryConfigurationError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final JDOMException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO detect bugzilla version
-			return new BugzillaOverviewParser();
+			try {
+				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
+				                                                            bugId + "")), bugId);
+			} catch (final URISyntaxException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				return null;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public OverviewParser getOverviewParser() {
+		// PRECONDITIONS
+		
+		try {
+			return new BugzillaOverviewParser(this);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -140,44 +69,35 @@ public class BugzillaTracker extends Tracker {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Parser getParser(final XmlReport xmlReport) {
+	public Parser getParser() {
 		// PRECONDITIONS
 		
 		try {
 			
-			// check for bugzilla version number
+			// FIXME get version number by new dynamic argument
+			final String bugzillaVersion = "4.0.4";
+			
+			// load all BugzillaParsers
 			try {
-				final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xmlReport.getContent());
-				final Bugzilla bugzilla = bugzillaDocument.getBugzilla();
-				final String bugzillaVersion = bugzilla.getVersion().getStringValue();
-				
-				// load all BugzillaParsers
-				try {
-					final Collection<Class<? extends BugzillaParser>> parserClasses = ClassFinder.getClassesExtendingClass(BugzillaParser.class.getPackage(),
-					                                                                                                       BugzillaParser.class,
-					                                                                                                       Modifier.ABSTRACT
-					                                                                                                               | Modifier.INTERFACE
-					                                                                                                               | Modifier.PRIVATE);
-					for (final Class<? extends BugzillaParser> parserClass : parserClasses) {
-						if (!Modifier.isAbstract(parserClass.getModifiers())) {
-							parserClass.newInstance();
-						}
+				final Collection<Class<? extends BugzillaParser>> parserClasses = ClassFinder.getClassesExtendingClass(BugzillaParser.class.getPackage(),
+				                                                                                                       BugzillaParser.class,
+				                                                                                                       Modifier.ABSTRACT
+				                                                                                                               | Modifier.INTERFACE
+				                                                                                                               | Modifier.PRIVATE);
+				for (final Class<? extends BugzillaParser> parserClass : parserClasses) {
+					if (!Modifier.isAbstract(parserClass.getModifiers())) {
+						parserClass.newInstance();
 					}
-				} catch (final Exception e) {
-					throw new UnrecoverableError(e);
 				}
-				
-				// get the correct parser and set tracker.
-				return BugzillaParser.getParser(bugzillaVersion);
-			} catch (final XmlException e) {
-				throw new UnrecoverableError(
-				                             "Could not extract Bugzilla version. This is necessary to load the correct parser instance.",
-				                             e);
-				
+			} catch (final Exception e) {
+				throw new UnrecoverableError(e);
 			}
+			
+			// get the correct parser and set tracker.
+			return BugzillaParser.getParser(bugzillaVersion);
+			
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
 }

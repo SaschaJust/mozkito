@@ -27,8 +27,7 @@ import java.util.SortedSet;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
@@ -37,7 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
@@ -54,34 +53,28 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 public class BugzillaTracker_4_0_4_Test {
 	
-	private RawReport rawReport1234;
-	private RawReport rawReport114562;
-	private RawReport rawReport153429;
-	private RawReport rawReport4_0_5PLUS;
+	private URI uri114562;
+	private URI uri642368;
+	private URI uri153429;
+	private URI uri1234;
+	private URI uri642368history;
 	
 	@Before
 	public void setUp() throws Exception {
 		
-		this.rawReport1234 = new RawReport(
-		                                   1l,
-		                                   IOUtils.fetch(new URI(
-		                                                         "https://bugs.eclipse.org/bugs/show_bug.cgi?ctype=xnl&id=1234")));
-		this.rawReport114562 = new RawReport(
-		                                     1l,
-		                                     IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-		                                                                                                        + "bugzilla_114562.xml")
-		                                                                                   .toURI()));
+		this.uri1234 = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "eclipse_1234.xml")
+		                                               .toURI();
 		
-		this.rawReport153429 = new RawReport(
-		                                     1l,
-		                                     IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-		                                                                                                        + "bugzilla_153429.xml")
-		                                                                                   .toURI()));
-		this.rawReport4_0_5PLUS = new RawReport(
-		                                        1l,
-		                                        IOUtils.fetch(BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-		                                                                                                           + "bugzilla_642368.xml")
-		                                                                                      .toURI()));
+		this.uri114562 = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml")
+		                                                 .toURI();
+		
+		this.uri153429 = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
+		                                                 .toURI();
+		this.uri642368 = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_642368.xml")
+		                                                 .toURI();
+		this.uri642368history = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
+		                                                                             + "bugzilla_mozilla_642368_history.html")
+		                                                        .toURI();
 		
 	}
 	
@@ -92,7 +85,7 @@ public class BugzillaTracker_4_0_4_Test {
 	@Test
 	public void test4_0_5PLUS() {
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = this.rawReport4_0_5PLUS.getUri().toASCIIString();
+		String url = this.uri642368.toASCIIString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_642368.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		
@@ -105,20 +98,11 @@ public class BugzillaTracker_4_0_4_Test {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(642368l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
 		
-		assertEquals(642368, report.getId());
+		final ReportLink reportLink = tracker.getLinkFromId("642368");
+		final Report report = tracker.parse(reportLink);
+		
+		assertEquals("642368", report.getId());
 		assertEquals(null, report.getAssignedTo());
 		assertEquals("Components", report.getCategory());
 		assertEquals("Rhino", report.getProduct());
@@ -134,7 +118,6 @@ public class BugzillaTracker_4_0_4_Test {
 		final History history = report.getHistory();
 		assertTrue(history.isEmpty());
 		
-		assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 		assertEquals(null, report.getLastUpdateTimestamp());
 		
 		assertEquals(Priority.UNKNOWN, report.getPriority());
@@ -160,8 +143,7 @@ public class BugzillaTracker_4_0_4_Test {
 	public void testAttachments() {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
-		                                             .toString();
+		String url = this.uri153429.toASCIIString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		try {
@@ -173,18 +155,8 @@ public class BugzillaTracker_4_0_4_Test {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(153429l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final ReportLink reportLink = tracker.getLinkFromId("153429");
+		final Report report = tracker.parse(reportLink);
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		assertEquals(11, attachments.size());
 		assertEquals("80909", attachments.get(0).getId());
@@ -219,27 +191,30 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	@Test
 	public void testCheckRAW() {
-		final BugzillaTracker tracker = new BugzillaTracker();
-		assertFalse(tracker.checkRAW(this.rawReport1234));
-		assertTrue(tracker.checkRAW(this.rawReport114562));
+		final BugzillaParser bugzillaParser = new BugzillaParser_4_0_4();
+		
+		try {
+			RawContent rawContent = IOUtils.fetch(this.uri1234);
+			assertFalse(bugzillaParser.checkRAW(rawContent.getContent()));
+			rawContent = IOUtils.fetch(this.uri114562);
+			assertTrue(bugzillaParser.checkRAW(rawContent.getContent()));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test
 	public void testCheckXML() {
-		final BugzillaTracker tracker = new BugzillaTracker();
-		final XmlReport xmlReport114562 = tracker.createDocument(this.rawReport114562);
-		assertTrue(tracker.checkXML(xmlReport114562));
-	}
-	
-	@Test
-	public void testCreateDocument() {
-		final BugzillaTracker tracker = new BugzillaTracker();
-		
-		final XmlReport xmlReport1234 = tracker.createDocument(this.rawReport1234);
-		final XmlReport xmlReport114562 = tracker.createDocument(this.rawReport114562);
-		
-		assertTrue(xmlReport1234 == null);
-		assertTrue(xmlReport114562 != null);
+		try {
+			final BugzillaParser bugzillaParser = new BugzillaParser_4_0_4();
+			final RawContent rawContent = IOUtils.fetch(this.uri114562);
+			final XmlReport xmlReport = bugzillaParser.createDocument(rawContent);
+			assertTrue(bugzillaParser.checkXML(xmlReport));
+		} catch (final Exception e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test
@@ -251,12 +226,11 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	@Test
 	public void testKeywords() {
+		
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_153429.xml")
-		                                             .toString();
+		String url = this.uri153429.toASCIIString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
-		
 		try {
 			tracker.setup(new URI(url), null, pattern, null, null, 153429l, 153429l, null);
 		} catch (final InvalidParameterException e) {
@@ -266,18 +240,9 @@ public class BugzillaTracker_4_0_4_Test {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(153429l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final ReportLink reportLink = tracker.getLinkFromId("153429");
+		final Report report = tracker.parse(reportLink);
+		
 		final Set<String> keywords = report.getKeywords();
 		assertEquals(1, keywords.size());
 		assertTrue(keywords.contains("plan"));
@@ -289,58 +254,36 @@ public class BugzillaTracker_4_0_4_Test {
 		try {
 			// final URL historyURL = new URL("https://bugs.eclipse.org/bugs/show_activity.cgi?id=114562");
 			
-			final String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
-			                                                                        + "bugzilla_mozilla_642368_history.html")
-			                                                   .toString();
-			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(new URI(url), 642368);
+			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(this.uri642368history,
+			                                                                                  "642368");
 			if (!historyParser.parse()) {
 				fail();
 			}
 			final SortedSet<HistoryElement> historyElements = historyParser.getHistory();
-			final History history = new History(642368);
+			final History history = new History("642368");
 			for (final HistoryElement hElem : historyElements) {
 				history.add(hElem);
 			}
-			final DateTime resolutionTimestamp = historyParser.getResolutionTimestamp();
-			final Person resolver = historyParser.getResolver();
-			
 			assertEquals(1, history.size());
-			// final Iterator<HistoryElement> hElemIter = history.iterator();
-			// HistoryElement hElem = hElemIter.next();
-			// assertEquals(1, hElem.size());
-			// assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
-			// assertEquals(DateTimeUtils.parseDate("2005-11-01 11:43:19 EST"), hElem.getTimestamp());
-			// assertTrue(hElem.contains("priority"));
-			// assertEquals(Priority.NORMAL, history.getOldValue("priority", hElem));
-			// assertEquals(BugzillaParser.getPriority("P1"), hElem.get("priority").getSecond());
-			// hElem = hElemIter.next();
-			// assertEquals(1, hElem.size());
-			// assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
-			// assertEquals(DateTimeUtils.parseDate("2005-11-01 11:52:13 EST"), hElem.getTimestamp());
-			// assertTrue(hElem.contains("summary"));
-			// assertEquals("add support for Bugzilla 2.20", history.getOldValue("summary", hElem));
-			// assertEquals("add support for Bugzilla 2 20", hElem.get("summary").getSecond());
-			// hElem = hElemIter.next();
-			// assertEquals(3, hElem.size());
-			// assertEquals("mik.kersten", hElem.getAuthor().getUsernames().iterator().next());
-			// assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), hElem.getTimestamp());
-			// assertTrue(hElem.contains("status"));
-			// assertTrue(hElem.contains("resolution"));
-			// assertTrue(hElem.contains("summary"));
-			// assertEquals(BugzillaParser.getStatus("NEW"), history.getOldValue("status", hElem));
-			// assertEquals(BugzillaParser.getStatus("RESOLVED"), hElem.get("status").getSecond());
-			// assertEquals(BugzillaParser.getResolution(""), history.getOldValue("resolution", hElem));
-			// assertEquals(BugzillaParser.getResolution("FIXED"), hElem.get("resolution").getSecond());
-			// assertEquals("add support for Bugzilla 2 20", history.getOldValue("summary", hElem));
-			// assertEquals("add basic support for Bugzilla 2.20", hElem.get("summary").getSecond());
-			// assertEquals("mik.kersten", resolver.getUsernames().iterator().next());
-			// assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), resolutionTimestamp);
+			final Iterator<HistoryElement> hElemIter = history.iterator();
+			final HistoryElement hElem = hElemIter.next();
+			assertEquals(3, hElem.size());
+			assertEquals("rhino", hElem.getAuthor().getUsernames().iterator().next());
+			assertEquals(DateTimeUtils.parseDate("2011-03-16 21:08:29 PDT "), hElem.getTimestamp());
+			assertTrue(hElem.contains("component"));
+			assertTrue(hElem.contains("version"));
+			assertTrue(hElem.contains("product"));
+			
+			assertEquals("JavaScript Engine", hElem.get("component").getFirst());
+			assertEquals("Core", hElem.get("component").getSecond());
+			
+			assertEquals("unspecified", hElem.get("version").getFirst());
+			assertEquals("1.7R1", hElem.get("version").getSecond());
+			
+			assertEquals("Core", hElem.get("product").getFirst());
+			assertEquals("Rhino", hElem.get("product").getSecond());
+			
 		} catch (final SecurityException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			fail();
-		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -352,11 +295,9 @@ public class BugzillaTracker_4_0_4_Test {
 	public void testParse() {
 		
 		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator + "bugzilla_114562.xml")
-		                                             .toString();
+		String url = this.uri114562.toASCIIString();
 		url = url.substring(0, url.lastIndexOf("bugzilla_114562.xml"));
 		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
-		
 		try {
 			tracker.setup(new URI(url), null, pattern, null, null, 114562l, 114562l, null);
 		} catch (final InvalidParameterException e) {
@@ -366,20 +307,10 @@ public class BugzillaTracker_4_0_4_Test {
 			e.printStackTrace();
 			fail();
 		}
-		RawReport rawReport = null;
-		try {
-			rawReport = tracker.fetchSource(tracker.getLinkFromId(114562l));
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final XmlReport xmlReport = tracker.createDocument(rawReport);
-		final Report report = tracker.parse(xmlReport);
+		final ReportLink reportLink = tracker.getLinkFromId("114562");
+		final Report report = tracker.parse(reportLink);
 		
-		assertEquals(114562, report.getId());
+		assertEquals("114562", report.getId());
 		assertEquals("mik.kersten", report.getAssignedTo().getUsernames().iterator().next());
 		assertEquals("Mik Kersten", report.getAssignedTo().getFullnames().iterator().next());
 		assertEquals("Mylyn", report.getCategory());
@@ -413,7 +344,6 @@ public class BugzillaTracker_4_0_4_Test {
 		final History history = report.getHistory();
 		assertTrue(history.isEmpty());
 		
-		assertEquals(rawReport.getFetchTime(), report.getLastFetch());
 		assertTrue(DateTimeUtils.parseDate("2005-11-03 23:17:37 -0500").isEqual(report.getLastUpdateTimestamp()));
 		
 		assertEquals(Priority.VERY_HIGH, report.getPriority());
@@ -421,8 +351,8 @@ public class BugzillaTracker_4_0_4_Test {
 		assertEquals(Severity.ENHANCEMENT, report.getSeverity());
 		
 		assertEquals(2, report.getSiblings().size());
-		assertEquals(true, report.getSiblings().contains(113042l));
-		assertEquals(true, report.getSiblings().contains(115017l));
+		assertEquals(true, report.getSiblings().contains("113042"));
+		assertEquals(true, report.getSiblings().contains("115017"));
 		
 		assertEquals(Status.CLOSED, report.getStatus());
 		assertEquals("add basic support for Bugzilla 2.20", report.getSubject());
@@ -448,12 +378,12 @@ public class BugzillaTracker_4_0_4_Test {
 			final String url = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
 			                                                                        + "bugzilla_114562_history.html")
 			                                                   .toString();
-			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(new URI(url), 114562);
+			final BugzillaHistoryParser_4_0_4 historyParser = new BugzillaHistoryParser_4_0_4(new URI(url), "114562");
 			if (!historyParser.parse()) {
 				fail();
 			}
 			final SortedSet<HistoryElement> historyElements = historyParser.getHistory();
-			final History history = new History(114562);
+			final History history = new History("114562");
 			for (final HistoryElement hElem : historyElements) {
 				history.add(hElem);
 			}

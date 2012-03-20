@@ -24,7 +24,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -57,9 +56,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
-	
-	/** The tracker. */
-	private Tracker               tracker      = null;
 	
 	private BugzillaHistoryParser historyParser;
 	
@@ -329,13 +325,13 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
 	@Override
-	public Long getId() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			Long bugId = null;
+			String bugId = null;
 			try {
-				bugId = Long.valueOf(getXmlBug().getBugId());
+				bugId = getXmlBug().getBugId();
 			} catch (final NumberFormatException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
@@ -541,26 +537,20 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
-		final Set<Long> result = new HashSet<Long>();
+		final Set<String> result = new HashSet<String>();
 		try {
 			// first check for dependencies and blocking bugs
 			final String[] dependsOn = getXmlBug().getDependsonArray();
 			for (final String dep : dependsOn) {
-				try {
-					result.add(Long.valueOf(dep));
-				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
-					}
-				}
+				result.add(dep);
 			}
 			
 			final String[] blockedArray = getXmlBug().getBlockedArray();
 			for (final String dep : blockedArray) {
 				try {
-					result.add(Long.valueOf(dep));
+					result.add(dep);
 				} catch (final NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
@@ -576,13 +566,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 					for (final List<RegexGroup> groups : groupsList) {
 						for (final RegexGroup group : groups) {
 							if (group.getName().equals("sibling")) {
-								try {
-									final Long sibling = Long.valueOf(group.getMatch());
-									result.add(sibling);
-								} catch (final NumberFormatException e) {
-									Logger.error("Could not intepret bug reference as a Long: " + group.getMatch()
-									        + ". Ignoring sibling.");
-								}
+								result.add(group.getMatch());
 							}
 						}
 					}
@@ -681,22 +665,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			return getXmlBug().getVersion();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
-	@Override
-	@NoneNull
-	public void setTracker(final Tracker tracker) {
-		// PRECONDITIONS
-		this.tracker = tracker;
-		try {
 		} finally {
 			// POSTCONDITIONS
 		}
