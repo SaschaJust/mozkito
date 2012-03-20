@@ -18,9 +18,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
-
-import org.eclipse.jgit.diff.Edit.Type;
-
+import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
