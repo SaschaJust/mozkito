@@ -18,7 +18,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 /**
  * The Class TrackerSettings.
@@ -41,9 +41,9 @@ public class TrackerSettings extends Settings {
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	public DatabaseArguments setDatabaseArgs(final Requirement requirement,
+	public DatabaseOptions setDatabaseArgs(final Requirement requirement,
 	                                         final String unit) throws ArgumentRegistrationException {
-		final DatabaseArguments minerDatabaseArguments = new DatabaseArguments(getRootArgumentSet(), requirement, unit);
+		final DatabaseOptions minerDatabaseArguments = new DatabaseOptions(getRootArgumentSet(), requirement, unit);
 		return minerDatabaseArguments;
 	}
 	

@@ -21,12 +21,12 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	
 	private final DirectoryArgument graphDBArg;
-	private final DatabaseArguments dbArgs;
+	private final DatabaseOptions dbArgs;
 	
 	/**
 	 * @param argumentSet
@@ -43,7 +43,7 @@ public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 		                                        "genealogy.graphdb",
 		                                        "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
 		                                        null, Requirement.required, true);
-		this.dbArgs = new DatabaseArguments(argumentSet, requirement, unit);
+		this.dbArgs = new DatabaseOptions(argumentSet, requirement, unit);
 	}
 	
 	/*

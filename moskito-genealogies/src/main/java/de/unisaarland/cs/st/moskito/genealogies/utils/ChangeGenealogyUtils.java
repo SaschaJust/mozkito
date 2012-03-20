@@ -49,7 +49,7 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -478,7 +478,7 @@ public class ChangeGenealogyUtils {
 		
 		final RepositorySettings settings = new RepositorySettings();
 		
-		final DatabaseArguments persistenceArgs = new DatabaseArguments(settings.getRootArgumentSet(),
+		final DatabaseOptions persistenceArgs = new DatabaseOptions(settings.getRootArgumentSet(),
 		                                                                Requirement.required, "ppa");
 		
 		final DirectoryArgument graphDBArg = new DirectoryArgument(settings.getRootArgumentSet(), "genealogy.graphdb",

@@ -31,11 +31,11 @@ import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 public class MappingChain extends Chain<MappingSettings> {
 	
-	private final DatabaseArguments databaseArguments;
+	private final DatabaseOptions databaseArguments;
 	private final LoggerArguments   logSettings;
 	private final MappingArguments  mappingArguments;
 	private final Pool              threadPool;

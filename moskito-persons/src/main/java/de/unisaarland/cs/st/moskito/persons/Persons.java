@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
 import de.unisaarland.cs.st.moskito.persons.settings.PersonsArguments;
 import de.unisaarland.cs.st.moskito.persons.settings.PersonsSettings;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class Persons extends Chain<PersonsSettings> {
 	
 	private final Pool             threadPool;
-	private DatabaseArguments      databaseArguments;
+	private DatabaseOptions      databaseArguments;
 	private final LoggerArguments  logSettings;
 	private final PersonsArguments personsArguments;
 	private PersistenceUtil        persistenceUtil;

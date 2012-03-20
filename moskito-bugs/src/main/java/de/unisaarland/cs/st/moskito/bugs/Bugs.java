@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -40,7 +40,7 @@ public class Bugs extends Chain<TrackerSettings> {
 	
 	private final Pool              threadPool;
 	private final TrackerArguments  trackerArguments;
-	private final DatabaseArguments databaseArguments;
+	private final DatabaseOptions databaseArguments;
 	private final LoggerArguments   logSettings;
 	
 	/**

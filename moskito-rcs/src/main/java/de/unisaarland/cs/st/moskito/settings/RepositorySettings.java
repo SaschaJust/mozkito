@@ -33,9 +33,9 @@ public class RepositorySettings extends Settings {
 	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public DatabaseArguments setDatabaseArgs(final Requirement requirement,
+	public DatabaseOptions setDatabaseArgs(final Requirement requirement,
 	                                         final String unit) throws ArgumentRegistrationException {
-		final DatabaseArguments minerDatabaseArguments = new DatabaseArguments(getRootArgumentSet(), requirement, unit);
+		final DatabaseOptions minerDatabaseArguments = new DatabaseOptions(getRootArgumentSet(), requirement, unit);
 		return minerDatabaseArguments;
 	}
 	

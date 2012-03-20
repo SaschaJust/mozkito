@@ -50,7 +50,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.LinearRegressionAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
@@ -115,7 +115,7 @@ public class Untangling {
 	
 	private final RepositoryArguments             repositoryArg;
 	
-	private final DatabaseArguments               databaseArgs;
+	private final DatabaseOptions               databaseArgs;
 	
 	private final UntanglingArguments             untanglingArgs;
 	

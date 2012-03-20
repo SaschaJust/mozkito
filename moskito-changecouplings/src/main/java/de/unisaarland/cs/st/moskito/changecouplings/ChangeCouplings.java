@@ -35,7 +35,7 @@ import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.changecouplings.model.SerialFileChangeCoupling;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class ChangeCouplings {
 	
-	private final DatabaseArguments   databaseArgs;
+	private final DatabaseOptions   databaseArgs;
 	private final EnumArgument<Level> levelArgument;
 	private final StringArgument      transactionArg;
 	private final DoubleArgument      minConfArg;

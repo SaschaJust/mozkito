@@ -35,7 +35,7 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
@@ -53,7 +53,7 @@ public class PPAToolChain extends Chain<Settings> {
 	private final RepositoryArguments repoSettings;
 	
 	/** The database settings. */
-	private final DatabaseArguments   databaseSettings;
+	private final DatabaseOptions   databaseSettings;
 	
 	/** The test case transaction arg. */
 	private final SetArgument         testCaseTransactionArg;

@@ -19,6 +19,7 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
@@ -53,7 +54,7 @@ public class RepositoryReader extends Source<LogEntry> {
 				}
 				
 				repository.getTransactionCount();
-				final long cacheSize = (Long) getSettings().getSetting("cache.size").getValue();
+				final long cacheSize = ((LongArgument) getSettings().getArgument("cache.size")).getValue();
 				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
 				                                                                 repository.getEndRevision(),
 				                                                                 (int) cacheSize);
