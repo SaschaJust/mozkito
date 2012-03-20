@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1309162335335_1" label="reposuite" name="reposuite">
+<item elementID="=moskito-bugs" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-ppa" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-persons" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-genealogies" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-ltc" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/eMine" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.unisaarland.cs.st.moskito.ppa.eclipse" type="4"/>
+<item elementID="=moskito-genealogies-metrics" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-callgraph" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-changecouplings" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.unisaarland.cs.st.reposuite.callgraph.eclipse" type="4"/>
+<item elementID="=moskito-persistence" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-rcs" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-infozilla" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-untangling" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moskito-utils" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/de.unisaarland.cs.st.reposuite.datadependency.eclipse" type="4"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1309163272211_2" label="own-hero libs" name="own-hero libs">
+<item elementID="=ioda" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/rasimu" type="4"/>
+<item elementID="=andama" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=kanuni" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=moreregex" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSet>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1320759207960_3" label="jsale" name="jsale">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/jsale" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1309162268804_0" label="Window Working Set" name="Aggregate for window 1309162268802"/>
+<mruList name="reposuite"/>
+<mruList name="jsale"/>
+<mruList name="own-hero libs"/>
+</workingSetManager>

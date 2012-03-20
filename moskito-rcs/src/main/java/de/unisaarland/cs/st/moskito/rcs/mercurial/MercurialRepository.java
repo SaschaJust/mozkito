@@ -734,11 +734,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
-		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
+		setup(address, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -754,8 +752,6 @@ public class MercurialRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(@NotNull final URI address,
-	                   final String startRevision,
-	                   final String endRevision,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir) {
@@ -782,17 +778,9 @@ public class MercurialRepository extends Repository {
 			}
 		}
 		
-		if (startRevision == null) {
-			setStartRevision(getFirstRevisionId());
-		} else {
-			setStartRevision(startRevision);
-		}
+		setStartRevision(getFirstRevisionId());
+		setEndRevision(getHEADRevisionId());
 		
-		if (endRevision == null) {
-			setEndRevision(getHEADRevisionId());
-		} else {
-			setEndRevision(startRevision);
-		}
 	}
 	
 	/*
@@ -802,13 +790,11 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
-		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
+		      tmpDir);
 	}
 }

@@ -14,8 +14,12 @@
 package de.unisaarland.cs.st.moskito.settings;
 
 import static org.junit.Assert.fail;
+
+import java.util.Map;
+
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -28,17 +32,23 @@ public class DatabaseArgumentsTest {
 	
 	@Test
 	public void test() throws SettingsParseError {
+		System.setProperty("database.name", "moskito_junit");
+		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
+		System.setProperty("database.user", "miner");
+		System.setProperty("database.password", "miner");
+		System.setProperty("database.options", "CREATE");
+		
 		final Settings settings = new Settings();
 		
 		try {
-			System.setProperty("database.name", "moskito_junit");
-			System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
-			System.setProperty("database.user", "miner");
-			System.setProperty("database.password", "miner");
-			System.setProperty("database.options", "CREATE");
-			
 			final DatabaseOptions dbArgs = new DatabaseOptions(settings.getRoot(), Requirement.required, "persistence");
-			
+			System.err.println(settings);
+			System.err.println(settings.getHelpString());
+			System.err.println(dbArgs);
+			final Map<String, IOptions<?, ?>> requirements = dbArgs.requirements(settings.getRoot());
+			for (final IOptions<?, ?> option : requirements.values()) {
+				System.err.println(option);
+			}
 			final ArgumentSet<PersistenceUtil, DatabaseOptions> argumentSet = ArgumentSetFactory.create(dbArgs);
 			
 			if (argumentSet.getValue() == null) {

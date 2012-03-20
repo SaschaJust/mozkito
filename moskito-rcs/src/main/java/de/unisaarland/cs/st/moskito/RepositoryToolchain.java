@@ -18,20 +18,21 @@ package de.unisaarland.cs.st.moskito;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
-import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Optional;
-import net.ownhero.dev.hiari.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
-import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 
 /**
  * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
@@ -39,41 +40,54 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryToolchain extends Chain<RepositorySettings> {
+public class RepositoryToolchain extends Chain<Settings> {
 	
-	private final Pool                threadPool;
-	private final RepositoryArguments repoSettings;
-	private final LoggerArguments     logSettings;
-	private final DatabaseArguments   databaseSettings;
-	private PersistenceUtil           persistenceUtil;
-	private Repository                repository;
+	private final Pool                                          threadPool;
+	private final ArgumentSet<Repository, RepositoryOptions>    repositoryArguments;
+	private final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	private PersistenceUtil                                     persistenceUtil;
+	private Repository                                          repository;
 	
-	public RepositoryToolchain() {
-		super(new RepositorySettings());
-		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
-		final RepositorySettings settings = getSettings();
+	public RepositoryToolchain(final Settings settings) {
+		super(settings);
 		
 		try {
-			this.repoSettings = settings.setRepositoryArg(new Required());
-			this.databaseSettings = settings.setDatabaseArgs(new Optional(), "rcs");
-			this.logSettings = settings.setLoggerArg(new Required());
-			new BooleanArgument(settings.getRootArgumentSet(), "headless",
-			                    "Can be enabled when running without graphical interface", "false", new Optional());
-			new LongArgument(settings.getRootArgumentSet(), "cache.size",
-			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-			                 new Required());
-			new BooleanArgument(settings.getRootArgumentSet(), "repository.analyze",
-			                    "Requires consistency checks on the repository", "false", new Optional());
+			
+			this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "rcs");
+			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
+			final RepositoryOptions repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required,
+			                                                                  databaseOptions);
+			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
+			
+			ArgumentFactory.create(new BooleanArgument.Options(
+			                                                   settings.getRoot(),
+			                                                   "headless",
+			                                                   "Can be enabled when running without graphical interface",
+			                                                   false, Requirement.optional));
+			ArgumentFactory.create(new LongArgument.Options(
+			                                                settings.getRoot(),
+			                                                "cacheSize",
+			                                                "determines the cache size (number of logs) that are prefetched during reading",
+			                                                3000l, Requirement.required));
+			ArgumentFactory.create(new BooleanArgument.Options(settings.getRoot(), "repository.analyze",
+			                                                   "Requires consistency checks on the repository", false,
+			                                                   Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw new Shutdown(e.getMessage(), e);
-		}
-		try {
-			settings.parse();
+		} catch (final ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
 		}
 	}
 	
@@ -97,9 +111,7 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 	 */
 	@Override
 	public void setup() {
-		this.logSettings.getValue();
-		
-		this.persistenceUtil = this.databaseSettings.getValue();
+		this.persistenceUtil = this.databaseArguments.getValue();
 		// this has be done done BEFORE other instances like repository since
 		// they could rely on data loading
 		if (this.persistenceUtil == null) {
@@ -109,8 +121,8 @@ public class RepositoryToolchain extends Chain<RepositorySettings> {
 			shutdown();
 		}
 		
-		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
-		this.repository = this.repoSettings.getValue();
+		this.repository = this.repositoryArguments.getValue();
+		
 		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository);
 		

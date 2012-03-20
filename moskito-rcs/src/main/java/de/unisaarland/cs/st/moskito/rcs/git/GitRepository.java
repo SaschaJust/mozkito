@@ -655,13 +655,11 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
+		setup(address, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -677,8 +675,6 @@ public class GitRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(@NotNull final URI address,
-	                   final String startRevision,
-	                   final String endRevision,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir) {
@@ -710,16 +706,8 @@ public class GitRepository extends Repository {
 			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}
 		
-		if ((startRevision == null) || (startRevision.equals("HEAD"))) {
-			setStartRevision(getFirstRevisionId());
-		} else {
-			setStartRevision(startRevision);
-		}
-		if ((endRevision == null) || (endRevision.equals("HEAD"))) {
-			setEndRevision(getHEADRevisionId());
-		} else {
-			setEndRevision(endRevision);
-		}
+		setStartRevision(getFirstRevisionId());
+		setEndRevision(getHEADRevisionId());
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		                                                                              "--pretty=format:%H",
@@ -749,8 +737,6 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
@@ -758,7 +744,7 @@ public class GitRepository extends Repository {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
-		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
+		      tmpDir);
 	}
 }

@@ -137,7 +137,7 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 		try {
 			final StringArgument hostArgument = (StringArgument) dependencies.get(this.databaseHost.getName());
 			final StringArgument nameArgument = (StringArgument) dependencies.get(this.databaseName.getName());
-			final StringArgument userArgument = (StringArgument) dependencies.get(this.databaseName.getName());
+			final StringArgument userArgument = (StringArgument) dependencies.get(this.databaseUser.getName());
 			final StringArgument passwordArgument = (StringArgument) dependencies.get(this.databasePassword.getName());
 			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) dependencies.get(this.databaseType.getName());
 			final StringArgument driverArgument = (StringArgument) dependencies.get(this.databaseDriver.getName());

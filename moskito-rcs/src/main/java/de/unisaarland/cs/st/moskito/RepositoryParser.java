@@ -22,6 +22,7 @@ import java.util.Set;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
@@ -31,7 +32,6 @@ import de.unisaarland.cs.st.moskito.rcs.elements.RCSFileManager;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced
@@ -48,7 +48,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryParser(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
+	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();

@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 public class CallGraphToolChain {
@@ -46,7 +46,7 @@ public class CallGraphToolChain {
 	private final StringArgument      transactionArg;
 	private final DirectoryArgument   dirArg;
 	private final OutputFileArgument  outArg;
-	private final RepositoryArguments repoSettings;
+	private final RepositoryOptions repoSettings;
 	private Repository                repository = null;
 	private final SetArgument         packageFilterArg;
 	private File                      sourceDir;

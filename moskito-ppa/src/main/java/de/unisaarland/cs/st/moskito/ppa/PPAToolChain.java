@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
@@ -50,7 +50,7 @@ public class PPAToolChain extends Chain<Settings> {
 	private final Pool                threadPool;
 	
 	/** The repo settings. */
-	private final RepositoryArguments repoSettings;
+	private final RepositoryOptions repoSettings;
 	
 	/** The database settings. */
 	private final DatabaseOptions   databaseSettings;

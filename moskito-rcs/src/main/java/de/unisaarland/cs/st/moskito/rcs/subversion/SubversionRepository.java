@@ -586,14 +586,12 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) throws MalformedURLException,
 	                                    InvalidProtocolType,
 	                                    InvalidRepositoryURI,
 	                                    UnsupportedProtocolType {
-		setup(address, startRevision, endRevision, null, null, branchFactory, tmpDir);
+		setup(address, null, null, branchFactory, tmpDir);
 	}
 	
 	/*
@@ -602,8 +600,6 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  final String username,
 	                  final String password,
 	                  @NotNull final BranchFactory branchFactory,
@@ -679,12 +675,8 @@ public class SubversionRepository extends Repository {
 				
 				this.repository = SVNRepositoryFactory.create(this.svnurl);
 				
-				this.startRevision = (startRevision != null
-				                                           ? SVNRevision.parse(startRevision)
-				                                           : SVNRevision.create(1));
-				this.endRevision = (endRevision != null
-				                                       ? SVNRevision.parse(endRevision)
-				                                       : SVNRevision.create(this.repository.getLatestRevision()));
+				this.startRevision = (SVNRevision.create(1));
+				this.endRevision = (SVNRevision.create(this.repository.getLatestRevision()));
 				
 				if (this.startRevision.getNumber() < 0) {
 					if (this.startRevision.equals(SVNRevision.PREVIOUS)) {

@@ -20,11 +20,11 @@ import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
@@ -41,7 +41,7 @@ public class RepositoryReader extends Source<LogEntry> {
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryReader(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
+	public RepositoryReader(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<LogEntry, LogEntry>(this) {

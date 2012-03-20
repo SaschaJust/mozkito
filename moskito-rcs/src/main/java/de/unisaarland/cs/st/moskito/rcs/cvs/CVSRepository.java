@@ -190,8 +190,6 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) throws MalformedURLException,
 	                                    InvalidProtocolType,
@@ -206,8 +204,6 @@ public class CVSRepository extends Repository {
 	
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,

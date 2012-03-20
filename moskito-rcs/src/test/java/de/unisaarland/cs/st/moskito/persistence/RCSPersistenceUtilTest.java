@@ -237,6 +237,7 @@ public class RCSPersistenceUtilTest extends MoskitoTest {
 		setup(getPersistenceUtil());
 		final RCSTransaction t = getPersistenceUtil().loadById(this.t_9f6f10.getId(), RCSTransaction.class);
 		
+		@SuppressWarnings ("deprecation")
 		final Iterator<RCSTransaction> iterator = RCSPersistenceUtil.getPreviousTransactions(getPersistenceUtil(), t,
 		                                                                                     TransactionSetOrder.DESC)
 		                                                            .iterator();
