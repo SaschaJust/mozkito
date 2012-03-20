@@ -27,17 +27,16 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> {
+public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> {
 	
-	private final TrackerOptions   trackerOptions;
-	private URIArgument.Options    overviewURIArg;
-	private StringArgument.Options bugzillaVersionArg;
+	private final TrackerOptions trackerOptions;
+	private URIArgument.Options  overviewURIArg;
 	
 	/**
 	 * @param argumentSet
@@ -46,16 +45,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	 * @param requirements
 	 */
 	@NoneNull
-	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
-		super(trackerOptions.getArgumentSet(), "bugzilla",
-		      "Necessary arguments to connect and parse bugzilla reports.", requirement);
+	public MantisOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
+		super(trackerOptions.getArgumentSet(), "mantis", "Necessary arguments to connect and parse mantis reports.",
+		      requirement);
 		
 		this.trackerOptions = trackerOptions;
 		
-	}
-	
-	public StringArgument.Options getBugzillaVersion() {
-		return this.bugzillaVersionArg;
 	}
 	
 	public URIArgument.Options getOverviewURI() {
@@ -88,12 +83,10 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			                                                                                                             .getTag());
 			
 			final URIArgument overviewArgument = (URIArgument) getSettings().getArgument(getOverviewURI().getTag());
-			final StringArgument bugzillaVersionArgument = (StringArgument) getSettings().getArgument(getBugzillaVersion().getTag());
 			
-			final BugzillaTracker tracker = new BugzillaTracker();
+			final MantisTracker tracker = new MantisTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), overviewArgument.getValue(),
-			              bugzillaVersionArgument.getValue());
+			              trackerPasswordArgument.getValue(), overviewArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
@@ -126,14 +119,9 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			this.overviewURIArg = new URIArgument.Options(
 			                                              set,
 			                                              "overviewURI",
-			                                              "URI to extract bug report IDs from (e.g. https://bugzilla.mozilla.org/buglist.cgi?product=Rhino).",
+			                                              "URI to extract bug report IDs from (e.g. https://issues.openbravo.com/view_all_bug_page.php).",
 			                                              null, Requirement.required);
-			this.bugzillaVersionArg = new StringArgument.Options(set, "bugzillaVersion",
-			                                                     "Version of the bugzilla tracker. (e.g. 4.0.4).",
-			                                                     "4.0.4", Requirement.required);
-			
 			req(this.overviewURIArg, map);
-			req(this.bugzillaVersionArg, map);
 			return map;
 		} finally {
 			// POSTCONDITIONS

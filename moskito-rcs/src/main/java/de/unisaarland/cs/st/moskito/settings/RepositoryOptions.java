@@ -20,7 +20,6 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.StringArgument;
@@ -111,16 +110,16 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public Repository init(final Map<String, IArgument<?, ?>> dependencies) {
+	public Repository init() {
 		// PRECONDITIONS
 		
 		try {
-			final URIArgument dirArgument = (URIArgument) dependencies.get(getRepoDirArg().getName());
-			final StringArgument userArgument = (StringArgument) dependencies.get(getUserArg().getName());
-			final StringArgument passwordArgument = (StringArgument) dependencies.get(getPassArg().getName());
-			final EnumArgument<RepositoryType> typeArgument = (EnumArgument<RepositoryType>) dependencies.get(getRepoTypeArg().getName());
-			final DirectoryArgument tmpDirArgument = (DirectoryArgument) dependencies.get(getTmpDirArg().getName());
-			this.persistenceUtil = ((ArgumentSet<PersistenceUtil, DatabaseOptions>) dependencies.get(this.databaseOptions.getName())).getValue();
+			final URIArgument dirArgument = (URIArgument) getSettings().getArgument(getRepoDirArg().getTag());
+			final StringArgument userArgument = (StringArgument) getSettings().getArgument(getUserArg().getTag());
+			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(getPassArg().getTag());
+			final EnumArgument<RepositoryType> typeArgument = (EnumArgument<RepositoryType>) getSettings().getArgument(getRepoTypeArg().getTag());
+			final DirectoryArgument tmpDirArgument = (DirectoryArgument) getSettings().getArgument(getTmpDirArg().getTag());
+			this.persistenceUtil = ((ArgumentSet<PersistenceUtil, DatabaseOptions>) getSettings().getArgument(this.databaseOptions.getTag())).getValue();
 			
 			final URI repositoryURI = dirArgument.getValue();
 			String username = userArgument.getValue();
@@ -189,7 +188,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			                                          Requirement.optional);
 			map.put(this.userArg.getName(), this.userArg);
 			this.passArg = new StringArgument.Options(set, "password", "Password to access repository", null,
-			                                          Requirement.optional);
+			                                          Requirement.optional, true);
 			map.put(this.passArg.getName(), this.passArg);
 			this.tmpDirArg = new DirectoryArgument.Options(set, "tmpDir",
 			                                               "Directory to be used to clone instances of repository.",

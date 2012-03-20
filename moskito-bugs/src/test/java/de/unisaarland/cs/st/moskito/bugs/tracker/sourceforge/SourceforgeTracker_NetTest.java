@@ -17,12 +17,11 @@ public class SourceforgeTracker_NetTest {
 	
 	@Test
 	public void testLiveOverview() {
-		final String liveUrl = "http://sourceforge.net/tracker/";
-		final String pattern = "?group_id=97367&atid=617889";
+		final String liveUrl = "http://sourceforge.net/";
 		
 		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {
-			tracker.setup(new URI(liveUrl), new URI(liveUrl + pattern), pattern, null, null, 1887104l, 1887104l, null);
+			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

@@ -17,21 +17,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
-import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
@@ -45,52 +43,31 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 public class SourceforgeTrackerTest {
 	
-	private static String url1 = "http://sourceforge.net/tracker/?group_id=97367&atid=617889";
-	private static String url2 = "http://sourceforge.net/tracker/?words=tracker_browse&sort=open_date&sortdir=desc&offset=50&group_id=97367&atid=617889&assignee=&status=&category=&artgroup=&keyword=&submitter=&artifact_id=";
+	private SourceforgeTracker tracker;
 	
-	@Test
-	public void testAtIdRegex() {
-		final Regex atIdRegex = new Regex(SourceforgeTracker.atIdRegex.getPattern());
-		atIdRegex.find(url1);
-		assertEquals(new Integer(1), atIdRegex.getGroupCount());
-		assertEquals("617889", atIdRegex.getGroup("atid"));
-		
-		atIdRegex.find(url2);
-		assertEquals(new Integer(1), atIdRegex.getGroupCount());
-		assertEquals("617889", atIdRegex.getGroup("atid"));
-		
-		final String newUrl = atIdRegex.replaceAll(url1, "atid=123456");
-		atIdRegex.find(newUrl);
-		assertEquals(new Integer(1), atIdRegex.getGroupCount());
-		assertEquals("123456", atIdRegex.getGroup("atid"));
+	@Before
+	public void setup() {
+		this.tracker = new SourceforgeTracker();
+		try {
+			this.tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l);
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@Test
-	public void testGroupIdRegex() {
-		final Regex groupIdRegex = new Regex(SourceforgeTracker.groupIdRegex.getPattern());
-		groupIdRegex.find(url1);
-		assertEquals(new Integer(1), groupIdRegex.getGroupCount());
-		assertEquals("97367", groupIdRegex.getGroup("group_id"));
-		
-		groupIdRegex.find(url2);
-		assertEquals(new Integer(1), groupIdRegex.getGroupCount());
-		assertEquals("97367", groupIdRegex.getGroup("group_id"));
-	}
-	
-	@Test
-	public void testIssueHistory() {
+	public void testIssueHistory() throws InvalidParameterException {
 		
 		try {
 			
-			final SourceforgeTracker tracker = new SourceforgeTracker();
-			
-			final String url = getClass().getResource(FileUtils.fileSeparator + "sourceforge_issue_3107411.html")
-			                             .toURI().toASCIIString();
-			String pattern = url.substring(0, url.lastIndexOf("sourceforge_issue_3107411.html"));
-			pattern = "sourceforge_issue_" + Tracker.getBugidplaceholder() + ".html";
-			
-			tracker.setup(new URI(url), null, pattern, null, null, 3107411l, 3107411l, null);
-			final Report report = tracker.parse(new ReportLink(new URI(url), "3107411"));
+			final Report report = this.tracker.parse(new ReportLink(
+			                                                        getClass().getResource(FileUtils.fileSeparator
+			                                                                                       + "sourceforge_issue_3107411.html")
+			                                                                  .toURI(), "3107411"));
 			
 			final History history = report.getHistory();
 			assertEquals(9, history.size());
@@ -243,9 +220,6 @@ public class SourceforgeTrackerTest {
 			
 			assertFalse(hElemIter.hasNext());
 			
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
@@ -254,19 +228,15 @@ public class SourceforgeTrackerTest {
 	}
 	
 	@Test
-	public void testIssueParser() {
-		final SourceforgeTracker tracker = new SourceforgeTracker();
-		String url = SourceforgeTrackerTest.class.getResource(FileUtils.fileSeparator
-		                                                              + "sourceforge_issue_1887104.html").toString();
-		url = url.substring(0, url.lastIndexOf("sourceforge_issue_1887104.html"));
-		final String pattern = "sourceforge_issue_" + Tracker.getBugidplaceholder() + ".html";
-		
+	public void testIssueParser() throws InvalidParameterException {
 		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 1887104l, 1887104l, null);
+			final Report report = this.tracker.parse(new ReportLink(
+			                                                        getClass().getResource(FileUtils.fileSeparator
+			                                                                                       + "sourceforge_issue_1887104.html")
+			                                                                  .toURI(), "1887104"));
 			
-			final Report report = tracker.parse(new ReportLink(new URI(url), "1887104"));
-			
-			assertEquals(null, report.getAssignedTo());
+			assertTrue(report.getAssignedTo() != null);
+			assertTrue(report.getAssignedTo().getFullnames().contains("Nobody/Anonymous"));
 			assertEquals("None", report.getCategory());
 			
 			assertEquals(6, report.getComments().size());
@@ -277,7 +247,7 @@ public class SourceforgeTrackerTest {
 			assertTrue(daliboz != null);
 			assertEquals(report, c1.getBugReport());
 			assertTrue(c1.getMessage().startsWith("bumping up priority."));
-			DateTime dt = DateTimeUtils.parseDate("2008-02-05 16:52:57 UTC");
+			DateTime dt = DateTimeUtils.parseDate("2008-02-05 08:52:57 PST");
 			assertTrue(dt.isEqual(c1.getTimestamp()));
 			
 			final Comment c2 = iterator.next();
@@ -286,7 +256,7 @@ public class SourceforgeTrackerTest {
 			assertTrue(scolebourne != null);
 			assertEquals(report, c2.getBugReport());
 			assertTrue(c2.getMessage().startsWith("Are you using v1.5.2?"));
-			dt = DateTimeUtils.parseDate("2008-02-05 22:37:45 UTC");
+			dt = DateTimeUtils.parseDate("2008-02-05 14:37:45 PST");
 			assertTrue(dt.isEqual(c2.getTimestamp()));
 			
 			final Comment c3 = iterator.next();
@@ -294,7 +264,7 @@ public class SourceforgeTrackerTest {
 			assertEquals(daliboz, c3.getAuthor());
 			assertEquals(report, c3.getBugReport());
 			assertTrue(c3.getMessage().startsWith("I've tried this on 1.5,"));
-			dt = DateTimeUtils.parseDate("2008-02-06 00:04:30 UTC");
+			dt = DateTimeUtils.parseDate("2008-02-05 16:04:30 PST");
 			assertTrue(dt.isEqual(c3.getTimestamp()));
 			
 			final Comment c4 = iterator.next();
@@ -302,7 +272,7 @@ public class SourceforgeTrackerTest {
 			assertEquals(scolebourne, c4.getAuthor());
 			assertEquals(report, c4.getBugReport());
 			assertTrue(c4.getMessage().startsWith("Fixed in svn rv 1323."));
-			dt = DateTimeUtils.parseDate("2008-02-08 00:13:32 UTC");
+			dt = DateTimeUtils.parseDate("2008-02-07 16:13:32 PST");
 			assertTrue(dt.isEqual(c4.getTimestamp()));
 			
 			final Comment c5 = iterator.next();
@@ -310,7 +280,7 @@ public class SourceforgeTrackerTest {
 			assertEquals(daliboz, c5.getAuthor());
 			assertEquals(report, c5.getBugReport());
 			assertTrue(c5.getMessage().startsWith("Can confirm that this is passing our unit tests"));
-			dt = DateTimeUtils.parseDate("2008-02-11 19:26:23 UTC");
+			dt = DateTimeUtils.parseDate("2008-02-11 11:26:23 PST");
 			assertTrue(dt.isEqual(c5.getTimestamp()));
 			
 			final Comment c6 = iterator.next();
@@ -318,28 +288,30 @@ public class SourceforgeTrackerTest {
 			assertEquals(daliboz, c6.getAuthor());
 			assertEquals(report, c6.getBugReport());
 			assertTrue(c6.getMessage().startsWith("Just noticed a difference for the Spring adjustment - though"));
-			final DateTime c6Dt = DateTimeUtils.parseDate("2008-02-11 20:13:00 UTC");
+			final DateTime c6Dt = DateTimeUtils.parseDate("2008-02-11 12:13:00 PST");
 			assertTrue(c6Dt.isEqual(c6.getTimestamp()));
 			
-			assertEquals("None", report.getComponent());
-			dt = DateTimeUtils.parseDate("2008-02-05 16:24:58 UTC");
+			assertEquals(null, report.getComponent());
+			dt = DateTimeUtils.parseDate("2008-02-05 08:24:58 PST");
 			assertTrue(dt.isEqual(report.getCreationTimestamp()));
 			
 			assertTrue(report.getDescription()
 			                 .startsWith("On versions 1.5+, using roundFloorCopy on one of the ambiguous times "));
-			assertEquals(1887104, report.getId());
-			assertTrue(c6Dt.isEqual(report.getLastUpdateTimestamp()));
+			assertEquals("1887104", report.getId());
+			assertTrue(DateTimeUtils.parseDate("2008-02-07 16:13:32 PST").isEqual(report.getLastUpdateTimestamp()));
 			assertEquals(Priority.VERY_HIGH, report.getPriority());
 			assertEquals(null, report.getProduct());
 			assertEquals(Resolution.UNRESOLVED, report.getResolution());
 			assertEquals(null, report.getResolutionTimestamp());
 			assertEquals(null, report.getResolver());
-			assertEquals(new Report("0").getSeverity(), report.getSeverity());
+			assertEquals(null, report.getSeverity());
 			assertEquals(0, report.getSiblings().size());
 			assertEquals(de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status.CLOSED, report.getStatus());
 			assertEquals("joda-time 1.5+ issues with roundFloor and DST", report.getSubject());
-			assertEquals(daliboz, report.getSubmitter());
-			assertEquals(null, report.getSummary());
+			assertTrue(report.getSubmitter() != null);
+			assertTrue(report.getSubmitter().getUsernames().contains("daliboz"));
+			assertTrue(report.getSubmitter().getFullnames().contains("Jenni"));
+			assertEquals("joda-time 1.5+ issues with roundFloor and DST", report.getSummary());
 			assertEquals(Type.BUG, report.getType());
 			assertEquals(null, report.getVersion());
 			
@@ -351,14 +323,12 @@ public class SourceforgeTrackerTest {
 			assertEquals(null, attachment.getDeltaTS());
 			assertEquals("Test program that reproduces issue with 2 different methods", attachment.getDescription());
 			assertEquals("RoundFloorDST.java", attachment.getFilename());
-			assertEquals("http://sourceforge.net/tracker/download.php?group_id=97367&atid=617889&file_id=265142&aid=1887104",
+			assertEquals(getClass().getResource(FileUtils.fileSeparator).toURI().toASCIIString()
+			                     + "/tracker/download.php?group_id=97367&atid=617889&file_id=265142&aid=1887104",
 			             attachment.getLink().toString());
 			assertEquals(null, attachment.getMime());
 			assertEquals(0, attachment.getSize());
-			assertEquals(DateTimeUtils.parseDate("2008-02-05 16:24:59 UTC"), attachment.getTimestamp());
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
+			assertEquals(DateTimeUtils.parseDate("2008-02-05 08:24:59 PST "), attachment.getTimestamp());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();

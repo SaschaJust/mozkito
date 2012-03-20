@@ -19,15 +19,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
@@ -38,44 +39,48 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
  */
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
 	
-	private URIArgument.Options               trackerURI;
-	private EnumArgument.Options<TrackerType> trackerType;
-	private StringArgument.Options            trackerUser;
-	private StringArgument.Options            trackerPassword;
-	private final ISettings                   settings;
+	private URIArgument.Options               trackerURIArg;
+	private EnumArgument.Options<TrackerType> trackerTypeArg;
+	private StringArgument.Options            trackerUserArg;
+	private StringArgument.Options            trackerPasswordArg;
+	private BugzillaOptions                   bugzillaOptions;
+	private GoogleOptions                     googleOptions;
+	private JiraOptions                       jiraOptions;
+	private MantisOptions                     mantisOptions;
+	private SourceforgeOptions                sourceforgeOptions;
 	
 	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "tracker", "Tracker settings.", requirement);
-		this.settings = argumentSet.getSettings();
+		argumentSet.getSettings();
 	}
 	
 	/**
 	 * @return the trackerPassword
 	 */
 	public final StringArgument.Options getTrackerPassword() {
-		return this.trackerPassword;
+		return this.trackerPasswordArg;
 	}
 	
 	/**
 	 * @return the trackerType
 	 */
 	public final EnumArgument.Options<TrackerType> getTrackerType() {
-		return this.trackerType;
+		return this.trackerTypeArg;
 	}
 	
 	/**
 	 * @return the trackerFetchURI
 	 */
 	public final URIArgument.Options getTrackerURI() {
-		return this.trackerURI;
+		return this.trackerURIArg;
 	}
 	
 	/**
 	 * @return the trackerUser
 	 */
 	public final StringArgument.Options getTrackerUser() {
-		return this.trackerUser;
+		return this.trackerUserArg;
 	}
 	
 	/*
@@ -83,41 +88,41 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
 	 */
 	@Override
-	public Tracker init(final Map<String, IArgument<?, ?>> dependencies) {
-		// PRECONDITIONS
-		//
-		// try {
-		// Class<? extends Tracker> trackerHandler = null;
-		// try {
-		//
-		// trackerHandler = TrackerFactory.getTrackerHandler(this.trackerType.getValue());
-		//
-		// final Tracker tracker = trackerHandler.newInstance();
-		//
-		// tracker.setup(this.trackerURI.getValue(), this.trackerOverviewURI.getValue(),
-		// this.trackerPattern.getValue(), this.trackerUser.getValue(),
-		// this.trackerPassword.getValue(), this.trackerStart.getValue(),
-		// this.trackerStop.getValue(), this.trackerCacheDir.getValue());
-		// setCachedValue(tracker);
-		// ret = true;
-		// } catch (final UnregisteredTrackerTypeException e) {
-		// throw new UnrecoverableError(e);
-		// } catch (final InstantiationException e) {
-		// throw new InstantiationError(e, trackerHandler, null, this.trackerURI.getValue(),
-		// this.trackerOverviewURI.getValue(), this.trackerPattern.getValue(),
-		// this.trackerUser.getValue(), this.trackerPassword.getValue(),
-		// this.trackerStart.getValue(), this.trackerStop.getValue(),
-		// this.trackerCacheDir.getValue());
-		// } catch (final IllegalAccessException e) {
-		// throw new UnrecoverableError(e);
-		// } catch (final InvalidParameterException e) {
-		// throw new UnrecoverableError(e);
-		// }
-		// } finally {
-		// // POSTCONDITIONS
-		// }
-		// TODO yahoo
-		return null;
+	public Tracker init() {
+		
+		try {
+			@SuppressWarnings ("unchecked")
+			final EnumArgument<TrackerType> trackerTypeArgument = (EnumArgument<TrackerType>) getSettings().getArgument(getTrackerType().getTag());
+			
+			switch (trackerTypeArgument.getValue()) {
+				case BUGZILLA:
+					final ArgumentSet<Tracker, BugzillaOptions> bugzillaArgumentSet = ArgumentSetFactory.create(this.bugzillaOptions);
+					return bugzillaArgumentSet.getValue();
+				case JIRA:
+					final ArgumentSet<Tracker, JiraOptions> jiraArgumentSet = ArgumentSetFactory.create(this.jiraOptions);
+					return jiraArgumentSet.getValue();
+				case MANTIS:
+					final ArgumentSet<Tracker, MantisOptions> mantisArgumentSet = ArgumentSetFactory.create(this.mantisOptions);
+					return mantisArgumentSet.getValue();
+				case SOURCEFORGE:
+					final ArgumentSet<Tracker, SourceforgeOptions> sourceforgeArgumentSet = ArgumentSetFactory.create(this.sourceforgeOptions);
+					return sourceforgeArgumentSet.getValue();
+				case GOOGLE:
+					final ArgumentSet<Tracker, GoogleOptions> googleArgumentSet = ArgumentSetFactory.create(this.googleOptions);
+					return googleArgumentSet.getValue();
+				default:
+					throw new UnrecoverableError("Could not handle " + trackerTypeArgument.getTag() + ": "
+					        + trackerTypeArgument.getValue());
+			}
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	private final void req(final IOptions<?, ?> option,
@@ -137,28 +142,44 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			this.trackerURI = new URIArgument.Options(
-			                                          set,
-			                                          "uri",
-			                                          "Base URI of the tracker (to fetch reports, e.g. https://bugs.eclipse.org).",
-			                                          null, Requirement.required);
-			req(this.trackerURI, map);
+			this.trackerURIArg = new URIArgument.Options(
+			                                             set,
+			                                             "uri",
+			                                             "Base URI of the tracker (to fetch reports, e.g. https://bugs.eclipse.org).",
+			                                             null, Requirement.required);
+			req(this.trackerURIArg, map);
 			
-			this.trackerType = new EnumArgument.Options<TrackerType>(set, "type",
-			                                                         "The type of the bug tracker to analyze.", null,
-			                                                         Requirement.required, TrackerType.values());
-			req(this.trackerType, map);
+			this.trackerTypeArg = new EnumArgument.Options<TrackerType>(set, "type",
+			                                                            "The type of the bug tracker to analyze.",
+			                                                            null, Requirement.required,
+			                                                            TrackerType.values());
+			req(this.trackerTypeArg, map);
 			
-			this.trackerUser = new StringArgument.Options(set, "user", "Username to access tracker", null,
-			                                              Requirement.optional);
+			this.trackerUserArg = new StringArgument.Options(set, "user", "Username to access tracker", null,
+			                                                 Requirement.optional);
 			
-			req(this.trackerUser, map);
-			this.trackerPassword = new StringArgument.Options(set, "password", "Password to access tracker", null,
-			                                                  Requirement.optional);
+			req(this.trackerUserArg, map);
+			this.trackerPasswordArg = new StringArgument.Options(set, "password", "Password to access tracker", null,
+			                                                     Requirement.optional, true);
 			
-			req(this.trackerPassword, map);
+			req(this.trackerPasswordArg, map);
 			
-			req(new BugzillaOptions(set, Requirement.equals(this.trackerType, TrackerType.BUGZILLA)), map);
+			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
+			                                                                    TrackerType.BUGZILLA));
+			req(this.bugzillaOptions, map);
+			
+			this.googleOptions = new GoogleOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.GOOGLE));
+			req(this.googleOptions, map);
+			
+			this.jiraOptions = new JiraOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.JIRA));
+			req(this.jiraOptions, map);
+			
+			this.mantisOptions = new MantisOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.MANTIS));
+			req(this.jiraOptions, map);
+			
+			this.sourceforgeOptions = new SourceforgeOptions(this, Requirement.equals(this.trackerTypeArg,
+			                                                                          TrackerType.SOURCEFORGE));
+			req(this.jiraOptions, map);
 			// this.trackerOverviewURI = new URIArgument.Options(
 			// set,
 			// "overviewURI",

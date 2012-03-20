@@ -15,8 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
-import java.io.File;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
@@ -24,22 +24,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
-import net.ownhero.dev.ioda.exceptions.LoadingException;
-import net.ownhero.dev.ioda.exceptions.StoringException;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kanuni.conditions.StringCondition;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Regex;
-
-import org.joda.time.DateTime;
-
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
@@ -56,66 +43,25 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public abstract class Tracker {
 	
-	protected final TrackerType       type             = TrackerType.valueOf(this.getClass()
-	                                                                             .getSimpleName()
-	                                                                             .substring(0,
-	                                                                                        this.getClass()
-	                                                                                            .getSimpleName()
-	                                                                                            .length()
-	                                                                                                - Tracker.class.getSimpleName()
-	                                                                                                               .length())
-	                                                                             .toUpperCase());
-	protected DateTime                lastUpdate;
-	protected String                  baseURL;
-	protected String                  pattern;
-	protected URI                     fetchURI;
+	protected final TrackerType       type          = TrackerType.valueOf(this.getClass()
+	                                                                          .getSimpleName()
+	                                                                          .substring(0,
+	                                                                                     this.getClass()
+	                                                                                         .getSimpleName().length()
+	                                                                                             - Tracker.class.getSimpleName()
+	                                                                                                            .length())
+	                                                                          .toUpperCase());
+	protected URI                     trackerURI;
 	protected String                  username;
 	protected String                  password;
-	protected Long                    startAt;
-	protected Long                    stopAt;
-	protected boolean                 initialized      = false;
-	private URI                       overviewURI;
-	private BlockingQueue<ReportLink> reportLinks      = new LinkedBlockingQueue<ReportLink>();
-	protected File                    cacheDir;
-	
-	protected static final String     bugIdPlaceholder = "<BUGID>";
-	protected static final Regex      bugIdRegex       = new Regex("({bugid}<BUGID>)");
-	
-	public final static Person        unknownPerson    = new Person("<unknown>", null, null);
-	
-	/**
-	 * @return
-	 */
-	public static String getBugidplaceholder() {
-		return bugIdPlaceholder;
-	}
-	
-	/**
-	 * @return
-	 */
-	public static Regex getBugidregex() {
-		return bugIdRegex;
-	}
+	private BlockingQueue<ReportLink> reportLinks   = new LinkedBlockingQueue<ReportLink>();
+	public final static Person        unknownPerson = new Person("<unknown>", null, null);
 	
 	/**
 	 * 
 	 */
 	public Tracker() {
-		Condition.check(!this.initialized, "The tracker must NOT be initialized at this point in time.");
 		Condition.notNull(this.reportLinks, "The bugId container must be initialized.");
-		Condition.notNull(bugIdPlaceholder, "bugIdPlaceholder must be set.");
-		StringCondition.notEmpty(bugIdPlaceholder, "bugIdPlaceholder must not be empty");
-		Condition.notNull(bugIdRegex, "bugIdRegex must be set.");
-		StringCondition.notEmpty(bugIdRegex.getPattern(), "bugIdRegex must not be empty");
-	}
-	
-	/**
-	 * @param id
-	 * @return
-	 */
-	public File getFileForContent(final long id) {
-		return new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + getHandle() + "_"
-		        + this.fetchURI.getHost() + "_content_" + id);
 	}
 	
 	/**
@@ -125,8 +71,6 @@ public abstract class Tracker {
 		return this.getClass().getSimpleName();
 		
 	}
-	
-	public abstract ReportLink getLinkFromId(final String bugId);
 	
 	/**
 	 * this method should be synchronized
@@ -141,20 +85,9 @@ public abstract class Tracker {
 		}
 	}
 	
-	public abstract OverviewParser getOverviewParser();
-	
-	/**
-	 * @return the overviewURI
-	 */
-	public URI getOverviewURI() {
-		return this.overviewURI;
-	}
-	
 	public abstract Parser getParser();
 	
-	public String getPattern() {
-		return this.pattern;
-	}
+	public abstract Collection<ReportLink> getReportLinks();
 	
 	/**
 	 * This method returns the tracker type, determined by
@@ -170,33 +103,7 @@ public abstract class Tracker {
 	 * @return the fetchURI
 	 */
 	public URI getUri() {
-		return this.fetchURI;
-	}
-	
-	/**
-	 * @return true if the setup method had been called
-	 */
-	protected boolean isInitialized() {
-		return this.initialized;
-	}
-	
-	/**
-	 * @param id
-	 * @return
-	 */
-	public RawContent loadContent(final long id) {
-		try {
-			return (RawContent) IOUtils.load(getFileForContent(id));
-		} catch (final LoadingException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return null;
+		return this.trackerURI;
 	}
 	
 	/**
@@ -288,28 +195,6 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * @param uri
-	 * @return
-	 */
-	protected Long reverseURI(final URI uri) {
-		// pattern = /bleh/<BUGID>3-blub/<BUGID>_3.xml
-		final String[] split = this.pattern.split(Tracker.bugIdPlaceholder);
-		final String uriString = uri.toString();
-		
-		final String tmpURI = uriString.substring(this.fetchURI.toString().length() + split[0].length(),
-		                                          uriString.length());
-		final String bugid = tmpURI.substring(0, split.length > 1
-		                                                         ? tmpURI.indexOf(split[1])
-		                                                         : tmpURI.length());
-		
-		try {
-			return new Long(bugid);
-		} catch (final NumberFormatException e) {
-			return null;
-		}
-	}
-	
-	/**
 	 * sets up the current tracker and fills the queue with the corresponding bug report ids
 	 * 
 	 * @param fetchURI
@@ -331,98 +216,17 @@ public abstract class Tracker {
 	 */
 	
 	public void setup(@NotNull final URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
 	                  final String username,
-	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final File cacheDir) throws InvalidParameterException {
+	                  final String password) throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
 		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
 		                username, password);
-		// FIXME this should be handled at Settings level.
-		Condition.check((overviewURI != null) || ((startAt != null) && (stopAt != null)),
-		                "You must either specify a valid [startAt,stopAt] interval or provide a valid overviewURI. ");
-		Condition.check(((startAt == null) || ((startAt != null) && (startAt > 0))),
-		                "`startAt` must be null or > 0, but is: %s", startAt);
-		Condition.check(((stopAt == null) || ((stopAt != null) && (stopAt > 0))),
-		                "[setup] `startAt` must be null or > 0, but is: %s", stopAt);
 		
-		if (!this.initialized) {
-			this.fetchURI = fetchURI;
-			this.overviewURI = overviewURI;
-			this.username = username;
-			this.password = password;
-			this.startAt = startAt;
-			this.stopAt = stopAt;
-			this.initialized = true;
-			this.cacheDir = cacheDir;
-			this.pattern = pattern;
-			
-			if (startAt == null) {
-				this.startAt = 1l;
-			}
-			if (stopAt == null) {
-				this.stopAt = Long.MAX_VALUE;
-			}
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn(getHandle() + " already initialized. Ignoring call to setup().");
-			}
-		}
+		this.trackerURI = fetchURI;
+		this.username = username;
+		this.password = password;
 		
 		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
-		
-		final OverviewParser overviewParser = getOverviewParser();
-		boolean parsedOverview = false;
-		
-		if (overviewParser != null) {
-			if (!overviewParser.parseOverview()) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse bug overview URI. See earlier errors.");
-				}
-			} else {
-				this.reportLinks.addAll(overviewParser.getReportLinks());
-				if (Logger.logInfo()) {
-					Logger.info("Added " + this.reportLinks.size() + " bug IDs while parsing overviewURI.");
-				}
-				parsedOverview = true;
-			}
-		}
-		if (!parsedOverview) {
-			// what if no overviewParser?
-			for (long i = startAt; i <= stopAt; ++i) {
-				final ReportLink uri = getLinkFromId(String.valueOf(i));
-				if (uri != null) {
-					this.reportLinks.add(uri);
-				}
-			}
-		}
+		this.reportLinks.addAll(getReportLinks());
 	}
-	
-	/**
-	 * @param content
-	 * @return
-	 */
-	@NoneNull
-	public boolean writeContentToFile(final RawContent content,
-	                                  @NotEmpty final String fileName) {
-		Condition.check(isInitialized(), "The tracker has to be initialized before using this method.");
-		
-		try {
-			IOUtils.store(content, this.cacheDir, fileName, true);
-			return true;
-		} catch (final StoringException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-		}
-		return false;
-	}
-	
 }

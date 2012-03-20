@@ -15,7 +15,6 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
-import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
@@ -53,41 +52,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	
 	private JiraRestClient        restClient;
 	
-	@Override
-	public ReportLink getLinkFromId(final String bugId) {
-		// PRECONDITIONS
-		
-		try {
-			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("key=" + this.pattern + "-"
-			                                                                                   + bugId, this.pm);
-			if (searchJql.getTotal() < 1) {
-				if (Logger.logError()) {
-					Logger.error("Could not find an issue report with bugid=" + this.pattern + "-" + bugId);
-				}
-				return null;
-			} else if (searchJql.getTotal() > 1) {
-				if (Logger.logWarn()) {
-					Logger.warn("Multiple issue reports found matching bugId=" + this.pattern + "-" + bugId
-					        + ". Using first.");
-				}
-			}
-			final BasicIssue issue = searchJql.getIssues().iterator().next();
-			return new ReportLink(issue.getSelf(), this.pattern + "-" + bugId);
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser() {
-		// PRECONDITIONS
-		
-		try {
-			return this;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	private String                projectKey;
 	
 	/*
 	 * (non-Javadoc)
@@ -120,7 +85,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.pattern,
+			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.projectKey,
 			                                                                           this.pm);
 			for (final BasicIssue issue : searchJql.getIssues()) {
 				this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
@@ -136,16 +101,12 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		}
 	}
 	
-	@Override
 	public void setup(@NotNull final URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
 	                  final String username,
 	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final File cacheDir) throws InvalidParameterException {
+	                  final String projectKey) throws InvalidParameterException {
 		
+		this.projectKey = projectKey;
 		final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
 		
 		final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
@@ -159,8 +120,6 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		authenticationHandler.configure(cc);
 		this.restClient = factory.create(fetchURI, authenticationHandler);
 		this.pm = new NullProgressMonitor();
-		
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
-		
+		super.setup(fetchURI, username, password);
 	}
 }

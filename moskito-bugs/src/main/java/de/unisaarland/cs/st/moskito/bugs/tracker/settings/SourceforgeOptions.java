@@ -18,6 +18,8 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.LongArgument.Options;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -27,17 +29,17 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> {
+public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> {
 	
-	private final TrackerOptions   trackerOptions;
-	private URIArgument.Options    overviewURIArg;
-	private StringArgument.Options bugzillaVersionArg;
+	private final TrackerOptions trackerOptions;
+	private Options              atIdArg;
+	private Options              groupIdArg;
 	
 	/**
 	 * @param argumentSet
@@ -46,23 +48,29 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	 * @param requirements
 	 */
 	@NoneNull
-	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
-		super(trackerOptions.getArgumentSet(), "bugzilla",
-		      "Necessary arguments to connect and parse bugzilla reports.", requirement);
+	public SourceforgeOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
+		super(trackerOptions.getArgumentSet(), "sourceforge",
+		      "Necessary arguments to connect and parse sourceforge reports.", requirement);
 		
 		this.trackerOptions = trackerOptions;
 		
 	}
 	
-	public StringArgument.Options getBugzillaVersion() {
-		return this.bugzillaVersionArg;
-	}
-	
-	public URIArgument.Options getOverviewURI() {
+	public LongArgument.Options getAtIdArg() {
 		// PRECONDITIONS
 		
 		try {
-			return this.overviewURIArg;
+			return this.atIdArg;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public LongArgument.Options getGroupIdArg() {
+		// PRECONDITIONS
+		
+		try {
+			return this.groupIdArg;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -87,13 +95,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			final StringArgument trackerPasswordArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerPassword()
 			                                                                                                             .getTag());
 			
-			final URIArgument overviewArgument = (URIArgument) getSettings().getArgument(getOverviewURI().getTag());
-			final StringArgument bugzillaVersionArgument = (StringArgument) getSettings().getArgument(getBugzillaVersion().getTag());
+			final LongArgument groupIdArgument = (LongArgument) getSettings().getArgument(getGroupIdArg().getTag());
+			final LongArgument atIdArgument = (LongArgument) getSettings().getArgument(getAtIdArg().getTag());
 			
-			final BugzillaTracker tracker = new BugzillaTracker();
+			final SourceforgeTracker tracker = new SourceforgeTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), overviewArgument.getValue(),
-			              bugzillaVersionArgument.getValue());
+			              trackerPasswordArgument.getValue(), groupIdArgument.getValue(), atIdArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
@@ -123,21 +130,16 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			
 			req(this.trackerOptions, map);
 			
-			this.overviewURIArg = new URIArgument.Options(
-			                                              set,
-			                                              "overviewURI",
-			                                              "URI to extract bug report IDs from (e.g. https://bugzilla.mozilla.org/buglist.cgi?product=Rhino).",
-			                                              null, Requirement.required);
-			this.bugzillaVersionArg = new StringArgument.Options(set, "bugzillaVersion",
-			                                                     "Version of the bugzilla tracker. (e.g. 4.0.4).",
-			                                                     "4.0.4", Requirement.required);
+			this.atIdArg = new LongArgument.Options(set, "atId", "Sourceforge project tracker's  atID.", null,
+			                                        Requirement.required);
+			this.groupIdArg = new LongArgument.Options(set, "groupId", "Sourceforge project's groupID.", null,
+			                                           Requirement.required);
 			
-			req(this.overviewURIArg, map);
-			req(this.bugzillaVersionArg, map);
+			req(this.groupIdArg, map);
+			req(getAtIdArg(), map);
 			return map;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
 }

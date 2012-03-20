@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
-import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
@@ -39,9 +38,11 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonTuple;
 
 public class MantisTrackerTest {
 	
-	private RawContent report19810;
-	private RawContent report18828;
-	private RawContent report8468;
+	private RawContent    report19810;
+	private RawContent    report18828;
+	private RawContent    report8468;
+	private MantisTracker tracker;
+	private RawContent    mantisOverview;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -52,17 +53,11 @@ public class MantisTrackerTest {
 		                                           .toURI());
 		this.report8468 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-8468.html")
 		                                          .toURI());
-	}
-	
-	@Test
-	public void testAttachments18828() {
-		
-		final MantisTracker tracker = new MantisTracker();
-		String url = this.report18828.getUri().toASCIIString();
-		url = url.substring(0, url.lastIndexOf("open-bravo-18828.html"));
-		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
+		this.mantisOverview = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "mantis_overview.html")
+		                                              .toURI());
+		this.tracker = new MantisTracker();
 		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 18828l, 18828l, null);
+			this.tracker.setup(new URI("https://issues.openbravo.com"), null, null, this.mantisOverview.getUri());
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -70,8 +65,12 @@ public class MantisTrackerTest {
 			e.printStackTrace();
 			fail();
 		}
+	}
+	
+	@Test
+	public void testAttachments18828() {
 		
-		final Report report = tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
+		final Report report = this.tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		assertTrue(attachments.isEmpty());
 	}
@@ -79,20 +78,7 @@ public class MantisTrackerTest {
 	@Test
 	public void testAttachments19810() {
 		
-		final MantisTracker tracker = new MantisTracker();
-		String url = this.report19810.getUri().toASCIIString();
-		url = url.substring(0, url.lastIndexOf("open-bravo-19810.html"));
-		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 19810l, 19810l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final Report report = tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
+		final Report report = this.tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		
 		final String reportLink = this.report19810.getUri().toASCIIString();
@@ -132,20 +118,7 @@ public class MantisTrackerTest {
 	
 	@Test
 	public void testKeywords() {
-		final MantisTracker tracker = new MantisTracker();
-		String url = this.report8468.getUri().toASCIIString();
-		url = url.substring(0, url.lastIndexOf("open-bravo-8468.html"));
-		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 8468l, 8468l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final Report report = tracker.parse(new ReportLink(this.report8468.getUri(), "8468"));
+		final Report report = this.tracker.parse(new ReportLink(this.report8468.getUri(), "8468"));
 		final Set<String> keywords = report.getKeywords();
 		assertEquals(2, keywords.size());
 		assertTrue(keywords.contains("main"));
@@ -155,22 +128,7 @@ public class MantisTrackerTest {
 	@Test
 	public void testParse() {
 		
-		final MantisTracker tracker = new MantisTracker();
-		
-		String url = this.report19810.getUri().toASCIIString();
-		url = url.substring(0, url.lastIndexOf("open-bravo-19810.html"));
-		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
-		
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 19810l, 19810l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final Report report = tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
+		final Report report = this.tracker.parse(new ReportLink(this.report19810.getUri(), "19810"));
 		
 		assertEquals("0019810", report.getId());
 		assertEquals("alostale", report.getAssignedTo().getUsernames().iterator().next());
@@ -284,21 +242,7 @@ public class MantisTrackerTest {
 	
 	@Test
 	public void testSiblings() {
-		final MantisTracker tracker = new MantisTracker();
-		String url = this.report18828.getUri().toASCIIString();
-		url = url.substring(0, url.lastIndexOf("open-bravo-18828.html"));
-		final String pattern = "open-bravo-" + Tracker.getBugidplaceholder() + ".html";
-		
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 18828l, 18828l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final Report report = tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
+		final Report report = this.tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));
 		final SortedSet<String> siblings = report.getSiblings();
 		assertEquals(2, siblings.size());
 		assertTrue(siblings.contains("0019022"));

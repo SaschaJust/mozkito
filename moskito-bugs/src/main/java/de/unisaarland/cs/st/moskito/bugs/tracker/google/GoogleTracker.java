@@ -12,19 +12,16 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import com.google.gdata.client.projecthosting.ProjectHostingService;
 import com.google.gdata.data.projecthosting.IssuesEntry;
@@ -33,7 +30,6 @@ import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -43,32 +39,11 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class GoogleTracker extends Tracker implements OverviewParser {
+public class GoogleTracker extends Tracker {
 	
 	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
 	private String                projectName;
 	private ProjectHostingService service;
-	private Set<ReportLink>       overviewURIs;
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getLinkFromId(java .lang.Long)
-	 */
-	@Override
-	public ReportLink getLinkFromId(final String bugId) {
-		return new ReportLink(null, bugId);
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser() {
-		// PRECONDITIONS
-		
-		try {
-			return this;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -95,32 +70,21 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 	}
 	
 	@Override
-	public Set<ReportLink> getReportLinks() {
+	public Collection<ReportLink> getReportLinks() {
 		// PRECONDITIONS
 		
 		try {
 			
-			return this.overviewURIs;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	@Override
-	public boolean parseOverview() {
-		// PRECONDITIONS
-		
-		try {
-			this.overviewURIs = new HashSet<ReportLink>();
+			final Set<ReportLink> overviewURIs = new HashSet<ReportLink>();
 			try {
 				
 				int startIndex = 1;
 				final int maxResults = 100;
 				
-				IssuesFeed resultFeed = this.service.getFeed(new URL(this.fetchURI.toString() + "?start-index="
-				        + startIndex + "&max-results=" + maxResults), IssuesFeed.class);
+				IssuesFeed resultFeed = this.service.getFeed(new URL(getUri().toString() + "?start-index=" + startIndex
+				        + "&max-results=" + maxResults), IssuesFeed.class);
 				if (Logger.logDebug()) {
-					Logger.debug(this.fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
+					Logger.debug(this.trackerURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
 					        + maxResults);
 				}
 				List<IssuesEntry> feedEntries = resultFeed.getEntries();
@@ -128,75 +92,38 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 					for (int i = 0; i < feedEntries.size(); i++) {
 						final IssuesEntry entry = feedEntries.get(i);
 						final String bugId = entry.getIssueId().getValue().toString();
-						this.overviewURIs.add(getLinkFromId(bugId));
+						overviewURIs.add(new ReportLink(null, bugId));
 						if (Logger.logDebug()) {
 							Logger.debug("GOOGLE TRACKER: adding issue #" + bugId + " to process list.");
 						}
 					}
 					startIndex += maxResults;
-					resultFeed = this.service.getFeed(new URL(this.fetchURI.toString() + "?start-index=" + startIndex
+					resultFeed = this.service.getFeed(new URL(this.trackerURI.toString() + "?start-index=" + startIndex
 					        + "&max-results=" + maxResults), IssuesFeed.class);
 					if (Logger.logDebug()) {
-						Logger.debug(this.fetchURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
+						Logger.debug(this.trackerURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
 						        + maxResults);
 					}
 					feedEntries = resultFeed.getEntries();
 				}
 			} catch (final AuthenticationException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return false;
+				throw new UnrecoverableError(e);
 			} catch (final IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return false;
+				throw new UnrecoverableError(e);
 			} catch (final ServiceException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return false;
+				throw new UnrecoverableError(e);
 			}
-			return true;
+			return overviewURIs;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.net.URI, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.Long, java.lang.Long, java.lang.String)
-	 */
-	@Override
-	public void setup(URI fetchURI,
-	                  final URI overviewURI,
-	                  final String pattern,
+	public void setup(final URI fetchURI,
 	                  final String username,
 	                  final String password,
-	                  final Long startAt,
-	                  final Long stopAt,
-	                  final File cacheDir) throws InvalidParameterException {
-		
-		final Regex fetchRegex = new Regex(fetchRegexPattern);
-		final List<RegexGroup> groups = fetchRegex.find(fetchURI.toString());
-		if ((groups == null) || (groups.size() < 2) || (fetchRegex.getGroup("project") == null)) {
-			throw new UnrecoverableError("The specified fetchUri cannot be parser (is invalid). Abort.");
-		}
-		
-		this.projectName = fetchRegex.getGroup("project");
-		
-		if (!fetchURI.toString().contains("feeds/issues")) {
-			try {
-				fetchURI = new URI("https://code.google.com/feeds/issues/p/" + this.projectName + "/issues/full");
-			} catch (final URISyntaxException e) {
-				throw new UnrecoverableError(e.getMessage(), e);
-			}
-		}
-		
-		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
-		
+	                  final String projectName) throws InvalidParameterException {
+		this.projectName = projectName;
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		try {
 			if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
@@ -205,5 +132,6 @@ public class GoogleTracker extends Tracker implements OverviewParser {
 		} catch (final AuthenticationException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
+		super.setup(fetchURI, username, password);
 	}
 }

@@ -40,8 +40,20 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 public class JiraTracker_NetTest {
 	
+	private JiraTracker tracker;
+	
 	@Before
 	public void setUp() throws Exception {
+		this.tracker = new JiraTracker();
+		try {
+			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR");
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
 		
 	}
 	
@@ -51,46 +63,44 @@ public class JiraTracker_NetTest {
 	
 	@Test
 	public void testAttachments() {
-		final JiraTracker tracker = new JiraTracker();
+		
 		try {
-			tracker.setup(new URI("http://jira.codehaus.org"), new URI("http://jira.codehaus.org"), "XPR", null, null,
-			              new Long(451l), new Long(451l), null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
+			final ReportLink reportLink = new ReportLink(
+			                                             new URI(
+			                                                     "jira.codehaus.org/si/jira.issueviews:issue-xml/XPR-451/XPR-451.xml"),
+			                                             "XPR-451");
+			final Report report = this.tracker.parse(reportLink);
+			
+			final List<AttachmentEntry> attachments = report.getAttachmentEntries();
+			assertEquals(1, attachments.size());
+			
+			assertEquals("38639", attachments.get(0).getId());
+			assertEquals(0, attachments.get(0).getAuthor().getUsernames().size());
+			assertTrue(attachments.get(0).getAuthor().getEmailAddresses().contains("andreas.bartelt@gmail.com"));
+			assertTrue(attachments.get(0).getAuthor().getFullnames().contains("Andreas Bartelt"));
+			assertEquals(null, attachments.get(0).getDeltaTS());
+			assertEquals(null, attachments.get(0).getDescription());
+			assertEquals(".classpath", attachments.get(0).getFilename());
+			assertEquals("http://jira.codehaus.org/secure/attachment/38639/.classpath", attachments.get(0).getLink()
+			                                                                                       .toString());
+			assertEquals("application/octet-stream", attachments.get(0).getMime());
+			assertEquals(8818, attachments.get(0).getSize());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
+		} finally {
+			
 		}
-		
-		final ReportLink reportLink = tracker.getLinkFromId("451");
-		final Report report = tracker.parse(reportLink);
-		
-		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
-		assertEquals(1, attachments.size());
-		
-		assertEquals("38639", attachments.get(0).getId());
-		assertEquals(0, attachments.get(0).getAuthor().getUsernames().size());
-		assertTrue(attachments.get(0).getAuthor().getEmailAddresses().contains("andreas.bartelt@gmail.com"));
-		assertTrue(attachments.get(0).getAuthor().getFullnames().contains("Andreas Bartelt"));
-		assertEquals(null, attachments.get(0).getDeltaTS());
-		assertEquals(null, attachments.get(0).getDescription());
-		assertEquals(".classpath", attachments.get(0).getFilename());
-		assertEquals("http://jira.codehaus.org/secure/attachment/38639/.classpath", attachments.get(0).getLink()
-		                                                                                       .toString());
-		assertEquals("application/octet-stream", attachments.get(0).getMime());
-		assertEquals(8818, attachments.get(0).getSize());
 	}
 	
 	@Test
-	public void testFromOverviewParse() {
-		final JiraTracker tracker = new JiraTracker();
-		
+	public void testFromOverviewParse() throws InvalidParameterException {
 		try {
-			tracker.setup(new URI("http://jira.codehaus.org"), new URI("http://jira.codehaus.org"), "JAXEN", null,
-			              null, new Long(177l), new Long(177l), null);
-			final ReportLink reportLink = tracker.getLinkFromId("177");
-			final Report report = tracker.parse(reportLink);
+			final ReportLink reportLink = new ReportLink(
+			                                             new URI(
+			                                                     "jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-177/JAXEN-177.xml"),
+			                                             "JAXEN-177");
+			final Report report = this.tracker.parse(reportLink);
 			
 			assertEquals("JAXEN-177", report.getId());
 			assertEquals(null, report.getAssignedTo());
@@ -147,9 +157,6 @@ public class JiraTracker_NetTest {
 			assertEquals("1.1", report.getVersion());
 			
 		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}

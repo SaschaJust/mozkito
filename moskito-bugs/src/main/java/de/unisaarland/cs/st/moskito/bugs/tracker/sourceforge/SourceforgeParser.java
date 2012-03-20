@@ -236,6 +236,8 @@ public class SourceforgeParser implements Parser {
 	
 	private Element                                   historyTableContainer;
 	
+	private Tracker                                   tracker;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
@@ -288,7 +290,7 @@ public class SourceforgeParser implements Parser {
 				if (aTags.isEmpty()) {
 					continue;
 				}
-				final String link = aTags.get(0).attr("href");
+				String link = aTags.get(0).attr("href");
 				String attachId = null;
 				for (final RegexGroup group : fileIdPattern.find(link)) {
 					if ((group.getName() != null) && (group.getName().equals("fileid"))) {
@@ -298,6 +300,7 @@ public class SourceforgeParser implements Parser {
 				if (attachId == null) {
 					continue;
 				}
+				link = this.tracker.getUri() + link;
 				
 				final AttachmentHistoryEntry attachmentHistoryEntry = this.attachmentHistory.get(filename);
 				
@@ -332,10 +335,10 @@ public class SourceforgeParser implements Parser {
 						Logger.error(e.getMessage(), e);
 					}
 				}
-				
+				result.add(attachmentEntry);
 			}
 			
-			return null;
+			return result;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -383,24 +386,31 @@ public class SourceforgeParser implements Parser {
 					}
 				}
 				
-				Elements elementsByClass = tr.getElementsByClass("yui-u first");
+				final Elements elementsByClass = tr.getElementsByClass("yui-u");
 				if ((elementsByClass == null) || (elementsByClass.isEmpty())) {
 					continue;
 				}
-				final String leftColumm = elementsByClass.get(0).text().replaceAll("\"", "").trim();
-				elementsByClass = tr.getElementsByClass("yui-u");
-				if ((elementsByClass == null) || (elementsByClass.isEmpty())) {
+				Element yui_u_first = null;
+				for (final Element tmp : elementsByClass) {
+					if (tmp.classNames().contains("first")) {
+						yui_u_first = tmp;
+						break;
+					}
+				}
+				if (yui_u_first == null) {
 					continue;
 				}
-				final String rightColumm = htmlCommentRegex.removeAll(elementsByClass.get(0).text())
-				                                           .replaceAll("\"", "").trim();
+				final Element yui_u = yui_u_first.nextElementSibling();
+				
+				final String leftColumm = yui_u_first.text().replaceAll("\"", "").trim();
+				final String rightColumm = htmlCommentRegex.removeAll(yui_u.text()).replaceAll("\"", "").trim();
 				final List<RegexGroup> find = commentRegex.find(leftColumm);
 				DateTime timestamp = null;
 				Person sender = null;
 				for (final RegexGroup group : find) {
-					if ((group.getName() != null) && (group.equals("timestamp"))) {
+					if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
 						timestamp = DateTimeUtils.parseDate(group.getMatch());
-					} else if ((group.getName() != null) && (group.equals("username"))) {
+					} else if ((group.getName() != null) && (group.getName().equals("username"))) {
 						sender = new Person(group.getMatch(), null, null);
 					}
 				}
@@ -579,7 +589,7 @@ public class SourceforgeParser implements Parser {
 							filename = split[1];
 						}
 						if (!this.attachmentHistory.containsKey(filename)) {
-							this.attachmentHistory.put(filename, new AttachmentHistoryEntry(author, timestamp));
+							this.attachmentHistory.put(filename.trim(), new AttachmentHistoryEntry(author, timestamp));
 						}
 					}
 				}
@@ -922,7 +932,7 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return;
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}

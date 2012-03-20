@@ -37,7 +37,6 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
-import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
@@ -53,11 +52,13 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 public class BugzillaTracker_4_0_4_Test {
 	
-	private URI uri114562;
-	private URI uri642368;
-	private URI uri153429;
-	private URI uri1234;
-	private URI uri642368history;
+	private URI             uri114562;
+	private URI             uri642368;
+	private URI             uri153429;
+	private URI             uri1234;
+	private URI             uri642368history;
+	private URI             fetchURI;
+	private BugzillaTracker tracker;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -75,7 +76,15 @@ public class BugzillaTracker_4_0_4_Test {
 		this.uri642368history = BugzillaTracker_4_0_4_Test.class.getResource(FileUtils.fileSeparator
 		                                                                             + "bugzilla_mozilla_642368_history.html")
 		                                                        .toURI();
+		this.fetchURI = new URI("https://bugs.eclipse.org/bugs/");
 		
+		this.tracker = new BugzillaTracker();
+		try {
+			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4");
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 	
 	@After
@@ -84,23 +93,10 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	@Test
 	public void test4_0_5PLUS() {
-		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = this.uri642368.toASCIIString();
-		url = url.substring(0, url.lastIndexOf("bugzilla_642368.xml"));
-		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
 		
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 642368l, 642368l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
+		final ReportLink reportLink = new ReportLink(this.uri642368, "642368");
 		
-		final ReportLink reportLink = tracker.getLinkFromId("642368");
-		final Report report = tracker.parse(reportLink);
+		final Report report = this.tracker.parse(reportLink);
 		
 		assertEquals("642368", report.getId());
 		assertEquals(null, report.getAssignedTo());
@@ -142,21 +138,8 @@ public class BugzillaTracker_4_0_4_Test {
 	@Test
 	public void testAttachments() {
 		
-		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = this.uri153429.toASCIIString();
-		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
-		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 153429l, 153429l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final ReportLink reportLink = tracker.getLinkFromId("153429");
-		final Report report = tracker.parse(reportLink);
+		final ReportLink reportLink = new ReportLink(this.uri153429, "153429");
+		final Report report = this.tracker.parse(reportLink);
 		final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 		assertEquals(11, attachments.size());
 		assertEquals("80909", attachments.get(0).getId());
@@ -164,7 +147,7 @@ public class BugzillaTracker_4_0_4_Test {
 		assertEquals(DateTimeUtils.parseDate("2007-10-22 17:04:30 -0400"), attachments.get(0).getDeltaTS());
 		assertEquals("Patch for Eclipse Testing Framework", attachments.get(0).getDescription());
 		assertEquals("bug153429_patch", attachments.get(0).getFilename());
-		assertEquals(url.toString() + "attachment.cgi?id=80909", attachments.get(0).getLink().toString());
+		assertEquals(this.fetchURI.toASCIIString() + "attachment.cgi?id=80909", attachments.get(0).getLink().toString());
 		assertEquals("text/plain", attachments.get(0).getMime());
 		assertEquals(13568, attachments.get(0).getSize());
 		assertEquals(DateTimeUtils.parseDate("2007-10-22 17:04:00 -0400"), attachments.get(0).getTimestamp());
@@ -173,7 +156,7 @@ public class BugzillaTracker_4_0_4_Test {
 		assertEquals(DateTimeUtils.parseDate("2007-11-08 12:27:18 -0500"), attachments.get(1).getDeltaTS());
 		assertEquals("code for Eclipse Test Framework", attachments.get(1).getDescription());
 		assertEquals("junit.zip", attachments.get(1).getFilename());
-		assertEquals(url.toString() + "attachment.cgi?id=81997", attachments.get(1).getLink().toString());
+		assertEquals(this.fetchURI.toASCIIString() + "attachment.cgi?id=81997", attachments.get(1).getLink().toString());
 		assertEquals("application/zip", attachments.get(1).getMime());
 		assertEquals(195784, attachments.get(1).getSize());
 		assertEquals(DateTimeUtils.parseDate("2007-11-02 16:03:00 -0400"), attachments.get(1).getTimestamp());
@@ -227,22 +210,8 @@ public class BugzillaTracker_4_0_4_Test {
 	@Test
 	public void testKeywords() {
 		
-		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = this.uri153429.toASCIIString();
-		url = url.substring(0, url.lastIndexOf("bugzilla_153429.xml"));
-		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 153429l, 153429l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final ReportLink reportLink = tracker.getLinkFromId("153429");
-		final Report report = tracker.parse(reportLink);
-		
+		final ReportLink reportLink = new ReportLink(this.uri153429, "153429");
+		final Report report = this.tracker.parse(reportLink);
 		final Set<String> keywords = report.getKeywords();
 		assertEquals(1, keywords.size());
 		assertTrue(keywords.contains("plan"));
@@ -294,22 +263,8 @@ public class BugzillaTracker_4_0_4_Test {
 	@Test
 	public void testParse() {
 		
-		final BugzillaTracker tracker = new BugzillaTracker();
-		String url = this.uri114562.toASCIIString();
-		url = url.substring(0, url.lastIndexOf("bugzilla_114562.xml"));
-		final String pattern = "bugzilla_" + Tracker.getBugidplaceholder() + ".xml";
-		try {
-			tracker.setup(new URI(url), null, pattern, null, null, 114562l, 114562l, null);
-		} catch (final InvalidParameterException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		}
-		final ReportLink reportLink = tracker.getLinkFromId("114562");
-		final Report report = tracker.parse(reportLink);
-		
+		final ReportLink reportLink = new ReportLink(this.uri114562, "114562");
+		final Report report = this.tracker.parse(reportLink);
 		assertEquals("114562", report.getId());
 		assertEquals("mik.kersten", report.getAssignedTo().getUsernames().iterator().next());
 		assertEquals("Mik Kersten", report.getAssignedTo().getFullnames().iterator().next());

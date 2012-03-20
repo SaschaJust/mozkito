@@ -13,10 +13,11 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collection;
 
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -27,47 +28,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  */
 public class MantisTracker extends Tracker {
 	
+	private URI overviewURI;
+	
 	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
-	
-	/**
-	 * 
-	 */
-	public MantisTracker() {
-		
-	}
-	
-	@Override
-	public ReportLink getLinkFromId(final String bugId) {
-		// PRECONDITIONS
-		
-		try {
-			try {
-				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
-				                                                            bugId + "")), bugId);
-			} catch (final URISyntaxException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return null;
-			}
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	@Override
-	public OverviewParser getOverviewParser() {
-		// PRECONDITIONS
-		
-		try {
-			if (Logger.logError()) {
-				Logger.error("Overview parsing not supported yet.");
-			}
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -82,6 +45,29 @@ public class MantisTracker extends Tracker {
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	@Override
+	public Collection<ReportLink> getReportLinks() {
+		// PRECONDITIONS
+		
+		try {
+			final MantisOverviewParser overviewParser = new MantisOverviewParser(this.overviewURI.toASCIIString());
+			if (!overviewParser.parseOverview()) {
+				throw new UnrecoverableError("Could not parse overview to extract bug report IDs. See earlier error.");
+			}
+			return overviewParser.getReportLinks();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public void setup(@NotNull final URI fetchURI,
+	                  final String username,
+	                  final String password,
+	                  final URI overviewURI) throws InvalidParameterException {
+		this.overviewURI = overviewURI;
+		super.setup(fetchURI, username, password);
 	}
 	
 }

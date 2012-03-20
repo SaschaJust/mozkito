@@ -17,13 +17,14 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
+import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -34,35 +35,27 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  */
 public class BugzillaTracker extends Tracker {
 	
-	@Override
-	public ReportLink getLinkFromId(final String bugId) {
-		// PRECONDITIONS
-		
-		try {
-			try {
-				return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.fetchURI.toString() + this.pattern,
-				                                                            bugId + "")), bugId);
-			} catch (final URISyntaxException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				return null;
-			}
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	// @Override
+	// public ReportLink getLinkFromId(final String bugId) {
+	// // PRECONDITIONS
+	//
+	// try {
+	// try {
+	// return new ReportLink(new URI(Tracker.bugIdRegex.replaceAll(this.trackerURI.toString() + this.pattern,
+	// bugId + "")), bugId);
+	// } catch (final URISyntaxException e) {
+	// if (Logger.logError()) {
+	// Logger.error(e.getMessage(), e);
+	// }
+	// return null;
+	// }
+	// } finally {
+	// // POSTCONDITIONS
+	// }
+	// }
 	
-	@Override
-	public OverviewParser getOverviewParser() {
-		// PRECONDITIONS
-		
-		try {
-			return new BugzillaOverviewParser(this);
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	private URI    overviewURI;
+	private String bugzillaVersion;
 	
 	/*
 	 * (non-Javadoc)
@@ -73,9 +66,6 @@ public class BugzillaTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			
-			// FIXME get version number by new dynamic argument
-			final String bugzillaVersion = "4.0.4";
 			
 			// load all BugzillaParsers
 			try {
@@ -94,10 +84,38 @@ public class BugzillaTracker extends Tracker {
 			}
 			
 			// get the correct parser and set tracker.
-			return BugzillaParser.getParser(bugzillaVersion);
+			return BugzillaParser.getParser(this.bugzillaVersion);
 			
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	@Override
+	public Collection<ReportLink> getReportLinks() {
+		// PRECONDITIONS
+		
+		try {
+			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI);
+			if (!overviewParser.parseOverview()) {
+				if (Logger.logError()) {
+					Logger.error("Could not parse overview URI. See earlier errors.");
+				}
+				return new ArrayList<ReportLink>(0);
+			}
+			return overviewParser.getReportLinks();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public void setup(@NotNull final URI fetchURI,
+	                  final String username,
+	                  final String password,
+	                  final URI overviewURI,
+	                  final String bugzillaVersion) throws InvalidParameterException {
+		super.setup(fetchURI, username, password);
+		this.overviewURI = overviewURI;
+		this.bugzillaVersion = bugzillaVersion;
 	}
 }

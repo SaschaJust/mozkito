@@ -65,8 +65,7 @@ public class GoogleTracker_NetTest {
 			}
 			
 			final GoogleTracker tracker = new GoogleTracker();
-			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
-			              null, null, 4380l, 4380l, cacheDir);
+			tracker.setup(new URI("https://code.google.com/"), null, null, "google-web-toolkit");
 			
 			final ReportLink reportLink = tracker.getNextReportLink();
 			assertEquals("4380", reportLink.getBugId());

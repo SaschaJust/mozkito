@@ -19,6 +19,7 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
@@ -27,17 +28,16 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraTracker;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> {
+public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, JiraOptions>> {
 	
-	private final TrackerOptions   trackerOptions;
-	private URIArgument.Options    overviewURIArg;
-	private StringArgument.Options bugzillaVersionArg;
+	private final TrackerOptions trackerOptions;
+	private Options              projectKeyArg;
 	
 	/**
 	 * @param argumentSet
@@ -46,26 +46,16 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	 * @param requirements
 	 */
 	@NoneNull
-	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
-		super(trackerOptions.getArgumentSet(), "bugzilla",
-		      "Necessary arguments to connect and parse bugzilla reports.", requirement);
+	public JiraOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
+		super(trackerOptions.getArgumentSet(), "jira", "Necessary arguments to connect and parse jira reports.",
+		      requirement);
 		
 		this.trackerOptions = trackerOptions;
 		
 	}
 	
-	public StringArgument.Options getBugzillaVersion() {
-		return this.bugzillaVersionArg;
-	}
-	
-	public URIArgument.Options getOverviewURI() {
-		// PRECONDITIONS
-		
-		try {
-			return this.overviewURIArg;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public StringArgument.Options getProjectKey() {
+		return this.projectKeyArg;
 	}
 	
 	/*
@@ -87,13 +77,11 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			final StringArgument trackerPasswordArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerPassword()
 			                                                                                                             .getTag());
 			
-			final URIArgument overviewArgument = (URIArgument) getSettings().getArgument(getOverviewURI().getTag());
-			final StringArgument bugzillaVersionArgument = (StringArgument) getSettings().getArgument(getBugzillaVersion().getTag());
+			final StringArgument projectNameArgument = (StringArgument) getSettings().getArgument(getProjectKey().getTag());
 			
-			final BugzillaTracker tracker = new BugzillaTracker();
+			final JiraTracker tracker = new JiraTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), overviewArgument.getValue(),
-			              bugzillaVersionArgument.getValue());
+			              trackerPasswordArgument.getValue(), projectNameArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
@@ -123,17 +111,13 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			
 			req(this.trackerOptions, map);
 			
-			this.overviewURIArg = new URIArgument.Options(
-			                                              set,
-			                                              "overviewURI",
-			                                              "URI to extract bug report IDs from (e.g. https://bugzilla.mozilla.org/buglist.cgi?product=Rhino).",
-			                                              null, Requirement.required);
-			this.bugzillaVersionArg = new StringArgument.Options(set, "bugzillaVersion",
-			                                                     "Version of the bugzilla tracker. (e.g. 4.0.4).",
-			                                                     "4.0.4", Requirement.required);
+			this.projectKeyArg = new StringArgument.Options(
+			                                                set,
+			                                                "projectKey",
+			                                                "Project key that identifies the project's reports (e.g. 'XSTR' for XStream).",
+			                                                null, Requirement.required);
 			
-			req(this.overviewURIArg, map);
-			req(this.bugzillaVersionArg, map);
+			req(this.projectKeyArg, map);
 			return map;
 		} finally {
 			// POSTCONDITIONS
