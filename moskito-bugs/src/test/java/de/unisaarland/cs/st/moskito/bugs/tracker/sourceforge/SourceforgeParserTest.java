@@ -16,7 +16,7 @@ public class SourceforgeParserTest {
 	@Test
 	public void testAttachmentIdRegex() {
 		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
-		final List<RegexGroup> find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
+		final List<RegexGroup> find = new Regex(ThanksToAdobe.fileIdPattern.getPattern()).find(link);
 		assertTrue(find != null);
 		assertEquals(2, find.size());
 		assertEquals("336228", find.get(1).getMatch());
@@ -25,7 +25,7 @@ public class SourceforgeParserTest {
 	@Test
 	public void testHTMLCommentRegex() {
 		final String s = "<!-- google_ad_section_start -->\n\"JodaTest.java\"<!-- google_ad_section_end -->";
-		final Regex htmlCommentRegex = new Regex(SourceforgeParser.htmlCommentRegex.getPattern(), Pattern.MULTILINE
+		final Regex htmlCommentRegex = new Regex(ThanksToAdobe.htmlCommentRegex.getPattern(), Pattern.MULTILINE
 		        | Pattern.DOTALL);
 		String result = htmlCommentRegex.removeAll(s);
 		result = result.replaceAll("\"", "");
