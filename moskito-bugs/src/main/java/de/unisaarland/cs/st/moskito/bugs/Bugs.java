@@ -18,17 +18,19 @@ package de.unisaarland.cs.st.moskito.bugs;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
-import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Optional;
-import net.ownhero.dev.hiari.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerArguments;
-import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
+import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
@@ -36,37 +38,53 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Bugs extends Chain<TrackerSettings> {
+public class Bugs extends Chain<Settings> {
 	
-	private final Pool              threadPool;
-	private final TrackerArguments  trackerArguments;
-	private final DatabaseOptions databaseArguments;
-	private final LoggerArguments   logSettings;
+	private final Pool                                    threadPool;
+	private ArgumentSet<Tracker, TrackerOptions>          trackerArguments;
+	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
 	
 	/**
 	 * @throws SettingsParseError
 	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Bugs() {
-		super(new TrackerSettings());
+	public Bugs(final Settings settings) {
+		super(settings);
+		
 		this.threadPool = new Pool(Bugs.class.getSimpleName(), this);
-		final TrackerSettings settings = getSettings();
+		
 		try {
-			this.trackerArguments = settings.setTrackerArgs(new Required());
-			this.databaseArguments = settings.setDatabaseArgs(new Optional(), this.getClass().getSimpleName()
-			                                                                      .toLowerCase());
-			this.logSettings = settings.setLoggerArg(new Required());
-			new BooleanArgument(settings.getRootArgumentSet(), "headless",
-			                    "Can be enabled when running without graphical interface", "false", new Optional());
-			new LongArgument(settings.getRootArgumentSet(), "cache.size",
-			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-			                 new Required());
+			this.trackerArguments = ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(),
+			                                                                     Requirement.required));
+			this.databaseArguments = ArgumentSetFactory.create(new DatabaseOptions(settings.getRoot(),
+			                                                                       Requirement.required, "bugs"));
+			
+			ArgumentFactory.create(new BooleanArgument.Options(
+			                                                   settings.getRoot(),
+			                                                   "headless",
+			                                                   "Can be enabled when running without graphical interface",
+			                                                   false, Requirement.optional));
+			ArgumentFactory.create(new LongArgument.Options(
+			                                                settings.getRoot(),
+			                                                "cacheSize",
+			                                                "determines the cache size (number of logs) that are prefetched during reading",
+			                                                3000l, Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new Shutdown();
+			throw new Shutdown(e);
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e);
 		}
 	}
 	
@@ -77,7 +95,6 @@ public class Bugs extends Chain<TrackerSettings> {
 	@Override
 	public void setup() {
 		final Tracker tracker = this.trackerArguments.getValue();
-		this.logSettings.getValue();
 		
 		new TrackerReader(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		// new TrackerRAWChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);

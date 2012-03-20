@@ -18,11 +18,11 @@ package de.unisaarland.cs.st.moskito.bugs;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.bugs.tracker.settings.TrackerSettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -34,7 +34,7 @@ public class TrackerParser extends Transformer<ReportLink, Report> {
 	 * @param threadGroup
 	 * @param tracker
 	 */
-	public TrackerParser(final Group threadGroup, final TrackerSettings settings, final Tracker tracker) {
+	public TrackerParser(final Group threadGroup, final Settings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<ReportLink, Report>(this) {

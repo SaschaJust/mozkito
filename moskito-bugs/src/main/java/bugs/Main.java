@@ -16,6 +16,8 @@
 package bugs;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.Bugs;
@@ -35,7 +37,8 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			final Bugs bugs = new Bugs();
+			final Settings settings = new Settings();
+			final Bugs bugs = new Bugs(settings);
 			bugs.setName(bugs.getClass().getSimpleName());
 			bugs.start();
 			bugs.join();
@@ -43,8 +46,11 @@ public class Main {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new Shutdown();
 		} catch (final InterruptedException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
