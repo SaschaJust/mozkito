@@ -34,12 +34,12 @@ public class Application implements IApplication {
 		        + "repository" + FileUtils.fileSeparator + "de" + FileUtils.fileSeparator + "unisaarland"
 		        + FileUtils.fileSeparator + "cs" + FileUtils.fileSeparator + "st" + FileUtils.fileSeparator + "moskito";
 		
-		String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.3-SNAPSHOT" + FileUtils.fileSeparator
-		        + "moskito-utils-0.3-SNAPSHOT.jar";
-		String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.3-SNAPSHOT" + FileUtils.fileSeparator
-		        + "moskito-rcs-0.3-SNAPSHOT.jar";
-		String ppaStr = baseDir + "-ppa" + FileUtils.fileSeparator + "0.3-SNAPSHOT" + FileUtils.fileSeparator
-		        + "moskito-ppa-0.3-SNAPSHOT.jar";
+		String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.4-SNAPSHOT" + FileUtils.fileSeparator
+		        + "moskito-utils-0.4-SNAPSHOT.jar";
+		String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.4-SNAPSHOT" + FileUtils.fileSeparator
+		        + "moskito-rcs-0.4-SNAPSHOT.jar";
+		String ppaStr = baseDir + "-ppa" + FileUtils.fileSeparator + "0.4-SNAPSHOT" + FileUtils.fileSeparator
+		        + "moskito-ppa-0.4-SNAPSHOT.jar";
 		
 		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppaStr);
 		

@@ -5,7 +5,7 @@
 	<artifactId>moskito</artifactId>
 	<name>moskito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://www.st.cs.uni-saarland.de/moskito</url>
 	<inceptionYear>2010</inceptionYear>
