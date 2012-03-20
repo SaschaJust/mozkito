@@ -34,7 +34,6 @@ import org.junit.Test;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.IRevDependencyGraph;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.git.GitRepository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -64,8 +63,8 @@ public class GitTransactionIteratorTest {
 			}
 			branchFactory = new BranchFactory(null);
 			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
-			           null, branchFactory, null);
+			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
+			           branchFactory, null);
 		} catch (final Exception e) {
 			fail();
 		}

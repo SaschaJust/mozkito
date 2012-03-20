@@ -19,9 +19,8 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -50,7 +49,7 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
+import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -195,7 +194,7 @@ public class ChangeGenealogyUtils {
 		}
 		
 		try {
-			repository.setup(urlFile.toURI(), null, null, branchFactory, null);
+			repository.setup(urlFile.toURI(), branchFactory, null);
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage());
@@ -479,7 +478,7 @@ public class ChangeGenealogyUtils {
 		final RepositorySettings settings = new RepositorySettings();
 		
 		final DatabaseOptions persistenceArgs = new DatabaseOptions(settings.getRootArgumentSet(),
-		                                                                Requirement.required, "ppa");
+		                                                            Requirement.required, "ppa");
 		
 		final DirectoryArgument graphDBArg = new DirectoryArgument(settings.getRootArgumentSet(), "genealogy.graphdb",
 		                                                           "Directory in which to load the GraphDB from.",

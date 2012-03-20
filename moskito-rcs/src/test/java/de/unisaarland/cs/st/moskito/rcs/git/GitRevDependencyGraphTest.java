@@ -42,8 +42,8 @@ public class GitRevDependencyGraphTest {
 			}
 			branchFactory = new BranchFactory(null);
 			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
-			           null, branchFactory, null);
+			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
+			           branchFactory, null);
 		} catch (final Exception e) {
 			fail();
 		}
