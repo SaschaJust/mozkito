@@ -10,7 +10,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.History.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Sep 02 15:26:32 CEST 2011")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class History_ {
     public static volatile SingularAttribute<History,Long> bugId;
     public static volatile SetAttribute<History,HistoryElement> elements;

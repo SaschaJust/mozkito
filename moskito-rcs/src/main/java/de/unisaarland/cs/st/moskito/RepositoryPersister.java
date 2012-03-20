@@ -1,41 +1,38 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
  */
 package de.unisaarland.cs.st.moskito;
 
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous
- * node and dumps the data to the database.
+ * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
+ * database.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class RepositoryPersister extends AndamaSink<RCSTransaction> {
+public class RepositoryPersister extends Sink<RCSTransaction> {
 	
 	Integer i = 0;
 	
@@ -45,7 +42,7 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public RepositoryPersister(final AndamaGroup threadGroup, final RepositorySettings settings,
+	public RepositoryPersister(final Group threadGroup, final RepositorySettings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
@@ -61,8 +58,7 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 			
 			@Override
 			public void process() {
-				RCSTransaction data = getInputData();
-				
+				final RCSTransaction data = getInputData();
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
@@ -81,7 +77,7 @@ public class RepositoryPersister extends AndamaSink<RCSTransaction> {
 			@Override
 			public void postExecution() {
 				persistenceUtil.commitTransaction();
-				persistenceUtil.shutdown();
+				// persistenceUtil.shutdown();
 			}
 		};
 	}

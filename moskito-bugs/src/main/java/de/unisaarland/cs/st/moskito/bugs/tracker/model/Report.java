@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -23,9 +20,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -51,6 +50,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -75,9 +75,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
-	/**
-	 * 
-	 */
 	private static final long     serialVersionUID  = 3241584366125944268L;
 	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
 	private String                category;
@@ -105,6 +102,9 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                summary;
 	private Type                  type              = Type.UNKNOWN;
 	private String                version;
+	private String                scmFixVersion;
+	
+	private Set<String>           keywords          = new HashSet<String>();
 	
 	private Report() {
 		super();
@@ -159,6 +159,11 @@ public class Report implements Annotated, Comparable<Report> {
 		setHistory(history);
 		historyElement.setBugId(getId());
 		return ret;
+	}
+	
+	@Transient
+	public boolean addKeyword(final String keyword) {
+		return this.keywords.add(keyword);
 	}
 	
 	/**
@@ -343,6 +348,17 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.id;
 	}
 	
+	@ElementCollection
+	public Set<String> getKeywords() {
+		// PRECONDITIONS
+		
+		try {
+			return this.keywords;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * @return the lastFetch
 	 */
@@ -444,6 +460,16 @@ public class Report implements Annotated, Comparable<Report> {
 		return getPersonContainer().get("resolver");
 	}
 	
+	public String getScmFixVersion() {
+		// PRECONDITIONS
+		
+		try {
+			return this.scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * @return the severity
 	 */
@@ -501,7 +527,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * @return the type
 	 */
-	@Enumerated (EnumType.ORDINAL)
+	@Enumerated (EnumType.STRING)
 	public Type getType() {
 		return this.type;
 	}
@@ -539,9 +565,13 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the comments.
+	 * 
 	 * @param comments
 	 *            the comments to set
+	 * @Deprecetd use addComment instead
 	 */
+	@Deprecated
 	public void setComments(final SortedSet<Comment> comments) {
 		this.comments = comments;
 	}
@@ -640,6 +670,17 @@ public class Report implements Annotated, Comparable<Report> {
 		this.id = id;
 	}
 	
+	public void setKeywords(final Set<String> keywords) {
+		// PRECONDITIONS
+		try {
+			this.keywords = keywords;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.keywords, keywords,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
+	}
+	
 	/**
 	 * @param lastFetch
 	 *            the lastFetch to set
@@ -729,6 +770,15 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	public void setResolver(final Person resolver) {
 		getPersonContainer().add("resolver", resolver);
+	}
+	
+	public void setScmFixVersion(final String scmFixVersion) {
+		// PRECONDITIONS
+		try {
+			this.scmFixVersion = scmFixVersion;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**

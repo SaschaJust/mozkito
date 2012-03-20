@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.model;
 
@@ -21,6 +18,7 @@ import java.util.Map;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -32,14 +30,14 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @Embeddable
 public class MappingEngineFeature implements Annotated {
 	
-	private static final long                                  serialVersionUID = 4097360257338824107L;
-	private double                                             confidence;
-	private String                                             fromFieldName;
-	private String                                             toFieldName;
-	private String                                             toSubstring;
-	private String                                             fromSubstring;
-	private String                                             fqClassName;
-	private static Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
+	private static final long                                        serialVersionUID = 4097360257338824107L;
+	private double                                                   confidence;
+	private String                                                   fromFieldName;
+	private String                                                   toFieldName;
+	private String                                                   toSubstring;
+	private String                                                   fromSubstring;
+	private String                                                   fqClassName;
+	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
 	 * used by persistence provider only
@@ -60,7 +58,7 @@ public class MappingEngineFeature implements Annotated {
 		setFromSubstring(fromSubstring);
 		setToFieldName(toFieldName);
 		setToSubstring(toSubstring);
-		setFqClassName(mappingEngine.getCanonicalName());
+		setFqClassName(mappingEngine.getSimpleName());
 		
 		if (!cache.containsKey(getFqClassName())) {
 			cache.put(getFqClassName(), mappingEngine);
@@ -80,23 +78,23 @@ public class MappingEngineFeature implements Annotated {
 	@Transient
 	public Class<? extends MappingEngine> getEngine() {
 		try {
-			if (cache.containsKey(this.fqClassName)) {
-				return cache.get(this.fqClassName);
+			if (cache.containsKey(getFqClassName())) {
+				return cache.get(getFqClassName());
 			} else {
 				@SuppressWarnings ("unchecked")
-				Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(this.fqClassName);
-				cache.put(this.fqClassName, engineClass);
+				final Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(getFqClassName());
+				cache.put(getFqClassName(), engineClass);
 				return engineClass;
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			
 			if (Logger.logError()) {
-				Logger.error("Cannot find MappingEngine: " + this.fqClassName, e);
+				Logger.error("Cannot find MappingEngine: " + getFqClassName(), e);
 			}
-			return null;
-		} catch (ClassCastException e) {
+			throw new ClassLoadingError(e, getFqClassName());
+		} catch (final ClassCastException e) {
 			if (Logger.logError()) {
-				Logger.error("Found corresponding class, but not of type MappingEngine: " + this.fqClassName, e);
+				Logger.error("Found corresponding class, but not of type MappingEngine: " + getFqClassName(), e);
 			}
 			return null;
 		}
@@ -191,7 +189,7 @@ public class MappingEngineFeature implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("MappingEngineFeature [confidence=");
 		builder.append(this.confidence);
 		builder.append(", fromFieldName=");

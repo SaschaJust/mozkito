@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -24,7 +21,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -52,8 +49,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @param element
 	 *            the element
-	 * @return the java class definition is successful, <code>null</code>
-	 *         otherwise.
+	 * @return the java class definition is successful, <code>null</code> otherwise.
 	 */
 	public static JavaClassDefinition fromXMLRepresentation(final org.jdom.Element element) {
 		
@@ -64,14 +60,14 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
 			}
 			return null;
 		}
-		String name = nameElement.getText();
+		final String name = nameElement.getText();
 		
 		return new JavaClassDefinition(name);
 	}
@@ -110,7 +106,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
-			anonymClass = true;
+			this.anonymClass = true;
 		}
 		setParent(parent);
 	}
@@ -136,12 +132,12 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Transient
 	private HashMap<Integer, Integer> getAnonCounters() {
-		return anonCounters;
+		return this.anonCounters;
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaClassDefinition getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/**
@@ -150,20 +146,18 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return the super class name
 	 */
 	public String getSuperClassName() {
-		return superClassName;
+		return this.superClassName;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation
-	 * (org.w3c.dom.Document)
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation (org.w3c.dom.Document)
 	 */
 	@Override
 	@NoneNull
 	public Element getXMLRepresentation() {
-		Element thisElement = new Element(JAVA_CLASS_DEFINITION);
-		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
+		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
@@ -175,12 +169,12 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return true, if is anonym class
 	 */
 	public boolean isAnonymClass() {
-		return anonymClass;
+		return this.anonymClass;
 	}
 	
 	/**
-	 * Returns the next anonymous class counter. This might differ from
-	 * anonymous class counters found in Java byte code.
+	 * Returns the next anonymous class counter. This might differ from anonymous class counters found in Java byte
+	 * code.
 	 * 
 	 * @param v
 	 *            the v
@@ -192,7 +186,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 		if (isAnonymClass()) {
 			return getParent().nextAnonCounter(v);
 		} else {
-			int vId = System.identityHashCode(v);
+			final int vId = System.identityHashCode(v);
 			if (!getAnonCounters().containsKey(vId)) {
 				getAnonCounters().put(vId, 0);
 			}
@@ -236,7 +230,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 * @return the string
 	 */
 	public String toLongString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
 		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");
@@ -254,7 +248,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("JavaClassDefinition [superClassName=");
 		sb.append(getSuperClassName());
 		sb.append(", anonymClass=");

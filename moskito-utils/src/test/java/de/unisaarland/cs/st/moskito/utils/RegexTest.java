@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -70,8 +67,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#checkRegex(String)}
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#checkRegex(String)}
 	 */
 	@Test
 	public void testCheckRegex() {
@@ -115,9 +111,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)} .
 	 */
 	@Test
 	public void testFind() {
@@ -141,9 +135,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#findAll(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#findAll(java.lang.String)} .
 	 */
 	@Test
 	public void testFindAll() {
@@ -178,9 +170,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)} .
 	 */
 	@Test
 	public void testFindAllPossibleMatches() {
@@ -196,9 +186,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#findLongestMatchingPattern(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#findLongestMatchingPattern(java.lang.String)} .
 	 */
 	@Test
 	public void testFindLongestMatchingPattern() {
@@ -211,8 +199,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#getGroupCount()}.
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#getGroupCount()}.
 	 */
 	@Test
 	public void testGetGroupCount() {
@@ -235,9 +222,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#matchesFull(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#matchesFull(java.lang.String)} .
 	 */
 	@Test
 	public void testMatches() {
@@ -272,9 +257,7 @@ public class RegexTest {
 	}
 	
 	/**
-	 * Test method for
-	 * {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)}
-	 * .
+	 * Test method for {@link net.ownhero.dev.ioda.Regex#find(java.lang.String)} .
 	 */
 	@Test
 	public void testNamedGroups() {

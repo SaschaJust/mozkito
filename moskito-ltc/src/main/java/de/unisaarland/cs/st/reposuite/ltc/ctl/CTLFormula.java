@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.reposuite.ltc.ctl;
 
 import java.util.Collection;
@@ -10,7 +23,6 @@ import org.w3c.dom.NodeList;
 import de.unisaarland.cs.st.reposuite.ltc.kripke.KripkeStructure;
 import de.unisaarland.cs.st.reposuite.ltc.kripke.State;
 
-
 /**
  * This class is the base class of all classes that represent CTL formulas.
  * 
@@ -19,13 +31,11 @@ import de.unisaarland.cs.st.reposuite.ltc.kripke.State;
 public abstract class CTLFormula {
 	
 	/**
-	 * Returns the CTL formula that occurs as the top level element in the given
-	 * node list.
+	 * Returns the CTL formula that occurs as the top level element in the given node list.
 	 * 
 	 * @param nodes
 	 *            List to search through.
-	 * @return CTL formula that occurs as the top level element in the node
-	 *         list.
+	 * @return CTL formula that occurs as the top level element in the node list.
 	 */
 	protected static CTLFormula getCTLFormulaFromXMLs(NodeList nodes) {
 		CTLFormula formula = null;
@@ -44,13 +54,12 @@ public abstract class CTLFormula {
 	}
 	
 	/**
-	 * Returns (creating it, if necessary) the CTL formula represented by the
-	 * given XML element.
+	 * Returns (creating it, if necessary) the CTL formula represented by the given XML element.
 	 * 
 	 * @param element
 	 *            XML representation of the CTL formula to create.
-	 * @return CTL formula, as represented by the given XML element, or
-	 *         <code>null</code>, if the element was not recognized.
+	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
+	 *         recognized.
 	 */
 	public static CTLFormula getFromXMLRepresentation(Element element) {
 		if (element.getNodeName().equals("CTL-AF")) {
@@ -99,15 +108,14 @@ public abstract class CTLFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public abstract boolean equals(Object o);
 	
 	/**
-	 * Returns a text representation of this CTL formula. Length of the
-	 * representation is determined by the verbosity given.
+	 * Returns a text representation of this CTL formula. Length of the representation is determined by the verbosity
+	 * given.
 	 * 
 	 * @param verbosity
 	 *            Verbosity of the representation.
@@ -126,7 +134,6 @@ public abstract class CTLFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -135,14 +142,12 @@ public abstract class CTLFormula {
 	}
 	
 	/**
-	 * Model-checks this formula against a given Kripke structure. Returns the
-	 * result of model-checking (i.e., <code>true</code> if the formula is true
-	 * in the given structure and <code>false</code> if it is not).
+	 * Model-checks this formula against a given Kripke structure. Returns the result of model-checking (i.e.,
+	 * <code>true</code> if the formula is true in the given structure and <code>false</code> if it is not).
 	 * 
 	 * @param kripkeStruct
 	 *            Kripke structure to model-check the formula against.
-	 * @return <code>true</code> if the formula is true in the given structure;
-	 *         <code>false</code> otherwise.
+	 * @return <code>true</code> if the formula is true in the given structure; <code>false</code> otherwise.
 	 */
 	public final <V> boolean modelCheck(KripkeStructure<V> kripkeStruct) {
 		this.modelCheckAllStates(kripkeStruct);
@@ -156,9 +161,8 @@ public abstract class CTLFormula {
 	}
 	
 	/**
-	 * Model-checks this formula against all states in the given Kripke
-	 * structure. This updates the states with information on whether the
-	 * formula holds in them or not.
+	 * Model-checks this formula against all states in the given Kripke structure. This updates the states with
+	 * information on whether the formula holds in them or not.
 	 * 
 	 * @param kripkeStruct
 	 *            Kripke structure to model-check the formula against.
@@ -169,7 +173,6 @@ public abstract class CTLFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

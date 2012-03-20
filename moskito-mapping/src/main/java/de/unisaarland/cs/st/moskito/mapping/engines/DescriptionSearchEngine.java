@@ -1,21 +1,18 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.lucene.document.Document;
@@ -30,7 +27,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -47,9 +44,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription ()
 	 */
 	@Override
 	public String getDescription() {
@@ -60,16 +55,17 @@ public class DescriptionSearchEngine extends SearchEngine {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
 		                        to.getBaseType());
-		
+		double confidence = 0d;
+		String toContent = null;
+		String toSubstring = null;
 		try {
 			final String fromBody = from.get(FieldKey.BODY).toString();
 			final String toId = to.get(FieldKey.ID).toString();
@@ -91,16 +87,19 @@ public class DescriptionSearchEngine extends SearchEngine {
 							final String bugId = hitDoc.get("bugid");
 							
 							if (bugId.compareTo(toId) == 0) {
-								score.addFeature(hit.score, FieldKey.BODY.name(), truncate(fromBody),
-								                 truncate(query.toString()), FieldKey.BODY.name(),
-								                 truncate(hitDoc.get("comment")), truncate(hitDoc.get("comment")),
-								                 this.getClass());
+								confidence = hit.score;
+								toContent = hitDoc.get("description");
+								toSubstring = hitDoc.get("description");
 								break;
 							}
 						}
 					}
 				}
 			}
+			
+			addFeature(score, confidence, FieldKey.BODY.name(), fromBody, query, FieldKey.BODY.name(), toContent,
+			           toSubstring);
+			
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
@@ -108,8 +107,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {

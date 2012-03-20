@@ -1,26 +1,26 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -30,9 +30,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	
-	
 	/** The transaction. */
-	private final RCSTransaction            transaction;
+	private final RCSTransaction                  transaction;
 	
 	/** The operations. */
 	private final Collection<JavaChangeOperation> operations;
@@ -50,14 +49,15 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		this.operations = operations;
 	}
 	
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
 	public int compareTo(final AtomicTransaction other) {
-		return transaction.compareTo(other.getTransaction()) * -1;
+		
+		final Comparator<? super RCSTransaction> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
+		return comparator.compare(other.getTransaction(), this.transaction);
 	}
 	
 	/*
@@ -75,22 +75,22 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AtomicTransaction other = (AtomicTransaction) obj;
-		if (transaction == null) {
+		final AtomicTransaction other = (AtomicTransaction) obj;
+		if (this.transaction == null) {
 			if (other.transaction != null) {
 				return false;
 			}
-		} else if (!transaction.equals(other.transaction)) {
+		} else if (!this.transaction.equals(other.transaction)) {
 			return false;
 		}
 		return true;
 	}
 	
 	public Set<JavaChangeOperation> getChangeOperation(final Class<? extends JavaElement> clazz) {
-		Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		final Set<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		
-		for(JavaChangeOperation op : this.getOperations()){
-			JavaElement element = op.getChangedElementLocation().getElement();
+		for (final JavaChangeOperation op : getOperations()) {
+			final JavaElement element = op.getChangedElementLocation().getElement();
 			if (element.getClass().equals(clazz)) {
 				result.add(op);
 			}
@@ -104,7 +104,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @return the operations
 	 */
 	public Collection<JavaChangeOperation> getOperations() {
-		return operations;
+		return this.operations;
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @return the transaction
 	 */
 	public RCSTransaction getTransaction() {
-		return transaction;
+		return this.transaction;
 	}
 	
 	/*
@@ -124,9 +124,9 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((transaction == null)
-				? 0
-						: transaction.hashCode());
+		result = (prime * result) + ((this.transaction == null)
+		                                                       ? 0
+		                                                       : this.transaction.hashCode());
 		return result;
 	}
 	

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -23,7 +20,7 @@ import java.util.List;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class JavaStacktrace extends Stacktrace {
 	
@@ -48,8 +45,11 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Overloaded Constructor
-	 * @param exception The Reason given in the Exception.
-	 * @param reason The list of locations the trace originated from.
+	 * 
+	 * @param exception
+	 *            The Reason given in the Exception.
+	 * @param reason
+	 *            The list of locations the trace originated from.
 	 */
 	public JavaStacktrace(final String exception, final String reason) {
 		this.traceStart = 0;
@@ -62,9 +62,13 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Overloaded Constructor
-	 * @param exception The Exception resulting in this Stack Trace.
-	 * @param reason The Reason given in the Exception.
-	 * @param frames The list of locations the trace originated from.
+	 * 
+	 * @param exception
+	 *            The Exception resulting in this Stack Trace.
+	 * @param reason
+	 *            The Reason given in the Exception.
+	 * @param frames
+	 *            The list of locations the trace originated from.
 	 */
 	public JavaStacktrace(final String exception, final String reason, final List<String> frames) {
 		this.traceStart = 0;
@@ -83,6 +87,7 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Getter for the Exception
+	 * 
 	 * @return the exception this Stack Trace originated from
 	 */
 	public String getException() {
@@ -91,6 +96,7 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Getter for the Trace Locations
+	 * 
 	 * @return A list of locations where the trace originated from.
 	 */
 	public List<String> getFrames() {
@@ -99,6 +105,7 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Joins the text of all Frames in frames
+	 * 
 	 * @return a single String with all frames concattenated
 	 */
 	public String getFramesText() {
@@ -111,6 +118,7 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Getter for the Reason
+	 * 
 	 * @return the reason for this Stack Trace stated in the first Exception. (removed trailing :)
 	 */
 	public String getReason() {
@@ -137,6 +145,7 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Check whether this Stack Trace is a cause or not
+	 * 
 	 * @return A boolean value indicating if the Stack Trace is a cause.
 	 */
 	public boolean isCause() {
@@ -145,7 +154,9 @@ public class JavaStacktrace extends Stacktrace {
 	
 	/**
 	 * Set the Stack Trace to be a cause or not
-	 * @param isCause A boolean value if this stack trace is a cause
+	 * 
+	 * @param isCause
+	 *            A boolean value if this stack trace is a cause
 	 */
 	public void setCause(final boolean isCause) {
 		this.isCause = isCause;

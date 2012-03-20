@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -32,51 +29,57 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.Intercepted;
-import net.ownhero.dev.ioda.JavaUtils;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class PersonContainer.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 public class PersonContainer implements Intercepted<Person>, Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = -5061178255449904475L;
+	
+	/** The map. */
 	private Map<String, Person> map              = new HashMap<String, Person>();
+	
+	/** The generated id. */
 	private long                generatedId;
 	
 	/**
-	 * 
+	 * Instantiates a new person container.
 	 */
 	public PersonContainer() {
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.Intercepted#add(java.lang.
-	 * String, java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.persistence.Intercepted#add(java.lang. String, java.lang.Object)
 	 */
 	@Override
 	@Transient
-	public Person add(final String id,
-	                  final Person person) {
-		Map<String, Person> map = getMap();
-		Person ret = map.put(id.toLowerCase(), person);
+	public Person add(@NotNull final String id,
+	                  @NotNull final Person person) {
+		final Map<String, Person> map = getMap();
+		final Person ret = map.put(id.toLowerCase(), person);
 		setMap(map);
 		return ret;
 	}
 	
 	/**
+	 * Contains.
+	 * 
 	 * @param key
-	 * @return
+	 *            the key
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean contains(final String key) {
@@ -85,9 +88,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.Intercepted#get(java.lang.
-	 * String)
+	 * @see de.unisaarland.cs.st.moskito.persistence.Intercepted#get(java.lang. String)
 	 */
 	@Override
 	@Transient
@@ -96,6 +97,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Gets the generated id.
+	 * 
 	 * @return the generatedId
 	 */
 	@Id
@@ -107,6 +110,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Gets the map.
+	 * 
 	 * @return the map
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -115,7 +120,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the persons.
+	 * 
+	 * @return the persons
 	 */
 	@Transient
 	public Collection<Person> getPersons() {
@@ -124,9 +131,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.Intercepted#interceptorTargets
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.persistence.Intercepted#interceptorTargets ()
 	 */
 	@Override
 	public Collection<Person> interceptorTargets() {
@@ -134,7 +139,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
 	 */
 	@Transient
 	public boolean isEmpty() {
@@ -143,14 +150,12 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.persistence.Intercepted#replace(java.lang
-	 * .Object, java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.persistence.Intercepted#replace(java.lang .Object, java.lang.Object)
 	 */
 	@Override
 	public void replace(final Person from,
 	                    final Person to) {
-		for (String key : getMap().keySet()) {
+		for (final String key : getMap().keySet()) {
 			if (getMap().get(key).getGeneratedId() == from.getGeneratedId()) {
 				getMap().put(key, to);
 			}
@@ -158,6 +163,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Sets the generated id.
+	 * 
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
@@ -166,6 +173,8 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Sets the map.
+	 * 
 	 * @param map
 	 *            the map to set
 	 */
@@ -174,7 +183,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Size.
+	 * 
+	 * @return the int
 	 */
 	@Transient
 	public int size() {
@@ -187,7 +198,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("PersonContainer [generatedId=");
 		builder.append(getGeneratedId());
 		builder.append(", map=");
@@ -197,10 +208,13 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	}
 	
 	/**
+	 * Update.
+	 * 
 	 * @param reference
+	 *            the reference
 	 */
 	public void update(final Person reference) {
-		for (String key : getMap().keySet()) {
+		for (final String key : getMap().keySet()) {
 			if (getMap().get(key).matches(reference)) {
 				getMap().put(key, reference);
 			}

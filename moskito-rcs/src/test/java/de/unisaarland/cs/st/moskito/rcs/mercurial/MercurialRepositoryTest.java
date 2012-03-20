@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.mercurial;
 
@@ -21,33 +18,20 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-import net.ownhero.dev.ioda.FileUtils;
-
-public class MercurialRepositoryTest {
-	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
+public class MercurialRepositoryTest extends MoskitoTest {
 	
 	@Test
-	public void testClone() {
-	}
-	
-	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testFixedDateTimeZone() {
 		int offset = 25200;
 		DateTimeZone timeZone = DateTimeZone.forOffsetMillis(offset * 1000);
@@ -55,16 +39,18 @@ public class MercurialRepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testFormerPathRegex() {
 		String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
 		List<RegexGroup> found = MercurialRepository.formerPathRegex.find(line);
 		assertTrue(MercurialRepository.formerPathRegex.matches(line));
 		assertEquals(2, found.size());
 		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
-		        MercurialRepository.formerPathRegex.getGroup("result"));
+		             MercurialRepository.formerPathRegex.getGroup("result"));
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testPlaineName() {
 		Regex.analyzePattern(MercurialRepository.authorRegex.getPattern());
 		List<RegexGroup> found = MercurialRepository.authorRegex.find("just");
@@ -74,6 +60,7 @@ public class MercurialRepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testPreFilterLines() {
 		List<String> lines = new ArrayList<String>();
 		lines.add("1510979776500f102ff503949ea34cdbf8c653d8+~+just+~+2010-10-22 14:33 +0000+~+file_1;+~++~++~+creating file_1");
@@ -98,12 +85,12 @@ public class MercurialRepositoryTest {
 		lines.add("01bcd1a86fb7d47c977f41af6a3a8f2407ce9183+~+just+~+2010-10-22 14:53 +0000+~+file_1;+~++~+dir_b/file_2_dir_a;+~+adding fake file_1 and modifying file_2_dir_a");
 		lines = MercurialRepository.preFilterLines(lines);
 		assertEquals(17, lines.size());
-		assertEquals(
-		        "b9aff3c08f90cbd42361da158fbbe979405fba70+~+just+~+2010-10-22 14:35 +0000+~+file_2;file_3;+~++~+file_1;+~+adding file_2<br/>adding file_3<br/>setting content of file_* to: file_* content",
-		        lines.get(1));
+		assertEquals("b9aff3c08f90cbd42361da158fbbe979405fba70+~+just+~+2010-10-22 14:35 +0000+~+file_2;file_3;+~++~+file_1;+~+adding file_2<br/>adding file_3<br/>setting content of file_* to: file_* content",
+		             lines.get(1));
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testReplaceLineBreaks() {
 		String s = "hubba<br/>hubba<br/>hopp";
 		String newS = s.replaceAll("<br/>", FileUtils.lineSeparator);
@@ -111,6 +98,7 @@ public class MercurialRepositoryTest {
 	}
 	
 	@Test
+	@DatabaseSettings (unit = "rcs")
 	public void testSaschasMegaRegExp() {
 		List<String> lines = new ArrayList<String>();
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <?xml version=\"1.0\"?>");

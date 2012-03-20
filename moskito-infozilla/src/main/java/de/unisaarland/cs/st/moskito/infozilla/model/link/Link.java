@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.infozilla.model.link;
 
@@ -113,35 +110,40 @@ public class Link implements Attachable, Inlineable {
 	}
 	
 	/**
-	 * @param postedBy the postedBy to set
+	 * @param postedBy
+	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
 		this.postedBy = postedBy;
 	}
 	
 	/**
-	 * @param postedIn the postedIn to set
+	 * @param postedIn
+	 *            the postedIn to set
 	 */
 	public void setPostedIn(final TextElement postedIn) {
 		this.postedIn = postedIn;
 	}
 	
 	/**
-	 * @param postedOn the postedOn to set
+	 * @param postedOn
+	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
 		this.postedOn = postedOn;
 	}
 	
 	/**
-	 * @param stringRepresentation the stringRepresentation to set
+	 * @param stringRepresentation
+	 *            the stringRepresentation to set
 	 */
 	public void setStringRepresentation(final String stringRepresentation) {
 		this.stringRepresentation = stringRepresentation;
 	}
 	
 	/**
-	 * @param url the url to set
+	 * @param url
+	 *            the url to set
 	 */
 	public void setUrl(final URL url) {
 		this.url = url;

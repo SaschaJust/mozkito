@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.reposuite.ltc.ctl;
 
 import java.util.HashSet;
@@ -15,8 +28,7 @@ import de.unisaarland.cs.st.reposuite.ltc.kripke.State;
 
 /**
  * Instances of this class represent CTL AU formulas. "A (f U g)" means that
- * "along all paths, f has to hold until at some position g holds". This implies
- * that g will be verified in the future.
+ * "along all paths, f has to hold until at some position g holds". This implies that g will be verified in the future.
  * 
  * @author Andrzej Wasylkowski
  */
@@ -30,18 +42,18 @@ public class CTLAU extends CTLBilateralFormula {
 	 * @param g
 	 *            Formula after "U"
 	 */
-	public static CTLAU get(CTLFormula f, CTLFormula g) {
+	public static CTLAU get(CTLFormula f,
+	                        CTLFormula g) {
 		return new CTLAU(f, g);
 	}
 	
 	/**
-	 * Returns (creating it, if necessary) the CTL formula represented by the
-	 * given XML element.
+	 * Returns (creating it, if necessary) the CTL formula represented by the given XML element.
 	 * 
 	 * @param element
 	 *            XML representation of the CTL formula to create.
-	 * @return CTL formula, as represented by the given XML element, or
-	 *         <code>null</code>, if the element was not recognized.
+	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
+	 *         recognized.
 	 */
 	public static CTLAU getFromXMLRepresentation(Element element) {
 		assert element.getNodeName().equals("CTL-AU");
@@ -85,21 +97,23 @@ public class CTLAU extends CTLBilateralFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.softevo.ctl.ctl.CTLFormula#calculateHashCode()
 	 */
 	@Override
 	protected int calculateHashCode() {
 		final int prime = 29;
 		int result = 1;
-		result = (prime * result) + ((this.f == null) ? 0 : this.f.hashCode());
-		result = (prime * result) + ((this.g == null) ? 0 : this.g.hashCode());
+		result = (prime * result) + ((this.f == null)
+		                                             ? 0
+		                                             : this.f.hashCode());
+		result = (prime * result) + ((this.g == null)
+		                                             ? 0
+		                                             : this.g.hashCode());
 		return result;
 	}
 	
 	/**
-	 * Returns the left hand-side of this formula. Specifically, for A (f U g)
-	 * returns f.
+	 * Returns the left hand-side of this formula. Specifically, for A (f U g) returns f.
 	 * 
 	 * @return The left-hand side of this formula.
 	 */
@@ -109,8 +123,7 @@ public class CTLAU extends CTLBilateralFormula {
 	}
 	
 	/**
-	 * Returns the right hand-side of this formula. Specifically, for A (f U g)
-	 * returns g.
+	 * Returns the right hand-side of this formula. Specifically, for A (f U g) returns g.
 	 * 
 	 * @return The right-hand side of this formula.
 	 */
@@ -121,10 +134,7 @@ public class CTLAU extends CTLBilateralFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo
-	 * .tikanga.ops.OutputVerbosity)
+	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
 	public String getTextRepresentation(OutputVerbosity verbosity) {
@@ -133,10 +143,7 @@ public class CTLAU extends CTLBilateralFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom
-	 * .Document)
+	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
 	public Element getXMLRepresentation(Document xml) {
@@ -152,10 +159,7 @@ public class CTLAU extends CTLBilateralFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke
-	 * .KripkeStructure)
+	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
 	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
@@ -166,7 +170,7 @@ public class CTLAU extends CTLBilateralFormula {
 		// A (f U g) = not (E ((not g) U ((not f) and (not g))) or EG (not g))
 		// First check E ((not g) U ((not f) and (not g))).
 		CTLFormula sub1 = CTLEU.get(CTLNegation.get(this.g),
-				CTLConjunction.get(CTLNegation.get(this.f), CTLNegation.get(this.g)));
+		                            CTLConjunction.get(CTLNegation.get(this.f), CTLNegation.get(this.g)));
 		sub1.modelCheckAllStates(kripkeStruct);
 		
 		// Now check not g.

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -44,7 +41,7 @@ public class LogIterator implements Iterator<LogEntry> {
 	private boolean          seenEnd      = false;
 	
 	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision,
-	        @NotEqualsInt(ref = 0) final int cacheSize) {
+	        @NotEqualsInt (ref = 0) final int cacheSize) {
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
 		} else if (startRevision.equals("HEAD")) {
@@ -62,23 +59,24 @@ public class LogIterator implements Iterator<LogEntry> {
 		this.repository = repository;
 		this.cacheSize = cacheSize;
 		
-		String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2 - 1);
+		final String relativeTransactionId = repository.getRelativeTransactionId(this.startRevision,
+		                                                                         (this.cacheSize / 2) - 1);
 		this.currentEntries = repository.log(this.startRevision, relativeTransactionId);
 		
 		if (!relativeTransactionId.equals(endRevision)) {
-			String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize / 2);
-			String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision, this.cacheSize - 1);
+			final String nextStartTransactionId = repository.getRelativeTransactionId(this.startRevision,
+			                                                                          this.cacheSize / 2);
+			final String nextEndTransactionId = repository.getRelativeTransactionId(this.startRevision,
+			                                                                        this.cacheSize - 1);
 			this.nextEntries = repository.log(nextStartTransactionId, nextEndTransactionId);
 		}
 		if (Logger.logDebug()) {
 			Logger.debug("LogIterator: endRevision=" + this.endRevision);
 		}
 		
-		Condition
-		        .notNull(this.currentEntries,
-		                "The current entries should never be null at this point. This would imply that there is nothing to do.");
-		Condition
-		        .check(!this.currentEntries.isEmpty(),
+		Condition.notNull(this.currentEntries,
+		                  "The current entries should never be null at this point. This would imply that there is nothing to do.");
+		Condition.check(!this.currentEntries.isEmpty(),
 		                "The current entries should never be empty at this point. This would imply that there is nothing to do.");
 	}
 	
@@ -109,7 +107,12 @@ public class LogIterator implements Iterator<LogEntry> {
 			}
 			return null;
 		} else {
-			LogEntry entry = this.currentEntries.get(this.currentIndex);
+			
+			if (Logger.logTrace()) {
+				Logger.trace("LogIterator.currentIndex: " + this.currentIndex);
+			}
+			
+			final LogEntry entry = this.currentEntries.get(this.currentIndex);
 			this.currentIndex++;
 			
 			if (entry.getRevision().equals(this.endRevision)
@@ -145,13 +148,13 @@ public class LogIterator implements Iterator<LogEntry> {
 	
 	public synchronized void update() {
 		if (Logger.logDebug()) {
-			Logger.debug("Fetching next " + this.cacheSize / 2 + " logs.");
+			Logger.debug("Fetching next " + (this.cacheSize / 2) + " logs.");
 		}
 		
-		String nextStart = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
-		        this.cacheSize / 2);
-		String nextEnd = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
-		        this.cacheSize - 1);
+		final String nextStart = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
+		                                                                  this.cacheSize / 2);
+		final String nextEnd = this.repository.getRelativeTransactionId(this.currentEntries.get(0).getRevision(),
+		                                                                this.cacheSize - 1);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("LogIterator: nextStart=" + nextStart);

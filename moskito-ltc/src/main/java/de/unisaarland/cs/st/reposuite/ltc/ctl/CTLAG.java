@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.reposuite.ltc.ctl;
 
 import org.w3c.dom.Document;
@@ -7,8 +20,7 @@ import de.unisaarland.cs.st.reposuite.ltc.kripke.KripkeStructure;
 import de.unisaarland.cs.st.reposuite.ltc.kripke.State;
 
 /**
- * Instances of this class represent CTL AG formulas. "AG f" means that "along
- * all paths, globally f"
+ * Instances of this class represent CTL AG formulas. "AG f" means that "along all paths, globally f"
  * 
  * @author Andrzej Wasylkowski
  */
@@ -25,13 +37,12 @@ public class CTLAG extends CTLComposedFormula {
 	}
 	
 	/**
-	 * Returns (creating it, if necessary) the CTL formula represented by the
-	 * given XML element.
+	 * Returns (creating it, if necessary) the CTL formula represented by the given XML element.
 	 * 
 	 * @param element
 	 *            XML representation of the CTL formula to create.
-	 * @return CTL formula, as represented by the given XML element, or
-	 *         <code>null</code>, if the element was not recognized.
+	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
+	 *         recognized.
 	 */
 	public static CTLAG getFromXMLRepresentation(Element element) {
 		assert element.getNodeName().equals("CTL-AG");
@@ -54,14 +65,15 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.softevo.ctl.ctl.CTLFormula#calculateHashCode()
 	 */
 	@Override
 	protected int calculateHashCode() {
 		final int prime = 23;
 		int result = 1;
-		result = (prime * result) + ((this.formula == null) ? 0 : this.formula.hashCode());
+		result = (prime * result) + ((this.formula == null)
+		                                                   ? 0
+		                                                   : this.formula.hashCode());
 		return result;
 	}
 	
@@ -77,10 +89,7 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo
-	 * .tikanga.ops.OutputVerbosity)
+	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
 	public String getTextRepresentation(OutputVerbosity verbosity) {
@@ -89,10 +98,7 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom
-	 * .Document)
+	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
 	public Element getXMLRepresentation(Document xml) {
@@ -103,10 +109,7 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke
-	 * .KripkeStructure)
+	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
 	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs;
 
@@ -41,25 +38,24 @@ import org.jfree.data.xy.DefaultXYDataset;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidProtocolType;
 import de.unisaarland.cs.st.moskito.exceptions.InvalidRepositoryURI;
 import de.unisaarland.cs.st.moskito.exceptions.UnsupportedProtocolType;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.elements.AnnotationEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.moskito.rcs.elements.RevDependencyIterator;
 import de.unisaarland.cs.st.moskito.rcs.mercurial.MercurialRepository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import difflib.Delta;
 
 /**
- * The Class Repository. Every repository connector that extends this class has
- * to be named [Repotype]Repository. E.g. DarksRepository. Additionally it is
- * mandatory to add a new enum constant in {@link RepositoryType}.
+ * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
+ * DarksRepository. Additionally it is mandatory to add a new enum constant in {@link RepositoryType}.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
 public abstract class Repository {
@@ -87,17 +83,15 @@ public abstract class Repository {
 	                                               String revision);
 	
 	/**
-	 * Checks out the given relative path in repository and returns the file
-	 * handle to the checked out file. If the path is a directory, the file
-	 * handle will point to the specified directory. If the relative path points
-	 * to a file, the file handle will do so too.
+	 * Checks out the given relative path in repository and returns the file handle to the checked out file. If the path
+	 * is a directory, the file handle will point to the specified directory. If the relative path points to a file, the
+	 * file handle will do so too.
 	 * 
 	 * @param relativeRepoPath
 	 *            the relative repository path
 	 * @param revision
 	 *            the revision
-	 * @return The file handle to the checked out, corresponding file or
-	 *         directory.
+	 * @return The file handle to the checked out, corresponding file or directory.
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
 	                                  String revision);
@@ -111,7 +105,7 @@ public abstract class Repository {
 	                             final boolean withInterface) {
 		LogEntry previous = null;
 		
-		for (LogEntry entry : logEntries) {
+		for (final LogEntry entry : logEntries) {
 			// check monotonic timestamp property
 			if (previous != null) {
 				if (entry.getDateTime().isBefore(previous.getDateTime())) {
@@ -149,17 +143,17 @@ public abstract class Repository {
 	 * @return
 	 */
 	private JFreeChart createFileCountPerTransaction(final List<LogEntry> entries) {
-		List<Double> revisions = new ArrayList<Double>(entries.size());
-		List<Double> files = new ArrayList<Double>(entries.size());
+		final List<Double> revisions = new ArrayList<Double>(entries.size());
+		final List<Double> files = new ArrayList<Double>(entries.size());
 		int i = 0;
-		double[][] datapoints = new double[6][entries.size()];
+		final double[][] datapoints = new double[6][entries.size()];
 		
 		ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
 		BarRenderer.setDefaultShadowsVisible(false);
 		
-		for (LogEntry entry : entries) {
+		for (final LogEntry entry : entries) {
 			revisions.add(Double.parseDouble(entry.getRevision()));
-			Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
+			final Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
 			files.add((double) changedPaths.size());
 			
 			datapoints[0][i] = revisions.get(i);
@@ -172,10 +166,10 @@ public abstract class Repository {
 			++i;
 		}
 		
-		DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
+		final DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
 		idataset.addSeries(new String("Files per revision"), datapoints);
-		JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files", idataset,
-		                                                 PlotOrientation.VERTICAL, true, false, false);
+		final JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files",
+		                                                       idataset, PlotOrientation.VERTICAL, true, false, false);
 		
 		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
 		
@@ -187,13 +181,13 @@ public abstract class Repository {
 	 * @return
 	 */
 	private JFreeChart createTimePerTransaction(final List<LogEntry> entries) {
-		DefaultXYDataset dataset = new DefaultXYDataset();
-		double[][] datapoints = new double[2][entries.size()];
+		final DefaultXYDataset dataset = new DefaultXYDataset();
+		final double[][] datapoints = new double[2][entries.size()];
 		
-		List<Double> revisions = new ArrayList<Double>(entries.size());
-		List<Double> times = new ArrayList<Double>(entries.size());
+		final List<Double> revisions = new ArrayList<Double>(entries.size());
+		final List<Double> times = new ArrayList<Double>(entries.size());
 		
-		for (LogEntry entry : entries) {
+		for (final LogEntry entry : entries) {
 			// timestamp per revision
 			revisions.add(Double.parseDouble(entry.getRevision()));
 			times.add((double) entry.getDateTime().getMillis() / (1000));
@@ -218,11 +212,11 @@ public abstract class Repository {
 	 */
 	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries,
 	                                               final double threshold) {
-		Map<String, Double> authors = new HashMap<String, Double>();
+		final Map<String, Double> authors = new HashMap<String, Double>();
 		
-		for (LogEntry entry : entries) {
+		for (final LogEntry entry : entries) {
 			// commits
-			String author = entry.getAuthor().toString();
+			final String author = entry.getAuthor().toString();
 			if (authors.containsKey(author)) {
 				authors.put(author, authors.get(author) + 1.0);
 			} else {
@@ -230,12 +224,12 @@ public abstract class Repository {
 			}
 		}
 		
-		DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
+		final DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
 		
 		double others = 0.0d;
 		int otherCount = 0;
-		for (String key : authors.keySet()) {
-			if (authors.get(key) > entries.size() / 35) {
+		for (final String key : authors.keySet()) {
+			if (authors.get(key) > (entries.size() / 35)) {
 				cdataset.addValue(authors.get(key), key, new String("authors"));
 			} else {
 				others += authors.get(key);
@@ -244,8 +238,8 @@ public abstract class Repository {
 		}
 		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
 		
-		return ChartFactory.createBarChart("Commits per Author (threshold " + 100d * threshold / entries.size() + "%)",
-		                                   "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
+		return ChartFactory.createBarChart("Commits per Author (threshold " + ((100d * threshold) / entries.size())
+		        + "%)", "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
 	}
 	
 	/**
@@ -264,8 +258,7 @@ public abstract class Repository {
 	                                       String revisedRevision);
 	
 	/**
-	 * @return a string containing information about the instrumented
-	 *         library/tool (e.g. version, ...)
+	 * @return a string containing information about the instrumented library/tool (e.g. version, ...)
 	 */
 	public abstract String gatherToolInformation();
 	
@@ -284,7 +277,7 @@ public abstract class Repository {
 	 * @return the endRevision
 	 */
 	public String getEndRevision() {
-		return endRevision;
+		return this.endRevision;
 	}
 	
 	/**
@@ -301,8 +294,7 @@ public abstract class Repository {
 	 *            (not null)
 	 * @param pathName
 	 *            (not null)
-	 * @return Returns the former path name iff the file/directory was renamed.
-	 *         Null otherwise.
+	 * @return Returns the former path name iff the file/directory was renamed. Null otherwise.
 	 */
 	public abstract String getFormerPathName(String revision,
 	                                         String pathName);
@@ -328,8 +320,7 @@ public abstract class Repository {
 	public abstract String getHEADRevisionId();
 	
 	/**
-	 * Returns the relative transaction id to the given one. Result is bounded
-	 * by startRevision and endRevision.
+	 * Returns the relative transaction id to the given one. Result is bounded by startRevision and endRevision.
 	 * 
 	 * @param transactionId
 	 * @param index
@@ -340,9 +331,8 @@ public abstract class Repository {
 	
 	/**
 	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
-	 * @return the {@link RepositoryType} of the connector class determined by
-	 *         naming convention. See the java-doc of {@link Repository} for
-	 *         details.
+	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
+	 *         {@link Repository} for details.
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass()
@@ -352,51 +342,38 @@ public abstract class Repository {
 		                                                     - Repository.class.getSimpleName().length()).toUpperCase());
 	}
 	
-	/**
-	 * Gets the rev dependency iterator.
-	 * 
-	 * @return the rev dependency iterator
-	 */
-	public abstract RevDependencyIterator getRevDependencyIterator();
+	public abstract IRevDependencyGraph getRevDependencyGraph();
+	
+	public abstract IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
 	
 	/**
 	 * @return the startRevision
 	 */
 	public String getStartRevision() {
-		return startRevision;
+		return this.startRevision;
 	}
 	
 	/**
 	 * @return the startTransaction
 	 */
 	public RCSTransaction getStartTransaction() {
-		return startTransaction;
+		return this.startTransaction;
 	}
 	
 	/**
-	 * @return the total number of revisions in the repository, -1 if error
-	 *         occured
+	 * @return the total number of revisions in the repository, -1 if error occured
 	 */
 	public abstract long getTransactionCount();
 	
 	/**
-	 * Returns the transaction id string to the transaction determined by the
-	 * given index.
+	 * Returns the transaction id string to the transaction determined by the given index.
 	 * 
 	 * @param index
 	 *            Starts at 0
-	 * @return the corresponding transaction id (e.g. for reposuite
-	 *         {@link MercurialRepository#getTransactionId(long)} returns
-	 *         021e7e97724b for 3.
+	 * @return the corresponding transaction id (e.g. for reposuite {@link MercurialRepository#getTransactionId(long)}
+	 *         returns 021e7e97724b for 3.
 	 */
 	public abstract String getTransactionId(long index);
-	
-	/**
-	 * @return
-	 */
-	public URI getUri() {
-		return uri;
-	}
 	
 	// /**
 	// * This method extracts the fragment of the URI, saves the given uri
@@ -438,8 +415,15 @@ public abstract class Repository {
 	// }
 	
 	/**
-	 * Returns the path of the directory that contains the local
-	 * copy/clone/checkout of the repository (the working copy)
+	 * @return
+	 */
+	public URI getUri() {
+		return this.uri;
+	}
+	
+	/**
+	 * Returns the path of the directory that contains the local copy/clone/checkout of the repository (the working
+	 * copy)
 	 * 
 	 * @return
 	 */
@@ -466,8 +450,7 @@ public abstract class Repository {
 	 *            the to revision
 	 * @param cacheSize
 	 *            the cache size
-	 * @return Iterator running from <code>fromRevisions</code> to
-	 *         <code>toRevision</code>
+	 * @return Iterator running from <code>fromRevisions</code> to <code>toRevision</code>
 	 */
 	public Iterator<LogEntry> log(final String fromRevision,
 	                              final String toRevision,
@@ -508,6 +491,10 @@ public abstract class Repository {
 	 *            first revision to take into account (may be null)
 	 * @param endRevision
 	 *            last revision to take into account (may be null)
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -519,10 +506,12 @@ public abstract class Repository {
 	 */
 	public abstract void setup(URI address,
 	                           String startRevision,
-	                           String endRevision) throws MalformedURLException,
-	                                              InvalidProtocolType,
-	                                              InvalidRepositoryURI,
-	                                              UnsupportedProtocolType;
+	                           String endRevision,
+	                           BranchFactory branchFactory,
+	                           File tmpDir) throws MalformedURLException,
+	                                       InvalidProtocolType,
+	                                       InvalidRepositoryURI,
+	                                       UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -537,6 +526,10 @@ public abstract class Repository {
 	 *            the username
 	 * @param password
 	 *            the password
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -550,10 +543,12 @@ public abstract class Repository {
 	                           String startRevision,
 	                           String endRevision,
 	                           String username,
-	                           String password) throws MalformedURLException,
-	                                           InvalidProtocolType,
-	                                           InvalidRepositoryURI,
-	                                           UnsupportedProtocolType;
+	                           String password,
+	                           BranchFactory branchFactory,
+	                           File tmpDir) throws MalformedURLException,
+	                                       InvalidProtocolType,
+	                                       InvalidRepositoryURI,
+	                                       UnsupportedProtocolType;
 	
 	/**
 	 * @param uri

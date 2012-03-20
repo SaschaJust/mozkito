@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -31,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -91,9 +88,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getMaxPossibleScore()
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getMaxPossibleScore()
 	 */
 	@Override
 	public double getMaxPossibleScore() {
@@ -102,41 +97,40 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor
-	 * #getScore(java.lang.Object, java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
+	 * java.lang.Object)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
-		String filePath1 = op1.getChangedElementLocation().getFilePath();
-		String filePath2 = op2.getChangedElementLocation().getFilePath();
+		final String filePath1 = op1.getChangedElementLocation().getFilePath();
+		final String filePath2 = op2.getChangedElementLocation().getFilePath();
 		
 		if (!filePath1.equals(filePath2)) {
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
 		// build path for file to analyze
-		File file = new File(this.checkoutDir.getAbsolutePath() + op1.getChangedPath());
+		final File file = new File(this.checkoutDir.getAbsolutePath() + op1.getChangedPath());
 		
-		String cacheFileName = this.transaction.getId() + ".dd";
-		File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
+		final String cacheFileName = this.transaction.getId() + ".dd";
+		final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
 		try {
 			if ((this.currentCacheFile != null) && (!this.currentCacheFile.getName().equals(cacheFile.getName()))) {
 				if ((this.cacheDir != null) && (cacheFile.exists())) {
-					ObjectInputStream objIn = new ObjectInputStream(
-					                                                new BufferedInputStream(
-					                                                                        new FileInputStream(
-					                                                                                            cacheFile)));
+					final ObjectInputStream objIn = new ObjectInputStream(
+					                                                      new BufferedInputStream(
+					                                                                              new FileInputStream(
+					                                                                                                  cacheFile)));
 					this.cache = (Map<String, Set<Set<Integer>>>) objIn.readObject();
 					objIn.close();
 				}
 			}
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} catch (ClassNotFoundException e) {
+		} catch (final FileNotFoundException e) {
+		} catch (final IOException e) {
+		} catch (final ClassNotFoundException e) {
 		}
 		
 		if ((!this.cache.containsKey(file.getAbsolutePath())) && (file.exists())) {
@@ -147,26 +141,26 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				this.cache.put(file.getAbsolutePath(), null);
 			}
 			
-			File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			final File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
-			String[] arguments = new String[] { "-vmargs", "-Din=file://" + file.getAbsolutePath(),
+			final String[] arguments = new String[] { "-vmargs", "-Din=file://" + file.getAbsolutePath(),
 			        "-Dout=file://" + eclipseOutFile.getAbsolutePath() };
 			
 			// run the data dependency eclipse app on that file
-			Tuple<Integer, List<String>> response = CommandExecutor.execute(this.eclipseDir.getAbsolutePath()
-			                                                                        + FileUtils.fileSeparator
-			                                                                        + "eclipse", arguments,
-			                                                                this.eclipseDir, null,
-			                                                                new HashMap<String, String>());
+			final Tuple<Integer, List<String>> response = CommandExecutor.execute(this.eclipseDir.getAbsolutePath()
+			                                                                              + FileUtils.fileSeparator
+			                                                                              + "eclipse", arguments,
+			                                                                      this.eclipseDir, null,
+			                                                                      new HashMap<String, String>());
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					sb.append("Could not generate data dependency for file ");
 					sb.append(file.getAbsolutePath());
 					sb.append(". Reason:");
 					sb.append(FileUtils.lineSeparator);
 					if (response.getSecond() != null) {
-						for (String s : response.getSecond()) {
+						for (final String s : response.getSecond()) {
 							sb.append(s);
 							sb.append(FileUtils.lineSeparator);
 						}
@@ -179,25 +173,25 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			BufferedReader reader = null;
 			try {
 				reader = new BufferedReader(new FileReader(eclipseOutFile));
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
 				this.cache.put(file.getAbsolutePath(), null);
 			}
 			
-			Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
+			final Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
 			String line = "";
 			try {
 				while ((line = reader.readLine()) != null) {
-					String[] lineParts = line.split(",");
-					Set<Integer> set = new HashSet<Integer>();
-					for (String s : lineParts) {
+					final String[] lineParts = line.split(",");
+					final Set<Integer> set = new HashSet<Integer>();
+					for (final String s : lineParts) {
 						set.add(Integer.valueOf(s));
 					}
 					lineDependencies.add(set);
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
@@ -208,27 +202,27 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			
 			// store changed cache
 			try {
-				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cacheFile));
+				final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cacheFile));
 				out.writeObject(this.cache);
 				out.close();
 				this.currentCacheFile = cacheFile;
-			} catch (FileNotFoundException e) {
+			} catch (final FileNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e.getMessage(), e);
 				}
 			}
 		}
 		
-		Set<Set<Integer>> lineDependencies = this.cache.get(file.getAbsolutePath());
+		final Set<Set<Integer>> lineDependencies = this.cache.get(file.getAbsolutePath());
 		if (lineDependencies == null) {
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
-		for (Set<Integer> set : lineDependencies) {
+		for (final Set<Integer> set : lineDependencies) {
 			if (!op1.getChangedElementLocation().coversAnyLine(set).equals(LineCover.FALSE)) {
 				if (!op2.getChangedElementLocation().coversAnyLine(set).equals(LineCover.FALSE)) {
 					return 1;

@@ -1,31 +1,24 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.registerable.Registered;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
@@ -38,84 +31,119 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class MappingArguments extends AndamaArgumentSet {
+public class MappingArguments extends ArgumentSet<MappingFinder> {
 	
-	private final Set<Registered> registereds = new HashSet<Registered>();
+	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
+	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
+	private final Set<MappingFilter>   filters    = new HashSet<MappingFilter>();
+	private final Set<MappingSelector> selectors  = new HashSet<MappingSelector>();
+	private final Set<MappingSplitter> splitters  = new HashSet<MappingSplitter>();
+	private final Set<MappingTrainer>  trainers   = new HashSet<MappingTrainer>();
 	
 	/**
-	 * @param isRequired
-	 * @param mappingSettings
-	 * 
+	 * @param argumentSet
+	 * @param requirement
+	 * @throws ArgumentRegistrationException
 	 */
-	public MappingArguments(final AndamaChain chain, final MappingSettings settings, final boolean isRequired) {
-		super();
+	public MappingArguments(final ArgumentSet<?> argumentSet, final Requirement requirement)
+	        throws ArgumentRegistrationException {
+		super(argumentSet, "Definies mapping specific settings.", requirement);
 		
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "engines", MappingEngine.class,
-		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "filters", MappingFilter.class,
-		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "selectors", MappingSelector.class,
-		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "splitters", MappingSplitter.class,
-		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "strategies", MappingStrategy.class,
-		                                                    isRequired));
-		this.registereds.addAll(Registered.handleRegistered(chain, settings, this, "trainers", MappingTrainer.class,
-		                                                    isRequired));
+		this.engines.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingEngine.class, "bleh blub",
+		                                                        new Required(), null, "Mapping", "Engines", true));
+		
+		this.filters.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingFilter.class, "bleh blub",
+		                                                        new Required(), null, "Mapping", "Filters", true));
+		
+		this.selectors.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingSelector.class, "bleh blub",
+		                                                          new Required(), null, "Mapping", "Selectors", true));
+		
+		this.splitters.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingSplitter.class, "bleh blub",
+		                                                          new Required(), null, "Mapping", "Splitters", true));
+		
+		this.strategies.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingStrategy.class, "bleh blub",
+		                                                           new Required(), null, "Mapping", "Strategies", true));
+		
+		this.trainers.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingTrainer.class, "bleh blub",
+		                                                         new Required(), null, "Mapping", "Trainers", true));
+	}
+	
+	/**
+	 * @return
+	 */
+	public Set<MappingEngine> getEngines() {
+		return this.engines;
+	}
+	
+	/**
+	 * @return the filters
+	 */
+	public final Set<MappingFilter> getFilters() {
+		return this.filters;
+	}
+	
+	/**
+	 * @return the selectors
+	 */
+	public final Set<MappingSelector> getSelectors() {
+		return this.selectors;
+	}
+	
+	/**
+	 * @return the splitters
+	 */
+	public final Set<MappingSplitter> getSplitters() {
+		return this.splitters;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Set<MappingStrategy> getStrategies() {
+		return this.strategies;
+	}
+	
+	/**
+	 * @return the trainers
+	 */
+	public final Set<MappingTrainer> getTrainers() {
+		return this.trainers;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
+	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
 	 */
 	@Override
-	public MappingFinder getValue() {
+	protected boolean init() {
 		final MappingFinder finder = new MappingFinder();
-		final Map<Class<? extends Registered>, Method> methodMap = new HashMap<Class<? extends Registered>, Method>();
-		final Method[] methods = finder.getClass().getMethods();
 		
-		try {
-			for (final Registered registered : this.registereds) {
-				if (methodMap.containsKey(registered.getClass())) {
-					// method finder.addXXX already known
-					methodMap.get(registered.getClass()).invoke(finder, registered);
-				} else {
-					// look up finder.addXXX method
-					boolean found = false;
-					Class<?> registeredSubClass = registered.getClass();
-					
-					while (!found && (registeredSubClass != Object.class)) {
-						for (final Method method : methods) {
-							if (method.getName().startsWith("add")) {
-								if ((method.getParameterTypes().length == 1)
-								        && (method.getParameterTypes()[0] == registeredSubClass)) {
-									found = true;
-									methodMap.put(registered.getClass(), method);
-									method.invoke(finder, registered);
-									break;
-								}
-							}
-						}
-						registeredSubClass = registeredSubClass.getSuperclass();
-					}
-					if (!found) {
-						
-						if (Logger.logError()) {
-							Logger.error("Could not find 'add' method in " + MappingFinder.class.getSimpleName()
-							        + " for type " + registered.getClass().getSimpleName());
-						}
-						throw new UnrecoverableError("Could not find 'add' method in "
-						        + MappingFinder.class.getSimpleName() + " for type "
-						        + registered.getClass().getSimpleName());
-					}
-				}
-			}
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e.getMessage(), e);
+		for (final MappingEngine engine : this.engines) {
+			finder.addEngine(engine);
 		}
 		
-		return finder;
+		for (final MappingStrategy strategy : this.strategies) {
+			finder.addStrategy(strategy);
+		}
+		
+		for (final MappingFilter filter : this.filters) {
+			finder.addFilter(filter);
+		}
+		
+		for (final MappingSelector selector : this.selectors) {
+			finder.addSelector(selector);
+		}
+		
+		for (final MappingSplitter splitter : this.splitters) {
+			finder.addSplitter(splitter);
+		}
+		
+		for (final MappingTrainer trainer : this.trainers) {
+			finder.addTrainer(trainer);
+		}
+		
+		setCachedValue(finder);
+		return true;
 	}
 	
 }

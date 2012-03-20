@@ -9,7 +9,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonTuple;
 import de.unisaarland.cs.st.moskito.persistence.model.StringTuple;
-
 import java.util.Date;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -17,7 +16,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Sep 02 15:26:32 CEST 2011")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class HistoryElement_ {
     public static volatile SingularAttribute<HistoryElement,Long> bugId;
     public static volatile MapAttribute<HistoryElement,String,DateTimeTuple> changedDateValues;

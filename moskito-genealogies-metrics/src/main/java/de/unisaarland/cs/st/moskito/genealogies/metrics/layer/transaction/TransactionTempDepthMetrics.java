@@ -1,8 +1,22 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
 
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
@@ -10,19 +24,18 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal.Universa
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-
 public class TransactionTempDepthMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
 	
+	private final UniversalTempDepthMetrics<RCSTransaction> universalMetric;
 	
-	private UniversalTempDepthMetrics<RCSTransaction> universalMetric;
-	
-	public TransactionTempDepthMetrics(TransactionChangeGenealogy genealogy) {
+	public TransactionTempDepthMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalTempDepthMetrics<RCSTransaction>(genealogy, this);
+		this.universalMetric = new UniversalTempDepthMetrics<RCSTransaction>(genealogy, this);
 	}
 	
 	@Override
-	public int daysDiff(RCSTransaction t1, RCSTransaction t2) {
+	public int daysDiff(final RCSTransaction t1,
+	                    final RCSTransaction t2) {
 		return DaysBetweenUtils.getDaysBetween(t1, t2);
 	}
 	
@@ -32,8 +45,11 @@ public class TransactionTempDepthMetrics extends GenealogyTransactionMetric impl
 	}
 	
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyTransactionNode item) {
-		return universalMetric.handle(item.getNode());
+	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
+		if (Logger.logDebug()) {
+			Logger.debug(this.getClass().getCanonicalName() + " handles node " + item.getNodeId());
+		}
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings;
 
@@ -25,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
@@ -57,23 +54,22 @@ public class ChangeCouplingRuleFactory {
 	 *            the min support
 	 * @param minConfidence
 	 *            the min confidence
-	 * @return the change coupling rules (sorted descending by confidence and
-	 *         support)
+	 * @return the change coupling rules (sorted descending by confidence and support)
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction transaction,
-			@Positive final int minSupport,
-			@LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
-			final PersistenceUtil persistenceUtil) {
+	                                                                    @Positive final int minSupport,
+	                                                                    final double minConfidence,
+	                                                                    final PersistenceUtil persistenceUtil) {
 		
 		updateProcedures(persistenceUtil);
 		
-		LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
+		final LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-					+ persistenceUtil.getType() + ").");
+			        + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
@@ -81,18 +77,18 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.commitTransaction();
 		
 		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
-				+ tablename + "')");
-		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-				+ tablename);
+		        + tablename + "')");
+		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
+		        + tablename);
 		if (list == null) {
 			return null;
 		}
-		for (Object[] row : list) {
-			int support = (Integer) row[2];
-			double confidence = (Double) row[3];
+		for (final Object[] row : list) {
+			final int support = (Integer) row[2];
+			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
-				String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
-				Integer[] premise = new Integer[premises.length];
+				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
+				final Integer[] premise = new Integer[premises.length];
 				for (int i = 0; i < premises.length; ++i) {
 					premise[i] = Integer.valueOf(premises[i]);
 				}
@@ -123,24 +119,24 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@NoneNull
 	public static LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
-			@Positive final int minSupport,
-			@LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
-			final Set<String> relevantMethodNames,
-			final PersistenceUtil persistenceUtil) {
+	                                                                        @Positive final int minSupport,
+	                                                                        @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
+	                                                                        final Set<String> relevantMethodNames,
+	                                                                        final PersistenceUtil persistenceUtil) {
 		updateProcedures(persistenceUtil);
 		
-		LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
+		final LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
 		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
-					+ persistenceUtil.getType() + ").");
+			        + persistenceUtil.getType() + ").");
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
 		tablename = "reposuite_method_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		StringBuilder query = new StringBuilder();
+		final StringBuilder query = new StringBuilder();
 		query.append("select reposuite_method_changecouplings('");
 		query.append(transaction.getId());
 		query.append("','");
@@ -156,19 +152,19 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.executeNativeQuery(query.toString());
 		
 		@SuppressWarnings ("unchecked")
-		List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
-				+ tablename);
+		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
+		        + tablename);
 		if (list == null) {
 			return null;
 		}
-		for (Object[] row : list) {
-			int support = (Integer) row[2];
-			double confidence = (Double) row[3];
+		for (final Object[] row : list) {
+			final int support = (Integer) row[2];
+			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
 				
 				// {org.joda.time.convert.ConverterManager.ConverterManager(),org.joda.time.convert.ReadableIntervalConverter.getDurationMillis(Object)}
 				
-				String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
+				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
 				result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence, persistenceUtil));
 			}
 		}
@@ -183,9 +179,9 @@ public class ChangeCouplingRuleFactory {
 		if (!updatedQueries) {
 			try {
 				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(
-								ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
-										+ "change_file_couplings.psql")));
+				                                           new InputStreamReader(
+				                                                                 ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                                         + "change_file_couplings.psql")));
 				
 				StringBuilder query = new StringBuilder();
 				String line = "";
@@ -198,9 +194,9 @@ public class ChangeCouplingRuleFactory {
 				persistenceUtil.executeNativeQuery(query.toString());
 				
 				reader = new BufferedReader(
-						new InputStreamReader(
-								ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
-										+ "change_method_couplings.psql")));
+				                            new InputStreamReader(
+				                                                  ChangeCouplingRuleFactory.class.getResourceAsStream(FileUtils.fileSeparator
+				                                                          + "change_method_couplings.psql")));
 				query = new StringBuilder();
 				line = "";
 				while ((line = reader.readLine()) != null) {
@@ -209,10 +205,10 @@ public class ChangeCouplingRuleFactory {
 				}
 				persistenceUtil.executeNativeQuery(query.toString());
 				
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not update the stored procedure to compute change couplings! Reason: "
-							+ e.getMessage());
+					        + e.getMessage());
 				}
 			}
 			updatedQueries = true;

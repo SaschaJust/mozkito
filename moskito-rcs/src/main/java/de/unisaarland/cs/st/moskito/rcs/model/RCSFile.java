@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -21,7 +18,6 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
@@ -53,8 +49,8 @@ public class RCSFile implements Annotated, Serializable {
 	private static final long   serialVersionUID = 7232712367403624199L;
 	private long                generatedId;
 	
-	private Map<String, String> changedNames = new HashMap<String, String>();
-
+	private Map<String, String> changedNames     = new HashMap<String, String>();
+	
 	/**
 	 * used by PersistenceUtil to create a {@link RCSFile} instance
 	 */
@@ -83,7 +79,7 @@ public class RCSFile implements Annotated, Serializable {
 	 */
 	@Transient
 	public void assignTransaction(final RCSTransaction transaction,
-			final String pathName) {
+	                              final String pathName) {
 		getChangedNames().put(transaction.getId(), pathName);
 	}
 	
@@ -102,7 +98,7 @@ public class RCSFile implements Annotated, Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		RCSFile other = (RCSFile) obj;
+		final RCSFile other = (RCSFile) obj;
 		if (getGeneratedId() != other.getGeneratedId()) {
 			return false;
 		}
@@ -148,33 +144,11 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return
 	 */
 	@Transient
-	public String getPath(RCSTransaction transaction) {
+	public String getPath(final RCSTransaction transaction) {
 		RCSTransaction current = transaction;
 		
 		while ((current != null) && !getChangedNames().containsKey(current.getId())) {
-			
-			// if current transaction is a merge
-			Set<RCSTransaction> currentParents = current.getParents();
-			if (currentParents.size() > 1) {
-				TreeSet<RCSTransaction> hits = new TreeSet<RCSTransaction>();
-				// for each merged branch check if it contains any of the
-				// transaction ids
-				for (RCSTransaction p : currentParents) {
-					RCSBranch parentBranch = p.getBranch();
-					if ((!parentBranch.equals(current.getBranch())) && (!parentBranch.equals(RCSBranch.MASTER))) {
-						hits.addAll(parentBranch.containsAnyTransaction(getChangedNames().keySet()));
-					}
-				}
-				// if we found a branch that contains a transaction and got
-				// merged here
-				if (hits.size() > 0) {
-					// mark it as hit and continue
-					current = hits.last();
-					continue;
-				}
-			}
-			
-			current = current.getParent(current.getBranch());
+			current = current.getBranchParent();
 		}
 		
 		if (current != null) {
@@ -182,9 +156,9 @@ public class RCSFile implements Annotated, Serializable {
 		} else {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
-						+ transaction.getId() + ". Returning latestPath.");
+				        + transaction.getId() + ". Returning latestPath.");
 			}
-			//FIXME see https://hg.st.cs.uni-saarland.de/issues/271
+			// FIXME see https://hg.st.cs.uni-saarland.de/issues/271
 			return getLatestPath();
 		}
 	}
@@ -228,7 +202,7 @@ public class RCSFile implements Annotated, Serializable {
 	@Override
 	public String toString() {
 		return "RCSFile [id=" + getGeneratedId() + ", changedNames="
-				+ JavaUtils.collectionToString(getChangedNames().values()) + "]";
+		        + JavaUtils.collectionToString(getChangedNames().values()) + "]";
 	}
 	
 }

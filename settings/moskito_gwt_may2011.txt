@@ -1,7 +1,7 @@
-database.name=reposuite_gwt_may2011
+database.name=moskito_gwt_may2011
 database.user=miner
 database.password=miner
-database.host=quentin.cs.uni-saarland.de
+database.host=grid1.st.cs.uni-saarland.de
 log.level=info
 repository.uri=/data/kim/miner_repos/web-toolkit/svn_repo_19.05.2011.git/
 repository.type=GIT
@@ -10,10 +10,16 @@ tracker.type=GOOGLE
 tracker.stop=6386
 headless
 
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/mosktio/eclipse-apps/linux/eclipse-mosktio-callgraph/
+datadependency.eclipse = /data/kim/mosktio/eclipse-apps/linux/eclipse-mosktio-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/gwt
 package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/gwt/
+
+#### Moskito Genealogies
+genealogy.graphdb=/data/kim/genealogies/gwt/may2011/
+genealogy.metric.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_fileMetrics.csv
+fix.pattern="(issue number|bug|issue|#|fixes:|issues)\\s*:?\\s*({bugids}\\d+(,\\s*\\d+)*)"

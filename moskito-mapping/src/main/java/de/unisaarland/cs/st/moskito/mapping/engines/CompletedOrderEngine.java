@@ -1,28 +1,26 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -35,7 +33,8 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class CompletedOrderEngine extends MappingEngine {
 	
-	private double scoreReportResolvedBeforeTransaction = -1d;
+	private double         scoreReportResolvedBeforeTransaction = -1d;
+	private DoubleArgument doubleArgument;
 	
 	/**
 	 * 
@@ -45,9 +44,17 @@ public class CompletedOrderEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription
-	 * ()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setScoreReportResolvedBeforeTransaction(this.doubleArgument.getValue());
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
 	 */
 	@Override
 	public String getDescription() {
@@ -63,55 +70,40 @@ public class CompletedOrderEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		super.init();
-		setScoreReportResolvedBeforeTransaction((Double) getOption("confidence").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
-		super.register(settings, arguments);
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Score in case the report was resolved before the transaction.",
-		                     this.scoreReportResolvedBeforeTransaction + "", true);
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
+		this.doubleArgument = new DoubleArgument(set, "confidence",
+		                                         "Score in case the report was resolved before the transaction.",
+		                                         this.scoreReportResolvedBeforeTransaction + "", Requirement.required);
+		return true;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
+		double confidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			score.addFeature(getScoreReportResolvedBeforeTransaction(), FieldKey.CREATION_TIMESTAMP.name(),
-			                 transaction.getTimestamp().toString(), transaction.getTimestamp().toString(),
-			                 FieldKey.CREATION_TIMESTAMP.name(),
-			                 report.getResolution() != null
-			                                               ? report.getResolutionTimestamp().toString()
-			                                               : unknown,
-			                 report.getResolution() != null
-			                                               ? report.getResolutionTimestamp().toString()
-			                                               : unknown, this.getClass());
+			confidence = getScoreReportResolvedBeforeTransaction();
 		}
+		
+		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
+		           transaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
+		           report.getResolutionTimestamp());
+		
 	}
 	
 	/**
@@ -124,8 +116,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {

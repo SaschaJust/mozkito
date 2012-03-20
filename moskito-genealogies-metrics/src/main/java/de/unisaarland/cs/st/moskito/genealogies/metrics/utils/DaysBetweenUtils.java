@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.metrics.utils;
 
 import java.util.Collection;
@@ -8,10 +21,10 @@ import org.joda.time.Days;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-
 public class DaysBetweenUtils {
 	
-	public static int getDaysBetween(Collection<JavaChangeOperation> p1, Collection<JavaChangeOperation> p2) {
+	public static int getDaysBetween(Collection<JavaChangeOperation> p1,
+	                                 Collection<JavaChangeOperation> p2) {
 		DateTime p1EarlyTime = null;
 		DateTime p1LateTime = null;
 		
@@ -52,12 +65,14 @@ public class DaysBetweenUtils {
 		
 	}
 	
-	public static int getDaysBetween(JavaChangeOperation op1, JavaChangeOperation op2) {
+	public static int getDaysBetween(JavaChangeOperation op1,
+	                                 JavaChangeOperation op2) {
 		return Math.abs(Days.daysBetween(op1.getRevision().getTransaction().getTimestamp(),
-		        op2.getRevision().getTransaction().getTimestamp()).getDays());
+		                                 op2.getRevision().getTransaction().getTimestamp()).getDays());
 	}
 	
-	public static int getDaysBetween(RCSTransaction t1, RCSTransaction t2) {
+	public static int getDaysBetween(RCSTransaction t1,
+	                                 RCSTransaction t2) {
 		return Math.abs(Days.daysBetween(t1.getTimestamp(), t2.getTimestamp()).getDays());
 	}
 	

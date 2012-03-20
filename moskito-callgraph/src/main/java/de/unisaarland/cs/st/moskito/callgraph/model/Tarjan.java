@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.model;
 
@@ -24,8 +21,6 @@ import java.util.Set;
 import edu.uci.ics.jung.graph.DirectedGraph;
 
 public class Tarjan<V, E> {
-	
-	
 	
 	private static class Node<V> {
 		
@@ -40,7 +35,7 @@ public class Tarjan<V, E> {
 	
 	private final Map<Object, Node<V>> nodes = new HashMap<Object, Node<V>>();
 	private int                        index = 0;
-	private final ArrayList<Node<V>> stack = new ArrayList<Node<V>>();
+	private final ArrayList<Node<V>>   stack = new ArrayList<Node<V>>();
 	private final Set<Set<V>>          SCC   = new HashSet<Set<V>>();
 	
 	private void clear() {
@@ -50,6 +45,7 @@ public class Tarjan<V, E> {
 		this.SCC.clear();
 		
 	}
+	
 	private Node<V> getNode(final V v) {
 		if (!this.nodes.containsKey(v)) {
 			this.nodes.put(v, new Node<V>(v));
@@ -57,7 +53,7 @@ public class Tarjan<V, E> {
 		return this.nodes.get(v);
 	}
 	
-	public Set<Set<V>> getStronglyConnectedComponents(final DirectedGraph<V,E> graph) {
+	public Set<Set<V>> getStronglyConnectedComponents(final DirectedGraph<V, E> graph) {
 		Set<Set<V>> result = new HashSet<Set<V>>();
 		
 		for (V v : graph.getVertices()) {
@@ -68,7 +64,8 @@ public class Tarjan<V, E> {
 		return result;
 	}
 	
-	public Set<Set<V>> tarjan(final Node<V> v, final DirectedGraph<V, E> graph) {
+	public Set<Set<V>> tarjan(final Node<V> v,
+	                          final DirectedGraph<V, E> graph) {
 		
 		v.index = this.index;
 		v.lowlink = this.index;

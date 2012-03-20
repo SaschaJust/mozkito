@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -23,9 +20,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import de.unisaarland.cs.st.moskito.ppa.utils.JavaElementLocations;
 
 /**
- * The Class JavaElementDefinitionCache. All instances extending JavaElement
- * must be stored here. Careful! Instances must be created new or fetched within
- * the persister.
+ * The Class JavaElementDefinitionCache. All instances extending JavaElement must be stored here. Careful! Instances
+ * must be created new or fetched within the persister.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
@@ -39,6 +35,12 @@ public class JavaElementLocationSet {
 	
 	/** The method call locations. */
 	private final List<JavaElementLocation> methodCallLocations = new LinkedList<JavaElementLocation>();
+	
+	private JavaElementFactory              elementFactory;
+	
+	public JavaElementLocationSet(JavaElementFactory factory) {
+		this.elementFactory = factory;
+	}
 	
 	/**
 	 * Adds an anonymous class definition to the set.
@@ -67,7 +69,7 @@ public class JavaElementLocationSet {
 	                                                       @NotNegative final int position,
 	                                                       @NotNegative final int bodyStartLine) {
 		
-		JavaClassDefinition definition = JavaElementFactory.getAnonymousClassDefinition(parent, fullQualifiedName);
+		JavaClassDefinition definition = elementFactory.getAnonymousClassDefinition(parent, fullQualifiedName);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.classDefLocations.add(location);
@@ -97,7 +99,7 @@ public class JavaElementLocationSet {
 	                                              @NotNegative final int endLine,
 	                                              @NotNegative final int position,
 	                                              @NotNegative final int bodyStartLine) {
-		JavaClassDefinition definition = JavaElementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
+		JavaClassDefinition definition = elementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.classDefLocations.add(location);
@@ -133,7 +135,7 @@ public class JavaElementLocationSet {
 	                                         @NotNegative final int startLine,
 	                                         @NotNegative final int endLine,
 	                                         @NotNegative final int position) {
-		JavaMethodCall call = JavaElementFactory.getMethodCall(objectName, methodName, signature, parent);
+		JavaMethodCall call = elementFactory.getMethodCall(objectName, methodName, signature, parent);
 		JavaElementLocation location = new JavaElementLocation(call, startLine, endLine, position, -1, file);
 		this.methodCallLocations.add(location);
 		return location;
@@ -168,7 +170,7 @@ public class JavaElementLocationSet {
 	                                               @NotNegative final int endLine,
 	                                               @NotNegative final int position,
 	                                               final int bodyStartLine) {
-		JavaMethodDefinition definition = JavaElementFactory.getMethodDefinition(objectName, methodName, signature);
+		JavaMethodDefinition definition = elementFactory.getMethodDefinition(objectName, methodName, signature);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.methodDefLocations.add(location);

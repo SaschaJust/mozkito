@@ -5,7 +5,6 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.model;
 
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
-
 import java.util.Date;
 import javax.persistence.metamodel.SingularAttribute;
 import org.joda.time.DateTime;
@@ -13,7 +12,7 @@ import org.joda.time.DateTime;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.AttachmentEntry.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Sep 02 15:26:32 CEST 2011")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class AttachmentEntry_ {
     public static volatile SingularAttribute<AttachmentEntry,DateTime> deltaTS;
     public static volatile SingularAttribute<AttachmentEntry,String> description;

@@ -1,4 +1,4 @@
-database.name=reposuite_jruby_july2010
+database.name=moskito_jruby_july2010
 database.user=miner
 database.password=miner
 log.level=info
@@ -9,7 +9,7 @@ tracker.type=JIRA
 tracker.stop=5811
 tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
 headless
-#mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
+#mapping.config.regexFile=file:///scratch/just/moskito/settings/moskito_xstream_may2011.regex
 #mapping.score.AuthorEquality=1
 #mapping.score.AuthorInequality=0
 #mapping.score.ReportCreatedAfterTransaction=1
@@ -19,11 +19,22 @@ headless
 
 ##### Untangling options: #####
 
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/jruby/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/jruby/eclipse-moskito-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/jruby/eclipse-moskito-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/jruby/
 changecouplings.cache.dir = /data/kim/cache.filechangecouplings/jruby/
 package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/jruby/
+
+
+##### Genealogy Metrics #####
+fix.pattern=JRUBY-({bugids}\\d+)
+#genealogy.graphdb=/data/kim/genealogies/jruby/july2010/
+genealogy.graphdb=/tmpfs/jruby/july2010/
+genealogy.metric.level=TRANSACTION
+#genealogy.metric.out=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_metrics.csv
+#genealogy.metric.fileAggregate.out=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_fileMetrics.csv
+genealogy.metric.out=/tmpfs/jruby/jruby_july2010_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/tmpfs/jruby/jruby_july2010_genealogy_transaction_fileMetrics.csv

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
@@ -59,8 +56,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 */
 	@NoneNull
 	public static String composeFullQualifiedName(final String parentName,
-			final String methodName,
-			final List<String> signature) {
+	                                              final String methodName,
+	                                              final List<String> signature) {
 		StringBuilder sb = new StringBuilder();
 		
 		String localParentName = parentName;
@@ -79,8 +76,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * 
 	 * @param element
 	 *            the element
-	 * @return the java method definition is successful, <code>null</code>
-	 *         otherwise.
+	 * @return the java method definition is successful, <code>null</code> otherwise.
 	 */
 	public static JavaMethodDefinition fromXMLRepresentation(final org.jdom.Element element) {
 		if (!element.getName().equals(JAVA_METHOD_DEFINITION)) {
@@ -181,9 +177,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElementDefinition#equals
-	 * (java.lang.Object)
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElementDefinition#equals (java.lang.Object)
 	 */
 	@Override
 	public boolean equals(final Object obj) {
@@ -219,9 +213,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation
-	 * (org.w3c.dom.Document)
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation (org.w3c.dom.Document)
 	 */
 	@Override
 	public Element getXMLRepresentation() {
@@ -234,16 +226,15 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.ppa.model.JavaElementDefinition#hashCode()
+	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElementDefinition#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = (prime * result) + ((getSignature() == null)
-				? 0
-						: getSignature().hashCode());
+		                                                     ? 0
+		                                                     : getSignature().hashCode());
 		return result;
 	}
 	
@@ -253,7 +244,6 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * @param signature
 	 *            the new signature
 	 */
-	@NoneNull
 	protected void setSignature(final List<String> signature) {
 		this.signature = signature;
 	}

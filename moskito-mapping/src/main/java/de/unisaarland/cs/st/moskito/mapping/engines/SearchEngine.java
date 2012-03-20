@@ -1,27 +1,32 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import static net.ownhero.dev.ioda.StringUtils.truncate;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Required;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -39,7 +44,21 @@ import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
  */
 public abstract class SearchEngine extends MappingEngine {
 	
-	private LuceneStorage storage;
+	private LuceneStorage  storage;
+	private String         language;
+	private long           minTokens;
+	private StringArgument languageArgument;
+	private LongArgument   minTokensArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setMinTokens(this.minTokensArgument.getValue());
+		setLanguage(this.languageArgument.getValue());
+	}
 	
 	/**
 	 * @param queryString
@@ -62,7 +81,7 @@ public abstract class SearchEngine extends MappingEngine {
 			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
 			
-			if (terms.size() < (Long) getOption("minTokens").getSecond().getValue()) {
+			if (terms.size() < getMinTokens()) {
 				return null;
 			}
 		} catch (final ParseException e) {
@@ -70,6 +89,20 @@ public abstract class SearchEngine extends MappingEngine {
 		}
 		
 		return query;
+	}
+	
+	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return this.language;
+	}
+	
+	/**
+	 * @return the minTokens
+	 */
+	public long getMinTokens() {
+		return this.minTokens;
 	}
 	
 	/**
@@ -81,8 +114,22 @@ public abstract class SearchEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#provideStorage
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.minTokensArgument = new LongArgument(set, "minTokens", "Minimum number of tokens required for a search.",
+		                                          "3", new Required());
+		this.languageArgument = new StringArgument(set, "language", "Language used for stemming", "en:English",
+		                                           new Required());
+		
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#provideStorage
 	 * (de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage)
 	 */
 	@Override
@@ -91,41 +138,55 @@ public abstract class SearchEngine extends MappingEngine {
 		this.storage = getStorage(LuceneStorage.class);
 		
 		if (storage != null) {
-			final String value = (String) getOption("language").getSecond().getValue();
+			final String value = getLanguage();
 			final String[] split = value.split(":");
+			Class<?> clazz = null;
+			Constructor<?> constructor = null;
+			final String className = "org.apache.lucene.analysis." + split[0] + "." + split[1] + "Analyzer";
 			try {
 				if (this.storage.getAnalyzer() == null) {
-					final Class<?> clazz = Class.forName("org.apache.lucene.analysis." + split[0] + "." + split[1]
-					        + "Analyzer");
-					final Constructor<?> constructor = clazz.getConstructor(Version.class);
+					clazz = Class.forName(className);
+					constructor = clazz.getConstructor(Version.class);
 					final Analyzer newInstance = (Analyzer) constructor.newInstance(Version.LUCENE_31);
 					this.storage.setAnalyzer(newInstance);
 				}
-			} catch (final Exception e) {
+			} catch (final ClassNotFoundException e) {
+				throw new ClassLoadingError(e, className);
+			} catch (final SecurityException e) {
+				throw new UnrecoverableError(e);
+			} catch (final NoSuchMethodException e) {
+				throw new NoSuchConstructorError(e, Version.class);
+			} catch (final IllegalArgumentException e) {
+				throw new UnrecoverableError(e);
+			} catch (final InstantiationException e) {
+				throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, clazz, constructor, Version.LUCENE_31);
+			} catch (final IllegalAccessException e) {
+				throw new UnrecoverableError(e);
+			} catch (final InvocationTargetException e) {
 				throw new UnrecoverableError(e);
 			}
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
+	/**
+	 * @param language
+	 *            the language to set
 	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
-		super.register(settings, arguments);
-		registerLongOption(settings, arguments, "minTokens", "Minimum number of tokens required for a search.", "3",
-		                   true);
-		registerStringOption(settings, arguments, "language", "Language used for stemming.", "en:English", true);
+	private final void setLanguage(final String language) {
+		this.language = language;
+	}
+	
+	/**
+	 * @param minTokens
+	 *            the minTokens to set
+	 */
+	private final void setMinTokens(final long minTokens) {
+		this.minTokens = minTokens;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#
-	 * storageDependency()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine# storageDependency()
 	 */
 	@Override
 	public Set<Class<? extends MappingStorage>> storageDependency() {

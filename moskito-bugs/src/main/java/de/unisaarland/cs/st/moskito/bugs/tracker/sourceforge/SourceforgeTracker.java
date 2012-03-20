@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -39,9 +36,11 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
@@ -60,6 +59,8 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
@@ -110,7 +111,7 @@ public class SourceforgeTracker extends Tracker {
 				                                                         Report.class.getDeclaredField("component"));
 				                                                     put("summary",
 				                                                         Report.class.getDeclaredField("subject"));
-			                                                     } catch (Exception e) {
+			                                                     } catch (final Exception e) {
 				                                                     if (Logger.logError()) {
 					                                                     Logger.error("No such field in "
 					                                                             + Report.class.getSimpleName() + ": "
@@ -123,7 +124,7 @@ public class SourceforgeTracker extends Tracker {
 	private static Priority buildPriority(final String value) {
 		// 1..9;
 		// UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
-		int priority = Integer.parseInt(value);
+		final int priority = Integer.parseInt(value);
 		switch (priority) {
 			case 1:
 			case 2:
@@ -216,7 +217,7 @@ public class SourceforgeTracker extends Tracker {
 	
 	private static Element getDeepestChild(final Element e) {
 		@SuppressWarnings ("rawtypes")
-		List children = e.getChildren();
+		final List children = e.getChildren();
 		if (children.size() > 1) {
 			return null;
 		} else if (children.size() < 1) {
@@ -234,6 +235,7 @@ public class SourceforgeTracker extends Tracker {
 	public boolean checkRAW(final RawReport rawReport) {
 		boolean retValue = super.checkRAW(rawReport);
 		
+		// checking for the report to have at least 1000 characters
 		retValue &= rawReport.getContent().length() > 1000;
 		
 		return retValue;
@@ -241,48 +243,47 @@ public class SourceforgeTracker extends Tracker {
 	
 	@Override
 	public boolean checkXML(final XmlReport xmlReport) {
-		boolean retValue = super.checkXML(xmlReport);
+		final boolean retValue = super.checkXML(xmlReport);
 		
 		return retValue;
 	}
 	
 	@Override
 	public XmlReport createDocument(final RawReport rawReport) {
-		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-			Document document = saxBuilder.build(reader);
+			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+			final Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
-		} catch (TransformerFactoryConfigurationError e) {
+		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot create XML document!", e);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot create XML document!", e);
 			}
-		} catch (JDOMException e) {
+		} catch (final JDOMException e) {
 			if (Logger.logError()) {
 				Logger.error("Cannot create XML document!", e);
 			}
 		}
-		
-		return null;
+		throw new UnrecoverableError();
 	}
 	
 	protected Set<Long> getIdsFromHTTPUri(final URI uri) throws SAXException, IOException {
-		Regex groupIdRegex = new Regex(groupIdPattern);
+		final Regex groupIdRegex = new Regex(groupIdPattern);
 		groupIdRegex.find(uri.toString());
-		String groupId = groupIdRegex.getGroup("group_id");
+		final String groupId = groupIdRegex.getGroup("group_id");
 		if (groupId == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not extract group_id from uri: " + uri.toString());
 			}
 		}
-		Regex atIdRegex = new Regex(atIdPattern);
+		final Regex atIdRegex = new Regex(atIdPattern);
 		atIdRegex.find(uri.toString());
-		String atId = atIdRegex.getGroup("atid");
+		final String atId = atIdRegex.getGroup("atid");
 		if (atId == null) {
 			if (Logger.logError()) {
 				Logger.error("Could not extract atid from uri: " + uri.toString());
@@ -291,35 +292,35 @@ public class SourceforgeTracker extends Tracker {
 		
 		String baseUriString = uri.toString();
 		
-		Regex limitRegex = new Regex(limitPattern);
+		final Regex limitRegex = new Regex(limitPattern);
 		limitRegex.find(uri.toString());
-		String limit = limitRegex.getGroup("limit");
+		final String limit = limitRegex.getGroup("limit");
 		if (limit == null) {
 			baseUriString += "&limit=100";
 		} else {
 			baseUriString = limitRegex.replaceAll(uri.toString(), "limit=100");
 		}
 		
-		Regex offsetRegex = new Regex(offsetPattern);
+		final Regex offsetRegex = new Regex(offsetPattern);
 		offsetRegex.find(uri.toString());
-		String offsetString = offsetRegex.getGroup("offset");
+		final String offsetString = offsetRegex.getGroup("offset");
 		if (offsetString != null) {
 			baseUriString = offsetRegex.replaceAll(uri.toString(), "");
 		}
 		baseUriString += "&offset=";
-		Set<Long> ids = new HashSet<Long>();
+		final Set<Long> ids = new HashSet<Long>();
 		
 		int offset = 0;
 		boolean running = true;
 		while (running) {
-			String nextUri = baseUriString + offset;
+			final String nextUri = baseUriString + offset;
 			offset += 100;
-			URL url = new URL(nextUri);
-			SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
+			final URL url = new URL(nextUri);
+			final SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
 			
-			StringBuilder htmlSB = new StringBuilder();
+			final StringBuilder htmlSB = new StringBuilder();
 			// write file to disk
 			String line = "";
 			while ((line = br.readLine()) != null) {
@@ -328,7 +329,7 @@ public class SourceforgeTracker extends Tracker {
 			}
 			br.close();
 			
-			String html = htmlSB.toString();
+			final String html = htmlSB.toString();
 			
 			if ((html.contains("There was an error processing your request ..."))
 			        || (html.contains("No results were found to match your current search criteria."))) {
@@ -336,27 +337,27 @@ public class SourceforgeTracker extends Tracker {
 				break;
 			}
 			
-			SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
 			try {
-				Document document = saxBuilder.build(new StringReader(html));
-				XMLOutputter outp = new XMLOutputter();
+				final Document document = saxBuilder.build(new StringReader(html));
+				final XMLOutputter outp = new XMLOutputter();
 				outp.setFormat(Format.getPrettyFormat());
-				String xml = outp.outputString(document);
+				final String xml = outp.outputString(document);
 				
 				br = new BufferedReader(new StringReader(xml));
-				XMLReader parser = XMLReaderFactory.createXMLReader();
+				final XMLReader parser = XMLReaderFactory.createXMLReader();
 				parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 				parser.setContentHandler(parseHandler);
-				InputSource inputSource = new InputSource(br);
+				final InputSource inputSource = new InputSource(br);
 				parser.parse(inputSource);
 				
-				Set<Long> idSet = parseHandler.getIDs();
+				final Set<Long> idSet = parseHandler.getIDs();
 				if (idSet.size() < 1) {
 					running = false;
 				} else {
 					ids.addAll(idSet);
 				}
-			} catch (JDOMException e) {
+			} catch (final JDOMException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not convert overview to XHTML!", e);
 				}
@@ -370,13 +371,13 @@ public class SourceforgeTracker extends Tracker {
 	public void getIdsFromURI(final URI uri) {
 		if (uri.getScheme().equals("file")) {
 			// FIXME this will fail on ?+*
-			Regex regex = new Regex(".*" + pattern.replace(bugIdPlaceholder, "({bugid}\\d+)"));
-			File baseDir = new File(uri.getPath());
+			final Regex regex = new Regex(".*" + this.pattern.replace(getBugidplaceholder(), "({bugid}\\d+)"));
+			final File baseDir = new File(uri.getPath());
 			
 			if (baseDir.exists() && baseDir.isDirectory() && baseDir.canExecute() && baseDir.canRead()) {
-				Collection<File> files = FileUtils.listFiles(baseDir, null, true);
+				final Collection<File> files = FileUtils.listFiles(baseDir, null, true);
 				
-				for (File file : files) {
+				for (final File file : files) {
 					if (regex.find(file.getAbsolutePath()) != null) {
 						addBugId(Long.parseLong(regex.getGroup("bugid")));
 					}
@@ -393,15 +394,15 @@ public class SourceforgeTracker extends Tracker {
 			}
 		} else if ((uri.getScheme().equals("http")) || (uri.getScheme().equals("https"))) {
 			try {
-				Set<Long> idsFromHTTPUri = getIdsFromHTTPUri(uri);
-				for (Long id : idsFromHTTPUri) {
+				final Set<Long> idsFromHTTPUri = getIdsFromHTTPUri(uri);
+				for (final Long id : idsFromHTTPUri) {
 					addBugId(id);
 				}
-			} catch (SAXException e) {
+			} catch (final SAXException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not fetch all bug report IDs from sourceforge!", e);
 				}
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Could not fetch all bug report IDs from sourceforge!", e);
 				}
@@ -412,14 +413,73 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			if (Logger.logError()) {
+				Logger.error("Overview parsing not supported yet.");
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
+	 */
+	@Override
+	public Parser getParser(final XmlReport xmlReport) {
+		// PRECONDITIONS
+		
+		try {
+			return new SourceForgeParser();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	// @Override
+	// public Report parse(final XmlReport xmlReport) {
+	// // System.err.println(document);
+	// // Content content = document.getContent(1);
+	// // Element element = content.getDocument().getRootElement();
+	// final Element element = xmlReport.getDocument().getRootElement();
+	// final Report bugReport = new Report(xmlReport.getId());
+	// bugReport.setLastFetch(xmlReport.getFetchTime());
+	// bugReport.setHash(xmlReport.getMd5());
+	// hangle(bugReport, element, null);
+	//
+	// // check if there is a non-added
+	// if (this.lastHistoryElement != null) {
+	// if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
+	// if (Logger.logWarn()) {
+	// Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
+	// }
+	// }
+	// }
+	//
+	// bugReport.setType(Type.BUG);
+	//
+	// return bugReport;
+	// }
+	
+	/**
+	 * @param bugReport
+	 * @param e
+	 * @param n
+	 */
 	@SuppressWarnings ("unchecked")
 	private void handleDivElement(final Report bugReport,
 	                              Element e,
 	                              final Element n) {
 		if (e.getName().equals("label")) {
 			
-			String fieldName = e.getValue().replaceFirst(":.*", "");
-			String fieldValue = n.getValue();
+			final String fieldName = e.getValue().replaceFirst(":.*", "");
+			final String fieldValue = n.getValue();
 			
 			if (Logger.logTrace()) {
 				Logger.trace("Found field `" + fieldName + "` with value: `" + fieldValue + "`");
@@ -430,8 +490,8 @@ public class SourceforgeTracker extends Tracker {
 			} else if (fieldName.equalsIgnoreCase("Details")) {
 				bugReport.setDescription(fieldValue);
 			} else if (fieldName.equalsIgnoreCase("Submitted")) {
-				Regex submittedRegex = new Regex(submittedPattern);
-				List<RegexGroup> find = submittedRegex.find(fieldValue);
+				final Regex submittedRegex = new Regex(submittedPattern);
+				final List<RegexGroup> find = submittedRegex.find(fieldValue);
 				bugReport.setSubmitter(new Person(find.get(2).getMatch().trim(), find.get(1).getMatch().trim(), null));
 				bugReport.setCreationTimestamp(DateTimeUtils.parseDate(find.get(3).getMatch().trim()));
 			} else if (fieldName.equals("Status")) {
@@ -457,7 +517,7 @@ public class SourceforgeTracker extends Tracker {
 			if (Logger.logTrace()) {
 				Logger.trace("Found field: subject, value: " + n.getValue());
 			}
-			List<RegexGroup> find = subjectRegex.find(n.getValue());
+			final List<RegexGroup> find = this.subjectRegex.find(n.getValue());
 			bugReport.setSubject(find.get(1).getMatch());
 			// bugReport.setId(Long.parseLong(find.get(2).getMatch()));
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("comment_table_container")) {
@@ -472,7 +532,7 @@ public class SourceforgeTracker extends Tracker {
 				e = (Element) e.getChildren().get(2); // tbody
 				
 				// All childs of tbody should be [TR]
-				for (Object commentObject : e.getChildren()) {
+				for (final Object commentObject : e.getChildren()) {
 					
 					// insert correct comment id
 					String comment_id = ((Element) commentObject).getAttributeValue("id");
@@ -496,7 +556,7 @@ public class SourceforgeTracker extends Tracker {
 					// System.err
 					// .println("================================================================================");
 					// System.err.println(e2.getValue());
-					Element commenter = e1.getChild("a", e1.getNamespace());
+					final Element commenter = e1.getChild("a", e1.getNamespace());
 					// System.err.println(">>>" + bugReport.getId());
 					String commenterUsername;
 					String commenterFullname;
@@ -521,9 +581,10 @@ public class SourceforgeTracker extends Tracker {
 					
 					String datetime = e1.getContent(0).getValue().trim();
 					datetime = datetime.substring(datetime.indexOf(" ") + 1, datetime.length());
-					DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
-					String commentBody = e2.getText().trim();
-					Comment comment = new Comment(new Integer(comment_id), commentAuthor, commentTimestamp, commentBody);
+					final DateTime commentTimestamp = DateTimeUtils.parseDate(datetime);
+					final String commentBody = e2.getText().trim();
+					final Comment comment = new Comment(new Integer(comment_id), commentAuthor, commentTimestamp,
+					                                    commentBody);
 					if ((bugReport.getLastUpdateTimestamp() == null)
 					        || (commentTimestamp.isAfter(bugReport.getLastUpdateTimestamp()))) {
 						bugReport.setLastUpdateTimestamp(commentTimestamp);
@@ -543,28 +604,28 @@ public class SourceforgeTracker extends Tracker {
 					}
 				}
 			}
-			Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
-			Element body = tabular.getChild("tbody", tabular.getNamespace());
+			final Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
+			final Element body = tabular.getChild("tbody", tabular.getNamespace());
 			if (body != null) {
-				List<Element> tableRows = body.getChildren("tr", body.getNamespace());
-				for (Element tableRow : tableRows) {
+				final List<Element> tableRows = body.getChildren("tr", body.getNamespace());
+				for (final Element tableRow : tableRows) {
 					
-					Element filenameElem = getDeepestChild((Element) tableRow.getChildren().get(0));
-					Element descriptionElem = getDeepestChild((Element) tableRow.getChildren().get(1));
-					Element aElem = getDeepestChild((Element) tableRow.getChildren().get(2));
+					final Element filenameElem = getDeepestChild((Element) tableRow.getChildren().get(0));
+					final Element descriptionElem = getDeepestChild((Element) tableRow.getChildren().get(1));
+					final Element aElem = getDeepestChild((Element) tableRow.getChildren().get(2));
 					if (aElem == null) {
 						continue;
 					}
 					String href = aElem.getAttributeValue("href");
-					List<RegexGroup> find = new Regex(fileIdPattern).find(href);
+					final List<RegexGroup> find = new Regex(fileIdPattern).find(href);
 					if ((find == null) || (find.size() < 2)) {
 						continue;
 					}
-					String attachId = find.get(1).getMatch();
-					AttachmentEntry attachment = new AttachmentEntry(attachId);
+					final String attachId = find.get(1).getMatch();
+					final AttachmentEntry attachment = new AttachmentEntry(attachId);
 					
 					String description = descriptionElem.getText();
-					Regex htmlCommentRegex = new Regex(htmlCommentPattern, Pattern.MULTILINE | Pattern.DOTALL);
+					final Regex htmlCommentRegex = new Regex(htmlCommentPattern, Pattern.MULTILINE | Pattern.DOTALL);
 					description = htmlCommentRegex.removeAll(description).trim();
 					attachment.setDescription(description.replaceAll("\"", ""));
 					
@@ -579,7 +640,7 @@ public class SourceforgeTracker extends Tracker {
 					}
 					try {
 						attachment.setLink(new URL(href));
-					} catch (MalformedURLException e1) {
+					} catch (final MalformedURLException e1) {
 						if (Logger.logDebug()) {
 							Logger.debug("Could not create link URL when parsing attachemnt.", e);
 						}
@@ -596,14 +657,14 @@ public class SourceforgeTracker extends Tracker {
 					}
 				}
 			}
-			Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
-			Element body = tabular.getChild("tbody", tabular.getNamespace());
+			final Element tabular = (Element) ((Element) e.getParentElement().getContent().get(i)).getContent().get(1);
+			final Element body = tabular.getChild("tbody", tabular.getNamespace());
 			if (body != null) {
-				List<Element> tableRows = body.getChildren("tr", body.getNamespace());
-				for (Element tableRow : tableRows) {
-					Element fieldElement = ((Element) tableRow.getChildren().get(0));
-					Element oldValueElement = ((Element) tableRow.getChildren().get(1));
-					Element datetimeElement = ((Element) tableRow.getChildren().get(2));
+				final List<Element> tableRows = body.getChildren("tr", body.getNamespace());
+				for (final Element tableRow : tableRows) {
+					final Element fieldElement = ((Element) tableRow.getChildren().get(0));
+					final Element oldValueElement = ((Element) tableRow.getChildren().get(1));
+					final Element datetimeElement = ((Element) tableRow.getChildren().get(2));
 					Element authorElement = ((Element) tableRow.getChildren().get(3)).getChild("a",
 					                                                                           tableRow.getNamespace());
 					if (authorElement == null) {
@@ -624,21 +685,21 @@ public class SourceforgeTracker extends Tracker {
 						authorUsername = authorUsername.trim();
 					}
 					
-					Person author = new Person(authorUsername, authorFullname, null);
+					final Person author = new Person(authorUsername, authorFullname, null);
 					
 					Field field = null;
 					field = fieldMap.get(fieldElement.getValue().toLowerCase().trim());
 					if (field == null) {
 						if (fieldElement.getValue().toLowerCase().trim().equals("file added")) {
 							// search for attachment and set fields
-							String[] splitValues = oldValueElement.getValue().trim().split(":");
+							final String[] splitValues = oldValueElement.getValue().trim().split(":");
 							if (splitValues.length != 2) {
 								if (Logger.logWarn()) {
 									Logger.warn("Could not identify attachment file. Failed to extract file id.");
 								}
 							}
-							String attachId = splitValues[0].trim();
-							for (AttachmentEntry attachment : bugReport.getAttachmentEntries()) {
+							final String attachId = splitValues[0].trim();
+							for (final AttachmentEntry attachment : bugReport.getAttachmentEntries()) {
 								if (attachment.getId().equals(attachId)) {
 									attachment.setTimestamp(DateTimeUtils.parseDate(datetimeElement.getValue()));
 									attachment.setAuthor(author);
@@ -653,20 +714,24 @@ public class SourceforgeTracker extends Tracker {
 						continue;
 					}
 					
-					DateTime dateTime = DateTimeUtils.parseDate(datetimeElement.getValue());
+					final DateTime dateTime = DateTimeUtils.parseDate(datetimeElement.getValue());
 					
-					if (lastHistoryElement == null) {
-						lastHistoryElement = new HistoryElement(bugReport.getId(), author,
-						                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
+					if (this.lastHistoryElement == null) {
+						this.lastHistoryElement = new HistoryElement(
+						                                             bugReport.getId(),
+						                                             author,
+						                                             DateTimeUtils.parseDate(datetimeElement.getValue()));
 					} else {
-						if (!lastHistoryElement.getTimestamp().isEqual(dateTime)) {
-							if (!bugReport.addHistoryElement(lastHistoryElement)) {
+						if (!this.lastHistoryElement.getTimestamp().isEqual(dateTime)) {
+							if (!bugReport.addHistoryElement(this.lastHistoryElement)) {
 								if (Logger.logWarn()) {
-									Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
+									Logger.warn("Could not add historyElement " + this.lastHistoryElement.toString());
 								}
 							}
-							lastHistoryElement = new HistoryElement(bugReport.getId(), author,
-							                                        DateTimeUtils.parseDate(datetimeElement.getValue()));
+							this.lastHistoryElement = new HistoryElement(
+							                                             bugReport.getId(),
+							                                             author,
+							                                             DateTimeUtils.parseDate(datetimeElement.getValue()));
 						}
 					}
 					
@@ -675,7 +740,7 @@ public class SourceforgeTracker extends Tracker {
 					// Object newValue =
 					// historicReport.getField(field.getName());
 					
-					History history = bugReport.getHistory().get(field.getName());
+					final History history = bugReport.getHistory().get(field.getName());
 					Object newValue = null;
 					
 					if (history.isEmpty()) {
@@ -684,26 +749,26 @@ public class SourceforgeTracker extends Tracker {
 						try {
 							method = Report.class.getMethod("get" + Character.toUpperCase(field.getName().charAt(0))
 							        + field.getName().substring(1), new Class<?>[0]);
-						} catch (SecurityException e1) {
+						} catch (final SecurityException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
 							}
-						} catch (NoSuchMethodException e1) {
+						} catch (final NoSuchMethodException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
 							}
 						}
 						try {
 							newValue = method.invoke(bugReport, new Object[0]);
-						} catch (IllegalArgumentException e1) {
+						} catch (final IllegalArgumentException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
 							}
-						} catch (IllegalAccessException e1) {
+						} catch (final IllegalAccessException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
 							}
-						} catch (InvocationTargetException e1) {
+						} catch (final InvocationTargetException e1) {
 							if (Logger.logError()) {
 								Logger.error("Failed parsing element!", e1);
 							}
@@ -735,17 +800,17 @@ public class SourceforgeTracker extends Tracker {
 						oldValue = DateTimeUtils.parseDate(oldValue.toString());
 					}
 					
-					Tuple<Object, Object> tuple = new Tuple<Object, Object>(oldValue, newValue);
-					HashMap<String, Tuple<Object, Object>> valueMap = new HashMap<String, Tuple<Object, Object>>();
+					final Tuple<Object, Object> tuple = new Tuple<Object, Object>(oldValue, newValue);
+					final HashMap<String, Tuple<Object, Object>> valueMap = new HashMap<String, Tuple<Object, Object>>();
 					valueMap.put(field.getName(), tuple);
-					lastHistoryElement.addChange(valueMap);
+					this.lastHistoryElement.addChange(valueMap);
 				}
 			}
 		} else if ((e.getAttributeValue("id") != null) && e.getAttributeValue("id").equals("commentbar")) {
 			// e = (Element) (e.getChildren() != null ? e.getChildren().get(0) :
 			// null);
-			String s = e.getText().trim();
-			String[] sa = s.split(" +");
+			final String s = e.getText().trim();
+			final String[] sa = s.split(" +");
 			if (sa.length > 3) {
 				// this.bugReport.setCommentCount(Integer.parseInt(sa[2]));
 			}
@@ -755,9 +820,9 @@ public class SourceforgeTracker extends Tracker {
 		
 		// Logger.getLogger(this.getClass()).trace(" " + e.getName() + ":" +
 		// e.getText());
-		List<Element> el = e.getChildren();
+		final List<Element> el = e.getChildren();
 		for (int i = 0; i < el.size(); i++) {
-			if (i + 1 < el.size()) {
+			if ((i + 1) < el.size()) {
 				handleDivElement(bugReport, el.get(i), el.get(i + 1));
 			} else {
 				handleDivElement(bugReport, el.get(i), null);
@@ -781,9 +846,9 @@ public class SourceforgeTracker extends Tracker {
 			// details and header
 			handleDivElement(bugReport, e, n);
 		} else {
-			List<Element> el = e.getChildren();
+			final List<Element> el = e.getChildren();
 			for (int i = 0; i < el.size(); i++) {
-				if (i + 1 < el.size()) {
+				if ((i + 1) < el.size()) {
 					hangle(bugReport, el.get(i), el.get(i + 1));
 				} else {
 					hangle(bugReport, el.get(i), null);
@@ -794,31 +859,6 @@ public class SourceforgeTracker extends Tracker {
 	}
 	
 	@Override
-	public Report parse(final XmlReport xmlReport) {
-		// System.err.println(document);
-		// Content content = document.getContent(1);
-		// Element element = content.getDocument().getRootElement();
-		Element element = xmlReport.getDocument().getRootElement();
-		Report bugReport = new Report(xmlReport.getId());
-		bugReport.setLastFetch(xmlReport.getFetchTime());
-		bugReport.setHash(xmlReport.getMd5());
-		hangle(bugReport, element, null);
-		
-		// check if there is a non-added
-		if (lastHistoryElement != null) {
-			if (!bugReport.addHistoryElement(lastHistoryElement)) {
-				if (Logger.logWarn()) {
-					Logger.warn("Could not add historyElement " + lastHistoryElement.toString());
-				}
-			}
-		}
-		
-		bugReport.setType(Type.BUG);
-		
-		return bugReport;
-	}
-	
-	@Override
 	public void setup(final URI fetchURI,
 	                  final URI overviewURI,
 	                  final String pattern,
@@ -826,11 +866,11 @@ public class SourceforgeTracker extends Tracker {
 	                  final String password,
 	                  final Long startAt,
 	                  final Long stopAt,
-	                  final String cacheDir) throws InvalidParameterException {
+	                  final File cacheDir) throws InvalidParameterException {
 		super.setup(fetchURI, overviewURI, pattern, username, password, startAt, stopAt, cacheDir);
 		
-		if (overviewURI != null) {
-			getIdsFromURI(overviewURI);
+		if (getOverviewURI() != null) {
+			getIdsFromURI(getOverviewURI());
 		} else {
 			if (startAt == null) {
 				this.startAt = 1l;
@@ -844,6 +884,6 @@ public class SourceforgeTracker extends Tracker {
 			}
 		}
 		
-		initialized = true;
+		this.initialized = true;
 	}
 }

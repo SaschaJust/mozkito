@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling;
 
@@ -26,25 +23,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.BooleanArgument;
-import net.ownhero.dev.andama.settings.DirectoryArgument;
-import net.ownhero.dev.andama.settings.DoubleArgument;
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.InputFileArgument;
-import net.ownhero.dev.andama.settings.ListArgument;
-import net.ownhero.dev.andama.settings.LongArgument;
-import net.ownhero.dev.andama.settings.OutputFileArgument;
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
-import serp.util.Strings;
 import de.unisaarland.cs.st.moskito.clustering.AvgCollapseVisitor;
 import de.unisaarland.cs.st.moskito.clustering.MaxCollapseVisitor;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
@@ -52,10 +43,8 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringCollapseVisit
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.moskito.clustering.SumAggregation;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
@@ -63,13 +52,14 @@ import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.LinearRegressionAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingArguments;
+import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingSettings;
 import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.FileChangeCouplingVoter;
@@ -89,8 +79,8 @@ public class Untangling {
 		SUM, VARSUM, LINEAR_REGRESSION, SVM;
 		
 		public static String[] stringValues() {
-			Set<String> values = new HashSet<String>();
-			for (ScoreCombinationMode g : ScoreCombinationMode.values()) {
+			final Set<String> values = new HashSet<String>();
+			for (final ScoreCombinationMode g : ScoreCombinationMode.values()) {
 				values.add(g.toString());
 			}
 			return values.toArray(new String[values.size()]);
@@ -101,8 +91,8 @@ public class Untangling {
 		AVG, MAX, RATIO;
 		
 		public static String[] stringValues() {
-			Set<String> values = new HashSet<String>();
-			for (UntanglingCollapse g : UntanglingCollapse.values()) {
+			final Set<String> values = new HashSet<String>();
+			for (final UntanglingCollapse g : UntanglingCollapse.values()) {
 				values.add(g.toString());
 			}
 			return values.toArray(new String[values.size()]);
@@ -111,83 +101,7 @@ public class Untangling {
 	
 	public static Random                          random          = new Random();
 	
-	/**
-	 * Untangle.̋
-	 * 
-	 * @param blob
-	 *            the blob
-	 * @param numClusters
-	 *            the num clusters
-	 * @param scoreVisitors2
-	 * @param scoreVisitors
-	 *            the score visitors
-	 * @param collapseVisitor
-	 *            the collapse visitor
-	 * @return the sets the
-	 */
-	
 	public long                                   seed;
-	
-	/** The repository arg. */
-	private final RepositoryArguments             repositoryArg;
-	
-	/** The callgraph arg. */
-	private final DirectoryArgument               callgraphArg;
-	
-	/** The blob arg. */
-	private final ListArgument                    atomicChangesArg;
-	
-	/** The use call graph. */
-	private final BooleanArgument                 useCallGraph;
-	
-	/** The database args. */
-	private final DatabaseArguments               databaseArgs;
-	
-	/** The use change couplings. */
-	private final BooleanArgument                 useChangeCouplings;
-	
-	/** The change couplings min support. */
-	private final LongArgument                    changeCouplingsMinSupport;
-	
-	/** The change couplings min confidence. */
-	private final DoubleArgument                  changeCouplingsMinConfidence;
-	
-	/** The package distance arg. */
-	private final LongArgument                    packageDistanceArg;
-	
-	/** The min blob size arg. */
-	private final LongArgument                    minBlobSizeArg;
-	
-	/** The max blob size arg. */
-	private final LongArgument                    maxBlobSizeArg;
-	
-	/** The out arg. */
-	private final OutputFileArgument              outArg;
-	
-	/** The call graph cache dir arg. */
-	private final DirectoryArgument               callGraphCacheDirArg;
-	
-	/** The dry run arg. */
-	private final BooleanArgument                 dryRunArg;
-	
-	/** The use data dependencies. */
-	private final BooleanArgument                 useDataDependencies;
-	
-	/** The datadep arg. */
-	private final DirectoryArgument               datadepArg;
-	
-	/** The n arg. */
-	private final LongArgument                    nArg;
-	
-	private final BooleanArgument                 useTestImpact;
-	
-	private final InputFileArgument               testImpactFileArg;
-	
-	private final LongArgument                    timeArg;
-	
-	private final EnumArgument                    collapseArg;
-	
-	private final EnumArgument                    scoreModeArg;
 	
 	private ScoreAggregation<JavaChangeOperation> aggregator      = null;
 	
@@ -197,147 +111,57 @@ public class Untangling {
 	
 	private final boolean                         dryrun;
 	
-	private PersistenceUtil                       persistenceUtil;
+	private final PersistenceUtil                 persistenceUtil;
 	
-	private final DirectoryArgument               changeCouplingsCacheDirArg;
+	private final RepositoryArguments             repositoryArg;
 	
-	private final DirectoryArgument               dataDependencyCacheDirArg;
+	private final DatabaseArguments               databaseArgs;
+	
+	private final UntanglingArguments             untanglingArgs;
 	
 	/**
 	 * Instantiates a new untangling.
+	 * 
+	 * @throws ArgumentRegistrationException
+	 * @throws SettingsParseError
 	 */
 	public Untangling() {
-		RepositorySettings settings = new RepositorySettings();
+		final UntanglingSettings settings = new UntanglingSettings();
 		
-		this.repositoryArg = settings.setRepositoryArg(true);
-		this.databaseArgs = settings.setDatabaseArgs(true, "untangling");
-		settings.setLoggerArg(false);
-		this.callgraphArg = new DirectoryArgument(
-				settings,
-				"callgraph.eclipse",
-				"Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
-				null, true, false);
+		try {
+			this.repositoryArg = settings.setRepositoryArg(Requirement.required);
+			this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
+			this.untanglingArgs = settings.setUntanglingArgs(Requirement.required);
+			settings.setLoggerArg(Requirement.optional);
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
-		this.atomicChangesArg = new ListArgument(
-				settings,
-				"atomic.transactions",
-				"A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
-				null, false);
+		try {
+			settings.parse();
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 		
-		this.useCallGraph = new BooleanArgument(settings, "vote.callgraph", "Use call graph voter when untangling",
-				"true", false);
-		
-		this.useChangeCouplings = new BooleanArgument(settings, "vote.changecouplings",
-				"Use change coupling voter when untangling", "true", false);
-		
-		this.useDataDependencies = new BooleanArgument(settings, "vote.datadependency",
-				"Use data dependency voter when untangling", "true", false);
-		
-		this.useTestImpact = new BooleanArgument(settings, "vote.testimpact", "Use test coverage information", "true",
-				false);
-		
-		this.testImpactFileArg = new InputFileArgument(settings, "testimpact.in",
-				"File containing a serial version of a ImpactMatrix", null,
-				false);
-		
-		this.datadepArg = new DirectoryArgument(
-				settings,
-				"datadependency.eclipse",
-				"Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
-				null, false, false);
-		
-		this.changeCouplingsMinSupport = new LongArgument(
-				settings,
-				"vote.changecouplings.minsupport",
-				"Set the minimum support for used change couplings to this value",
-				"3", false);
-		this.changeCouplingsMinConfidence = new DoubleArgument(
-				settings,
-				"vote.changecouplings.minconfidence",
-				"Set minimum confidence for used change couplings to this value",
-				"0.7", false);
-		
-		this.packageDistanceArg = new LongArgument(
-				settings,
-				"package.distance",
-				"The maximal allowed distance between packages allowed when generating blobs.",
-				"0", true);
-		
-		this.minBlobSizeArg = new LongArgument(settings, "blobsize.min",
-				"The minimal number of transactions to be combined within a blob.", "2",
-				true);
-		
-		this.maxBlobSizeArg = new LongArgument(
-				settings,
-				"blobsize.max",
-				"The maximal number of transactions to be combined within a blob. (-1 means not limit)",
-				"-1", true);
-		
-		this.outArg = new OutputFileArgument(settings, "out.file", "Write descriptive statistics into this file", null,
-				true, true);
-		
-		this.callGraphCacheDirArg = new DirectoryArgument(
-				settings,
-				"callgraph.cache.dir",
-				"Cache directory containing call graphs using the naming converntion <transactionId>.cg",
-				null, false, false);
-		
-		this.changeCouplingsCacheDirArg = new DirectoryArgument(
-				settings,
-				"changecouplings.cache.dir",
-				"Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
-				null, false, false);
-		
-		this.dataDependencyCacheDirArg = new DirectoryArgument(
-				settings,
-				"datadependency.cache.dir",
-				"Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
-				null, false, false);
-		
-		this.dryRunArg = new BooleanArgument(
-				settings,
-				"dryrun",
-				"Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
-				"false", false);
-		
-		this.nArg = new LongArgument(settings, "n", "Choose n random artificial blobs. (-1 = unlimited)", "-1", false);
-		
-		LongArgument seedArg = new LongArgument(settings, "seed", "Use random seed.", null, false);
-		
-		this.collapseArg = new EnumArgument(settings, "collapse",
-				"Method to collapse when untangling. Possible values "
-						+ StringUtils.join(UntanglingCollapse.stringValues(), ","), "MAX",
-						false, UntanglingCollapse.stringValues());
-		
-		this.timeArg = new LongArgument(
-				settings,
-				"blobWindow",
-				"Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)",
-				"-1", false);
-		
-		this.scoreModeArg = new EnumArgument(settings, "scoreMode",
-				"Method to combine single initial clustering matrix scores. Possbile values: "
-						+ Strings.join(ScoreCombinationMode.values(), ","),
-						ScoreCombinationMode.LINEAR_REGRESSION.toString(), false,
-						ScoreCombinationMode.stringValues());
-		
-		settings.parseArguments();
-		if (seedArg.getValue() != null) {
-			this.seed = seedArg.getValue();
+		if (this.untanglingArgs.getSeedArg().getValue() != null) {
+			this.seed = this.untanglingArgs.getSeedArg().getValue();
 		} else {
 			this.seed = random.nextLong();
 		}
 		random.setSeed(this.seed);
+		
 		this.repository = this.repositoryArg.getValue();
-		this.dryrun = this.dryRunArg.getValue();
+		this.dryrun = this.untanglingArgs.getDryRunArg().getValue();
 		
 		this.databaseArgs.getValue();
-		this.persistenceUtil = null;
-		try {
-			this.persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1.getMessage(), e1);
-		}
+		this.persistenceUtil = this.databaseArgs.getValue();
+		
 	}
 	
 	/**
@@ -350,24 +174,24 @@ public class Untangling {
 	 * @return the int
 	 */
 	private int comparePartitions(final ArtificialBlob blob,
-			final Set<Set<JavaChangeOperation>> partitions) {
+	                              final Set<Set<JavaChangeOperation>> partitions) {
 		
 		Condition.check(blob.getTransactions().size() == partitions.size(),
-				"The size of partitions in artificial blob and the size of untangled partitions must be equal.");
+		                "The size of partitions in artificial blob and the size of untangled partitions must be equal.");
 		
-		List<List<JavaChangeOperation>> originalPartitions = blob.getChangeOperationPartitions();
+		final List<List<JavaChangeOperation>> originalPartitions = blob.getChangeOperationPartitions();
 		
-		PermutationGenerator<Set<JavaChangeOperation>> pGen = new PermutationGenerator<Set<JavaChangeOperation>>(
-				partitions);
+		final PermutationGenerator<Set<JavaChangeOperation>> pGen = new PermutationGenerator<Set<JavaChangeOperation>>(
+		                                                                                                               partitions);
 		
 		int minDiff = Integer.MAX_VALUE;
 		
 		while (pGen.hasMore()) {
-			List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
+			final List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
 			int diff = 0;
 			for (int i = 0; i < nextPermutation.size(); ++i) {
-				Set<JavaChangeOperation> untangledPart = nextPermutation.get(i);
-				List<JavaChangeOperation> originalPart = originalPartitions.get(i);
+				final Set<JavaChangeOperation> untangledPart = nextPermutation.get(i);
+				final List<JavaChangeOperation> originalPart = originalPartitions.get(i);
 				diff += CollectionUtils.subtract(originalPart, untangledPart).size();
 			}
 			if (diff < minDiff) {
@@ -379,20 +203,20 @@ public class Untangling {
 	
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction transaction) {
 		
-		if ((this.testImpactVoter == null) && (this.useTestImpact.getValue())) {
-			File testCoverageIn = this.testImpactFileArg.getValue();
+		if ((this.testImpactVoter == null) && (this.untanglingArgs.getUseTestImpact().getValue())) {
+			final File testCoverageIn = this.untanglingArgs.getTestImpactFileArg().getValue();
 			if (testCoverageIn == null) {
 				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
-						+ this.testImpactFileArg.getName());
+				        + this.untanglingArgs.getTestImpactFileArg().getName());
 			}
 			try {
 				this.testImpactVoter = new TestImpactVoter(testCoverageIn);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
 					Logger.error(e.getMessage(), e);
 				}
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
 					Logger.error(e.getMessage(), e);
@@ -400,7 +224,7 @@ public class Untangling {
 			}
 		}
 		
-		List<String> eclipseArgs = new LinkedList<String>();
+		final List<String> eclipseArgs = new LinkedList<String>();
 		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Dppa");
 		eclipseArgs.add(" -Drepository.uri=file://" + this.repositoryArg.getRepoDirArg().getValue().toString());
@@ -412,40 +236,43 @@ public class Untangling {
 			eclipseArgs.add(" -Drepository.user=" + this.repositoryArg.getUserArg().getValue());
 		}
 		
-		List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
+		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());
 		// add call graph visitor
-		if (this.useCallGraph.getValue()) {
-			scoreVisitors.add(new CallGraphVoter(this.callgraphArg.getValue(),
-					eclipseArgs.toArray(new String[eclipseArgs.size()]), transaction,
-					this.callGraphCacheDirArg.getValue()));
+		if (this.untanglingArgs.getUseCallGraph().getValue()) {
+			scoreVisitors.add(new CallGraphVoter(this.untanglingArgs.getCallgraphArg().getValue(),
+			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]), transaction,
+			                                     this.untanglingArgs.getCallGraphCacheDirArg().getValue()));
 		}
 		
 		// add change coupling visitor
-		if (this.useChangeCouplings.getValue()) {
-			if ((this.changeCouplingsMinConfidence.getValue() == null)
-					|| (this.changeCouplingsMinSupport.getValue() == null)) {
+		if (this.untanglingArgs.getUseChangeCouplings().getValue()) {
+			if ((this.untanglingArgs.getChangeCouplingsMinConfidence().getValue() == null)
+			        || (this.untanglingArgs.getChangeCouplingsMinSupport().getValue() == null)) {
 				throw new UnrecoverableError(
-						"When using change couplings, you have to specify a min support and min confidence value.");
+				                             "When using change couplings, you have to specify a min support and min confidence value.");
 			}
 			
-			File ccCacheDir = this.changeCouplingsCacheDirArg.getValue();
-			scoreVisitors.add(new FileChangeCouplingVoter(transaction, this.changeCouplingsMinSupport.getValue()
-					.intValue(),
-					this.changeCouplingsMinConfidence.getValue().doubleValue(),
-					this.persistenceUtil, ccCacheDir));
+			final File ccCacheDir = this.untanglingArgs.getChangeCouplingsCacheDirArg().getValue();
+			scoreVisitors.add(new FileChangeCouplingVoter(transaction,
+			                                              this.untanglingArgs.getChangeCouplingsMinSupport().getValue()
+			                                                                 .intValue(),
+			                                              this.untanglingArgs.getChangeCouplingsMinConfidence()
+			                                                                 .getValue().doubleValue(),
+			                                              this.persistenceUtil, ccCacheDir));
 		}
 		
 		// add data dependency visitor
-		if (this.useDataDependencies.getValue()) {
-			File dataDepEclipseDir = this.datadepArg.getValue();
+		if (this.untanglingArgs.getUseDataDependencies().getValue()) {
+			final File dataDepEclipseDir = this.untanglingArgs.getDatadepArg().getValue();
 			if (dataDepEclipseDir == null) {
-				throw new UnrecoverableError("When using data dependencies -D" + this.useDataDependencies.getName()
-						+ " you must set the -D" + this.datadepArg.getName() + "!");
+				throw new UnrecoverableError("When using data dependencies -D"
+				        + this.untanglingArgs.getUseDataDependencies().getName() + " you must set the -D"
+				        + this.untanglingArgs.getDatadepArg().getName() + "!");
 			}
 			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, this.repository, transaction,
-					this.dataDependencyCacheDirArg.getValue()));
+			                                          this.untanglingArgs.getDataDependencyCacheDirArg().getValue()));
 		}
 		
 		// add test impact visitor
@@ -458,19 +285,19 @@ public class Untangling {
 	}
 	
 	public List<String> getScoreVisitorNames() {
-		List<String> result = new LinkedList<String>();
+		final List<String> result = new LinkedList<String>();
 		result.add(LineDistanceVoter.class.getSimpleName());
 		result.add(FileDistanceVoter.class.getSimpleName());
-		if (this.useCallGraph.getValue()) {
+		if (this.untanglingArgs.getUseCallGraph().getValue()) {
 			result.add(CallGraphVoter.class.getSimpleName());
 		}
-		if (this.useChangeCouplings.getValue()) {
+		if (this.untanglingArgs.getUseChangeCouplings().getValue()) {
 			result.add(FileChangeCouplingVoter.class.getSimpleName());
 		}
-		if (this.useDataDependencies.getValue()) {
+		if (this.untanglingArgs.getUseDataDependencies().getValue()) {
 			result.add(DataDependencyVoter.class.getSimpleName());
 		}
-		if (this.useTestImpact.getValue()) {
+		if (this.untanglingArgs.getUseTestImpact().getValue()) {
 			result.add(TestImpactVoter.class.getSimpleName());
 		}
 		return result;
@@ -482,35 +309,36 @@ public class Untangling {
 	public void run() {
 		
 		// load the atomic transactions and their change operations
-		List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
+		final List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
 		
-		if (this.atomicChangesArg.getValue() != null) {
-			HashSet<String> atomicTransactions = this.atomicChangesArg.getValue();
-			for (String transactionId : atomicTransactions) {
-				RCSTransaction t = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		if (this.untanglingArgs.getAtomicChangesArg().getValue() != null) {
+			for (final String transactionId : this.untanglingArgs.getAtomicChangesArg().getValue()) {
+				final RCSTransaction t = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				
 				// FIXME this is required due to some unknown problem which
 				// causes NullpointerExceptions becaus Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
 				
-				Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, t);
+				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
+				                                                                                  t);
 				transactions.add(new AtomicTransaction(t, ops));
 			}
 		} else {
-			Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic",
-					true);
-			List<RCSTransaction> atomicTransactions = this.persistenceUtil.load(criteria);
-			for (RCSTransaction t : atomicTransactions) {
+			final Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class)
+			                                                              .eq("atomic", true);
+			final List<RCSTransaction> atomicTransactions = this.persistenceUtil.load(criteria);
+			for (final RCSTransaction t : atomicTransactions) {
 				
 				// FIXME this is required due to some unknown problem which
 				// causes NullpointerExceptions becaus Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
 				
-				Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, t);
-				Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
-				for (JavaChangeOperation op : ops) {
+				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
+				                                                                                  t);
+				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
+				for (final JavaChangeOperation op : ops) {
 					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
 						toRemove.add(op);
 					}
@@ -526,7 +354,7 @@ public class Untangling {
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
 		
 		if (transactions.size() > 50) {
-			Set<AtomicTransaction> randomTransactions = new HashSet<AtomicTransaction>();
+			final Set<AtomicTransaction> randomTransactions = new HashSet<AtomicTransaction>();
 			for (int i = 0; i < 50; ++i) {
 				random.nextInt(transactions.size());
 				randomTransactions.add(transactions.get(i));
@@ -536,11 +364,14 @@ public class Untangling {
 			transactions.addAll(randomTransactions);
 		}
 		
-		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions, this.packageDistanceArg.getValue()
-				.intValue(),
-				this.minBlobSizeArg.getValue().intValue(),
-				this.maxBlobSizeArg.getValue().intValue(),
-				this.timeArg.getValue()));
+		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
+		                                                           this.untanglingArgs.getPackageDistanceArg()
+		                                                                              .getValue().intValue(),
+		                                                           this.untanglingArgs.getMinBlobSizeArg().getValue()
+		                                                                              .intValue(),
+		                                                           this.untanglingArgs.getMaxBlobSizeArg().getValue()
+		                                                                              .intValue(),
+		                                                           this.untanglingArgs.getTimeArg().getValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -551,30 +382,31 @@ public class Untangling {
 			return;
 		}
 		
-		File outFile = this.outArg.getValue();
+		final File outFile = this.untanglingArgs.getOutArg().getValue();
 		BufferedWriter outWriter;
 		try {
 			outWriter = new BufferedWriter(new FileWriter(outFile));
 			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore");
 			outWriter.append(FileUtils.lineSeparator);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		if ((this.nArg.getValue() != -1l) && (this.nArg.getValue() < artificialBlobs.size())) {
-			List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
-			for (int i = 0; i < this.nArg.getValue(); ++i) {
-				int r = random.nextInt(artificialBlobs.size());
+		if ((this.untanglingArgs.getnArg().getValue() != -1l)
+		        && (this.untanglingArgs.getnArg().getValue() < artificialBlobs.size())) {
+			final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
+			for (int i = 0; i < this.untanglingArgs.getnArg().getValue(); ++i) {
+				final int r = random.nextInt(artificialBlobs.size());
 				selectedArtificialBlobs.add(artificialBlobs.remove(r));
 			}
 			artificialBlobs = selectedArtificialBlobs;
 			blobSetSize = artificialBlobs.size();
 		}
 		
-		Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
+		final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
 		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
-		UntanglingCollapse collapse = UntanglingCollapse.valueOf(this.collapseArg.getValue());
+		final UntanglingCollapse collapse = this.untanglingArgs.getCollapseArg().getValue();
 		switch (collapse) {
 			case AVG:
 				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
@@ -588,7 +420,7 @@ public class Untangling {
 		}
 		
 		// create the corresponding score aggregation model
-		ScoreCombinationMode scoreAggregationMode = ScoreCombinationMode.valueOf(this.scoreModeArg.getValue());
+		final ScoreCombinationMode scoreAggregationMode = this.untanglingArgs.getScoreModeArg().getValue();
 		switch (scoreAggregationMode) {
 			case SUM:
 				this.aggregator = new SumAggregation<JavaChangeOperation>();
@@ -597,57 +429,58 @@ public class Untangling {
 				this.aggregator = new VarSumAggregation<JavaChangeOperation>();
 				break;
 			case LINEAR_REGRESSION:
-				LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
+				final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
 				// train score aggregation model
-				Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
-				for (ArtificialBlob blob : artificialBlobs) {
+				final Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
+				for (final ArtificialBlob blob : artificialBlobs) {
 					trainTransactions.addAll(blob.getAtomicTransactions());
 				}
 				linarRegressionAggregator.train(trainTransactions);
 				this.aggregator = linarRegressionAggregator;
 				break;
 			case SVM:
-				SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
+				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 				// train score aggregation model
-				Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
-				for (ArtificialBlob blob : artificialBlobs) {
+				final Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
+				for (final ArtificialBlob blob : artificialBlobs) {
 					svmTrainTransactions.addAll(blob.getAtomicTransactions());
 				}
 				svmAggregator.train(svmTrainTransactions);
 				this.aggregator = svmAggregator;
 				break;
 			default:
-				throw new UnrecoverableError("Unknown score aggregation mode found: " + this.scoreModeArg.getValue());
+				throw new UnrecoverableError("Unknown score aggregation mode found: "
+				        + this.untanglingArgs.getScoreModeArg().getValue());
 		}
 		
 		// for each artificial blob
-		DescriptiveStatistics stat = new DescriptiveStatistics();
-		DescriptiveStatistics relativeStat = new DescriptiveStatistics();
+		final DescriptiveStatistics stat = new DescriptiveStatistics();
+		final DescriptiveStatistics relativeStat = new DescriptiveStatistics();
 		int counter = 0;
-		for (ArtificialBlob blob : artificialBlobs) {
+		for (final ArtificialBlob blob : artificialBlobs) {
 			
 			if (Logger.logInfo()) {
 				Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
 			}
 			
-			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = this.generateScoreVisitors(blob.getLatestTransaction());
+			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(blob.getLatestTransaction());
 			
 			// run the partitioning algorithm
 			if (!this.dryrun) {
 				
-				MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-						blob.getAllChangeOperations(),
-						scoreVisitors,
-						this.aggregator,
-						collapseVisitor);
+				final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
+				                                                                                                           blob.getAllChangeOperations(),
+				                                                                                                           scoreVisitors,
+				                                                                                                           this.aggregator,
+				                                                                                                           collapseVisitor);
 				
-				Set<Set<JavaChangeOperation>> partitions = clustering.getPartitions(blob.size());
+				final Set<Set<JavaChangeOperation>> partitions = clustering.getPartitions(blob.size());
 				
 				// compare the true and the computed partitions and score the
 				// similarity score in a descriptive statistic
-				int diff = comparePartitions(blob, partitions);
+				final int diff = comparePartitions(blob, partitions);
 				stat.addValue(diff);
-				double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
+				final double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
 				relativeStat.addValue(relDiff);
 				try {
 					outWriter.append(String.valueOf(diff));
@@ -658,7 +491,7 @@ public class Untangling {
 					outWriter.append(",");
 					outWriter.append(String.valueOf(clustering.getLowestScore()));
 					outWriter.append(FileUtils.lineSeparator);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
 				}
 			}
@@ -677,7 +510,7 @@ public class Untangling {
 			outWriter.append("Med. relative MissRate:," + relativeStat.getPercentile(50));
 			outWriter.append(FileUtils.lineSeparator);
 			outWriter.append("Used transactions:");
-			for (RCSTransaction t : usedTransactions) {
+			for (final RCSTransaction t : usedTransactions) {
 				outWriter.append(t.getId());
 				outWriter.append(",");
 			}
@@ -690,7 +523,7 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 			
 			outWriter.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 	}

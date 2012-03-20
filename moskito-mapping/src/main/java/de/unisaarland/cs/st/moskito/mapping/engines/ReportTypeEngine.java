@@ -1,29 +1,28 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -35,9 +34,23 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Or;
  */
 public class ReportTypeEngine extends MappingEngine {
 	
-	private double confidence;
+	private double             confidence;
 	
-	private Type   type;
+	private Type               type;
+	
+	private EnumArgument<Type> typeArgument;
+	
+	private DoubleArgument     confidenceArgument;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	@Override
+	public void afterParse() {
+		setConfidence(this.confidenceArgument.getValue());
+		setType(this.typeArgument.getValue());
+	}
 	
 	/**
 	 * @return the confidence
@@ -48,9 +61,7 @@ public class ReportTypeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
 	 */
 	@Override
 	public String getDescription() {
@@ -66,57 +77,48 @@ public class ReportTypeEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
 	 */
 	@Override
-	public void init() {
-		super.init();
-		
-		setConfidence((Double) getOption("confidence").getSecond().getValue());
-		setType((Type) getOption("type").getSecond().getValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#register
-	 * (de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
-		super.register(settings, arguments);
-		registerDoubleOption(settings, arguments, "confidence",
-		                     "Confidence that is used if the report isn't of the specified type.", "-1", true);
-		registerEnumOption(settings, arguments, "type", "Type the report has to match, e.g. BUG.", null, true,
-		                   JavaUtils.enumToArray(Type.BUG));
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new DoubleArgument(
+		                                             set,
+		                                             "confidence",
+		                                             "Confidence that is used if the report isn't of the specified type.",
+		                                             "-1", Requirement.required);
+		this.typeArgument = new EnumArgument<Type>(set, "type", "Type the report has to match, e.g. BUG.", Type.BUG,
+		                                           Requirement.required);
+		return true;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		if (element1 instanceof MappableReport) {
 			if (element1.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), unused, unknown, unknown, FieldKey.TYPE.name(),
-				                 element1.get(FieldKey.TYPE).toString(), element1.get(FieldKey.TYPE).toString(),
+				score.addFeature(getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
+				                 element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown(),
 				                 this.getClass());
 			}
-		}
+		} else
 		
 		if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), unused, unknown, unknown, FieldKey.TYPE.name(),
+				score.addFeature(getConfidence(), getUnused(), getUnknown(), getUnknown(), FieldKey.TYPE.name(),
 				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
 				                 this.getClass());
 			}
+		} else {
+			score.addFeature(0, getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(), getUnknown(),
+			                 this.getClass());
 		}
 		
 	}
@@ -125,7 +127,7 @@ public class ReportTypeEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence to set
 	 */
-	public void setConfidence(final double confidence) {
+	private void setConfidence(final double confidence) {
 		this.confidence = confidence;
 	}
 	
@@ -133,14 +135,13 @@ public class ReportTypeEngine extends MappingEngine {
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(final Type type) {
+	private void setType(final Type type) {
 		this.type = type;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {

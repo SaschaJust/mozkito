@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 import static org.junit.Assert.assertEquals;
@@ -16,17 +29,17 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 	@Test
 	public void test() {
 		setup();
-		UniversalTestTempDepthMetric metric = new UniversalTestTempDepthMetric(genealogy);
-		Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
+		final UniversalTestTempDepthMetric metric = new UniversalTestTempDepthMetric(genealogy);
+		final Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
 		
-		for (String item : genealogy.vertexSet()) {
+		for (final String item : genealogy.vertexSet()) {
 			metricValues.addAll(metric.handle(item));
 		}
 		
 		assertEquals(140, metricValues.size());
 		
-		for (GenealogyMetricValue mValue : metricValues) {
-			if (mValue.getMetricId().equals(UniversalTempDepthMetrics.maxTempDepth1)) {
+		for (final GenealogyMetricValue mValue : metricValues) {
+			if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth1())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -56,7 +69,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(1, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.maxTempDepth2)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth2())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -86,7 +99,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(1, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.maxTempDepth5)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth5())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -116,7 +129,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(2, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.maxTempDepth10)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth10())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -146,7 +159,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(5, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.maxTempDepth14)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth14())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -176,7 +189,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(7, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.numTempResponses1)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getNumtempresponses1())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -206,7 +219,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(1, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.numTempResponses2)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getNumtempresponses2())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -236,7 +249,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(2, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.numTempResponses5)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getNumtempresponses5())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -266,7 +279,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(5, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.numTempResponses10)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getNumtempresponses10())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
@@ -296,7 +309,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 				} else if (mValue.getNodeId().equals("14")) {
 					assertEquals(9, mValue.getValue(), 0);
 				}
-			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.numTempResponses14)) {
+			} else if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getNumtempresponses14())) {
 				if (mValue.getNodeId().equals("1")) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.clustering;
 
@@ -39,32 +36,25 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering.ComparableTu
 public class MultilevelClusteringTest {
 	
 	private class StringScoreVisitor implements MultilevelClusteringScoreVisitor<String>,
-	MultilevelClusteringCollapseVisitor<String> {
+	        MultilevelClusteringCollapseVisitor<String> {
 		
 		public int getLevenshteinDistance(final String s,
-				final String t) {
+		                                  final String t) {
 			if ((s == null) || (t == null)) {
 				throw new IllegalArgumentException("Strings must not be null");
 			}
 			
 			/*
-			 * The difference between this impl. and the previous is that,
-			 * rather than creating and retaining a matrix of size s.length()+1
-			 * by t.length()+1, we maintain two single-dimensional arrays of
-			 * length s.length()+1. The first, d, is the 'current working'
-			 * distance array that maintains the newest distance cost counts as
-			 * we iterate through the characters of String s. Each time we
-			 * increment the index of String t we are comparing, d is copied to
-			 * p, the second int[]. Doing so allows us to retain the previous
-			 * cost counts as required by the algorithm (taking the minimum of
-			 * the cost count to the left, up one, and diagonally up and to the
-			 * left of the current cost count being calculated). (Note that the
-			 * arrays aren't really copied anymore, just switched...this is
-			 * clearly much better than cloning an array or doing a
-			 * System.arraycopy() each time through the outer loop.)
-			 * Effectively, the difference between the two implementations is
-			 * this one does not cause an out of memory condition when
-			 * calculating the LD over two very large strings.
+			 * The difference between this impl. and the previous is that, rather than creating and retaining a matrix
+			 * of size s.length()+1 by t.length()+1, we maintain two single-dimensional arrays of length s.length()+1.
+			 * The first, d, is the 'current working' distance array that maintains the newest distance cost counts as
+			 * we iterate through the characters of String s. Each time we increment the index of String t we are
+			 * comparing, d is copied to p, the second int[]. Doing so allows us to retain the previous cost counts as
+			 * required by the algorithm (taking the minimum of the cost count to the left, up one, and diagonally up
+			 * and to the left of the current cost count being calculated). (Note that the arrays aren't really copied
+			 * anymore, just switched...this is clearly much better than cloning an array or doing a System.arraycopy()
+			 * each time through the outer loop.) Effectively, the difference between the two implementations is this
+			 * one does not cause an out of memory condition when calculating the LD over two very large strings.
 			 */
 			
 			int n = s.length(); // length of s
@@ -98,8 +88,8 @@ public class MultilevelClusteringTest {
 				
 				for (i = 1; i <= n; i++) {
 					cost = s.charAt(i - 1) == t_j
-							? 0
-									: 1;
+					                             ? 0
+					                             : 1;
 					// minimum of cell to the left+1, to the top+1, diagonally
 					// left and up +cost
 					d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
@@ -124,8 +114,8 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final Cluster<String> newCluster,
-				final Cluster<String> otherCluster,
-				final Map<String, Map<String, Double>> originalScoreMatrix) {
+		                       final Cluster<String> otherCluster,
+		                       final Map<String, Map<String, Double>> originalScoreMatrix) {
 			double d = 1000d;
 			for (String s : newCluster.getAllElements()) {
 				for (String t : otherCluster.getAllElements()) {
@@ -144,7 +134,7 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final String t1,
-				final String t2) {
+		                       final String t2) {
 			
 			if (t1.equals(t2)) {
 				return 2d;
@@ -157,7 +147,7 @@ public class MultilevelClusteringTest {
 	}
 	
 	private class TestScoreVisitor implements MultilevelClusteringScoreVisitor<Integer>,
-	MultilevelClusteringCollapseVisitor<Integer> {
+	        MultilevelClusteringCollapseVisitor<Integer> {
 		
 		private int counter = 0;
 		
@@ -168,14 +158,14 @@ public class MultilevelClusteringTest {
 		
 		@Override
 		public double getScore(final Cluster<Integer> newCluster,
-				final Cluster<Integer> otherCluster,
-				final Map<Integer, Map<Integer, Double>> originalScoreMatrix) {
+		                       final Cluster<Integer> otherCluster,
+		                       final Map<Integer, Map<Integer, Double>> originalScoreMatrix) {
 			return (++counter);
 		}
 		
 		@Override
 		public double getScore(final Integer t1,
-				final Integer t2) {
+		                       final Integer t2) {
 			return (++counter);
 		}
 		

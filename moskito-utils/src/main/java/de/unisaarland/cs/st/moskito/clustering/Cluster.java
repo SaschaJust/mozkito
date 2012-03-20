@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.clustering;
 
@@ -32,7 +29,7 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	/** The elements. */
 	private Tuple<Cluster<T>, Cluster<T>> children = null;
 	
-	private final double          score;
+	private final double                  score;
 	
 	/**
 	 * Instantiates a new partition cell.
@@ -54,7 +51,6 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		this.score = score;
 	}
 	
-	
 	@Override
 	public int compareTo(final Cluster<T> o) {
 		if (this.getScore() > o.getScore()) {
@@ -66,7 +62,7 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -91,10 +87,10 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	
 	/**
 	 * Returns all elements that are contained within this cluster (incl. all sub-clusters).
-	 *
+	 * 
 	 * @return the all elements
 	 */
-	public Set<T> getAllElements(){
+	public Set<T> getAllElements() {
 		Set<T> result = new HashSet<T>();
 		result.addAll(this.children.getFirst().getAllElements());
 		result.addAll(this.children.getSecond().getAllElements());
@@ -110,7 +106,6 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		return this.children;
 	}
 	
-	
 	public double getScore() {
 		return this.score;
 	}
@@ -119,9 +114,10 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.children == null) ? 0 : this.children.hashCode());
+		result = prime * result + ((this.children == null)
+		                                                  ? 0
+		                                                  : this.children.hashCode());
 		return result;
 	}
-	
 	
 }

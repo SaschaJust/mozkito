@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
 
 import java.util.ArrayList;
@@ -12,17 +25,18 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 public class UniversalTempParentsMetrics<T> {
 	
-	private static String      maxTempParentDepth1  = "maxTempParentDepth_1";
-	private static String      maxTempParentDepth2  = "maxTempParentDepth_2";
-	private static String      maxTempParentDepth5  = "maxTempParentDepth_5";
-	private static String      maxTempParentDepth10 = "maxTempParentDepth_10";
-	private static String      maxTempParentDepth14 = "maxTempParentDepth_14";
+	private static String maxTempParentDepth1  = "maxTempParentDepth_1";
+	private static String maxTempParentDepth2  = "maxTempParentDepth_2";
+	private static String maxTempParentDepth5  = "maxTempParentDepth_5";
+	private static String maxTempParentDepth10 = "maxTempParentDepth_10";
+	private static String maxTempParentDepth14 = "maxTempParentDepth_14";
 	
-	private static String      numTempParents1      = "numTempParents_1";
-	private static String      numTempParents2      = "numTempParents_2";
-	private static String      numTempParents5      = "numTempParents_5";
-	private static String      numTempParents10     = "numTempParents_10";
-	private static String      numTempParents14     = "numTempParents_14";
+	private static String numTempParents1      = "numTempParents_1";
+	private static String numTempParents2      = "numTempParents_2";
+	private static String numTempParents5      = "numTempParents_5";
+	private static String numTempParents10     = "numTempParents_10";
+	private static String numTempParents14     = "numTempParents_14";
+	
 	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(maxTempParentDepth1);
@@ -37,14 +51,15 @@ public class UniversalTempParentsMetrics<T> {
 		result.add(numTempParents14);
 		return result;
 	}
+	
 	private ChangeGenealogy<T> genealogy;
 	private DayTimeDiff<T>     dayTimeDiff;
-	private Set<String>        parents_1            = new HashSet<String>();
-	private Set<String>        parents_2            = new HashSet<String>();
-	private Set<String>        parents_5            = new HashSet<String>();
-	private Set<String>        parents_10           = new HashSet<String>();
+	private Set<String>        parents_1  = new HashSet<String>();
+	private Set<String>        parents_2  = new HashSet<String>();
+	private Set<String>        parents_5  = new HashSet<String>();
+	private Set<String>        parents_10 = new HashSet<String>();
 	
-	private Set<String>        parents_14           = new HashSet<String>();
+	private Set<String>        parents_14 = new HashSet<String>();
 	
 	public UniversalTempParentsMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
 		this.genealogy = genealogy;
@@ -75,7 +90,6 @@ public class UniversalTempParentsMetrics<T> {
 		result.add(new GenealogyMetricValue(maxTempParentDepth10, nodeId, longestPaths[3]));
 		result.add(new GenealogyMetricValue(maxTempParentDepth14, nodeId, longestPaths[4]));
 		
-		
 		result.add(new GenealogyMetricValue(numTempParents1, nodeId, parents_1.size()));
 		result.add(new GenealogyMetricValue(numTempParents2, nodeId, parents_2.size()));
 		result.add(new GenealogyMetricValue(numTempParents5, nodeId, parents_5.size()));
@@ -85,7 +99,9 @@ public class UniversalTempParentsMetrics<T> {
 		return result;
 	}
 	
-	private int[] longestPath(T originalNode, T node, Collection<T> seen) {
+	private int[] longestPath(T originalNode,
+	                          T node,
+	                          Collection<T> seen) {
 		
 		int[] result = { 0, 0, 0, 0, 0 };
 		

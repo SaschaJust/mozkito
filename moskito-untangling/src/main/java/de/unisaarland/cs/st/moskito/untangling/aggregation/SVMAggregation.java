@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
 import java.io.File;
@@ -20,7 +33,6 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
 
-
 public class SVMAggregation extends UntanglingScoreAggregation implements Serializable {
 	
 	/**
@@ -28,7 +40,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 */
 	private static final long   serialVersionUID = 5743363755550937828L;
 	
-	private static final double  TRAIN_FRACTION      = .5;
+	private static final double TRAIN_FRACTION   = .5;
 	
 	public static SVMAggregation createInstance(final Untangling untangling) {
 		SVMAggregation result = null;
@@ -56,14 +68,15 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 				Logger.warn("Could not deserialize SVMAggregation model. Creating new one.");
 			}
 		}
-		if(result == null){
+		if (result == null) {
 			result = new SVMAggregation(untangling);
 		}
 		return result;
 	}
-	private boolean              trained             = false;
 	
-	private final Untangling    untangling;
+	private boolean          trained = false;
+	
+	private final Untangling untangling;
 	
 	private svm_model        model;
 	
@@ -99,8 +112,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 			return true;
 		}
 		
-		Condition
-		.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
 		Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION, untangling);
 		

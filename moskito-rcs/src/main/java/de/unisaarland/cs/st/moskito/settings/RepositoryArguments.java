@@ -1,30 +1,32 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.settings;
 
 import java.net.URI;
 
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.EnumArgument;
-import net.ownhero.dev.andama.settings.MaskedStringArgument;
-import net.ownhero.dev.andama.settings.StringArgument;
-import net.ownhero.dev.andama.settings.URIArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
+import net.ownhero.dev.hiari.settings.arguments.MaskedStringArgument;
+import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.arguments.URIArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Optional;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
@@ -33,40 +35,52 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class RepositoryArguments extends AndamaArgumentSet {
+public class RepositoryArguments extends ArgumentSet<Repository> {
 	
-	private final StringArgument endRevision;
-	private final StringArgument passArg;
-	private final URIArgument    repoDirArg;
-	private final EnumArgument   repoTypeArg;
-	private final StringArgument startRevision;
-	private final StringArgument userArg;
-	private final AndamaSettings settings;
+	private final StringArgument               endRevision;
+	private final MaskedStringArgument         passArg;
+	private final URIArgument                  repoDirArg;
+	private final EnumArgument<RepositoryType> repoTypeArg;
+	private final StringArgument               startRevision;
+	private final MaskedStringArgument         userArg;
+	
+	PersistenceUtil                            persistenceUtil;
+	private BranchFactory                      branchFactory;
+	private final DirectoryArgument            tmpDirArg;
 	
 	/**
-	 * Is an argument set that contains all arguments necessary for the
-	 * repositories.
+	 * Is an argument set that contains all arguments necessary for the repositories.
 	 * 
 	 * @param settings
-	 * @param isRequired
+	 * @param requirement
+	 * @throws ArgumentRegistrationException
 	 * @throws DuplicateArgumentException
 	 */
-	public RepositoryArguments(final RepositorySettings settings, final boolean isRequired) {
-		super();
-		this.repoDirArg = new URIArgument(settings, "repository.uri", "URI where the rcs repository is located", null,
-		                                  isRequired);
-		this.repoTypeArg = new EnumArgument(settings, "repository.type", "Type of the repository. Possible values: "
-		        + JavaUtils.enumToString(RepositoryType.SUBVERSION), null, isRequired,
-		                                    JavaUtils.enumToArray(RepositoryType.SUBVERSION));
-		this.userArg = new MaskedStringArgument(settings, "repository.user", "Username to access repository", null,
-		                                        false);
-		this.passArg = new MaskedStringArgument(settings, "repository.password", "Password to access repository", null,
-		                                        false);
-		this.startRevision = new StringArgument(settings, "repository.transaction.start", "Revision to start with",
-		                                        null, false);
-		this.endRevision = new StringArgument(settings, "repository.transaction.stop", "Revision to stop at", "HEAD",
-		                                      false);
-		this.settings = settings;
+	public RepositoryArguments(final ArgumentSet<?> argumentSet, final Requirement requirement)
+	        throws ArgumentRegistrationException {
+		super(argumentSet, "Options used to setup the repository environment.", requirement);
+		this.repoDirArg = new URIArgument(this, "repository.uri", "URI where the rcs repository is located", null,
+		                                  requirement);
+		this.repoTypeArg = new EnumArgument<RepositoryType>(this, "repository.type", "Type of the repository.",
+		                                                    RepositoryType.GIT, requirement);
+		this.userArg = new MaskedStringArgument(this, "repository.user", "Username to access repository", null,
+		                                        new Optional());
+		this.passArg = new MaskedStringArgument(this, "repository.password", "Password to access repository", null,
+		                                        new Optional());
+		this.startRevision = new StringArgument(this, "repository.transaction.start", "Revision to start with", null,
+		                                        new Optional());
+		this.endRevision = new StringArgument(this, "repository.transaction.stop", "Revision to stop at", "HEAD",
+		                                      new Optional());
+		this.tmpDirArg = new DirectoryArgument(this, "reposiotory.tmp.dir",
+		                                       "Directory to be used to clone instances of repository.", null,
+		                                       Requirement.optional, false);
+	}
+	
+	public BranchFactory getBranchFactory() {
+		if (this.branchFactory == null) {
+			this.branchFactory = new BranchFactory(this.persistenceUtil);
+		}
+		return this.branchFactory;
 	}
 	
 	public StringArgument getPassArg() {
@@ -77,7 +91,7 @@ public class RepositoryArguments extends AndamaArgumentSet {
 		return this.repoDirArg;
 	}
 	
-	public EnumArgument getRepoTypeArg() {
+	public EnumArgument<RepositoryType> getRepoTypeArg() {
 		return this.repoTypeArg;
 	}
 	
@@ -91,22 +105,21 @@ public class RepositoryArguments extends AndamaArgumentSet {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.settings.RepoSuiteArgumentSet#getValue()
+	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
 	 */
 	@Override
-	public Repository getValue() {
-		URI repositoryURI = this.getRepoDirArg().getValue();
-		String username = this.getUserArg().getValue();
-		String password = this.getPassArg().getValue();
-		String startRevision = this.getStartRevision().getValue();
-		String endRevision = this.endRevision.getValue();
+	protected boolean init() {
+		final URI repositoryURI = getRepoDirArg().getValue();
+		String username = getUserArg().getValue();
+		String password = getPassArg().getValue();
+		final String startRevision = getStartRevision().getValue();
+		final String endRevision = this.endRevision.getValue();
 		
-		if (JavaUtils.AnyNull(repositoryURI, this.getRepoTypeArg().getValue())) {
-			return null;
+		if (JavaUtils.AnyNull(repositoryURI, getRepoTypeArg().getValue())) {
+			return false;
 		}
 		
-		RepositoryType rcsType = RepositoryType.valueOf(this.getRepoTypeArg().getValue());
+		final RepositoryType rcsType = getRepoTypeArg().getValue();
 		
 		if (((username == null) && (password != null)) || ((username != null) && (password == null))) {
 			if (Logger.logWarn()) {
@@ -117,23 +130,37 @@ public class RepositoryArguments extends AndamaArgumentSet {
 		}
 		
 		try {
-			Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
-			Repository repository = repositoryClass.newInstance();
+			final Class<? extends Repository> repositoryClass = RepositoryFactory.getRepositoryHandler(rcsType);
+			final Repository repository = repositoryClass.newInstance();
 			
-			if ((username == null) && (password == null)) {
-				repository.setup(repositoryURI, startRevision, endRevision);
-			} else {
-				repository.setup(repositoryURI, startRevision, endRevision, username, password);
+			if (this.persistenceUtil == null) {
+				if (Logger.logWarn()) {
+					Logger.warn("PersistenceUtil is null, but should be set prior to calling getValue in "
+					        + this.getClass().getSimpleName() + ".");
+				}
 			}
 			
-			this.settings.addToolInformation(repository.getHandle(), repository.gatherToolInformation());
+			if ((username == null) && (password == null)) {
+				repository.setup(repositoryURI, startRevision, endRevision, getBranchFactory(),
+				                 this.tmpDirArg.getValue());
+			} else {
+				repository.setup(repositoryURI, startRevision, endRevision, username, password, getBranchFactory(),
+				                 this.tmpDirArg.getValue());
+			}
 			
-			return repository;
-		} catch (Exception e) {
+			getSettings().addToolInformation(repository.getHandle(), repository.gatherToolInformation());
+			
+			setCachedValue(repository);
+			return true;
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			throw new RuntimeException();
+			return false;
 		}
+	}
+	
+	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
+		this.persistenceUtil = persistenceUtil;
 	}
 }

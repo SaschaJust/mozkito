@@ -4,28 +4,45 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
 
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.TransactionPartitioner;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
+import de.unisaarland.cs.st.moskito.genealogies.utils.GenealogyTestEnvironment;
+import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
+import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class TransactionChangeGenealogyTest extends TestEnvironment {
+public class TransactionChangeGenealogyTest extends MoskitoTest {
 	
 	@Test
+	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
 	public void test() {
-		TestEnvironment.setup();
+		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
+		                                                      FileShutdownAction.DELETE);
+		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
+		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
+		                                                                                                  branchFactory);
+		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
+		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
-		TransactionChangeGenealogy tdg = TransactionChangeGenealogy.readFromFile(tmpGraphDBFile, getPersistenceUtil(),
-				new TransactionPartitioner());
+		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
 		
-		assertEquals(16, tdg.edgeSize());
+		assertEquals(12, tdg.edgeSize());
 		
 		assertTrue(tdg.containsVertex(environmentTransactions.get(1)));
 		assertTrue(tdg.containsVertex(environmentTransactions.get(2)));
@@ -51,7 +68,7 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		
 		assertTrue(tdg.containsEdge(environmentTransactions.get(2), environmentTransactions.get(1)));
 		Collection<GenealogyEdgeType> edges = tdg.getEdges(environmentTransactions.get(2),
-				environmentTransactions.get(1));
+		                                                   environmentTransactions.get(1));
 		assertEquals(1, edges.size());
 		assertTrue(edges.contains(GenealogyEdgeType.CallOnDefinition));
 		
@@ -72,12 +89,7 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		assertTrue(edges.contains(GenealogyEdgeType.DeletedDefinitionOnDefinition));
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(2)));
-		
-		assertTrue(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(3)));
-		edges = tdg.getEdges(environmentTransactions.get(3), environmentTransactions.get(3));
-		assertEquals(1, edges.size());
-		assertTrue(edges.contains(GenealogyEdgeType.CallOnDefinition));
-		
+		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(3)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(4)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(5)));
 		assertFalse(tdg.containsEdge(environmentTransactions.get(3), environmentTransactions.get(6)));
@@ -235,8 +247,8 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
-		for (RCSTransaction v : tdg.vertexSet()) {
+		final Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
+		for (final RCSTransaction v : tdg.vertexSet()) {
 			vertices.add(v);
 		}
 		
@@ -245,5 +257,4 @@ public class TransactionChangeGenealogyTest extends TestEnvironment {
 		
 		tdg.close();
 	}
-	
 }

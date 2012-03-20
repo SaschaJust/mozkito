@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
@@ -20,22 +17,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.URIArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -119,214 +117,19 @@ public class RegexEngine extends MappingEngine {
 	
 	private URI                 configPath;
 	/*
-	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)"
-	 * Pattern.CASE_INSENSITIVE 1.0 "fixing bug #({match}##ID##)"
-	 * Pattern.CASE_INSENSITIVE
+	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)" Pattern.CASE_INSENSITIVE 1.0
+	 * "fixing bug #({match}##ID##)" Pattern.CASE_INSENSITIVE
 	 */
 	private Collection<Matcher> matchers;
-	
-	/**
-	 * @param arg0
-	 * @return
-	 * @see java.net.URI#compareTo(java.net.URI)
-	 */
-	public int compareTo(final URI arg0) {
-		return this.configPath.compareTo(arg0);
-	}
+	private URIArgument         fileArgument;
 	
 	/*
 	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
 	 */
 	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof RegexEngine)) {
-			return false;
-		}
-		final RegexEngine other = (RegexEngine) obj;
-		if (this.configPath == null) {
-			if (other.configPath != null) {
-				return false;
-			}
-		} else if (!this.configPath.equals(other.configPath)) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getAuthority()
-	 */
-	public String getAuthority() {
-		return this.configPath.getAuthority();
-	}
-	
-	/**
-	 * @return the configPath
-	 */
-	private URI getConfigPath() {
-		return this.configPath;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription
-	 * ()
-	 */
-	@Override
-	public String getDescription() {
-		return "Scores if regular expressions from a given set match. See config at: " + getConfigPath();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getFragment()
-	 */
-	public String getFragment() {
-		return this.configPath.getFragment();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getHost()
-	 */
-	public String getHost() {
-		return this.configPath.getHost();
-	}
-	
-	/**
-	 * @return the matchers
-	 */
-	private Collection<Matcher> getMatchers() {
-		return this.matchers;
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getPath()
-	 */
-	public String getPath() {
-		return this.configPath.getPath();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getPort()
-	 */
-	public int getPort() {
-		return this.configPath.getPort();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getQuery()
-	 */
-	public String getQuery() {
-		return this.configPath.getQuery();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawAuthority()
-	 */
-	public String getRawAuthority() {
-		return this.configPath.getRawAuthority();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawFragment()
-	 */
-	public String getRawFragment() {
-		return this.configPath.getRawFragment();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawPath()
-	 */
-	public String getRawPath() {
-		return this.configPath.getRawPath();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawQuery()
-	 */
-	public String getRawQuery() {
-		return this.configPath.getRawQuery();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawSchemeSpecificPart()
-	 */
-	public String getRawSchemeSpecificPart() {
-		return this.configPath.getRawSchemeSpecificPart();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getRawUserInfo()
-	 */
-	public String getRawUserInfo() {
-		return this.configPath.getRawUserInfo();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getScheme()
-	 */
-	public String getScheme() {
-		return this.configPath.getScheme();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getSchemeSpecificPart()
-	 */
-	public String getSchemeSpecificPart() {
-		return this.configPath.getSchemeSpecificPart();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#getUserInfo()
-	 */
-	public String getUserInfo() {
-		return this.configPath.getUserInfo();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + ((this.configPath == null)
-		                                                      ? 0
-		                                                      : this.configPath.hashCode());
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
-	 */
-	@Override
-	public void init() {
-		super.init();
-		setConfigPath((URI) getOption("file").getSecond().getValue());
+	public void afterParse() {
+		setConfigPath(this.fileArgument.getValue());
 		setMatchers(new LinkedList<RegexEngine.Matcher>());
 		
 		if (!getConfigPath().getScheme().equalsIgnoreCase("file")) {
@@ -361,63 +164,65 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
-	 * @return
-	 * @see java.net.URI#isAbsolute()
+	 * @return the configPath
 	 */
-	public boolean isAbsolute() {
-		return this.configPath.isAbsolute();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#isOpaque()
-	 */
-	public boolean isOpaque() {
-		return this.configPath.isOpaque();
-	}
-	
-	/**
-	 * @return
-	 * @see java.net.URI#normalize()
-	 */
-	public URI normalize() {
-		return this.configPath.normalize();
-	}
-	
-	/**
-	 * @return
-	 * @throws URISyntaxException
-	 * @see java.net.URI#parseServerAuthority()
-	 */
-	public URI parseServerAuthority() throws URISyntaxException {
-		return this.configPath.parseServerAuthority();
+	private URI getConfigPath() {
+		return this.configPath;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
-	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
 	 */
 	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
-		super.register(settings, arguments);
-		registerURIOption(settings, arguments, "file",
-		                  "URI to file containing the regular expressions used to map the IDs.", null, true);
+	public String getDescription() {
+		return "Scores if regular expressions from a given set match. See config at: " + getConfigPath();
+	}
+	
+	/**
+	 * @return the matchers
+	 */
+	private Collection<Matcher> getMatchers() {
+		return this.matchers;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.configPath == null)
+		                                                      ? 0
+		                                                      : this.configPath.hashCode());
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
+	 * DynamicArgumentSet)
+	 */
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.fileArgument = new URIArgument(set, "file",
+		                                    "URI to file containing the regular expressions used to map the IDs.",
+		                                    null, Requirement.required);
+		return true;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		double value = 0d;
 		String relevantString = "";
 		
@@ -433,7 +238,7 @@ public class RegexEngine extends MappingEngine {
 				if (Logger.logDebug()) {
 					Logger.debug("Using regex '" + regex.getPattern() + "'.");
 				}
-				if (regex.find(element1.get(FieldKey.BODY).toString()) != null) {
+				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
 					
 					value += matcher.getScore();
 					relevantString = regex.getGroup("match");
@@ -441,12 +246,8 @@ public class RegexEngine extends MappingEngine {
 			}
 		}
 		
-		if (!relevantString.isEmpty()) {
-			score.addFeature(value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
-			                 FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID)
-			                                                                                   .toString(),
-			                 this.getClass());
-		}
+		addFeature(score, value, FieldKey.BODY.name(), element1.get(FieldKey.BODY).toString(), relevantString,
+		           FieldKey.ID.name(), element2.get(FieldKey.ID).toString(), element2.get(FieldKey.ID).toString());
 	}
 	
 	/**
@@ -467,8 +268,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {
@@ -485,8 +285,7 @@ public class RegexEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#toString()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#toString()
 	 */
 	@Override
 	public String toString() {

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.finder;
 
@@ -22,15 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
-import de.unisaarland.cs.st.moskito.mapping.model.PersistentMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
@@ -54,6 +49,10 @@ public class MappingFinder {
 	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
 	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
+	
+	public MappingFinder() {
+		
+	}
 	
 	/**
 	 * @param engine
@@ -117,7 +116,7 @@ public class MappingFinder {
 	 * @param mapping
 	 * @return
 	 */
-	public FilteredMapping filter(final PersistentMapping mapping) {
+	public FilteredMapping filter(final Mapping mapping) {
 		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
 		
 		for (final MappingFilter filter : this.filters.values()) {
@@ -163,7 +162,8 @@ public class MappingFinder {
 	 * @return
 	 */
 	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
-	                                                       final Class<T> targetClass) {
+	                                                       final Class<T> targetClass,
+	                                                       final PersistenceUtil util) {
 		final Set<T> candidates = new HashSet<T>();
 		
 		try {
@@ -171,7 +171,7 @@ public class MappingFinder {
 			                                                      ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
 			for (final MappingSelector selector : selectors) {
-				candidates.addAll(selector.parse(source, targetClass));
+				candidates.addAll(selector.parse(source, targetClass, util));
 			}
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
@@ -193,19 +193,15 @@ public class MappingFinder {
 	 * @param score
 	 * @return
 	 */
-	public PersistentMapping map(final MapScore score) {
-		PersistentMapping mapping = new PersistentMapping(score);
-		for (final String key : this.strategies.keySet()) {
-			final MappingStrategy strategy = this.strategies.get(key);
-			mapping = strategy.map(mapping);
-			mapping.addStrategy(strategy);
+	public Mapping map(final MappingStrategy strategy,
+	                   final Mapping mapping) {
+		if (Logger.logDebug()) {
+			Logger.debug("Mapping with strategy: " + strategy.getHandle());
 		}
+		strategy.map(mapping);
 		
-		if ((mapping.getValid() != null) && (mapping.getValid() == true)) {
-			return mapping;
-		} else {
-			return null;
-		}
+		return mapping;
+		
 	}
 	
 	/**
@@ -233,45 +229,46 @@ public class MappingFinder {
 	 * @param report
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public MapScore score(final MappableEntity element1,
-	                      final MappableEntity element2) {
-		final MapScore score = new MapScore(element1, element2);
+	public Mapping score(final MappingEngine engine,
+	                     final MappableEntity element1,
+	                     final MappableEntity element2) {
+		final Mapping score = new Mapping(element1, element2);
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Scoring with " + this.engines.size() + " engines: "
-			        + JavaUtils.collectionToString(this.engines.values()));
+			Logger.debug("Scoring with engine: " + engine.getHandle());
 		}
 		
-		for (final String engineName : this.engines.keySet()) {
-			final MappingEngine mappingEngine = this.engines.get(engineName);
-			final Expression expression = mappingEngine.supported();
-			if (expression == null) {
-				throw new UnrecoverableError("Engine: " + engineName + " returns NULL when asked for supported fields.");
-			}
-			
-			final int check = expression.check(element1.getClass(), element2.getClass());
-			
-			if (check > 0) {
-				mappingEngine.score(element1, element2, score);
-			} else if (check < 0) {
-				mappingEngine.score(element2, element1, score);
-			} else if (Logger.logInfo()) {
-				Logger.info("Skipping engine " + engineName + " due to type incompatibility.");
-			}
+		final Expression expression = engine.supported();
+		if (expression == null) {
+			throw new UnrecoverableError("Engine: " + engine.getHandle()
+			        + " returns NULL when asked for supported fields.");
 		}
+		
+		final int check = expression.check(element1.getClass(), element2.getClass());
+		
+		if (check > 0) {
+			engine.score(element1, element2, score);
+		} else if (check < 0) {
+			engine.score(element2, element1, score);
+		} else if (Logger.logInfo()) {
+			Logger.info("Skipping engine " + engine.getHandle() + " due to type incompatibility: "
+			        + expression.toString());
+		}
+		
 		return score;
 	}
 	
 	/**
 	 * @return
 	 */
-	public List<Annotated> split(final FilteredMapping data) {
+	public List<Annotated> split(final FilteredMapping data,
+	                             final PersistenceUtil util) {
 		final LinkedList<Annotated> list = new LinkedList<Annotated>();
 		
 		for (final Class<? extends MappingSplitter> key : this.splitters.keySet()) {
 			final MappingSplitter splitter = this.splitters.get(key);
 			
-			list.addAll(splitter.process());
+			list.addAll(splitter.process(util));
 		}
 		return list;
 	}

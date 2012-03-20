@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -20,28 +17,164 @@ package de.unisaarland.cs.st.moskito.persistence;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.andama.exceptions.InstantiationError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- *
+ * 
  */
 public class PersistenceManager {
 	
-	private static Class<PersistenceUtil>                  middleware    = null;
+	private static final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
 	
-	private static Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
-	private static Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
+	private static final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
 	
 	/**
-	 * @return
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @throws SQLException
 	 */
-	public static Class<PersistenceUtil> getMiddleware() {
-		return middleware;
+	public static void createDatabase(final String host,
+	                                  final String database,
+	                                  final String user,
+	                                  final String password,
+	                                  final String type,
+	                                  final String driver) throws SQLException {
+		try {
+			Class.forName(driver);
+		} catch (final ClassNotFoundException e) {
+			throw new SQLException("Could not load JDBC driver " + driver, e);
+		}
+		
+		// FIXME determine default database other than postgres
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		                                                          password);
+		if (connection != null) {
+			final Statement statement = connection.createStatement();
+			if (statement != null) {
+				statement.executeUpdate("CREATE DATABASE " + database + ";");
+				statement.close();
+			}
+			connection.close();
+		}
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @param unit
+	 * @param dropContents
+	 * @param middleware
+	 * @return
+	 * @throws UnrecoverableError
+	 */
+	public static PersistenceUtil createUtil(final String host,
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final ConnectOptions dropContents,
+	                                         final Class<?> middleware) throws UnrecoverableError {
+		
+		PersistenceUtil instance = null;
+		try {
+			
+			instance = (PersistenceUtil) middleware.newInstance();
+			instance.createSessionFactory(host, database, user, password, type, driver, unit, dropContents);
+		} catch (final InstantiationException e) {
+			throw new InstantiationError(e, middleware, null, new Object[0]);
+		} catch (final IllegalAccessException e) {
+			throw new UnrecoverableError(e);
+		}
+		return instance;
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @param unit
+	 * @param options
+	 * @param middleware
+	 * @return
+	 * @throws UnrecoverableError
+	 */
+	@SuppressWarnings ("unchecked")
+	public static PersistenceUtil createUtil(final String host,
+	                                         final String database,
+	                                         final String user,
+	                                         final String password,
+	                                         final String type,
+	                                         final String driver,
+	                                         final String unit,
+	                                         final ConnectOptions options,
+	                                         final String middleware) throws UnrecoverableError {
+		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
+		Class<PersistenceUtil> klass = null;
+		try {
+			
+			klass = (Class<PersistenceUtil>) Class.forName(className);
+			return createUtil(host, database, user, password, type, driver, unit, options, klass);
+		} catch (final ClassNotFoundException e) {
+			throw new ClassLoadingError(e, className);
+		}
+		
+	}
+	
+	/**
+	 * @param host
+	 * @param database
+	 * @param user
+	 * @param password
+	 * @param type
+	 * @param driver
+	 * @throws SQLException
+	 */
+	public static void dropDatabase(final String host,
+	                                final String database,
+	                                final String user,
+	                                final String password,
+	                                final String type,
+	                                final String driver) throws SQLException {
+		
+		try {
+			Class.forName(driver);
+		} catch (final ClassNotFoundException e) {
+			throw new SQLException("Could not load JDBC driver " + driver, e);
+		}
+		
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		                                                          password);
+		if (connection != null) {
+			final Statement statement = connection.createStatement();
+			if (statement != null) {
+				statement.executeUpdate("DROP DATABASE " + database + ";");
+				statement.close();
+			}
+			connection.close();
+		}
 	}
 	
 	/**
@@ -49,9 +182,9 @@ public class PersistenceManager {
 	 * @param id
 	 * @return
 	 */
-	public static String getNativeQuery(final PersistenceUtil util,
-	                                    final String id) {
-		String databaseType = util.getType().toLowerCase();
+	public static synchronized String getNativeQuery(final PersistenceUtil util,
+	                                                 final String id) {
+		final String databaseType = util.getType().toLowerCase();
 		
 		if (nativeQueries.containsKey(databaseType) && nativeQueries.get(databaseType).containsKey(id)) {
 			return nativeQueries.get(databaseType).get(id);
@@ -65,36 +198,9 @@ public class PersistenceManager {
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	public static <T> Criteria<T> getStoredQuery(final String id,
-	                                             final Class<T> clazz) {
+	public static synchronized <T> Criteria<T> getStoredQuery(final String id,
+	                                                          final Class<T> clazz) {
 		return (Criteria<T>) storedQueries.get(clazz).get(id);
-	}
-	
-	/**
-	 * @return
-	 * @throws UninitializedDatabaseException 
-	 */
-	public static PersistenceUtil getUtil() throws UninitializedDatabaseException {
-		try {
-			return (PersistenceUtil) PersistenceManager.getMiddleware().getMethod("getInstance").invoke(null);
-		} catch (Exception e) {
-			throw new UninitializedDatabaseException(e);
-		}
-	}
-	
-	/**
-	 * @param middleware
-	 */
-	public static void registerMiddleware(final Class<PersistenceUtil> middleware) {
-		if (PersistenceManager.middleware == null) {
-			PersistenceManager.middleware = middleware;
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Cannot register middleware " + middleware.getCanonicalName()
-				        + " because a middleware is already registered: "
-				        + PersistenceManager.middleware.getCanonicalName());
-			}
-		}
 	}
 	
 	/**
@@ -103,15 +209,15 @@ public class PersistenceManager {
 	 * @param query
 	 * @return
 	 */
-	public static String registerNativeQuery(final String type,
-	                                         final String id,
-	                                         final String query) {
-		String databaseType = type.toLowerCase();
+	public static synchronized String registerNativeQuery(final String type,
+	                                                      final String id,
+	                                                      final String query) {
+		final String databaseType = type.toLowerCase();
 		if (!nativeQueries.containsKey(databaseType)) {
 			nativeQueries.put(databaseType, new HashMap<String, String>());
 		}
 		
-		Map<String, String> map = nativeQueries.get(databaseType);
+		final Map<String, String> map = nativeQueries.get(databaseType);
 		return map.put(id, query);
 	}
 	
@@ -119,7 +225,7 @@ public class PersistenceManager {
 	 * @param <T>
 	 * @param query
 	 */
-	public static <T> void registerPreparedQuery(final PreparedQuery<T> query) {
+	public static synchronized <T> void registerPreparedQuery(final PreparedQuery<T> query) {
 		
 	}
 	
@@ -128,9 +234,9 @@ public class PersistenceManager {
 	 * @param query
 	 */
 	@SuppressWarnings ("unchecked")
-	public static <T> void registerQuery(final String id,
-	                                     final Criteria<T> criteria) {
-		Type actualTypeArgument = ((ParameterizedType) criteria.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+	public static synchronized <T> void registerQuery(final String id,
+	                                                  final Criteria<T> criteria) {
+		final Type actualTypeArgument = ((ParameterizedType) criteria.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<T> actualRawTypeArgument = null;
 		if (actualTypeArgument instanceof ParameterizedType) {
 			actualRawTypeArgument = (Class<T>) ((ParameterizedType) actualTypeArgument).getRawType();

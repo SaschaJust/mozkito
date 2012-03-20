@@ -1,21 +1,18 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
@@ -26,7 +23,7 @@ import org.apache.lucene.util.Version;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -43,9 +40,7 @@ public class SummarySearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription
-	 * ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
 	 */
 	@Override
 	public String getDescription() {
@@ -56,13 +51,16 @@ public class SummarySearchEngine extends SearchEngine {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final MapScore score) {
+	                  final Mapping score) {
+		
+		double confidence = 0d;
+		String toContent = null;
+		String toSubstring = null;
 		try {
 			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
 			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
@@ -80,15 +78,17 @@ public class SummarySearchEngine extends SearchEngine {
 						final Long bugId = Long.parseLong(hitDoc.get("bugid"));
 						
 						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) {
-							score.addFeature(hit.score, "message", truncate(element1.get(FieldKey.BODY).toString()),
-							                 truncate(element1.get(FieldKey.BODY).toString()), "summary",
-							                 truncate(element2.get(FieldKey.SUMMARY).toString()),
-							                 truncate(element2.get(FieldKey.SUMMARY).toString()), this.getClass());
+							confidence = hit.score;
+							toContent = element2.get(FieldKey.SUMMARY).toString();
+							toSubstring = element2.get(FieldKey.SUMMARY).toString();
+							
 							break;
 						}
 					}
 				}
 			}
+			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY),
+			           "summary", toContent, toSubstring);
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
@@ -96,8 +96,7 @@ public class SummarySearchEngine extends SearchEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {

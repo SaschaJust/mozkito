@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -21,24 +18,31 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URI;
-import java.util.List;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
+import noNamespace.BugDocument.Bug;
+import noNamespace.BugzillaDocument;
+import noNamespace.BugzillaDocument.Bugzilla;
 
+import org.apache.xmlbeans.XmlException;
 import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -48,8 +52,7 @@ public class BugzillaTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
@@ -60,30 +63,8 @@ public class BugzillaTracker extends Tracker {
 		if (rawReport.getContent().contains("<bug error=\"NotFound\">")) {
 			return false;
 		}
-		Regex regex = new Regex("<head>\\s*<title>Format Not Found</title>");
+		final Regex regex = new Regex("<head>\\s*<title>Format Not Found</title>");
 		if (regex.matches(rawReport.getContent())) {
-			return false;
-		}
-		return false;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
-	 */
-	@Override
-	public boolean checkXML(final XmlReport xmlReport) {
-		if (!super.checkXML(xmlReport)) {
-			return false;
-		}
-		if (!xmlReport.getDocument().getRootElement().getName().equals("bugzilla")) {
-			return false;
-		}
-		@SuppressWarnings ("unchecked")
-		List<Element> bugs = xmlReport.getDocument().getRootElement().getChildren("bug");
-		if (bugs.size() != 1) {
 			return false;
 		}
 		return true;
@@ -91,29 +72,50 @@ public class BugzillaTracker extends Tracker {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
+	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 */
+	@Override
+	public boolean checkXML(final XmlReport xmlReport) {
+		
+		try {
+			final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xmlReport.getContent());
+			final Bugzilla bugzilla = bugzillaDocument.getBugzilla();
+			final Bug[] bugArray = bugzilla.getBugArray();
+			return bugArray.length == 1;
+		} catch (final XmlException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		}
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	@Override
 	public XmlReport createDocument(@NotNull final RawReport rawReport) {
-		BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			Document document = saxBuilder.build(reader);
+			final Document document = saxBuilder.build(reader);
 			reader.close();
 			return new XmlReport(rawReport, document);
-		} catch (TransformerFactoryConfigurationError e) {
+		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-		} catch (JDOMException e) {
+		} catch (final JDOMException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -121,47 +123,61 @@ public class BugzillaTracker extends Tracker {
 		return null;
 	}
 	
-	protected Element getRootElement(@NotNull final XmlReport rawReport) {
-		return rawReport.getDocument().getRootElement().getChild("bug");
+	@Override
+	public OverviewParser getOverviewParser(final RawContent overviewContent) {
+		// PRECONDITIONS
+		
+		try {
+			// TODO detect bugzilla version
+			return new BugzillaOverviewParser();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#parse(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
 	 */
 	@Override
-	public Report parse(@NotNull final XmlReport rawReport) {
-		Report bugReport = new Report(rawReport.getId());
-		Element itemElement = getRootElement(rawReport);
-		BugzillaXMLParser.handleRoot(bugReport, itemElement, this);
-		bugReport.setLastFetch(rawReport.getFetchTime());
-		bugReport.setHash(rawReport.getMd5());
+	public Parser getParser(final XmlReport xmlReport) {
+		// PRECONDITIONS
 		
-		String uriString = rawReport.getUri().toString().replace("show_bug.cgi", "show_activity.cgi");
-		if (uriString.equals(rawReport.getUri().toString())) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not fetch bugzilla report history: could not create neccessary url.");
-			}
-		} else {
+		try {
+			
+			// check for bugzilla version number
 			try {
-				URI historyUri = new URI(uriString);
-				BugzillaXMLParser.handleHistory(historyUri, bugReport);
-			} catch (Exception e) {
-				if (Logger.logError()) {
-					if (bugReport.getId() == -1) {
-						Logger.error("Could not fetch bug history for bugReport. Used uri =`" + uriString + "`.");
-					} else {
-						Logger.error("Could not fetch bug history for bugReport `" + bugReport.getId()
-						        + "`. Used uri =`" + uriString + "`.");
+				final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xmlReport.getContent());
+				final Bugzilla bugzilla = bugzillaDocument.getBugzilla();
+				final String bugzillaVersion = bugzilla.getVersion().getStringValue();
+				
+				// load all BugzillaParsers
+				try {
+					final Collection<Class<? extends BugzillaParser>> parserClasses = ClassFinder.getClassesExtendingClass(BugzillaParser.class.getPackage(),
+					                                                                                                       BugzillaParser.class,
+					                                                                                                       Modifier.ABSTRACT
+					                                                                                                               | Modifier.INTERFACE
+					                                                                                                               | Modifier.PRIVATE);
+					for (final Class<? extends BugzillaParser> parserClass : parserClasses) {
+						if (!Modifier.isAbstract(parserClass.getModifiers())) {
+							parserClass.newInstance();
+						}
 					}
-					Logger.error(e.getMessage(), e);
+				} catch (final Exception e) {
+					throw new UnrecoverableError(e);
 				}
+				
+				// get the correct parser and set tracker.
+				return BugzillaParser.getParser(bugzillaVersion);
+			} catch (final XmlException e) {
+				throw new UnrecoverableError(
+				                             "Could not extract Bugzilla version. This is necessary to load the correct parser instance.",
+				                             e);
+				
 			}
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		return bugReport;
 	}
 	
 }

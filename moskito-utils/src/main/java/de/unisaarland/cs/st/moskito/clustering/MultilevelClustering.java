@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.clustering;
 
@@ -62,7 +59,6 @@ public class MultilevelClustering<T> {
 		
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		@Override
@@ -89,9 +85,8 @@ public class MultilevelClustering<T> {
 	private double                                          lastSelectedScore = -1d;
 	
 	/**
-	 * Instantiates a new multilevel partitioning. The aggregator must be
-	 * trained using an attribute ordering corresponding to the here given list
-	 * of score visitors.
+	 * Instantiates a new multilevel partitioning. The aggregator must be trained using an attribute ordering
+	 * corresponding to the here given list of score visitors.
 	 * 
 	 * @param nodes
 	 *            the nodes
@@ -103,9 +98,10 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final Collection<T> nodes,
-			final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors, final ScoreAggregation<T> aggregator,
-			final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
-		@SuppressWarnings("unchecked") T[] array = (T[]) nodes.toArray();
+	        final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors, final ScoreAggregation<T> aggregator,
+	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+		@SuppressWarnings ("unchecked")
+		T[] array = (T[]) nodes.toArray();
 		this.collapseVisitor = collapseVisitor;
 		this.aggregator = aggregator;
 		this.scoreVisitors = scoreVisitors;
@@ -113,8 +109,8 @@ public class MultilevelClustering<T> {
 	}
 	
 	/**
-	 * Instantiates a new multilevel partitioning. The aggregator must be
-	 * trained using an attribute ordering corresponding to the here given list
+	 * Instantiates a new multilevel partitioning. The aggregator must be trained using an attribute ordering
+	 * corresponding to the here given list
 	 * 
 	 * @param nodes
 	 *            the nodes
@@ -125,14 +121,14 @@ public class MultilevelClustering<T> {
 	 */
 	@NoneNull
 	public MultilevelClustering(final T[] nodes, final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors,
-			final ScoreAggregation<T> aggregator, final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
+	        final ScoreAggregation<T> aggregator, final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		this.aggregator = aggregator;
 		this.collapseVisitor = collapseVisitor;
 		this.scoreVisitors = scoreVisitors;
 		this.init(nodes);
 	}
 	
-	public double getLowestScore(){
+	public double getLowestScore() {
 		return lastSelectedScore;
 	}
 	
@@ -141,9 +137,8 @@ public class MultilevelClustering<T> {
 	 * 
 	 * @param numPartitions
 	 *            the num partitions
-	 * @return the a set of set of nodes. The size of the outer should be equal
-	 *         to <code>numPartitions</code>. Return null in case something went
-	 *         wrong!
+	 * @return the a set of set of nodes. The size of the outer should be equal to <code>numPartitions</code>. Return
+	 *         null in case something went wrong!
 	 */
 	public Set<Set<T>> getPartitions(final int numPartitions) {
 		
@@ -208,7 +203,8 @@ public class MultilevelClustering<T> {
 	 *            the t2
 	 * @return the score
 	 */
-	public double getScore(final T t1, final T t2) {
+	public double getScore(final T t1,
+	                       final T t2) {
 		List<Double> scores = new ArrayList<Double>(scoreVisitors.size());
 		for (MultilevelClusteringScoreVisitor<T> visitor : scoreVisitors) {
 			scores.add(visitor.getScore(t1, t2));
@@ -232,5 +228,5 @@ public class MultilevelClustering<T> {
 			}
 		}
 	}
-
+	
 }

@@ -5,13 +5,12 @@
 package de.unisaarland.cs.st.moskito.rcs.model;
 
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
-
 import javax.persistence.metamodel.SingularAttribute;
 
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.rcs.model.RCSRevision.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Sep 02 15:43:33 CEST 2011")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Thu Mar 01 23:42:05 CET 2012")
 public class RCSRevision_ {
     public static volatile SingularAttribute<RCSRevision,ChangeType> changeType;
     public static volatile SingularAttribute<RCSRevision,RCSFile> changedFile;

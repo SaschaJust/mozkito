@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
 import java.io.BufferedWriter;
@@ -9,24 +22,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSink;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
-
-public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
+public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
 	
-	private File outputFile;
+	private final File               outputFile;
 	private boolean                  checkedConsistency = false;
 	
-	Map<String, Map<String, Double>> metricValues = new HashMap<String, Map<String, Double>>();
+	Map<String, Map<String, Double>> metricValues       = new HashMap<String, Map<String, Double>>();
 	
-	public GenealogyMetricSink(AndamaGroup threadGroup, AndamaSettings settings, File outputFile) {
+	public GenealogyMetricSink(final Group threadGroup, final Settings settings, final File outputFile) {
 		super(threadGroup, settings, false);
 		this.outputFile = outputFile;
 		
@@ -34,20 +46,21 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			
 			@Override
 			public void process() {
-				GenealogyMetricValue metricValue = getInputData();
+				final GenealogyMetricValue metricValue = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Receving metric value: " + metricValue);
 				}
 				
-				if (!metricValues.containsKey(metricValue.getNodeId())) {
-					metricValues.put(metricValue.getNodeId(), new HashMap<String, Double>());
+				if (!GenealogyMetricSink.this.metricValues.containsKey(metricValue.getNodeId())) {
+					GenealogyMetricSink.this.metricValues.put(metricValue.getNodeId(), new HashMap<String, Double>());
 				}
-				Map<String, Double> nodeMetricValues = metricValues.get(metricValue.getNodeId());
+				final Map<String, Double> nodeMetricValues = GenealogyMetricSink.this.metricValues.get(metricValue.getNodeId());
 				
 				if (nodeMetricValues.containsKey(metricValue.getMetricId())) {
 					if (Logger.logError()) {
-						Logger.error("Receiving the very same metric for the same node twice. Dropping all values except the first received instance!");
+						Logger.error("Receiving the very same metric `" + metricValue.getMetricId()
+						        + "` for the same node twice. Dropping all values except the first received instance!");
 					}
 				} else {
 					nodeMetricValues.put(metricValue.getMetricId(), metricValue.getValue());
@@ -64,7 +77,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				}
 				if (!GenealogyMetricSink.this.isConsistent()) {
 					throw new UnrecoverableError(
-					        "Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
+					                             "Metric data inconsistent. The metric data is not trust worth and will not be written to disk! Please see error previous error messages");
 				}
 				if (Logger.logInfo()) {
 					Logger.info("done.");
@@ -80,29 +93,33 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 			}
 			
 		};
-
+		
+	}
+	
+	public Map<String, Map<String, Double>> getMetricValues() {
+		return this.metricValues;
 	}
 	
 	public boolean isConsistent() {
-		checkedConsistency = true;
+		this.checkedConsistency = true;
 		int numMetrics = -1;
 		String firstNodeId = null;
 		int numLines = 0;
-		for (String nodeId : metricValues.keySet()) {
+		for (final String nodeId : this.metricValues.keySet()) {
 			++numLines;
 			if (numMetrics == -1) {
-				numMetrics = metricValues.get(nodeId).size();
+				numMetrics = this.metricValues.get(nodeId).size();
 				firstNodeId = nodeId;
 				continue;
 			}
-			if (numMetrics != metricValues.get(nodeId).size()) {
+			if (numMetrics != this.metricValues.get(nodeId).size()) {
 				if (Logger.logError()) {
-					Logger.error("Found " + metricValues.get(nodeId).size() + " metric values for node id `" + nodeId
-							+ "` but " + numMetrics
-							+ " were expected. Metric data not consistent. Don't trust the data!");
+					Logger.error("Found " + this.metricValues.get(nodeId).size() + " metric values for node id `"
+					        + nodeId + "` but " + numMetrics
+					        + " were expected. Metric data not consistent. Don't trust the data!");
 					if (numLines < 3) {
 						Logger.error("The previous error was caused by the second instance checked. It might be that the first instance was wrong. Instance id of the first entry: `"
-								+ firstNodeId + "`");
+						        + firstNodeId + "`");
 					}
 				}
 				return false;
@@ -113,23 +130,23 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 	}
 	
 	public void writeToFile() {
-		if (!checkedConsistency) {
+		if (!this.checkedConsistency) {
 			if (Logger.logWarn()) {
 				Logger.warn("You did not check whether the metric data is consistent. This may result in wrong metric data sets written to output file. We strongly recommend data consistency checks. Use metric data at own risk.");
 			}
 		}
 		
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+			final BufferedWriter writer = new BufferedWriter(new FileWriter(this.outputFile));
 			
 			writer.write("NodeID");
 			
 			List<String> metricIDs = null;
 			
-			for (String nodeId : metricValues.keySet()) {
-				if(metricIDs == null){
+			for (final String nodeId : this.metricValues.keySet()) {
+				if (metricIDs == null) {
 					metricIDs = new LinkedList<String>();
-					for(String metricId : metricValues.get(nodeId).keySet()){
+					for (final String metricId : this.metricValues.get(nodeId).keySet()) {
 						metricIDs.add(metricId);
 						writer.write(",");
 						writer.write(metricId);
@@ -139,7 +156,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 				writer.write(FileUtils.lineSeparator);
 				writer.write(nodeId);
 				
-				Map<String, Double> metricValuesForNode = metricValues.get(nodeId);
+				final Map<String, Double> metricValuesForNode = this.metricValues.get(nodeId);
 				
 				if (metricIDs.size() < metricValuesForNode.size()) {
 					if (Logger.logWarn()) {
@@ -147,7 +164,7 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 					}
 				}
 				
-				for(String metricId : metricIDs){
+				for (final String metricId : metricIDs) {
 					writer.write(",");
 					if (!metricValuesForNode.containsKey(metricId)) {
 						writer.write("NA");
@@ -159,13 +176,9 @@ public class GenealogyMetricSink extends AndamaSink<GenealogyMetricValue> {
 					}
 				}
 			}
-			
 			writer.close();
-			
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UnrecoverableError(e);
 		}
-		
 	}
-	
 }

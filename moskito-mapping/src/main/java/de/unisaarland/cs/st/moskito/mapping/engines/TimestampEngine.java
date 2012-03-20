@@ -1,28 +1,25 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
+import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.ListArgument;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.kanuni.checks.CollectionCheck;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -38,7 +35,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.MapScore;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -52,28 +49,15 @@ import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 public class TimestampEngine extends MappingEngine {
 	
 	private org.joda.time.Interval windowReportResolvedAfterTransaction = new Interval(0, 7200000);
-	
-	@Override
-	public String getDescription() {
-		return "Scores based on the relation of close and commit timestamp (1/(1+days(close - upperbound).";
-	}
-	
-	/**
-	 * @return the windowReportResolvedAfterTransaction
-	 */
-	private org.joda.time.Interval getWindowReportResolvedAfterTransaction() {
-		return this.windowReportResolvedAfterTransaction;
-	}
+	private ListArgument           confidenceArgument;
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init()
+	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
 	 */
 	@Override
-	public void init() {
-		super.init();
-		@SuppressWarnings ("unchecked")
-		final List<String> list = new LinkedList<String>((Set<String>) getOption("confidence").getSecond().getValue());
+	public void afterParse() {
+		final List<String> list = this.confidenceArgument.getValue();
 		CollectionCheck.minSize(list,
 		                        1,
 		                        "There are 1 to 2 values that have to be specified for a time interval to be valid. If only one is specified, the first one defaults to 0.");
@@ -100,6 +84,28 @@ public class TimestampEngine extends MappingEngine {
 		}
 		
 		setWindowReportResolvedAfterTransaction(new Interval(start * 1000, end * 1000));
+	}
+	
+	@Override
+	public String getDescription() {
+		return "Scores based on the relation of close and commit timestamp (1/(1+days(close - upperbound).";
+	}
+	
+	/**
+	 * @return the windowReportResolvedAfterTransaction
+	 */
+	private org.joda.time.Interval getWindowReportResolvedAfterTransaction() {
+		return this.windowReportResolvedAfterTransaction;
+	}
+	
+	@Override
+	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
+		this.confidenceArgument = new ListArgument(
+		                                           set,
+		                                           "confidence",
+		                                           "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
+		                                           "-0d 0h 10m 0s,+0d 2h 0m 0s", new Required());
+		return true;
 	}
 	
 	/**
@@ -132,32 +138,14 @@ public class TimestampEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#init(de.
-	 * unisaarland.cs.st.reposuite.mapping.settings.MappingSettings,
-	 * de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments, boolean)
-	 */
-	@Override
-	public void register(final AndamaSettings settings,
-	                     final AndamaArgumentSet arguments) {
-		super.register(settings, arguments);
-		registerListOption(settings,
-		                   arguments,
-		                   "confidence",
-		                   "Time window for the 'mapping.score.ReportResolvedWithinWindow' setting in format '[+-]XXd XXh XXm XXs'.",
-		                   "-0d 0h 10m 0s,+0d 2h 0m 0s", true);
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
 	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.model.MapScore)
+	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final MapScore score) {
+	                  final Mapping score) {
 		double value = 0d;
 		
 		final DateTime element1Timestamp = ((DateTime) element1.get(FieldKey.CREATION_TIMESTAMP));
@@ -188,11 +176,11 @@ public class TimestampEngine extends MappingEngine {
 				}
 			}
 			
-			score.addFeature(value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
-			                 element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
-			                 element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString(),
-			                 this.getClass());
 		}
+		
+		addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
+		           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
+		           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 	}
 	
 	/**
@@ -205,8 +193,7 @@ public class TimestampEngine extends MappingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
 	 */
 	@Override
 	public Expression supported() {

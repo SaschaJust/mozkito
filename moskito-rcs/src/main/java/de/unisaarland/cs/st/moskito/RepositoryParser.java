@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
@@ -22,10 +19,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaTransformer;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
@@ -37,14 +34,13 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
- * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage,
- * parses the data and stores the produced {@link RCSTransaction} in the output
- * storage.
+ * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced
+ * {@link RCSTransaction} in the output storage.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction> {
+public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
 	/**
 	 * @see RepoSuiteTransformerThread
@@ -52,8 +48,7 @@ public class RepositoryParser extends AndamaTransformer<LogEntry, RCSTransaction
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryParser(final AndamaGroup threadGroup, final RepositorySettings settings,
-	        final Repository repository) {
+	public RepositoryParser(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();

@@ -1,7 +1,7 @@
-database.name=reposuite_jaxen_june2010
+database.name=moskito_jaxen_june2010
 database.user=miner
 database.password=miner
-database.host=quentin.cs.uni-saarland.de
+database.host=grid1.st.cs.uni-saarland.de
 log.level=info
 repository.uri=/data/kim/miner_repos/jaxen/git_repo_07.06.2010/
 repository.type=GIT
@@ -10,10 +10,17 @@ tracker.type=JIRA
 tracker.stop=212
 tracker.pattern=JAXEN-<BUGID>/JAXEN-<BUGID>.xml
 headless
-callgraph.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-callgraph/
-datadependency.eclipse = /data/kim/reposuite/eclipse-apps/linux/eclipse-reposuite-datadependency/
+callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-callgraph/
+datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-datadependency/
 callgraph.cache.dir = /data/kim/cache.callgraph/jaxen/
 package.distance = 2
 vote.changecouplings.minconfidence = 0.1
 vote.changecouplings.minsupport = 3
 datadependency.cache.dir = /data/kim/cache.datadependency/jaxen/
+
+##### Genealogy Metrics #####
+fix.pattern=JAXEN-({bugids}\\d+)
+genealogy.graphdb=/data/kim/genealogies/jaxen/june2010/
+genealogy.metric.level=TRANSACTION
+genealogy.metric.out=/data/kim/genealogies/jaxen/jaxen_june2010_genealogy_transaction_metrics.csv
+genealogy.metric.fileAggregate.out=/data/kim/genealogies/jaxen/jaxen_june2010_genealogy_transaction_fileMetrics.csv

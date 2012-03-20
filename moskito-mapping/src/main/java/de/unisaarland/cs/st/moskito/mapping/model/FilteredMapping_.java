@@ -12,6 +12,6 @@ import javax.persistence.metamodel.SingularAttribute;
                              date = "Fri Sep 02 15:37:56 CEST 2011")
 public class FilteredMapping_ {
 	
-	public static volatile ListAttribute<FilteredMapping, String>                filters;
-	public static volatile SingularAttribute<FilteredMapping, PersistentMapping> mapping;
+	public static volatile ListAttribute<FilteredMapping, String>      filters;
+	public static volatile SingularAttribute<FilteredMapping, Mapping> mapping;
 }

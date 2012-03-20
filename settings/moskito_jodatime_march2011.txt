@@ -1,4 +1,4 @@
-database.name=reposuite_jodatime_march2011
+database.name=moskito_jodatime_march2011
 database.user=miner
 database.password=miner
 database.host=quentin.cs.uni-saarland.de

@@ -5,65 +5,59 @@ package de.unisaarland.cs.st.moskito.ppa;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.threads.AndamaGroup;
-import net.ownhero.dev.andama.threads.AndamaSource;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
-
-import org.apache.maven.surefire.shade.org.codehaus.plexus.util.StringUtils;
-
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.RCSPersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author just
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class PPASource extends AndamaSource<RCSTransaction> {
+public class PPASource extends Source<RCSTransaction> {
 	
-	private Iterator<RCSTransaction> iterator;
+	private Iterator<RCSBranch>      branchIterator   = null;
+	private Iterator<RCSTransaction> tIterator        = null;
+	private Set<String>              transactionLimit = null;
 	
-	public PPASource(AndamaGroup threadGroup, AndamaSettings settings, final PersistenceUtil persistenceUtil,
-			final String startWith, final HashSet<String> transactionLimit) {
+	public PPASource(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
+	        final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
-		
-		if (Logger.logDebug()) {
-			Logger.debug("transactionLimit: "
-					+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
-		}
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				
-				if (Logger.logDebug()) {
-					Logger.debug(criteria.toString());
-				}
-				
-				if ((transactionLimit != null) && (!transactionLimit.isEmpty())) {
-					if (Logger.logDebug()) {
-						Logger.debug("Added transaction input criteria limit: "
-								+ StringUtils.join(transactionLimit.toArray(new String[transactionLimit.size()]), ","));
+				if ((PPASource.this.transactionLimit != null) && (!PPASource.this.transactionLimit.isEmpty())) {
+					PPASource.this.transactionLimit = transactionLimit;
+				} else {
+					final List<RCSBranch> branches = new LinkedList<RCSBranch>();
+					final BranchFactory branchFactory = new BranchFactory(persistenceUtil);
+					branches.add(branchFactory.getMasterBranch());
+					
+					final Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class);
+					for (final RCSBranch branch : persistenceUtil.load(criteria)) {
+						if (!branch.isMasterBranch()) {
+							branches.add(branch);
+						}
 					}
-					criteria.in("id", transactionLimit);
-				}
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
-				if (Logger.logDebug()) {
-					Logger.debug("Loaded " + list.size() + " transactions as tool chain input.");
-				}
-				iterator = list.iterator();
-				
-				if (startWith != null) {
-					while (iterator.hasNext() && !(iterator.next().getId().equals(startWith))) {
-						// drop
-					}
+					PPASource.this.branchIterator = branches.iterator();
 				}
 			}
 		};
@@ -72,18 +66,74 @@ public class PPASource extends AndamaSource<RCSTransaction> {
 			
 			@Override
 			public void process() {
-				if (iterator.hasNext()) {
-					RCSTransaction transaction = iterator.next();
-					
-					if (Logger.logDebug()) {
-						Logger.debug("Providing " + transaction);
+				
+				if (PPASource.this.branchIterator == null) {
+					// test cases
+					if (PPASource.this.tIterator == null) {
+						// initialize
+						final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+						criteria.in("id", PPASource.this.transactionLimit);
+						PPASource.this.tIterator = persistenceUtil.load(criteria).iterator();
+					}
+					if (PPASource.this.tIterator.hasNext()) {
+						providePartialOutputData(PPASource.this.tIterator.next());
+						if (!PPASource.this.tIterator.hasNext()) {
+							setCompleted();
+						}
+					} else {
+						provideOutputData(null, true);
+						setCompleted();
+					}
+				} else {
+					// normal behavior
+					if ((PPASource.this.tIterator == null) || (!PPASource.this.tIterator.hasNext())) {
+						// load new transactions
+						if (PPASource.this.branchIterator.hasNext()) {
+							final RCSBranch next = PPASource.this.branchIterator.next();
+							PPASource.this.tIterator = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
+							                                                              TransactionSetOrder.ASC)
+							                                             .iterator();
+							if (Logger.logInfo()) {
+								Logger.info("Processing RCSBRanch " + next.toString());
+							}
+						} else {
+							provideOutputData(null, true);
+							setCompleted();
+						}
 					}
 					
-					providePartialOutputData(transaction);
-				} else {
-					provideOutputData(null, true);
-					setCompleted();
+					if (PPASource.this.tIterator.hasNext()) {
+						
+						final RCSTransaction transaction = PPASource.this.tIterator.next();
+						
+						// test if seen already
+						boolean skip = false;
+						for (final RCSRevision revision : transaction.getRevisions()) {
+							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
+							                                                                  .eq("revision", revision);
+							if (!persistenceUtil.load(skipCriteria).isEmpty()) {
+								skip = true;
+								break;
+							}
+						}
+						if (skip) {
+							skipOutputData();
+						}
+						
+						providePartialOutputData(transaction);
+						if ((!PPASource.this.tIterator.hasNext()) && (!PPASource.this.branchIterator.hasNext())) {
+							setCompleted();
+						}
+					} else {
+						if (!PPASource.this.branchIterator.hasNext()) {
+							setCompleted();
+						} else {
+							skipOutputData();
+						}
+					}
+					
 				}
+				
 			}
 		};
 	}

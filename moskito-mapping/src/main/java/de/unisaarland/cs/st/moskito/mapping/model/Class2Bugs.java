@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.model;
 
@@ -26,10 +23,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.ioda.FileUtils;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -47,9 +42,6 @@ public class Class2Bugs implements Annotated {
 	 * 
 	 */
 	private static final long serialVersionUID = -5780165055568852588L;
-	RCSFile                   file;
-	
-	Set<Report>               reports;
 	
 	static {
 		PersistenceManager.registerNativeQuery("postgresql",
@@ -76,54 +68,54 @@ public class Class2Bugs implements Annotated {
 	/**
 	 * @return
 	 */
-	public static List<Class2Bugs> getBugCounts() {
-		List<Class2Bugs> ret = new LinkedList<Class2Bugs>();
-		PersistenceUtil util;
-		try {
-			util = PersistenceManager.getUtil();
+	public static List<File2Bugs> getBugCounts(final PersistenceUtil util) {
+		final List<File2Bugs> ret = new LinkedList<File2Bugs>();
+		
+		@SuppressWarnings ("unchecked")
+		final List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util,
+		                                                                                              "files2bugs"));
+		Criteria<RCSFile> fileCriteria;
+		Criteria<Report> reportCriteria;
+		long fileid = -1, tmp = -1, bugid = -1;
+		RCSFile file = null;
+		final Set<Report> reports = new HashSet<Report>();
+		
+		for (final Object[] entries : result) {
+			tmp = (Long) entries[0];
+			bugid = (Long) entries[1];
 			
-			@SuppressWarnings ("unchecked")
-			List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util, "files2bugs"));
-			Criteria<RCSFile> fileCriteria;
-			Criteria<Report> reportCriteria;
-			long fileid = -1, tmp = -1, bugid = -1;
-			RCSFile file = null;
-			Set<Report> reports = new HashSet<Report>();
-			
-			for (Object[] entries : result) {
-				tmp = (Long) entries[0];
-				bugid = (Long) entries[1];
-				
-				if (tmp != fileid) {
-					if (!reports.isEmpty()) {
-						ret.add(new Class2Bugs(file, reports));
-						reports.clear();
-					}
-					
-					fileid = tmp;
-					fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
-					file = util.load(fileCriteria).iterator().next();
+			if (tmp != fileid) {
+				if (!reports.isEmpty()) {
+					ret.add(new File2Bugs(file, reports));
+					reports.clear();
 				}
 				
-				reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
-				reports.addAll(util.load(reportCriteria));
+				fileid = tmp;
+				fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
+				file = util.load(fileCriteria).iterator().next();
 			}
 			
-			if (!reports.isEmpty()) {
-				ret.add(new Class2Bugs(file, reports));
-				reports.clear();
-			}
-		} catch (UninitializedDatabaseException e) {
-			throw new Shutdown(e);
+			reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
+			reports.addAll(util.load(reportCriteria));
+		}
+		
+		if (!reports.isEmpty()) {
+			ret.add(new File2Bugs(file, reports));
+			reports.clear();
 		}
 		
 		return ret;
 	}
 	
+	RCSFile     file;
+	
+	Set<Report> reports;
+	
 	/**
-	 * Used by persistence provider only
+	 * used by persistence provider only
 	 */
 	public Class2Bugs() {
+		
 	}
 	
 	/**
@@ -147,10 +139,10 @@ public class Class2Bugs implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Class2Bugs)) {
+		if (!(obj instanceof File2Bugs)) {
 			return false;
 		}
-		Class2Bugs other = (Class2Bugs) obj;
+		final File2Bugs other = (File2Bugs) obj;
 		if (getFile() == null) {
 			if (other.getFile() != null) {
 				return false;
@@ -211,11 +203,11 @@ public class Class2Bugs implements Annotated {
 	 * @return
 	 */
 	public String toCSV() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append(getFile().getLatestPath()).append(",");
 		builder.append(getReports().size()).append(",");
-		StringBuilder b = new StringBuilder();
-		for (Report report : getReports()) {
+		final StringBuilder b = new StringBuilder();
+		for (final Report report : getReports()) {
 			if (b.length() > 0) {
 				b.append(" ");
 			}
@@ -231,12 +223,12 @@ public class Class2Bugs implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("RCSFile2Bugs [file=");
 		builder.append(getFile().getGeneratedId());
 		builder.append(", reports=");
-		StringBuilder b = new StringBuilder();
-		for (Report report : getReports()) {
+		final StringBuilder b = new StringBuilder();
+		for (final Report report : getReports()) {
 			if (b.length() > 0) {
 				b.append(",");
 			}

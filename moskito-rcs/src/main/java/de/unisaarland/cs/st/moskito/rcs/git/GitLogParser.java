@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.rcs.git;
 
@@ -19,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -61,8 +58,8 @@ class GitLogParser {
 		String fullname = null;
 		String email = null;
 		
-		Regex emailRegex = new Regex(emailBaseRegex.getPattern());
-		Regex usernameRegex = new Regex(usernameBaseRegex.getPattern());
+		final Regex emailRegex = new Regex(emailBaseRegex.getPattern());
+		final Regex usernameRegex = new Regex(usernameBaseRegex.getPattern());
 		
 		String authorString = authorParts[1].trim();
 		authorParts = authorString.split(" ");
@@ -73,7 +70,7 @@ class GitLogParser {
 			return new Person("<unknown>", null, null);
 		} else if (authorParts.length == 1) {
 			// can be email or username
-			List<RegexGroup> find = emailRegex.find(authorString);
+			final List<RegexGroup> find = emailRegex.find(authorString);
 			if (find != null) {
 				email = authorString.replaceAll("<", "").replaceAll(">", "").trim();
 			} else {
@@ -81,7 +78,7 @@ class GitLogParser {
 			}
 		} else if (authorParts.length == 2) {
 			// could be full name or username and email OR username and username
-			List<RegexGroup> find = emailRegex.find(authorString);
+			final List<RegexGroup> find = emailRegex.find(authorString);
 			if (find != null) {
 				emailRegex.find(authorString);
 				email = emailRegex.getGroup("email");
@@ -89,7 +86,7 @@ class GitLogParser {
 				username = username.replaceAll("<", "").replaceAll(">", "");
 				username = username.trim();
 			} else {
-				List<List<RegexGroup>> findList = usernameRegex.findAll(authorString);
+				final List<List<RegexGroup>> findList = usernameRegex.findAll(authorString);
 				if (findList != null) {
 					if (findList.size() > 1) {
 						username = findList.get(0).get(1).getMatch();
@@ -140,12 +137,11 @@ class GitLogParser {
 	 * Parses the list of log messages.
 	 * 
 	 * @param logMessages
-	 *            List of strings corresponding to the lines of the log message.
-	 *            (not null)
+	 *            List of strings corresponding to the lines of the log message. (not null)
 	 * @return the list of parsed log entries representing the logMessages
 	 */
 	protected static List<LogEntry> parse(@NotNull final List<String> logMessages) {
-		List<LogEntry> result = new ArrayList<LogEntry>();
+		final List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
 		
 		String currentID = null;
@@ -154,7 +150,7 @@ class GitLogParser {
 		String date = null;
 		boolean append = true;
 		StringBuilder message = new StringBuilder();
-		for (String line : logMessages) {
+		for (final String line : logMessages) {
 			++lineCounter;
 			if (line.startsWith("commit")) {
 				if (currentID != null) {
@@ -164,7 +160,12 @@ class GitLogParser {
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
 					}
-					result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime, original_id));
+					final LogEntry logEntry = new LogEntry(currentID, previous, author, message.toString(), dateTime,
+					                                       original_id);
+					result.add(logEntry);
+					if (Logger.logDebug()) {
+						Logger.debug("Adding log entry: " + logEntry);
+					}
 					currentID = null;
 					author = null;
 					date = null;
@@ -172,7 +173,7 @@ class GitLogParser {
 					original_id = null;
 					message = new StringBuilder();
 				}
-				String[] commitParts = line.split(" ");
+				final String[] commitParts = line.split(" ");
 				if (commitParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
 					        + ". Abort parsing.");
@@ -181,7 +182,7 @@ class GitLogParser {
 			} else if (line.startsWith("Author:")) {
 				author = getAuthor(line, lineCounter);
 			} else if (line.startsWith("AuthorDate:")) {
-				String[] authorDateParts = line.split(": ");
+				final String[] authorDateParts = line.split(": ");
 				if (authorDateParts.length != 2) {
 					throw new UnrecoverableError("Found error in git log file: line " + lineCounter
 					        + ". Abort parsing.");
@@ -228,7 +229,17 @@ class GitLogParser {
 			}
 			result.add(new LogEntry(currentID, previous, author, message.toString(), dateTime, original_id));
 		}
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Added " + result.size() + " log entries while parsing log file.");
+		}
+		
 		Collections.reverse(result);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Returning " + result.size() + " log entries in reverse order.");
+		}
+		
 		return result;
 	}
 }

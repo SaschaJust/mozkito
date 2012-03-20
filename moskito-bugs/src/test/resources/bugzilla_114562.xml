@@ -1,7 +1,7 @@
-<?xml version="1.0" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <!DOCTYPE bugzilla SYSTEM "https://bugs.eclipse.org/bugs/bugzilla.dtd">
 
-<bugzilla version="3.4.4"
+<bugzilla version="4.0.4"
           urlbase="https://bugs.eclipse.org/bugs/"
           
           maintainer="webmaster@eclipse.org"
@@ -15,8 +15,8 @@
           <delta_ts>2005-11-03 23:17:37 -0500</delta_ts>
           <reporter_accessible>1</reporter_accessible>
           <cclist_accessible>1</cclist_accessible>
-          <classification_id>4</classification_id>
-          <classification>Tools</classification>
+          <classification_id>14</classification_id>
+          <classification>Mylyn</classification>
           <product>Mylyn</product>
           <component>Bugzilla</component>
           <version>unspecified</version>
@@ -26,13 +26,12 @@
           <resolution>FIXED</resolution>
           
           
-          
-          
-          
+          <bug_file_loc></bug_file_loc>
+          <status_whiteboard></status_whiteboard>
+          <keywords></keywords>
           <priority>P1</priority>
           <bug_severity>enhancement</bug_severity>
           <target_milestone>---</target_milestone>
-          
           
           
           <everconfirmed>1</everconfirmed>
@@ -40,6 +39,7 @@
           <assigned_to name="Mik Kersten">mik.kersten</assigned_to>
           
           
+          <votes>0</votes>
 
       
 
@@ -48,22 +48,27 @@
       
 
           <long_desc isprivate="0">
+            <commentid>555024</commentid>
             <who name="Mik Kersten">mik.kersten</who>
             <bug_when>2005-11-01 11:42:53 -0500</bug_when>
             <thetext>eclipse.org is moving to it</thetext>
           </long_desc>
           <long_desc isprivate="0">
+            <commentid>555035</commentid>
             <who name="Mik Kersten">mik.kersten</who>
             <bug_when>2005-11-01 11:52:13 -0500</bug_when>
             <thetext>Test site is here: https://node1.eclipse.org/bugstest/
 
-Related to eclipse.org bug 113042</thetext>
+Related to eclipse.org bug 113042
+</thetext>
           </long_desc>
           <long_desc isprivate="0">
+            <commentid>557496</commentid>
             <who name="Mik Kersten">mik.kersten</who>
             <bug_when>2005-11-03 23:17:37 -0500</bug_when>
             <thetext>Core support works now (adding existing reports, creating new reports).  Still some issue
-with search (bug 115017), and rest will be broken out into seperate reports.</thetext>
+with search (bug 115017), and rest will be broken out into seperate reports.
+</thetext>
           </long_desc>
       
       

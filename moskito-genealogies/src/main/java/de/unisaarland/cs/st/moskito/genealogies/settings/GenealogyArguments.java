@@ -1,48 +1,83 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
+
 package de.unisaarland.cs.st.moskito.genealogies.settings;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
-import net.ownhero.dev.andama.settings.AndamaArgumentSet;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.DirectoryArgument;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.ChangeGenealogyUtils;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
 
-
-public class GenealogyArguments extends AndamaArgumentSet {
+public class GenealogyArguments extends ArgumentSet<CoreChangeGenealogy> {
 	
-	private DirectoryArgument graphDBArg;
-	private DatabaseArguments dbArgs;
+	private final DirectoryArgument graphDBArg;
+	private final DatabaseArguments dbArgs;
 	
-	public GenealogyArguments(AndamaSettings settings, boolean isRequired,String unit) {
-		super();
-		graphDBArg = new DirectoryArgument(settings, "genealogy.graphdb",
-				"Directory in which to store the GraphDB (if exists, load graphDB from this dir)", null, true, true);
-		dbArgs = new DatabaseArguments(settings, isRequired, unit);
+	/**
+	 * @param argumentSet
+	 * @param requirement
+	 * @param unit
+	 * @throws ArgumentRegistrationException
+	 */
+	public GenealogyArguments(final ArgumentSet<?> argumentSet, final Requirement requirement, final String unit)
+	        throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
+		super(argumentSet, "GenealogyArguments", requirement);
+		
+		this.graphDBArg = new DirectoryArgument(
+		                                        this,
+		                                        "genealogy.graphdb",
+		                                        "Directory in which to store the GraphDB (if exists, load graphDB from this dir)",
+		                                        null, Requirement.required, true);
+		this.dbArgs = new DatabaseArguments(argumentSet, requirement, unit);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
+	 */
 	@Override
-	public CoreChangeGenealogy getValue() {
+	protected boolean init() {
+		boolean ret = false;
 		
-		if (!this.dbArgs.getValue()) {
-			if (Logger.logError()) {
-				Logger.error("Could not connect to database!");
+		try {
+			if (!isInitialized()) {
+				synchronized (this) {
+					if (!isInitialized()) {
+						final PersistenceUtil persistenceUtil = this.dbArgs.getValue();
+						if (persistenceUtil == null) {
+							throw new UnrecoverableError("Could not connect to database!");
+						}
+						setCachedValue(ChangeGenealogyUtils.readFromDB(this.graphDBArg.getValue(), persistenceUtil));
+						ret = true;
+					} else {
+						ret = true;
+					}
+				}
+			} else {
+				ret = true;
 			}
 			
-			throw new Shutdown();
+			return ret;
+		} finally {
+			if (ret) {
+				Condition.check(isInitialized(), "If init() returns true, the %s has to be set to initialized.",
+				                getHandle());
+			}
 		}
-		PersistenceUtil persistenceUtil;
-		try {
-			persistenceUtil = PersistenceManager.getUtil();
-		} catch (UninitializedDatabaseException e1) {
-			throw new UnrecoverableError(e1);
-		}
-		return ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
 	}
-	
 }

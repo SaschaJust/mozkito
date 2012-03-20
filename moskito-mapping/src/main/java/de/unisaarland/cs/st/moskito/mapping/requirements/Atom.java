@@ -1,24 +1,25 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.requirements;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -26,14 +27,11 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
 /**
- * The atom expression evaluates to true if the given criteria are met.
- * Evaluates to false otherwise.
+ * The atom expression evaluates to true if the given criteria are met. Evaluates to false otherwise.
  * 
- * If a type is given, the {@link Atom#check(Class, Class, Index)} method checks
- * if the instance corresponding to the given index matches the given
- * type/class. If a/multiple {@link FieldKey}(s) is/are given, the check method
- * is looking up if the instance corresponding to the given index supports this
- * type of field (determined by {@link FieldKey}).
+ * If a type is given, the {@link Atom#check(Class, Class, Index)} method checks if the instance corresponding to the
+ * given index matches the given type/class. If a/multiple {@link FieldKey}(s) is/are given, the check method is looking
+ * up if the instance corresponding to the given index supports this type of field (determined by {@link FieldKey}).
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -50,7 +48,7 @@ public final class Atom extends Expression {
 	 * @param type
 	 *            the type that the corresponding entity is required to match
 	 */
-	public Atom(final Index idx, final Class<?> type) {
+	public Atom(@NotNull final Index idx, final Class<?> type) {
 		this.idx = idx;
 		this.type = type;
 	}
@@ -61,7 +59,7 @@ public final class Atom extends Expression {
 	 * @param key
 	 *            the {@link FieldKey} the entity has to support
 	 */
-	public Atom(final Index idx, final FieldKey key) {
+	public Atom(@NotNull final Index idx, final FieldKey key) {
 		this.idx = idx;
 		this.keys.add(key);
 	}
@@ -72,15 +70,14 @@ public final class Atom extends Expression {
 	 * @param keys
 	 *            the {@link FieldKey}s the entity has to support
 	 */
-	public Atom(final Index idx, final FieldKey... keys) {
+	public Atom(@NotNull final Index idx, final FieldKey... keys) {
 		this.idx = idx;
 		CollectionUtils.addAll(this.keys, keys);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check(
-	 * java.lang.Class, java.lang.Class,
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check( java.lang.Class, java.lang.Class,
 	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
@@ -90,42 +87,58 @@ public final class Atom extends Expression {
 		switch (this.idx) {
 			case FROM:
 				if (this.type != null) {
-					return target1 == this.type;
+					try {
+						return target1.newInstance().getBaseType() == this.type;
+					} catch (final Exception e) {
+						throw new UnrecoverableError(e.getMessage(), e);
+					}
 				} else {
 					try {
 						return target1.newInstance().supported().containsAll(this.keys);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				}
 			case TO:
 				if (this.type != null) {
-					return target2 == this.type;
+					try {
+						return target2.newInstance().getBaseType() == this.type;
+					} catch (final Exception e) {
+						throw new UnrecoverableError(e.getMessage(), e);
+					}
 				} else {
 					try {
 						return target2.newInstance().supported().containsAll(this.keys);
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw new UnrecoverableError(e.getMessage(), e);
 					}
 				}
 			case ONE:
 				if (oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
-						return target1 == this.type;
+						try {
+							return target1.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target1.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
 				} else {
 					if (this.type != null) {
-						return target2 == this.type;
+						try {
+							return target2.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target2.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
@@ -133,21 +146,29 @@ public final class Atom extends Expression {
 			case OTHER:
 				if (!oneEquals.equals(Index.FROM)) {
 					if (this.type != null) {
-						return target1 == this.type;
+						try {
+							return target1.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target1.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
 				} else {
 					if (this.type != null) {
-						return target2 == this.type;
+						try {
+							return target2.newInstance().getBaseType() == this.type;
+						} catch (final Exception e) {
+							throw new UnrecoverableError(e.getMessage(), e);
+						}
 					} else {
 						try {
 							return target2.newInstance().supported().containsAll(this.keys);
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new UnrecoverableError(e.getMessage(), e);
 						}
 					}
@@ -158,6 +179,27 @@ public final class Atom extends Expression {
 		return false;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
+	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 */
+	@Override
+	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
+	                                        final Class<? extends MappableEntity> target2,
+	                                        final Index oneEquals) {
+		return check(target1, target2, oneEquals)
+		                                         ? null
+		                                         : new LinkedList<Expression>() {
+			                                         
+			                                         private static final long serialVersionUID = 1L;
+			                                         
+			                                         {
+				                                         add(Atom.this);
+			                                         }
+		                                         };
+	}
+	
 	/**
 	 * @return the index the atom refers to
 	 */
@@ -166,8 +208,7 @@ public final class Atom extends Expression {
 	}
 	
 	/**
-	 * @return the {@link FieldKey}s the atom refers to, if any. Returns an
-	 *         empty set if none were specified.
+	 * @return the {@link FieldKey}s the atom refers to, if any. Returns an empty set if none were specified.
 	 */
 	public Set<FieldKey> getKeys() {
 		return this.keys;
@@ -178,5 +219,18 @@ public final class Atom extends Expression {
 	 */
 	public Class<?> getType() {
 		return this.type;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 */
+	@Override
+	public String toString() {
+		if (this.type != null) {
+			return "(" + this.idx.name() + "<type> = " + this.type.getSimpleName() + ")";
+		} else {
+			return "(" + this.idx.name() + "<fields> ⊇ " + JavaUtils.collectionToString(this.keys) + ")";
+		}
 	}
 }

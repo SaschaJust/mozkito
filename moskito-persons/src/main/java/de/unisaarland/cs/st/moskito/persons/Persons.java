@@ -1,31 +1,29 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 /**
  * 
  */
 package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.model.AndamaChain;
-import net.ownhero.dev.andama.model.AndamaPool;
-import net.ownhero.dev.andama.settings.AndamaSettings;
-import net.ownhero.dev.andama.settings.LoggerArguments;
+import net.ownhero.dev.andama.model.Chain;
+import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.RCS;
-import de.unisaarland.cs.st.moskito.exceptions.UninitializedDatabaseException;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
+import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
 import de.unisaarland.cs.st.moskito.persons.settings.PersonsArguments;
@@ -37,40 +35,39 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Persons extends AndamaChain {
+public class Persons extends Chain<PersonsSettings> {
 	
-	private final AndamaPool        threadPool;
-	private final DatabaseArguments databaseArguments;
-	private final LoggerArguments   logSettings;
-	private final PersonsArguments  personsArguments;
+	private final Pool             threadPool;
+	private DatabaseArguments      databaseArguments;
+	private final LoggerArguments  logSettings;
+	private final PersonsArguments personsArguments;
+	private PersistenceUtil        persistenceUtil;
 	
 	/**
+	 * @throws SettingsParseError
+	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Persons() {
+	public Persons() throws SettingsParseError, ArgumentRegistrationException {
 		super(new PersonsSettings());
-		this.threadPool = new AndamaPool(RCS.class.getSimpleName(), this);
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
 		
-		AndamaSettings settings = getSettings();
-		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(true, "persistence");
-		this.logSettings = settings.setLoggerArg(true);
-		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(true);
+		final Settings settings = getSettings();
+		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(Requirement.required, "persistence");
+		this.logSettings = settings.setLoggerArg(Requirement.required);
+		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.required);
 		
-		settings.parseArguments();
+		settings.parse();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		setup();
-		this.threadPool.execute();
-		
-		if (Logger.logInfo()) {
-			Logger.info("Terminating.");
-		}
+	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException {
+		super(new PersonsSettings());
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+		final Settings settings = getSettings();
+		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.optional);
+		this.logSettings = settings.setLoggerArg(Requirement.required);
+		this.persistenceUtil = util;
+		settings.parse();
 	}
 	
 	/*
@@ -80,42 +77,20 @@ public class Persons extends AndamaChain {
 	@Override
 	public void setup() {
 		this.logSettings.getValue();
-		PersistenceUtil persistenceUtil = null;
-		
-		if (this.databaseArguments.getValue() != null) {
-			try {
-				persistenceUtil = PersistenceManager.getUtil();
-			} catch (UninitializedDatabaseException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-				
-				shutdown();
-			}
-			
-		} else {
+		if ((this.persistenceUtil == null) && (this.databaseArguments != null)) {
+			this.persistenceUtil = this.databaseArguments.getValue();
+		}
+		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
 				Logger.error("Database arguments are not set (required when merging persons).");
 			}
-			
 			shutdown();
 		}
 		
-		MergingProcessor processor = this.personsArguments.getValue();
-		processor.providePersistenceUtil(persistenceUtil);
+		final MergingProcessor processor = this.personsArguments.getValue();
+		processor.providePersistenceUtil(this.persistenceUtil);
 		
-		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil, processor);
+		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);
+		new PersonsMerger(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil, processor);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.toolchain.RepoSuiteToolchain#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		this.threadPool.shutdown();
-	}
-	
 }
