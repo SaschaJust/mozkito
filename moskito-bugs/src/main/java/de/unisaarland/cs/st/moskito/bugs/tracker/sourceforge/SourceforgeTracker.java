@@ -152,7 +152,7 @@ public class SourceforgeTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			return new ThanksToAdobe();
+			return new SourceforgeParser();
 		} finally {
 			// POSTCONDITIONS
 		}

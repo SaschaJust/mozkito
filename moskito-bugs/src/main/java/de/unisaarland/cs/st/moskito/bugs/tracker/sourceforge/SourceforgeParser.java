@@ -59,7 +59,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ThanksToAdobe implements Parser {
+public class SourceforgeParser implements Parser {
 	
 	private class AttachmentHistoryEntry {
 		
@@ -441,7 +441,7 @@ public class ThanksToAdobe implements Parser {
 			for (final Element child : this.leftGBox.children()) {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = ThanksToAdobe.submittedRegex.findAll(pElement.text()
+					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
 					                                                                                        .trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
 						final List<RegexGroup> groups = findAll.get(0);
@@ -841,7 +841,7 @@ public class ThanksToAdobe implements Parser {
 			for (final Element child : this.leftGBox.children()) {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = ThanksToAdobe.submittedRegex.findAll(pElement.text()
+					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
 					                                                                                        .trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
 						String name = null;
