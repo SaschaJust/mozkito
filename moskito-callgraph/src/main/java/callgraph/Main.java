@@ -16,6 +16,8 @@
 package callgraph;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.callgraph.CallGraphToolChain;
 
@@ -31,12 +33,17 @@ public class Main {
 	public static void main(final String[] args) {
 		CallGraphToolChain toolChain;
 		try {
-			toolChain = new CallGraphToolChain();
+			final Settings settings = new Settings();
+			toolChain = new CallGraphToolChain(settings);
 			toolChain.run();
 			if (Logger.logInfo()) {
 				Logger.info("PPA.Main: All done. cerio!");
 			}
 		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
