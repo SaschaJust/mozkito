@@ -32,6 +32,7 @@ public class DatabaseArgumentsTest {
 	
 	@Test
 	public void test() throws SettingsParseError {
+		
 		System.setProperty("database.name", "moskito_junit");
 		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
 		System.setProperty("database.user", "miner");

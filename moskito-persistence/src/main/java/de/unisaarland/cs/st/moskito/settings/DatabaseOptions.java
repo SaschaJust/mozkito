@@ -134,15 +134,15 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 		// PRECONDITIONS
 		
 		try {
-			final StringArgument hostArgument = (StringArgument) getSettings().getArgument(this.databaseHost.getName());
-			final StringArgument nameArgument = (StringArgument) getSettings().getArgument(this.databaseName.getName());
-			final StringArgument userArgument = (StringArgument) getSettings().getArgument(this.databaseUser.getName());
-			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(this.databasePassword.getName());
-			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) getSettings().getArgument(this.databaseType.getName());
-			final StringArgument driverArgument = (StringArgument) getSettings().getArgument(this.databaseDriver.getName());
-			final StringArgument unitArgument = (StringArgument) getSettings().getArgument(this.databaseUnit.getName());
-			final EnumArgument<ConnectOptions> optionsArgument = (EnumArgument<ConnectOptions>) getSettings().getArgument(this.databaseOptions.getName());
-			final StringArgument middlewareArgument = (StringArgument) getSettings().getArgument(this.databaseMiddleware.getName());
+			final StringArgument hostArgument = (StringArgument) getSettings().getArgument(this.databaseHost.getTag());
+			final StringArgument nameArgument = (StringArgument) getSettings().getArgument(this.databaseName.getTag());
+			final StringArgument userArgument = (StringArgument) getSettings().getArgument(this.databaseUser.getTag());
+			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(this.databasePassword.getTag());
+			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) getSettings().getArgument(this.databaseType.getTag());
+			final StringArgument driverArgument = (StringArgument) getSettings().getArgument(this.databaseDriver.getTag());
+			final StringArgument unitArgument = (StringArgument) getSettings().getArgument(this.databaseUnit.getTag());
+			final EnumArgument<ConnectOptions> optionsArgument = (EnumArgument<ConnectOptions>) getSettings().getArgument(this.databaseOptions.getTag());
+			final StringArgument middlewareArgument = (StringArgument) getSettings().getArgument(this.databaseMiddleware.getTag());
 			
 			if (optionsArgument.getValue().equals(ConnectOptions.DB_DROP_CREATE)) {
 				try {
