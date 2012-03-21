@@ -1,16 +1,18 @@
-/**
- * ***************************************************************************** Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ***************************************************************************** 
- */
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings;
 
 import java.io.File;
@@ -20,12 +22,17 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
-import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
-import net.ownhero.dev.hiari.settings.arguments.LongArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -36,7 +43,6 @@ import de.unisaarland.cs.st.moskito.changecouplings.model.SerialFileChangeCoupli
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The Class ChangeCouplings.
@@ -45,59 +51,95 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class ChangeCouplings {
 	
-	private final DatabaseOptions   databaseArgs;
-	private final EnumArgument<Level> levelArgument;
-	private final StringArgument      transactionArg;
-	private final DoubleArgument      minConfArg;
-	private final LongArgument        minSupportArg;
-	private PersistenceUtil           persistenceUtil;
-	private Long                      minSupport;
-	private Double                    minConf;
-	private final OutputFileArgument  outputFileArgument;
-	private final RepositorySettings  settings;
+	/** The persistence util. */
+	private PersistenceUtil                               persistenceUtil;
 	
-	public ChangeCouplings() {
-		this.settings = new RepositorySettings();
-		
+	/** The min support. */
+	private Long                                          minSupport;
+	
+	/** The min conf. */
+	private Double                                        minConf;
+	
+	/** The granularity argument. */
+	private EnumArgument<Level>                           granularityArgument;
+	
+	/** The transaction id argument. */
+	private StringArgument                                transactionIdArgument;
+	
+	/** The min confidence argument. */
+	private DoubleArgument                                minConfidenceArgument;
+	
+	/** The min support argument. */
+	private LongArgument                                  minSupportArgument;
+	
+	/** The out argument. */
+	private OutputFileArgument                            outArgument;
+	
+	/** The database arguments. */
+	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	
+	/**
+	 * Instantiates a new change couplings.
+	 *
+	 * @param settings the settings
+	 */
+	public ChangeCouplings(final Settings settings) {
 		try {
-			this.databaseArgs = this.settings.setDatabaseArgs(Requirement.required, "untangling");
 			
-			this.levelArgument = new EnumArgument<Level>(this.settings.getRootArgumentSet(), "changecouplings.level",
-			                                             "The level to compute change couplings on.", Level.FILE,
-			                                             Requirement.required);
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "untangling");
+			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
 			
-			this.transactionArg = new StringArgument(this.settings.getRootArgumentSet(), "changecouplings.transaction",
-			                                         "The transaction id to compute change couplings for.", null,
-			                                         Requirement.required);
+			this.granularityArgument = ArgumentFactory.create(new EnumArgument.Options<Level>(
+			                                                                                  settings.getRoot(),
+			                                                                                  "granularity",
+			                                                                                  "The level to compute change couplings on.",
+			                                                                                  Level.FILE,
+			                                                                                  Requirement.required));
 			
-			this.minConfArg = new DoubleArgument(
-			                                     this.settings.getRootArgumentSet(),
-			                                     "changecouplings.minConfidence",
-			                                     "Only compute change couplings exceeding the minimal confidence of this value.",
-			                                     "0.1", Requirement.required);
+			this.transactionIdArgument = ArgumentFactory.create(new StringArgument.Options(
+			                                                                               settings.getRoot(),
+			                                                                               "transaction",
+			                                                                               "The transaction id to compute change couplings for.",
+			                                                                               null, Requirement.required));
 			
-			this.minSupportArg = new LongArgument(
-			                                      this.settings.getRootArgumentSet(),
-			                                      "changecouplings.minSupport",
-			                                      "Only compute change couplings that exceed a minimal support of this value.",
-			                                      "3", Requirement.required);
+			this.minConfidenceArgument = ArgumentFactory.create(new DoubleArgument.Options(
+			                                                                               settings.getRoot(),
+			                                                                               "minConfidence",
+			                                                                               "Only compute change couplings exceeding the minimal confidence of this value.",
+			                                                                               null, Requirement.required));
 			
-			this.outputFileArgument = new OutputFileArgument(this.settings.getRootArgumentSet(), "changecouplings.out",
-			                                                 "Write the serialized change couplings to this file.",
-			                                                 null, Requirement.required, true);
-		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getLocalizedMessage(), e);
+			this.minSupportArgument = ArgumentFactory.create(new LongArgument.Options(
+			                                                                          settings.getRoot(),
+			                                                                          "minSupport",
+			                                                                          "Only compute change couplings that exceed a minimal support of this value.",
+			                                                                          3l, Requirement.required));
+			
+			this.outArgument = ArgumentFactory.create(new OutputFileArgument.Options(
+			                                                                         settings.getRoot(),
+			                                                                         "out",
+			                                                                         "Write the serialized change couplings to this file.",
+			                                                                         null, Requirement.required, true));
+			
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} finally {
+			
 		}
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run() {
-		final RCSTransaction transaction = this.persistenceUtil.loadById(this.transactionArg.getValue(),
+		final RCSTransaction transaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
 		                                                                 RCSTransaction.class);
 		
-		if (this.levelArgument.getValue().equals("FILE")) {
+		if (this.granularityArgument.getValue().equals(Level.FILE)) {
 			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
 			                                                                                                            this.minSupport.intValue(),
 			                                                                                                            this.minConf.doubleValue(),
@@ -112,7 +154,7 @@ public class ChangeCouplings {
 				Logger.info("Serializing " + couplings.size() + " file change couplings ... ");
 			}
 			
-			final File serialFile = this.outputFileArgument.getValue();
+			final File serialFile = this.outArgument.getValue();
 			
 			try {
 				final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
@@ -137,27 +179,22 @@ public class ChangeCouplings {
 		}
 	}
 	
+	/**
+	 * Setup.
+	 */
 	public void setup() {
 		
-		try {
-			this.settings.parse();
-		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getLocalizedMessage(), e);
-		}
-		final PersistenceUtil persistenceUtil = this.databaseArgs.getValue();
+		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		if (persistenceUtil == null) {
 			throw new UnrecoverableError("Could not connect to database");
 		}
 		
-		this.minConf = this.minConfArg.getValue();
+		this.minConf = this.minConfidenceArgument.getValue();
 		if ((this.minConf < 0.1) || (this.minConf > 1)) {
 			throw new UnrecoverableError("The minimal confidence value must be between [0.1,1]");
 		}
 		
-		this.minSupport = this.minSupportArg.getValue();
+		this.minSupport = this.minSupportArgument.getValue();
 		if (this.minSupport < 1) {
 			throw new UnrecoverableError("The minimal support value must be larger or equal than one.");
 		}
