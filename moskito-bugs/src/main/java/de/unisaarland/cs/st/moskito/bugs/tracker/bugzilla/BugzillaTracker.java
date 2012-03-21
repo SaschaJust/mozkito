@@ -114,8 +114,8 @@ public class BugzillaTracker extends Tracker {
 	                  final String password,
 	                  final URI overviewURI,
 	                  final String bugzillaVersion) throws InvalidParameterException {
-		super.setup(fetchURI, username, password);
 		this.overviewURI = overviewURI;
 		this.bugzillaVersion = bugzillaVersion;
+		super.setup(fetchURI, username, password);
 	}
 }
