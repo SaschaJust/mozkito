@@ -24,6 +24,7 @@ import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 
 /**
  * The Class SourceforgeTracker.
@@ -36,6 +37,7 @@ public class SourceforgeTracker extends Tracker {
 	
 	private Long groupId;
 	private Long atId;
+	private Type bugType;
 	
 	/*
 	 * (non-Javadoc)
@@ -46,7 +48,7 @@ public class SourceforgeTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			return new SourceforgeParser();
+			return new SourceforgeParser(this.bugType);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -76,9 +78,11 @@ public class SourceforgeTracker extends Tracker {
 	                  final String username,
 	                  final String password,
 	                  final Long groupId,
-	                  final Long atId) throws InvalidParameterException {
+	                  final Long atId,
+	                  final Type bugType) throws InvalidParameterException {
 		this.groupId = groupId;
 		this.atId = atId;
+		this.bugType = bugType;
 		super.setup(fetchURI, username, password);
 	}
 }

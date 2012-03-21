@@ -249,10 +249,6 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					final Person oldValue = new Person(removed, null, null);
 					final Person newValue = new Person(added, null, null);
 					hElement.addChangedValue(field, oldValue, newValue);
-				} else if (what.equals("target milestone")) {
-					
-				} else if (what.equals("cc")) {
-					// TODO to be implemented
 				} else if (what.equals("component")) {
 					field = ("component");
 					hElement.addChangedValue(field, removed, added);
@@ -266,10 +262,6 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					field = ("severity");
 					hElement.addChangedValue(field, BugzillaParser.getSeverity(removed),
 					                         BugzillaParser.getSeverity(added));
-				} else if (what.equals("blocks")) {
-					// TODO how shall I do that?
-				} else if (what.equals("depends on")) {
-					// TODO how shall I do that?
 				} else if (what.equals("status")) {
 					field = ("status");
 					hElement.addChangedValue(field, BugzillaParser.getStatus(removed), BugzillaParser.getStatus(added));

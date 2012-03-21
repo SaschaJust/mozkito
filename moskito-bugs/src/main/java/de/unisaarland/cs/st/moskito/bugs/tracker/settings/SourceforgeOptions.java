@@ -17,9 +17,9 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.LongArgument.Options;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -29,6 +29,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
 
 /**
@@ -37,9 +38,10 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
  */
 public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> {
 	
-	private final TrackerOptions trackerOptions;
-	private Options              atIdArg;
-	private Options              groupIdArg;
+	private final TrackerOptions       trackerOptions;
+	private LongArgument.Options       atIdArg;
+	private LongArgument.Options       groupIdArg;
+	private EnumArgument.Options<Type> bugTypeArg;
 	
 	/**
 	 * @param argumentSet
@@ -61,6 +63,16 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		
 		try {
 			return this.atIdArg;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	public EnumArgument.Options<Type> getBugTypeArg() {
+		// PRECONDITIONS
+		
+		try {
+			return this.bugTypeArg;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -98,9 +110,13 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			final LongArgument groupIdArgument = (LongArgument) getSettings().getArgument(getGroupIdArg().getTag());
 			final LongArgument atIdArgument = (LongArgument) getSettings().getArgument(getAtIdArg().getTag());
 			
+			@SuppressWarnings ("unchecked")
+			final EnumArgument<Type> bugTypeArgument = (EnumArgument<Type>) getSettings().getArgument(getBugTypeArg().getTag());
+			
 			final SourceforgeTracker tracker = new SourceforgeTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), groupIdArgument.getValue(), atIdArgument.getValue());
+			              trackerPasswordArgument.getValue(), groupIdArgument.getValue(), atIdArgument.getValue(),
+			              bugTypeArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
@@ -135,8 +151,15 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			this.groupIdArg = new LongArgument.Options(set, "groupId", "Sourceforge project's groupID.", null,
 			                                           Requirement.required);
 			
-			req(this.groupIdArg, map);
+			this.bugTypeArg = new EnumArgument.Options<Type>(
+			                                                 set,
+			                                                 "bugType",
+			                                                 "Specifies the bug type of reports contained within this Sourceforge tracker. Sourceforge has multiple trackers for multiple report types.",
+			                                                 Type.BUG, Requirement.required);
+			
+			req(getGroupIdArg(), map);
 			req(getAtIdArg(), map);
+			req(getBugTypeArg(), map);
 			return map;
 		} finally {
 			// POSTCONDITIONS

@@ -238,6 +238,12 @@ public class SourceforgeParser implements Parser {
 	
 	private Tracker                                   tracker;
 	
+	private final Type                                bugType;
+	
+	public SourceforgeParser(final Type bugType) {
+		this.bugType = bugType;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
@@ -900,8 +906,7 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			// FIXME requires an own sourceforge tracker argument
-			return Type.BUG;
+			return this.bugType;
 		} finally {
 			// POSTCONDITIONS
 		}

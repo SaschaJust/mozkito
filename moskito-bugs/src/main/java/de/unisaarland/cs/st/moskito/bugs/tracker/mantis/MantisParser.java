@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +31,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
@@ -232,7 +234,6 @@ public class MantisParser implements Parser {
 	private final Regex                     projectRegex      = new Regex("\\[({PRJECT}[^\\]]+)\\]");
 	
 	/** The tracker. */
-	@SuppressWarnings ("unused")
 	private Tracker                         tracker;
 	
 	/** The history elements. */
@@ -471,16 +472,16 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find filenameTag for attachmentEntry.");
 					}
 					attachmentEntry.setFilename(filenameTag.text());
-					// try {
-					// FIXME Sascha told me to ignore this (he did use the words, but anyway).
-					// attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
-					// } catch (final Exception e) {
-					// if (Logger.logError()) {
-					// Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
-					// e);
-					// }
-					//
-					// }
+					try {
+						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(this.tracker.getUri().toASCIIString()
+						        + attachmentEntry.getLink()).toURI()));
+					} catch (final Exception e) {
+						if (Logger.logError()) {
+							Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
+							             e);
+						}
+						
+					}
 					
 					final Person person = this.attachters.get(attachmentEntry.getFilename());
 					if (person == null) {

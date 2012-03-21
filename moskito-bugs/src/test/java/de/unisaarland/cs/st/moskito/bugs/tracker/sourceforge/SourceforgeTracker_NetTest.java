@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
+import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 
 public class SourceforgeTracker_NetTest {
 	
@@ -21,7 +22,7 @@ public class SourceforgeTracker_NetTest {
 		
 		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {
-			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l);
+			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l, Type.BUG);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

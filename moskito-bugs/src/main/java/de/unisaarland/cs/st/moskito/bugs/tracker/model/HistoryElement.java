@@ -482,7 +482,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	@Override
 	@Transient
 	public String getText() {
-		// FIXME
 		return null;
 	}
 	

@@ -49,7 +49,8 @@ public class SourceforgeTrackerTest {
 	public void setup() {
 		this.tracker = new SourceforgeTracker();
 		try {
-			this.tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l);
+			this.tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l,
+			                   Type.BUG);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

@@ -348,8 +348,15 @@ public class GoogleParser implements Parser {
 										milestoneUpdate = new Tuple<String, String>("", "");
 									}
 									milestoneUpdate.setFirst(oldValue);
+								} else {
+									String keyword = label.trim();
+									if (keyword.startsWith("-")) {
+										keyword = keyword.substring(1);
+										hElem.addChangedValue("keywords", keyword, null);
+									} else {
+										hElem.addChangedValue("keywords", null, keyword);
+									}
 								}
-								// TODO keywords This requires suitable methods in HistoryElement
 							}
 							
 							if (typeUpdate != null) {
