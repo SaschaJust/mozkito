@@ -48,26 +48,37 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
 /**
+ * The Class Comment.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 @Table (name = "comment", uniqueConstraints = { @UniqueConstraint (columnNames = { "id", "bugreport_id" }) })
 public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2410349441783888667L;
+	
+	/** The generated id. */
 	private long              generatedId;
+	
+	/** The timestamp. */
 	private DateTime          timestamp;
+	
+	/** The message. */
 	private String            message;
+	
+	/** The bug report. */
 	private Report            bugReport;
+	
+	/** The id. */
 	private int               id;
+	
+	/** The person container. */
 	private PersonContainer   personContainer  = new PersonContainer();
 	
 	/**
-	 * 
+	 * Instantiates a new comment.
 	 */
 	@SuppressWarnings ("unused")
 	private Comment() {
@@ -75,10 +86,12 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
-	 * @param bugReport
-	 * @param author
-	 * @param timestamp
-	 * @param message
+	 * Instantiates a new comment.
+	 *
+	 * @param id the id
+	 * @param author the author
+	 * @param timestamp the timestamp
+	 * @param message the message
 	 */
 	@NoneNull
 	public Comment(@Positive final int id, final Person author, final DateTime timestamp, final String message) {
@@ -106,6 +119,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the author.
+	 *
 	 * @return the author
 	 */
 	@Override
@@ -116,6 +131,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the bug report.
+	 *
 	 * @return the bugReport
 	 */
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -124,6 +141,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the generated id.
+	 *
 	 * @return the generatedId
 	 */
 	@Id
@@ -133,6 +152,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the id.
+	 *
 	 * @return the id
 	 */
 	@Basic
@@ -141,7 +162,9 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the java timestamp.
+	 *
+	 * @return the java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -151,6 +174,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the message.
+	 *
 	 * @return the message
 	 */
 	@Lob
@@ -161,6 +186,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the person container.
+	 *
 	 * @return the personContainer
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -179,6 +206,8 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
+	 * Gets the timestamp.
+	 *
 	 * @return the timestamp
 	 */
 	@Override
@@ -188,37 +217,46 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
-	 * @param author
-	 *            the author to set
+	 * Sets the author.
+	 *
+	 * @param author the author to set
 	 */
 	public void setAuthor(final Person author) {
 		getPersonContainer().add("author", author);
 	}
 	
 	/**
-	 * @param bugReport
-	 *            the bugReport to set
+	 * Sets the bug report.
+	 *
+	 * @param bugReport the bugReport to set
 	 */
 	public void setBugReport(final Report bugReport) {
 		this.bugReport = bugReport;
 	}
 	
 	/**
-	 * @param generatedId
-	 *            the generatedId to set
+	 * Sets the generated id.
+	 *
+	 * @param generatedId the generatedId to set
 	 */
 	public void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	
 	/**
-	 * @param id
-	 *            the id to set
+	 * Sets the id.
+	 *
+	 * @param id the id to set
 	 */
 	public void setId(final int id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Sets the java timestamp.
+	 *
+	 * @param timestamp the new java timestamp
+	 */
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date timestamp) {
 		this.timestamp = timestamp == null
@@ -227,24 +265,27 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	}
 	
 	/**
-	 * @param message
-	 *            the message to set
+	 * Sets the message.
+	 *
+	 * @param message the message to set
 	 */
 	public void setMessage(final String message) {
 		this.message = message;
 	}
 	
 	/**
-	 * @param personContainer
-	 *            the personContainer to set
+	 * Sets the person container.
+	 *
+	 * @param personContainer the personContainer to set
 	 */
 	protected void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
 	}
 	
 	/**
-	 * @param timestamp
-	 *            the timestamp to set
+	 * Sets the timestamp.
+	 *
+	 * @param timestamp the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;

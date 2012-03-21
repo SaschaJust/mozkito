@@ -22,23 +22,51 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * The Class SourceforgeSummaryParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SourceforgeSummaryParser extends DefaultHandler {
 	
+	/**
+	 * The Enum SummaryParserMode.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	private static enum SummaryParserMode {
-		DEFAULT, TABLE, TR, TD
+		
+		/** The DEFAULT. */
+		DEFAULT, 
+ /** The TABLE. */
+ TABLE, 
+ /** The TR. */
+ TR, 
+ /** The TD. */
+ TD
 	}
 	
+	/** The content. */
 	private StringBuffer          content = null;
+	
+	/** The current mode. */
 	private SummaryParserMode     currentMode;
 	
+	/** The ids. */
 	private final HashSet<String> ids;            ;
 	
+	/**
+	 * Instantiates a new sourceforge summary parser.
+	 */
 	public SourceforgeSummaryParser() {
 		this.content = new StringBuffer();
 		this.currentMode = SummaryParserMode.DEFAULT;
 		this.ids = new HashSet<String>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
 	@Override
 	public void characters(final char[] ch,
 	                       final int start,
@@ -48,6 +76,9 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void endElement(final String uri,
 	                       final String localName,
@@ -62,10 +93,18 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		}
 	}
 	
+	/**
+	 * Gets the i ds.
+	 *
+	 * @return the i ds
+	 */
 	public Set<String> getIDs() {
 		return this.ids;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
 	@Override
 	public void startElement(final String uri,
 	                         final String localName,

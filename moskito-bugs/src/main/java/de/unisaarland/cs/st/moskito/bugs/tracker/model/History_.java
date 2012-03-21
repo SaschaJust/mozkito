@@ -22,12 +22,23 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.model;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+/**
+ * The Class History_.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.History.class)
 @javax.annotation.Generated
 (value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class History_ {
+    
+    /** The bug id. */
     public static volatile SingularAttribute<History,Long> bugId;
+    
+    /** The elements. */
     public static volatile SetAttribute<History,HistoryElement> elements;
+    
+    /** The id. */
     public static volatile SingularAttribute<History,Long> id;
 }

@@ -44,8 +44,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  */
 public class GoogleTracker extends Tracker {
 	
+	/** The fetch regex pattern. */
 	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
+	
+	/** The project name. */
 	private String                projectName;
+	
+	/** The service. */
 	private ProjectHostingService service;
 	
 	/*
@@ -72,6 +77,9 @@ public class GoogleTracker extends Tracker {
 		return this.projectName;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getReportLinks()
+	 */
 	@Override
 	public Collection<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -122,6 +130,15 @@ public class GoogleTracker extends Tracker {
 		}
 	}
 	
+	/**
+	 * Setup.
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param projectName the project name
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	public void setup(final URI fetchURI,
 	                  final String username,
 	                  final String password,

@@ -32,34 +32,88 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
+/**
+ * The Class Report_.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.bugs.tracker.model.Report.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Tue Feb 28 13:12:49 CET 2012")
 public class Report_ {
 	
+	/** The attachment entries. */
 	public static volatile ListAttribute<Report, AttachmentEntry>     attachmentEntries;
+	
+	/** The category. */
 	public static volatile SingularAttribute<Report, String>          category;
+	
+	/** The comments. */
 	public static volatile SetAttribute<Report, Comment>              comments;
+	
+	/** The component. */
 	public static volatile SingularAttribute<Report, String>          component;
+	
+	/** The creation java timestamp. */
 	public static volatile SingularAttribute<Report, Date>            creationJavaTimestamp;
+	
+	/** The description. */
 	public static volatile SingularAttribute<Report, String>          description;
+	
+	/** The hash. */
 	public static volatile ListAttribute<Report, Byte>                hash;
+	
+	/** The history. */
 	public static volatile SingularAttribute<Report, History>         history;
+	
+	/** The id. */
 	public static volatile SingularAttribute<Report, String>          id;
+	
+	/** The keywords. */
 	public static volatile SetAttribute<Report, String>               keywords;
+	
+	/** The last fetch java. */
 	public static volatile SingularAttribute<Report, Date>            lastFetchJava;
+	
+	/** The last update java timestamp. */
 	public static volatile SingularAttribute<Report, Date>            lastUpdateJavaTimestamp;
+	
+	/** The person container. */
 	public static volatile SingularAttribute<Report, PersonContainer> personContainer;
+	
+	/** The priority. */
 	public static volatile SingularAttribute<Report, Priority>        priority;
+	
+	/** The product. */
 	public static volatile SingularAttribute<Report, String>          product;
+	
+	/** The resolution. */
 	public static volatile SingularAttribute<Report, Resolution>      resolution;
+	
+	/** The resolution java timestamp. */
 	public static volatile SingularAttribute<Report, Date>            resolutionJavaTimestamp;
+	
+	/** The scm fix version. */
 	public static volatile SingularAttribute<Report, String>          scmFixVersion;
+	
+	/** The severity. */
 	public static volatile SingularAttribute<Report, Severity>        severity;
+	
+	/** The siblings. */
 	public static volatile SetAttribute<Report, Long>                 siblings;
+	
+	/** The status. */
 	public static volatile SingularAttribute<Report, Status>          status;
+	
+	/** The subject. */
 	public static volatile SingularAttribute<Report, String>          subject;
+	
+	/** The summary. */
 	public static volatile SingularAttribute<Report, String>          summary;
+	
+	/** The type. */
 	public static volatile SingularAttribute<Report, Type>            type;
+	
+	/** The version. */
 	public static volatile SingularAttribute<Report, String>          version;
 }

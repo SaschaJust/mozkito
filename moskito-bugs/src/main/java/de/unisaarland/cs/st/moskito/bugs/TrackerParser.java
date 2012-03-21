@@ -28,14 +28,18 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
+ * The Class TrackerParser.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerParser extends Transformer<ReportLink, Report> {
 	
 	/**
-	 * @param threadGroup
-	 * @param tracker
+	 * Instantiates a new tracker parser.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param tracker the tracker
 	 */
 	public TrackerParser(final Group threadGroup, final Settings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);

@@ -36,21 +36,29 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
 
 /**
+ * The Class SourceforgeOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> {
 	
+	/** The tracker options. */
 	private final TrackerOptions       trackerOptions;
+	
+	/** The at id arg. */
 	private LongArgument.Options       atIdArg;
+	
+	/** The group id arg. */
 	private LongArgument.Options       groupIdArg;
+	
+	/** The bug type arg. */
 	private EnumArgument.Options<Type> bugTypeArg;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new sourceforge options.
+	 *
+	 * @param trackerOptions the tracker options
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public SourceforgeOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -61,6 +69,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		
 	}
 	
+	/**
+	 * Gets the at id arg.
+	 *
+	 * @return the at id arg
+	 */
 	public LongArgument.Options getAtIdArg() {
 		// PRECONDITIONS
 		
@@ -71,6 +84,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		}
 	}
 	
+	/**
+	 * Gets the bug type arg.
+	 *
+	 * @return the bug type arg
+	 */
 	public EnumArgument.Options<Type> getBugTypeArg() {
 		// PRECONDITIONS
 		
@@ -81,6 +99,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		}
 	}
 	
+	/**
+	 * Gets the group id arg.
+	 *
+	 * @return the group id arg
+	 */
 	public LongArgument.Options getGroupIdArg() {
 		// PRECONDITIONS
 		
@@ -128,6 +151,12 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

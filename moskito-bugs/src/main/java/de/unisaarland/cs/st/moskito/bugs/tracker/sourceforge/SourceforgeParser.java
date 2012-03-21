@@ -64,20 +64,44 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public class SourceforgeParser implements Parser {
 	
+	/**
+	 * The Class AttachmentHistoryEntry.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	private class AttachmentHistoryEntry {
 		
+		/** The author. */
 		private final Person   author;
+		
+		/** The timestamp. */
 		private final DateTime timestamp;
 		
+		/**
+		 * Instantiates a new attachment history entry.
+		 *
+		 * @param author the author
+		 * @param timestamp the timestamp
+		 */
 		public AttachmentHistoryEntry(final Person author, final DateTime timestamp) {
 			this.author = author;
 			this.timestamp = timestamp;
 		}
 		
+		/**
+		 * Gets the author.
+		 *
+		 * @return the author
+		 */
 		public Person getAuthor() {
 			return this.author;
 		}
 		
+		/**
+		 * Gets the timestamp.
+		 *
+		 * @return the timestamp
+		 */
 		public DateTime getTimestamp() {
 			return this.timestamp;
 		}
@@ -204,6 +228,7 @@ public class SourceforgeParser implements Parser {
 	private static Regex                              submittedRegex         = new Regex(
 	                                                                                     "({fullname}[^(]+)\\(\\s+({username}[^\\s]+)\\s+\\)\\s+-\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*)");
 	
+	/** The comment regex. */
 	private static Regex                              commentRegex           = new Regex(
 	                                                                                     "Date:\\s+({timestamp}\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}.*).*Sender:\\s+({username}.*)");
 	
@@ -221,28 +246,45 @@ public class SourceforgeParser implements Parser {
 	private final Regex                               subjectRegex           = new Regex(
 	                                                                                     "\\s*\\d\\s*({subject}.*)\\s+-\\s+ID:\\s+({bugid}\\d+)$");
 	
+	/** The artifact comment id regex. */
 	private final Regex                               artifactCommentIdRegex = new Regex(
 	                                                                                     "artifact_comment_({comment_id}\\d+)");
 	
+	/** The last update timestamp. */
 	private DateTime                                  lastUpdateTimestamp;
 	
+	/** The resolution timestamp. */
 	private DateTime                                  resolutionTimestamp;
 	
+	/** The resolver. */
 	private Person                                    resolver;
 	
+	/** The history. */
 	private SortedSet<HistoryElement>                 history                = null;
+	
+	/** The attachment history. */
 	private final Map<String, AttachmentHistoryEntry> attachmentHistory      = new HashMap<String, AttachmentHistoryEntry>();
 	
+	/** The comment table. */
 	private Element                                   commentTable;
 	
+	/** The attachment table container. */
 	private Element                                   attachmentTableContainer;
 	
+	/** The history table container. */
 	private Element                                   historyTableContainer;
 	
+	/** The tracker. */
 	private Tracker                                   tracker;
 	
+	/** The bug type. */
 	private final Type                                bugType;
 	
+	/**
+	 * Instantiates a new sourceforge parser.
+	 *
+	 * @param bugType the bug type
+	 */
 	public SourceforgeParser(final Type bugType) {
 		this.bugType = bugType;
 	}

@@ -19,12 +19,40 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
 
 /**
+ * The Enum Status.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum Status {
-	UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS, FEEDBACK, REOPENED, REVIEWPENDING, VERIFIED, CLOSED, ACKNOWLEDGED;
 	
+	/** The UNKNOWN. */
+	UNKNOWN, 
+ /** The UNCONFIRMED. */
+ UNCONFIRMED, 
+ /** The NEW. */
+ NEW, 
+ /** The ASSIGNED. */
+ ASSIGNED, 
+ /** The I n_ progress. */
+ IN_PROGRESS, 
+ /** The FEEDBACK. */
+ FEEDBACK, 
+ /** The REOPENED. */
+ REOPENED, 
+ /** The REVIEWPENDING. */
+ REVIEWPENDING, 
+ /** The VERIFIED. */
+ VERIFIED, 
+ /** The CLOSED. */
+ CLOSED, 
+ /** The ACKNOWLEDGED. */
+ ACKNOWLEDGED;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

@@ -51,13 +51,30 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonTuple;
 
+/**
+ * The Class MantisTrackerTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class MantisTrackerTest {
 	
+	/** The report19810. */
 	private RawContent    report19810;
+	
+	/** The report18828. */
 	private RawContent    report18828;
+	
+	/** The report8468. */
 	private RawContent    report8468;
+	
+	/** The tracker. */
 	private MantisTracker tracker;
 	
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		
@@ -79,6 +96,9 @@ public class MantisTrackerTest {
 		}
 	}
 	
+	/**
+	 * Test attachments18828.
+	 */
 	@Test
 	public void testAttachments18828() {
 		
@@ -87,6 +107,9 @@ public class MantisTrackerTest {
 		assertTrue(attachments.isEmpty());
 	}
 	
+	/**
+	 * Test attachments19810.
+	 */
 	@Test
 	public void testAttachments19810() {
 		
@@ -128,6 +151,9 @@ public class MantisTrackerTest {
 		
 	}
 	
+	/**
+	 * Test keywords.
+	 */
 	@Test
 	public void testKeywords() {
 		final Report report = this.tracker.parse(new ReportLink(this.report8468.getUri(), "8468"));
@@ -137,6 +163,9 @@ public class MantisTrackerTest {
 		assertTrue(keywords.contains("tictech"));
 	}
 	
+	/**
+	 * Test parse.
+	 */
 	@Test
 	public void testParse() {
 		
@@ -252,6 +281,9 @@ public class MantisTrackerTest {
 		assertTrue(report.getKeywords().isEmpty());
 	}
 	
+	/**
+	 * Test siblings.
+	 */
 	@Test
 	public void testSiblings() {
 		final Report report = this.tracker.parse(new ReportLink(this.report18828.getUri(), "18828"));

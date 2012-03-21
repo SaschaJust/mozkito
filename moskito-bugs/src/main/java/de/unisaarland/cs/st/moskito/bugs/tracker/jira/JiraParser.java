@@ -60,8 +60,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
+ * The Class JiraParser.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class JiraParser implements Parser {
 	
@@ -70,6 +71,12 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
+	/**
+	 * Resolve resolution.
+	 *
+	 * @param resolutionString the resolution string
+	 * @return the resolution
+	 */
 	public static Resolution resolveResolution(final String resolutionString) {
 		// PRECONDITIONS
 		
@@ -96,6 +103,12 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Resolve severity.
+	 *
+	 * @param severity the severity
+	 * @return the severity
+	 */
 	public static Severity resolveSeverity(final String severity) {
 		if (severity.equals("blocker")) {
 			return Severity.BLOCKER;
@@ -114,6 +127,12 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Resolve status.
+	 *
+	 * @param statusStr the status str
+	 * @return the status
+	 */
 	public static Status resolveStatus(final String statusStr) {
 		if (statusStr.equals("open")) {
 			return Status.NEW;
@@ -134,6 +153,12 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Resolve type.
+	 *
+	 * @param typeStr the type str
+	 * @return the type
+	 */
 	public static Type resolveType(final String typeStr) {
 		if (typeStr.equals("bug")) {
 			return Type.BUG;
@@ -151,18 +176,29 @@ public class JiraParser implements Parser {
 		return null;
 	}
 	
+	/** The rest client. */
 	private JiraRestClient            restClient;
 	
+	/** The issue. */
 	private Issue                     issue;
 	
+	/** The fetch time. */
 	private DateTime                  fetchTime;
 	
+	/** The tracker. */
 	private Tracker                   tracker;
 	
+	/** The history. */
 	private SortedSet<HistoryElement> history = null;
 	
+	/** The resolver. */
 	private Person                    resolver;
 	
+	/**
+	 * Instantiates a new jira parser.
+	 *
+	 * @param restClient the rest client
+	 */
 	public JiraParser(final JiraRestClient restClient) {
 		// PRECONDITIONS
 		
@@ -279,6 +315,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
+	 */
 	@Override
 	public String getComponent() {
 		// PRECONDITIONS
@@ -302,6 +341,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
+	 */
 	@Override
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
@@ -600,6 +642,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 */
 	@Override
 	public String getSubject() {
 		// PRECONDITIONS
@@ -611,6 +656,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 */
 	@Override
 	public Person getSubmitter() {
 		// PRECONDITIONS
@@ -626,6 +674,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 */
 	@Override
 	public String getSummary() {
 		// PRECONDITIONS
@@ -637,6 +688,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 */
 	@Override
 	public Type getType() {
 		// PRECONDITIONS
@@ -653,6 +707,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
 	@Override
 	public String getVersion() {
 		// PRECONDITIONS
@@ -675,6 +732,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
@@ -686,6 +746,9 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS

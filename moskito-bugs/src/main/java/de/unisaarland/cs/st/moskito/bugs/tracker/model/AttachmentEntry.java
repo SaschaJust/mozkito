@@ -44,39 +44,62 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
 /**
+ * The Class AttachmentEntry.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 public class AttachmentEntry implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5533493175917492442L;
 	
+	/** The person container. */
 	private PersonContainer   personContainer  = new PersonContainer();
+	
+	/** The size. */
 	long                      size;
+	
+	/** The mime. */
 	private String            mime;
+	
+	/** The timestamp. */
 	private DateTime          timestamp;
+	
+	/** The delta ts. */
 	private DateTime          deltaTS;
+	
+	/** The id. */
 	private String            id;
+	
+	/** The description. */
 	private String            description;
+	
+	/** The filename. */
 	private String            filename;
+	
+	/** The link. */
 	private String            link;
 	
 	/**
-	 * should be used by persistence util only
+	 * should be used by persistence util only.
 	 */
 	public AttachmentEntry() {
 		
 	}
 	
 	/**
-	 * @param attachId
+	 * Instantiates a new attachment entry.
+	 *
+	 * @param attachId the attach id
 	 */
 	public AttachmentEntry(final String attachId) {
 		this.id = attachId;
 	}
 	
 	/**
+	 * Gets the author.
+	 *
 	 * @return the author
 	 */
 	@Transient
@@ -85,6 +108,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the delta ts.
+	 *
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
@@ -92,6 +117,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the description.
+	 *
 	 * @return the description
 	 */
 	@Basic
@@ -101,6 +128,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the filename.
+	 *
 	 * @return the filename
 	 */
 	public String getFilename() {
@@ -108,6 +137,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the id.
+	 *
 	 * @return the id
 	 */
 	@Id
@@ -116,7 +147,9 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the java timestamp.
+	 *
+	 * @return the java timestamp
 	 */
 	@Column (name = "timestamp")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -127,6 +160,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the link.
+	 *
 	 * @return the link
 	 */
 	@Basic
@@ -135,6 +170,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the mime.
+	 *
 	 * @return the mime
 	 */
 	@Basic
@@ -143,6 +180,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the person container.
+	 *
 	 * @return the personContainer
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
@@ -151,6 +190,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the size.
+	 *
 	 * @return the size
 	 */
 	@Basic
@@ -159,6 +200,8 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
+	 * Gets the timestamp.
+	 *
 	 * @return the timestamp
 	 */
 	@Transient
@@ -167,8 +210,9 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param author
-	 *            the author to set
+	 * Sets the author.
+	 *
+	 * @param author the author to set
 	 */
 	public void setAuthor(@NotNull final Person author) {
 		getPersonContainer().add("author", author);
@@ -176,54 +220,63 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param deltaTS
-	 *            the deltaTS to set
+	 * Sets the delta ts.
+	 *
+	 * @param deltaTS the deltaTS to set
 	 */
 	public void setDeltaTS(final DateTime deltaTS) {
 		this.deltaTS = deltaTS;
 	}
 	
 	/**
-	 * @param description
-	 *            the description to set
+	 * Sets the description.
+	 *
+	 * @param description the description to set
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
 	}
 	
 	/**
-	 * @param filename
-	 *            the filename to set
+	 * Sets the filename.
+	 *
+	 * @param filename the filename to set
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 	
 	/**
-	 * @param id
-	 *            the id to set
+	 * Sets the id.
+	 *
+	 * @param id the id to set
 	 */
 	public void setId(final String id) {
 		this.id = id;
 	}
 	
 	/**
-	 * @param timestamp
+	 * Sets the java timestamp.
+	 *
+	 * @param timestamp the new java timestamp
 	 */
 	public void setJavaTimestamp(final Date timestamp) {
 		setTimestamp(new DateTime(timestamp));
 	}
 	
 	/**
-	 * @param link
-	 *            the link to set
+	 * Sets the link.
+	 *
+	 * @param link the link to set
 	 */
 	public void setLink(final String link) {
 		this.link = link;
 	}
 	
 	/**
-	 * @param url
+	 * Sets the link.
+	 *
+	 * @param url the new link
 	 */
 	@Transient
 	public void setLink(final URL url) {
@@ -231,39 +284,45 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @param mime
-	 *            the mime to set
+	 * Sets the mime.
+	 *
+	 * @param mime the mime to set
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
 	}
 	
 	/**
-	 * @param personContainer
-	 *            the personContainer to set
+	 * Sets the person container.
+	 *
+	 * @param personContainer the personContainer to set
 	 */
 	public void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
 	}
 	
 	/**
-	 * @param size
-	 *            the size to set
+	 * Sets the size.
+	 *
+	 * @param size the size to set
 	 */
 	public void setSize(final long size) {
 		this.size = size;
 	}
 	
 	/**
-	 * @param timestamp
-	 *            the timestamp to set
+	 * Sets the timestamp.
+	 *
+	 * @param timestamp the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	
 	/**
-	 * @return
+	 * To uri.
+	 *
+	 * @return the uRI
 	 */
 	public URI toURI() {
 		try {
@@ -274,7 +333,9 @@ public class AttachmentEntry implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * To url.
+	 *
+	 * @return the uRL
 	 */
 	public URL toURL() {
 		try {

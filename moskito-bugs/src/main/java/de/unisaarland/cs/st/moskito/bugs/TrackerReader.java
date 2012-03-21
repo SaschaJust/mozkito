@@ -26,14 +26,18 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 
 /**
+ * The Class TrackerReader.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerReader extends Source<ReportLink> {
 	
 	/**
-	 * @param threadGroup
-	 * @param tracker
+	 * Instantiates a new tracker reader.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param tracker the tracker
 	 */
 	public TrackerReader(final Group threadGroup, final Settings settings, final Tracker tracker) {
 		super(threadGroup, settings, false);

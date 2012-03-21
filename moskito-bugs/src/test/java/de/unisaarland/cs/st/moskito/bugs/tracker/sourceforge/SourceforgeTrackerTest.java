@@ -44,10 +44,19 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
+/**
+ * The Class SourceforgeTrackerTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SourceforgeTrackerTest {
 	
+	/** The tracker. */
 	private SourceforgeTracker tracker;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		this.tracker = new SourceforgeTracker();
@@ -63,6 +72,11 @@ public class SourceforgeTrackerTest {
 		}
 	}
 	
+	/**
+	 * Test issue history.
+	 *
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	@Test
 	public void testIssueHistory() throws InvalidParameterException {
 		
@@ -231,6 +245,11 @@ public class SourceforgeTrackerTest {
 		
 	}
 	
+	/**
+	 * Test issue parser.
+	 *
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	@Test
 	public void testIssueParser() throws InvalidParameterException {
 		try {

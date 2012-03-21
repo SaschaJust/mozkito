@@ -27,11 +27,15 @@ import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 /**
+ * The Class OpenJPA_NetTest.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class OpenJPA_NetTest extends MoskitoTest {
 	
+	/**
+	 * Test orphan person.
+	 */
 	@Test
 	@DatabaseSettings (unit = "bugs")
 	public void testOrphanPerson() {

@@ -34,19 +34,23 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraTracker;
 
 /**
+ * The Class JiraOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, JiraOptions>> {
 	
+	/** The tracker options. */
 	private final TrackerOptions trackerOptions;
+	
+	/** The project key arg. */
 	private Options              projectKeyArg;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new jira options.
+	 *
+	 * @param trackerOptions the tracker options
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public JiraOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -57,6 +61,11 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 		
 	}
 	
+	/**
+	 * Gets the project key.
+	 *
+	 * @return the project key
+	 */
 	public StringArgument.Options getProjectKey() {
 		return this.projectKeyArg;
 	}
@@ -93,6 +102,12 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

@@ -23,8 +23,9 @@ import java.util.Comparator;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
+ * The Class ReportComparator.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class ReportComparator implements Comparator<Report> {
 	

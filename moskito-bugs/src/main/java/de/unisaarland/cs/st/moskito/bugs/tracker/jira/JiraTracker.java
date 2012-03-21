@@ -49,12 +49,16 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  */
 public class JiraTracker extends Tracker implements OverviewParser {
 	
+	/** The overview ur is. */
 	private final Set<ReportLink> overviewURIs = new HashSet<ReportLink>();
 	
+	/** The pm. */
 	private NullProgressMonitor   pm;
 	
+	/** The rest client. */
 	private JiraRestClient        restClient;
 	
+	/** The project key. */
 	private String                projectKey;
 	
 	/*
@@ -72,6 +76,9 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getReportLinks()
+	 */
 	@Override
 	public Set<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -83,6 +90,9 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
+	 */
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
@@ -104,6 +114,15 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		}
 	}
 	
+	/**
+	 * Setup.
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param projectKey the project key
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,

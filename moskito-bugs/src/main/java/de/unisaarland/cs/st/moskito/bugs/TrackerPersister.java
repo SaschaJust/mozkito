@@ -30,16 +30,22 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
+ * The Class TrackerPersister.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerPersister extends Sink<Report> {
 	
+	/** The i. */
 	private Integer i = 0;
 	
 	/**
-	 * @param threadGroup
-	 * @param persistenceUtil
+	 * Instantiates a new tracker persister.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param tracker the tracker
+	 * @param persistenceUtil the persistence util
 	 */
 	public TrackerPersister(final Group threadGroup, final Settings settings, final Tracker tracker,
 	        final PersistenceUtil persistenceUtil) {

@@ -29,8 +29,16 @@ import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 
+/**
+ * The Class SourceforgeTracker_NetTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SourceforgeTracker_NetTest {
 	
+	/**
+	 * Test live overview.
+	 */
 	@Test
 	public void testLiveOverview() {
 		final String liveUrl = "http://sourceforge.net/";

@@ -34,19 +34,23 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleTracker;
 
 /**
+ * The Class GoogleOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, GoogleOptions>> {
 	
+	/** The tracker options. */
 	private final TrackerOptions trackerOptions;
+	
+	/** The project name arg. */
 	private Options              projectNameArg;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new google options.
+	 *
+	 * @param trackerOptions the tracker options
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public GoogleOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -57,6 +61,11 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		
 	}
 	
+	/**
+	 * Gets the project name.
+	 *
+	 * @return the project name
+	 */
 	public StringArgument.Options getProjectName() {
 		return this.projectNameArg;
 	}
@@ -93,6 +102,12 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

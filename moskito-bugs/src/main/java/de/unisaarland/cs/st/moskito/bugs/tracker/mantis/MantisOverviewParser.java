@@ -39,18 +39,40 @@ import org.jsoup.select.Elements;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
+/**
+ * The Class MantisOverviewParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class MantisOverviewParser implements OverviewParser {
 	
+	/** The tracker uri. */
 	private final String          trackerUri;
+	
+	/** The report links. */
 	private final Set<ReportLink> reportLinks = new HashSet<ReportLink>();
 	
+	/** The page regex. */
 	private final Regex           pageRegex   = new Regex("\\?page_number=({page_number}\\d+)");
+	
+	/** The report regex. */
 	private final Regex           reportRegex = new Regex("view.php\\?id=({bugid}\\d+)");
 	
+	/**
+	 * Instantiates a new mantis overview parser.
+	 *
+	 * @param trackerUri the tracker uri
+	 */
 	public MantisOverviewParser(final String trackerUri) {
 		this.trackerUri = trackerUri;
 	}
 	
+	/**
+	 * Determine num pages.
+	 *
+	 * @param uri the uri
+	 * @return the int
+	 */
 	protected int determineNumPages(final URI uri) {
 		// PRECONDITIONS
 		
@@ -105,6 +127,12 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/**
+	 * Gets the link from id.
+	 *
+	 * @param bugId the bug id
+	 * @return the link from id
+	 */
 	public ReportLink getLinkFromId(final String bugId) {
 		// PRECONDITIONS
 		
@@ -123,6 +151,9 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#getReportLinks()
+	 */
 	@Override
 	public Set<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -134,6 +165,12 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/**
+	 * Handle page.
+	 *
+	 * @param pageUri the page uri
+	 * @return the list
+	 */
 	protected List<ReportLink> handlePage(final URI pageUri) {
 		// PRECONDITIONS
 		
@@ -196,6 +233,9 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
+	 */
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS

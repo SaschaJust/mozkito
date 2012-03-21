@@ -30,8 +30,16 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
+/**
+ * The Class BugzillaOverviewParserTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class BugzillaOverviewParserTest {
 	
+	/**
+	 * Test eclipse.
+	 */
 	@Test
 	public void testEclipse() {
 		try {
@@ -61,6 +69,9 @@ public class BugzillaOverviewParserTest {
 		}
 	}
 	
+	/**
+	 * Test mozilla.
+	 */
 	@Test
 	public void testMozilla() {
 		try {

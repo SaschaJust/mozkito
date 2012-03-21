@@ -32,14 +32,13 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.UnregisteredTrackerTypeException;
 
 /**
+ * A factory for creating Tracker objects.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerFactory {
 	
-	/**
-	 * container for repository connector mappings
-	 */
+	/** container for repository connector mappings. */
 	private static Map<TrackerType, Class<? extends Tracker>> trackerHandlers = new HashMap<TrackerType, Class<? extends Tracker>>();
 	
 	/**
@@ -89,8 +88,10 @@ public class TrackerFactory {
 	}
 	
 	/**
-	 * @param trackerIdentifier
-	 * @param trackerClass
+	 * Adds the tracker handler.
+	 *
+	 * @param trackerIdentifier the tracker identifier
+	 * @param trackerClass the tracker class
 	 */
 	private static void addTrackerHandler(final TrackerType trackerIdentifier,
 	                                      final Class<? extends Tracker> trackerClass) {
@@ -109,13 +110,11 @@ public class TrackerFactory {
 	}
 	
 	/**
-	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null)
-	 * 
-	 * @param trackerIdentifier
-	 *            not null
+	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null).
+	 *
+	 * @param trackerIdentifier not null
 	 * @return the corresponding {@link Tracker} class object
-	 * @throws UnregisteredTrackerTypeException
-	 *             * if no matching tracker class object could be found in the registry
+	 * @throws UnregisteredTrackerTypeException * if no matching tracker class object could be found in the registry
 	 */
 	public static Class<? extends Tracker> getTrackerHandler(final TrackerType trackerIdentifier) throws UnregisteredTrackerTypeException {
 		assert (trackerIdentifier != null);
@@ -135,12 +134,14 @@ public class TrackerFactory {
 	}
 	
 	/**
-	 * private constructor avoids instantiation
+	 * private constructor avoids instantiation.
 	 */
 	private TrackerFactory() {
 	}
 	
 	/**
+	 * Gets the handle.
+	 *
 	 * @return the simple class name
 	 */
 	public String getHandle() {

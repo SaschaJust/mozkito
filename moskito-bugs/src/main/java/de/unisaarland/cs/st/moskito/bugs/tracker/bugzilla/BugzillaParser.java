@@ -200,7 +200,11 @@ public abstract class BugzillaParser implements Parser {
 	
 	/** The supported versions. */
 	private final Set<String> supportedVersions;
+	
+	/** The xml report. */
 	private XmlReport         xmlReport;
+	
+	/** The xml bug. */
 	private Bug               xmlBug;
 	
 	/**
@@ -223,6 +227,12 @@ public abstract class BugzillaParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkRAW(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.RawReport)
 	 */
+	/**
+	 * Check raw.
+	 *
+	 * @param content the content
+	 * @return true, if successful
+	 */
 	protected boolean checkRAW(final String content) {
 		if (content.contains("<bug error=\"NotFound\">")) {
 			return false;
@@ -238,6 +248,12 @@ public abstract class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#checkXML(de.unisaarland
 	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 */
+	/**
+	 * Check xml.
+	 *
+	 * @param xml the xml
+	 * @return true, if successful
 	 */
 	protected boolean checkXML(final XmlReport xml) {
 		
@@ -259,6 +275,12 @@ public abstract class BugzillaParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de
 	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
+	 */
+	/**
+	 * Creates the document.
+	 *
+	 * @param rawContent the raw content
+	 * @return the xml report
 	 */
 	protected XmlReport createDocument(@NotNull final RawContent rawContent) {
 		final BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
@@ -285,6 +307,9 @@ public abstract class BugzillaParser implements Parser {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getFetchTime()
+	 */
 	@Override
 	public final DateTime getFetchTime() {
 		// PRECONDITIONS
@@ -296,6 +321,11 @@ public abstract class BugzillaParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Gets the history parser.
+	 *
+	 * @return the history parser
+	 */
 	protected abstract BugzillaHistoryParser getHistoryParser();
 	
 	/**
@@ -307,10 +337,20 @@ public abstract class BugzillaParser implements Parser {
 		return this.supportedVersions;
 	}
 	
+	/**
+	 * Gets the xml bug.
+	 *
+	 * @return the xml bug
+	 */
 	public Bug getXmlBug() {
 		return this.xmlBug;
 	}
 	
+	/**
+	 * Gets the xml report.
+	 *
+	 * @return the xml report
+	 */
 	public XmlReport getXmlReport() {
 		return this.xmlReport;
 	}
@@ -331,6 +371,9 @@ public abstract class BugzillaParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	 */
 	@Override
 	public final boolean setURI(final ReportLink reportLink) {
 		

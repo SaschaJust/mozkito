@@ -60,6 +60,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
+	/** The history parser. */
 	private BugzillaHistoryParser historyParser;
 	
 	/** The sibling regex. */
@@ -67,9 +68,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/**
 	 * Instantiates a new bugzilla parser.
-	 * 
-	 * @param tracker
-	 *            the tracker
+	 *
 	 */
 	public BugzillaParser_4_0_4() {
 		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
@@ -346,6 +345,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getKeywords()
+	 */
 	@Override
 	public Set<String> getKeywords() {
 		// PRECONDITIONS
@@ -582,6 +584,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 */
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -593,6 +598,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 */
 	@Override
 	public String getSubject() {
 		// PRECONDITIONS
@@ -604,6 +612,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 */
 	@Override
 	public Person getSubmitter() {
 		// PRECONDITIONS

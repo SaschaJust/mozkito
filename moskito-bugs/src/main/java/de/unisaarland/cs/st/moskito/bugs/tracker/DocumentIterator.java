@@ -19,8 +19,9 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 /**
+ * The Class DocumentIterator.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class DocumentIterator {
 	

@@ -66,6 +66,12 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public class GoogleParser implements Parser {
 	
+	/**
+	 * Resolve priority.
+	 *
+	 * @param priority the priority
+	 * @return the priority
+	 */
 	public static Priority resolvePriority(final String priority) {
 		if (priority.equals("critical")) {
 			return Priority.VERY_HIGH;
@@ -79,6 +85,12 @@ public class GoogleParser implements Parser {
 		return Priority.UNKNOWN;
 	}
 	
+	/**
+	 * Resolve resolution.
+	 *
+	 * @param status the status
+	 * @return the resolution
+	 */
 	private static Resolution resolveResolution(final String status) {
 		// PRECONDITIONS
 		
@@ -100,6 +112,12 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Resolve status.
+	 *
+	 * @param status the status
+	 * @return the status
+	 */
 	private static Status resolveStatus(final String status) {
 		// PRECONDITIONS
 		
@@ -126,6 +144,12 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Resolve type.
+	 *
+	 * @param type the type
+	 * @return the type
+	 */
 	public static Type resolveType(final String type) {
 		if (type.equals("defect")) {
 			return Type.BUG;
@@ -155,12 +179,16 @@ public class GoogleParser implements Parser {
 	/** The issues entry. */
 	private IssuesEntry                     issuesEntry;
 	
+	/** The fetch time. */
 	private DateTime                        fetchTime;
 	
+	/** The resolver. */
 	private Person                          resolver;
 	
+	/** The history. */
 	private final SortedSet<HistoryElement> history  = new TreeSet<HistoryElement>();
 	
+	/** The comments. */
 	private SortedSet<Comment>              comments = null;
 	
 	/**
@@ -583,6 +611,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getLastUpdateTimestamp()
+	 */
 	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
@@ -651,6 +682,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
+	 */
 	@Override
 	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
@@ -745,6 +779,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 */
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS

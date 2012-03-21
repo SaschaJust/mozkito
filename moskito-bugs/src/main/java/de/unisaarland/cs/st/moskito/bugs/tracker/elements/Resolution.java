@@ -19,12 +19,32 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
 
 /**
+ * The Enum Resolution.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum Resolution {
-	UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID, WONT_FIX, WORKS_FOR_ME;
 	
+	/** The UNKNOWN. */
+	UNKNOWN, 
+ /** The UNRESOLVED. */
+ UNRESOLVED, 
+ /** The DUPLICATE. */
+ DUPLICATE, 
+ /** The RESOLVED. */
+ RESOLVED, 
+ /** The INVALID. */
+ INVALID, 
+ /** The WON t_ fix. */
+ WONT_FIX, 
+ /** The WORK s_ fo r_ me. */
+ WORKS_FOR_ME;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

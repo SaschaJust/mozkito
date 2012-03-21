@@ -26,8 +26,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 
 /**
+ * The Class MantisTracker.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MantisTracker extends Tracker {
 	
@@ -48,6 +49,9 @@ public class MantisTracker extends Tracker {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getReportLinks()
+	 */
 	@Override
 	public Collection<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -63,6 +67,9 @@ public class MantisTracker extends Tracker {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#setup(java.net.URI, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,

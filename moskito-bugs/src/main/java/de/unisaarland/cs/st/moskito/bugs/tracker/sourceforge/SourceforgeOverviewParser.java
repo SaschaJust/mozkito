@@ -43,6 +43,11 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
+/**
+ * The Class SourceforgeOverviewParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SourceforgeOverviewParser implements OverviewParser {
 	
 	/** The limit pattern. */
@@ -50,12 +55,27 @@ public class SourceforgeOverviewParser implements OverviewParser {
 	/** The offset pattern. */
 	protected static Regex        offsetRegex = new Regex("offset=({offset}\\d+)");
 	
+	/** The issue links. */
 	private final Set<ReportLink> issueLinks  = new HashSet<ReportLink>();
+	
+	/** The group id. */
 	private Long                  groupId;
+	
+	/** The at id. */
 	private Long                  atId;
+	
+	/** The base overview uri. */
 	private String                baseOverviewURI;
+	
+	/** The base report uri. */
 	private String                baseReportURI;
 	
+	/**
+	 * Instantiates a new sourceforge overview parser.
+	 *
+	 * @param atId the at id
+	 * @param groupId the group id
+	 */
 	public SourceforgeOverviewParser(final Long atId, final Long groupId) {
 		// PRECONDITIONS
 		
@@ -71,6 +91,9 @@ public class SourceforgeOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#getReportLinks()
+	 */
 	@Override
 	public Set<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -82,6 +105,9 @@ public class SourceforgeOverviewParser implements OverviewParser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
+	 */
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS

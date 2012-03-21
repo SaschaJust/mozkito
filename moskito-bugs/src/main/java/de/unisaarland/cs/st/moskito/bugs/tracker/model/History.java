@@ -52,37 +52,46 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
+ * The Class History.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 public class History implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long         serialVersionUID = 1720480073428317973L;
+	
+	/** The id. */
 	private long                      id;
+	
+	/** The bug id. */
 	private String                    bugId;
 	
+	/** The elements. */
 	private SortedSet<HistoryElement> elements         = new TreeSet<HistoryElement>(new HistoryElementComparator());
 	
 	/**
-	 * should be used by persistence util only
+	 * should be used by persistence util only.
 	 */
 	public History() {
 		
 	}
 	
 	/**
-	 * @param bugId
+	 * Instantiates a new history.
+	 *
+	 * @param bugId the bug id
 	 */
 	public History(@NotNegative final String bugId) {
 		setBugId(bugId);
 	}
 	
 	/**
-	 * @param element
+	 * Adds the.
+	 *
+	 * @param element the element
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean add(@NotNull final HistoryElement element) {
@@ -97,8 +106,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param dateTime
-	 * @return
+	 * After.
+	 *
+	 * @param dateTime the date time
+	 * @return the history
 	 */
 	@Transient
 	public History after(@NotNull final DateTime dateTime) {
@@ -114,8 +125,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param dateTime
-	 * @return
+	 * Before.
+	 *
+	 * @param dateTime the date time
+	 * @return the history
 	 */
 	@Transient
 	public History before(@NotNull final DateTime dateTime) {
@@ -131,7 +144,9 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * First.
+	 *
+	 * @return the history element
 	 */
 	@Transient
 	public HistoryElement first() {
@@ -139,9 +154,11 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param from
-	 * @param to
-	 * @return
+	 * Gets the.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @return the history
 	 */
 	@Transient
 	@NoneNull
@@ -159,8 +176,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param author
-	 * @return
+	 * Gets the.
+	 *
+	 * @param author the author
+	 * @return the history
 	 */
 	@Transient
 	public History get(final Person author) {
@@ -176,8 +195,11 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param timestamp
-	 * @return
+	 * Gets the.
+	 *
+	 * @param author the author
+	 * @param timestamp the timestamp
+	 * @return the history element
 	 */
 	public HistoryElement get(final Person author,
 	                          final DateTime timestamp) {
@@ -193,8 +215,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param field
-	 * @return
+	 * Gets the.
+	 *
+	 * @param field the field
+	 * @return the history
 	 */
 	@Transient
 	public History get(final String field) {
@@ -211,6 +235,8 @@ public class History implements Annotated {
 	}
 	
 	/**
+	 * Gets the bug id.
+	 *
 	 * @return the bugId
 	 */
 	public String getBugId() {
@@ -218,8 +244,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param bugId
-	 * @return
+	 * Gets the by bug id.
+	 *
+	 * @param bugId the bug id
+	 * @return the by bug id
 	 */
 	@Transient
 	public History getByBugId(final String bugId) {
@@ -235,6 +263,8 @@ public class History implements Annotated {
 	}
 	
 	/**
+	 * Gets the elements.
+	 *
 	 * @return the elements
 	 */
 	@OrderBy
@@ -244,6 +274,8 @@ public class History implements Annotated {
 	}
 	
 	/**
+	 * Gets the id.
+	 *
 	 * @return the id
 	 */
 	@Id
@@ -253,9 +285,11 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param fieldName
-	 * @param element
-	 * @return
+	 * Gets the old value.
+	 *
+	 * @param fieldName the field name
+	 * @param element the element
+	 * @return the old value
 	 */
 	public Object getOldValue(final String fieldName,
 	                          final HistoryElement element) {
@@ -276,7 +310,9 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
 	 */
 	@Transient
 	public boolean isEmpty() {
@@ -284,14 +320,18 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Iterator.
+	 *
+	 * @return the iterator
 	 */
 	public Iterator<HistoryElement> iterator() {
 		return getElements().iterator();
 	}
 	
 	/**
-	 * @return
+	 * Last.
+	 *
+	 * @return the history element
 	 */
 	@Transient
 	public HistoryElement last() {
@@ -299,7 +339,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param element
+	 * Removes the.
+	 *
+	 * @param element the element
+	 * @return true, if successful
 	 */
 	private boolean remove(final HistoryElement element) {
 		boolean ret;
@@ -310,8 +353,11 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param report
-	 * @return
+	 * Rollback.
+	 *
+	 * @param report the report
+	 * @param timestamp the timestamp
+	 * @return the report
 	 */
 	@SuppressWarnings ("deprecation")
 	public Report rollback(@NotNull final Report report,
@@ -352,24 +398,27 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param bugId
-	 *            the bugId to set
+	 * Sets the bug id.
+	 *
+	 * @param bugId the bugId to set
 	 */
 	private void setBugId(final String bugId) {
 		this.bugId = bugId;
 	}
 	
 	/**
-	 * @param elements
-	 *            the elements to set
+	 * Sets the elements.
+	 *
+	 * @param elements the elements to set
 	 */
 	private void setElements(final SortedSet<HistoryElement> elements) {
 		this.elements = elements;
 	}
 	
 	/**
-	 * @param id
-	 *            the id to set
+	 * Sets the id.
+	 *
+	 * @param id the id to set
 	 */
 	@SuppressWarnings ("unused")
 	private void setId(final long id) {
@@ -377,7 +426,9 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Size.
+	 *
+	 * @return the int
 	 */
 	@Transient
 	public int size() {
@@ -400,8 +451,10 @@ public class History implements Annotated {
 	}
 	
 	/**
-	 * @param interval
-	 * @return
+	 * Whithin.
+	 *
+	 * @param interval the interval
+	 * @return the history
 	 */
 	public History whithin(final Interval interval) {
 		final History history = new History(getBugId());

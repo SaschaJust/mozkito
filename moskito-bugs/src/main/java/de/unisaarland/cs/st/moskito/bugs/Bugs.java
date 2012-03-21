@@ -38,19 +38,25 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 /**
+ * The Class Bugs.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Bugs extends Chain<Settings> {
 	
+	/** The thread pool. */
 	private final Pool                                    threadPool;
+	
+	/** The tracker arguments. */
 	private ArgumentSet<Tracker, TrackerOptions>          trackerArguments;
+	
+	/** The database arguments. */
 	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
 	
 	/**
-	 * @throws SettingsParseError
-	 * @throws ArgumentRegistrationException
-	 * 
+	 * Instantiates a new bugs.
+	 *
+	 * @param settings the settings
 	 */
 	public Bugs(final Settings settings) {
 		super(settings);

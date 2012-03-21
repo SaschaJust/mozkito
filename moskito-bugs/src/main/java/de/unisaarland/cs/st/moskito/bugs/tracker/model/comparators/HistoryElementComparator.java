@@ -23,11 +23,15 @@ import java.util.Comparator;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 
 /**
+ * The Class HistoryElementComparator.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class HistoryElementComparator implements Comparator<HistoryElement> {
 	
+	/* (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public int compare(final HistoryElement arg0,
 	                   final HistoryElement arg1) {

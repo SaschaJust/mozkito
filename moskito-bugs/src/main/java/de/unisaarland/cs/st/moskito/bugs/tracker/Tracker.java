@@ -39,13 +39,15 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
+ * The Class Tracker.
+ *
  * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
  * mining/parsing/analyzing of a {@link Report}.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Tracker {
 	
+	/** The type. */
 	protected final TrackerType       type          = TrackerType.valueOf(this.getClass()
 	                                                                          .getSimpleName()
 	                                                                          .substring(0,
@@ -54,20 +56,32 @@ public abstract class Tracker {
 	                                                                                             - Tracker.class.getSimpleName()
 	                                                                                                            .length())
 	                                                                          .toUpperCase());
+	
+	/** The tracker uri. */
 	protected URI                     trackerURI;
+	
+	/** The username. */
 	protected String                  username;
+	
+	/** The password. */
 	protected String                  password;
+	
+	/** The report links. */
 	private BlockingQueue<ReportLink> reportLinks   = new LinkedBlockingQueue<ReportLink>();
+	
+	/** The Constant unknownPerson. */
 	public final static Person        unknownPerson = new Person("<unknown>", null, null);
 	
 	/**
-	 * 
+	 * Instantiates a new tracker.
 	 */
 	public Tracker() {
 		Condition.notNull(this.reportLinks, "The bugId container must be initialized.");
 	}
 	
 	/**
+	 * Gets the handle.
+	 *
 	 * @return the simple class name of the current tracker instance
 	 */
 	public String getHandle() {
@@ -76,8 +90,8 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * this method should be synchronized
-	 * 
+	 * this method should be synchronized.
+	 *
 	 * @return the next id that hasn't been requested.
 	 */
 	public final synchronized ReportLink getNextReportLink() {
@@ -88,8 +102,18 @@ public abstract class Tracker {
 		}
 	}
 	
+	/**
+	 * Gets the parser.
+	 *
+	 * @return the parser
+	 */
 	public abstract Parser getParser();
 	
+	/**
+	 * Gets the report links.
+	 *
+	 * @return the report links
+	 */
 	public abstract Collection<ReportLink> getReportLinks();
 	
 	/**
@@ -103,6 +127,8 @@ public abstract class Tracker {
 	}
 	
 	/**
+	 * Gets the uri.
+	 *
 	 * @return the fetchURI
 	 */
 	public URI getUri() {
@@ -110,10 +136,10 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * This method is used to fetch persistent reports from the database
-	 * 
-	 * @param id
-	 *            the id of the bug report
+	 * This method is used to fetch persistent reports from the database.
+	 *
+	 * @param id the id of the bug report
+	 * @param persistenceUtil the persistence util
 	 * @return the {@link Report}
 	 */
 	public Report loadReport(final Long id,
@@ -130,6 +156,9 @@ public abstract class Tracker {
 	
 	/**
 	 * This method parses a XML document representing a bug report.
+	 *
+	 * @param reportLink the report link
+	 * @return the report
 	 */
 	public final Report parse(final ReportLink reportLink) {
 		final Parser parser = getParser();
@@ -198,24 +227,13 @@ public abstract class Tracker {
 	}
 	
 	/**
-	 * sets up the current tracker and fills the queue with the corresponding bug report ids
-	 * 
-	 * @param fetchURI
-	 *            The {@link URI} to be appended by the pattern filled with the bug id. If pattern is null, this is a
-	 *            direct link to a site composing all reports in one document.
-	 * @param overviewURI
-	 *            The {@link URI} to an overview site where all bug ids can be found. May be null.
-	 * @param pattern
-	 *            The pattern to be appended to the {@link URI} when fetching bug reports. May be null.
-	 * @param username
-	 *            The username to be used to login to a bug tracking system. May be null iff password is null.
-	 * @param password
-	 *            The password to be used to login to a bug tracking system. May be null iff username is null.
-	 * @param startAt
-	 *            The first bug id to be mined. May be null.
-	 * @param stopAt
-	 *            The last bug id to be mined. May be null.
-	 * @throws InvalidParameterException
+	 * sets up the current tracker and fills the queue with the corresponding bug report ids.
+	 *
+	 * @param fetchURI The {@link URI} to be appended by the pattern filled with the bug id. If pattern is null, this is a
+	 * direct link to a site composing all reports in one document.
+	 * @param username The username to be used to login to a bug tracking system. May be null iff password is null.
+	 * @param password The password to be used to login to a bug tracking system. May be null iff username is null.
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	
 	public void setup(@NotNull final URI fetchURI,

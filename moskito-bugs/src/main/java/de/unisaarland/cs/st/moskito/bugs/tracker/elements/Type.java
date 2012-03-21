@@ -19,12 +19,42 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
 
 /**
+ * The Enum Type.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum Type {
-	BUG, RFE, TASK, TEST, OTHER, UNKNOWN, DESIGN_DEFECT, BACKPORT, CLEANUP, IMPROVEMENT, REFACTORING, SPEC;
 	
+	/** The BUG. */
+	BUG, 
+ /** The RFE. */
+ RFE, 
+ /** The TASK. */
+ TASK, 
+ /** The TEST. */
+ TEST, 
+ /** The OTHER. */
+ OTHER, 
+ /** The UNKNOWN. */
+ UNKNOWN, 
+ /** The DESIG n_ defect. */
+ DESIGN_DEFECT, 
+ /** The BACKPORT. */
+ BACKPORT, 
+ /** The CLEANUP. */
+ CLEANUP, 
+ /** The IMPROVEMENT. */
+ IMPROVEMENT, 
+ /** The REFACTORING. */
+ REFACTORING, 
+ /** The SPEC. */
+ SPEC;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

@@ -28,17 +28,38 @@ import java.util.Date;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+/**
+ * The Class HistoryElement_.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement.class)
 @javax.annotation.Generated
 (value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class HistoryElement_ {
+    
+    /** The bug id. */
     public static volatile SingularAttribute<HistoryElement,Long> bugId;
+    
+    /** The changed date values. */
     public static volatile MapAttribute<HistoryElement,String,DateTimeTuple> changedDateValues;
+    
+    /** The changed enum values. */
     public static volatile MapAttribute<HistoryElement,String,EnumTuple> changedEnumValues;
+    
+    /** The changed person values. */
     public static volatile MapAttribute<HistoryElement,String,PersonTuple> changedPersonValues;
+    
+    /** The changed string values. */
     public static volatile MapAttribute<HistoryElement,String,StringTuple> changedStringValues;
+    
+    /** The id. */
     public static volatile SingularAttribute<HistoryElement,Long> id;
+    
+    /** The java timestamp. */
     public static volatile SingularAttribute<HistoryElement,Date> javaTimestamp;
+    
+    /** The person container. */
     public static volatile SingularAttribute<HistoryElement,PersonContainer> personContainer;
 }

@@ -39,30 +39,62 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
+/**
+ * The Class JiraHistoryParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class JiraHistoryParser {
 	
+	/** The skip regex. */
 	private static Regex                    skipRegex = new Regex("The issue you are trying to view does not exist");
 	
+	/** The history. */
 	private final SortedSet<HistoryElement> history   = new TreeSet<HistoryElement>();
 	
+	/** The report id. */
 	private final String                    reportId;
 	
+	/** The uri. */
 	private final URI                       uri;
+	
+	/** The resolver. */
 	private Person                          resolver  = null;
 	
+	/**
+	 * Instantiates a new jira history parser.
+	 *
+	 * @param reportId the report id
+	 * @param uri the uri
+	 */
 	public JiraHistoryParser(final String reportId, final URI uri) {
 		this.reportId = reportId;
 		this.uri = uri;
 	}
 	
+	/**
+	 * Gets the history.
+	 *
+	 * @return the history
+	 */
 	public SortedSet<HistoryElement> getHistory() {
 		return this.history;
 	}
 	
+	/**
+	 * Gets the resolver.
+	 *
+	 * @return the resolver
+	 */
 	public Person getResolver() {
 		return this.resolver;
 	}
 	
+	/**
+	 * Parses the.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean parse() {
 		// PRECONDITIONS
 		

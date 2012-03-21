@@ -22,16 +22,46 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
+/**
+ * The Interface BugzillaHistoryParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public interface BugzillaHistoryParser {
 	
+	/**
+	 * Gets the history.
+	 *
+	 * @return the history
+	 */
 	SortedSet<HistoryElement> getHistory();
 	
+	/**
+	 * Gets the resolution timestamp.
+	 *
+	 * @return the resolution timestamp
+	 */
 	DateTime getResolutionTimestamp();
 	
+	/**
+	 * Gets the resolver.
+	 *
+	 * @return the resolver
+	 */
 	Person getResolver();
 	
+	/**
+	 * Checks for parsed.
+	 *
+	 * @return true, if successful
+	 */
 	boolean hasParsed();
 	
+	/**
+	 * Parses the.
+	 *
+	 * @return true, if successful
+	 */
 	boolean parse();
 	
 }

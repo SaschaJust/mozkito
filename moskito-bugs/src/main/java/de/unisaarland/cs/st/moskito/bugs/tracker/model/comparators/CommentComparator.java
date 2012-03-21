@@ -23,11 +23,15 @@ import java.util.Comparator;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 
 /**
+ * The Class CommentComparator.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class CommentComparator implements Comparator<Comment> {
 	
+	/* (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public int compare(final Comment o1,
 	                   final Comment o2) {

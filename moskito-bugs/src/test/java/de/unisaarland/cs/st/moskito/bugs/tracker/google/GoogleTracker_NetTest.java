@@ -40,11 +40,20 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
+/**
+ * The Class GoogleTracker_NetTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class GoogleTracker_NetTest {
 	
+	/** The Constant dateTimeHistoryFormatRegex. */
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
 	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
 	
+	/**
+	 * Test fetch regex.
+	 */
 	@Test
 	public void testFetchRegex() {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
@@ -59,6 +68,9 @@ public class GoogleTracker_NetTest {
 		assertEquals("google-web-toolkit", regex.getGroup("project"));
 	}
 	
+	/**
+	 * Test tracker.
+	 */
 	@Test
 	public void testTracker() {
 		final File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);

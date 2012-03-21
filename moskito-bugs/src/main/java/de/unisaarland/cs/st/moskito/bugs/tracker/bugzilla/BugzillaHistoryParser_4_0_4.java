@@ -72,6 +72,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	/** The parsed. */
 	private boolean                         parsed    = false;
 	
+	/** The skip regex. */
 	private static Regex                    skipRegex = new Regex("No changes have been made to this bug yet.");
 	
 	/**
@@ -118,6 +119,9 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		return this.resolver;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaHistoryParser#hasParsed()
+	 */
 	@Override
 	public boolean hasParsed() {
 		return this.parsed;
@@ -125,19 +129,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	
 	/**
 	 * Parses the.
-	 * 
-	 * @throws UnsupportedProtocolException
-	 *             the unsupported protocol exception
-	 * @throws FetchException
-	 *             the fetch exception
-	 * @throws JDOMException
-	 *             the jDOM exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws SecurityException
-	 *             the security exception
-	 * @throws NoSuchFieldException
-	 *             the no such field exception
+	 *
+	 * @return true, if successful
 	 */
 	@Override
 	@NoneNull

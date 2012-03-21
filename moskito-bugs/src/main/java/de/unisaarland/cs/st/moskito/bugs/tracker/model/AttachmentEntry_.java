@@ -24,18 +24,41 @@ import java.util.Date;
 import javax.persistence.metamodel.SingularAttribute;
 import org.joda.time.DateTime;
 
+/**
+ * The Class AttachmentEntry_.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.AttachmentEntry.class)
 @javax.annotation.Generated
 (value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class AttachmentEntry_ {
+    
+    /** The delta ts. */
     public static volatile SingularAttribute<AttachmentEntry,DateTime> deltaTS;
+    
+    /** The description. */
     public static volatile SingularAttribute<AttachmentEntry,String> description;
+    
+    /** The filename. */
     public static volatile SingularAttribute<AttachmentEntry,String> filename;
+    
+    /** The id. */
     public static volatile SingularAttribute<AttachmentEntry,String> id;
+    
+    /** The java timestamp. */
     public static volatile SingularAttribute<AttachmentEntry,Date> javaTimestamp;
+    
+    /** The link. */
     public static volatile SingularAttribute<AttachmentEntry,String> link;
+    
+    /** The mime. */
     public static volatile SingularAttribute<AttachmentEntry,String> mime;
+    
+    /** The person container. */
     public static volatile SingularAttribute<AttachmentEntry,PersonContainer> personContainer;
+    
+    /** The size. */
     public static volatile SingularAttribute<AttachmentEntry,Long> size;
 }

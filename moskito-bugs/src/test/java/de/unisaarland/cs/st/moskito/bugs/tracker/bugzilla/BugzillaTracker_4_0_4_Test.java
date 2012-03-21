@@ -53,16 +53,39 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
+/**
+ * The Class BugzillaTracker_4_0_4_Test.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class BugzillaTracker_4_0_4_Test {
 	
+	/** The uri114562. */
 	private URI             uri114562;
+	
+	/** The uri642368. */
 	private URI             uri642368;
+	
+	/** The uri153429. */
 	private URI             uri153429;
+	
+	/** The uri1234. */
 	private URI             uri1234;
+	
+	/** The uri642368history. */
 	private URI             uri642368history;
+	
+	/** The fetch uri. */
 	private URI             fetchURI;
+	
+	/** The tracker. */
 	private BugzillaTracker tracker;
 	
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		
@@ -90,10 +113,18 @@ public class BugzillaTracker_4_0_4_Test {
 		}
 	}
 	
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void tearDown() throws Exception {
 	}
 	
+	/**
+	 * Test4_0_5 plus.
+	 */
 	@Test
 	public void test4_0_5PLUS() {
 		
@@ -138,6 +169,9 @@ public class BugzillaTracker_4_0_4_Test {
 		
 	}
 	
+	/**
+	 * Test attachments.
+	 */
 	@Test
 	public void testAttachments() {
 		
@@ -175,6 +209,9 @@ public class BugzillaTracker_4_0_4_Test {
 		
 	}
 	
+	/**
+	 * Test check raw.
+	 */
 	@Test
 	public void testCheckRAW() {
 		final BugzillaParser bugzillaParser = new BugzillaParser_4_0_4();
@@ -190,6 +227,9 @@ public class BugzillaTracker_4_0_4_Test {
 		}
 	}
 	
+	/**
+	 * Test check xml.
+	 */
 	@Test
 	public void testCheckXML() {
 		try {
@@ -203,6 +243,9 @@ public class BugzillaTracker_4_0_4_Test {
 		}
 	}
 	
+	/**
+	 * Test date parse.
+	 */
 	@Test
 	public void testDateParse() {
 		final String date = "2005-11-01 11:43:19 EST";
@@ -210,6 +253,9 @@ public class BugzillaTracker_4_0_4_Test {
 		assertTrue(dateTime != null);
 	}
 	
+	/**
+	 * Test keywords.
+	 */
 	@Test
 	public void testKeywords() {
 		
@@ -220,6 +266,9 @@ public class BugzillaTracker_4_0_4_Test {
 		assertTrue(keywords.contains("plan"));
 	}
 	
+	/**
+	 * Test mozilla history.
+	 */
 	@Test
 	public void testMozillaHistory() {
 		
@@ -263,6 +312,9 @@ public class BugzillaTracker_4_0_4_Test {
 		}
 	}
 	
+	/**
+	 * Test parse.
+	 */
 	@Test
 	public void testParse() {
 		
@@ -327,6 +379,9 @@ public class BugzillaTracker_4_0_4_Test {
 		
 	}
 	
+	/**
+	 * Test parse history.
+	 */
 	@Test
 	public void testParseHistory() {
 		

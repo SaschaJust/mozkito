@@ -37,21 +37,46 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 
 /**
+ * The Class TrackerOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
 	
+	/** The tracker uri arg. */
 	private URIArgument.Options               trackerURIArg;
+	
+	/** The tracker type arg. */
 	private EnumArgument.Options<TrackerType> trackerTypeArg;
+	
+	/** The tracker user arg. */
 	private StringArgument.Options            trackerUserArg;
+	
+	/** The tracker password arg. */
 	private StringArgument.Options            trackerPasswordArg;
+	
+	/** The bugzilla options. */
 	private BugzillaOptions                   bugzillaOptions;
+	
+	/** The google options. */
 	private GoogleOptions                     googleOptions;
+	
+	/** The jira options. */
 	private JiraOptions                       jiraOptions;
+	
+	/** The mantis options. */
 	private MantisOptions                     mantisOptions;
+	
+	/** The sourceforge options. */
 	private SourceforgeOptions                sourceforgeOptions;
 	
+	/**
+	 * Instantiates a new tracker options.
+	 *
+	 * @param argumentSet the argument set
+	 * @param requirement the requirement
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 */
 	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "tracker", "Tracker settings.", requirement);
@@ -59,6 +84,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	}
 	
 	/**
+	 * Gets the tracker password.
+	 *
 	 * @return the trackerPassword
 	 */
 	public final StringArgument.Options getTrackerPassword() {
@@ -66,6 +93,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	}
 	
 	/**
+	 * Gets the tracker type.
+	 *
 	 * @return the trackerType
 	 */
 	public final EnumArgument.Options<TrackerType> getTrackerType() {
@@ -73,6 +102,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	}
 	
 	/**
+	 * Gets the tracker uri.
+	 *
 	 * @return the trackerFetchURI
 	 */
 	public final URIArgument.Options getTrackerURI() {
@@ -80,6 +111,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	}
 	
 	/**
+	 * Gets the tracker user.
+	 *
 	 * @return the trackerUser
 	 */
 	public final StringArgument.Options getTrackerUser() {
@@ -128,6 +161,12 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

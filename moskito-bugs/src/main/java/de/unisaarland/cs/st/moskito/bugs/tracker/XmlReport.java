@@ -24,17 +24,23 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.jdom.Document;
 
 /**
+ * The Class XmlReport.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class XmlReport extends RawContent {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6524458006854786132L;
+	
+	/** The document. */
 	private final Document    document;
 	
 	/**
-	 * @param rawReport
-	 * @param document
+	 * Instantiates a new xml report.
+	 *
+	 * @param rawContent the raw content
+	 * @param document the document
 	 */
 	@NoneNull
 	public XmlReport(final RawContent rawContent, final Document document) {
@@ -44,6 +50,8 @@ public class XmlReport extends RawContent {
 	}
 	
 	/**
+	 * Gets the document.
+	 *
 	 * @return the document
 	 */
 	public Document getDocument() {

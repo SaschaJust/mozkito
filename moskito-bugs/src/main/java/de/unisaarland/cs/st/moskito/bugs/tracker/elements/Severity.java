@@ -19,12 +19,34 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
 
 /**
+ * The Enum Severity.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum Severity {
-	UNKNOWN, ENHANCEMENT, TRIVIAL, MINOR, NORMAL, MAJOR, CRITICAL, BLOCKER;
 	
+	/** The UNKNOWN. */
+	UNKNOWN, 
+ /** The ENHANCEMENT. */
+ ENHANCEMENT, 
+ /** The TRIVIAL. */
+ TRIVIAL, 
+ /** The MINOR. */
+ MINOR, 
+ /** The NORMAL. */
+ NORMAL, 
+ /** The MAJOR. */
+ MAJOR, 
+ /** The CRITICAL. */
+ CRITICAL, 
+ /** The BLOCKER. */
+ BLOCKER;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

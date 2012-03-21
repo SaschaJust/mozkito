@@ -29,12 +29,25 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
+/**
+ * The Class MantisOverviewParserTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class MantisOverviewParserTest {
 	
+	/** The parser. */
 	private MantisOverviewParser parser;
+	
+	/** The tracker uri. */
 	private URI                  trackerUri;
+	
+	/** The overview uri. */
 	private URI                  overviewUri;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		
@@ -48,12 +61,18 @@ public class MantisOverviewParserTest {
 		}
 	}
 	
+	/**
+	 * Test num page detection.
+	 */
 	@Test
 	public void testNumPageDetection() {
 		final int numPages = this.parser.determineNumPages(this.overviewUri);
 		assertEquals(47, numPages);
 	}
 	
+	/**
+	 * Test parse page.
+	 */
 	@Test
 	public void testParsePage() {
 		final List<ReportLink> links = this.parser.handlePage(this.overviewUri);

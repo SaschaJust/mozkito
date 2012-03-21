@@ -39,7 +39,11 @@ public class SourceforgeTracker extends Tracker {
 	/** The issue links. */
 	
 	private Long groupId;
+	
+	/** The at id. */
 	private Long atId;
+	
+	/** The bug type. */
 	private Type bugType;
 	
 	/*
@@ -77,6 +81,17 @@ public class SourceforgeTracker extends Tracker {
 		}
 	}
 	
+	/**
+	 * Setup.
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param groupId the group id
+	 * @param atId the at id
+	 * @param bugType the bug type
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,

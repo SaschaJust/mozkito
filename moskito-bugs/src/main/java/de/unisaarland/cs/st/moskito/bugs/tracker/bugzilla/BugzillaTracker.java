@@ -33,8 +33,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 
 /**
+ * The Class BugzillaTracker.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class BugzillaTracker extends Tracker {
 	
@@ -57,7 +58,10 @@ public class BugzillaTracker extends Tracker {
 	// }
 	// }
 	
+	/** The overview uri. */
 	private URI    overviewURI;
+	
+	/** The bugzilla version. */
 	private String bugzillaVersion;
 	
 	/*
@@ -94,6 +98,9 @@ public class BugzillaTracker extends Tracker {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getReportLinks()
+	 */
 	@Override
 	public Collection<ReportLink> getReportLinks() {
 		// PRECONDITIONS
@@ -112,6 +119,16 @@ public class BugzillaTracker extends Tracker {
 		}
 	}
 	
+	/**
+	 * Setup.
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param overviewURI the overview uri
+	 * @param bugzillaVersion the bugzilla version
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,

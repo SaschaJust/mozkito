@@ -33,18 +33,20 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
 
 /**
+ * The Class MantisOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> {
 	
+	/** The tracker options. */
 	private final TrackerOptions trackerOptions;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new mantis options.
+	 *
+	 * @param trackerOptions the tracker options
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public MantisOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -85,6 +87,12 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

@@ -30,8 +30,16 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class ReportPersistence_NetTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ReportPersistence_NetTest extends MoskitoTest {
 	
+	/**
+	 * Test bugzilla.
+	 */
 	@Test
 	@DatabaseSettings (unit = "bugs")
 	public void testBugzilla() {

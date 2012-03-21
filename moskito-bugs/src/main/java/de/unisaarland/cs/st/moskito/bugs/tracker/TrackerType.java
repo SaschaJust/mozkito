@@ -19,12 +19,28 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 /**
+ * The Enum TrackerType.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum TrackerType {
-	BUGZILLA, JIRA, SOURCEFORGE, GOOGLE, MANTIS;
 	
+	/** The BUGZILLA. */
+	BUGZILLA, 
+ /** The JIRA. */
+ JIRA, 
+ /** The SOURCEFORGE. */
+ SOURCEFORGE, 
+ /** The GOOGLE. */
+ GOOGLE, 
+ /** The MANTIS. */
+ MANTIS;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public static String getHandle() {
 		return TrackerType.class.getSimpleName();
 	}

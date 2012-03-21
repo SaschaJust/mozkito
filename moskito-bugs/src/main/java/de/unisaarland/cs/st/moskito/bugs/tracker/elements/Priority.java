@@ -19,12 +19,30 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.elements;
 
 /**
+ * The Enum Priority.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum Priority {
-	UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
 	
+	/** The UNKNOWN. */
+	UNKNOWN, 
+ /** The VER y_ low. */
+ VERY_LOW, 
+ /** The LOW. */
+ LOW, 
+ /** The NORMAL. */
+ NORMAL, 
+ /** The HIGH. */
+ HIGH, 
+ /** The VER y_ high. */
+ VERY_HIGH;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

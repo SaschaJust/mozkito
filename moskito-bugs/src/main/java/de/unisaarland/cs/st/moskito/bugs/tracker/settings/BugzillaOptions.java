@@ -33,20 +33,26 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
 
 /**
+ * The Class BugzillaOptions.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> {
 	
+	/** The tracker options. */
 	private final TrackerOptions   trackerOptions;
+	
+	/** The overview uri arg. */
 	private URIArgument.Options    overviewURIArg;
+	
+	/** The bugzilla version arg. */
 	private StringArgument.Options bugzillaVersionArg;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new bugzilla options.
+	 *
+	 * @param trackerOptions the tracker options
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -57,10 +63,20 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		
 	}
 	
+	/**
+	 * Gets the bugzilla version.
+	 *
+	 * @return the bugzilla version
+	 */
 	public StringArgument.Options getBugzillaVersion() {
 		return this.bugzillaVersionArg;
 	}
 	
+	/**
+	 * Gets the overview uri.
+	 *
+	 * @return the overview uri
+	 */
 	public URIArgument.Options getOverviewURI() {
 		// PRECONDITIONS
 		
@@ -105,6 +121,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		}
 	}
 	
+	/**
+	 * Req.
+	 *
+	 * @param option the option
+	 * @param map the map
+	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

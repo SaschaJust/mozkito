@@ -23,15 +23,32 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import java.util.Date;
 import javax.persistence.metamodel.SingularAttribute;
 
+/**
+ * The Class Comment_.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment.class)
 @javax.annotation.Generated
 (value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Tue Feb 28 13:12:49 CET 2012")
 public class Comment_ {
+    
+    /** The bug report. */
     public static volatile SingularAttribute<Comment,Report> bugReport;
+    
+    /** The generated id. */
     public static volatile SingularAttribute<Comment,Long> generatedId;
+    
+    /** The id. */
     public static volatile SingularAttribute<Comment,Integer> id;
+    
+    /** The java timestamp. */
     public static volatile SingularAttribute<Comment,Date> javaTimestamp;
+    
+    /** The message. */
     public static volatile SingularAttribute<Comment,String> message;
+    
+    /** The person container. */
     public static volatile SingularAttribute<Comment,PersonContainer> personContainer;
 }

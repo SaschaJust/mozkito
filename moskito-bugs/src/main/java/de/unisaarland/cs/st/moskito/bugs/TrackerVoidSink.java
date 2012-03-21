@@ -24,11 +24,18 @@ import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
+ * The Class TrackerVoidSink.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TrackerVoidSink extends Sink<Report> {
 	
+	/**
+	 * Instantiates a new tracker void sink.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 */
 	public TrackerVoidSink(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 	}

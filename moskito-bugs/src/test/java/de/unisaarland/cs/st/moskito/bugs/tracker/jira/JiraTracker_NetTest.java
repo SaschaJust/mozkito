@@ -41,10 +41,21 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.History;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
+/**
+ * The Class JiraTracker_NetTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class JiraTracker_NetTest {
 	
+	/** The tracker. */
 	private JiraTracker tracker;
 	
+	/**
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		this.tracker = new JiraTracker();
@@ -60,10 +71,18 @@ public class JiraTracker_NetTest {
 		
 	}
 	
+	/**
+	 * Tear down.
+	 *
+	 * @throws Exception the exception
+	 */
 	@After
 	public void tearDown() throws Exception {
 	}
 	
+	/**
+	 * Test attachments.
+	 */
 	@Test
 	public void testAttachments() {
 		
@@ -96,6 +115,11 @@ public class JiraTracker_NetTest {
 		}
 	}
 	
+	/**
+	 * Test from overview parse.
+	 *
+	 * @throws InvalidParameterException the invalid parameter exception
+	 */
 	@Test
 	public void testFromOverviewParse() throws InvalidParameterException {
 		try {

@@ -25,8 +25,16 @@ import net.ownhero.dev.regex.RegexGroup;
 
 import org.junit.Test;
 
+/**
+ * The Class MantisParserTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class MantisParserTest {
 	
+	/**
+	 * Test attachment id regex.
+	 */
 	@Test
 	public void testAttachmentIdRegex() {
 		final String url = "https://issues.openbravo.com/file_download.php?file_id=5008&amp;type=bug";
@@ -39,6 +47,9 @@ public class MantisParserTest {
 		assertEquals("5008", findAll.get(0).get(0).getMatch());
 	}
 	
+	/**
+	 * Test attachment regex.
+	 */
 	@Test
 	public void testAttachmentRegex() {
 		final String s = "Selection_031.png (37,363) 2012-02-20 10:39 https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug  test.html (1,073) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5010&type=bug";

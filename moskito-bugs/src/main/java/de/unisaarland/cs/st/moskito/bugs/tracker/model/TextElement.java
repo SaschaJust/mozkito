@@ -23,14 +23,30 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
+ * The Interface TextElement.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public interface TextElement {
 	
+	/**
+	 * Gets the author.
+	 *
+	 * @return the author
+	 */
 	public Person getAuthor();
 	
+	/**
+	 * Gets the text.
+	 *
+	 * @return the text
+	 */
 	public String getText();
 	
+	/**
+	 * Gets the timestamp.
+	 *
+	 * @return the timestamp
+	 */
 	public DateTime getTimestamp();
 }

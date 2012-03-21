@@ -17,10 +17,25 @@ package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 import java.util.Set;
 
+/**
+ * The Interface OverviewParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public interface OverviewParser {
 	
+	/**
+	 * Gets the report links.
+	 *
+	 * @return the report links
+	 */
 	Set<ReportLink> getReportLinks();
 	
+	/**
+	 * Parses the overview.
+	 *
+	 * @return true, if successful
+	 */
 	boolean parseOverview();
 	
 }
