@@ -28,8 +28,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
  */
 public class MantisTracker extends Tracker {
 	
-	private URI overviewURI;
-	
 	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
 	
 	/*
@@ -52,7 +50,7 @@ public class MantisTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			final MantisOverviewParser overviewParser = new MantisOverviewParser(this.overviewURI.toASCIIString());
+			final MantisOverviewParser overviewParser = new MantisOverviewParser(getUri().toASCIIString());
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse overview to extract bug report IDs. See earlier error.");
 			}
@@ -62,11 +60,10 @@ public class MantisTracker extends Tracker {
 		}
 	}
 	
+	@Override
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
-	                  final String password,
-	                  final URI overviewURI) throws InvalidParameterException {
-		this.overviewURI = overviewURI;
+	                  final String password) throws InvalidParameterException {
 		super.setup(fetchURI, username, password);
 	}
 	

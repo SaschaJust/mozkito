@@ -36,7 +36,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
 public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> {
 	
 	private final TrackerOptions trackerOptions;
-	private URIArgument.Options  overviewURIArg;
 	
 	/**
 	 * @param argumentSet
@@ -51,16 +50,6 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		
 		this.trackerOptions = trackerOptions;
 		
-	}
-	
-	public URIArgument.Options getOverviewURI() {
-		// PRECONDITIONS
-		
-		try {
-			return this.overviewURIArg;
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/*
@@ -82,11 +71,9 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			final StringArgument trackerPasswordArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerPassword()
 			                                                                                                             .getTag());
 			
-			final URIArgument overviewArgument = (URIArgument) getSettings().getArgument(getOverviewURI().getTag());
-			
 			final MantisTracker tracker = new MantisTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), overviewArgument.getValue());
+			              trackerPasswordArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
@@ -116,12 +103,6 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			
 			req(this.trackerOptions, map);
 			
-			this.overviewURIArg = new URIArgument.Options(
-			                                              set,
-			                                              "overviewURI",
-			                                              "URI to extract bug report IDs from (e.g. https://issues.openbravo.com/view_all_bug_page.php).",
-			                                              null, Requirement.required);
-			req(this.overviewURIArg, map);
 			return map;
 		} finally {
 			// POSTCONDITIONS

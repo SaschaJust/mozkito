@@ -42,7 +42,6 @@ public class MantisTrackerTest {
 	private RawContent    report18828;
 	private RawContent    report8468;
 	private MantisTracker tracker;
-	private RawContent    mantisOverview;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -53,11 +52,9 @@ public class MantisTrackerTest {
 		                                           .toURI());
 		this.report8468 = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "open-bravo-8468.html")
 		                                          .toURI());
-		this.mantisOverview = IOUtils.fetch(getClass().getResource(FileUtils.fileSeparator + "mantis_overview.html")
-		                                              .toURI());
 		this.tracker = new MantisTracker();
 		try {
-			this.tracker.setup(new URI("https://issues.openbravo.com"), null, null, this.mantisOverview.getUri());
+			this.tracker.setup(new URI("https://issues.openbravo.com"), null, null);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
