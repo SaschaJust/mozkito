@@ -18,11 +18,8 @@ package de.unisaarland.cs.st.moskito;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
-import net.ownhero.dev.hiari.settings.BooleanArgument;
-import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
@@ -60,19 +57,6 @@ public class RepositoryToolchain extends Chain<Settings> {
 			                                                                  databaseOptions);
 			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
-			ArgumentFactory.create(new BooleanArgument.Options(
-			                                                   settings.getRoot(),
-			                                                   "headless",
-			                                                   "Can be enabled when running without graphical interface",
-			                                                   false, Requirement.optional));
-			ArgumentFactory.create(new LongArgument.Options(
-			                                                settings.getRoot(),
-			                                                "cacheSize",
-			                                                "determines the cache size (number of logs) that are prefetched during reading",
-			                                                3000l, Requirement.required));
-			ArgumentFactory.create(new BooleanArgument.Options(settings.getRoot(), "repository.analyze",
-			                                                   "Requires consistency checks on the repository", false,
-			                                                   Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
