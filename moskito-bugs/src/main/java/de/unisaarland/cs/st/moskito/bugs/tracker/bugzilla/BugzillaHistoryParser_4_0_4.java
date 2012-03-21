@@ -1,21 +1,17 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.SortedSet;
@@ -24,14 +20,11 @@ import java.util.TreeSet;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
@@ -119,7 +112,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		return this.resolver;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaHistoryParser#hasParsed()
 	 */
 	@Override
@@ -129,7 +123,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	
 	/**
 	 * Parses the.
-	 *
+	 * 
 	 * @return true, if successful
 	 */
 	@Override
