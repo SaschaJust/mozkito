@@ -7,31 +7,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Optional.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Optional extends Requirement {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	/**
+	 * Instantiates a new optional.
 	 */
-	@Override
-	public boolean required() {
-		return false;
-	}
+	Optional() {
+	};
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
-		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
 		try {
 			return dependencies;
 		} finally {
@@ -44,8 +42,17 @@ public class Optional extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
+	public List<Requirement> getRequiredDependencies() {
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		return false;
 	}
 	
 	/*

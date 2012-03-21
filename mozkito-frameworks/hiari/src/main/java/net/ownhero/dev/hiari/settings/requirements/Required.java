@@ -7,22 +7,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Required.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Required extends Requirement {
+	
+	/**
+	 * Instantiates a new required.
+	 */
+	Required() {
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
-		final Set<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
+		
 		try {
 			return dependencies;
 		} finally {
@@ -35,7 +44,7 @@ public class Required extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
+	public List<Requirement> getRequiredDependencies() {
 		return null;
 	}
 	

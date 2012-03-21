@@ -14,437 +14,686 @@ package net.ownhero.dev.hiari.settings;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.PriorityQueue;
 import java.util.Properties;
-import java.util.Set;
+import java.util.TreeMap;
 
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
-import net.ownhero.dev.hiari.settings.arguments.MailArguments;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
-import net.ownhero.dev.hiari.settings.arguments.URIArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ClassLoadingError;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentProvider;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Optional;
-import net.ownhero.dev.hiari.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * The Class Settings.
  * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Settings implements ISettings {
 	
 	/**
-	 * @return
+	 * The Class Help.
+	 */
+	private class Help {
+		
+		/** The option map. */
+		Map<String, IOptions<?, ?>> optionMap = new TreeMap<String, IOptions<?, ?>>();
+		
+		/**
+		 * Adds the option.
+		 * 
+		 * @param <T>
+		 *            the generic type
+		 * @param <Y>
+		 *            the generic type
+		 * @param <X>
+		 *            the generic type
+		 * @param options
+		 *            the options
+		 * @throws ArgumentRegistrationException
+		 *             the argument registration exception
+		 * @throws ArgumentSetRegistrationException
+		 *             the argument set registration exception
+		 */
+		public <T, Y extends IArgument<T, ?>, X extends IOptions<T, ? extends Y>> void addOption(@NotNull final X options) throws ArgumentRegistrationException,
+		                                                                                                                  ArgumentSetRegistrationException {
+			if (!this.optionMap.containsKey(options.getTag())) {
+				this.optionMap.put(options.getTag(), options);
+			} else {
+				if (options instanceof ArgumentOptions) {
+					throw new ArgumentRegistrationException("Options already present.", null,
+					                                        (ArgumentOptions<?, ?>) options);
+				} else if (options instanceof ArgumentSetOptions) {
+					throw new ArgumentSetRegistrationException("Options already present.", null,
+					                                           (ArgumentSetOptions<?, ?>) options);
+				} else {
+					if (Logger.logError()) {
+						Logger.error("TODO THIS SHOULD NEVER HAPPEN.");
+					}
+				}
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			// PRECONDITIONS
+			
+			final StringBuilder builder = new StringBuilder();
+			
+			try {
+				int maxlength = 0;
+				for (final String key : this.optionMap.keySet()) {
+					if (key.length() > maxlength) {
+						maxlength = key.length();
+					}
+				}
+				
+				for (final String key : this.optionMap.keySet()) {
+					builder.append(this.optionMap.get(key).getHelpString(maxlength + 1))
+					       .append(FileUtils.lineSeparator);
+					// builder.append(key).append('\t').append(this.optionMap.get(key)).append(FileUtils.lineSeparator);
+				}
+				return builder.toString();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	/**
+	 * The Class RootArgumentSet.
+	 * 
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 */
+	final class RootArgumentSet extends ArgumentSet<Boolean, RootArgumentSet.Options> {
+		
+		/**
+		 * The Class Options.
+		 */
+		class Options extends ArgumentSetOptions<Boolean, RootArgumentSet> {
+			
+			/**
+			 * Instantiates a new options.
+			 * 
+			 * @param argumentSet
+			 *            the argument set
+			 * @param name
+			 *            the name
+			 * @param description
+			 *            the description
+			 * @param requirements
+			 *            the requirements
+			 */
+			public Options(final ArgumentSet<?, ?> argumentSet, final String name, final String description,
+			        final Requirement requirements) {
+				super(argumentSet, name, description, requirements);
+			}
+			
+			/*
+			 * (non-Javadoc)
+			 * @see net.ownhero.dev.andama.settings.ArgumentSetOptions#init(java.util.Map)
+			 */
+			@Override
+			public Boolean init() {
+				return true;
+			}
+			
+			/*
+			 * (non-Javadoc)
+			 * @see
+			 * net.ownhero.dev.andama.settings.ArgumentSetOptions#requirements(net.ownhero.dev.andama.settings.ArgumentSet
+			 * )
+			 */
+			@Override
+			public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+			                                                                            SettingsParseError {
+				return new HashMap<String, IOptions<?, ?>>();
+			}
+			
+		}
+		
+		/**
+		 * Instantiates a new root argument set.
+		 * 
+		 * @param settings
+		 *            the settings
+		 */
+		@SuppressWarnings ("deprecation")
+		private RootArgumentSet(final ISettings settings) {
+			super(settings, "ROOT", "Base arguments.");
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.andama.settings.ArgumentSet#getParent()
+		 */
+		@Override
+		public ArgumentSet<?, ?> getParent() {
+			return null;
+		}
+		
+	}
+	
+	/** The Constant settingsTag. */
+	private static final String settingsTag = "config";
+	
+	/**
+	 * Gets the report this.
+	 * 
+	 * @return the report this
 	 */
 	public static String getReportThis() {
 		return reportThis;
 	}
 	
-	private final Map<String, ArgumentSet<?>> argumentSets      = new HashMap<String, ArgumentSet<?>>();
+	/** The argument sets. */
+	private final Map<String, ArgumentSet<?, ?>>          argumentSets         = new HashMap<String, ArgumentSet<?, ?>>();
 	
-	private final Map<String, String>         toolInformation   = new HashMap<String, String>();
-	private Properties                        commandlineProps;
-	private BooleanArgument                   noDefaultValueArg;
-	private BooleanArgument                   helpArg;
-	private BooleanArgument                   disableCrashArg;
-	private URIArgument                       settingsArg;
-	private MailArguments                     mailArguments     = null;
+	/** The tool information. */
+	private final Map<String, String>                     information          = new HashMap<String, String>();
 	
-	private ArgumentSet<Boolean>              rootArgumentSet;
-	private StringArgument                    bugReportArgument;
-	private final Properties                  fileProps         = new Properties();
-	private final Properties                  properties        = new Properties();
+	/** The no default value arg. */
+	private BooleanArgument                               noDefaultValueArg;
 	
-	private final Set<ArgumentProvider>       argumentProviders = new HashSet<ArgumentProvider>();
+	/** The disable crash arg. */
+	private BooleanArgument                               disableCrashArg;
 	
-	private static String                     reportThis        = "Please file a bug report with this error message here: https://dev.own-hero.net";
+	/** The settings arg. */
+	private URIArgument                                   settingsArg;
+	
+	/** The mail arguments. */
+	private ArgumentSet<Properties, MailOptions>          mailArguments;
+	
+	/** The root argument set. */
+	private ArgumentSet<Boolean, RootArgumentSet.Options> rootArgumentSet;
+	
+	/** The bug report argument. */
+	private StringArgument                                bugReportArgument;
+	
+	/** The properties. */
+	private final Properties                              properties           = new Properties();
+	
+	/** The report this. */
+	private static String                                 reportThis           = "Please file a bug report with this error message here: https://dev.own-hero.net";
+	
+	/** The Constant denyDefaultValuesTag. */
+	public static final String                            denyDefaultValuesTag = "denyDefaultValues";
 	
 	/**
+	 * The main method.
 	 * 
+	 * @param args
+	 *            the arguments
 	 */
-	public Settings() {
-		Logger.readConfiguration();
+	public static void main(final String[] args) {
 		try {
-			this.rootArgumentSet = new ArgumentSet<Boolean>(this, "ROOT arguments") {
-				
-				@Override
-				protected boolean init() {
-					setCachedValue(true);
-					return true;
-				}
-			};
+			System.getProperties().remove("help");
 			
-			this.bugReportArgument = new StringArgument(
-			                                            getRootArgumentSet(),
-			                                            "bug.report",
-			                                            "Determines the error string yielding the URL to the bug tracker for this project.",
-			                                            "Please file a bug report with this error message here: https://dev.own-hero.net",
-			                                            new Required());
-			this.noDefaultValueArg = new BooleanArgument(getRootArgumentSet(), "denyDefaultValues",
-			                                             "Ignore default values!", "false", new Optional());
-			this.helpArg = new BooleanArgument(getRootArgumentSet(), "help", "Shows this help menu.", "false",
-			                                   new Optional());
-			this.disableCrashArg = new BooleanArgument(getRootArgumentSet(), "disableCrashEmail",
-			                                           "If set to `true` no crash emails will be send!", null,
-			                                           new Optional());
-			this.settingsArg = new URIArgument(
-			                                   getRootArgumentSet(),
-			                                   "andamaSettings",
-			                                   "Setting file that contains the JavaVM arguments for the current toolchain.",
-			                                   null, new Optional());
+			ISettings settings = new Settings();
+			System.err.println("toString() (without -Dhelp)");
+			System.err.println(settings);
+			System.err.println();
+			System.err.println("HELP (without -Dhelp)");
+			System.err.println(settings.getHelpString());
 			
-			this.mailArguments = new MailArguments(getRootArgumentSet(), new Required());
+			System.err.println();
+			System.err.println();
 			
-		} catch (final ArgumentRegistrationException e) {
+			System.setProperty("help", "T");
+			settings = new Settings();
+			System.err.println("toString() (with -Dhelp)");
+			System.err.println(settings);
+			System.err.println();
+			System.err.println("HELP (with -Dhelp)");
+			System.err.println(settings.getHelpString());
+			
+		} catch (final SettingsParseError e) {
+			// TODO Auto-generated catch block
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
+			
 		}
 		
 	}
 	
+	/** The help. */
+	public Help                                 help   = new Help();
+	
+	/** The logger args. */
+	private ArgumentSet<Boolean, LoggerOptions> loggerArgs;
+	
+	/** The nohelp. */
+	private boolean                             nohelp = true;
+	
 	/**
-	 * adds an argument to the andama suite settings. Leave default value <code>null</code> if none to be set.
+	 * Instantiates a new settings.
 	 * 
-	 * @param name
-	 *            Name of the JavaVM argument (-D<name>
-	 * @param description
-	 *            Short description that will be displayed when requesting help
-	 * @param defaultValue
-	 *            String that will be set as default value. If none to be set pass <code>null</code>.
-	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
-	 */
-	protected boolean addArgument(@NotNull final ArgumentSet<?> argument) {
-		
-		if (this.argumentSets.containsKey(argument.getName())) {
-			return false;
-		} else {
-			this.argumentSets.put(argument.getName(), argument);
-			return true;
-		}
-		
-	}
-	
-	@Override
-	public boolean addArgumentMapping(final String name,
-	                                  final ArgumentSet<?> argument) {
-		if (!this.argumentSets.containsKey(name)) {
-			this.argumentSets.put(name, argument);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * @param argument
-	 */
-	@Override
-	public void addArgumentProvider(final ArgumentProvider provider) {
-		this.argumentProviders.add(provider);
-	}
-	
-	/**
-	 * @param tool
-	 * @param information
-	 */
-	@Override
-	public void addToolInformation(final String tool,
-	                               final String information) {
-		this.toolInformation.put(tool, information);
-	}
-	
-	/**
-	 * @return
-	 */
-	boolean frozen() {
-		// TODO: implement this
-		return false;
-	}
-	
-	/**
-	 * @param argument
-	 * @return
-	 */
-	private final Argument<?> getArgument(final String argument) {
-		return this.argumentSets.get(argument).getArgument(argument);
-	}
-	
-	/**
-	 * Return the arguments registered at this settings.
-	 * 
-	 * @return
-	 */
-	@Override
-	public Collection<ArgumentSet<?>> getArguments() {
-		return this.argumentSets.values();
-	}
-	
-	/**
-	 * @return the bugReportArgument
-	 */
-	public final StringArgument getBugReportArgument() {
-		return this.bugReportArgument;
-	}
-	
-	/**
-	 * Return the help string that will contain all possible command line arguments.
-	 * 
-	 * @return
-	 */
-	@Override
-	public String getHelpString() {
-		final StringBuilder ss = new StringBuilder();
-		ss.append("Available JavaVM arguments:");
-		ss.append(System.getProperty("line.separator"));
-		
-		return getRootArgumentSet().getHelpString();
-	}
-	
-	/**
-	 * @return the mailArguments
-	 */
-	public MailArguments getMailArguments() {
-		return this.mailArguments;
-	}
-	
-	/**
-	 * @return the properties
-	 */
-	@Override
-	public Properties getProperties() {
-		return this.properties;
-	}
-	
-	/**
-	 * @return the rootArgumentSet
-	 */
-	public final ArgumentSet<Boolean> getRootArgumentSet() {
-		return this.rootArgumentSet;
-	}
-	
-	/**
-	 * @param name
-	 * @return
-	 */
-	@Override
-	public IArgument<?> getSetting(final String name) {
-		final ArgumentSet<?> argumentSet = this.argumentSets.get(name);
-		if (argumentSet.getArgument(name) == null) {
-			return argumentSet;
-		} else {
-			return argumentSet.getArgument(name);
-		}
-	}
-	
-	/**
-	 * @return
-	 */
-	@Override
-	public String getToolInformation() {
-		final StringBuilder builder = new StringBuilder();
-		
-		for (final String tool : this.toolInformation.keySet()) {
-			builder.append("[[");
-			builder.append(tool);
-			builder.append("]]");
-			builder.append(FileUtils.lineSeparator);
-			builder.append(this.toolInformation.get(tool));
-			builder.append(FileUtils.lineSeparator);
-			builder.append(FileUtils.lineSeparator);
-		}
-		
-		return builder.toString();
-	}
-	
-	@Override
-	public boolean hasSetting(final String name) {
-		return this.argumentSets.containsKey(name);
-	}
-	
-	/**
-	 * @return
-	 */
-	public boolean isCrashEmailDisabled() {
-		return this.disableCrashArg.getValue();
-	}
-	
-	/**
 	 * @throws SettingsParseError
-	 * 
+	 *             the settings parse error
 	 */
-	@Override
-	public void parse() throws SettingsParseError {
-		// check to load settings from URI
-		if (System.getProperty("andamaSettings") != null) {
-			this.settingsArg.setStringValue(System.getProperty("andamaSettings"));
-			try {
-				this.settingsArg.parse();
-			} catch (final SettingsParseError e) {
-				if (Logger.logError()) {
-					Logger.error(getHelpString());
-				}
-				throw e;
+	public Settings() throws SettingsParseError {
+		// in any case, you first want to read the logger options
+		Logger.readConfiguration();
+		
+		try {
+			// first read
+			getProperties().clear();
+			
+			// first set properties to the properties set on the command line
+			final Properties commandlineProps = (Properties) System.getProperties().clone();
+			// this will be set later by the corresponding URIArgument if set at all
+			final Properties fileProps = new Properties();
+			getProperties().putAll(commandlineProps);
+			
+			// now, create the root of all arguments
+			this.rootArgumentSet = new RootArgumentSet(this);
+			
+			// setup the help argument
+			ArgumentFactory.create(new BooleanArgument.Options(getRoot(), "help", "Shows this help menu.", false,
+			                                                   Requirement.optional));
+			if (getProperties().get("help") != null) {
+				this.nohelp = false;
 			}
 			
-			if (!this.settingsArg.isInitialized()) {
-				throw new SettingsParseError("You cannot parse andamaSettings that are not initialized.");
-			} else {
+			// check to load settings from URI
+			if (System.getProperty(settingsTag) != null) {
+				this.settingsArg = ArgumentFactory.create(new URIArgument.Options(
+				                                                                  getRoot(),
+				                                                                  settingsTag,
+				                                                                  "Setting file that contains the JavaVM arguments for the current toolchain.",
+				                                                                  null, Requirement.optional));
+				
 				try {
 					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
-					this.fileProps.load(stream);
+					fileProps.load(stream);
 					
 				} catch (final MalformedURLException e) {
 					throw new SettingsParseError(e.getMessage());
 				} catch (final IOException e) {
 					throw new SettingsParseError(e.getMessage());
 				}
-				
 			}
-		}
-		
-		getProperties().clear();
-		getProperties().putAll(this.fileProps);
-		
-		this.commandlineProps = (Properties) System.getProperties().clone();
-		
-		// overwrite properties with the one from the command line
-		getProperties().putAll(this.commandlineProps);
-		
-		if (System.getProperty("help") != null) {
-			System.err.println(getHelpString());
-			throw new SettingsParseError(null, null);
-		}
-		
-		for (final Entry<Object, Object> entry : getProperties().entrySet()) {
-			final String argName = entry.getKey().toString().trim();
-			final String value = entry.getValue().toString().trim();
 			
-			if (this.argumentSets.containsKey(argName)) {
-				getArgument(argName).setStringValue(value);
-				
+			if (fileProps != null) {
+				getProperties().putAll(fileProps);
+				// overwrite values given on the commandline
+				getProperties().putAll(commandlineProps);
 			}
-		}
-		
-		try {
-			getRootArgumentSet().parse();
-		} catch (final SettingsParseError e) {
+			
+			this.bugReportArgument = ArgumentFactory.create(new StringArgument.Options(
+			                                                                           getRoot(),
+			                                                                           "report",
+			                                                                           "Determines the error string yielding the URL to the bug tracker for this project.",
+			                                                                           "Please file a bug report with this error message here: https://dev.own-hero.net",
+			                                                                           Requirement.required));
+			this.noDefaultValueArg = ArgumentFactory.create(new BooleanArgument.Options(getRoot(),
+			                                                                            denyDefaultValuesTag,
+			                                                                            "Ignore default values!",
+			                                                                            false, Requirement.optional));
+			this.disableCrashArg = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                          getRoot(),
+			                                                                          "disableCrashEmail",
+			                                                                          "If set to `true` no crash emails will be send!",
+			                                                                          null, Requirement.optional));
+			this.mailArguments = ArgumentSetFactory.create(new MailOptions(getRoot(), Requirement.required));
+			this.loggerArgs = ArgumentSetFactory.create(new LoggerOptions(getRoot(), Requirement.required));
+		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(getHelpString());
+				Logger.error(e.getMessage(), e);
 			}
-			throw e;
-		}
-		
-		if (!validateSettings()) {
-			System.err.println(getHelpString());
-			throw new SettingsParseError(null, null);
-		}
-		
-		if (this.helpArg.getValue()) {
-			System.err.println(getHelpString());
-			throw new SettingsParseError(null, null);
-		}
-		
-		if (Logger.logInfo()) {
-			Logger.info("Using settings: ");
-			Logger.info(toString());
-		}
-		
-		reportThis = this.bugReportArgument.getValue();
-		
-		// call after parse
-		for (final ArgumentProvider provider : this.argumentProviders) {
-			provider.afterParse();
-		}
-	}
-	
-	@Override
-	public void parseArguments(final Collection<IArgument<?>> arguments) throws SettingsParseError {
-		
-		final PriorityQueue<IArgument<?>> queue = new PriorityQueue<IArgument<?>>(arguments);
-		IArgument<?> argument = null;
-		while ((argument = queue.poll()) != null) {
-			
-			parseArguments(argument.getDependencies());
-			
-			if (!argument.getRequirements().required()) {
-				
-				final String errorMessage = "Could not resolved dependencies. Argument: " + argument
-				        + " has unresolved dependencies: "
-				        + JavaUtils.collectionToString(argument.getRequirements().getMissingRequirements());
-				throw new SettingsParseError(errorMessage, argument);
+			throw new SettingsParseError(e.getMessage(), e.getArgumentSet(), e);
+		} catch (final ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
 			}
+			throw new SettingsParseError(e.getMessage(), e.getArgumentSet(), e);
 			
-			boolean initResult = false;
-			if (argument instanceof Argument<?>) {
-				initResult = ((Argument<?>) argument).init();
-			} else {
-				initResult = ((ArgumentSet<?>) argument).init();
-			}
-			
-			if (!initResult) {
-				final String message = "Could not initialize " + argument
-				        + ". Please see error earlier error messages, refer to the argument help information, "
-				        + "or review the init() method of the corresponding " + argument.getHandle() + ".";
-				throw new SettingsParseError(message, argument);
-			}
 		}
 		
-		if (!validateSettings()) {
-			throw new SettingsParseError("Provided arguments are invalid.");
-		}
-		
-		if (this.helpArg.getValue()) {
-			System.err.println(getHelpString());
-		} else if (Logger.logInfo()) {
-			Logger.info("Using settings: ");
-			Logger.info(toString());
-		}
 	}
 	
 	/**
-	 * Set the value of a registered argument field
+	 * Adds the argument mapping.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param argument
+	 *            the argument
+	 * @return true, if successful
+	 */
+	boolean addArgumentMapping(final String name,
+	                           final ArgumentSet<?, ?> argument) {
+		this.nohelp = true;
+		if (!this.argumentSets.containsKey(name)) {
+			synchronized (this.argumentSets) {
+				if (!this.argumentSets.containsKey(name)) {
+					this.argumentSets.put(name, argument);
+					return true;
+				} else {
+					return false;
+				}
+			}
+			
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#addInformation(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void addInformation(final String key,
+	                           final String information) {
+		synchronized (information) {
+			this.information.put(key, information);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#addOption(net.ownhero.dev.andama.settings.IOptions)
+	 */
+	@Override
+	public <T, X extends IArgument<T, Y>, Y extends IOptions<T, X>> void addOption(@NotNull final Y options) throws ArgumentRegistrationException,
+	                                                                                                        ArgumentSetRegistrationException {
+		this.help.addOption(options);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ISettings#getAnchor(java.lang.String)
+	 */
+	@Override
+	public final ArgumentSet<?, ?> getAnchor(final String argumentSetTag) {
+		return this.argumentSets.get(argumentSetTag);
+	}
+	
+	/**
+	 * Gets the argument.
 	 * 
 	 * @param argument
-	 *            The name of the argument the value shall be set for.
-	 * @param value
-	 *            The value to be set as String.
-	 * @throws NoSuchFieldException
-	 *             If no argument with the specified name is registered.
+	 *            the argument
+	 * @return the argument
 	 */
-	protected void setField(final String argument,
-	                        final String value) throws NoSuchFieldException {
-		if (!this.argumentSets.containsKey(argument)) {
-			throw new NoSuchFieldException("Argument could not be set in " + getClass().getSimpleName()
-			        + ". The argument is not part of the current argument set.");
+	@Override
+	public final IArgument<?, ?> getArgument(final String argument) {
+		synchronized (this.argumentSets) {
+			return this.argumentSets.get(argument).getArgument(argument);
 		}
-		((Argument<?>) getArgument(argument)).setStringValue(value);
 	}
 	
 	/**
-	 * Add the settings set for logger.
+	 * Gets the bug report argument.
 	 * 
-	 * @param isRequired
-	 *            Set to <code>true</code> if the database settings required.
-	 * @return
-	 * @throws ArgumentRegistrationException
-	 * @throws DuplicateArgumentException
+	 * @return the bugReportArgument
 	 */
-	public LoggerArguments setLoggerArg(final Requirement requirements) throws ArgumentRegistrationException {
-		return new LoggerArguments(getRootArgumentSet(), requirements);
+	@Override
+	public final StringArgument getBugReportArgument() {
+		return this.bugReportArgument;
+	}
+	
+	/**
+	 * Gets the deny default values tag.
+	 * 
+	 * @return the denydefaultvaluestag
+	 */
+	@Override
+	public final String getDenyDefaultValuesTag() {
+		// PRECONDITIONS
+		
+		try {
+			return denyDefaultValuesTag;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(denyDefaultValuesTag, "Field '%s' in '%s'.", "denyDefaultValuesTag",
+			                  getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * Gets the disable crash arg.
+	 * 
+	 * @return the disableCrashArg
+	 */
+	public final BooleanArgument getDisableCrashArg() {
+		return this.disableCrashArg;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getHandle()
+	 */
+	@Override
+	public String getHandle() {
+		return getClass().getSimpleName();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getHelpString()
+	 */
+	@Override
+	public String getHelpString() {
+		if (this.nohelp) {
+			return getRoot().getHelpString();
+		} else {
+			return this.help.toString();
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getToolInformation()
+	 */
+	@Override
+	public String getInformation() {
+		final StringBuilder builder = new StringBuilder();
+		
+		synchronized (this.information) {
+			for (final String tool : this.information.keySet()) {
+				builder.append("[[");
+				builder.append(tool);
+				builder.append("]]");
+				builder.append(FileUtils.lineSeparator);
+				builder.append(this.information.get(tool));
+				builder.append(FileUtils.lineSeparator);
+				builder.append(FileUtils.lineSeparator);
+			}
+		}
+		
+		return builder.toString();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getLoggerArguments()
+	 */
+	@Override
+	public final ArgumentSet<Boolean, LoggerOptions> getLoggerArguments() {
+		return this.loggerArgs;
+	}
+	
+	/**
+	 * Gets the mail arguments.
+	 * 
+	 * @return the mailArguments
+	 */
+	@Override
+	public final ArgumentSet<Properties, MailOptions> getMailArguments() {
+		return this.mailArguments;
+	}
+	
+	/**
+	 * Gets the no default value arg.
+	 * 
+	 * @return the noDefaultValueArg
+	 */
+	@Override
+	public final BooleanArgument getNoDefaultValueArg() {
+		return this.noDefaultValueArg;
+	}
+	
+	/**
+	 * Gets the properties.
+	 * 
+	 * @return the properties
+	 */
+	private final Properties getProperties() {
+		return this.properties;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getProperty(java.lang.String)
+	 */
+	@Override
+	public final String getProperty(final String name) {
+		// PRECONDITIONS
+		Condition.notNull(getProperties(), "The field %s in %s.", "properties", getHandle());
+		
+		return getProperties().getProperty(name);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#getRootArgumentSet()
+	 */
+	@Override
+	public final ArgumentSet<Boolean, RootArgumentSet.Options> getRoot() {
+		return this.rootArgumentSet;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#hasSetting(java.lang.String)
+	 */
+	@Override
+	public final boolean hasSetting(final String name) {
+		synchronized (this.argumentSets) {
+			return this.argumentSets.containsKey(name);
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.ISettings#isCrashEmailDisabled()
+	 */
+	@Override
+	public final boolean isCrashEmailDisabled() {
+		return this.disableCrashArg.getValue();
+	}
+	
+	/**
+	 * Load by class.
+	 * 
+	 * @param providerClass
+	 *            the provider class
+	 * @param anchorSet
+	 *            the anchor set
+	 * @return the argument set
+	 */
+	@Override
+	public final ArgumentSet<?, ?> loadByClass(final Class<? extends SettingsProvider> providerClass,
+	                                           final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	                                                                             ArgumentSetRegistrationException,
+	                                                                             SettingsParseError {
+		try {
+			final SettingsProvider provider = providerClass.newInstance();
+			return loadByEntity(provider, anchorSet);
+		} catch (final InstantiationException e) {
+			// TODO Auto-generated catch block
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			
+		} catch (final IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Load by entity.
+	 * 
+	 * @param provider
+	 *            the provider
+	 * @param anchorSet
+	 *            the anchor set
+	 * @return the argument set
+	 * @throws SettingsParseError
+	 * @throws ArgumentSetRegistrationException
+	 * @throws ArgumentRegistrationException
+	 */
+	@Override
+	public final ArgumentSet<?, ?> loadByEntity(final SettingsProvider provider,
+	                                            final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	                                                                              ArgumentSetRegistrationException,
+	                                                                              SettingsParseError {
+		return provider.provide(anchorSet);
+	}
+	
+	/**
+	 * Load by inheritance.
+	 * 
+	 * @param pakkage
+	 *            the pakkage
+	 * @param anchorSet
+	 *            the anchor set
+	 * @return the collection
+	 */
+	@Override
+	public final Collection<ArgumentSet<?, ?>> loadByInheritance(final Package pakkage,
+	                                                             final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	                                                                                               ArgumentSetRegistrationException,
+	                                                                                               SettingsParseError {
+		final Collection<ArgumentSet<?, ?>> ret = new LinkedList<ArgumentSet<?, ?>>();
+		
+		try {
+			final Collection<Class<SettingsProvider>> collection = ClassFinder.getClassesOfInterface(pakkage,
+			                                                                                         SettingsProvider.class,
+			                                                                                         Modifier.ABSTRACT
+			                                                                                                 | Modifier.INTERFACE
+			                                                                                                 | Modifier.PRIVATE
+			                                                                                                 | Modifier.PROTECTED);
+			for (final Class<SettingsProvider> providerClass : collection) {
+				ret.add(loadByClass(providerClass, anchorSet));
+			}
+			
+		} catch (final ClassNotFoundException e) {
+			throw new ClassLoadingError(e, null);
+		} catch (final WrongClassSearchMethodException e) {
+			throw new UnrecoverableError(e);
+		} catch (final IOException e) {
+			throw new UnrecoverableError(e);
+		}
+		
+		return ret;
 	}
 	
 	/*
@@ -452,7 +701,7 @@ public class Settings implements ISettings {
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuilder builder = new StringBuilder();
 		
 		builder.append(getClass().getSimpleName() + ":");
@@ -464,55 +713,9 @@ public class Settings implements ISettings {
 		
 		builder.append(FileUtils.lineSeparator);
 		
-		builder.append(getRootArgumentSet().toString());
+		builder.append(getRoot().toString());
 		
 		return builder.toString();
-	}
-	
-	/**
-	 * Check if all required arguments are set.
-	 * 
-	 * @return <code>null</code> if all required arguments are set. Returns the required argument with no value set
-	 *         first found.
-	 */
-	private boolean validateSettings() {
-		final Set<Argument<?>> defaultValueArgs = new HashSet<Argument<?>>();
-		
-		for (final ArgumentSet<?> args : this.argumentSets.values()) {
-			for (final Argument<?> argument : args.getArguments().values()) {
-				if (!argument.wasSet()) {
-					if (this.noDefaultValueArg.getValue()) {
-						argument.setStringValue(null);
-					} else if (argument.getDefaultValue() != null) {
-						defaultValueArgs.add(argument);
-					}
-				}
-				if (argument.required() && (argument.getValue() == null)) {
-					if (Logger.logError()) {
-						Logger.error("Required argument `" + argument.getName() + "` is not set.");
-					}
-					return false;
-				}
-			}
-		}
-		
-		if (defaultValueArgs.size() > 0) {
-			final StringBuilder sb = new StringBuilder();
-			sb.append("ARGUMENT WARNING: The following required arguments were not set and their default values will be used:");
-			sb.append(FileUtils.lineSeparator);
-			for (final Argument<?> arg : defaultValueArgs) {
-				sb.append(arg.getName());
-				sb.append(": ");
-				sb.append(arg.getDefaultValue());
-				sb.append(FileUtils.lineSeparator);
-			}
-			sb.append("Use -DdenyDefaultValues=T to allow only manually set arguments");
-			if (Logger.logWarn()) {
-				Logger.warn(sb.toString());
-			}
-		}
-		
-		return true;
 	}
 	
 }

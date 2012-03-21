@@ -8,31 +8,40 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.Argument;
-import net.ownhero.dev.hiari.settings.IArgument;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
-import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
-import net.ownhero.dev.hiari.settings.arguments.LongArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Equals.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Equals extends Requirement {
 	
-	private final Argument<?>    argument;
-	private IArgument<?> depender;
-	private Object                     value;
+	/** The argument. */
+	private final IOptions<?, ?> argument;
+	
+	/** The depender. */
+	private IOptions<?, ?>       depender;
+	
+	/** The value. */
+	private Object               value;
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param value
+	 *            the value
 	 */
-	public Equals(@NotNull final BooleanArgument argument, @NotNull final boolean value) {
+	public Equals(@NotNull final BooleanArgument.Options argument, @NotNull final boolean value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -43,10 +52,14 @@ public class Equals extends Requirement {
 	}
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param value
+	 *            the value
 	 */
-	public Equals(@NotNull final DoubleArgument argument, @NotNull final double value) {
+	public Equals(@NotNull final DoubleArgument.Options argument, @NotNull final double value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -57,10 +70,14 @@ public class Equals extends Requirement {
 	}
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param value
+	 *            the value
 	 */
-	public Equals(@NotNull final EnumArgument<?> argument, @NotNull final Enum<?> value) {
+	public Equals(@NotNull final EnumArgument.Options<?> argument, @NotNull final Enum<?> value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -71,10 +88,14 @@ public class Equals extends Requirement {
 	}
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param value
+	 *            the value
 	 */
-	public Equals(@NotNull final LongArgument argument, @NotNull final long value) {
+	public Equals(@NotNull final LongArgument.Options argument, @NotNull final long value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -85,10 +106,14 @@ public class Equals extends Requirement {
 	}
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param depender
+	 *            the depender
 	 */
-	public Equals(@NotNull final StringArgument argument, @NotNull final IArgument<?> depender) {
+	public Equals(@NotNull final StringArgument.Options argument, @NotNull final IOptions<?, ?> depender) {
 		try {
 			this.argument = argument;
 			this.depender = depender;
@@ -100,10 +125,14 @@ public class Equals extends Requirement {
 	}
 	
 	/**
+	 * Instantiates a new equals.
+	 * 
 	 * @param argument
+	 *            the argument
 	 * @param value
+	 *            the value
 	 */
-	public Equals(@NotNull final StringArgument argument, @NotNull final String value) {
+	public Equals(@NotNull final StringArgument.Options argument, @NotNull final String value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -115,29 +144,11 @@ public class Equals extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public boolean required() {
-		if ((this.argument != null) && this.argument.isInitialized()) {
-			if (this.depender != null) {
-				return this.argument.getValue().equals(this.depender.getName());
-			} else {
-				return this.argument.getValue().equals(this.value);
-			}
-		} else {
-			return false;
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
-	 */
-	@Override
-	public Set<IArgument<?>> getDependencies() {
-		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
 		try {
 			dependencies.add(this.argument);
 			
@@ -149,21 +160,39 @@ public class Equals extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
+	public List<Requirement> getRequiredDependencies() {
 		return required()
-		              ? null
-		              : new LinkedList<Requirement>() {
-			              
-			              private static final long serialVersionUID = 1L;
-			              
-			              {
-				              add(Equals.this);
-			              }
-		              };
+		                 ? null
+		                 : new LinkedList<Requirement>() {
+			                 
+			                 private static final long serialVersionUID = 1L;
+			                 
+			                 {
+				                 add(Equals.this);
+			                 }
+		                 };
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		// if ((this.argument != null) && this.argument.required()) {
+		// if (this.depender != null) {
+		// return this.argument.getValue().equals(this.depender.getName());
+		// } else {
+		// return this.argument.getValue().equals(this.value);
+		// }
+		// } else {
+		// return false;
+		// }
+		// TODO FIXME IMPLEMENT THIS
+		return false;
 	}
 	
 	/*

@@ -14,9 +14,8 @@ package net.ownhero.dev.hiari.settings;
 
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
@@ -24,108 +23,101 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * The Class Argument.
  * 
+ * @param <T>
+ *            the generic type
+ * @param <X>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public abstract class Argument<T> implements IArgument<T> {
+public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argument<T, ?>>> implements IArgument<T, X> {
 	
-	private final String        defaultValue;
-	private final String        description;
-	private String              name;
-	private final Settings      settings;
-	private final Requirement   requirements;
-	
+	/** The string value. */
 	private String              stringValue;
-	private boolean             wasSet;
-	private boolean             init       = false;
+	
+	/** The cached value. */
 	private T                   cachedValue;
-	private final boolean       masked;
+	
+	/** The options. */
+	private X                   options;
+	
+	/** The Constant maskString. */
 	private final static String maskString = "******** (masked)";
 	
 	/**
-	 * @param settings
-	 *            The RepoSuiteSetting instance this argument will register for
-	 * @param name
-	 *            Name of the Argument
-	 * @param description
-	 *            The help string description
-	 * @param defaultValue
-	 *            The default value given as string will be interpreted as path
-	 * @param required
-	 *            Set to <code>true</code> if this argument will be required
+	 * Instantiates a new argument.
+	 * 
+	 * @param options
+	 *            the options
 	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
-	public Argument(@NotNull final ArgumentSet<?> argumentSet, @NotNull final String name,
-	        @NotNull final String description, final String defaultValue, @NotNull final Requirement requirements)
-	        throws ArgumentRegistrationException {
-		this(argumentSet, name, description, defaultValue, requirements, false);
-	}
-	
-	public Argument(@NotNull final ArgumentSet<?> argumentSet, @NotNull final String name,
-	        @NotNull final String description, final String defaultValue, @NotNull final Requirement requirements,
-	        final boolean mask) throws ArgumentRegistrationException {
+	@SuppressWarnings ("unchecked")
+	Argument(@NotNull final X options) throws ArgumentRegistrationException {
 		
 		try {
-			this.setName(name);
-			this.description = description;
-			this.requirements = requirements;
-			this.stringValue = defaultValue;
-			this.defaultValue = defaultValue;
-			this.settings = argumentSet.getSettings();
-			this.masked = mask;
-			
-			if (!argumentSet.addArgument(this)) {
-				throw new ArgumentRegistrationException("Could not register argument set " + getHandle() + ".");
+			this.options = options;
+			this.stringValue = options.getDefaultValue() != null
+			                                                    ? options.getDefaultValue().toString()
+			                                                    : null;
+			if (!options.getArgumentSet().addArgument((Argument<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
+				throw new ArgumentRegistrationException(String.format("Could not register argument '%s':%s.",
+				                                                      getName(), getHandle()), this, options);
 			}
 		} finally {
-			Condition.notNull(this.getName(), "Field '%s' in %s.", "name", getHandle());
-			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
-			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
-			Condition.notNull(this.settings, "Field '%s' in %s.", "settings", getHandle());
+			// POSTCONDITIONS
+			Condition.notNull(this.options, "Field '%s' in %s.", "options", getHandle());
 		}
 	}
 	
 	/**
+	 * __init post condition.
+	 * 
 	 * @param retval
+	 *            the retval
 	 */
-	protected void __initPostCondition(final boolean retval) {
+	protected final void __initPostCondition(final boolean retval) {
 		if (retval) {
-			Condition.check(isInitialized(), "If init() returns true, the %s has to be set to initialized.",
-			                getHandle());
 			if (required()) {
 				Condition.notNull(getCachedValue(),
 				                  "%s has been successful initialized with config value '%s' but the stored data is null.",
 				                  getHandle(), getStringValue());
 			}
-		} else {
-			Condition.check(!isInitialized(), "If init() returns false, the %s has to be set to uninitialized.",
-			                getHandle());
 		}
 	}
 	
 	/**
+	 * Compare to.
+	 * 
 	 * @param arg0
-	 * @return
+	 *            the arg0
+	 * @return the int
 	 */
 	@Override
-	public final int compareTo(final IArgument<?> arg0) {
+	public final int compareTo(final IArgument<?, ?> arg0) {
 		if (this == arg0) {
+			return 0;
+		} else if (equals(arg0)) {
 			return 0;
 		}
 		
-		final Set<IArgument<?>> dependencies = getDependencies();
+		final Set<IOptions<?, ?>> dependencies = getDependencies();
+		
 		if (dependencies.contains(arg0)) {
 			return 1;
 		} else if (dependencies.contains(this)) {
 			return 0;
 		} else {
 			int ret = -1;
-			for (final IArgument<?> argX : dependencies) {
-				ret = argX.compareTo(arg0);
+			
+			for (final IOptions<?, ?> argX : dependencies) {
+				ret = argX.compareTo(arg0.getOptions());
 				if (ret != 0) {
 					return ret;
 				}
 			}
+			
 			return ret;
 		}
 	}
@@ -148,7 +140,8 @@ public abstract class Argument<T> implements IArgument<T> {
 			return false;
 		}
 		
-		final Argument<?> other = (Argument<?>) obj;
+		final Argument<?, ?> other = (Argument<?, ?>) obj;
+		
 		if (this.getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -156,25 +149,34 @@ public abstract class Argument<T> implements IArgument<T> {
 		} else if (!this.getName().equals(other.getName())) {
 			return false;
 		}
+		
 		return true;
 	}
 	
 	/**
-	 * @return
+	 * Gets the cached value.
+	 * 
+	 * @return the cached value
 	 */
 	protected final T getCachedValue() {
 		return this.cachedValue;
 	}
 	
 	/**
-	 * @return
+	 * Gets the default value.
+	 * 
+	 * @return the default value
 	 */
-	public final String getDefaultValue() {
-		return this.defaultValue;
+	public final T getDefaultValue() {
+		return this.options.getDefaultValue();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getDependencies()
+	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
+	public final Set<IOptions<?, ?>> getDependencies() {
 		return getRequirements().getDependencies();
 	}
 	
@@ -184,7 +186,7 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public final String getDescription() {
-		return this.description;
+		return this.options.getDescription();
 	}
 	
 	/*
@@ -198,41 +200,33 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString()
+	 * @see net.ownhero.dev.andama.settings.IArgument#getHelpString()
 	 */
 	@Override
 	public String getHelpString() {
+		// PRECONDITIONS
 		
-		String color = "";
-		if (required() && (getDefaultValue() == null)) {
-			color = "\u001b[4;35m";
-		} else if (required()) {
-			color = "\u001b[0;35m";
+		try {
+			return getHelpString(this.options.getTag().length(), 0);
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		return String.format("%s-D%s: %s %s%s%s [value='%s', default='%s', required if=%s, type=%s]%s", color,
-		                     getName(), getDescription(), color, required()
-		                                                                   ? "(required!)"
-		                                                                   : "", "\u001b[0;37m",
-		                     getStringValue() == null
-		                                             ? "(unset)"
-		                                             : getStringValue(), getDefaultValue(), getRequirements(),
-		                     getHandle(), "\u001b[m");
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getHelpString (int)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getHelpString(int, int)
 	 */
 	@Override
-	public String getHelpString(final int indentation) {
-		final StringBuilder builder = new StringBuilder();
+	public String getHelpString(final int keyWidth,
+	                            final int indentation) {
+		// PRECONDITIONS
 		
-		for (int i = 0; i < indentation; ++i) {
-			builder.append("| ");
+		try {
+			return this.options.getHelpString(keyWidth, indentation);
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		return "|" + getHelpString();
 	}
 	
 	/*
@@ -240,13 +234,13 @@ public abstract class Argument<T> implements IArgument<T> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getKeyValueSpan()
 	 */
 	@Override
-	public Tuple<Integer, Integer> getKeyValueSpan() {
-		return new Tuple<Integer, Integer>(getName().length(),
+	public final Tuple<Integer, Integer> getKeyValueSpan() {
+		return new Tuple<Integer, Integer>(getTag().length(),
 		                                   getStringValue() == null
 		                                                           ? "(unset)".length()
-		                                                           : this.masked
-		                                                                        ? maskString.length()
-		                                                                        : getStringValue().length());
+		                                                           : this.options.isMasked()
+		                                                                                    ? maskString.length()
+		                                                                                    : getStringValue().length());
 	}
 	
 	/*
@@ -255,28 +249,84 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public final String getName() {
-		return this.name;
+		return this.options.getName();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getOptions()
+	 */
 	@Override
-	public Requirement getRequirements() {
-		return this.requirements;
+	public X getOptions() {
+		// PRECONDITIONS
+		
+		try {
+			return this.options;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getParent()
+	 */
+	@Override
+	public ArgumentSet<?, ?> getParent() {
+		// PRECONDITIONS
+		
+		try {
+			return this.options.getParent();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getRequirements()
+	 */
+	@Override
+	public final Requirement getRequirements() {
+		return this.options.getRequirements();
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getSettings()
 	 */
+	/**
+	 * Gets the settings.
+	 * 
+	 * @return the settings
+	 */
 	@Override
-	public final Settings getSettings() {
-		return this.settings;
+	public final ISettings getSettings() {
+		return this.options.getArgumentSet().getSettings();
 	}
 	
 	/**
+	 * Gets the string value.
+	 * 
 	 * @return the stringValue
 	 */
-	public final String getStringValue() {
+	protected final String getStringValue() {
 		return this.stringValue;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getTag()
+	 */
+	@Override
+	public String getTag() {
+		// PRECONDITIONS
+		
+		try {
+			return this.options.getTag();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -285,10 +335,6 @@ public abstract class Argument<T> implements IArgument<T> {
 	 */
 	@Override
 	public final T getValue() {
-		if (!this.init) {
-			throw new UnrecoverableError("Calling getValue() on " + getHandle() + " and instance '" + getName()
-			        + "' before calling init() is not allowed! Please fix your code.");
-		}
 		return this.getCachedValue();
 	}
 	
@@ -307,16 +353,19 @@ public abstract class Argument<T> implements IArgument<T> {
 	}
 	
 	/**
-	 * @return
+	 * Initializes the argument.
+	 * 
+	 * @return true, if successful
 	 */
 	protected abstract boolean init();
 	
 	/**
-	 * @return the init
+	 * Checks if is masked.
+	 * 
+	 * @return true, if is masked
 	 */
-	@Override
-	public final boolean isInitialized() {
-		return this.init;
+	public boolean isMasked() {
+		return this.options.isMasked();
 	}
 	
 	/*
@@ -324,8 +373,8 @@ public abstract class Argument<T> implements IArgument<T> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
 	 */
 	@Override
-	public void parse() throws SettingsParseError {
-		final String value = (String) getSettings().getProperties().get(getName());
+	public final void parse() throws SettingsParseError {
+		final String value = getSettings().getProperty(getName());
 		
 		if (value != null) {
 			setStringValue(value);
@@ -338,36 +387,37 @@ public abstract class Argument<T> implements IArgument<T> {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#required()
+	 * @see net.ownhero.dev.andama.settings.IArgument#required()
 	 */
 	@Override
 	public boolean required() {
-		return getRequirements().required() && !(getRequirements() instanceof Optional);
+		// PRECONDITIONS
+		
+		try {
+			return getRequirements().required() && !(getRequirements() instanceof Optional);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
+	 * Sets the cached value.
+	 * 
 	 * @param cachedValue
+	 *            the new cached value
 	 */
 	protected final void setCachedValue(final T cachedValue) {
-		this.init = true;
 		this.cachedValue = cachedValue;
-	}
-	
-	/**
-	 * @param name
-	 */
-	void setName(final String name) {
-		this.name = name;
 	}
 	
 	/**
 	 * Sets the string value for the argument.
 	 * 
 	 * @param value
+	 *            the new string value
 	 */
 	protected final void setStringValue(final String value) {
 		this.stringValue = value;
-		this.wasSet = true;
 	}
 	
 	/*
@@ -385,31 +435,25 @@ public abstract class Argument<T> implements IArgument<T> {
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
 	@Override
-	public String toString(final int keyWidth,
-	                       final int valueWidth) {
+	public final String toString(final int keyWidth,
+	                             final int valueWidth) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("%-").append(keyWidth).append("s = %-").append(valueWidth).append("s\t%s");
 		
-		return String.format(builder.toString(), getName(), getStringValue() == null
-		                                                                            ? "(unset)"
-		                                                                            : this.masked
-		                                                                                         ? maskString
-		                                                                                         : getStringValue(),
-		                     getHelpString());
+		return String.format(builder.toString(), getTag(), getStringValue() == null
+		                                                                           ? "(unset)"
+		                                                                           : isMasked()
+		                                                                                       ? maskString
+		                                                                                       : getStringValue(),
+		                     getOptions().getHelpString(keyWidth + 1));
 	}
 	
 	/**
-	 * @return
+	 * Valid string value.
+	 * 
+	 * @return true, if the set stringValue is not null and not empty
 	 */
 	protected final boolean validStringValue() {
 		return (getStringValue() != null) && !getStringValue().trim().isEmpty();
 	}
-	
-	/**
-	 * @return
-	 */
-	public final boolean wasSet() {
-		return this.wasSet;
-	}
-	
 }

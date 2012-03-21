@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
@@ -20,13 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * The and expression evaluates to true if and only if both inner expressions
- * evaluate to true. Evaluates to false otherwise.
+ * The and expression evaluates to true if and only if both inner expressions evaluate to true. Evaluates to false
+ * otherwise.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -52,21 +49,11 @@ public final class And extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public boolean required() {
-		return getRequirement1().required() && getRequirement2().required();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
-	 */
-	@Override
-	public Set<IArgument<?>> getDependencies() {
-		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
 		try {
 			dependencies.addAll(this.requirement1.getDependencies());
 			dependencies.addAll(this.requirement2.getDependencies());
@@ -79,18 +66,16 @@ public final class And extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause
-	 * (java.lang.Class, java.lang.Class,
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
+	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
-		List<Requirement> failureCause = this.requirement1.getMissingRequirements();
+	public List<Requirement> getRequiredDependencies() {
+		List<Requirement> failureCause = this.requirement1.getRequiredDependencies();
 		final boolean check = required();
 		if (!check) {
 			if (failureCause == null) {
-				failureCause = this.requirement2.getMissingRequirements();
+				failureCause = this.requirement2.getRequiredDependencies();
 				if (failureCause == null) {
 					return check
 					            ? null
@@ -127,8 +112,16 @@ public final class And extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
+	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
+	 */
+	@Override
+	public boolean required() {
+		return getRequirement1().required() && getRequirement2().required();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#toString()
 	 */
 	@Override
 	public String toString() {

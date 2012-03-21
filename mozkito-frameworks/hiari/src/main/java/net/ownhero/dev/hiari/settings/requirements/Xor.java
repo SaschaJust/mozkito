@@ -12,54 +12,38 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.apache.commons.collections.CollectionUtils;
-
 /**
- * The any expression evaluates to true if any of the inner expressions evaluate to true. Evaluates to false otherwise.
+ * The or expression evaluates to true if one or more of the inner expressions evaluate to true. Evaluates to false
+ * otherwise.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public final class Any extends Requirement {
+public class Xor extends Requirement {
 	
-	private final Set<Requirement> requirements = new HashSet<Requirement>();
-	
-	/**
-	 * @param requirements
-	 *            a collection of inner expressions
-	 */
-	public Any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
-		try {
-			this.requirements.addAll(this.requirements);
-		} finally {
-			Condition.notNull(this.requirements, "Requirement values may never be null.");
-			CollectionCondition.notEmpty(this.requirements, "Requirement values may never be empty.");
-		}
-	}
+	private final Requirement requirement1;
+	private final Requirement requirement2;
 	
 	/**
-	 * @param expressions
-	 *            sa collection of inner expressions
+	 * @param requirement1
+	 * @param requirement2
 	 */
-	public Any(@NotNull @NotEmpty final Requirement... expressions) {
+	public Xor(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
 		try {
-			CollectionUtils.addAll(this.requirements, expressions);
+			this.requirement1 = requirement1;
+			this.requirement2 = requirement2;
 		} finally {
-			Condition.notNull(this.requirements, "Requirement values may never be null.");
-			CollectionCondition.notEmpty(this.requirements, "Requirement values may never be empty.");
+			Condition.notNull(this.requirement1, "Requirements in %s may never be null.", getHandle());
+			Condition.notNull(this.requirement2, "Requirements in %s may never be null.", getHandle());
 		}
 	}
 	
@@ -70,21 +54,15 @@ public final class Any extends Requirement {
 	@Override
 	public Set<IOptions<?, ?>> getDependencies() {
 		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
+		
 		try {
-			for (final Requirement requirement : this.requirements) {
-				dependencies.addAll(requirement.getDependencies());
-			}
+			dependencies.addAll(this.requirement1.getDependencies());
+			dependencies.addAll(this.requirement2.getDependencies());
+			
 			return dependencies;
 		} finally {
 			Condition.notNull(dependencies, "Dependency values may never be null.");
 		}
-	}
-	
-	/**
-	 * @return the expressions
-	 */
-	public final Set<Requirement> getExpressions() {
-		return this.requirements;
 	}
 	
 	/*
@@ -94,34 +72,47 @@ public final class Any extends Requirement {
 	 */
 	@Override
 	public List<Requirement> getRequiredDependencies() {
-		if (!required()) {
+		final List<Requirement> failureCause1 = this.requirement1.getRequiredDependencies();
+		final List<Requirement> failureCause2 = this.requirement1.getRequiredDependencies();
+		final boolean check = required();
+		
+		if (!check) {
 			return new LinkedList<Requirement>() {
 				
 				private static final long serialVersionUID = 1L;
 				
 				{
-					addAll(getExpressions());
+					addAll(failureCause1);
+					addAll(failureCause2);
 				}
 			};
+			
 		} else {
 			return null;
 		}
 	}
 	
+	/**
+	 * @return the 'from' expression
+	 */
+	public Requirement getRequirement1() {
+		return this.requirement1;
+	}
+	
+	/**
+	 * @return the 'to' expression
+	 */
+	public Requirement getRequirement2() {
+		return this.requirement2;
+	}
+	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check( java.lang.Class, java.lang.Class,
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
 	@Override
 	public boolean required() {
-		for (final Requirement requirement : this.requirements) {
-			if (requirement.required()) {
-				return true;
-			}
-		}
-		
-		return false;
+		return getRequirement1().required() ^ getRequirement2().required();
 	}
 	
 	/*
@@ -130,6 +121,6 @@ public final class Any extends Requirement {
 	 */
 	@Override
 	public String toString() {
-		return "(∃ [true] : " + JavaUtils.collectionToString(this.requirements) + ")";
+		return "(" + this.requirement1.toString() + " ^ " + this.requirement2.toString() + ")";
 	}
 }

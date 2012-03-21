@@ -9,62 +9,97 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.IArgument;
-import net.ownhero.dev.hiari.settings.arguments.ListArgument;
-import net.ownhero.dev.hiari.settings.arguments.SetArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ListArgument;
+import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Contains.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Contains extends Requirement {
 	
-	private ListArgument listArgument = null;
+	/** The list argument. */
+	private IOptions<?, ?>  listOption = null;
 	
-	private SetArgument  setArgument  = null;
-	private IArgument<?> depender     = null;
-	private String       value        = null;
+	/** The set argument. */
+	private IOptions<?, ?>  setOption  = null;
 	
-	public Contains(@NotNull final ListArgument argument, @NotNull final IArgument<?> depender) {
+	/** The depender. */
+	private IArgument<?, ?> depender   = null;
+	
+	/**
+	 * Instantiates a new contains.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param depender
+	 *            the depender
+	 */
+	public Contains(@NotNull final ListArgument.Options option, @NotNull final IArgument<?, ?> depender) {
 		try {
-			this.listArgument = argument;
+			this.listOption = option;
 			this.depender = depender;
 		} finally {
-			Condition.notNull(this.listArgument, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
 			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
 			                  getHandle());
 		}
 	}
 	
-	public Contains(@NotNull final ListArgument argument, @NotNull final String value) {
+	/**
+	 * Instantiates a new contains.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 */
+	public Contains(@NotNull final ListArgument.Options option, @NotNull final String value) {
 		try {
-			this.listArgument = argument;
-			this.value = value;
+			this.listOption = option;
 		} finally {
-			Condition.notNull(this.listArgument, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
 			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
 			                  getHandle());
 		}
 	}
 	
-	public Contains(@NotNull final SetArgument argument, @NotNull final IArgument<?> depender) {
+	/**
+	 * Instantiates a new contains.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param depender
+	 *            the depender
+	 */
+	public Contains(@NotNull final SetArgument.Options option, @NotNull final IArgument<?, ?> depender) {
 		try {
-			this.setArgument = argument;
+			this.setOption = option;
 			this.depender = depender;
 		} finally {
-			Condition.notNull(this.listArgument, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
 			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
 			                  getHandle());
 		}
 	}
 	
-	public Contains(@NotNull final SetArgument argument, @NotNull final String value) {
+	/**
+	 * Instantiates a new contains.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 */
+	public Contains(@NotNull final SetArgument.Options option, @NotNull final String value) {
 		try {
-			this.setArgument = argument;
-			this.value = value;
+			this.setOption = option;
 		} finally {
-			Condition.notNull(this.listArgument, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
 			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
 			                  getHandle());
 		}
@@ -75,12 +110,12 @@ public class Contains extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
-		final HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
 		try {
-			dependencies.add(this.listArgument != null
-			                                          ? this.listArgument
-			                                          : this.setArgument);
+			dependencies.add(this.listOption != null
+			                                        ? this.listOption
+			                                        : this.setOption);
 			
 			return dependencies;
 		} finally {
@@ -93,7 +128,7 @@ public class Contains extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
+	public List<Requirement> getRequiredDependencies() {
 		return required()
 		                 ? null
 		                 : new LinkedList<Requirement>() {
@@ -112,19 +147,21 @@ public class Contains extends Requirement {
 	 */
 	@Override
 	public boolean required() {
-		if (this.listArgument != null) {
-			return this.listArgument.isInitialized()
-			        && this.listArgument.getValue().contains(this.depender != null
-			                                                                      ? this.depender.getName()
-			                                                                      : this.value);
-		} else if (this.setArgument != null) {
-			return this.setArgument.isInitialized()
-			        && this.setArgument.getValue().contains(this.depender != null
-			                                                                     ? this.depender.getName()
-			                                                                     : this.value);
-		} else {
-			return false;
-		}
+		// if (this.listOption != null) {
+		// return this.listOption.required()
+		// && this.listOption.getValue().contains(this.depender != null
+		// ? this.depender.getName()
+		// : this.value);
+		// } else if (this.setOption != null) {
+		// return this.setOption.required()
+		// && this.setOption.getValue().contains(this.depender != null
+		// ? this.depender.getName()
+		// : this.value);
+		// } else {
+		// return false;
+		// }
+		// TODO FIXME IMPLEMENT THIS
+		return false;
 	}
 	
 	/*
@@ -133,9 +170,9 @@ public class Contains extends Requirement {
 	 */
 	@Override
 	public String toString() {
-		return ("(∈ " + this.listArgument) != null
-		                                          ? this.listArgument.getName()
-		                                          : this.setArgument.getName() + ".value() )";
+		return ("(∈ " + this.listOption) != null
+		                                          ? this.listOption.getName()
+		                                          : this.setOption.getName() + ".value() )";
 	};
 	
 }

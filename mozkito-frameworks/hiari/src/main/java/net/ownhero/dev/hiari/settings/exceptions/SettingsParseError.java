@@ -20,7 +20,7 @@ public class SettingsParseError extends Exception {
      * 
      */
 	private static final long serialVersionUID = 6569706686166731951L;
-	private IArgument<?>      argument         = null;
+	private IArgument<?, ?>   argument         = null;
 	
 	/**
 	 * 
@@ -39,7 +39,7 @@ public class SettingsParseError extends Exception {
 	/**
 	 * @param arg0
 	 */
-	public SettingsParseError(final String arg0, final IArgument<?> argument) {
+	public SettingsParseError(final String arg0, final IArgument<?, ?> argument) {
 		super(arg0);
 		this.argument = argument;
 	}
@@ -48,7 +48,7 @@ public class SettingsParseError extends Exception {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public SettingsParseError(final String arg0, final IArgument<?> argument, final Throwable arg1) {
+	public SettingsParseError(final String arg0, final IArgument<?, ?> argument, final Throwable arg1) {
 		super(arg0, arg1);
 		this.argument = argument;
 	}
@@ -63,7 +63,7 @@ public class SettingsParseError extends Exception {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(super.getMessage());
 			builder.append(FileUtils.lineSeparator).append(this.argument.getName());
-			final List<Requirement> requirements = this.argument.getRequirements().getMissingRequirements();
+			final List<Requirement> requirements = this.argument.getRequirements().getRequiredDependencies();
 			builder.append(FileUtils.lineSeparator).append("Total dependencies: ")
 			       .append(this.argument.getRequirements());
 			

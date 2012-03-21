@@ -12,159 +12,104 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.arguments.SetArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentProvider;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Contains;
-import net.ownhero.dev.hiari.settings.requirements.Equals;
-import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
- */
-/**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ArgumentSet.
  * 
  * @param <T>
+ *            the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public abstract class ArgumentSet<T> implements IArgument<T> {
+public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSet<T, ?>>> implements IArgument<T, X> {
 	
-	@NoneNull
-	public static <T extends ArgumentProvider> Collection<T> provideDynamicArguments(final ArgumentSet<?> argumentSet,
-	                                                                                 final Class<T> superClass,
-	                                                                                 final String description,
-	                                                                                 final Requirement requirement,
-	                                                                                 final String defaultValue,
-	                                                                                 final String moduleName,
-	                                                                                 final String provideGroupName,
-	                                                                                 final boolean multiEnable) throws ArgumentRegistrationException {
-		try {
-			final Settings settings = argumentSet.getSettings();
-			final Collection<T> instances = new LinkedList<T>();
-			final Collection<Class<T>> classes = ClassFinder.getClassesOfInterface(superClass.getPackage(), superClass,
-			                                                                       Modifier.ABSTRACT
-			                                                                               | Modifier.INTERFACE
-			                                                                               | Modifier.PRIVATE
-			                                                                               | Modifier.PROTECTED);
-			
-			final DynamicArgumentSet<Boolean> set = new DynamicArgumentSet<Boolean>(argumentSet, "Arguments",
-			        description, requirement, provideGroupName, provideGroupName) {
-				
-				@Override
-				protected boolean init() {
-					return true;
-				}
-			};
-			
-			final StringBuilder validArguments = new StringBuilder();
-			for (final Class<?> c : classes) {
-				validArguments.append(c.getSimpleName());
-			}
-			
-			SetArgument setArgument = null;
-			StringArgument stringArgument = null;
-			
-			if (multiEnable) {
-				setArgument = new SetArgument(set, moduleName.toLowerCase() + "." + provideGroupName.toLowerCase(),
-				                              "Enables " + provideGroupName + " in the " + moduleName
-				                                      + " module. Valid arguments: " + validArguments, defaultValue,
-				                              requirement);
-			} else {
-				stringArgument = new StringArgument(set, moduleName.toLowerCase() + "."
-				        + provideGroupName.toLowerCase(), "Enables " + provideGroupName + " in the " + moduleName
-				        + " module. Valid arguments: " + validArguments, defaultValue, requirement);
-			}
-			
-			for (final Class<?> c : classes) {
-				DynamicArgumentSet<Boolean> specificSet = null;
-				if (multiEnable) {
-					specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(), "Bundles the settings for "
-					        + c.getSimpleName(), new Contains(setArgument, c.getSimpleName()), provideGroupName,
-					        provideGroupName) {
-						
-						@Override
-						protected boolean init() {
-							return true;
-						}
-					};
-				} else {
-					specificSet = new DynamicArgumentSet<Boolean>(set, c.getSimpleName(), "Bundles the settings for "
-					        + c.getSimpleName(), new Equals(stringArgument, c.getSimpleName()), provideGroupName,
-					        provideGroupName) {
-						
-						@Override
-						protected boolean init() {
-							return true;
-						}
-					};
-				}
-				
-				@SuppressWarnings ("unchecked")
-				final T o = (T) c.newInstance();
-				final Method method = c.getMethod(ArgumentProvider.class.getMethods()[0].getName(),
-				                                  DynamicArgumentSet.class);
-				method.invoke(o, specificSet);
-				instances.add(o);
-				settings.addArgumentProvider(o);
-			}
-			
-			return instances;
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e);
-		}
-		
-	}
+	/** The arguments. */
+	private final HashMap<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>>    arguments    = new HashMap<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>>();
+	/** The argument sets. */
+	private final HashMap<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>> argumentSets = new HashMap<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>>();
+	/** The name. */
+	private final String                                                                  name;
 	
-	private final HashMap<String, Argument<?>>    arguments    = new HashMap<String, Argument<?>>();
-	private final HashMap<String, ArgumentSet<?>> argumentSets = new HashMap<String, ArgumentSet<?>>();
-	private final String                          description;
-	private final Requirement                     requirements;
-	private final Settings                        settings;
-	private boolean                               init         = false;
+	/** The description. */
+	private final String                                                                  description;
 	
-	private T                                     cachedValue  = null;
+	/** The requirements. */
+	private final Requirement                                                             requirements;
+	
+	/** The settings. */
+	private final ISettings                                                               settings;
+	
+	/** The cached value. */
+	private T                                                                             cachedValue  = null;
+	
+	/** The argument set. */
+	private final ArgumentSet<?, ?>                                                       argumentSet;
+	
+	private X                                                                             configurator;
+	
+	private boolean                                                                       initialized  = false;
 	
 	/**
-	 * @throws ArgumentRegistrationException
-	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
-	 */
-	public ArgumentSet(final ArgumentSet<?> argumentSet, final String description, final Requirement requirements)
-	        throws ArgumentRegistrationException {
-		this.description = description;
-		this.settings = argumentSet.getSettings();
-		if (!argumentSet.addArgument(this)) {
-			throw new ArgumentRegistrationException("Could not register argument set " + getHandle() + ".");
-		}
-		this.requirements = requirements;
-	}
-	
-	/**
+	 * Instantiates a new argument set (for root argument set only).
+	 * 
 	 * @param settings
+	 *            the settings
 	 * @param description
+	 *            the description
 	 */
-	ArgumentSet(final Settings settings, final String description) {
+	@Deprecated
+	ArgumentSet(final ISettings settings, final String name, final String description) {
+		this.name = name;
 		this.settings = settings;
 		this.description = description;
-		this.requirements = new Required();
-		getSettings().addArgument(this);
+		this.requirements = Requirement.required;
+		this.argumentSet = null;
+		this.configurator = null;
+	}
+	
+	/**
+	 * @throws ArgumentSetRegistrationException
+	 * 
+	 */
+	@SuppressWarnings ("unchecked")
+	ArgumentSet(final @NotNull X options) throws ArgumentSetRegistrationException {
+		// PRECONDITIONS
+		
+		try {
+			this.name = options.getName();
+			this.description = options.getDescription();
+			this.argumentSet = options.getArgumentSet();
+			this.settings = options.getArgumentSet().getSettings();
+			this.requirements = options.getRequirements();
+			this.configurator = options;
+			
+			if (!this.argumentSet.addArgument((ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
+				throw new ArgumentSetRegistrationException("Could not register argument set " + getHandle() + ".",
+				                                           this, options);
+			}
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.argumentSet, "Field '%s' in %s.", "argumentSet", getHandle());
+			Condition.notNull(this.name, "Field '%s' in %s.", "name", getHandle());
+			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
+			Condition.notNull(this.settings, "Field '%s' in %s.", "settings", getHandle());
+			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
+			Condition.notNull(this.configurator, "Field '%s' in %s.", "configurator", getHandle());
+		}
 	}
 	
 	/**
@@ -175,73 +120,78 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 *            MinerArgument to be added
 	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
-	boolean addArgument(@NotNull final Argument<?> argument) {
-		if (!getSettings().frozen()) {
-			if (getSettings().hasSetting(argument.getName())) {
-				// TODO Warn log
-				return false;
+	boolean addArgument(@NotNull final Argument<?, ? extends IOptions<?, IArgument<?, ?>>> argument) {
+		if (argument.getName().contains(".")) {
+			if (Logger.logWarn()) {
+				Logger.warn("Argument tags may never contain '.'. Cannot register argument: " + argument.getName()
+				        + ":" + argument.getHandle());
 			}
-			
-			if (this.arguments.containsKey(argument.getName())) {
-				// TODO Warn log
-				return false;
-			}
-			
-			this.arguments.put(argument.getName(), argument);
-			
-			// tell settings who is responsible for this artifact
-			getSettings().addArgumentMapping(argument.getName(), this);
-			
-			return true;
-		} else {
+			// names may not contain the tag of the set
+			return false;
+		}
+		
+		if (this.arguments.containsKey(argument.getName())) {
 			// TODO Warn log
 			return false;
 		}
-	}
-	
-	private final boolean addArgument(@NotNull final ArgumentSet<?> argument) {
-		if (!getSettings().frozen()) {
-			if (getSettings().hasSetting(argument.getName())) {
-				// TODO Warn log
-				return false;
-			}
-			
-			if (this.argumentSets.containsKey(argument.getName())) {
-				// TODO Warn log
-				return false;
-			}
-			
-			this.argumentSets.put(argument.getName(), argument);
-			
-			// // tell settings who is responsible for this artifact
-			// getSettings().addArgumentMapping(argument.getName(), this);
-			
-			return true;
-		} else {
-			// TODO Warn log
+		
+		this.arguments.put(argument.getName(), argument);
+		
+		// tell settings who is responsible for this artifact
+		if (!((Settings) getSettings()).addArgumentMapping(argument.getTag(), this)) {
 			return false;
 		}
+		
+		return true;
 	}
 	
 	/**
+	 * Adds the argument.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @return true, if successful
+	 */
+	private final boolean addArgument(@NotNull final ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>> argument) {
+		if (getSettings().hasSetting(argument.getTag())) {
+			// TODO Warn log
+			return false;
+		}
+		
+		if (this.argumentSets.containsKey(argument.getName())) {
+			// TODO Warn log
+			return false;
+		}
+		
+		this.argumentSets.put(argument.getName(), argument);
+		
+		return true;
+		
+	}
+	
+	/**
+	 * Compare to.
+	 * 
 	 * @param arg0
-	 * @return
+	 *            the arg0
+	 * @return the int
 	 */
 	@Override
-	public final int compareTo(final IArgument<?> arg0) {
+	public final int compareTo(final IArgument<?, ?> arg0) {
 		if (this == arg0) {
 			return 0;
 		}
 		
-		final Set<IArgument<?>> dependencies = getDependencies();
-		if (dependencies.contains(arg0)) {
+		final Set<IOptions<?, ?>> dependencies = getDependencies();
+		
+		if (dependencies.contains(arg0.getOptions())) {
 			return 1;
 		} else if (dependencies.contains(this)) {
 			return 0;
 		} else {
 			int ret = -1;
-			for (final IArgument<?> argX : dependencies) {
-				ret = argX.compareTo(arg0);
+			for (final IOptions<?, ?> argX : dependencies) {
+				ret = argX.compareTo(arg0.getOptions());
 				if (ret != 0) {
 					return ret;
 				}
@@ -251,48 +201,67 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	}
 	
 	/**
+	 * Gets the argument.
+	 * 
 	 * @param name
-	 * @return
+	 *            the name
+	 * @return the argument
 	 */
-	public final Argument<?> getArgument(final String name) {
-		return getArguments().get(name);
+	public final IArgument<?, ?> getArgument(final String tag) {
+		for (final IArgument<?, ?> argument : getArguments().values()) {
+			if (argument.getTag().equals(tag)) {
+				return argument;
+			}
+		}
+		return null;
 	}
 	
 	/**
 	 * Return the arguments held within the set.
 	 * 
-	 * @return
+	 * @return the arguments
 	 */
-	Map<String, Argument<?>> getArguments() {
+	private final Map<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>> getArguments() {
 		return this.arguments;
 	}
 	
 	/**
-	 * @return
+	 * Gets the argument sets.
+	 * 
+	 * @return the argument sets
 	 */
-	public Map<String, ArgumentSet<?>> getArgumentSets() {
+	Map<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>> getArgumentSets() {
 		return this.argumentSets;
 	}
 	
 	/**
-	 * @return
+	 * Gets the cached value.
+	 * 
+	 * @return the cached value
 	 */
 	protected final T getCachedValue() {
 		return this.cachedValue;
 	}
 	
-	public Collection<IArgument<?>> getChildren() {
-		final LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>();
+	/**
+	 * Gets the children.
+	 * 
+	 * @return the children
+	 */
+	public Collection<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>> getChildren() {
+		final LinkedList<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>> list = new LinkedList<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>>();
 		list.addAll(getArguments().values());
 		list.addAll(getArgumentSets().values());
 		return list;
 	}
 	
 	/**
+	 * Gets the dependencies.
+	 * 
 	 * @return the dependees
 	 */
 	@Override
-	public final Set<IArgument<?>> getDependencies() {
+	public final Set<IOptions<?, ?>> getDependencies() {
 		return this.requirements.getDependencies();
 	}
 	
@@ -320,49 +289,62 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public final String getHelpString() {
-		final StringBuilder builder = new StringBuilder();
-		
-		builder.append("[ ").append(getName()).append(" ]").append(FileUtils.lineSeparator);
-		builder.append("|-Description: ").append(getDescription());
-		builder.append(required()
-		                         ? " (Required, due to " + getRequirements() + ")"
-		                         : "");
-		
-		for (final IArgument<?> argument : getChildren()) {
-			builder.append(FileUtils.lineSeparator).append(argument.getHelpString(1));
-		}
-		
-		return builder.toString();
+		return getHelpString(0);
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
 	 */
-	@Override
 	public String getHelpString(final int indentation) {
-		final StringBuilder builder = new StringBuilder();
-		
-		final StringBuilder indent = new StringBuilder();
-		final StringBuilder header = new StringBuilder();
-		for (int i = 0, j = 0; i < indentation; ++i, ++j) {
-			indent.append("| ");
-			if ((j + 1) < indentation) {
-				header.append("| ");
+		int maxWidth = 0;
+		for (final IArgument<?, ? extends IOptions<?, IArgument<?, ?>>> argument : getChildren()) {
+			final Tuple<Integer, Integer> tuple = argument.getKeyValueSpan();
+			if (tuple.getFirst() > maxWidth) {
+				maxWidth = tuple.getFirst();
 			}
 		}
 		
-		builder.append(header).append("|-[ ").append(getName()).append(" ]").append(FileUtils.lineSeparator);
-		builder.append(header).append("| `-Description: ").append(getDescription());
-		builder.append(required()
-		                         ? " (Required, due to " + getRequirements() + ")"
-		                         : "");
+		return getHelpString(maxWidth, indentation);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getHelpString(int, int)
+	 */
+	@Override
+	public String getHelpString(final int keyWidth,
+	                            final int indentation) {
+		// PRECONDITIONS
 		
-		for (final IArgument<?> argument : getChildren()) {
-			builder.append(FileUtils.lineSeparator).append(indent).append(argument.getHelpString(indentation + 1));
+		try {
+			final StringBuilder builder = new StringBuilder();
+			
+			final StringBuilder indent = new StringBuilder();
+			final StringBuilder header = new StringBuilder();
+			
+			for (int i = 0, j = 0; i < indentation; ++i, ++j) {
+				indent.append("| ");
+				if ((j + 1) < indentation) {
+					header.append("| ");
+				}
+			}
+			
+			builder.append(header).append("|-[ ").append(getName()).append(" ]").append(FileUtils.lineSeparator);
+			builder.append(header).append("| `-Description: ").append(getDescription());
+			builder.append(required()
+			                         ? " (Required, due to " + getRequirements() + ")"
+			                         : "");
+			
+			for (final IArgument<?, ? extends IOptions<?, IArgument<?, ?>>> argument : getChildren()) {
+				builder.append(FileUtils.lineSeparator).append(indent)
+				       .append(argument.getHelpString(keyWidth, indentation + 1));
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		return builder.toString();
 	}
 	
 	/*
@@ -373,8 +355,9 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	public Tuple<Integer, Integer> getKeyValueSpan() {
 		final Tuple<Integer, Integer> tuple = new Tuple<Integer, Integer>(0, 0);
 		
-		for (final IArgument<?> arg : getChildren()) {
+		for (final IArgument<?, ?> arg : getChildren()) {
 			final Tuple<Integer, Integer> span = arg.getKeyValueSpan();
+			
 			if (span.getFirst() > tuple.getFirst()) {
 				tuple.setFirst(span.getFirst());
 			}
@@ -383,6 +366,7 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 				tuple.setSecond(span.getSecond());
 			}
 		}
+		
 		return new Tuple<Integer, Integer>(tuple.getFirst(), tuple.getSecond());
 	}
 	
@@ -392,7 +376,37 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public String getName() {
-		return getHandle();
+		return this.name;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getOptions()
+	 */
+	@Override
+	public X getOptions() {
+		// PRECONDITIONS
+		
+		try {
+			return this.configurator;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getParent()
+	 */
+	@Override
+	public ArgumentSet<?, ?> getParent() {
+		// PRECONDITIONS
+		
+		try {
+			return this.argumentSet;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -405,11 +419,45 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	}
 	
 	/**
+	 * Gets the settings.
+	 * 
 	 * @return the settings
 	 */
 	@Override
-	public final Settings getSettings() {
+	public final ISettings getSettings() {
 		return this.settings;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.IArgument#getParent()
+	 */
+	@Override
+	public String getTag() {
+		final StringBuilder builder = new StringBuilder();
+		final LinkedList<String> list = new LinkedList<String>();
+		ArgumentSet<?, ?> parent = getParent();
+		
+		do {
+			list.add(parent.getName());
+		} while ((parent = parent.getParent()) != null);
+		
+		final Iterator<String> iterator = list.descendingIterator();
+		
+		while (iterator.hasNext()) {
+			if (builder.length() > 0) {
+				builder.append('.');
+			}
+			
+			builder.append(iterator.next());
+		}
+		
+		if (builder.length() > 0) {
+			builder.append('.');
+		}
+		builder.append(getName());
+		
+		return builder.toString();
 	}
 	
 	/*
@@ -418,25 +466,17 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public final T getValue() {
-		if (!this.init) {
-			throw new UnrecoverableError("Calling getValue() on " + this.getClass().getSimpleName() + " and instance "
-			        + getName() + " before calling init() is not allowed! Please fix your code.");
-		}
 		return this.getCachedValue();
 	}
 	
 	/**
-	 * @return
+	 * Inits the.
+	 * 
+	 * @return true, if successful
 	 */
-	protected abstract boolean init();
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#isInitialized()
-	 */
-	@Override
-	public final boolean isInitialized() {
-		return this.init;
+	protected boolean init() {
+		// TODO
+		return true;
 	}
 	
 	/*
@@ -445,15 +485,15 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	 */
 	@Override
 	public void parse() throws SettingsParseError {
-		LinkedList<IArgument<?>> list = new LinkedList<IArgument<?>>(this.arguments.values());
+		LinkedList<IArgument<?, ?>> list = new LinkedList<IArgument<?, ?>>(this.arguments.values());
 		list.addAll(this.argumentSets.values());
-		LinkedList<IArgument<?>> list2 = new LinkedList<IArgument<?>>();
+		LinkedList<IArgument<?, ?>> list2 = new LinkedList<IArgument<?, ?>>();
 		
 		while (!list.isEmpty()) {
-			for (final IArgument<?> argument : list) {
+			for (final IArgument<?, ?> argument : list) {
 				argument.parse();
 				
-				if (argument.getRequirements().getMissingRequirements() != null) {
+				if (argument.getRequirements().getRequiredDependencies() != null) {
 					list2.add(argument);
 				}
 			}
@@ -461,12 +501,22 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 			if (list2.isEmpty()) {
 				break;
 			} else if (list.size() == list2.size()) {
-				throw new SettingsParseError(
-				                             "Could not resolved dependencies. Arguments have unresolved dependencies: ",
-				                             list2.iterator().next());
+				for (final IArgument<?, ?> argument : list) {
+					if (argument.required()) {
+						throw new SettingsParseError(
+						                             "Could not resolved dependencies. Arguments have unresolved dependencies: ",
+						                             list2.iterator().next());
+						
+					} else {
+						if (Logger.logWarn()) {
+							Logger.warn("Skipping: " + argument);
+						}
+					}
+				}
+				break;
 			} else {
 				list = list2;
-				list2 = new LinkedList<IArgument<?>>();
+				list2 = new LinkedList<IArgument<?, ?>>();
 			}
 		}
 		
@@ -478,6 +528,8 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 			        + "'. Please see error earlier error messages, refer to the argument help information, "
 			        + "or review the init() method of the corresponding " + getHandle() + ".", this);
 		}
+		
+		this.initialized = true;
 	}
 	
 	/*
@@ -490,10 +542,13 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	}
 	
 	/**
+	 * Sets the cached value.
+	 * 
 	 * @param cachedValue
+	 *            the new cached value
 	 */
 	protected final void setCachedValue(final T cachedValue) {
-		this.init = true;
+		this.initialized = true;
 		this.cachedValue = cachedValue;
 	}
 	
@@ -516,12 +571,25 @@ public abstract class ArgumentSet<T> implements IArgument<T> {
 	                       final int valueWidth) {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append("[").append(getName()).append(" - ").append(getDescription()).append("]");
+		if (!this.initialized && (this instanceof Settings.RootArgumentSet)) {
+			builder.append(getSettings().getHandle())
+			       .append(" are uninitialized. You might wanna call help (-Dhelp) and display the helpString instead.")
+			       .append(FileUtils.lineSeparator);
+		}
 		
-		for (final IArgument<?> arg : getChildren()) {
+		builder.append("[").append(getName()).append("] ");
+		
+		if (!this.initialized) {
+			builder.append("  <## NOT INITIALIZED ##>  ");
+		}
+		
+		builder.append(getDescription());
+		
+		for (final IArgument<?, ?> arg : getChildren()) {
 			builder.append(FileUtils.lineSeparator).append(arg.toString(keyWidth, valueWidth));
 		}
 		
 		return builder.toString();
 	}
+	
 }

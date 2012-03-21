@@ -18,24 +18,72 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+/**
+ * The Class Requirement.
+ */
 public abstract class Requirement {
 	
+	/** The Constant required. */
 	public static final Requirement required = new Required();
+	
+	/** The Constant optional. */
 	public static final Requirement optional = new Optional();
 	
 	/**
-	 * @param arguments
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 * @return the requirement
 	 */
-	public static void printGraph(final Collection<ArgumentSet<?>> arguments) {
+	public static Requirement equals(@NotNull final EnumArgument.Options<?> argument,
+	                                 @NotNull final Enum<?> value) {
+		return new Equals(argument, value);
+	}
+	
+	/**
+	 * Iff.
+	 * 
+	 * @param option
+	 *            the option
+	 * @return the requirement
+	 */
+	public static Requirement iff(@NotNull final IOptions<?, ?> option) {
+		return new If(option);
+	}
+	
+	/**
+	 * Not.
+	 * 
+	 * @param requirement
+	 *            the requirement
+	 * @return the requirement
+	 */
+	public static Requirement not(final Requirement requirement) {
+		return new Not(requirement);
+	}
+	
+	/**
+	 * Prints the graph.
+	 * 
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void printGraph(final Collection<ArgumentSet<?, ?>> arguments) {
 		final StringBuilder builder = new StringBuilder();
 		
-		for (final IArgument<?> aai : arguments) {
-			for (final IArgument<?> aaiDependency : aai.getDependencies()) {
+		for (final IArgument<?, ?> aai : arguments) {
+			for (final IOptions<?, ?> aaiDependency : aai.getDependencies()) {
 				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName())
 				       .append(FileUtils.lineSeparator);
 			}
@@ -54,24 +102,43 @@ public abstract class Requirement {
 	}
 	
 	/**
-	 * @return
+	 * Unset.
+	 * 
+	 * @param option
+	 *            the option
+	 * @return the requirement
 	 */
-	public abstract Set<IArgument<?>> getDependencies();
+	public static Requirement unset(@NotNull final IOptions<?, ?> option) {
+		return Requirement.not(Requirement.iff(option));
+	}
 	
 	/**
-	 * @return
+	 * Gets the dependencies.
+	 * 
+	 * @return the dependencies
+	 */
+	public abstract Set<IOptions<?, ?>> getDependencies();
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	public final String getHandle() {
 		return getClass().getSimpleName();
 	}
 	
 	/**
-	 * @return
+	 * Gets the required dependencies.
+	 * 
+	 * @return the required dependencies
 	 */
-	public abstract List<Requirement> getMissingRequirements();
+	public abstract List<Requirement> getRequiredDependencies();
 	
 	/**
-	 * @return
+	 * Required.
+	 * 
+	 * @return true, if successful
 	 */
 	public abstract boolean required();
 }

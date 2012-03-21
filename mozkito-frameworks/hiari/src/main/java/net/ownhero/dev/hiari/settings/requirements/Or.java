@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -49,20 +49,12 @@ public class Or extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return getRequirement1().required() || getRequirement2().required();
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
-		HashSet<IArgument<?>> dependencies = new HashSet<IArgument<?>>();
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
+		
 		try {
 			dependencies.addAll(this.requirement1.getDependencies());
 			dependencies.addAll(this.requirement2.getDependencies());
@@ -79,9 +71,9 @@ public class Or extends Requirement {
 	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
-		final List<Requirement> failureCause1 = this.requirement1.getMissingRequirements();
-		final List<Requirement> failureCause2 = this.requirement1.getMissingRequirements();
+	public List<Requirement> getRequiredDependencies() {
+		final List<Requirement> failureCause1 = this.requirement1.getRequiredDependencies();
+		final List<Requirement> failureCause2 = this.requirement1.getRequiredDependencies();
 		final boolean check = required();
 		if (!check) {
 			return new LinkedList<Requirement>() {
@@ -112,6 +104,15 @@ public class Or extends Requirement {
 	 */
 	public Requirement getRequirement2() {
 		return this.requirement2;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		return getRequirement1().required() || getRequirement2().required();
 	}
 	
 	/*

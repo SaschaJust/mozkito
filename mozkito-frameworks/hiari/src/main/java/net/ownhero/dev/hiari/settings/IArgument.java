@@ -6,78 +6,135 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
 
-public interface IArgument<T> extends Comparable<IArgument<?>> {
+/**
+ * The Interface IArgument.
+ * 
+ * @param <T>
+ *            the generic type
+ */
+public interface IArgument<T, X extends IOptions<T, ?>> extends Comparable<IArgument<?, ?>> {
 	
 	/**
-	 * @return
+	 * Gets the dependencies.
+	 * 
+	 * @return the dependencies
 	 */
-	Set<IArgument<?>> getDependencies();
+	Set<IOptions<?, ?>> getDependencies();
 	
 	/**
+	 * Gets the description.
+	 * 
 	 * @return The description of the argument (as printed in help string).
 	 */
 	String getDescription();
 	
 	/**
+	 * Gets the handle.
+	 * 
 	 * @return the simple class name
 	 */
 	String getHandle();
 	
+	/**
+	 * Gets the help string.
+	 * 
+	 * @return the help string
+	 */
 	String getHelpString();
 	
 	/**
+	 * Gets the help string.
+	 * 
+	 * @param keyWidth
+	 *            the key width
 	 * @param indentation
-	 * @return
+	 *            the indentation
+	 * @return the help string
 	 */
-	String getHelpString(int indentation);
+	String getHelpString(int keyWidth,
+	                     int indentation);
 	
 	/**
-	 * @return
+	 * Gets the key value span.
+	 * 
+	 * @return the key value span
 	 */
 	Tuple<Integer, Integer> getKeyValueSpan();
 	
 	/**
+	 * Gets the name.
+	 * 
 	 * @return The name of the argument (as printed in help string).
 	 */
 	String getName();
 	
 	/**
-	 * @return
+	 * Gets the options.
+	 * 
+	 * @return the options
+	 */
+	X getOptions();
+	
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
+	ArgumentSet<?, ?> getParent();
+	
+	/**
+	 * Gets the requirements.
+	 * 
+	 * @return the requirements
 	 */
 	Requirement getRequirements();
 	
 	/**
-	 * @return
+	 * Gets the settings.
+	 * 
+	 * @return the settings
 	 */
-	Settings getSettings();
+	ISettings getSettings();
 	
 	/**
-	 * @return
+	 * Gets the tag.
+	 * 
+	 * @return the tag
+	 */
+	public String getTag();
+	
+	/**
+	 * Gets the value.
+	 * 
+	 * @return the value
 	 */
 	T getValue();
 	
 	/**
-	 * @return
-	 */
-	boolean isInitialized();
-	
-	/**
-	 * @throws SettingsParseError
+	 * Parses the.
 	 * 
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	void parse() throws SettingsParseError;
 	
 	/**
-	 * @return
+	 * Required.
+	 * 
+	 * @return true, if successful
 	 */
 	boolean required();
 	
 	/**
+	 * To string.
 	 * 
 	 * @param keyWidth
+	 *            the key width
 	 * @param valueWidth
-	 * @return
+	 *            the value width
+	 * @return the string
 	 */
 	String toString(int keyWidth,
 	                int valueWidth);
+	
 }

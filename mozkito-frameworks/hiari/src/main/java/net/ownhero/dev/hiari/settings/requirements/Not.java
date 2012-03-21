@@ -12,11 +12,12 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.IArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
@@ -43,22 +44,13 @@ public class Not extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return !this.requirement.required();
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
-	public Set<IArgument<?>> getDependencies() {
-		Set<IArgument<?>> dependencies = null;
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
 		try {
-			dependencies = this.requirement.getDependencies();
+			dependencies.addAll(this.requirement.getDependencies());
 			return dependencies;
 		} finally {
 			Condition.notNull(dependencies, "Dependency values may never be null.");
@@ -77,26 +69,35 @@ public class Not extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getMissingRequirements() {
-		final List<Requirement> failureCause = this.requirement.getMissingRequirements();
+	public List<Requirement> getRequiredDependencies() {
+		final List<Requirement> failureCause = this.requirement.getRequiredDependencies();
 		
 		if (failureCause == null) {
 			return required()
-			              ? null
-			              : new LinkedList<Requirement>() {
-				              
-				              private static final long serialVersionUID = 1L;
-				              
-				              {
-					              add(Not.this);
-				              }
-			              };
+			                 ? null
+			                 : new LinkedList<Requirement>() {
+				                 
+				                 private static final long serialVersionUID = 1L;
+				                 
+				                 {
+					                 add(Not.this);
+				                 }
+			                 };
 		} else {
 			return required()
-			              ? null
-			              : failureCause;
+			                 ? null
+			                 : failureCause;
 		}
 		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean required() {
+		return !this.requirement.required();
 	}
 	
 	/*
