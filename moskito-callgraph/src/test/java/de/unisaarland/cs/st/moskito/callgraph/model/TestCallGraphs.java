@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.model;
 
 import static org.junit.Assert.assertEquals;
@@ -32,21 +35,52 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 
+/**
+ * The Class TestCallGraphs.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class TestCallGraphs {
 	
+	/** The A. */
 	private ClassVertex  A;
+	
+	/** The Aa. */
 	private MethodVertex Aa;
+	
+	/** The Ab. */
 	private MethodVertex Ab;
+	
+	/** The Ac. */
 	private MethodVertex Ac;
+	
+	/** The Ad. */
 	private MethodVertex Ad;
+	
+	/** The B. */
 	private ClassVertex  B;
+	
+	/** The Ba. */
 	private MethodVertex Ba;
+	
+	/** The Bb. */
 	private MethodVertex Bb;
+	
+	/** The C. */
 	private ClassVertex  C;
+	
+	/** The Ca. */
 	private MethodVertex Ca;
+	
+	/** The Cb. */
 	private MethodVertex Cb;
+	
+	/** The cg. */
 	private CallGraph    cg;
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		this.Aa = VertexFactory.createMethodVertex("A.a(bool,bool)", "A.java");
@@ -82,11 +116,17 @@ public class TestCallGraphs {
 		
 	}
 	
+	/**
+	 * Tear down.
+	 */
 	@After
 	public void tearDown() {
 		VertexFactory.clear();
 	}
 	
+	/**
+	 * Test graph generation.
+	 */
 	@Test
 	public void testGraphGeneration() {
 		
@@ -212,6 +252,9 @@ public class TestCallGraphs {
 		
 	}
 	
+	/**
+	 * Test serialize.
+	 */
 	@Test
 	public void testSerialize() {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
@@ -221,6 +264,9 @@ public class TestCallGraphs {
 		file.delete();
 	}
 	
+	/**
+	 * Test update graph.
+	 */
 	@Test
 	public void testUpdateGraph() {
 		this.cg.removeRecursive(this.B);

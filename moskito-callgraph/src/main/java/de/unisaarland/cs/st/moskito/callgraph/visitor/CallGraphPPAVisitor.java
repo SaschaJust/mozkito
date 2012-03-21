@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.visitor;
 
 import java.util.ArrayList;
@@ -40,15 +43,39 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPAVisitor;
 
+/**
+ * The Class CallGraphPPAVisitor.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class CallGraphPPAVisitor implements PPAVisitor {
 	
+	/** The call graph. */
 	private final CallGraph              callGraph;
+	
+	/** The update. */
 	private boolean                      update           = false;
+	
+	/** The resetted vertices. */
 	private final Set<ClassVertex>       resettedVertices = new HashSet<ClassVertex>();
+	
+	/** The changed methods. */
 	private final Set<MethodVertex>      changedMethods   = new HashSet<MethodVertex>();
+	
+	/** The filename. */
 	private final String                 filename;
+	
+	/** The java element cache. */
 	private final JavaElementLocationSet javaElementCache;
 	
+	/**
+	 * Instantiates a new call graph ppa visitor.
+	 *
+	 * @param callGraph the call graph
+	 * @param update the update
+	 * @param fileName the file name
+	 * @param javaElementCache the java element cache
+	 */
 	public CallGraphPPAVisitor(final CallGraph callGraph, final boolean update, final String fileName,
 	        final JavaElementLocationSet javaElementCache) {
 		this.callGraph = callGraph;
@@ -57,6 +84,12 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		this.javaElementCache = javaElementCache;
 	}
 	
+	/**
+	 * Adds the edge.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 */
 	private void addEdge(final MethodVertex from,
 	                     final MethodVertex to) {
 		if (update) {
@@ -70,6 +103,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		changedMethods.add(from);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.ppa.visitors.PPAVisitor#endVisit(de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet)
+	 */
 	@Override
 	public void endVisit(final PPATypeVisitor ppaVisitor,
 	                     final CompilationUnit cu,
@@ -80,6 +116,11 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 	}
 	
+	/**
+	 * Gets the changed classes.
+	 *
+	 * @return the changed classes
+	 */
 	public Set<ClassVertex> getChangedClasses() {
 		Set<ClassVertex> changedClasses = new HashSet<ClassVertex>();
 		for (MethodVertex v : changedMethods) {
@@ -90,10 +131,23 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		return changedClasses;
 	}
 	
+	/**
+	 * Gets the changed methods.
+	 *
+	 * @return the changed methods
+	 */
 	public Set<MethodVertex> getChangedMethods() {
 		return changedMethods;
 	}
 	
+	/**
+	 * Handle class instance creation.
+	 *
+	 * @param line the line
+	 * @param cic the cic
+	 * @param classContext the class context
+	 * @param methodContext the method context
+	 */
 	private void handleClassInstanceCreation(final int line,
 	                                         final ClassInstanceCreation cic,
 	                                         final JavaElementLocation classContext,
@@ -185,6 +239,14 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		}
 	}
 	
+	/**
+	 * Handle method invocation.
+	 *
+	 * @param line the line
+	 * @param mi the mi
+	 * @param classContextLocation the class context location
+	 * @param methodContextLocation the method context location
+	 */
 	private void handleMethodInvocation(final int line,
 	                                    final MethodInvocation mi,
 	                                    final JavaElementLocation classContextLocation,
@@ -278,6 +340,14 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 	}
 	
+	/**
+	 * Handle super constructor invocation.
+	 *
+	 * @param line the line
+	 * @param sci the sci
+	 * @param classContextLocation the class context location
+	 * @param methodContextLocation the method context location
+	 */
 	private void handleSuperConstructorInvocation(final int line,
 	                                              final SuperConstructorInvocation sci,
 	                                              final JavaElementLocation classContextLocation,
@@ -382,6 +452,14 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 	}
 	
+	/**
+	 * Handle super method invocation.
+	 *
+	 * @param line the line
+	 * @param smi the smi
+	 * @param classContextLocation the class context location
+	 * @param methodContextLocation the method context location
+	 */
 	private void handleSuperMethodInvocation(final int line,
 	                                         final SuperMethodInvocation smi,
 	                                         final JavaElementLocation classContextLocation,
@@ -466,6 +544,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.ppa.visitors.PPAVisitor#postVisit(de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, int, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet)
+	 */
 	@Override
 	public void postVisit(final PPATypeVisitor ppaVisitor,
 	                      final CompilationUnit cu,
@@ -502,6 +583,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.ppa.visitors.PPAVisitor#preVisit(de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation, int, int, de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet)
+	 */
 	@Override
 	public void preVisit(final PPATypeVisitor ppaVisitor,
 	                     final CompilationUnit cu,

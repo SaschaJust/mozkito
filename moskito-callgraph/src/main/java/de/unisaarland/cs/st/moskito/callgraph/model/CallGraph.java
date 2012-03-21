@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.model;
 
 import java.io.BufferedInputStream;
@@ -42,11 +45,15 @@ import edu.uci.ics.jung.graph.util.Pair;
 public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implements
         DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5019126219418574465L;
 	
+	/**
+	 * Unserialize.
+	 *
+	 * @param file the file
+	 * @return the call graph
+	 */
 	public static CallGraph unserialize(final File file) {
 		try {
 			final ObjectInputStream objIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
@@ -72,14 +79,24 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return null;
 	}
 	
+	/** The method call graph. */
 	private DirectedSparseGraph<MethodVertex, CallGraphEdge> methodCallGraph = new DirectedSparseGraph<MethodVertex, CallGraphEdge>();
 	
+	/** The class call graph. */
 	private DirectedSparseGraph<ClassVertex, CallGraphEdge>  classCallGraph  = new DirectedSparseGraph<ClassVertex, CallGraphEdge>();
 	
+	/**
+	 * Instantiates a new call graph.
+	 */
 	public CallGraph() {
 		
 	}
 	
+	/**
+	 * Instantiates a new call graph.
+	 *
+	 * @param other the other
+	 */
 	public CallGraph(final CallGraph other) {
 		this.methodCallGraph = other.methodCallGraph;
 		this.classCallGraph = other.classCallGraph;
@@ -185,6 +202,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.containsVertex(vertex);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -393,6 +413,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.getVertices();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -477,6 +500,11 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		}
 	}
 	
+	/**
+	 * Removes the recursive.
+	 *
+	 * @param vertex the vertex
+	 */
 	public void removeRecursive(final ClassVertex vertex) {
 		Collection<CallGraphEdge> outEdges = this.classCallGraph.getOutEdges(vertex);
 		if (outEdges == null) {
@@ -527,6 +555,11 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return true;
 	}
 	
+	/**
+	 * Serialize.
+	 *
+	 * @param file the file
+	 */
 	public void serialize(final File file) {
 		try {
 			final ObjectOutputStream objOut = new ObjectOutputStream(
