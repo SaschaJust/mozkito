@@ -19,7 +19,6 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.StringArgument;
@@ -131,19 +130,19 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public PersistenceUtil init(final Map<String, IArgument<?, ?>> dependencies) {
+	public PersistenceUtil init() {
 		// PRECONDITIONS
 		
 		try {
-			final StringArgument hostArgument = (StringArgument) dependencies.get(this.databaseHost.getName());
-			final StringArgument nameArgument = (StringArgument) dependencies.get(this.databaseName.getName());
-			final StringArgument userArgument = (StringArgument) dependencies.get(this.databaseUser.getName());
-			final StringArgument passwordArgument = (StringArgument) dependencies.get(this.databasePassword.getName());
-			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) dependencies.get(this.databaseType.getName());
-			final StringArgument driverArgument = (StringArgument) dependencies.get(this.databaseDriver.getName());
-			final StringArgument unitArgument = (StringArgument) dependencies.get(this.databaseUnit.getName());
-			final EnumArgument<ConnectOptions> optionsArgument = (EnumArgument<ConnectOptions>) dependencies.get(this.databaseOptions.getName());
-			final StringArgument middlewareArgument = (StringArgument) dependencies.get(this.databaseMiddleware.getName());
+			final StringArgument hostArgument = (StringArgument) getSettings().getArgument(this.databaseHost.getName());
+			final StringArgument nameArgument = (StringArgument) getSettings().getArgument(this.databaseName.getName());
+			final StringArgument userArgument = (StringArgument) getSettings().getArgument(this.databaseUser.getName());
+			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(this.databasePassword.getName());
+			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) getSettings().getArgument(this.databaseType.getName());
+			final StringArgument driverArgument = (StringArgument) getSettings().getArgument(this.databaseDriver.getName());
+			final StringArgument unitArgument = (StringArgument) getSettings().getArgument(this.databaseUnit.getName());
+			final EnumArgument<ConnectOptions> optionsArgument = (EnumArgument<ConnectOptions>) getSettings().getArgument(this.databaseOptions.getName());
+			final StringArgument middlewareArgument = (StringArgument) getSettings().getArgument(this.databaseMiddleware.getName());
 			
 			if (optionsArgument.getValue().equals(ConnectOptions.DB_DROP_CREATE)) {
 				try {
