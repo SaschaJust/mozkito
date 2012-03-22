@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
 import java.io.BufferedInputStream;
@@ -57,21 +60,25 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	/** The checkout dir. */
 	private File                           checkoutDir      = null;
 	
+	/** The cache dir. */
 	private final File                     cacheDir;
 	
+	/** The transaction. */
 	private final RCSTransaction           transaction;
+	
+	/** The cache. */
 	private Map<String, Set<Set<Integer>>> cache            = new HashMap<String, Set<Set<Integer>>>();
+	
+	/** The current cache file. */
 	private File                           currentCacheFile = null;
 	
 	/**
 	 * Instantiates a new data dependency voter.
-	 * 
-	 * @param eclipseDir
-	 *            the eclipse dir
-	 * @param repository
-	 *            the repository
-	 * @param transaction
-	 *            the transaction
+	 *
+	 * @param eclipseDir the eclipse dir
+	 * @param repository the repository
+	 * @param transaction the transaction
+	 * @param cacheFile the cache file
 	 */
 	public DataDependencyVoter(@NotNull final File eclipseDir, @NotNull final Repository repository,
 	        final RCSTransaction transaction, final File cacheFile) {

@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
 import java.util.ArrayList;
@@ -36,42 +39,91 @@ import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
 
 /**
+ * The Class UntanglingOptions.
+ *
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
  */
 public class UntanglingOptions extends
         ArgumentSetOptions<UntanglingControl, ArgumentSet<UntanglingControl, UntanglingOptions>> {
 	
+	/** The repository options. */
 	private final RepositoryOptions                    repositoryOptions;
+	
+	/** The callgraph eclipse options. */
 	private DirectoryArgument.Options                  callgraphEclipseOptions;
+	
+	/** The atomic changes options. */
 	private ListArgument.Options                       atomicChangesOptions;
+	
+	/** The use call graph options. */
 	private BooleanArgument.Options                    useCallGraphOptions;
+	
+	/** The use change couplings options. */
 	private BooleanArgument.Options                    useChangeCouplingsOptions;
+	
+	/** The use data dependencies options. */
 	private BooleanArgument.Options                    useDataDependenciesOptions;
+	
+	/** The use test impact options. */
 	private BooleanArgument.Options                    useTestImpactOptions;
+	
+	/** The test impact file options. */
 	private InputFileArgument.Options                  testImpactFileOptions;
+	
+	/** The datadependency eclipse options. */
 	private DirectoryArgument.Options                  datadependencyEclipseOptions;
+	
+	/** The change couplings min support. */
 	private LongArgument.Options                       changeCouplingsMinSupport;
+	
+	/** The change couplings min confidence. */
 	private DoubleArgument.Options                     changeCouplingsMinConfidence;
+	
+	/** The package distance options. */
 	private LongArgument.Options                       packageDistanceOptions;
+	
+	/** The min blob size options. */
 	private LongArgument.Options                       minBlobSizeOptions;
+	
+	/** The max blob size options. */
 	private LongArgument.Options                       maxBlobSizeOptions;
+	
+	/** The out options. */
 	private OutputFileArgument.Options                 outOptions;
+	
+	/** The call graph cache dir options. */
 	private DirectoryArgument.Options                  callGraphCacheDirOptions;
+	
+	/** The change couplings cache dir options. */
 	private DirectoryArgument.Options                  changeCouplingsCacheDirOptions;
+	
+	/** The data dependency cache dir options. */
 	private DirectoryArgument.Options                  dataDependencyCacheDirOptions;
+	
+	/** The dry run options. */
 	private BooleanArgument.Options                    dryRunOptions;
+	
+	/** The n options. */
 	private LongArgument.Options                       nOptions;
+	
+	/** The seed options. */
 	private LongArgument.Options                       seedOptions;
+	
+	/** The collapse mode options. */
 	private EnumArgument.Options<UntanglingCollapse>   collapseModeOptions;
+	
+	/** The blob window size options. */
 	private LongArgument.Options                       blobWindowSizeOptions;
+	
+	/** The score mode options. */
 	private EnumArgument.Options<ScoreCombinationMode> scoreModeOptions;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new untangling options.
+	 *
+	 * @param argumentSet the argument set
+	 * @param requirements the requirements
+	 * @param repositoryOptions the repository options
 	 */
 	public UntanglingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 	        final RepositoryOptions repositoryOptions) {
@@ -81,8 +133,10 @@ public class UntanglingOptions extends
 	}
 	
 	/**
-	 * @param set
-	 * @return
+	 * Call graph requirements.
+	 *
+	 * @param set the set
+	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> callGraphRequirements(final ArgumentSet<?, ?> set) {
 		// PRECONDITIONS
@@ -117,6 +171,14 @@ public class UntanglingOptions extends
 		}
 	}
 	
+	/**
+	 * Change coupling requirements.
+	 *
+	 * @param set the set
+	 * @return the map
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 * @throws SettingsParseError the settings parse error
+	 */
 	private Map<String, IOptions<?, ?>> changeCouplingRequirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
 	                                                                                           SettingsParseError {
 		final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
@@ -152,8 +214,10 @@ public class UntanglingOptions extends
 	}
 	
 	/**
-	 * @param set
-	 * @return
+	 * Data dependency requirements.
+	 *
+	 * @param set the set
+	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> dataDependencyRequirements(final ArgumentSet<?, ?> set) {
 		// PRECONDITIONS
@@ -351,8 +415,10 @@ public class UntanglingOptions extends
 	}
 	
 	/**
-	 * @param set
-	 * @return
+	 * Test impact requirements.
+	 *
+	 * @param set the set
+	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> testImpactRequirements(final ArgumentSet<?, ?> set) {
 		// PRECONDITIONS

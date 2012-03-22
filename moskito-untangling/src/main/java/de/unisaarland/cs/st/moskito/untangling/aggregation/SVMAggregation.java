@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
@@ -33,15 +36,25 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
 
+/**
+ * The Class SVMAggregation.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SVMAggregation extends UntanglingScoreAggregation implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long   serialVersionUID = 5743363755550937828L;
 	
+	/** The Constant TRAIN_FRACTION. */
 	private static final double TRAIN_FRACTION   = .5;
 	
+	/**
+	 * Creates the instance.
+	 *
+	 * @param untangling the untangling
+	 * @return the sVM aggregation
+	 */
 	public static SVMAggregation createInstance(final Untangling untangling) {
 		SVMAggregation result = null;
 		if (System.getProperty("svmModel") != null) {
@@ -74,17 +87,28 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		return result;
 	}
 	
+	/** The trained. */
 	private boolean          trained = false;
 	
+	/** The untangling. */
 	private final Untangling untangling;
 	
+	/** The model. */
 	private svm_model        model;
 	
+	/**
+	 * Instantiates a new sVM aggregation.
+	 *
+	 * @param untangling the untangling
+	 */
 	protected SVMAggregation(final Untangling untangling) {
 		super();
 		this.untangling = untangling;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.ScoreAggregation#aggregate(java.util.List)
+	 */
 	@Override
 	public double aggregate(final List<Double> values) {
 		Condition.check(trained, "You must train a model before using it,");
@@ -99,6 +123,9 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		return svm.svm_predict(model, x);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.ScoreAggregation#getInfo()
+	 */
 	@Override
 	public String getInfo() {
 		StringBuilder sb = new StringBuilder();
@@ -106,6 +133,12 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		return sb.toString();
 	}
 	
+	/**
+	 * Train.
+	 *
+	 * @param transactionSet the transaction set
+	 * @return true, if successful
+	 */
 	public boolean train(final Collection<AtomicTransaction> transactionSet) {
 		
 		if (trained) {

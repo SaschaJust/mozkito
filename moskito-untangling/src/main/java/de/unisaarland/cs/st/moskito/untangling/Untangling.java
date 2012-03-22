@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling;
 
 import java.io.BufferedWriter;
@@ -77,10 +80,24 @@ import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter;
  */
 public class Untangling {
 	
+	/**
+	 * The Enum ScoreCombinationMode.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	public enum ScoreCombinationMode {
 		
-		SUM, VARSUM, LINEAR_REGRESSION, SVM;
+		/** The SUM. */
+		SUM, /** The VARSUM. */
+ VARSUM, /** The LINEA r_ regression. */
+ LINEAR_REGRESSION, /** The SVM. */
+ SVM;
 		
+		/**
+		 * String values.
+		 *
+		 * @return the string[]
+		 */
 		public static String[] stringValues() {
 			final Set<String> values = new HashSet<String>();
 			for (final ScoreCombinationMode g : ScoreCombinationMode.values()) {
@@ -90,9 +107,25 @@ public class Untangling {
 		}
 	}
 	
+	/**
+	 * The Enum UntanglingCollapse.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	public enum UntanglingCollapse {
-		AVG, MAX, RATIO;
 		
+		/** The AVG. */
+		AVG, 
+ /** The MAX. */
+ MAX, 
+ /** The RATIO. */
+ RATIO;
+		
+		/**
+		 * String values.
+		 *
+		 * @return the string[]
+		 */
 		public static String[] stringValues() {
 			final Set<String> values = new HashSet<String>();
 			for (final UntanglingCollapse g : UntanglingCollapse.values()) {
@@ -102,28 +135,37 @@ public class Untangling {
 		}
 	}
 	
+	/** The random. */
 	public static Random                          random          = new Random();
 	
+	/** The seed. */
 	public long                                   seed;
 	
+	/** The aggregator. */
 	private ScoreAggregation<JavaChangeOperation> aggregator      = null;
 	
+	/** The test impact voter. */
 	private TestImpactVoter                       testImpactVoter = null;
 	
+	/** The persistence util. */
 	private final PersistenceUtil                 persistenceUtil;
+	
+	/** The untangling control. */
 	private UntanglingControl                     untanglingControl;
 	
+	/** The repository options. */
 	private RepositoryOptions                     repositoryOptions;
 	
+	/** The repository username. */
 	private String                                repositoryUsername;
 	
+	/** The repository password. */
 	private String                                repositoryPassword;
 	
 	/**
 	 * Instantiates a new untangling.
-	 * 
-	 * @throws ArgumentRegistrationException
-	 * @throws SettingsParseError
+	 *
+	 * @param settings the settings
 	 */
 	public Untangling(final Settings settings) {
 		
@@ -194,6 +236,12 @@ public class Untangling {
 		return minDiff;
 	}
 	
+	/**
+	 * Generate score visitors.
+	 *
+	 * @param transaction the transaction
+	 * @return the list
+	 */
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction transaction) {
 		
 		if ((this.testImpactVoter == null) && (this.untanglingControl.isTestImpactEnabled())) {
@@ -267,6 +315,11 @@ public class Untangling {
 		
 	}
 	
+	/**
+	 * Gets the score visitor names.
+	 *
+	 * @return the score visitor names
+	 */
 	public List<String> getScoreVisitorNames() {
 		final List<String> result = new LinkedList<String>();
 		result.add(LineDistanceVoter.class.getSimpleName());
