@@ -1,17 +1,13 @@
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,11 +15,7 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import net.ownhero.dev.hiari.settings.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
@@ -48,8 +40,6 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -75,28 +65,6 @@ public class ChangeGenealogyUtils {
 	/** The genealogies. */
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
-	private static void exportToDOT(final CoreChangeGenealogy genealogy,
-	                                final File dotFile) throws IOException {
-		final BufferedWriter out = new BufferedWriter(new FileWriter(dotFile));
-		
-		out.write("digraph g {");
-		out.write(FileUtils.lineSeparator);
-		final Iterator<JavaChangeOperation> vertexIterator = genealogy.vertexIterator();
-		while (vertexIterator.hasNext()) {
-			final JavaChangeOperation op = vertexIterator.next();
-			final String opId = genealogy.getNodeId(op);
-			for (final JavaChangeOperation parent : genealogy.getAllParents(op)) {
-				final String parentId = genealogy.getNodeId(parent);
-				out.write(opId);
-				out.write(" -> ");
-				out.write(parentId);
-				out.write(FileUtils.lineSeparator);
-			}
-		}
-		out.write("}");
-		out.close();
-	}
-	
 	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
 	                                   final File outFile) {
 		try {
@@ -112,26 +80,6 @@ public class ChangeGenealogyUtils {
 				Logger.error(e.getLocalizedMessage(), e);
 			}
 		}
-	}
-	
-	public static String getGenealogyStats(final CoreChangeGenealogy genealogy) {
-		final StringBuilder sb = new StringBuilder();
-		
-		sb.append("#Vertices: ");
-		sb.append(genealogy.vertexSize());
-		sb.append(FileUtils.lineSeparator);
-		sb.append("#Edges: ");
-		
-		sb.append(genealogy.edgeSize());
-		sb.append(FileUtils.lineSeparator);
-		sb.append("Edge types used: ");
-		
-		for (final GenealogyEdgeType t : genealogy.getExistingEdgeTypes()) {
-			sb.append(t.toString());
-			sb.append(" ");
-		}
-		sb.append(FileUtils.lineSeparator);
-		return sb.toString();
 	}
 	
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
@@ -470,60 +418,5 @@ public class ChangeGenealogyUtils {
 				graphDb.shutdown();
 			}
 		});
-	}
-	
-	public static void run() throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException,
-	                        SettingsParseError {
-		
-		final RepositorySettings settings = new RepositorySettings();
-		
-		final DatabaseOptions persistenceArgs = new DatabaseOptions(settings.getRootArgumentSet(),
-		                                                            Requirement.required, "ppa");
-		
-		final DirectoryArgument graphDBArg = new DirectoryArgument(settings.getRootArgumentSet(), "genealogy.graphdb",
-		                                                           "Directory in which to load the GraphDB from.",
-		                                                           null, Requirement.required, true);
-		
-		final BooleanArgument statsArg = new BooleanArgument(settings.getRootArgumentSet(), "stats",
-		                                                     "Print vertex/edge statistic for ChangeGenealogy",
-		                                                     "false", Requirement.optional);
-		
-		final OutputFileArgument graphmlArg = new OutputFileArgument(
-		                                                             settings.getRootArgumentSet(),
-		                                                             "graphml.out",
-		                                                             "Export the graph as GraphML file into this file.",
-		                                                             null, Requirement.optional, false);
-		
-		final OutputFileArgument dotArg = new OutputFileArgument(
-		                                                         settings.getRootArgumentSet(),
-		                                                         "dot.out",
-		                                                         "Export the graph as DOT file (must be processed using graphviz).",
-		                                                         null, Requirement.optional, true);
-		
-		settings.parse();
-		
-		final PersistenceUtil persistenceUtil = persistenceArgs.getValue();
-		
-		final CoreChangeGenealogy genealogy = ChangeGenealogyUtils.readFromDB(graphDBArg.getValue(), persistenceUtil);
-		
-		if (statsArg.getValue()) {
-			System.out.println(getGenealogyStats(genealogy));
-		}
-		
-		final File graphmlFile = graphmlArg.getValue();
-		if (graphmlFile != null) {
-			exportToGraphML(genealogy, graphmlFile);
-		}
-		
-		final File dotFile = dotArg.getValue();
-		if (dotFile != null) {
-			try {
-				exportToDOT(genealogy, dotFile);
-			} catch (final IOException e) {
-				throw new UnrecoverableError(e);
-			}
-		}
-		
-		genealogy.close();
 	}
 }

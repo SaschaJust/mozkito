@@ -13,47 +13,63 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
-public class GenealogyToolChain extends Chain<GenealogySettings> {
+public class GenealogyToolChain extends Chain<Settings> {
 	
-	private final Pool               threadPool;
-	private final GenealogyArguments genealogyArgs;
-	private CoreChangeGenealogy      genealogy;
-	private final BooleanArgument    infoArg;
-	private LoggerArguments          loggerArg;
+	private final Pool                                               threadPool;
+	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgs;
+	private CoreChangeGenealogy                                      genealogy;
+	private final BooleanArgument                                    infoArgument;
 	
-	public GenealogyToolChain() {
-		super(new GenealogySettings());
+	public GenealogyToolChain(final Settings settings) {
+		super(settings);
 		
 		this.threadPool = new Pool(GenealogyToolChain.class.getSimpleName(), this);
-		final GenealogySettings settings = getSettings();
 		try {
-			this.loggerArg = settings.setLoggerArg(Requirement.optional);
-			this.infoArg = new BooleanArgument(settings.getRootArgumentSet(), "genealogyInfoOnly",
-			                                   "Only prints standard genealogy infos", "false", Requirement.required);
 			
-			this.genealogyArgs = settings.setGenealogyArgs(Requirement.required);
-		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
-			throw new Shutdown(e.getMessage(), e);
+			this.infoArgument = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                       settings.getRoot(),
+			                                                                       "infoOnly",
+			                                                                       "Only prints standard genealogy infos",
+			                                                                       false, Requirement.required));
+			
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
+			                                                               databaseOptions);
+			this.genealogyArgs = ArgumentSetFactory.create(genealogyOptions);
+			
+		} catch (final ArgumentRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} finally {
+			
 		}
 		
 	}
 	
 	@Override
 	public void setup() {
-		this.loggerArg.getValue();
-		if (this.infoArg.getValue()) {
+		if (this.infoArgument.getValue()) {
 			
 			this.genealogy = this.genealogyArgs.getValue();
 			if (Logger.logInfo()) {
