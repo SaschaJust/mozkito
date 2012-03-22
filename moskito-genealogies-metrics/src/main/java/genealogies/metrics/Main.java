@@ -16,9 +16,13 @@ package genealogies.metrics;
 import java.io.File;
 import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
@@ -26,8 +30,8 @@ import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsAggregateToolChain;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 public class Main {
 	
@@ -41,40 +45,46 @@ public class Main {
 	public static void main(final String[] args) {
 		
 		try {
-			final GenealogySettings settings = new GenealogySettings();
-			settings.setLoggerArg(Requirement.optional);
-			final GenealogyArguments genealogyArgs = settings.setGenealogyArgs(Requirement.required);
+			final Settings settings = new Settings();
 			
-			final OutputFileArgument fileMetricsFileArgument = new OutputFileArgument(
-			                                                                          settings.getRootArgumentSet(),
-			                                                                          "genealogy.metric.fileAggregate.out",
-			                                                                          "Filename that will contain genealogy metrics aggregated to RCSFile level as matrix.",
-			                                                                          null, Requirement.optional, true);
-			final EnumArgument<MetricLevel> granularityArg = new EnumArgument<MetricLevel>(
-			                                                                               settings.getRootArgumentSet(),
-			                                                                               "genealogy.metric.level",
-			                                                                               "The granularity level the metrics should be computed on.",
-			                                                                               MetricLevel.CHANGEOPERATION,
-			                                                                               Requirement.required);
-			final GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain(settings, granularityArg,
-			                                                                                 genealogyArgs);
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
+			                                                               databaseOptions);
+			
+			final OutputFileArgument.Options fileAggregateOutOptions = new OutputFileArgument.Options(
+			                                                                                          settings.getRoot(),
+			                                                                                          "fileAggregateOut",
+			                                                                                          "Filename that will contain genealogy metrics aggregated to RCSFile level as matrix.",
+			                                                                                          null,
+			                                                                                          Requirement.optional,
+			                                                                                          true);
+			final EnumArgument.Options<MetricLevel> granularityOptions = new EnumArgument.Options<MetricLevel>(
+			                                                                                                   settings.getRoot(),
+			                                                                                                   "metricLevel",
+			                                                                                                   "The granularity level the metrics should be computed on.",
+			                                                                                                   MetricLevel.TRANSACTION,
+			                                                                                                   Requirement.required);
+			
+			final GenealogyMetricsToolChain genealogyMetrics = new GenealogyMetricsToolChain(settings,
+			                                                                                 granularityOptions,
+			                                                                                 genealogyOptions);
 			
 			genealogyMetrics.setName(genealogyMetrics.getClass().getSimpleName());
 			genealogyMetrics.start();
 			genealogyMetrics.join();
 			
-			final File aggregateFile = fileMetricsFileArgument.getValue();
+			final File aggregateFile = ArgumentFactory.create(fileAggregateOutOptions).getValue();
 			
 			final Map<String, Map<String, Double>> metricsValues = genealogyMetrics.getMetricsValues();
 			
 			if ((aggregateFile != null) && (!metricsValues.isEmpty())) {
-				final CoreChangeGenealogy coreChangeGenealogy = genealogyArgs.getValue();
-				if (granularityArg.getValue().equals(MetricLevel.TRANSACTION)) {
+				final CoreChangeGenealogy coreChangeGenealogy = genealogyMetrics.getGenealogy();
+				if (genealogyMetrics.getGranularity().equals(MetricLevel.TRANSACTION)) {
 					final GenealogyMetricsAggregateToolChain aggregateToolChain = new GenealogyMetricsAggregateToolChain(
 					                                                                                                     settings,
 					                                                                                                     aggregateFile,
 					                                                                                                     metricsValues,
-					                                                                                                     granularityArg.getValue(),
+					                                                                                                     genealogyMetrics.getGranularity(),
 					                                                                                                     coreChangeGenealogy.getPersistenceUtil());
 					
 					aggregateToolChain.setName(aggregateToolChain.getClass().getSimpleName());
@@ -84,7 +94,7 @@ public class Main {
 					coreChangeGenealogy.close();
 				} else {
 					if (Logger.logError()) {
-						Logger.error("Metric aggregation for granularity " + granularityArg.getValue()
+						Logger.error("Metric aggregation for granularity " + genealogyMetrics.getGranularity()
 						        + " not supported yet.");
 					}
 				}
@@ -95,6 +105,14 @@ public class Main {
 			}
 			throw new RuntimeException();
 		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+		} catch (final ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
