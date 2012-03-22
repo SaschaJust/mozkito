@@ -15,20 +15,26 @@ package de.unisaarland.cs.st.moskito.ppa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.ListArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.ListArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.arguments.SetArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
@@ -37,7 +43,6 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaElementFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The Class PPAToolChain.
@@ -47,75 +52,84 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class PPAToolChain extends Chain<Settings> {
 	
 	/** The thread pool. */
-	private final Pool                threadPool;
-	
-	/** The repo settings. */
-	private final RepositoryOptions repoSettings;
-	
-	/** The database settings. */
-	private final DatabaseOptions   databaseSettings;
+	private final Pool                                    threadPool;
 	
 	/** The test case transaction arg. */
-	private final SetArgument         testCaseTransactionArg;
+	private final SetArgument                             testCaseTransactionArgument;
 	
 	/** The ppa arg. */
-	private final BooleanArgument     ppaArg;
+	private final BooleanArgument                         ppaArgument;
 	
 	/** The as xml. */
-	private final OutputFileArgument  asXML;
+	private final OutputFileArgument                      asXML;
 	
 	/** The persistence middleware util. */
-	private PersistenceUtil           persistenceUtil;
+	private PersistenceUtil                               persistenceUtil;
 	
 	/** The package filter arg. */
-	private ListArgument              packageFilterArg;
+	private ListArgument                                  packageFilterArgument;
+	
+	private DatabaseOptions                               databaseOptions;
+	
+	private ArgumentSet<Repository, RepositoryOptions>    repositoryArguments;
+	
+	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
 	
 	/**
 	 * Instantiates a new pPA tool chain.
 	 * 
 	 */
-	public PPAToolChain() {
-		super(new RepositorySettings());
+	public PPAToolChain(final Settings settings) {
+		super(settings);
 		
 		this.threadPool = new Pool(PPAToolChain.class.getSimpleName(), this);
-		final RepositorySettings settings = (RepositorySettings) getSettings();
 		
 		try {
-			this.repoSettings = settings.setRepositoryArg(Requirement.required);
-			this.databaseSettings = settings.setDatabaseArgs(Requirement.optional, "ppa");
-			settings.setLoggerArg(Requirement.required);
-			this.testCaseTransactionArg = new SetArgument(
-			                                              settings.getRootArgumentSet(),
-			                                              "testCaseTransactions",
-			                                              "List of transactions that will be passed for test case purposes. "
-			                                                      + "If this option is set, this module will start in test case mode. "
-			                                                      + "It will generate change operations to specified transactions, only;"
-			                                                      + "outputting result as XML either to sdtout (if option -DasXML not set) "
-			                                                      + "or to specified XML file.", null,
-			                                              Requirement.optional);
 			
-			this.ppaArg = new BooleanArgument(settings.getRootArgumentSet(), "ppa",
-			                                  "If set to true, this module will use the PPA tool.", "true",
-			                                  Requirement.optional);
+			this.databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			
-			this.asXML = new OutputFileArgument(
-			                                    settings.getRootArgumentSet(),
-			                                    "output.xml",
-			                                    "Instead of writing the source code change operations to the DB, output them as XML into this file.",
-			                                    null, Requirement.optional, true);
+			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
 			
-			this.packageFilterArg = new ListArgument(
-			                                         settings.getRootArgumentSet(),
-			                                         "ppa.package.filter",
-			                                         "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
-			                                         null, Requirement.optional);
+			this.repositoryArguments = ArgumentSetFactory.create(new RepositoryOptions(settings.getRoot(),
+			                                                                           Requirement.required,
+			                                                                           this.databaseOptions));
+			
+			this.testCaseTransactionArgument = ArgumentFactory.create(new SetArgument.Options(
+			                                                                                  settings.getRoot(),
+			                                                                                  "testCaseTransactions",
+			                                                                                  "List of transactions that will be passed for test case purposes. "
+			                                                                                          + "If this option is set, this module will start in test case mode. "
+			                                                                                          + "It will generate change operations to specified transactions, only;"
+			                                                                                          + "outputting result as XML either to sdtout (if option -DasXML not set) "
+			                                                                                          + "or to specified XML file.",
+			                                                                                  new HashSet<String>(),
+			                                                                                  Requirement.optional));
+			
+			this.ppaArgument = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                      settings.getRoot(),
+			                                                                      "ppa",
+			                                                                      "If set to true, this module will use the PPA tool.",
+			                                                                      true, Requirement.optional));
+			
+			this.asXML = ArgumentFactory.create(new OutputFileArgument.Options(
+			                                                                   settings.getRoot(),
+			                                                                   "output.xml",
+			                                                                   "Instead of writing the source code change operations to the DB, output them as XML into this file.",
+			                                                                   null, Requirement.optional, true));
+			
+			this.packageFilterArgument = ArgumentFactory.create(new ListArgument.Options(
+			                                                                             settings.getRoot(),
+			                                                                             "ppa.package.filter",
+			                                                                             "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
+			                                                                             new ArrayList<String>(0),
+			                                                                             Requirement.optional));
 		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getMessage(), e);
+			throw new UnrecoverableError(e);
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
 		}
-		
 	}
 	
 	/*
@@ -124,18 +138,9 @@ public class PPAToolChain extends Chain<Settings> {
 	 */
 	@Override
 	public void setup() {
-		this.persistenceUtil = this.databaseSettings.getValue();
-		if (this.persistenceUtil == null) {
-			if (Logger.logError()) {
-				Logger.error("Could not connect to database!");
-			}
-			
-			throw new Shutdown();
-		}
-		
+		this.persistenceUtil = this.databaseArguments.getValue();
 		final File xmlFile = this.asXML.getValue();
-		this.repoSettings.setPersistenceUtil(this.persistenceUtil);
-		final Repository repository = this.repoSettings.getValue();
+		final Repository repository = this.repositoryArguments.getValue();
 		
 		final JavaElementFactory elementFactory = new JavaElementFactory(this.persistenceUtil);
 		
@@ -180,15 +185,15 @@ public class PPAToolChain extends Chain<Settings> {
 		}
 		
 		String[] packageFilter = new String[0];
-		final List<String> packageFilterList = this.packageFilterArg.getValue();
+		final List<String> packageFilterList = this.packageFilterArgument.getValue();
 		if (packageFilterList != null) {
 			packageFilter = packageFilterList.toArray(new String[packageFilterList.size()]);
 		}
 		
 		// generate the change operation reader
 		new PPASource(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil,
-		              this.testCaseTransactionArg.getValue());
-		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArg.getValue(),
+		              this.testCaseTransactionArgument.getValue());
+		new PPATransformer(this.threadPool.getThreadGroup(), getSettings(), repository, this.ppaArgument.getValue(),
 		                   elementFactory, packageFilter);
 		
 		if (Logger.logDebug()) {
