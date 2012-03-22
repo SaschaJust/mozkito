@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
@@ -39,43 +42,92 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+/**
+ * The Class TransactionChangeSizeMetrics.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
+	/** The Constant changeSize. */
 	private static final String   changeSize                    = "numChangeOperations";
 	
+	/** The Constant numAddOperations. */
 	private static final String   numAddOperations              = "numAddOperations";
+	
+	/** The Constant numDelOperations. */
 	private static final String   numDelOperations              = "numDelOperations";
+	
+	/** The Constant numAddedMethDefs. */
 	private static final String   numAddedMethDefs              = "numAddedMethDefs";
+	
+	/** The Constant numDeletedMethDefs. */
 	private static final String   numDeletedMethDefs            = "numDeletedMethDefs";
 	
+	/** The Constant numAddedClassDefs. */
 	private static final String   numAddedClassDefs             = "numAddedClassDefs";
+	
+	/** The Constant numDeletedClassDefs. */
 	private static final String   numDeletedClassDefs           = "numDeletedClassDefs";
 	
+	/** The Constant numAddedCalls. */
 	private static final String   numAddedCalls                 = "numAddedCalls";
+	
+	/** The Constant numDeletedCalls. */
 	private static final String   numDeletedCalls               = "numDeletedCalls";
 	
+	/** The Constant avgDepChangeSize. */
 	private static final String   avgDepChangeSize              = "avgDepChangeSize";
+	
+	/** The Constant maxDepChangeSize. */
 	private static final String   maxDepChangeSize              = "maxDepChangeSize";
+	
+	/** The Constant sumDepChangeSize. */
 	private static final String   sumDepChangeSize              = "sumDepChangeSize";
+	
+	/** The Constant avgParentChangeSize. */
 	private static final String   avgParentChangeSize           = "avgParentChangeSize";
+	
+	/** The Constant maxParentChangeSize. */
 	private static final String   maxParentChangeSize           = "maxParentChangeSize";
+	
+	/** The Constant sumParentChangeSize. */
 	private static final String   sumParentChangeSize           = "sumParentChangeSize";
 	
+	/** The Constant numChangedFiles. */
 	private static final String   numChangedFiles               = "numChangedFiles";
+	
+	/** The Constant effectiveNumOperations. */
 	private static final String   effectiveNumOperations        = "effectiveNumOperations";
+	
+	/** The Constant effectiveNumMethDefOperations. */
 	private static final String   effectiveNumMethDefOperations = "effectiveNumMethDefOperations";
+	
+	/** The Constant effectiveNumCallOperations. */
 	private static final String   effectiveNumCallOperations    = "effectiveNumCallOperations";
+	
+	/** The Constant changedBlocks. */
 	private static final String   changedBlocks                 = "numChangedLineBlocks";
 	
+	/** The Constant numAffectedPackages. */
 	private static final String   numAffectedPackages           = "numAffectedPackages";
 	
+	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
 	
+	/**
+	 * Instantiates a new transaction change size metrics.
+	 *
+	 * @param genealogy the genealogy
+	 */
 	public TransactionChangeSizeMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#getMetricNames()
+	 */
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(7);
@@ -97,6 +149,9 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		return metricNames;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
+	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
 		if (Logger.logDebug()) {

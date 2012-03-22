@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -50,16 +53,41 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.Transa
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
 
+/**
+ * The Class GenealogyMetricsToolChain.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class GenealogyMetricsToolChain extends Chain<Settings> {
 	
+	/** The genealogy arguments. */
 	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArguments;
+	
+	/** The thread pool. */
 	private final Pool                                               threadPool;
+	
+	/** The genealogy. */
 	private CoreChangeGenealogy                                      genealogy;
+	
+	/** The granularity argument. */
 	private final EnumArgument<MetricLevel>                          granularityArgument;
+	
+	/** The output file argument. */
 	private final OutputFileArgument                                 outputFileArgument;
+	
+	/** The genealogy metric sink. */
 	private GenealogyMetricSink                                      genealogyMetricSink;
+	
+	/** The granularity. */
 	private MetricLevel                                              granularity;
 	
+	/**
+	 * Instantiates a new genealogy metrics tool chain.
+	 *
+	 * @param setting the setting
+	 * @param granularityOptions the granularity options
+	 * @param genealogyOptions the genealogy options
+	 */
 	public GenealogyMetricsToolChain(final Settings setting,
 	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions) {
 		super(setting);
@@ -91,18 +119,36 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 		
 	}
 	
+	/**
+	 * Gets the genealogy.
+	 *
+	 * @return the genealogy
+	 */
 	public CoreChangeGenealogy getGenealogy() {
 		return this.genealogy;
 	}
 	
+	/**
+	 * Gets the granularity.
+	 *
+	 * @return the granularity
+	 */
 	public MetricLevel getGranularity() {
 		return this.granularity;
 	}
 	
+	/**
+	 * Gets the metrics values.
+	 *
+	 * @return the metrics values
+	 */
 	public Map<String, Map<String, Double>> getMetricsValues() {
 		return this.genealogyMetricSink.getMetricValues();
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.ownhero.dev.andama.model.Chain#setup()
+	 */
 	@Override
 	public void setup() {
 		this.genealogy = this.genealogyArguments.getValue();

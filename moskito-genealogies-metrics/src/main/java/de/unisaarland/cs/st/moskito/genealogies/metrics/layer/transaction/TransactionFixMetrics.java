@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.io.BufferedReader;
@@ -26,13 +41,30 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+/**
+ * The Class TransactionFixMetrics.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	
+	/** The fix type name. */
 	private static String              fixTypeName  = "fixType";
+	
+	/** The num fixes name. */
 	private static String              numFixesName = "numFixes";
+	
+	/** The persistence util. */
 	private final PersistenceUtil      persistenceUtil;
+	
+	/** The classify map. */
 	private final Map<String, Integer> classifyMap  = new HashMap<String, Integer>();
 	
+	/**
+	 * Instantiates a new transaction fix metrics.
+	 *
+	 * @param genealogy the genealogy
+	 */
 	public TransactionFixMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
@@ -72,6 +104,13 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		}
 	}
 	
+	/**
+	 * Gets the bug id.
+	 *
+	 * @param regex the regex
+	 * @param message the message
+	 * @return the bug id
+	 */
 	private List<String> getBugId(final Regex regex,
 	                              final String message) {
 		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
@@ -95,6 +134,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#getMetricNames()
+	 */
 	@Override
 	public Collection<String> getMetricNames() {
 		final HashSet<String> result = new HashSet<String>();
@@ -103,6 +145,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
+	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
 		if (Logger.logDebug()) {

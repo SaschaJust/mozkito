@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -41,22 +44,46 @@ import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
 
+/**
+ * The Class TestChangeGenealogy.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
+	/**
+	 * Read from db.
+	 *
+	 * @param dbFile the db file
+	 * @return the test change genealogy
+	 */
 	public static TestChangeGenealogy readFromDB(final File dbFile) {
 		final GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		final TestChangeGenealogy genealogy = new TestChangeGenealogy(graph, dbFile);
 		return genealogy;
 	}
 	
+	/** The graph. */
 	private final GraphDatabaseService graph;
+	
+	/** The db file. */
 	private final File                 dbFile;
+	
+	/** The index manager. */
 	private final IndexManager         indexManager;
 	
+	/** The node index. */
 	private final Index<Node>          nodeIndex;
 	
+	/** The root index. */
 	private final Index<Node>          rootIndex;
 	
+	/**
+	 * Instantiates a new test change genealogy.
+	 *
+	 * @param graph the graph
+	 * @param dbFile the db file
+	 */
 	private TestChangeGenealogy(final GraphDatabaseService graph, final File dbFile) {
 		this.graph = graph;
 		this.dbFile = dbFile;
@@ -65,6 +92,14 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		this.rootIndex = this.indexManager.forNodes(CoreChangeGenealogy.ROOT_VERTICES);
 	}
 	
+	/**
+	 * Adds the edge.
+	 *
+	 * @param dependent the dependent
+	 * @param target the target
+	 * @param edgeType the edge type
+	 * @return true, if successful
+	 */
 	public boolean addEdge(@NotEmpty final String dependent,
 	                       @NotEmpty final String target,
 	                       final GenealogyEdgeType edgeType) {
@@ -103,6 +138,12 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return true;
 	}
 	
+	/**
+	 * Adds the vertex.
+	 *
+	 * @param v the v
+	 * @return true, if successful
+	 */
 	@NoneNull
 	public boolean addVertex(@NotEmpty final String v) {
 		if (containsVertex(v)) {
@@ -130,11 +171,17 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#close()
+	 */
 	@Override
 	public void close() {
 		this.graph.shutdown();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#containsEdge(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public boolean containsEdge(final String from,
 	                            final String to) {
@@ -142,11 +189,17 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result != null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#containsVertex(java.lang.Object)
+	 */
 	@Override
 	public boolean containsVertex(final String vertex) {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#edgeSize()
+	 */
 	@Override
 	public int edgeSize() {
 		int result = 0;
@@ -158,6 +211,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getAllDependants(java.lang.Object)
+	 */
 	@Override
 	public Collection<String> getAllDependants(final String t) {
 		return getDependants(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
@@ -166,6 +222,12 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	/**
+	 * Gets the all dependents.
+	 *
+	 * @param node the node
+	 * @return the all dependents
+	 */
 	private Collection<Node> getAllDependents(final Node node) {
 		return getDependents(node, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
@@ -173,6 +235,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getAllParents(java.lang.Object)
+	 */
 	@Override
 	public Collection<String> getAllParents(final String t) {
 		return getParents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
@@ -181,12 +246,18 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getCore()
+	 */
 	@Override
 	@Deprecated
 	public CoreChangeGenealogy getCore() {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getDependants(java.lang.Object, de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public Collection<String> getDependants(final String t,
 	                                        final GenealogyEdgeType... edgeTypes) {
@@ -205,6 +276,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parentOperations;
 	}
 	
+	/**
+	 * Gets the dependents.
+	 *
+	 * @param node the node
+	 * @param edgeTypes the edge types
+	 * @return the dependents
+	 */
 	private Collection<Node> getDependents(final Node node,
 	                                       final GenealogyEdgeType... edgeTypes) {
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
@@ -215,6 +293,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parents;
 	}
 	
+	/**
+	 * Gets the edge.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @return the edge
+	 */
 	private GenealogyEdgeType getEdge(final String from,
 	                                  final String to) {
 		final Node fromNode = getNodeForVertex(from);
@@ -243,6 +328,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getEdges(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public Collection<GenealogyEdgeType> getEdges(final String from,
 	                                              final String to) {
@@ -251,6 +339,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getExistingEdgeTypes()
+	 */
 	@Override
 	public Set<GenealogyEdgeType> getExistingEdgeTypes() {
 		final Set<GenealogyEdgeType> result = new HashSet<GenealogyEdgeType>();
@@ -266,16 +357,28 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getGraphDBDir()
+	 */
 	@Override
 	public File getGraphDBDir() {
 		return this.dbFile;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getGraphDBService()
+	 */
 	@Override
 	public GraphDatabaseService getGraphDBService() {
 		return this.graph;
 	}
 	
+	/**
+	 * Gets the node for vertex.
+	 *
+	 * @param from the from
+	 * @return the node for vertex
+	 */
 	private Node getNodeForVertex(final String from) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, from);
 		if (!indexHits.hasNext()) {
@@ -286,6 +389,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return node;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getNodeId(java.lang.Object)
+	 */
 	@Override
 	public String getNodeId(final String t) {
 		if (containsVertex(t)) {
@@ -294,6 +400,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
+	/**
+	 * Gets the parents.
+	 *
+	 * @param node the node
+	 * @param edgeTypes the edge types
+	 * @return the parents
+	 */
 	private Collection<Node> getParents(final Node node,
 	                                    final GenealogyEdgeType[] edgeTypes) {
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
@@ -304,6 +417,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parents;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getParents(java.lang.Object, de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public Collection<String> getParents(final String t,
 	                                     final GenealogyEdgeType... edgeTypes) {
@@ -322,6 +438,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parentOperations;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#getRoots()
+	 */
 	@Override
 	public Collection<String> getRoots() {
 		final Collection<String> result = new HashSet<String>();
@@ -332,15 +451,27 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
+	/**
+	 * Gets the vertex for node.
+	 *
+	 * @param dependentNode the dependent node
+	 * @return the vertex for node
+	 */
 	private String getVertexForNode(final Node dependentNode) {
 		return dependentNode.getProperty(CoreChangeGenealogy.NODE_ID).toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
+	 */
 	@Override
 	public int inDegree(final String s) {
 		return inDegree(s, GenealogyEdgeType.values());
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#inDegree(java.lang.Object, de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public int inDegree(final String s,
 	                    final GenealogyEdgeType... edgeTypes) {
@@ -363,11 +494,17 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
+	 */
 	@Override
 	public int outDegree(final String s) {
 		return outDegree(s, GenealogyEdgeType.values());
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#outDegree(java.lang.Object, de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public int outDegree(final String s,
 	                     final GenealogyEdgeType... edgeTypes) {
@@ -381,6 +518,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return numEdges;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#vertexSet()
+	 */
 	@Override
 	public Iterable<String> vertexSet() {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
@@ -393,6 +533,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return operations;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy#vertexSize()
+	 */
 	@Override
 	public int vertexSize() {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
