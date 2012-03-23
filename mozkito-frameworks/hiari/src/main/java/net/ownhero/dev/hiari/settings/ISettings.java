@@ -63,8 +63,25 @@ public interface ISettings {
 	 * @param argumentSetTag
 	 *            the argument set tag
 	 * @return the anchor
+	 * @deprecated use {@link ISettings#getArgument(IArgumentOptions)}
 	 */
+	@Deprecated
 	ArgumentSet<?, ?> getAnchor(final String argumentSetTag);
+	
+	/**
+	 * Gets the argument.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param <Y>
+	 *            the generic type
+	 * @param argument
+	 *            the argument
+	 * @return the argument
+	 */
+	<T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> argument);
 	
 	/**
 	 * Gets the argument.

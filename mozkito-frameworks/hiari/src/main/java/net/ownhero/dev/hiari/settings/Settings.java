@@ -36,7 +36,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Settings.
  * 
@@ -427,6 +426,24 @@ public class Settings implements ISettings {
 	@Override
 	public final ArgumentSet<?, ?> getAnchor(final String argumentSetTag) {
 		return this.argumentSets.get(argumentSetTag);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ISettings#getArgument(net.ownhero.dev.hiari.settings.IArgumentOptions)
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> argument) {
+		// PRECONDITIONS
+		
+		try {
+			synchronized (this.argumentSets) {
+				return (Y) this.argumentSets.get(argument.getTag()).getArgument(argument.getTag());
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
