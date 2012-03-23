@@ -17,13 +17,31 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Interface SettingsProvider.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public interface SettingsProvider {
 	
-	ArgumentSet<?, ?> provide(ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
-	                                                      ArgumentSetRegistrationException,
-	                                                      SettingsParseError;
+	/**
+	 * Inits the.
+	 */
+	void init();
 	
+	/**
+	 * Provide.
+	 * 
+	 * @param root
+	 *            the root
+	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 */
+	ArgumentSet<?, ?> provide(ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                 ArgumentSetRegistrationException,
+	                                                 SettingsParseError;
 }

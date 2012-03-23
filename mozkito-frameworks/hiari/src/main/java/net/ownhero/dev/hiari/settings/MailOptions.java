@@ -180,20 +180,20 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 			private static final long serialVersionUID = -4075576523389682827L;
 			
 			{
-				put("mail.smtp.host", getSettings().getArgument(getHostOption().getTag()).getValue());
+				put("mail.smtp.host", getSettings().getArgument(getHostOption()).getValue());
 				put("mail.transport.protocol", "smtp");
-				put("mail.to", getSettings().getArgument(getToOption().getTag()).getValue());
-				put("mail.subject", getSettings().getArgument(getSubjectOption().getTag()).getValue());
-				put("mail.sender.name", getSettings().getArgument(getSenderNameOption().getTag()).getValue());
-				put("mail.sender.address", getSettings().getArgument(getSenderAddressOption().getTag()).getValue());
-				put("mail.sender.host", getSettings().getArgument(getSenderHostOption().getTag()).getValue());
+				put("mail.to", getSettings().getArgument(getToOption()).getValue());
+				put("mail.subject", getSettings().getArgument(getSubjectOption()).getValue());
+				put("mail.sender.name", getSettings().getArgument(getSenderNameOption()).getValue());
+				put("mail.sender.address", getSettings().getArgument(getSenderAddressOption()).getValue());
+				put("mail.sender.host", getSettings().getArgument(getSenderHostOption()).getValue());
 				
-				if (getSettings().getArgument(getUsernameOption().getTag()).getValue() != null) {
-					put("mail.username", getSettings().getArgument(getUsernameOption().getTag()).getValue());
+				if (getSettings().getArgument(getUsernameOption()).getValue() != null) {
+					put("mail.username", getSettings().getArgument(getUsernameOption()).getValue());
 				}
 				
-				if (getSettings().getArgument(getPasswordOption().getTag()).getValue() != null) {
-					put("mail.password", getSettings().getArgument(getPasswordOption().getTag()).getValue());
+				if (getSettings().getArgument(getPasswordOption()).getValue() != null) {
+					put("mail.password", getSettings().getArgument(getPasswordOption()).getValue());
 				}
 				
 			}
