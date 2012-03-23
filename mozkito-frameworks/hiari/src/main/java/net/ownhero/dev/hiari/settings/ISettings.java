@@ -63,9 +63,7 @@ public interface ISettings {
 	 * @param argumentSetTag
 	 *            the argument set tag
 	 * @return the anchor
-	 * @deprecated use {@link ISettings#getArgument(IArgumentOptions)}
 	 */
-	@Deprecated
 	ArgumentSet<?, ?> getAnchor(final String argumentSetTag);
 	
 	/**
@@ -89,7 +87,9 @@ public interface ISettings {
 	 * @param argument
 	 *            the argument
 	 * @return the argument
+	 * @deprecated use {@link ISettings#getArgument(IArgumentOptions)}
 	 */
+	@Deprecated
 	IArgument<?, ?> getArgument(final String argument);
 	
 	/**
