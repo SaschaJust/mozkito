@@ -14,6 +14,7 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
@@ -40,15 +41,22 @@ import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
  */
 public class DescriptionSearchEngine extends SearchEngine {
 	
-	private QueryParser parser;
+	private QueryParser         parser;
+	private static final String description = Messages.getString("DescriptionSearchEngine.description"); //$NON-NLS-1$
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription ()
+	/**
+	 * @return the description
 	 */
 	@Override
-	public String getDescription() {
-		return "Scores based on document similarity/relevance based on commit message and report description.";
+	public final String getDescription() {
+		// PRECONDITIONS
+		
+		try {
+			return description;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(DescriptionSearchEngine.description, "Field '%s' in '%s'.", "description", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/*
@@ -61,7 +69,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
-		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
+		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.", //$NON-NLS-1$
 		                        to.getBaseType());
 		double confidence = 0d;
 		String toContent = null;
@@ -70,7 +78,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 			final String fromBody = from.get(FieldKey.BODY).toString();
 			final String toId = to.get(FieldKey.ID).toString();
 			
-			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer());
+			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer()); //$NON-NLS-1$
 			final Query query = buildQuery(fromBody, this.parser);
 			
 			if (query != null) {
@@ -84,12 +92,12 @@ public class DescriptionSearchEngine extends SearchEngine {
 						// Iterate through the results:
 						for (final ScoreDoc hit : hits) {
 							final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-							final String bugId = hitDoc.get("bugid");
+							final String bugId = hitDoc.get("bugid"); //$NON-NLS-1$
 							
 							if (bugId.compareTo(toId) == 0) {
 								confidence = hit.score;
-								toContent = hitDoc.get("description");
-								toSubstring = hitDoc.get("description");
+								toContent = hitDoc.get("description"); //$NON-NLS-1$
+								toSubstring = hitDoc.get("description"); //$NON-NLS-1$
 								break;
 							}
 						}

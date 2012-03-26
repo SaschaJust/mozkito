@@ -39,15 +39,22 @@ import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
  */
 public class CommentSearchEngine extends SearchEngine {
 	
-	private QueryParser parser = null;
+	private QueryParser         parser      = null;
+	private static final String description = Messages.getString("CommentSearchEngine.description"); //$NON-NLS-1$
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores based on document similarity/relevance based on commit message and report comments.";
+		// PRECONDITIONS
+		
+		try {
+			return description;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -60,7 +67,7 @@ public class CommentSearchEngine extends SearchEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
-		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
+		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.", //$NON-NLS-1$
 		                        to.getBaseType());
 		double confidence = 0d;
 		String toContent = null;
@@ -69,7 +76,7 @@ public class CommentSearchEngine extends SearchEngine {
 			final String fromBody = from.get(FieldKey.BODY).toString();
 			final String toId = to.get(FieldKey.ID).toString();
 			
-			this.parser = new QueryParser(Version.LUCENE_31, "comment", getStorage().getAnalyzer());
+			this.parser = new QueryParser(Version.LUCENE_31, "comment", getStorage().getAnalyzer()); //$NON-NLS-1$
 			final Query query = buildQuery(fromBody, this.parser);
 			
 			if (query != null) {
@@ -82,12 +89,12 @@ public class CommentSearchEngine extends SearchEngine {
 					// Iterate through the results:
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-						final String bugId = hitDoc.get("bugid");
+						final String bugId = hitDoc.get("bugid"); //$NON-NLS-1$
 						
 						if (bugId.compareTo(toId) == 0) {
 							confidence = hit.score;
-							toContent = hitDoc.get("comment");
-							toSubstring = hitDoc.get("comment");
+							toContent = hitDoc.get("comment"); //$NON-NLS-1$
+							toSubstring = hitDoc.get("comment"); //$NON-NLS-1$
 							break;
 						}
 					}

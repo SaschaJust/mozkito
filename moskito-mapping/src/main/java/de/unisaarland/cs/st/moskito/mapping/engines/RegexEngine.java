@@ -267,7 +267,7 @@ public class RegexEngine extends MappingEngine {
 		try {
 			
 			setConfigOption(new URIArgument.Options(anchor, "config", //$NON-NLS-1$
-			                                        "", //$NON-NLS-1$
+			                                        Messages.getString("RegexEngine.configDescription"), //$NON-NLS-1$
 			                                        null, Requirement.required));
 			
 			return anchor;

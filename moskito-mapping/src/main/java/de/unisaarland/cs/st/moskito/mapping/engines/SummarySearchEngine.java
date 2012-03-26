@@ -36,7 +36,9 @@ import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
  */
 public class SummarySearchEngine extends SearchEngine {
 	
-	private QueryParser parser = null;
+	private static final String description = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	
+	private QueryParser         parser      = null;
 	
 	/*
 	 * (non-Javadoc)
@@ -44,7 +46,7 @@ public class SummarySearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores based on document similarity/relevance based on commit message and report summary.";
+		return description;
 	}
 	
 	/*
@@ -62,7 +64,7 @@ public class SummarySearchEngine extends SearchEngine {
 		String toContent = null;
 		String toSubstring = null;
 		try {
-			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
+			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer()); //$NON-NLS-1$
 			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
 			
 			if (query != null) {
@@ -75,9 +77,9 @@ public class SummarySearchEngine extends SearchEngine {
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
 						// TODO change hardcoded strings
-						final Long bugId = Long.parseLong(hitDoc.get("bugid"));
+						final Long bugId = Long.parseLong(hitDoc.get("bugid")); //$NON-NLS-1$
 						
-						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) {
+						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) { //$NON-NLS-1$
 							confidence = hit.score;
 							toContent = element2.get(FieldKey.SUMMARY).toString();
 							toSubstring = element2.get(FieldKey.SUMMARY).toString();
@@ -87,8 +89,8 @@ public class SummarySearchEngine extends SearchEngine {
 					}
 				}
 			}
-			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY),
-			           "summary", toContent, toSubstring);
+			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY), //$NON-NLS-1$
+			           "summary", toContent, toSubstring); //$NON-NLS-1$
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}
