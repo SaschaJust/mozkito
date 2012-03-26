@@ -239,7 +239,11 @@ public abstract class MappingEngine extends Node {
 		return unused;
 	}
 	
+	/** The settings. */
 	private ISettings settings;
+	
+	/** The options. */
+	private Options   options;
 	
 	/**
 	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
@@ -296,18 +300,51 @@ public abstract class MappingEngine extends Node {
 		                                                                              : unknown)), getClass());
 	}
 	
+	/**
+	 * Gets the anchor.
+	 * 
+	 * @param settings
+	 *            the settings
+	 * @return the anchor
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 */
 	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
 	                                                                              ArgumentSetRegistrationException,
 	                                                                              ArgumentRegistrationException {
 		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingEngine.Options.tag);
 		if (anchor == null) {
-			anchor = ArgumentSetFactory.create(new MappingEngine.Options(settings.getRoot(), Requirement.required));
+			if (this.options == null) {
+				this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
+			}
+			anchor = ArgumentSetFactory.create(this.options);
 		}
 		
 		return anchor;
 	}
 	
 	/**
+	 * Gets the options.
+	 * 
+	 * @param settings
+	 *            the settings
+	 * @return the options
+	 */
+	protected final SetArgument.Options getOptions(@NotNull final ISettings settings) {
+		if (this.options == null) {
+			this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
+		}
+		
+		return this.options.enginesOption;
+	}
+	
+	/**
+	 * Gets the settings.
+	 * 
 	 * @return the settings
 	 */
 	public final ISettings getSettings() {
@@ -337,6 +374,8 @@ public abstract class MappingEngine extends Node {
 	                           final Mapping score);
 	
 	/**
+	 * Sets the settings.
+	 * 
 	 * @param settings
 	 *            the settings to set
 	 */

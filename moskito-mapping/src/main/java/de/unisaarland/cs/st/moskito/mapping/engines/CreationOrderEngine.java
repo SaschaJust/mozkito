@@ -177,7 +177,9 @@ public class CreationOrderEngine extends MappingEngine {
 			                                               anchor,
 			                                               "confidence", //$NON-NLS-1$
 			                                               Messages.getString("CreationOrderEngine.confidenceDescription"), //$NON-NLS-1$
-			                                               getDefaultConfidence(), Requirement.required));
+			                                               getDefaultConfidence(),
+			                                               Requirement.contains(getOptions(getSettings()),
+			                                                                    getClass().getSimpleName())));
 			
 			return anchor;
 		} finally {

@@ -12,6 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
@@ -41,7 +45,7 @@ public class CommentSearchEngine extends SearchEngine {
 	
 	private QueryParser         parser      = null;
 	private static final String description = Messages.getString("CommentSearchEngine.description"); //$NON-NLS-1$
-	
+	                                                                                                 
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
@@ -52,6 +56,39 @@ public class CommentSearchEngine extends SearchEngine {
 		
 		try {
 			return description;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			super.init();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			return super.provide(root);
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -146,7 +146,7 @@ public class MappingFinder {
 				}
 			} catch (final Exception e) {
 				if (Logger.logWarn()) {
-					Logger.warn("Omitting selector " + klass.getSimpleName() + " due to instantiation error: "
+					Logger.warn("Omitting selector due to instantiation error: " + klass.getSimpleName() + " / "
 					        + e.getMessage());
 				}
 			}

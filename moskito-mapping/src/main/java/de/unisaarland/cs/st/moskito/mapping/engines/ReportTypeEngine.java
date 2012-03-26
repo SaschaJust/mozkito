@@ -246,10 +246,14 @@ public class ReportTypeEngine extends MappingEngine {
 			
 			setConfidenceOption(new DoubleArgument.Options(anchor, "confidence", //$NON-NLS-1$
 			                                               "", //$NON-NLS-1$
-			                                               getDefaultConfidence(), Requirement.required));
+			                                               getDefaultConfidence(),
+			                                               Requirement.contains(getOptions(getSettings()),
+			                                                                    getClass().getSimpleName())));
 			setTypeOption(new EnumArgument.Options<Type>(anchor,
 			                                             Messages.getString("ReportTypeEngine.typeDescription"), //$NON-NLS-1$
-			                                             description, getDefaultType(), Requirement.required));
+			                                             description, getDefaultType(),
+			                                             Requirement.contains(getOptions(getSettings()),
+			                                                                  getClass().getSimpleName())));
 			
 			return anchor;
 		} finally {

@@ -205,7 +205,9 @@ public class TimestampEngine extends MappingEngine {
 			
 			setIntervalOption(new TupleArgument.Options(anchor, "interval", //$NON-NLS-1$
 			                                            Messages.getString("TimestampEngine.intervalDescription"), //$NON-NLS-1$
-			                                            getDefaultinterval(), Requirement.required));
+			                                            getDefaultinterval(),
+			                                            Requirement.contains(getOptions(getSettings()),
+			                                                                 getClass().getSimpleName())));
 			
 			return anchor;
 		} finally {

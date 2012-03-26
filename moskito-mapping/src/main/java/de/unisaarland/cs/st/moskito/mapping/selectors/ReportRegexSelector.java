@@ -16,10 +16,13 @@ import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
@@ -69,10 +72,24 @@ public class ReportRegexSelector extends MappingSelector {
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
 	 */
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		this.patternArgument = new StringArgument(set, "pattern", "Pattern of report ids to scan for.",
-		                                          "(\\p{XDigit}{7,})", set.getRequirements());
+		this.patternArgument = new StringArgument(set,, set.getRequirements());
 		return true;
 	}
 	
@@ -120,6 +137,25 @@ public class ReportRegexSelector extends MappingSelector {
 		}
 		
 		return list;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			new StringArgument.Options(root, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
+			                           Requirement.required);
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**

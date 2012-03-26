@@ -39,10 +39,10 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 public class AuthorEqualityEngine extends MappingEngine {
 	
 	/** The constant description. */
-	private static final String description       = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
-	                                                                                                        
+	private static final String DESCRIPTION        = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
+	                                                                                                         
 	/** The constant defaultConfidence. */
-	private static final Double defaultConfidence = 0.2d;
+	private static final Double DEFAULT_CONFIDENCE = 0.2d;
 	
 	/**
 	 * Gets the default confidence.
@@ -53,10 +53,10 @@ public class AuthorEqualityEngine extends MappingEngine {
 		// PRECONDITIONS
 		
 		try {
-			return defaultConfidence;
+			return DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(defaultConfidence, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
 			                  AuthorEqualityEngine.class.getSimpleName());
 		}
 	}
@@ -127,7 +127,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return DESCRIPTION;
 	}
 	
 	/**
@@ -178,7 +178,9 @@ public class AuthorEqualityEngine extends MappingEngine {
 			                                               anchor,
 			                                               "confidence", //$NON-NLS-1$
 			                                               Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-			                                               getDefaultConfidence(), Requirement.required));
+			                                               getDefaultConfidence(),
+			                                               Requirement.contains(getOptions(getSettings()),
+			                                                                    getClass().getSimpleName())));
 			
 			return anchor;
 		} finally {

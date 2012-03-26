@@ -233,11 +233,12 @@ public abstract class SearchEngine extends MappingEngine {
 			
 			setMinTokensOption(new LongArgument.Options(anchor, "minTokens", //$NON-NLS-1$
 			                                            Messages.getString("SearchEngine.minTokensDescription"), 3l, //$NON-NLS-1$
-			                                            Requirement.required));
+			                                            Requirement.contains(getOptions(getSettings()),
+			                                                                 getClass().getSimpleName())));
 			setLanguageOption(new StringArgument.Options(
 			                                             anchor,
 			                                             "language", Messages.getString("SearchEngine.languageDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-			                                             "en:English", Requirement.required)); //$NON-NLS-1$
+			                                             "en:English", Requirement.contains(getOptions(getSettings()), getClass().getSimpleName()))); //$NON-NLS-1$
 			
 			return anchor;
 		} finally {

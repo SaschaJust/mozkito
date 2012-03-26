@@ -13,7 +13,15 @@
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
@@ -27,6 +35,63 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * 
  */
 public abstract class MappingSelector extends Node {
+	
+	static class Options extends ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final String name, final String description,
+		        final Requirement requirements) {
+			super(argumentSet, name, description, requirements);
+			// PRECONDITIONS
+			
+			try {
+				// TODO Auto-generated constructor stub
+				
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public Set<MappingSelector> init() {
+			// PRECONDITIONS
+			
+			try {
+				// TODO Auto-generated method stub
+				return null;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+		                                                                            SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				// TODO Auto-generated method stub
+				return null;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
 	
 	/**
 	 * @param entity

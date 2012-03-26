@@ -164,7 +164,9 @@ public class BackrefEngine extends MappingEngine {
 			
 			setConfidenceOption(new DoubleArgument.Options(anchor, "confidence", //$NON-NLS-1$
 			                                               Messages.getString("BackrefEngine.confidenceDescription"), //$NON-NLS-1$
-			                                               getDefaultConfidence(), Requirement.required));
+			                                               getDefaultConfidence(),
+			                                               Requirement.contains(getOptions(getSettings()),
+			                                                                    getClass().getSimpleName())));
 			
 			return anchor;
 		} finally {
