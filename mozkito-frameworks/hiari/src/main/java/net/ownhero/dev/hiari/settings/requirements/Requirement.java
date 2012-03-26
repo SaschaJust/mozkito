@@ -21,6 +21,8 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ListArgument;
+import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -36,6 +38,62 @@ public abstract class Requirement {
 	
 	/** The Constant optional. */
 	public static final Requirement optional = new Optional();
+	
+	/**
+	 * Contains.
+	 * 
+	 * @param option
+	 *            the option
+	 * @param depender
+	 *            the depender
+	 * @return the requirement
+	 */
+	public static Requirement contains(@NotNull final ListArgument.Options option,
+	                                   @NotNull final IArgument<?, ?> depender) {
+		return new Contains(option, depender);
+	}
+	
+	/**
+	 * Contains.
+	 * 
+	 * @param option
+	 *            the option
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
+	public static Requirement contains(@NotNull final ListArgument.Options option,
+	                                   @NotNull final String value) {
+		return new Contains(option, value);
+	}
+	
+	/**
+	 * Contains.
+	 * 
+	 * @param option
+	 *            the option
+	 * @param depender
+	 *            the depender
+	 * @return the requirement
+	 */
+	public static Requirement contains(@NotNull final SetArgument.Options option,
+	                                   @NotNull final IArgument<?, ?> depender) {
+		return new Contains(option, depender);
+	}
+	
+	/**
+	 * Contains.
+	 * 
+	 * @param option
+	 *            the option
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
+	public static Requirement contains(@NotNull final SetArgument.Options option,
+	                                   @NotNull final String value) {
+		return new Contains(option, value);
+	}
 	
 	/**
 	 * Equals.
@@ -84,12 +142,12 @@ public abstract class Requirement {
 		
 		for (final IArgument<?, ?> aai : arguments) {
 			for (final IOptions<?, ?> aaiDependency : aai.getDependencies()) {
-				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName())
+				builder.append(aai.getName()).append(" --> ").append(aaiDependency.getName()) //$NON-NLS-1$
 				       .append(FileUtils.lineSeparator);
 			}
 		}
 		
-		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy",
+		final Tuple<Integer, List<String>> execute = CommandExecutor.execute("graph-easy", //$NON-NLS-1$
 		                                                                     null,
 		                                                                     FileUtils.tmpDir,
 		                                                                     new ByteArrayInputStream(
