@@ -20,8 +20,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -76,8 +78,16 @@ public class Merge_NetTest extends MoskitoTest {
 		
 		persistenceUtil.commitTransaction();
 		
-		final Persons personsMerger = new Persons(persistenceUtil);
-		personsMerger.run();
+		Persons personsMerger;
+		try {
+			personsMerger = new Persons(persistenceUtil);
+			personsMerger.run();
+		} catch (final ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			
+		}
 		
 		criteria = persistenceUtil.createCriteria(Person.class);
 		list = persistenceUtil.load(criteria);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -10,29 +10,29 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
-package de.unisaarland.cs.st.moskito.persons.settings;
+package de.unisaarland.cs.st.moskito.persons.engine;
 
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
+ *
  */
-public class PersonsSettings extends RepositorySettings {
+public class Messages {
 	
-	/**
-	 * @param isRequired
-	 * @return
-	 * @throws ArgumentRegistrationException
-	 */
-	public PersonsArguments setPersonsArgs(final Requirement requirement) throws ArgumentRegistrationException {
-		final PersonsArguments personsArguments = new PersonsArguments(getRootArgumentSet(), requirement);
-		return personsArguments;
+	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.persons.engine.messages"; //$NON-NLS-1$
+	                                                                                                              
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	
+	private Messages() {
 	}
 	
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
 }

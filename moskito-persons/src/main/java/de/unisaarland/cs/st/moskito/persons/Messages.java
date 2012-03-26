@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -10,38 +10,29 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
-package persons;
+package de.unisaarland.cs.st.moskito.persons;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persons.Persons;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
+ *
  */
-public class Main {
+public class Messages {
 	
-	/**
-	 * @param args
-	 */
-	public static void main(final String[] args) {
-		try {
-			final Settings settings = new Settings();
-			final Persons persons = new Persons(settings);
-			persons.setName(persons.getClass().getSimpleName());
-			persons.start();
-			persons.join();
-		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown();
-		}
+	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.persons.messages"; //$NON-NLS-1$
+	                                                                                                       
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	
+	private Messages() {
 	}
 	
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
 }

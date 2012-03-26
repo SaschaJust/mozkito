@@ -18,24 +18,23 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
 import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class UniqueEmailEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class UniqueEmailEngine extends MergingEngine {
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = Messages.getString("UniqueEmailEngine.description"); //$NON-NLS-1$
 	
 	/*
 	 * (non-Javadoc)
@@ -67,13 +66,38 @@ public class UniqueEmailEngine extends MergingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return "Finds collision on unique email addresses";
+		return DESCRIPTION;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

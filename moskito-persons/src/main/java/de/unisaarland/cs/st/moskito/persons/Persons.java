@@ -15,59 +15,84 @@
  */
 package de.unisaarland.cs.st.moskito.persons;
 
+import java.util.Set;
+
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.RepositoryToolchain;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.persons.engine.MergingEngine;
 import de.unisaarland.cs.st.moskito.persons.processing.MergingProcessor;
-import de.unisaarland.cs.st.moskito.persons.settings.PersonsArguments;
-import de.unisaarland.cs.st.moskito.persons.settings.PersonsSettings;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Persons extends Chain<PersonsSettings> {
+public class Persons extends Chain<Settings> {
 	
-	private final Pool             threadPool;
-	private DatabaseOptions      databaseArguments;
-	private final LoggerArguments  logSettings;
-	private final PersonsArguments personsArguments;
-	private PersistenceUtil        persistenceUtil;
+	private final Pool                                             threadPool;
+	private ArgumentSet<PersistenceUtil, DatabaseOptions>          databaseArguments;
+	private PersistenceUtil                                        persistenceUtil;
+	private ArgumentSet<Set<MergingEngine>, MergingEngine.Options> enginesSet;
+	
+	@Deprecated
+	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException,
+	        ArgumentSetRegistrationException {
+		super(new Settings());
+		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+		final Settings settings = getSettings();
+		this.persistenceUtil = util;
+		this.enginesSet = ArgumentSetFactory.create(new MergingEngine.Options(getSettings().getRoot(),
+		                                                                      Requirement.required));
+		settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
+		
+	}
 	
 	/**
 	 * @throws SettingsParseError
 	 * @throws ArgumentRegistrationException
 	 * 
 	 */
-	public Persons() throws SettingsParseError, ArgumentRegistrationException {
-		super(new PersonsSettings());
-		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+	public Persons(final Settings settings) throws SettingsParseError, ArgumentRegistrationException {
+		super(settings);
 		
-		final Settings settings = getSettings();
-		this.databaseArguments = ((RepositorySettings) settings).setDatabaseArgs(Requirement.required, "persistence");
-		this.logSettings = settings.setLoggerArg(Requirement.required);
-		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.required);
-		
-		settings.parse();
-	}
-	
-	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException {
-		super(new PersonsSettings());
-		this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
-		final Settings settings = getSettings();
-		this.personsArguments = ((PersonsSettings) settings).setPersonsArgs(Requirement.optional);
-		this.logSettings = settings.setLoggerArg(Requirement.required);
-		this.persistenceUtil = util;
-		settings.parse();
+		try {
+			this.threadPool = new Pool(RepositoryToolchain.class.getSimpleName(), this);
+			
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "persistence"); //$NON-NLS-1$
+			this.databaseArguments = ArgumentSetFactory.create(databaseOptions);
+			
+			this.enginesSet = ArgumentSetFactory.create(new MergingEngine.Options(getSettings().getRoot(),
+			                                                                      Requirement.required));
+			
+			settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
+		} catch (final ArgumentRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			throw new Shutdown(e.getMessage(), e);
+		}
 	}
 	
 	/*
@@ -76,7 +101,6 @@ public class Persons extends Chain<PersonsSettings> {
 	 */
 	@Override
 	public void setup() {
-		this.logSettings.getValue();
 		if ((this.persistenceUtil == null) && (this.databaseArguments != null)) {
 			this.persistenceUtil = this.databaseArguments.getValue();
 		}
@@ -87,7 +111,33 @@ public class Persons extends Chain<PersonsSettings> {
 			shutdown();
 		}
 		
-		final MergingProcessor processor = this.personsArguments.getValue();
+		final MergingProcessor processor = new MergingProcessor();
+		for (final MergingEngine engine : this.enginesSet.getValue()) {
+			processor.addEngine(engine);
+			try {
+				engine.provide(getSettings().getRoot());
+			} catch (final ArgumentRegistrationException e) {
+				// TODO Auto-generated catch block
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				
+			} catch (final ArgumentSetRegistrationException e) {
+				// TODO Auto-generated catch block
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				
+			} catch (final SettingsParseError e) {
+				// TODO Auto-generated catch block
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				
+			}
+			engine.init();
+		}
+		
 		processor.providePersistenceUtil(this.persistenceUtil);
 		
 		new PersonsReader(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);

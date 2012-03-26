@@ -18,8 +18,9 @@ package de.unisaarland.cs.st.moskito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.elements.PersonBucket;
@@ -31,11 +32,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
  */
 public class UniqueUsernameEngine extends MergingEngine {
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
+	private static final String DESCRIPTION = Messages.getString("UniqueUsernameEngine.description"); //$NON-NLS-1$
 	
 	/*
 	 * (non-Javadoc)
@@ -63,17 +60,42 @@ public class UniqueUsernameEngine extends MergingEngine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.persons.engine.MergingEngine#getDescription ()
+	 * @see de.unisaarland.cs.st.moskito.persons.engine.MergingEngine#getDescription()
 	 */
 	@Override
 	public String getDescription() {
-		return "Finds collision on unique usernames";
+		return DESCRIPTION;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }
