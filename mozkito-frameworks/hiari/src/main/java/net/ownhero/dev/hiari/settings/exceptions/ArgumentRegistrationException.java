@@ -5,7 +5,6 @@ package net.ownhero.dev.hiari.settings.exceptions;
 
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IArgumentOptions;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
@@ -54,7 +53,6 @@ public class ArgumentRegistrationException extends Exception {
 	 * @param cause
 	 *            the cause
 	 */
-	@NoneNull
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options, @NotNull final Throwable cause) {
 		super(message, cause);

@@ -125,6 +125,11 @@ public class TupleArgument extends Argument<Tuple<String, String>, TupleArgument
 		
 		try {
 			this.delimiter = options.getDelimiter();
+			
+			setStringValue(options.getDefaultValue() != null
+			                                                ? options.getDefaultValue().getFirst() + this.delimiter
+			                                                        + options.getDefaultValue().getSecond()
+			                                                : null);
 		} finally {
 			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
 			StringCondition.notEmpty(this.delimiter, "The delimiter in %s must not be empty.", getHandle());

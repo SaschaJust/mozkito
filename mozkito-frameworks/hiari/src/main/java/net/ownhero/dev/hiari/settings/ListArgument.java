@@ -22,6 +22,8 @@ import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The Class ListArgument.
  * 
@@ -126,6 +128,10 @@ public class ListArgument extends Argument<List<String>, ListArgument.Options> {
 		
 		try {
 			this.delimiter = options.getDelimiter();
+			setStringValue(options.getDefaultValue() != null
+			                                                ? StringUtils.join(options.getDefaultValue(),
+			                                                                   this.delimiter)
+			                                                : null);
 		} finally {
 			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
 			StringCondition.notEmpty(this.delimiter, "The delimiter in %s must not be empty.", getHandle());

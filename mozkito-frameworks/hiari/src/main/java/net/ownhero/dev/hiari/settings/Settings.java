@@ -33,6 +33,7 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.ClassCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -636,6 +637,7 @@ public class Settings implements ISettings {
 	                                                                             ArgumentSetRegistrationException,
 	                                                                             SettingsParseError {
 		try {
+			ClassCondition.instantiable(providerClass, "Argument '%s' in '%s'.", "providerClass", getHandle());
 			final SettingsProvider provider = providerClass.newInstance();
 			return loadByEntity(provider, anchorSet);
 		} catch (final InstantiationException e) {

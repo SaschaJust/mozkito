@@ -21,7 +21,8 @@ import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
-// TODO: Auto-generated Javadoc
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The Class SetArgument.
  * 
@@ -128,10 +129,14 @@ public class SetArgument extends Argument<HashSet<String>, SetArgument.Options> 
 	 *             the argument registration exception
 	 * @see Argument
 	 */
-	private SetArgument(@NotNull final Options options) throws ArgumentRegistrationException {
+	protected SetArgument(@NotNull final Options options) throws ArgumentRegistrationException {
 		super(options);
 		try {
 			this.delimiter = options.getDelimiter();
+			setStringValue(options.getDefaultValue() != null
+			                                                ? StringUtils.join(options.getDefaultValue(),
+			                                                                   this.delimiter)
+			                                                : null);
 		} finally {
 			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
 			StringCondition.notEmpty(this.delimiter, "The delimiter in %s must not be empty.", getHandle());
