@@ -13,6 +13,7 @@
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -56,7 +57,7 @@ public class SVMStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		return mapping;
 	}
 	

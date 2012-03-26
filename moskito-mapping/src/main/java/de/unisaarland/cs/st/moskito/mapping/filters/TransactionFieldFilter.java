@@ -15,7 +15,7 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -35,7 +35,7 @@ public class TransactionFieldFilter extends MappingFilter {
 	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
 	 */
 	@Override
-	public Set<? extends MappingFilter> filter(final Mapping mapping,
+	public Set<? extends MappingFilter> filter(final IMapping mapping,
 	                                           final Set<? extends MappingFilter> triggeringFilters) {
 		// TODO Auto-generated method stub
 		return null;

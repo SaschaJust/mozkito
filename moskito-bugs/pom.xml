@@ -36,6 +36,11 @@
 			<artifactId>jira-rest-java-client</artifactId>
 			<version>0.5-m6</version>
 		</dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.19.0</version>
+        </dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>

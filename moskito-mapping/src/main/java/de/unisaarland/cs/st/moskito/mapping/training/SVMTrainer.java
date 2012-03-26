@@ -24,7 +24,10 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -94,12 +97,6 @@ public class SVMTrainer extends MappingTrainer {
 		System.exit(1);
 	}
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	private void do_cross_validation() {
 		int i;
 		int total_correct = 0;
@@ -133,18 +130,35 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
-	// read in a problem (in svmlight format)
-	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
+	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	private void parse_command_line(final String argv[]) {
@@ -269,6 +283,24 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	private void read_problem() throws IOException {
 		final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
 		final Vector<Double> vy = new Vector<Double>();
@@ -353,7 +385,13 @@ public class SVMTrainer extends MappingTrainer {
 	 */
 	@Override
 	public void train() {
-		// TODO Auto-generated method stub
+		// PRECONDITIONS
 		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
+	
 }

@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 import java.util.Collection;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 /**
@@ -55,7 +56,7 @@ public class VetoStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		final Collection<MappingEngineFeature> features = mapping.getFeatures();
 		
 		Boolean valid = null;

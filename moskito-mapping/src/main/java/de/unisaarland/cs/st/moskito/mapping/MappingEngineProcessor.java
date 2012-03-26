@@ -21,6 +21,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
@@ -44,7 +45,7 @@ public class MappingEngineProcessor extends Filter<Mapping> {
 			
 			@Override
 			public void process() {
-				final Mapping candidate = getInputData();
+				final IMapping candidate = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Processing mapping for " + candidate.getElement1() + " to " + candidate.getElement2()

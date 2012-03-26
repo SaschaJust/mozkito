@@ -22,7 +22,10 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 public class MapId {
 	
+	/** The from id. */
 	private String fromId;
+	
+	/** The to id. */
 	private String toId;
 	
 	/*
@@ -40,25 +43,27 @@ public class MapId {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		MapId other = (MapId) obj;
-		if (this.getFromId() == null) {
+		final MapId other = (MapId) obj;
+		if (getFromId() == null) {
 			if (other.getFromId() != null) {
 				return false;
 			}
-		} else if (!this.getFromId().equals(other.getFromId())) {
+		} else if (!getFromId().equals(other.getFromId())) {
 			return false;
 		}
-		if (this.getToId() == null) {
+		if (getToId() == null) {
 			if (other.getToId() != null) {
 				return false;
 			}
-		} else if (!this.getToId().equals(other.getToId())) {
+		} else if (!getToId().equals(other.getToId())) {
 			return false;
 		}
 		return true;
 	}
 	
 	/**
+	 * Gets the from id.
+	 * 
 	 * @return the id of the "from" entity
 	 */
 	public String getFromId() {
@@ -66,6 +71,8 @@ public class MapId {
 	}
 	
 	/**
+	 * Gets the to id.
+	 * 
 	 * @return the id of the "to" entity
 	 */
 	public String getToId() {
@@ -80,28 +87,30 @@ public class MapId {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getFromId() == null)
-		                                                       ? 0
-		                                                       : this.getFromId().hashCode());
-		result = (prime * result) + ((this.getToId() == null)
-		                                                     ? 0
-		                                                     : this.getToId().hashCode());
+		result = (prime * result) + ((getFromId() == null)
+		                                                  ? 0
+		                                                  : getFromId().hashCode());
+		result = (prime * result) + ((getToId() == null)
+		                                                ? 0
+		                                                : getToId().hashCode());
 		return result;
 	}
 	
 	/**
-	 * Sets the id of the "from" entity
+	 * Sets the id of the "from" entity.
 	 * 
 	 * @param fromId
+	 *            the new from id
 	 */
 	public void setFromId(final String fromId) {
 		this.fromId = fromId;
 	}
 	
 	/**
-	 * Sets the id of the "to" entity
+	 * Sets the id of the "to" entity.
 	 * 
 	 * @param toId
+	 *            the new to id
 	 */
 	public void setToId(final String toId) {
 		this.toId = toId;

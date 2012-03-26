@@ -13,9 +13,34 @@
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import static net.ownhero.dev.ioda.StringUtils.truncate;
+
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ISettings;
+import net.ownhero.dev.hiari.settings.SetArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -43,12 +68,144 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
  */
 public abstract class MappingEngine extends Node {
 	
-	private static final String defaultNegative = "-1";
-	private static final String defaultPositive = "1";
-	private static final String unknown         = "(unknown)";
-	private static final String unused          = "(unused)";
-	
 	/**
+	 * The Class Options.
+	 */
+	static class Options extends ArgumentSetOptions<Set<MappingEngine>, ArgumentSet<Set<MappingEngine>, Options>> {
+		
+		/** The Constant tag. */
+		static final String         tag = "engines"; //$NON-NLS-1$
+		                                             
+		/** The engines option. */
+		private SetArgument.Options enginesOption;
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, tag, "...", requirements); //$NON-NLS-1$
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public Set<MappingEngine> init() {
+			// PRECONDITIONS
+			final Set<MappingEngine> set = new HashSet<MappingEngine>();
+			
+			try {
+				
+				final SetArgument argument = getSettings().getArgument(this.enginesOption);
+				final HashSet<String> value = argument.getValue();
+				
+				for (final String name : value) {
+					@SuppressWarnings ("unchecked")
+					final Class<? extends MappingEngine> clazz = (Class<? extends MappingEngine>) Class.forName(name);
+					final MappingEngine instance = clazz.newInstance();
+					instance.init();
+					set.add(instance);
+				}
+				
+				return set;
+			} catch (final ClassNotFoundException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				throw new UnrecoverableError(e);
+			} catch (final InstantiationException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				throw new UnrecoverableError(e);
+			} catch (final IllegalAccessException e) {
+				if (Logger.logError()) {
+					Logger.error(e.getMessage(), e);
+				}
+				throw new UnrecoverableError(e);
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+		                                                                            SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+				
+				final HashSet<String> defaultSet = new HashSet<String>();
+				
+				try {
+					final Collection<Class<? extends MappingEngine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                                   MappingEngine.class,
+					                                                                                                   Modifier.ABSTRACT
+					                                                                                                           | Modifier.INTERFACE
+					                                                                                                           | Modifier.PRIVATE
+					                                                                                                           | Modifier.PROTECTED);
+					for (final Class<? extends MappingEngine> c : collection) {
+						defaultSet.add(c.getSimpleName());
+					}
+				} catch (final ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+					
+				} catch (final WrongClassSearchMethodException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+					
+				} catch (final IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e.getMessage(), e);
+					}
+					
+				}
+				
+				this.enginesOption = new SetArgument.Options(
+				                                             set,
+				                                             "enabled", Messages.getString("MappingEngine.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+				                                             defaultSet, Requirement.required);
+				
+				map.put(this.enginesOption.getName(), this.enginesOption);
+				
+				return map;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	/** The Constant defaultNegative. */
+	private static final String defaultNegative = "-1";                                       //$NON-NLS-1$
+	                                                                                           
+	/** The Constant defaultPositive. */
+	private static final String defaultPositive = "1";                                        //$NON-NLS-1$
+	                                                                                           
+	/** The Constant unknown. */
+	private static final String unknown         = Messages.getString("MappingEngine.unknown"); //$NON-NLS-1$
+	                                                                                           
+	/** The Constant unused. */
+	private static final String unused          = Messages.getString("MappingEngine.unused"); //$NON-NLS-1$
+	                                                                                           
+	/**
+	 * Gets the default negative.
+	 * 
 	 * @return the defaultNegative
 	 */
 	public static String getDefaultNegative() {
@@ -56,6 +213,8 @@ public abstract class MappingEngine extends Node {
 	}
 	
 	/**
+	 * Gets the default positive.
+	 * 
 	 * @return the defaultPositive
 	 */
 	public static String getDefaultPositive() {
@@ -63,6 +222,8 @@ public abstract class MappingEngine extends Node {
 	}
 	
 	/**
+	 * Gets the unknown.
+	 * 
 	 * @return the unknown
 	 */
 	public static String getUnknown() {
@@ -70,11 +231,15 @@ public abstract class MappingEngine extends Node {
 	}
 	
 	/**
+	 * Gets the unused.
+	 * 
 	 * @return the unused
 	 */
 	public static String getUnused() {
 		return unused;
 	}
+	
+	private ISettings settings;
 	
 	/**
 	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
@@ -131,7 +296,34 @@ public abstract class MappingEngine extends Node {
 		                                                                              : unknown)), getClass());
 	}
 	
+	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
+	                                                                              ArgumentSetRegistrationException,
+	                                                                              ArgumentRegistrationException {
+		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingEngine.Options.tag);
+		if (anchor == null) {
+			anchor = ArgumentSetFactory.create(new MappingEngine.Options(settings.getRoot(), Requirement.required));
+		}
+		
+		return anchor;
+	}
+	
 	/**
+	 * @return the settings
+	 */
+	public final ISettings getSettings() {
+		// PRECONDITIONS
+		
+		try {
+			return this.settings;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.settings, "Field '%s' in '%s'.", "settings", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Score.
+	 * 
 	 * @param from
 	 *            the 'from' entity
 	 * @param to
@@ -145,6 +337,24 @@ public abstract class MappingEngine extends Node {
 	                           final Mapping score);
 	
 	/**
+	 * @param settings
+	 *            the settings to set
+	 */
+	protected final void setSettings(@NotNull final ISettings settings) {
+		// PRECONDITIONS
+		
+		try {
+			this.settings = settings;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.settings, settings,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Supported.
+	 * 
 	 * @return an instance of {@link Expression} that represents the support of this engine
 	 */
 	public abstract Expression supported();

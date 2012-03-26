@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 import java.util.Queue;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -56,7 +57,7 @@ public class LoneWarriorStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		final Queue<MappingEngineFeature> features = mapping.getFeatures();
 		Boolean valid = null;
 		for (final MappingEngineFeature feature : features) {

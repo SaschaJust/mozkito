@@ -19,6 +19,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
@@ -39,7 +40,7 @@ public class Filter extends Transformer<Mapping, FilteredMapping> {
 			
 			@Override
 			public void process() {
-				final Mapping inputData = getInputData();
+				final IMapping inputData = getInputData();
 				final FilteredMapping mapping = finder.filter(inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {

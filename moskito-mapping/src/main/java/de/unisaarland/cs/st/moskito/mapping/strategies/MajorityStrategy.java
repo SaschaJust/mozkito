@@ -14,7 +14,11 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import java.util.Queue;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -23,12 +27,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  * 
  */
 public class MajorityStrategy extends MappingStrategy {
-	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -40,9 +38,9 @@ public class MajorityStrategy extends MappingStrategy {
 	}
 	
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
+	public void init() {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 	
 	/*
@@ -51,7 +49,7 @@ public class MajorityStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		int pro = 0;
 		int contra = 0;
 		int neutral = 0;
@@ -81,6 +79,24 @@ public class MajorityStrategy extends MappingStrategy {
 		}
 		
 		return mapping;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

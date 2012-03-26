@@ -25,6 +25,7 @@ import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -116,7 +117,7 @@ public class MappingFinder {
 	 * @param mapping
 	 * @return
 	 */
-	public FilteredMapping filter(final Mapping mapping) {
+	public FilteredMapping filter(final IMapping mapping) {
 		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
 		
 		for (final MappingFilter filter : this.filters.values()) {

@@ -15,11 +15,10 @@ package de.unisaarland.cs.st.moskito.mapping;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.arguments.BooleanArgument;
-import net.ownhero.dev.hiari.settings.arguments.LoggerArguments;
-import net.ownhero.dev.hiari.settings.arguments.LongArgument;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -27,7 +26,6 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingArguments;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -36,9 +34,7 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 public class MappingChain extends Chain<MappingSettings> {
 	
 	private final DatabaseOptions databaseArguments;
-	private final LoggerArguments   logSettings;
-	private final MappingArguments  mappingArguments;
-	private final Pool              threadPool;
+	private final Pool            threadPool;
 	
 	/**
 	 * @throws SettingsParseError
@@ -46,7 +42,7 @@ public class MappingChain extends Chain<MappingSettings> {
 	 * 
 	 */
 	public MappingChain() {
-		super(new MappingSettings(), "mapping");
+		super(new MappingSettings(), "mapping"); //$NON-NLS-1$
 		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
 		final MappingSettings settings = getSettings();
 		try {

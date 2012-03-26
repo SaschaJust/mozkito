@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  */
 @Entity
 @IdClass (MapId.class)
-public class Mapping implements Annotated, Comparable<Mapping> {
+public class Mapping implements Annotated, IMapping {
 	
 	private static final long           serialVersionUID = -8606759070008468513L;
 	
@@ -113,8 +113,13 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.model.IMapping#compareTo(de.unisaarland.cs.st.moskito.mapping.model.Mapping)
+	 */
 	@Override
-	public int compareTo(final Mapping arg0) {
+	public int compareTo(final IMapping arg0) {
 		return Double.compare(getTotalConfidence(), arg0.getTotalConfidence());
 	}
 	
@@ -135,31 +140,39 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 		return null;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getClass1()
 	 */
+	@Override
 	public String getClass1() {
 		return this.class1;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getClass2()
 	 */
+	@Override
 	public String getClass2() {
 		return this.class2;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement1()
 	 */
+	@Override
 	@ManyToOne (fetch = FetchType.EAGER)
 	public MappableEntity getElement1() {
 		return this.element1;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement2()
 	 */
+	@Override
 	@ManyToOne (fetch = FetchType.EAGER)
 	public MappableEntity getElement2() {
 		return this.element2;
@@ -173,9 +186,11 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 		return this.features;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getFromId()
 	 */
+	@Override
 	@Id
 	public String getFromId() {
 		return this.fromId;
@@ -203,17 +218,21 @@ public class Mapping implements Annotated, Comparable<Mapping> {
 		return this.strategies;
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getToId()
 	 */
+	@Override
 	@Id
 	public String getToId() {
 		return this.toId;
 	}
 	
-	/**
-	 * @return the totalConfidence
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getTotalConfidence()
 	 */
+	@Override
 	@Basic
 	public double getTotalConfidence() {
 		return this.totalConfidence;

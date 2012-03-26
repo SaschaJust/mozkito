@@ -55,7 +55,7 @@ public abstract class SearchEngine extends MappingEngine {
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
 	 */
 	@Override
-	public void afterParse() {
+	public void init() {
 		setMinTokens(this.minTokensArgument.getValue());
 		setLanguage(this.languageArgument.getValue());
 	}

@@ -12,9 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -28,47 +29,53 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class EssentialChangeEngine extends MappingEngine {
 	
-	private double         confidence = 0d;
-	private DoubleArgument confidenceArguement;
-	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
-	 */
-	@Override
-	public void afterParse() {
-		setConfidence(this.confidenceArguement.getValue());
-	}
-	
-	/**
-	 * @return the confidence
-	 */
-	public double getConfidence() {
-		return this.confidence;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores negative if the changes done in the transaction aren't essential changes (no interface changes, renamings etc...)";
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		this.confidenceArguement = new DoubleArgument(
-		                                              set,
-		                                              "confidence",
-		                                              "Confidence that is used if the changes done in the transaction are not essential.",
-		                                              this.confidence + "", Requirement.required);
-		return true;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -84,14 +91,6 @@ public class EssentialChangeEngine extends MappingEngine {
 		// TODO Auto-generated method stub
 		// addFeature(score, confidence, fromFieldName, fromFieldContent, fromSubstring, toFieldName, toFieldContent,
 		// toSubstring);
-	}
-	
-	/**
-	 * @param confidence
-	 *            the confidence to set
-	 */
-	public void setConfidence(final double confidence) {
-		this.confidence = confidence;
 	}
 	
 	/*

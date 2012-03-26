@@ -12,9 +12,15 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -32,49 +38,166 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  */
 public class AuthorEqualityEngine extends MappingEngine {
 	
-	private double         scoreAuthorEquality = 0.2d;
-	private DoubleArgument confidenceArgument;
+	/** The constant description. */
+	private static final String description       = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
+	                                                                                                        
+	/** The constant defaultConfidence. */
+	private static final Double defaultConfidence = 0.2d;
 	
-	@Override
-	public void afterParse() {
-		setScoreAuthorEquality(this.confidenceArgument.getValue());
+	/**
+	 * Gets the default confidence.
+	 * 
+	 * @return the defaultConfidences
+	 */
+	private static final Double getDefaultConfidence() {
+		// PRECONDITIONS
+		
+		try {
+			return defaultConfidence;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(defaultConfidence, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			                  AuthorEqualityEngine.class.getSimpleName());
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
+	/** The confidence option. */
+	private DoubleArgument.Options confidenceOption;
+	
+	/** The confidence argument. */
+	private DoubleArgument         confidenceArgument;
+	
+	/** The confidence. */
+	private Double                 confidence;
+	
+	/**
+	 * Gets the confidence.
+	 * 
+	 * @return the confidence
 	 */
-	@Override
-	public String getDescription() {
-		return "Scores according to the equality of both entities (at some time in the history).";
+	private final Double getConfidence() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidence;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/**
-	 * @return the scoreAuthorEquality (which is the confidence value for this engine; defaults to the initial value of
-	 *         scoreAuthorEquality)
+	 * Gets the confidence argument.
+	 * 
+	 * @return the confidenceArgument
 	 */
-	private double getScoreAuthorEquality() {
-		return this.scoreAuthorEquality;
+	private final DoubleArgument getConfidenceArgument() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidenceArgument;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceArgument, "Field '%s' in '%s'.", "confidenceArgument", //$NON-NLS-1$ //$NON-NLS-2$
+			                  getHandle());
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	/**
+	 * Gets the confidence option.
+	 * 
+	 * @return the confidenceOption
+	 */
+	private final DoubleArgument.Options getConfidenceOption() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidenceOption;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", //$NON-NLS-1$ //$NON-NLS-2$
+			                  getHandle());
+		}
+	}
+	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		this.confidenceArgument = new DoubleArgument(set, "confidence",
-		                                             "Score for equal authors in transaction and report comments.",
-		                                             this.scoreAuthorEquality + "", Requirement.required);
-		return true;
+	public String getDescription() {
+		return description;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * de.unisaarland.cs.st.moskito.mapping.mappable.MappableEntity, de.unisaarland.cs.st.moskito.mapping.model.Mapping)
+	/**
+	 * After parse.
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			setConfidenceArgument(getSettings().getArgument(getConfidenceOption()));
+			setConfidence(getConfidenceArgument().getValue());
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceArgument, "Field '%s' in '%s'.", "confidenceArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Provide.
+	 * 
+	 * @param anchorSet
+	 *            the anchor set
+	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(@NotNull final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	                                                                            ArgumentSetRegistrationException,
+	                                                                            SettingsParseError {
+		// PRECONDITIONS
+		setSettings(anchorSet.getSettings());
+		Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		// request the mapping.engines anchor
+		final ArgumentSet<?, ?> anchor = super.getAnchor(getSettings());
+		
+		try {
+			
+			setConfidenceOption(new DoubleArgument.Options(
+			                                               anchor,
+			                                               "confidence", //$NON-NLS-1$
+			                                               Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
+			                                               getDefaultConfidence(), Requirement.required));
+			
+			return anchor;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(anchor, "Field '%s' in '%s'.", "anchor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Score.
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param score
+	 *            the score
 	 */
 	@Override
 	public void score(final MappableEntity from,
@@ -82,8 +205,9 @@ public class AuthorEqualityEngine extends MappingEngine {
 	                  final Mapping score) {
 		double confidence = 0d;
 		
+		// check if the values in the author fields are equal
 		if (from.get(FieldKey.AUTHOR).equals(to.get(FieldKey.AUTHOR))) {
-			confidence = getScoreAuthorEquality();
+			confidence = getConfidence();
 		}
 		
 		addFeature(score, confidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR), from.get(FieldKey.AUTHOR),
@@ -91,16 +215,63 @@ public class AuthorEqualityEngine extends MappingEngine {
 	}
 	
 	/**
-	 * @param scoreAuthorEquality
-	 *            the scoreAuthorEquality to set
+	 * Sets the confidence.
+	 * 
+	 * @param confidence
+	 *            the confidence to set
 	 */
-	private void setScoreAuthorEquality(final double scoreAuthorEquality) {
-		this.scoreAuthorEquality = scoreAuthorEquality;
+	private final void setConfidence(@NotNull final Double confidence) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidence = confidence;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidence, confidence,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#supported()
+	/**
+	 * Sets the confidence argument.
+	 * 
+	 * @param confidenceArgument
+	 *            the confidenceArgument to set
+	 */
+	private final void setConfidenceArgument(@NotNull final DoubleArgument confidenceArgument) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidenceArgument = confidenceArgument;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidenceArgument, confidenceArgument,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Sets the confidence option.
+	 * 
+	 * @param confidenceOption
+	 *            the confidenceOption to set
+	 */
+	private final void setConfidenceOption(@NotNull final DoubleArgument.Options confidenceOption) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidenceOption = confidenceOption;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidenceOption, confidenceOption,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Supported.
+	 * 
+	 * @return the expression
 	 */
 	@Override
 	public Expression supported() {

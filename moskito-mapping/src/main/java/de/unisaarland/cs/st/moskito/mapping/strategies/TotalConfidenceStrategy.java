@@ -13,6 +13,7 @@
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
@@ -53,7 +54,7 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		switch (Double.compare(mapping.getTotalConfidence(), 0d)) {
 			case -1:
 				mapping.addStrategy(getHandle(), false);

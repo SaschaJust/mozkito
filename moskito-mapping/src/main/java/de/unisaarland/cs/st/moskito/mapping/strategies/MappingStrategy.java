@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
@@ -38,5 +39,5 @@ public abstract class MappingStrategy extends Node {
 	 * @param mapping
 	 * @return
 	 */
-	public abstract Mapping map(Mapping mapping);
+	public abstract IMapping map(Mapping mapping);
 }

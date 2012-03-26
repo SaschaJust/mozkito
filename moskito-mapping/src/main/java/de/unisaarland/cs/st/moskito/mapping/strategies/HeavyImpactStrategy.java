@@ -13,6 +13,7 @@
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
@@ -51,7 +52,7 @@ public class HeavyImpactStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		double maxabs = 0d;
 		for (final MappingEngineFeature feature : mapping.getFeatures()) {
 			if (Math.abs(feature.getConfidence()) > Math.abs(maxabs)) {
