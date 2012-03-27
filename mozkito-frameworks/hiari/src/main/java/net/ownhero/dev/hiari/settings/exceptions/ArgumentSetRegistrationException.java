@@ -46,7 +46,11 @@ public class ArgumentSetRegistrationException extends Exception {
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options) {
 		super(message);
-		this.message = message + ": " + argument.getTag();
+		this.message = (message + ": " + argument) != null
+		                                                  ? argument.getTag()
+		                                                  : options != null
+		                                                                   ? options.getTag()
+		                                                                   : "";
 		
 		this.argument = argument;
 		this.options = options;
@@ -73,8 +77,11 @@ public class ArgumentSetRegistrationException extends Exception {
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options, final Throwable t) {
 		super(message, t);
-		this.message = message + ": " + argument.getTag();
-		
+		this.message = (message + ": " + argument) != null
+		                                                  ? argument.getTag()
+		                                                  : options != null
+		                                                                   ? options.getTag()
+		                                                                   : "";
 		this.argument = argument;
 		this.options = options;
 	}
