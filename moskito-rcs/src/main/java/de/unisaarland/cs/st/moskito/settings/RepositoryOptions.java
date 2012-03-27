@@ -114,12 +114,12 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		// PRECONDITIONS
 		
 		try {
-			final URIArgument dirArgument = (URIArgument) getSettings().getArgument(getRepoDirArg().getTag());
-			final StringArgument userArgument = (StringArgument) getSettings().getArgument(getUserArg().getTag());
-			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(getPassArg().getTag());
-			final EnumArgument<RepositoryType> typeArgument = (EnumArgument<RepositoryType>) getSettings().getArgument(getRepoTypeArg().getTag());
-			final DirectoryArgument tmpDirArgument = (DirectoryArgument) getSettings().getArgument(getTmpDirArg().getTag());
-			this.persistenceUtil = ((ArgumentSet<PersistenceUtil, DatabaseOptions>) getSettings().getArgument(this.databaseOptions.getTag())).getValue();
+			final URIArgument dirArgument = getSettings().getArgument(getRepoDirArg());
+			final StringArgument userArgument = getSettings().getArgument(getUserArg());
+			final StringArgument passwordArgument = getSettings().getArgument(getPassArg());
+			final EnumArgument<RepositoryType> typeArgument = getSettings().getArgument(getRepoTypeArg());
+			final DirectoryArgument tmpDirArgument = getSettings().getArgument(getTmpDirArg());
+			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
 			
 			final URI repositoryURI = dirArgument.getValue();
 			String username = userArgument.getValue();
