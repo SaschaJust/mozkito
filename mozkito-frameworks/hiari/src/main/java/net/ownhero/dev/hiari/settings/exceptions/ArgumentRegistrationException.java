@@ -5,6 +5,7 @@ package net.ownhero.dev.hiari.settings.exceptions;
 
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IArgumentOptions;
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
@@ -23,6 +24,8 @@ public class ArgumentRegistrationException extends Exception {
 	/** The options. */
 	private final IArgumentOptions<?, ?> options;
 	
+	private final String                 message;
+	
 	/**
 	 * Instantiates a new argument registration exception.
 	 * 
@@ -36,6 +39,8 @@ public class ArgumentRegistrationException extends Exception {
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options) {
 		super(message + ": " + argument.getTag());
+		
+		this.message = message + ": " + argument.getTag();
 		
 		this.argument = argument;
 		this.options = options;
@@ -55,7 +60,8 @@ public class ArgumentRegistrationException extends Exception {
 	 */
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options, @NotNull final Throwable cause) {
-		super(message, cause);
+		super(message + ": " + argument.getTag(), cause);
+		this.message = message + ": " + argument.getTag();
 		
 		this.argument = argument;
 		this.options = options;
@@ -70,6 +76,34 @@ public class ArgumentRegistrationException extends Exception {
 		return this.argument;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Throwable#getMessage()
+	 */
+	@Override
+	public String getMessage() {
+		// PRECONDITIONS
+		
+		// PRECONDITIONS
+		
+		try {
+			final StringBuilder builder = new StringBuilder();
+			builder.append(this.message);
+			
+			if (this.options != null) {
+				builder.append(FileUtils.lineSeparator).append("Argument: ").append(this.argument); //$NON-NLS-1$
+			}
+			
+			if (this.options != null) {
+				builder.append(FileUtils.lineSeparator).append("Options: ").append(this.options); //$NON-NLS-1$
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the options.
 	 * 
@@ -78,5 +112,4 @@ public class ArgumentRegistrationException extends Exception {
 	public final IArgumentOptions<?, ?> getOptions() {
 		return this.options;
 	}
-	
 }
