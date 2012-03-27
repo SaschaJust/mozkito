@@ -35,7 +35,7 @@ public class ArgumentRegistrationException extends Exception {
 	 */
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options) {
-		super(message);
+		super(message + ": " + argument.getTag());
 		
 		this.argument = argument;
 		this.options = options;
