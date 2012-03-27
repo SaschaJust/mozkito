@@ -134,15 +134,15 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 		// PRECONDITIONS
 		
 		try {
-			final StringArgument hostArgument = (StringArgument) getSettings().getArgument(this.databaseHost.getTag());
-			final StringArgument nameArgument = (StringArgument) getSettings().getArgument(this.databaseName.getTag());
-			final StringArgument userArgument = (StringArgument) getSettings().getArgument(this.databaseUser.getTag());
-			final StringArgument passwordArgument = (StringArgument) getSettings().getArgument(this.databasePassword.getTag());
-			final EnumArgument<DatabaseType> typeArgument = (EnumArgument<DatabaseType>) getSettings().getArgument(this.databaseType.getTag());
-			final StringArgument driverArgument = (StringArgument) getSettings().getArgument(this.databaseDriver.getTag());
-			final StringArgument unitArgument = (StringArgument) getSettings().getArgument(this.databaseUnit.getTag());
-			final EnumArgument<ConnectOptions> optionsArgument = (EnumArgument<ConnectOptions>) getSettings().getArgument(this.databaseOptions.getTag());
-			final StringArgument middlewareArgument = (StringArgument) getSettings().getArgument(this.databaseMiddleware.getTag());
+			final StringArgument hostArgument = getSettings().getArgument(this.databaseHost);
+			final StringArgument nameArgument = getSettings().getArgument(this.databaseName);
+			final StringArgument userArgument = getSettings().getArgument(this.databaseUser);
+			final StringArgument passwordArgument = getSettings().getArgument(this.databasePassword);
+			final EnumArgument<DatabaseType> typeArgument = getSettings().getArgument(this.databaseType);
+			final StringArgument driverArgument = getSettings().getArgument(this.databaseDriver);
+			final StringArgument unitArgument = getSettings().getArgument(this.databaseUnit);
+			final EnumArgument<ConnectOptions> optionsArgument = getSettings().getArgument(this.databaseOptions);
+			final StringArgument middlewareArgument = getSettings().getArgument(this.databaseMiddleware);
 			
 			if (optionsArgument.getValue().equals(ConnectOptions.DB_DROP_CREATE)) {
 				try {
