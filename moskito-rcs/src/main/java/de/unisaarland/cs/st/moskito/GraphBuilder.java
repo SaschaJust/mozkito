@@ -74,6 +74,11 @@ public class GraphBuilder implements Runnable {
 		int counter = 0;
 		for (final String hash : this.revDepGraph.getVertices()) {
 			final RCSTransaction rcsTransaction = this.persistenceUtil.loadById(hash, RCSTransaction.class);
+			
+			if (rcsTransaction == null) {
+				throw new UnrecoverableError("Could not load transaction " + hash + " from database.");
+			}
+			
 			if (!this.revDepGraph.hasVertex(hash)) {
 				throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
 			}
