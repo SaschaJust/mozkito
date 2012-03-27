@@ -57,6 +57,10 @@ public class RepositoryToolchain extends Chain<Settings> {
 			                                                                  databaseOptions);
 			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
+			if (getSettings().helpRequested()) {
+				System.err.println(getSettings().getHelpString());
+			}
+			
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logDebug()) {
 				Logger.debug(e.getMessage(), e);
