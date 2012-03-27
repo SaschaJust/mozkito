@@ -174,6 +174,13 @@ public interface ISettings {
 	boolean hasSetting(final String name);
 	
 	/**
+	 * Help requested.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean helpRequested();
+	
+	/**
 	 * Checks if is crash email disabled.
 	 * 
 	 * @return true, if is crash email disabled

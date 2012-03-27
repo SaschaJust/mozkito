@@ -613,6 +613,13 @@ public class Settings implements ISettings {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
+	public final boolean helpRequested() {
+		return System.getProperty("help") != null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.ISettings#isCrashEmailDisabled()
