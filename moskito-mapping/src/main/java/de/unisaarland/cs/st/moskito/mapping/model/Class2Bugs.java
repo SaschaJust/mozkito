@@ -31,16 +31,16 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Class2Bugs.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 public class Class2Bugs implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5780165055568852588L;
 	
 	static {
@@ -66,7 +66,10 @@ public class Class2Bugs implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the bug counts.
+	 *
+	 * @param util the util
+	 * @return the bug counts
 	 */
 	public static List<File2Bugs> getBugCounts(final PersistenceUtil util) {
 		final List<File2Bugs> ret = new LinkedList<File2Bugs>();
@@ -107,20 +110,24 @@ public class Class2Bugs implements Annotated {
 		return ret;
 	}
 	
+	/** The file. */
 	RCSFile     file;
 	
+	/** The reports. */
 	Set<Report> reports;
 	
 	/**
-	 * used by persistence provider only
+	 * used by persistence provider only.
 	 */
 	public Class2Bugs() {
 		
 	}
 	
 	/**
-	 * @param file
-	 * @param reports
+	 * Instantiates a new class2 bugs.
+	 *
+	 * @param file the file
+	 * @param reports the reports
 	 */
 	public Class2Bugs(final RCSFile file, final Set<Report> reports) {
 		setFile(file);
@@ -154,6 +161,8 @@ public class Class2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Gets the file.
+	 *
 	 * @return the file
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -162,6 +171,8 @@ public class Class2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Gets the reports.
+	 *
 	 * @return the reports
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -184,23 +195,27 @@ public class Class2Bugs implements Annotated {
 	}
 	
 	/**
-	 * @param file
-	 *            the file to set
+	 * Sets the file.
+	 *
+	 * @param file the file to set
 	 */
 	public void setFile(final RCSFile file) {
 		this.file = file;
 	}
 	
 	/**
-	 * @param reports
-	 *            the reports to set
+	 * Sets the reports.
+	 *
+	 * @param reports the reports to set
 	 */
 	public void setReports(final Set<Report> reports) {
 		this.reports = reports;
 	}
 	
 	/**
-	 * @return
+	 * To csv.
+	 *
+	 * @return the string
 	 */
 	public String toCSV() {
 		final StringBuilder builder = new StringBuilder();

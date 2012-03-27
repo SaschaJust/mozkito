@@ -39,30 +39,49 @@ import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Mapping.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 @IdClass (MapId.class)
 public class Mapping implements Annotated, IMapping {
 	
+	/** The Constant serialVersionUID. */
 	private static final long           serialVersionUID = -8606759070008468513L;
 	
+	/** The features. */
 	private Queue<MappingEngineFeature> features         = new LinkedBlockingQueue<MappingEngineFeature>();
+	
+	/** The strategies. */
 	private Map<String, Boolean>        strategies       = new HashMap<String, Boolean>();
+	
+	/** The total confidence. */
 	private double                      totalConfidence  = 0.0d;
 	
+	/** The element1. */
 	private MappableEntity              element1;
+	
+	/** The element2. */
 	private MappableEntity              element2;
 	
+	/** The from id. */
 	private String                      fromId;
+	
+	/** The class1. */
 	private String                      class1;
 	
+	/** The to id. */
 	private String                      toId;
+	
+	/** The class2. */
 	private String                      class2;
 	
 	/**
+	 * Instantiates a new mapping.
+	 *
 	 * @deprecated use {@link Mapping#Mapping(MappableEntity, MappableEntity)} used by persistence provider only
 	 */
 	@Deprecated
@@ -71,8 +90,10 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param transaction
-	 * @param report
+	 * Instantiates a new mapping.
+	 *
+	 * @param element1 the element1
+	 * @param element2 the element2
 	 */
 	public Mapping(final MappableEntity element1, final MappableEntity element2) {
 		setElement1(element1);
@@ -80,10 +101,16 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param confidence
-	 * @param transactionFieldName
-	 * @param relevantString
-	 * @param mappingEngine
+	 * Adds the feature.
+	 *
+	 * @param confidence the confidence
+	 * @param transactionFieldName the transaction field name
+	 * @param transactionFieldContent the transaction field content
+	 * @param transactionSubstring the transaction substring
+	 * @param reportFieldName the report field name
+	 * @param reportFieldContent the report field content
+	 * @param reportSubstring the report substring
+	 * @param mappingEngine the mapping engine
 	 */
 	@Transient
 	public void addFeature(final double confidence,
@@ -100,8 +127,10 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param strategyName
-	 * @param valid
+	 * Adds the strategy.
+	 *
+	 * @param strategyName the strategy name
+	 * @param valid the valid
 	 */
 	@Transient
 	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
@@ -124,8 +153,10 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param o
-	 * @return
+	 * Fetch id.
+	 *
+	 * @param o the o
+	 * @return the string
 	 */
 	private String fetchId(final Object o) {
 		try {
@@ -179,6 +210,8 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
+	 * Gets the features.
+	 *
 	 * @return the features
 	 */
 	@ElementCollection (fetch = FetchType.EAGER)
@@ -197,6 +230,8 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
+	 * Gets the scoring engines.
+	 *
 	 * @return a set of {@link MappingEngine} classes that were used for this scoring
 	 */
 	@Transient
@@ -211,7 +246,9 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @return
+	 * Gets the strategies.
+	 *
+	 * @return the strategies
 	 */
 	@ElementCollection
 	public Map<String, Boolean> getStrategies() {
@@ -239,21 +276,27 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param class1
+	 * Sets the class1.
+	 *
+	 * @param class1 the new class1
 	 */
 	public void setClass1(final String class1) {
 		this.class1 = class1;
 	}
 	
 	/**
-	 * @param class2
+	 * Sets the class2.
+	 *
+	 * @param class2 the new class2
 	 */
 	public void setClass2(final String class2) {
 		this.class2 = class2;
 	}
 	
 	/**
-	 * @param element1
+	 * Sets the element1.
+	 *
+	 * @param element1 the new element1
 	 */
 	public void setElement1(final MappableEntity element1) {
 		this.element1 = element1;
@@ -264,7 +307,9 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param element2
+	 * Sets the element2.
+	 *
+	 * @param element2 the new element2
 	 */
 	public void setElement2(final MappableEntity element2) {
 		this.element2 = element2;
@@ -276,37 +321,45 @@ public class Mapping implements Annotated, IMapping {
 	}
 	
 	/**
-	 * @param features
-	 *            the features to set
+	 * Sets the features.
+	 *
+	 * @param features the features to set
 	 */
 	public void setFeatures(final Queue<MappingEngineFeature> features) {
 		this.features = features;
 	}
 	
 	/**
-	 * @param id1
+	 * Sets the from id.
+	 *
+	 * @param id1 the new from id
 	 */
 	public void setFromId(final String id1) {
 		this.fromId = id1;
 	}
 	
 	/**
-	 * @param strategies
+	 * Sets the strategies.
+	 *
+	 * @param strategies the strategies
 	 */
 	public void setStrategies(final Map<String, Boolean> strategies) {
 		this.strategies = strategies;
 	}
 	
 	/**
-	 * @param id2
+	 * Sets the to id.
+	 *
+	 * @param id2 the new to id
 	 */
 	public void setToId(final String id2) {
 		this.toId = id2;
 	}
 	
 	/**
-	 * @param totalConfidence
-	 *            the totalConfidence to set
+	 * Sets the total confidence.
+	 *
+	 * @param totalConfidence the totalConfidence to set
 	 */
 	public void setTotalConfidence(final double totalConfidence) {
 		this.totalConfidence = totalConfidence;

@@ -18,9 +18,11 @@ import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingSplitter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class MappingSplitter extends Node {
 	
@@ -31,6 +33,12 @@ public abstract class MappingSplitter extends Node {
 	@Override
 	public abstract String getDescription();
 	
+	/**
+	 * Process.
+	 *
+	 * @param util the util
+	 * @return the list
+	 */
 	public abstract List<Annotated> process(PersistenceUtil util);
 	
 }

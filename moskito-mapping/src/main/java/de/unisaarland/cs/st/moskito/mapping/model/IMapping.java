@@ -19,9 +19,11 @@ import javax.persistence.ManyToOne;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Interface IMapping.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public interface IMapping extends Comparable<IMapping> {
 	
@@ -33,40 +35,54 @@ public interface IMapping extends Comparable<IMapping> {
 	public abstract int compareTo(final IMapping arg0);
 	
 	/**
-	 * @return
+	 * Gets the class1.
+	 *
+	 * @return the class1
 	 */
 	public abstract String getClass1();
 	
 	/**
-	 * @return
+	 * Gets the class2.
+	 *
+	 * @return the class2
 	 */
 	public abstract String getClass2();
 	
 	/**
-	 * @return
+	 * Gets the element1.
+	 *
+	 * @return the element1
 	 */
 	@ManyToOne (fetch = FetchType.EAGER)
 	public abstract MappableEntity getElement1();
 	
 	/**
-	 * @return
+	 * Gets the element2.
+	 *
+	 * @return the element2
 	 */
 	@ManyToOne (fetch = FetchType.EAGER)
 	public abstract MappableEntity getElement2();
 	
 	/**
-	 * @return
+	 * Gets the from id.
+	 *
+	 * @return the from id
 	 */
 	@Id
 	public abstract String getFromId();
 	
 	/**
-	 * @return
+	 * Gets the to id.
+	 *
+	 * @return the to id
 	 */
 	@Id
 	public abstract String getToId();
 	
 	/**
+	 * Gets the total confidence.
+	 *
 	 * @return the totalConfidence
 	 */
 	@Basic

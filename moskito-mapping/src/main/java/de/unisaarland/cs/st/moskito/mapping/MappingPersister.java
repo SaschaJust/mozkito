@@ -25,19 +25,23 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingPersister.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MappingPersister extends Sink<Mapping> {
 	
+	/** The i. */
 	private Integer i = 0;
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
-	 * @param persistenceUtil
+	 * Instantiates a new mapping persister.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
 	 */
 	public MappingPersister(final Group threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {

@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
  * The or expression evaluates to true if one or more of the inner expressions evaluate to true. Evaluates to false
  * otherwise.
@@ -26,13 +27,17 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public class Or extends Expression {
 	
+	/** The expression1. */
 	private final Expression expression1;
 	
+	/** The expression2. */
 	private final Expression expression2;
 	
 	/**
-	 * @param expression1
-	 * @param expression2
+	 * Instantiates a new or.
+	 *
+	 * @param expression1 the expression1
+	 * @param expression2 the expression2
 	 */
 	public Or(final Expression expression1, final Expression expression2) {
 		this.expression1 = expression1;
@@ -53,6 +58,8 @@ public class Or extends Expression {
 	}
 	
 	/**
+	 * Gets the expression1.
+	 *
 	 * @return the 'from' expression
 	 */
 	public Expression getExpression1() {
@@ -60,6 +67,8 @@ public class Or extends Expression {
 	}
 	
 	/**
+	 * Gets the expression2.
+	 *
 	 * @return the 'to' expression
 	 */
 	public Expression getExpression2() {

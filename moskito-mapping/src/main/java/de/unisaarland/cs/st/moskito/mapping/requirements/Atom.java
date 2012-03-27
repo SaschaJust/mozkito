@@ -26,6 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
  * The atom expression evaluates to true if the given criteria are met. Evaluates to false otherwise.
  * 
@@ -38,15 +39,20 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public final class Atom extends Expression {
 	
+	/** The idx. */
 	private final Index         idx;
+	
+	/** The type. */
 	private Class<?>            type;
+	
+	/** The keys. */
 	private final Set<FieldKey> keys = new HashSet<FieldKey>();
 	
 	/**
-	 * @param idx
-	 *            the index the atom refers to
-	 * @param type
-	 *            the type that the corresponding entity is required to match
+	 * Instantiates a new atom.
+	 *
+	 * @param idx the index the atom refers to
+	 * @param type the type that the corresponding entity is required to match
 	 */
 	public Atom(@NotNull final Index idx, final Class<?> type) {
 		this.idx = idx;
@@ -54,10 +60,10 @@ public final class Atom extends Expression {
 	}
 	
 	/**
-	 * @param idx
-	 *            the index the atom refers to
-	 * @param key
-	 *            the {@link FieldKey} the entity has to support
+	 * Instantiates a new atom.
+	 *
+	 * @param idx the index the atom refers to
+	 * @param key the {@link FieldKey} the entity has to support
 	 */
 	public Atom(@NotNull final Index idx, final FieldKey key) {
 		this.idx = idx;
@@ -65,10 +71,10 @@ public final class Atom extends Expression {
 	}
 	
 	/**
-	 * @param idx
-	 *            the index the atom refers to
-	 * @param keys
-	 *            the {@link FieldKey}s the entity has to support
+	 * Instantiates a new atom.
+	 *
+	 * @param idx the index the atom refers to
+	 * @param keys the {@link FieldKey}s the entity has to support
 	 */
 	public Atom(@NotNull final Index idx, final FieldKey... keys) {
 		this.idx = idx;
@@ -201,6 +207,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the idx.
+	 *
 	 * @return the index the atom refers to
 	 */
 	public Index getIdx() {
@@ -208,6 +216,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the keys.
+	 *
 	 * @return the {@link FieldKey}s the atom refers to, if any. Returns an empty set if none were specified.
 	 */
 	public Set<FieldKey> getKeys() {
@@ -215,6 +225,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the type.
+	 *
 	 * @return the type the atom refers to. Returns <code>null</code> otherwise.
 	 */
 	public Class<?> getType() {

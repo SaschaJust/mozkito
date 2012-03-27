@@ -46,18 +46,24 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class TimestampEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TimestampEngine extends MappingEngine {
 	
+	/** The Constant description. */
 	private static final String                description     = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
 	                                                                                                                
+	/** The Constant defaultInterval. */
 	private static final Tuple<String, String> defaultInterval = new Tuple<String, String>("-0d 2h 0m 0s", //$NON-NLS-1$
 	                                                                                       "+1d 0h 0m 0s");        //$NON-NLS-1$
 	                                                                                                                
 	/**
+	 * Gets the defaultinterval.
+	 * 
 	 * @return the defaultinterval
 	 */
 	private static final Tuple<String, String> getDefaultinterval() {
@@ -72,17 +78,27 @@ public class TimestampEngine extends MappingEngine {
 		}
 	}
 	
+	/** The interval option. */
 	private TupleArgument.Options intervalOption;
+	
+	/** The interval argument. */
 	private TupleArgument         intervalArgument;
 	
+	/** The interval. */
 	private Interval              interval;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
+	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 	
 	/**
+	 * Gets the interval.
+	 * 
 	 * @return the interval
 	 */
 	private final Interval getInterval() {
@@ -97,6 +113,8 @@ public class TimestampEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the interval argument.
+	 * 
 	 * @return the intervalArgument
 	 */
 	private final TupleArgument getIntervalArgument() {
@@ -112,6 +130,8 @@ public class TimestampEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the interval option.
+	 * 
 	 * @return the intervalOption
 	 */
 	private final TupleArgument.Options getIntervalOption() {
@@ -162,8 +182,11 @@ public class TimestampEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Parses the interval string.
+	 * 
 	 * @param string
-	 * @return
+	 *            the string
+	 * @return the int
 	 */
 	private int parseIntervalString(final String string) {
 		int value = 0;
@@ -190,6 +213,10 @@ public class TimestampEngine extends MappingEngine {
 		return value;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
 	@Override
 	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
 	                                                              ArgumentSetRegistrationException,
@@ -265,6 +292,8 @@ public class TimestampEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the interval.
+	 * 
 	 * @param interval
 	 *            the interval to set
 	 */
@@ -286,6 +315,8 @@ public class TimestampEngine extends MappingEngine {
 	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	/**
+	 * Sets the interval argument.
+	 * 
 	 * @param intervalArgument
 	 *            the intervalArgument to set
 	 */
@@ -303,6 +334,8 @@ public class TimestampEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the interval option.
+	 * 
 	 * @param intervalOption
 	 *            the intervalOption to set
 	 */

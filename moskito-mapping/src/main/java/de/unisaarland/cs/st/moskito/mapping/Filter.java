@@ -23,16 +23,20 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Filter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Filter extends Transformer<Mapping, FilteredMapping> {
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
+	 * Instantiates a new filter.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param finder the finder
 	 */
 	public Filter(final Group threadGroup, final MappingSettings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);

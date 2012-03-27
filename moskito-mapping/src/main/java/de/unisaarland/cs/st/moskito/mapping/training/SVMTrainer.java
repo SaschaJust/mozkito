@@ -29,24 +29,39 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class SVMTrainer.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class SVMTrainer extends MappingTrainer {
 	
+	/** The param. */
 	private svm_parameter              param;           // set by
 	                                                     // parse_command_line
-	private svm_problem                prob;            // set by read_problem
+	/** The prob. */
+                                                     	private svm_problem                prob;            // set by read_problem
+	
+	/** The model. */
 	private svm_model                  model;
+	
+	/** The input_file_name. */
 	private String                     input_file_name; // set by
 	                                                     // parse_command_line
-	private String                     model_file_name; // set by
+	/** The model_file_name. */
+                                                     	private String                     model_file_name; // set by
 	                                                     // parse_command_line
-	private String                     error_msg;
+	/** The error_msg. */
+                                                     	private String                     error_msg;
+	
+	/** The cross_validation. */
 	private int                        cross_validation;
+	
+	/** The nr_fold. */
 	private int                        nr_fold;
 	
+	/** The svm_print_null. */
 	private static svm_print_interface svm_print_null = new svm_print_interface() {
 		                                                  
 		                                                  @Override
@@ -54,6 +69,12 @@ public class SVMTrainer extends MappingTrainer {
 		                                                  }
 	                                                  };
 	
+	/**
+	 * Atof.
+	 *
+	 * @param s the s
+	 * @return the double
+	 */
 	private static double atof(final String s) {
 		final double d = Double.valueOf(s).doubleValue();
 		if (Double.isNaN(d) || Double.isInfinite(d)) {
@@ -63,10 +84,19 @@ public class SVMTrainer extends MappingTrainer {
 		return (d);
 	}
 	
+	/**
+	 * Atoi.
+	 *
+	 * @param s the s
+	 * @return the int
+	 */
 	private static int atoi(final String s) {
 		return Integer.parseInt(s);
 	}
 	
+	/**
+	 * Exit_with_help.
+	 */
 	private static void exit_with_help() {
 		System.out.print("Usage: svm_train [options] training_set_file [model_file]\n"
 		        + "options:\n"
@@ -97,6 +127,9 @@ public class SVMTrainer extends MappingTrainer {
 		System.exit(1);
 	}
 	
+	/**
+	 * Do_cross_validation.
+	 */
 	private void do_cross_validation() {
 		int i;
 		int total_correct = 0;
@@ -161,6 +194,11 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	/**
+	 * Parse_command_line.
+	 *
+	 * @param argv the argv
+	 */
 	private void parse_command_line(final String argv[]) {
 		int i;
 		svm_print_interface print_func = null; // default printing to stdout
@@ -301,6 +339,11 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	/**
+	 * Read_problem.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void read_problem() throws IOException {
 		final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
 		final Vector<Double> vy = new Vector<Double>();
@@ -360,6 +403,12 @@ public class SVMTrainer extends MappingTrainer {
 		fp.close();
 	}
 	
+	/**
+	 * Run.
+	 *
+	 * @param argv the argv
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@SuppressWarnings ("unused")
 	private void run(final String argv[]) throws IOException {
 		parse_command_line(argv);

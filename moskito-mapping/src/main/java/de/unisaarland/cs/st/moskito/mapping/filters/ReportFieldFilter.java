@@ -17,12 +17,17 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ReportFieldFilter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class ReportFieldFilter extends MappingFilter {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -54,6 +59,12 @@ public class ReportFieldFilter extends MappingFilter {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
+	 */
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {

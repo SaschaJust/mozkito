@@ -22,16 +22,21 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingStrategyProcessor.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MappingStrategyProcessor extends Filter<Mapping> {
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
+	 * Instantiates a new mapping strategy processor.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param finder the finder
+	 * @param strategy the strategy
 	 */
 	public MappingStrategyProcessor(final Group threadGroup, final MappingSettings settings,
 	        final MappingFinder finder, final MappingStrategy strategy) {

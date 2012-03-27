@@ -22,21 +22,28 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * Selectors analyze a {@link MappableEntity} and find possible candidates that can be mapped to the entity, due to some
  * relation.
@@ -46,18 +53,25 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  */
 public abstract class MappingSelector extends Node {
 	
+	/**
+	 * The Class Options.
+	 */
 	static class Options extends ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
 		
+		/** The Constant TAG. */
 		static final String         TAG         = "selectors";                                      //$NON-NLS-1$
+		
+		/** The Constant DESCRIPTION. */
 		static final String         DESCRIPTION = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
 		                                                                                             
+		/** The selectors option. */
 		private SetArgument.Options selectorsOption;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, TAG, DESCRIPTION, requirements);
@@ -164,11 +178,63 @@ public abstract class MappingSelector extends Node {
 		
 	}
 	
+	/** The settings. */
+	private ISettings settings;
+	
+	/** The options. */
+	private Options   options;
+	
 	/**
-	 * @param entity
-	 *            the element under subject
-	 * @param targetType
-	 *            the target entity type of the candidate
+	 * Gets the anchor.
+	 * 
+	 * @param settings
+	 *            the settings
+	 * @return the anchor
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 */
+	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
+	                                                                              ArgumentSetRegistrationException,
+	                                                                              ArgumentRegistrationException {
+		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingSelector.Options.TAG);
+		
+		if (anchor == null) {
+			if (this.options == null) {
+				this.options = new MappingSelector.Options(settings.getRoot(), Requirement.required);
+			}
+			anchor = ArgumentSetFactory.create(this.options);
+		}
+		
+		return anchor;
+	}
+	
+	/**
+	 * Gets the settings.
+	 *
+	 * @return the settings
+	 */
+	public final ISettings getSettings() {
+		// PRECONDITIONS
+		
+		try {
+			return this.settings;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.settings, "Field '%s' in '%s'.", "settings", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Parses the.
+	 *
+	 * @param <T> the generic type
+	 * @param entity the element under subject
+	 * @param targetType the target entity type of the candidate
+	 * @param util the util
 	 * @return a list of {@link Candidate}s that might be mapped to the given entity
 	 */
 	public abstract <T extends MappableEntity> List<T> parse(MappableEntity entity,
@@ -176,10 +242,28 @@ public abstract class MappingSelector extends Node {
 	                                                         PersistenceUtil util);
 	
 	/**
-	 * @param from
-	 *            the 'from' entity
-	 * @param to
-	 *            the 'to' entity
+	 * Sets the settings.
+	 * 
+	 * @param settings
+	 *            the settings to set
+	 */
+	protected final void setSettings(@NotNull final ISettings settings) {
+		// PRECONDITIONS
+		
+		try {
+			this.settings = settings;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.settings, settings,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Supports.
+	 *
+	 * @param from the 'from' entity
+	 * @param to the 'to' entity
 	 * @return true if the selector supports this combination of entities
 	 */
 	public abstract boolean supports(Class<?> from,

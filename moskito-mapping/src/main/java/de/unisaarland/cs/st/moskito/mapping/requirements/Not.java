@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
  * The not expression evaluates to true if the innerexpression evaluates to false. Evaluates to true otherwise.
  * 
@@ -25,11 +26,13 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public class Not extends Expression {
 	
+	/** The expression. */
 	private final Expression expression;
 	
 	/**
-	 * @param expression
-	 *            the inner expression used in the evaluation
+	 * Instantiates a new not.
+	 *
+	 * @param expression the inner expression used in the evaluation
 	 */
 	public Not(final Expression expression) {
 		this.expression = expression;
@@ -48,6 +51,8 @@ public class Not extends Expression {
 	}
 	
 	/**
+	 * Gets the expression.
+	 *
 	 * @return the inner expression
 	 */
 	public Expression getExpression() {

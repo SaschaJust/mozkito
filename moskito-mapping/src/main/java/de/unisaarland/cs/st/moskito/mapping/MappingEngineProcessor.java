@@ -25,16 +25,21 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingEngineProcessor.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MappingEngineProcessor extends Filter<Mapping> {
 	
 	/**
-	 * @param threadGroup
-	 * @param settings
-	 * @param persistenceUtil
+	 * Instantiates a new mapping engine processor.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param finder the finder
+	 * @param engine the engine
 	 */
 	public MappingEngineProcessor(final Group threadGroup, final MappingSettings settings,
 	        final MappingFinder finder, final MappingEngine engine) {

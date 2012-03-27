@@ -31,15 +31,21 @@ import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MappingChain.
+ */
 public class MappingChain extends Chain<MappingSettings> {
 	
+	/** The database arguments. */
 	private final DatabaseOptions databaseArguments;
+	
+	/** The thread pool. */
 	private final Pool            threadPool;
 	
 	/**
-	 * @throws SettingsParseError
-	 * @throws ArgumentRegistrationException
-	 * 
+	 * Instantiates a new mapping chain.
+	 *
 	 */
 	public MappingChain() {
 		super(new MappingSettings(), "mapping"); //$NON-NLS-1$

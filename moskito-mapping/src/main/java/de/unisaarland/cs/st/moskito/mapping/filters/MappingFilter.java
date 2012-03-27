@@ -18,20 +18,29 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MappingFilter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class MappingFilter extends Node {
 	
+	/**
+	 * Instantiates a new mapping filter.
+	 */
 	public MappingFilter() {
 		
 	}
 	
 	/**
-	 * @param transaction
-	 * @param report
-	 * @param score
+	 * Filter.
+	 * 
+	 * @param mapping
+	 *            the mapping
+	 * @param triggeringFilters
+	 *            the triggering filters
+	 * @return the set<? extends mapping filter>
 	 */
 	@NoneNull
 	public abstract Set<? extends MappingFilter> filter(final IMapping mapping,

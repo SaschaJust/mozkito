@@ -28,6 +28,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
+// TODO: Auto-generated Javadoc
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from' entity in the body text.
  * 

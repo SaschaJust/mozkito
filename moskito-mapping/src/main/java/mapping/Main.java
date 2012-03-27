@@ -17,9 +17,11 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.MappingChain;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Main.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Main {
 	
@@ -28,7 +30,9 @@ public class Main {
 	}
 	
 	/**
-	 * @param args
+	 * The main method.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(final String[] args) {
 		try {

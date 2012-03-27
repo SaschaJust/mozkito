@@ -41,26 +41,43 @@ import org.apache.lucene.util.Version;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class SearchEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class SearchEngine extends MappingEngine {
 	
+	/** The storage. */
 	private LuceneStorage          storage;
 	
+	/** The language. */
 	private String                 language;
 	
+	/** The min tokens. */
 	private Long                   minTokens;
+	
+	/** The language argument. */
 	private StringArgument         languageArgument;
+	
+	/** The language option. */
 	private StringArgument.Options languageOption;
+	
+	/** The min tokens argument. */
 	private LongArgument           minTokensArgument;
+	
+	/** The min tokens option. */
 	private LongArgument.Options   minTokensOption;
 	
 	/**
+	 * Builds the query.
+	 * 
 	 * @param queryString
+	 *            the query string
 	 * @param queryParser
-	 * @return
+	 *            the query parser
+	 * @return the query
 	 */
 	protected Query buildQuery(String queryString,
 	                           final QueryParser queryParser) {
@@ -89,6 +106,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the language.
+	 * 
 	 * @return the language
 	 */
 	private final String getLanguage() {
@@ -103,6 +122,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the language argument.
+	 * 
 	 * @return the languageArgument
 	 */
 	private final StringArgument getLanguageArgument() {
@@ -118,6 +139,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the language option.
+	 * 
 	 * @return the languageOption
 	 */
 	private final StringArgument.Options getLanguageOption() {
@@ -132,6 +155,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the min tokens.
+	 * 
 	 * @return the minTokens
 	 */
 	private final Long getMinTokens() {
@@ -146,6 +171,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the min tokens argument.
+	 * 
 	 * @return the minTokensArgument
 	 */
 	private final LongArgument getMinTokensArgument() {
@@ -161,6 +188,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the min tokens option.
+	 * 
 	 * @return the minTokensOption
 	 */
 	private final LongArgument.Options getMinTokensOption() {
@@ -176,6 +205,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the storage.
+	 * 
 	 * @return the storage
 	 */
 	public final LuceneStorage getStorage() {
@@ -292,6 +323,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the language.
+	 * 
 	 * @param language
 	 *            the language to set
 	 */
@@ -309,6 +342,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the language argument.
+	 * 
 	 * @param languageArgument
 	 *            the languageArgument to set
 	 */
@@ -326,6 +361,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the language option.
+	 * 
 	 * @param languageOption
 	 *            the languageOption to set
 	 */
@@ -343,6 +380,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the min tokens.
+	 * 
 	 * @param minTokens
 	 *            the minTokens to set
 	 */
@@ -360,6 +399,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the min tokens argument.
+	 * 
 	 * @param minTokensArgument
 	 *            the minTokensArgument to set
 	 */
@@ -377,6 +418,8 @@ public abstract class SearchEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the min tokens option.
+	 * 
 	 * @param options
 	 *            the minTokensOption to set
 	 */

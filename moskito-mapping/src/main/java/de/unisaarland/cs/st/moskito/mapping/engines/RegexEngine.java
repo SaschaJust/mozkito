@@ -42,25 +42,36 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class RegexEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class RegexEngine extends MappingEngine {
 	
 	/**
-	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * The Class Matcher.
 	 * 
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
 	 */
 	private class Matcher {
 		
+		/** The regex. */
 		private Regex  regex;
+		
+		/** The score. */
 		private double score;
 		
 		/**
+		 * Instantiates a new matcher.
+		 * 
 		 * @param score
+		 *            the score
 		 * @param pattern
+		 *            the pattern
 		 * @param options
+		 *            the options
 		 */
 		public Matcher(final String score, final String pattern, final String options) {
 			setScore(Double.parseDouble(score));
@@ -70,6 +81,10 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
+		 * Gets the regex.
+		 * 
+		 * @param id
+		 *            the id
 		 * @return the regex
 		 */
 		public Regex getRegex(final String id) {
@@ -77,6 +92,8 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
+		 * Gets the score.
+		 * 
 		 * @return the score
 		 */
 		public double getScore() {
@@ -84,6 +101,8 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
+		 * Sets the regex.
+		 * 
 		 * @param regex
 		 *            the regex to set
 		 */
@@ -92,6 +111,8 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		/**
+		 * Sets the score.
+		 * 
 		 * @param score
 		 *            the score to set
 		 */
@@ -120,14 +141,21 @@ public class RegexEngine extends MappingEngine {
 	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)" Pattern.CASE_INSENSITIVE 1.0
 	 * "fixing bug #({match}##ID##)" Pattern.CASE_INSENSITIVE
 	 */
+	/** The matchers. */
 	private Collection<Matcher> matchers;
 	
+	/** The config option. */
 	private URIArgument.Options configOption;
+	
+	/** The config argument. */
 	private URIArgument         configArgument;
 	
+	/** The config. */
 	private URI                 config;
 	
 	/**
+	 * Gets the config.
+	 * 
 	 * @return the config
 	 */
 	private final URI getConfig() {
@@ -142,6 +170,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the config argument.
+	 * 
 	 * @return the configArgument
 	 */
 	private final URIArgument getConfigArgument() {
@@ -156,6 +186,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the config option.
+	 * 
 	 * @return the configOption
 	 */
 	private final URIArgument.Options getConfigOption() {
@@ -179,6 +211,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Gets the matchers.
+	 * 
 	 * @return the matchers
 	 */
 	private Collection<Matcher> getMatchers() {
@@ -244,8 +278,8 @@ public class RegexEngine extends MappingEngine {
 	/**
 	 * Provide.
 	 * 
-	 * @param anchorSet
-	 *            the anchor set
+	 * @param root
+	 *            the root
 	 * @return the argument set
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
@@ -318,6 +352,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the config.
+	 * 
 	 * @param config
 	 *            the config to set
 	 */
@@ -333,6 +369,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the config argument.
+	 * 
 	 * @param configArgument
 	 *            the configArgument to set
 	 */
@@ -349,6 +387,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the config option.
+	 * 
 	 * @param configOption
 	 *            the configOption to set
 	 */
@@ -365,6 +405,8 @@ public class RegexEngine extends MappingEngine {
 	}
 	
 	/**
+	 * Sets the matchers.
+	 * 
 	 * @param matchers
 	 *            the matchers to set
 	 */

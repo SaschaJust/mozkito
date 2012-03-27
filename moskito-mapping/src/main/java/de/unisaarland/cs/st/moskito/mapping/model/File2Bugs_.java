@@ -10,11 +10,18 @@ import javax.persistence.metamodel.SingularAttribute;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class File2Bugs_.
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.mapping.model.File2Bugs.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Fri Sep 02 15:37:56 CEST 2011")
 public class File2Bugs_ {
 	
+	/** The file. */
 	public static volatile SingularAttribute<File2Bugs, RCSFile> file;
+	
+	/** The reports. */
 	public static volatile SetAttribute<File2Bugs, Report>       reports;
 }

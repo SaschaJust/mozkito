@@ -15,14 +15,18 @@ package de.unisaarland.cs.st.moskito.mapping.storages;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingStorage.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class MappingStorage extends Node {
 	
 	/**
-	 * @param util
+	 * Load data.
+	 *
+	 * @param util the util
 	 */
 	public void loadData(final PersistenceUtil util) {
 	}

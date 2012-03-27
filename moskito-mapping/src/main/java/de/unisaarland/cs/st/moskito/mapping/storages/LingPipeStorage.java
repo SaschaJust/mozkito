@@ -14,18 +14,23 @@ package de.unisaarland.cs.st.moskito.mapping.storages;
 
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class LingPipeStorage.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class LingPipeStorage extends MappingStorage {
 	
 	/**
-	 * 
+	 * Instantiates a new ling pipe storage.
 	 */
 	public LingPipeStorage() {
 	}
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -46,6 +51,12 @@ public class LingPipeStorage extends MappingStorage {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
+	 */
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {

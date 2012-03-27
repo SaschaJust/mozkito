@@ -28,19 +28,23 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TransactionReader.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TransactionReader extends Source<RCSTransaction> {
 	
+	/** The iterator. */
 	private Iterator<RCSTransaction> iterator;
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
-	 * @param persistenceUtil
+	 * Instantiates a new transaction reader.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
 	 */
 	public TransactionReader(final Group threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {

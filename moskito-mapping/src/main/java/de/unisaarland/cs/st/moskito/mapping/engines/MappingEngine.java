@@ -47,6 +47,7 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
+// TODO: Auto-generated Javadoc
 /**
  * 
  * Engines analyze two candidates to match certain criteria and score neutral (0) if they don't match or

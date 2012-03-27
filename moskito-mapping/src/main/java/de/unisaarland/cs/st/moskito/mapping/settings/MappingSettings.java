@@ -18,20 +18,21 @@ import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingSettings.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MappingSettings extends Settings {
 	
 	/**
 	 * Add the settings set for the database.
-	 * 
-	 * @param isRequired
-	 *            Set to <code>true</code> if the database settings required.
-	 * @return
-	 * @throws ArgumentRegistrationException
-	 * @throws DuplicateArgumentException
+	 *
+	 * @param requirement the requirement
+	 * @param unit the unit
+	 * @return the database options
+	 * @throws ArgumentRegistrationException the argument registration exception
 	 */
 	public DatabaseOptions setDatabaseArgs(final Requirement requirement,
 	                                         final String unit) throws ArgumentRegistrationException {
@@ -40,9 +41,12 @@ public class MappingSettings extends Settings {
 	}
 	
 	/**
-	 * @param isRequired
-	 * @return
-	 * @throws ArgumentRegistrationException
+	 * Sets the mapping args.
+	 *
+	 * @param set the set
+	 * @param requirement the requirement
+	 * @return the mapping arguments
+	 * @throws ArgumentRegistrationException the argument registration exception
 	 */
 	public MappingArguments setMappingArgs(final ArgumentSet<?> set,
 	                                       final Requirement requirement) throws ArgumentRegistrationException {

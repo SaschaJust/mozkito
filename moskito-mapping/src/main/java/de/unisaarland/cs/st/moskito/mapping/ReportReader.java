@@ -28,19 +28,23 @@ import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ReportReader.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class ReportReader extends Source<Report> {
 	
+	/** The iterator. */
 	private Iterator<Report> iterator;
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
-	 * @param persistenceUtil
+	 * Instantiates a new report reader.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
 	 */
 	public ReportReader(final Group threadGroup, final MappingSettings settings,
 	        final PersistenceUtil persistenceUtil) {

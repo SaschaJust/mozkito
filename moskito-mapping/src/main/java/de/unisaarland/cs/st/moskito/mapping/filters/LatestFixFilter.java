@@ -17,15 +17,20 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class LatestFixFilter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class LatestFixFilter extends MappingFilter {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
+	 */
+	/**
+	 * After parse.
 	 */
 	@Override
 	public void afterParse() {
@@ -58,6 +63,12 @@ public class LatestFixFilter extends MappingFilter {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
+	 */
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {

@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
@@ -27,23 +27,41 @@ import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MappingArguments.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MappingArguments extends ArgumentSet<MappingFinder> {
 	
+	/** The engines. */
 	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
+	
+	/** The strategies. */
 	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
+	
+	/** The filters. */
 	private final Set<MappingFilter>   filters    = new HashSet<MappingFilter>();
+	
+	/** The selectors. */
 	private final Set<MappingSelector> selectors  = new HashSet<MappingSelector>();
+	
+	/** The splitters. */
 	private final Set<MappingSplitter> splitters  = new HashSet<MappingSplitter>();
+	
+	/** The trainers. */
 	private final Set<MappingTrainer>  trainers   = new HashSet<MappingTrainer>();
 	
 	/**
+	 * Instantiates a new mapping arguments.
+	 * 
 	 * @param argumentSet
+	 *            the argument set
 	 * @param requirement
+	 *            the requirement
 	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	public MappingArguments(final ArgumentSet<?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
@@ -69,13 +87,17 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the engines.
+	 * 
+	 * @return the engines
 	 */
 	public Set<MappingEngine> getEngines() {
 		return this.engines;
 	}
 	
 	/**
+	 * Gets the filters.
+	 * 
 	 * @return the filters
 	 */
 	public final Set<MappingFilter> getFilters() {
@@ -83,6 +105,8 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 	}
 	
 	/**
+	 * Gets the selectors.
+	 * 
 	 * @return the selectors
 	 */
 	public final Set<MappingSelector> getSelectors() {
@@ -90,6 +114,8 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 	}
 	
 	/**
+	 * Gets the splitters.
+	 * 
 	 * @return the splitters
 	 */
 	public final Set<MappingSplitter> getSplitters() {
@@ -97,13 +123,17 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the strategies.
+	 * 
+	 * @return the strategies
 	 */
 	public Set<MappingStrategy> getStrategies() {
 		return this.strategies;
 	}
 	
 	/**
+	 * Gets the trainers.
+	 * 
 	 * @return the trainers
 	 */
 	public final Set<MappingTrainer> getTrainers() {

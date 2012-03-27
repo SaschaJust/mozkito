@@ -17,12 +17,17 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ByPassFilter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class ByPassFilter extends MappingFilter {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -50,6 +55,12 @@ public class ByPassFilter extends MappingFilter {
 		
 	}
 	
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
 		// TODO Auto-generated method stub

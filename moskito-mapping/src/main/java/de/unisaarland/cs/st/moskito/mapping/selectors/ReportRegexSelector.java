@@ -33,23 +33,19 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ReportRegexSelector.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ReportRegexSelector extends MappingSelector {
 	
-	private String         pattern;
-	private StringArgument patternArgument;
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
-	 */
-	@Override
-	public void afterParse() {
-		setPattern(this.patternArgument.getValue());
-	}
+	/** The pattern. */
+	private String              pattern;
 	
 	/*
 	 * (non-Javadoc)
@@ -57,10 +53,12 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public String getDescription() {
-		return "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
+		return DESCRIPTION;
 	}
 	
 	/**
+	 * Gets the pattern.
+	 * 
 	 * @return the pattern
 	 */
 	public String getPattern() {
@@ -85,12 +83,6 @@ public class ReportRegexSelector extends MappingSelector {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		this.patternArgument = new StringArgument(set,, set.getRequirements());
-		return true;
 	}
 	
 	/*
@@ -159,6 +151,8 @@ public class ReportRegexSelector extends MappingSelector {
 	}
 	
 	/**
+	 * Sets the pattern.
+	 * 
 	 * @param pattern
 	 *            the pattern to set
 	 */

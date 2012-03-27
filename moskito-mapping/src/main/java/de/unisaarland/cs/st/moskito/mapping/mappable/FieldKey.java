@@ -17,14 +17,16 @@ import java.util.Collection;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum FieldKey.
+ */
 public enum FieldKey {
-	/**
-	 * the id of the MappableEntity (String)
-	 */
+	
+	/** the id of the MappableEntity (String). */
 	ID,
-	/**
-	 * the body text of the {@link MappableEntity} (String)
-	 */
+	
+	/** the body text of the {@link MappableEntity} (String). */
 	BODY,
 	/**
 	 * the author of the {@link MappableEntity}, i.e. the one that initially created the original instance encapsulated
@@ -54,13 +56,11 @@ public enum FieldKey {
 	 * <code>Collection<Person>/Person</code>)
 	 */
 	CHANGER,
-	/**
-	 * the person that closed/committed/sent the original entity
-	 */
+	
+	/** the person that closed/committed/sent the original entity. */
 	CLOSER,
-	/**
-	 * @see FieldKey#FILE
-	 */
+	
+	/** The PATH. @see FieldKey#FILE */
 	PATH,
 	/**
 	 * the comment(s)/reply(replies) to an encapsulated entity. If requested without index, represents a
@@ -69,20 +69,16 @@ public enum FieldKey {
 	 * <code>Collection<Comment>/Comment</code>)
 	 */
 	COMMENT,
-	/**
-	 * 
-	 */
+	
+	/** The FILE. */
 	FILE,
-	/**
-	 *  
-	 */
+	
+	/** The TYPE. */
 	TYPE,
-	/**
-	 * 
-	 */
+	
+	/** The SUMMARY. */
 	SUMMARY,
-	/**
-	 * 
-	 */
+	
+	/** The RESOLUTIO n_ timestamp. */
 	RESOLUTION_TIMESTAMP;
 }

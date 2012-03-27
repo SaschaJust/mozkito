@@ -16,12 +16,12 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
- * The superclass of all {@link Expression}s that are used to express the support of an engine for specific instances of
+ * The superclass of all {@link Expression}s that are used to express the support of an engine for specific instances of.
+ *
  * {@link MappableEntity}s.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Expression {
 	
@@ -65,10 +65,12 @@ public abstract class Expression {
 	                              final Index oneEquals);
 	
 	/**
-	 * @param target1
-	 * @param target2
-	 * @param oneEquals
-	 * @return
+	 * Gets the failure cause.
+	 *
+	 * @param target1 the target1
+	 * @param target2 the target2
+	 * @param oneEquals the one equals
+	 * @return the failure cause
 	 */
 	public abstract List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
 	                                                 final Class<? extends MappableEntity> target2,

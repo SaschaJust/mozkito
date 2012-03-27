@@ -26,12 +26,17 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Files2BugsSplitter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Files2BugsSplitter extends MappingSplitter {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -47,6 +52,13 @@ public class Files2BugsSplitter extends MappingSplitter {
 		return "Creates a table that puts files into relation to their bugs.";
 	}
 	
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
 		// TODO Auto-generated method stub

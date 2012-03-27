@@ -16,12 +16,17 @@ import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class SVMStrategy.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class SVMStrategy extends MappingStrategy {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -37,6 +42,12 @@ public class SVMStrategy extends MappingStrategy {
 		return "Maps according to the trained model on known mappings with the given feature vectors from the MappingEngines.";
 	}
 	
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
 		// TODO Auto-generated method stub
@@ -44,7 +55,7 @@ public class SVMStrategy extends MappingStrategy {
 	}
 	
 	/**
-	 * 
+	 * Load model.
 	 */
 	@SuppressWarnings ("unused")
 	private void loadModel() {

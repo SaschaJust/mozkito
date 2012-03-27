@@ -14,21 +14,23 @@ package de.unisaarland.cs.st.moskito.mapping.training;
 
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingTrainer.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class MappingTrainer extends Node {
 	
 	/**
-	 * 
+	 * Instantiates a new mapping trainer.
 	 */
 	public MappingTrainer() {
 		
 	}
 	
 	/**
-	 * 
+	 * Train.
 	 */
 	public abstract void train();
 }

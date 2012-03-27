@@ -33,9 +33,11 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class CompletedOrderEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CompletedOrderEngine extends MappingEngine {
 	

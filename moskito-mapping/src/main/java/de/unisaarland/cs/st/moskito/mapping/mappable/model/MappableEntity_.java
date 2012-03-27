@@ -6,11 +6,18 @@ package de.unisaarland.cs.st.moskito.mapping.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MappableEntity_.
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Nov 03 18:46:07 CET 2011")
 public class MappableEntity_ {
 	
+	/** The generated id. */
 	public static volatile SingularAttribute<MappableEntity, Long>    generatedId;
+	
+	/** The test. */
 	public static volatile SingularAttribute<MappableEntity, Integer> test;
 }

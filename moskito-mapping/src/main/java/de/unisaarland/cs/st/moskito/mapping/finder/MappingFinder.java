@@ -37,26 +37,46 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingFinder.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class MappingFinder {
 	
+	/** The engines. */
 	private final Map<String, MappingEngine>                             engines    = new HashMap<String, MappingEngine>();
+	
+	/** The filters. */
 	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
+	
+	/** The selectors. */
 	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
+	
+	/** The splitters. */
 	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
+	
+	/** The storages. */
 	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	
+	/** The strategies. */
 	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
+	
+	/** The trainers. */
 	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
 	
+	/**
+	 * Instantiates a new mapping finder.
+	 */
 	public MappingFinder() {
 		
 	}
 	
 	/**
-	 * @param engine
+	 * Adds the engine.
+	 *
+	 * @param engine the engine
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
@@ -65,7 +85,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param filter
+	 * Adds the filter.
+	 *
+	 * @param filter the filter
 	 */
 	public void addFilter(final MappingFilter filter) {
 		this.filters.put(filter.getClass(), filter);
@@ -74,7 +96,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param selector
+	 * Adds the selector.
+	 *
+	 * @param selector the selector
 	 */
 	public void addSelector(final MappingSelector selector) {
 		this.selectors.put(selector.getClass(), selector);
@@ -82,7 +106,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param splitter
+	 * Adds the splitter.
+	 *
+	 * @param splitter the splitter
 	 */
 	public void addSplitter(final MappingSplitter splitter) {
 		this.splitters.put(splitter.getClass(), splitter);
@@ -90,7 +116,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param storage
+	 * Adds the storage.
+	 *
+	 * @param storage the storage
 	 */
 	public void addStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
@@ -98,7 +126,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param strategy
+	 * Adds the strategy.
+	 *
+	 * @param strategy the strategy
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
 		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
@@ -106,7 +136,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param trainer
+	 * Adds the trainer.
+	 *
+	 * @param trainer the trainer
 	 */
 	public void addTrainer(final MappingTrainer trainer) {
 		this.trainers.put(trainer.getClass(), trainer);
@@ -114,8 +146,10 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param mapping
-	 * @return
+	 * Filter.
+	 *
+	 * @param mapping the mapping
+	 * @return the filtered mapping
 	 */
 	public FilteredMapping filter(final IMapping mapping) {
 		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
@@ -129,11 +163,13 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param <K>
-	 * @param <V>
-	 * @param fromClazz
-	 * @param toClazz
-	 * @return
+	 * Find selectors.
+	 *
+	 * @param <K> the key type
+	 * @param <V> the value type
+	 * @param fromClazz the from clazz
+	 * @param toClazz the to clazz
+	 * @return the list
 	 */
 	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz,
 	                                                   final Class<V> toClazz) {
@@ -156,11 +192,13 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param <K>
-	 * @param <V>
-	 * @param source
-	 * @param targetClass
-	 * @return
+	 * Gets the candidates.
+	 *
+	 * @param <T> the generic type
+	 * @param source the source
+	 * @param targetClass the target class
+	 * @param util the util
+	 * @return the candidates
 	 */
 	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
 	                                                       final Class<T> targetClass,
@@ -182,7 +220,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param persistenceUtil
+	 * Load data.
+	 *
+	 * @param persistenceUtil the persistence util
 	 */
 	public void loadData(final PersistenceUtil persistenceUtil) {
 		for (final Class<? extends MappingStorage> key : this.storages.keySet()) {
@@ -191,8 +231,11 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param score
-	 * @return
+	 * Map.
+	 *
+	 * @param strategy the strategy
+	 * @param mapping the mapping
+	 * @return the mapping
 	 */
 	public Mapping map(final MappingStrategy strategy,
 	                   final Mapping mapping) {
@@ -206,7 +249,9 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param accessor
+	 * Provide storages.
+	 *
+	 * @param accessor the accessor
 	 */
 	private void provideStorages(final Node accessor) {
 		for (final Class<? extends MappingStorage> key : accessor.storageDependency()) {
@@ -226,8 +271,11 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @param transaction
-	 * @param report
+	 * Score.
+	 *
+	 * @param engine the engine
+	 * @param element1 the element1
+	 * @param element2 the element2
 	 * @return the computed scoring for transaction/report relation
 	 */
 	public Mapping score(final MappingEngine engine,
@@ -260,7 +308,11 @@ public class MappingFinder {
 	}
 	
 	/**
-	 * @return
+	 * Split.
+	 *
+	 * @param data the data
+	 * @param util the util
+	 * @return the list
 	 */
 	public List<Annotated> split(final FilteredMapping data,
 	                             final PersistenceUtil util) {

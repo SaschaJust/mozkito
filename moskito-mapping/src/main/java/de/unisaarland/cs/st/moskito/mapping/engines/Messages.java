@@ -16,16 +16,26 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Messages.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Messages {
 	
+	/** The Constant BUNDLE_NAME. */
 	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.mapping.engines";       //$NON-NLS-1$
 	                                                                                                             
+	/** The Constant RESOURCE_BUNDLE. */
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, Locale.GERMANY);
 	
+	/**
+	 * Gets the string.
+	 *
+	 * @param key the key
+	 * @return the string
+	 */
 	public static String getString(final String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
@@ -34,6 +44,9 @@ public class Messages {
 		}
 	}
 	
+	/**
+	 * Instantiates a new messages.
+	 */
 	private Messages() {
 	}
 }

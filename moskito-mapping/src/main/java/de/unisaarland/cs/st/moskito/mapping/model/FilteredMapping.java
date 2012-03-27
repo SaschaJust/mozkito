@@ -25,28 +25,35 @@ import javax.persistence.OneToOne;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class FilteredMapping.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Entity
 public class FilteredMapping implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4228229393714955483L;
+	
+	/** The mapping. */
 	private IMapping           mapping;
+	
+	/** The filters. */
 	private List<String>      filters          = new LinkedList<String>();
 	
 	/**
-	 * used by persistence provider only
+	 * used by persistence provider only.
 	 */
 	public FilteredMapping() {
 	}
 	
 	/**
-	 * @param score
+	 * Instantiates a new filtered mapping.
+	 *
+	 * @param mapping the mapping
+	 * @param triggeringFilters the triggering filters
 	 */
 	public FilteredMapping(final IMapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
 		for (final MappingFilter filter : triggeringFilters) {
@@ -55,6 +62,8 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
+	 * Gets the filters.
+	 *
 	 * @return the filters
 	 */
 	@ElementCollection
@@ -63,6 +72,8 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
+	 * Gets the mapping.
+	 *
 	 * @return the mapping
 	 */
 	@Id
@@ -72,16 +83,18 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
-	 * @param filters
-	 *            the filters to set
+	 * Sets the filters.
+	 *
+	 * @param filters the filters to set
 	 */
 	public void setFilters(final List<String> filters) {
 		this.filters = filters;
 	}
 	
 	/**
-	 * @param mapping
-	 *            the mapping to set
+	 * Sets the mapping.
+	 *
+	 * @param mapping the mapping to set
 	 */
 	public void setMapping(final IMapping mapping) {
 		this.mapping = mapping;

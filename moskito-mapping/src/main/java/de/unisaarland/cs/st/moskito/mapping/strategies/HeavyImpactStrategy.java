@@ -17,6 +17,7 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
+// TODO: Auto-generated Javadoc
 /**
  * Only consider the feature with the highest impact.
  * 
@@ -25,6 +26,9 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  */
 public class HeavyImpactStrategy extends MappingStrategy {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -40,6 +44,12 @@ public class HeavyImpactStrategy extends MappingStrategy {
 		return "Maps according to the highest confidence given by a MappingEngine.";
 	}
 	
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
 		// TODO Auto-generated method stub

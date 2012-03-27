@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
+// TODO: Auto-generated Javadoc
 /**
  * The all expression evaluates to true if and only if all checks on the inner expressions evaluate to true. Evaluates
  * to false otherwise.
@@ -33,19 +34,22 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public final class All extends Expression {
 	
+	/** The expressions. */
 	private final Set<Expression> expressions = new HashSet<Expression>();
 	
 	/**
-	 * @param expressions
-	 *            a collection of inner expressions
+	 * Instantiates a new all.
+	 *
+	 * @param expressions a collection of inner expressions
 	 */
 	public All(final Collection<Expression> expressions) {
 		this.expressions.addAll(this.expressions);
 	}
 	
 	/**
-	 * @param expressions
-	 *            a collection of inner expressions
+	 * Instantiates a new all.
+	 *
+	 * @param expressions a collection of inner expressions
 	 */
 	public All(final Expression... expressions) {
 		CollectionUtils.addAll(this.expressions, expressions);

@@ -23,33 +23,54 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class MappingEngineFeature.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @Embeddable
 public class MappingEngineFeature implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long                                        serialVersionUID = 4097360257338824107L;
+	
+	/** The confidence. */
 	private double                                                   confidence;
+	
+	/** The from field name. */
 	private String                                                   fromFieldName;
+	
+	/** The to field name. */
 	private String                                                   toFieldName;
+	
+	/** The to substring. */
 	private String                                                   toSubstring;
+	
+	/** The from substring. */
 	private String                                                   fromSubstring;
+	
+	/** The fq class name. */
 	private String                                                   fqClassName;
+	
+	/** The Constant cache. */
 	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
-	 * used by persistence provider only
+	 * used by persistence provider only.
 	 */
 	public MappingEngineFeature() {
 	}
 	
 	/**
-	 * @param confidence
-	 * @param fromFieldName
-	 * @param fromSubstring
-	 * @param mappingEngine
+	 * Instantiates a new mapping engine feature.
+	 *
+	 * @param confidence the confidence
+	 * @param fromFieldName the from field name
+	 * @param fromSubstring the from substring
+	 * @param toFieldName the to field name
+	 * @param toSubstring the to substring
+	 * @param mappingEngine the mapping engine
 	 */
 	public MappingEngineFeature(final double confidence, final String fromFieldName, final String fromSubstring,
 	        final String toFieldName, final String toSubstring, final Class<? extends MappingEngine> mappingEngine) {
@@ -66,6 +87,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the confidence.
+	 *
 	 * @return the confidence
 	 */
 	public double getConfidence() {
@@ -73,7 +96,9 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the engine.
+	 *
+	 * @return the engine
 	 */
 	@Transient
 	public Class<? extends MappingEngine> getEngine() {
@@ -101,6 +126,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the fq class name.
+	 *
 	 * @return the fqClassName
 	 */
 	public String getFqClassName() {
@@ -108,6 +135,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the report field name.
+	 *
 	 * @return the reportFieldName
 	 */
 	public String getReportFieldName() {
@@ -115,6 +144,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the report substring.
+	 *
 	 * @return the reportSubstring
 	 */
 	public String getReportSubstring() {
@@ -122,6 +153,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the transaction field name.
+	 *
 	 * @return the transactionFieldName
 	 */
 	public String getTransactionFieldName() {
@@ -129,6 +162,8 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
+	 * Gets the transaction substring.
+	 *
 	 * @return the transactionSubstring
 	 */
 	public String getTransactionSubstring() {
@@ -136,48 +171,54 @@ public class MappingEngineFeature implements Annotated {
 	}
 	
 	/**
-	 * @param confidence
-	 *            the confidence to set
+	 * Sets the confidence.
+	 *
+	 * @param confidence the confidence to set
 	 */
 	public void setConfidence(final double confidence) {
 		this.confidence = confidence;
 	}
 	
 	/**
-	 * @param fqClassName
-	 *            the fqClassName to set
+	 * Sets the fq class name.
+	 *
+	 * @param fqClassName the fqClassName to set
 	 */
 	public void setFqClassName(final String fqClassName) {
 		this.fqClassName = fqClassName;
 	}
 	
 	/**
-	 * @param transactionFieldName
-	 *            the transactionFieldName to set
+	 * Sets the from field name.
+	 *
+	 * @param transactionFieldName the transactionFieldName to set
 	 */
 	public void setFromFieldName(final String transactionFieldName) {
 		this.fromFieldName = transactionFieldName;
 	}
 	
 	/**
-	 * @param transactionSubstring
-	 *            the transactionSubstring to set
+	 * Sets the from substring.
+	 *
+	 * @param transactionSubstring the transactionSubstring to set
 	 */
 	public void setFromSubstring(final String transactionSubstring) {
 		this.fromSubstring = transactionSubstring;
 	}
 	
 	/**
-	 * @param reportFieldName
-	 *            the reportFieldName to set
+	 * Sets the to field name.
+	 *
+	 * @param reportFieldName the reportFieldName to set
 	 */
 	public void setToFieldName(final String reportFieldName) {
 		this.toFieldName = reportFieldName;
 	}
 	
 	/**
-	 * @param reportSubstring
-	 *            the reportSubstring to set
+	 * Sets the to substring.
+	 *
+	 * @param reportSubstring the reportSubstring to set
 	 */
 	public void setToSubstring(final String reportSubstring) {
 		this.toSubstring = reportSubstring;

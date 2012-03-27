@@ -18,12 +18,18 @@ import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+// TODO: Auto-generated Javadoc
+
 /**
+ * The Class VetoStrategy.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class VetoStrategy extends MappingStrategy {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
@@ -43,6 +49,12 @@ public class VetoStrategy extends MappingStrategy {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
+	 */
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
 	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {

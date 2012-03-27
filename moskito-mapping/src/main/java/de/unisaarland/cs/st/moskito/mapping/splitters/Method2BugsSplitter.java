@@ -19,30 +19,48 @@ import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class Method2BugsSplitter.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Method2BugsSplitter extends MappingSplitter {
 	
+	/**
+	 * After parse.
+	 */
 	@Override
 	public void afterParse() {
 		// TODO Auto-generated method stub
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#getDescription()
+	 */
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	/**
+	 * Inits the settings.
+	 *
+	 * @param set the set
+	 * @return true, if successful
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 */
 	@Override
 	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#process(de.unisaarland.cs.st.moskito.persistence.PersistenceUtil)
+	 */
 	@Override
 	public List<Annotated> process(final PersistenceUtil util) {
 		// TODO Auto-generated method stub

@@ -6,15 +6,30 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MappingEngineFeature_.
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Fri Sep 02 15:37:56 CEST 2011")
 public class MappingEngineFeature_ {
 	
+	/** The confidence. */
 	public static volatile SingularAttribute<MappingEngineFeature, Double> confidence;
+	
+	/** The fq class name. */
 	public static volatile SingularAttribute<MappingEngineFeature, String> fqClassName;
+	
+	/** The from field name. */
 	public static volatile SingularAttribute<MappingEngineFeature, String> fromFieldName;
+	
+	/** The from substring. */
 	public static volatile SingularAttribute<MappingEngineFeature, String> fromSubstring;
+	
+	/** The to field name. */
 	public static volatile SingularAttribute<MappingEngineFeature, String> toFieldName;
+	
+	/** The to substring. */
 	public static volatile SingularAttribute<MappingEngineFeature, String> toSubstring;
 }
