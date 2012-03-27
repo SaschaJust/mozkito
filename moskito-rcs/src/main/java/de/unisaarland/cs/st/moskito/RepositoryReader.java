@@ -15,6 +15,8 @@
  */
 package de.unisaarland.cs.st.moskito;
 
+import java.util.Iterator;
+
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -23,7 +25,6 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
 
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
@@ -33,7 +34,7 @@ import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
  */
 public class RepositoryReader extends Source<LogEntry> {
 	
-	private LogIterator logIterator;
+	private Iterator<LogEntry> logIterator;
 	
 	/**
 	 * @param threadGroup
@@ -53,8 +54,8 @@ public class RepositoryReader extends Source<LogEntry> {
 				}
 				
 				repository.getTransactionCount();
-				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
-				                                                                 repository.getEndRevision());
+				RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
+				                                                   repository.getEndRevision()).iterator();
 				
 				if (Logger.logInfo()) {
 					Logger.info("Created iterator.");
