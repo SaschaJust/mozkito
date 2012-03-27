@@ -26,16 +26,16 @@ import net.ownhero.dev.kisa.Logger;
 public final class AndamaDataStorage<E> {
 	
 	/** The queue. */
-	private final Queue<Tuple<E, CountDownLatch>>       queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
+	private final Queue<Tuple<E, CountDownLatch>> queue   = new ConcurrentLinkedQueue<Tuple<E, CountDownLatch>>();
 	
 	/** The writers. */
-	private final BlockingDeque<INode<?, E>> writers = new LinkedBlockingDeque<INode<?, E>>();
+	private final BlockingDeque<INode<?, E>>      writers = new LinkedBlockingDeque<INode<?, E>>();
 	
 	/** The readers. */
-	private final BlockingDeque<INode<E, ?>> readers = new LinkedBlockingDeque<INode<E, ?>>();
+	private final BlockingDeque<INode<E, ?>>      readers = new LinkedBlockingDeque<INode<E, ?>>();
 	
 	/** The cache size. */
-	private final int                                   cacheSize;
+	private final int                             cacheSize;
 	
 	/**
 	 * Instantiates a new repo suite data storage.
@@ -55,6 +55,15 @@ public final class AndamaDataStorage<E> {
 	}
 	
 	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
+	 */
+	public String getHandle() {
+		return getClass().getSimpleName();
+	}
+	
+	/**
 	 * Gets the num readers.
 	 * 
 	 * @return the num readers
@@ -62,6 +71,36 @@ public final class AndamaDataStorage<E> {
 	public final int getNumReaders() {
 		return this.readers.size();
 	}
+	
+	// /*
+	// * (non-Javadoc)
+	// * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	// */
+	// @Override
+	// public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	// ArgumentSetRegistrationException,
+	// SettingsParseError {
+	// // PRECONDITIONS
+	// ArgumentSet<?, ?> anchor = anchorSet.getSettings().getAnchor("andama");
+	//
+	// try {
+	//
+	// if (anchor == null) {
+	// anchor = ArgumentSetFactory.create(new AndamaOptions(anchorSet.getSettings().getRoot(),
+	// Requirement.required));
+	// }
+	//
+	// ArgumentFactory.create(new LongArgument.Options(
+	// anchor,
+	// "cachesize",
+	// "determines the cache size (maximum number of entries in a data storage)",
+	// 3000l, Requirement.required));
+	// return anchor;
+	// } finally {
+	// // POSTCONDITIONS
+	// Condition.notNull(anchor, "Field '%s' in %s.", "anchor", getHandle());
+	// }
+	// }
 	
 	/**
 	 * Read.
@@ -235,4 +274,18 @@ public final class AndamaDataStorage<E> {
 			return countDownLatch;
 		}
 	}
+	
+	// /* (non-Javadoc)
+	// * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	// */
+	// @Override
+	// public void init() {
+	// // PRECONDITIONS
+	//
+	// try {
+	// // TODO Auto-generated method stub
+	// } finally {
+	// // POSTCONDITIONS
+	// }
+	// }
 }

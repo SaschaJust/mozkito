@@ -33,6 +33,7 @@ import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
 import net.ownhero.dev.hiari.settings.ISettings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -1403,6 +1404,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 				Logger.error(e.getMessage(), e);
 				Logger.error("Shutting down.");
 			}
+			throw new UnrecoverableError(e);
 		} finally {
 			finish();
 			for (final CountDownLatch latch : this.awaitingLatches) {

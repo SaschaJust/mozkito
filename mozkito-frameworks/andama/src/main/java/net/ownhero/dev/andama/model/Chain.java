@@ -3,6 +3,7 @@
  */
 package net.ownhero.dev.andama.model;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
@@ -59,6 +60,10 @@ public abstract class Chain<T extends Settings> extends Thread {
 	@Override
 	public final void run() {
 		if (!this.shutdown) {
+			if (getSettings().helpRequested()) {
+				System.err.println(getSettings().getHelpString());
+				throw new Shutdown("help requested"); //$NON-NLS-1$
+			}
 			setup();
 			if (!this.shutdown) {
 				getPool().execute();
