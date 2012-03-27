@@ -59,6 +59,7 @@ public class RepositoryToolchain extends Chain<Settings> {
 			
 			if (getSettings().helpRequested()) {
 				System.err.println(getSettings().getHelpString());
+				throw new Shutdown();
 			}
 			
 		} catch (final ArgumentRegistrationException e) {
