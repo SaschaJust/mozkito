@@ -73,6 +73,11 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 */
 	@Deprecated
 	ArgumentSet(final ISettings settings, final String name, final String description) {
+		if (Logger.logTrace()) {
+			Logger.trace("Deprecated constructor used. This should only be done by Settings to create the ROOT element. Element: "
+			        + name);
+		}
+		
 		this.name = name;
 		this.settings = settings;
 		this.description = description;
@@ -90,14 +95,41 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 		// PRECONDITIONS
 		
 		try {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting name to: %s", options.getName()));
+			}
 			this.name = options.getName();
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting description to: %s", options.getName()));
+			}
 			this.description = options.getDescription();
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting parent to: %s", options.getArgumentSet()));
+			}
 			this.argumentSet = options.getArgumentSet();
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting settings field."));
+			}
 			this.settings = options.getArgumentSet().getSettings();
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting requirements to: %s", options.getRequirements()));
+			}
 			this.requirements = options.getRequirements();
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Setting configurator to: %s", options));
+			}
 			this.configurator = options;
 			
 			if (!this.argumentSet.addArgument((ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
+				if (Logger.logTrace()) {
+					Logger.trace(String.format("Attaching this ArgumentSet (tag: '%s') to the parent (tag: '%s') failed.",
+					                           options.getTag(), getParent().getTag()));
+				}
 				throw new ArgumentSetRegistrationException("Could not register argument set " + getHandle() + ".",
 				                                           this, options);
 			}
@@ -121,52 +153,130 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
 	boolean addArgument(@NotNull final Argument<?, ? extends IOptions<?, IArgument<?, ?>>> argument) {
-		if (argument.getName().contains(".")) {
-			if (Logger.logWarn()) {
-				Logger.warn("Argument tags may never contain '.'. Cannot register argument: " + argument.getName()
-				        + ":" + argument.getHandle());
+		try {
+			if (Logger.logTrace()) {
+				Logger.trace(">>> addArgument(argument)");
 			}
-			// names may not contain the tag of the set
-			return false;
+			
+			if (argument.getName().contains(".")) {
+				if (Logger.logWarn()) {
+					Logger.warn("Argument tags may never contain '.'. Cannot register argument: " + argument.getName()
+					        + ":" + argument.getHandle());
+				}
+				// names may not contain the tag of the set
+				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Checking if the Argument (tag: '%s') is already known to the current (parent) set (this.tag: '%s').",
+				                           argument.getTag(), getTag()));
+			}
+			if (this.arguments.containsKey(argument.getName())) {
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("Argument (tag: '%s') already known to the current (parent) (this.tag: '%s'). Argument in its current state renders as follows: %s",
+					                          argument.getTag(), getTag(), argument));
+				}
+				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Adding the Argument (tag: '%s') to the parent set (tag: '%s').",
+				                           argument.getTag(), getParent().getTag()));
+			}
+			this.arguments.put(argument.getName(), argument);
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Communicating new argument mapping for the Argument (tag: '%s') to the settings entity.",
+				                           argument.getTag()));
+			}
+			// tell settings who is responsible for this artifact
+			if (!((Settings) getSettings()).addArgumentMapping(argument.getTag(), this)) {
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("Settings denied registration of the new argument mapping for the Argument (tag: '%s') to the settings entity.",
+					                          argument.getTag()));
+				}
+				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Adding the new Argument (tag: '%s') was successful.", argument.getTag()));
+			}
+			return true;
+		} finally {
+			if (Logger.logTrace()) {
+				Logger.trace("<<< addArgument(argument)");
+			}
 		}
-		
-		if (this.arguments.containsKey(argument.getName())) {
-			// TODO Warn log
-			return false;
-		}
-		
-		this.arguments.put(argument.getName(), argument);
-		
-		// tell settings who is responsible for this artifact
-		if (!((Settings) getSettings()).addArgumentMapping(argument.getTag(), this)) {
-			return false;
-		}
-		
-		return true;
 	}
 	
 	/**
 	 * Adds the argument.
 	 * 
-	 * @param argument
+	 * @param argumentSet
 	 *            the argument
 	 * @return true, if successful
 	 */
-	private final boolean addArgument(@NotNull final ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>> argument) {
-		if (getSettings().hasSetting(argument.getTag())) {
-			// TODO Warn log
-			return false;
+	private final boolean addArgument(@NotNull final ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>> argumentSet) {
+		try {
+			if (Logger.logTrace()) {
+				Logger.trace(">>> addArgument(argumentSet)");
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Registering new ArgumentSet (tag: '%s')", argumentSet.getTag()));
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Checking if the Argument (tag: '%s') is already known to the parent set (tag: '%s').",
+				                           argumentSet.getTag(), getParent().getTag()));
+			}
+			if (getSettings().hasSetting(argumentSet.getTag())) {
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("ArgumentSet (tag: '%s') already known to settings. ArgumentSet in its current state renders as follows: %s",
+					                          argumentSet.getTag(), argumentSet));
+				}
+				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Checking if current ArgumentSet (this.tag: '%s') already knows about the ArgumentSet under suspect (tag: '%s').",
+				                           getTag(), argumentSet.getTag()));
+			}
+			if (this.argumentSets.containsKey(argumentSet.getName())) {
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("ArgumentSet (tag: '%s') already known to the parent set (tag: '%s'). ArgumentSet in its current state renders as follows: %s",
+					                          getTag(), argumentSet.getTag(), argumentSet));
+				}
+				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Adding the ArgumentSet (tag: '%s') to the local mapping (within tag: '%s').",
+				                           argumentSet.getTag(), getTag()));
+			}
+			this.argumentSets.put(argumentSet.getName(), argumentSet);
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Communicating new argument mapping for the ArgumentSet (tag: '%s') to the settings entity.",
+				                           argumentSet.getTag()));
+			}
+			if (!((Settings) getSettings()).addArgumentMapping(argumentSet.getTag(), argumentSet)) {
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("Settings denied registration of the new argument mapping for the ArgumentSet (tag: '%s') to the settings entity.",
+					                          argumentSet.getTag()));
+				}
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Adding the new ArgumentSet (tag: '%s') was successful.",
+				                           argumentSet.getTag()));
+			}
+			return true;
+		} finally {
+			if (Logger.logTrace()) {
+				Logger.trace("<<< addArgument(argumentSet)");
+			}
 		}
-		
-		if (this.argumentSets.containsKey(argument.getName())) {
-			// TODO Warn log
-			return false;
-		}
-		
-		this.argumentSets.put(argument.getName(), argument);
-		
-		return true;
-		
 	}
 	
 	/**

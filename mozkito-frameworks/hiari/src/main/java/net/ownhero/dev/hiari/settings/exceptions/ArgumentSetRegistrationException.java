@@ -46,11 +46,11 @@ public class ArgumentSetRegistrationException extends Exception {
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options) {
 		super(message);
-		this.message = (message + ": " + argument) != null
-		                                                  ? argument.getTag()
-		                                                  : options != null
-		                                                                   ? options.getTag()
-		                                                                   : "";
+		this.message = message + ": " + (argument != null
+		                                                 ? argument.getTag()
+		                                                 : options != null
+		                                                                  ? options.getTag()
+		                                                                  : "");
 		
 		this.argument = argument;
 		this.options = options;
@@ -77,11 +77,11 @@ public class ArgumentSetRegistrationException extends Exception {
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options, final Throwable t) {
 		super(message, t);
-		this.message = (message + ": " + argument) != null
-		                                                  ? argument.getTag()
-		                                                  : options != null
-		                                                                   ? options.getTag()
-		                                                                   : "";
+		this.message = message + ": " + (argument != null
+		                                                 ? argument.getTag()
+		                                                 : options != null
+		                                                                  ? options.getTag()
+		                                                                  : "");
 		this.argument = argument;
 		this.options = options;
 	}
@@ -107,7 +107,7 @@ public class ArgumentSetRegistrationException extends Exception {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(this.message);
 			
-			if (this.options != null) {
+			if (this.argument != null) {
 				builder.append(FileUtils.lineSeparator).append("ArgumentSet: ").append(this.argument); //$NON-NLS-1$
 			}
 			
@@ -115,7 +115,7 @@ public class ArgumentSetRegistrationException extends Exception {
 				builder.append(FileUtils.lineSeparator).append("Options: ").append(this.options); //$NON-NLS-1$
 			}
 			
-			return super.toString();
+			return builder.toString();
 		} finally {
 			// POSTCONDITIONS
 		}

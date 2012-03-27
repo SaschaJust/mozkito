@@ -40,11 +40,11 @@ public class ArgumentRegistrationException extends Exception {
 	        final IArgumentOptions<?, ?> options) {
 		super(message + ": " + argument.getTag());
 		
-		this.message = (message + ": " + argument) != null
-		                                                  ? argument.getTag()
-		                                                  : options != null
-		                                                                   ? options.getTag()
-		                                                                   : "";
+		this.message = message + ": " + (argument != null
+		                                                 ? argument.getTag()
+		                                                 : options != null
+		                                                                  ? options.getTag()
+		                                                                  : "");
 		this.argument = argument;
 		this.options = options;
 	}
@@ -64,11 +64,11 @@ public class ArgumentRegistrationException extends Exception {
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options, @NotNull final Throwable cause) {
 		super(message + ": " + argument.getTag(), cause);
-		this.message = (message + ": " + argument) != null
-		                                                  ? argument.getTag()
-		                                                  : options != null
-		                                                                   ? options.getTag()
-		                                                                   : "";
+		this.message = message + ": " + (argument != null
+		                                                 ? argument.getTag()
+		                                                 : options != null
+		                                                                  ? options.getTag()
+		                                                                  : "");
 		this.argument = argument;
 		this.options = options;
 	}
@@ -96,7 +96,7 @@ public class ArgumentRegistrationException extends Exception {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(this.message);
 			
-			if (this.options != null) {
+			if (this.argument != null) {
 				builder.append(FileUtils.lineSeparator).append("Argument: ").append(this.argument); //$NON-NLS-1$
 			}
 			
