@@ -26,7 +26,6 @@ import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class EnumArgument.
  * 

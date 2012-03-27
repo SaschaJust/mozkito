@@ -33,6 +33,8 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @param <T>
  *            the generic type
+ * @param <X>
+ *            the generic type
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSet<T, ?>>> implements IArgument<T, X> {
@@ -59,8 +61,10 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	/** The argument set. */
 	private final ArgumentSet<?, ?>                                                       argumentSet;
 	
+	/** The configurator. */
 	private X                                                                             configurator;
 	
+	/** The initialized. */
 	private boolean                                                                       initialized  = false;
 	
 	/**
@@ -68,6 +72,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * 
 	 * @param settings
 	 *            the settings
+	 * @param name
+	 *            the name
 	 * @param description
 	 *            the description
 	 */
@@ -87,8 +93,12 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	}
 	
 	/**
-	 * @throws ArgumentSetRegistrationException
+	 * Instantiates a new argument set.
 	 * 
+	 * @param options
+	 *            the options
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
 	 */
 	@SuppressWarnings ("unchecked")
 	ArgumentSet(final @NotNull X options) throws ArgumentSetRegistrationException {
@@ -180,8 +190,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 			}
 			
 			if (Logger.logTrace()) {
-				Logger.trace(String.format("Adding the Argument (tag: '%s') to the parent set (tag: '%s').",
-				                           argument.getTag(), getParent().getTag()));
+				Logger.trace(String.format("Adding the Argument (tag: '%s') to the current (parent) set (tag: '%s').",
+				                           argument.getTag(), getTag()));
 			}
 			this.arguments.put(argument.getName(), argument);
 			
@@ -227,8 +237,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 			}
 			
 			if (Logger.logTrace()) {
-				Logger.trace(String.format("Checking if the Argument (tag: '%s') is already known to the parent set (tag: '%s').",
-				                           argumentSet.getTag(), getParent().getTag()));
+				Logger.trace(String.format("Checking if the Argument (tag: '%s') is already known to the settings entity.",
+				                           argumentSet.getTag()));
 			}
 			if (getSettings().hasSetting(argumentSet.getTag())) {
 				if (Logger.logWarn()) {
@@ -313,17 +323,35 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	/**
 	 * Gets the argument.
 	 * 
-	 * @param name
-	 *            the name
+	 * @param <T>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param <Y>
+	 *            the generic type
+	 * @param option
+	 *            the option
 	 * @return the argument
 	 */
-	public final IArgument<?, ?> getArgument(final String tag) {
-		for (final IArgument<?, ?> argument : getArguments().values()) {
-			if (argument.getTag().equals(tag)) {
-				return argument;
-			}
+	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> option) {
+		if (Logger.logTrace()) {
+			Logger.trace(String.format("Looking up Argument (tag: '%s').", option.getTag()));
 		}
-		return null;
+		
+		if (getArguments().containsKey(option.getName())) {
+			@SuppressWarnings ("unchecked")
+			final Y set = (Y) getArguments().get(option.getName());
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Found Argument (tag: '%s').", option.getTag()));
+			}
+			return set;
+		} else {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Could not find Argument (tag: '%s').", option.getTag()));
+			}
+			return null;
+		}
 	}
 	
 	/**
@@ -333,6 +361,41 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 */
 	private final Map<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>> getArguments() {
 		return this.arguments;
+	}
+	
+	/**
+	 * Gets the argument set.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param <Y>
+	 *            the generic type
+	 * @param option
+	 *            the option
+	 * @return the argument set
+	 */
+	public <T, X extends ArgumentSetOptions<T, Y>, Y extends ArgumentSet<T, X>> Y getArgumentSet(final IArgumentSetOptions<T, Y> option) {
+		if (Logger.logTrace()) {
+			Logger.trace(String.format("Looking up ArgumentSet (tag: '%s').", option.getTag()));
+		}
+		
+		if (getArgumentSets().containsKey(option.getName())) {
+			@SuppressWarnings ("unchecked")
+			final Y set = (Y) getArgumentSets().get(option.getName());
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Found ArgumentSet (tag: '%s').", option.getTag()));
+			}
+			return set;
+		} else {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Could not find ArgumentSet (tag: '%s').", option.getTag()));
+			}
+			return null;
+		}
+		
 	}
 	
 	/**
@@ -405,6 +468,13 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#toString(int)
+	 */
+	/**
+	 * Gets the help string.
+	 * 
+	 * @param indentation
+	 *            the indentation
+	 * @return the help string
 	 */
 	public String getHelpString(final int indentation) {
 		int maxWidth = 0;
@@ -546,11 +616,12 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	public String getTag() {
 		final StringBuilder builder = new StringBuilder();
 		final LinkedList<String> list = new LinkedList<String>();
-		ArgumentSet<?, ?> parent = getParent();
+		ArgumentSet<?, ?> parent = this;
 		
-		do {
+		while (((parent = parent.getParent()) != null)
+		        && !parent.getName().equals(Settings.RootArgumentSet.Options.TAG)) {
 			list.add(parent.getName());
-		} while ((parent = parent.getParent()) != null);
+		};
 		
 		final Iterator<String> iterator = list.descendingIterator();
 		
@@ -577,16 +648,6 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	@Override
 	public final T getValue() {
 		return this.getCachedValue();
-	}
-	
-	/**
-	 * Inits the.
-	 * 
-	 * @return true, if successful
-	 */
-	protected boolean init() {
-		// TODO
-		return true;
 	}
 	
 	/*
@@ -628,15 +689,6 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 				list = list2;
 				list2 = new LinkedList<IArgument<?, ?>>();
 			}
-		}
-		
-		boolean initResult = false;
-		initResult = init();
-		
-		if (!initResult) {
-			throw new SettingsParseError("Could not initialize '" + getName()
-			        + "'. Please see error earlier error messages, refer to the argument help information, "
-			        + "or review the init() method of the corresponding " + getHandle() + ".", this);
 		}
 		
 		this.initialized = true;

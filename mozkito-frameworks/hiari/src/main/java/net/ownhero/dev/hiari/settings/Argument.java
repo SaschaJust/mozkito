@@ -21,6 +21,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Argument.
@@ -43,7 +44,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	private X                   options;
 	
 	/** The Constant maskString. */
-	private final static String maskString = "******** (masked)";
+	private final static String MASK_STRING = "******** (masked)";
 	
 	/**
 	 * Instantiates a new argument.
@@ -55,19 +56,37 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 */
 	@SuppressWarnings ("unchecked")
 	Argument(@NotNull final X options) throws ArgumentRegistrationException {
+		// PRECONDITIONS
 		
 		try {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Instatiating Argument with options: %s", options));
+			}
 			this.options = options;
-			this.stringValue = options.getDefaultValue() != null
-			                                                    ? options.getDefaultValue().toString()
-			                                                    : null;
+			
+			if (options.getDefaultValue() != null) {
+				if (Logger.logTrace()) {
+					Logger.trace(String.format("Setting stringValue of Argument (tag: '%s') to default value: %s",
+					                           options.getTag(), options.getDefaultValue()));
+				}
+				this.stringValue = options.getDefaultValue().toString();
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Trying to register Argument (tag: '%s') to its parent ArgumentSet (tag: '%s').",
+				                           options.getTag(), options.getParent().getTag()));
+			}
 			if (!options.getArgumentSet().addArgument((Argument<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
-				throw new ArgumentRegistrationException(String.format("Could not register argument '%s':%s.",
+				if (Logger.logWarn()) {
+					Logger.warn(String.format("Registration of Argument (tag: '%s') to its parent ArgumentSet (tag: '%s') failed.",
+					                          options.getTag(), options.getParent().getTag()));
+				}
+				throw new ArgumentRegistrationException(String.format("Could not register Argument '%s': %s.",
 				                                                      getName(), getHandle()), this, options);
 			}
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.options, "Field '%s' in %s.", "options", getHandle());
+			Condition.notNull(this.options, "Field '%s' in %s.", "options", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -239,7 +258,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 		                                   getStringValue() == null
 		                                                           ? "(unset)".length()
 		                                                           : this.options.isMasked()
-		                                                                                    ? maskString.length()
+		                                                                                    ? MASK_STRING.length()
 		                                                                                    : getStringValue().length());
 	}
 	
@@ -381,7 +400,8 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 		}
 		
 		if (!init()) {
-			throw new SettingsParseError("Could not initialize " + getHandle() + " instance '" + getName() + "'.", this);
+			throw new SettingsParseError(String.format("Could not initialize '%s' instance '%s'.", getHandle(),
+			                                           getName()), this);
 		}
 	}
 	
@@ -443,7 +463,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 		return String.format(builder.toString(), getTag(), getStringValue() == null
 		                                                                           ? "(unset)"
 		                                                                           : isMasked()
-		                                                                                       ? maskString
+		                                                                                       ? MASK_STRING
 		                                                                                       : getStringValue(),
 		                     getOptions().getHelpString(keyWidth + 1));
 	}

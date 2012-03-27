@@ -82,15 +82,19 @@ public interface ISettings {
 	<T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> argument);
 	
 	/**
-	 * Gets the argument.
+	 * Gets the argument set.
 	 * 
-	 * @param argument
-	 *            the argument
-	 * @return the argument
-	 * @deprecated use {@link ISettings#getArgument(IArgumentOptions)}
+	 * @param <T>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param <Y>
+	 *            the generic type
+	 * @param option
+	 *            the option
+	 * @return the argument set
 	 */
-	@Deprecated
-	IArgument<?, ?> getArgument(final String argument);
+	<T, X extends ArgumentSetOptions<T, Y>, Y extends ArgumentSet<T, X>> Y getArgumentSet(final IArgumentSetOptions<T, Y> option);
 	
 	/**
 	 * Gets the bug report argument.
@@ -195,6 +199,12 @@ public interface ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	ArgumentSet<?, ?> loadByClass(final Class<? extends SettingsProvider> providerClass,
 	                              final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
@@ -209,6 +219,12 @@ public interface ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	ArgumentSet<?, ?> loadByEntity(final SettingsProvider provider,
 	                               final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
@@ -223,6 +239,12 @@ public interface ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the collection
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	Collection<ArgumentSet<?, ?>> loadByInheritance(final Package pakkage,
 	                                                final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,

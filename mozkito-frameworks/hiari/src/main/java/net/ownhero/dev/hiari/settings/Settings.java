@@ -130,21 +130,22 @@ public class Settings implements ISettings {
 		 */
 		class Options extends ArgumentSetOptions<Boolean, RootArgumentSet> {
 			
+			/** The Constant TAG. */
+			static final String TAG         = "ROOT";
+			
+			/** The Constant DESCRIPTION. */
+			static final String DESCRIPTION = "Base arguments.";
+			
 			/**
 			 * Instantiates a new options.
 			 * 
 			 * @param argumentSet
 			 *            the argument set
-			 * @param name
-			 *            the name
-			 * @param description
-			 *            the description
 			 * @param requirements
 			 *            the requirements
 			 */
-			public Options(final ArgumentSet<?, ?> argumentSet, final String name, final String description,
-			        final Requirement requirements) {
-				super(argumentSet, name, description, requirements);
+			public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+				super(argumentSet, TAG, DESCRIPTION, requirements);
 			}
 			
 			/*
@@ -178,7 +179,7 @@ public class Settings implements ISettings {
 		 */
 		@SuppressWarnings ("deprecation")
 		private RootArgumentSet(final ISettings settings) {
-			super(settings, "ROOT", "Base arguments.");
+			super(settings, Options.TAG, Options.DESCRIPTION);
 		}
 		
 		/*
@@ -223,7 +224,7 @@ public class Settings implements ISettings {
 	private ArgumentSet<Properties, MailOptions>          mailArguments;
 	
 	/** The root argument set. */
-	private ArgumentSet<Boolean, RootArgumentSet.Options> rootArgumentSet;
+	private ArgumentSet<Boolean, RootArgumentSet.Options> root;
 	
 	/** The bug report argument. */
 	private StringArgument                                bugReportArgument;
@@ -266,7 +267,6 @@ public class Settings implements ISettings {
 			System.err.println(settings.getHelpString());
 			
 		} catch (final SettingsParseError e) {
-			// TODO Auto-generated catch block
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -305,7 +305,7 @@ public class Settings implements ISettings {
 			getProperties().putAll(commandlineProps);
 			
 			// now, create the root of all arguments
-			this.rootArgumentSet = new RootArgumentSet(this);
+			this.root = new RootArgumentSet(this);
 			
 			// setup the help argument
 			ArgumentFactory.create(new BooleanArgument.Options(getRoot(), "help", "Shows this help menu.", false,
@@ -313,15 +313,13 @@ public class Settings implements ISettings {
 			if (getProperties().get("help") != null) {
 				this.nohelp = false;
 			}
-			
+			this.settingsArg = ArgumentFactory.create(new URIArgument.Options(
+			                                                                  getRoot(),
+			                                                                  settingsTag,
+			                                                                  "Setting file that contains the JavaVM arguments for the current toolchain.",
+			                                                                  null, Requirement.optional));
 			// check to load settings from URI
 			if (System.getProperty(settingsTag) != null) {
-				this.settingsArg = ArgumentFactory.create(new URIArgument.Options(
-				                                                                  getRoot(),
-				                                                                  settingsTag,
-				                                                                  "Setting file that contains the JavaVM arguments for the current toolchain.",
-				                                                                  null, Requirement.optional));
-				
 				try {
 					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
 					fileProps.load(stream);
@@ -382,7 +380,6 @@ public class Settings implements ISettings {
 	 */
 	boolean addArgumentMapping(final String name,
 	                           final ArgumentSet<?, ?> argument) {
-		this.nohelp = true;
 		if (!this.argumentSets.containsKey(name)) {
 			synchronized (this.argumentSets) {
 				if (!this.argumentSets.containsKey(name)) {
@@ -435,29 +432,38 @@ public class Settings implements ISettings {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> argument) {
+	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> option) {
 		// PRECONDITIONS
 		
 		try {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Requesting Argument (tag: '%s').", option.getTag()));
+			}
 			synchronized (this.argumentSets) {
-				return (Y) this.argumentSets.get(argument.getTag()).getArgument(argument.getTag());
+				return this.argumentSets.get(option.getTag()).getArgument(option);
 			}
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/**
-	 * Gets the argument.
-	 * 
-	 * @param argument
-	 *            the argument
-	 * @return the argument
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ISettings#getArgumentSet(net.ownhero.dev.hiari.settings.IArgumentSetOptions)
 	 */
 	@Override
-	public final IArgument<?, ?> getArgument(final String argument) {
-		synchronized (this.argumentSets) {
-			return this.argumentSets.get(argument).getArgument(argument);
+	public <T, X extends ArgumentSetOptions<T, Y>, Y extends ArgumentSet<T, X>> Y getArgumentSet(final IArgumentSetOptions<T, Y> option) {
+		// PRECONDITIONS
+		
+		try {
+			if (Logger.logTrace()) {
+				Logger.trace(String.format("Requesting ArgumentSet (tag: '%s').", option.getTag()));
+			}
+			synchronized (this.argumentSets) {
+				return (Y) this.argumentSets.get(option.getTag());
+			}
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 	
@@ -514,8 +520,14 @@ public class Settings implements ISettings {
 	@Override
 	public String getHelpString() {
 		if (this.nohelp) {
+			if (Logger.logTrace()) {
+				Logger.trace("Help mode is inactive. Displaying graph structure deduced from active settings.");
+			}
 			return getRoot().getHelpString();
 		} else {
+			if (Logger.logTrace()) {
+				Logger.trace("Help mode is active. Displaying information based on IOptions seen so far (stored in the Help entity in Settings).");
+			}
 			return this.help.toString();
 		}
 	}
@@ -530,9 +542,9 @@ public class Settings implements ISettings {
 		
 		synchronized (this.information) {
 			for (final String tool : this.information.keySet()) {
-				builder.append("[[");
+				builder.append("[["); //$NON-NLS-1$
 				builder.append(tool);
-				builder.append("]]");
+				builder.append("]]"); //$NON-NLS-1$
 				builder.append(FileUtils.lineSeparator);
 				builder.append(this.information.get(tool));
 				builder.append(FileUtils.lineSeparator);
@@ -599,7 +611,7 @@ public class Settings implements ISettings {
 	 */
 	@Override
 	public final ArgumentSet<Boolean, RootArgumentSet.Options> getRoot() {
-		return this.rootArgumentSet;
+		return this.root;
 	}
 	
 	/*
@@ -613,11 +625,13 @@ public class Settings implements ISettings {
 		}
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ISettings#helpRequested()
 	 */
+	@Override
 	public final boolean helpRequested() {
-		return System.getProperty("help") != null;
+		return !this.nohelp;
 	}
 	
 	/*
@@ -637,6 +651,12 @@ public class Settings implements ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	@Override
 	public final ArgumentSet<?, ?> loadByClass(final Class<? extends SettingsProvider> providerClass,
@@ -648,13 +668,10 @@ public class Settings implements ISettings {
 			final SettingsProvider provider = providerClass.newInstance();
 			return loadByEntity(provider, anchorSet);
 		} catch (final InstantiationException e) {
-			// TODO Auto-generated catch block
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
-			
 		} catch (final IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -672,9 +689,12 @@ public class Settings implements ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the argument set
-	 * @throws SettingsParseError
-	 * @throws ArgumentSetRegistrationException
 	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	@Override
 	public final ArgumentSet<?, ?> loadByEntity(final SettingsProvider provider,
@@ -692,6 +712,12 @@ public class Settings implements ISettings {
 	 * @param anchorSet
 	 *            the anchor set
 	 * @return the collection
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	@Override
 	public final Collection<ArgumentSet<?, ?>> loadByInheritance(final Package pakkage,
@@ -730,10 +756,10 @@ public class Settings implements ISettings {
 	public final String toString() {
 		final StringBuilder builder = new StringBuilder();
 		
-		builder.append(getClass().getSimpleName() + ":");
+		builder.append(getClass().getSimpleName() + ":"); //$NON-NLS-1$
 		builder.append(FileUtils.lineSeparator);
 		
-		for (int i = 0; i < (getClass().getSimpleName().length() + ":".length()); ++i) {
+		for (int i = 0; i < (getClass().getSimpleName().length() + ":".length()); ++i) { //$NON-NLS-1$
 			builder.append('-');
 		}
 		

@@ -133,7 +133,6 @@ public class ArgumentSetFactory {
 				}
 				
 				if (options.getArgumentSet().getSettings().hasSetting(key)) {
-					// FIXME WTF?
 					if (Logger.logTrace()) {
 						Logger.trace(String.format("Required IArgument with tag '%s' already present. Skipping initialization.",
 						                           iOptions.getTag()));

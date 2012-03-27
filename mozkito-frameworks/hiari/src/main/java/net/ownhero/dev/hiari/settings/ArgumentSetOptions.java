@@ -23,7 +23,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ArgumentSetConfigurator.
  * 
@@ -246,6 +245,7 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 	 * 
 	 * @return the settings
 	 */
+	@Override
 	public ISettings getSettings() {
 		return this.set.getSettings();
 	}

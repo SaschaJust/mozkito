@@ -66,7 +66,7 @@ public class URIArgument extends Argument<URI, URIArgument.Options> {
 	 *             the argument registration exception
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArgument
 	 */
-	private URIArgument(@NotNull final Options options) throws ArgumentRegistrationException {
+	protected URIArgument(@NotNull final Options options) throws ArgumentRegistrationException {
 		super(options);
 	}
 	
