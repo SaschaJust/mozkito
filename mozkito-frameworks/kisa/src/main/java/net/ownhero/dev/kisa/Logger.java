@@ -884,7 +884,13 @@ public class Logger {
 					                         "log.class. arguments must have at least a log level specified.");
 					final org.apache.log4j.Logger classLogger = LogManager.getLogger(className);
 					final LogLevel classLogLevel = LogLevel.valueOf(values[0].toUpperCase());
-					classLogger.setLevel(org.apache.log4j.Level.toLevel(classLogLevel.toString()));
+					
+					final Level log4jLevel = org.apache.log4j.Level.toLevel(classLogLevel.toString());
+					if (org.apache.log4j.Logger.getRootLogger().getLevel().isGreaterOrEqual(log4jLevel)) {
+						org.apache.log4j.Logger.getRootLogger().setLevel(log4jLevel);
+					}
+					
+					classLogger.setLevel(log4jLevel);
 					if (values.length > 1) {
 						final RollingFileAppender classFileAppender = new RollingFileAppender();
 						classFileAppender.setFile(values[1]);
@@ -915,6 +921,11 @@ public class Logger {
 		
 		final WriterAppender consoleDefaultAppender = new WriterAppender(defaultLayout, System.err);
 		final LevelRangeFilter normalFilter = new LevelRangeFilter();
+		
+		final Level log4jLevel = Level.toLevel(consoleLevel.toString());
+		if (org.apache.log4j.Logger.getRootLogger().getLevel().isGreaterOrEqual(log4jLevel)) {
+			org.apache.log4j.Logger.getRootLogger().setLevel(log4jLevel);
+		}
 		
 		if (TerminalColor.isSupported()) {
 			
@@ -983,7 +994,13 @@ public class Logger {
 			final LevelRangeFilter fileLevelRangeFilter = new org.apache.log4j.varia.LevelRangeFilter();
 			// set levels and minLevel
 			final LogLevel fileLevel = LogLevel.valueOf(System.getProperty("log.file.level", "INFO").toUpperCase());
-			fileLevelRangeFilter.setLevelMin(Level.toLevel(fileLevel.toString()));
+			
+			final Level log4jLevel = Level.toLevel(fileLevel.toString());
+			if (org.apache.log4j.Logger.getRootLogger().getLevel().isGreaterOrEqual(log4jLevel)) {
+				org.apache.log4j.Logger.getRootLogger().setLevel(log4jLevel);
+			}
+			
+			fileLevelRangeFilter.setLevelMin(log4jLevel);
 			if ((maxLevel == null) || (fileLevel.compareTo(maxLevel) > 0)) {
 				maxLevel = fileLevel;
 			}
