@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
@@ -40,7 +37,7 @@ import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
 
 /**
  * The Class UntanglingOptions.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class UntanglingOptions extends
@@ -120,10 +117,13 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Instantiates a new untangling options.
-	 *
-	 * @param argumentSet the argument set
-	 * @param requirements the requirements
-	 * @param repositoryOptions the repository options
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param requirements
+	 *            the requirements
+	 * @param repositoryOptions
+	 *            the repository options
 	 */
 	public UntanglingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 	        final RepositoryOptions repositoryOptions) {
@@ -134,8 +134,9 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Call graph requirements.
-	 *
-	 * @param set the set
+	 * 
+	 * @param set
+	 *            the set
 	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> callGraphRequirements(final ArgumentSet<?, ?> set) {
@@ -173,11 +174,14 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Change coupling requirements.
-	 *
-	 * @param set the set
+	 * 
+	 * @param set
+	 *            the set
 	 * @return the map
-	 * @throws ArgumentRegistrationException the argument registration exception
-	 * @throws SettingsParseError the settings parse error
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
 	 */
 	private Map<String, IOptions<?, ?>> changeCouplingRequirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
 	                                                                                           SettingsParseError {
@@ -215,8 +219,9 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Data dependency requirements.
-	 *
-	 * @param set the set
+	 * 
+	 * @param set
+	 *            the set
 	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> dataDependencyRequirements(final ArgumentSet<?, ?> set) {
@@ -263,30 +268,30 @@ public class UntanglingOptions extends
 		try {
 			final UntanglingControl control = new UntanglingControl();
 			
-			final ArgumentSet<Repository, RepositoryOptions> repositoryArgument = (ArgumentSet<Repository, RepositoryOptions>) getSettings().getArgument(this.repositoryOptions.getTag());
-			final DirectoryArgument callGraphEclipseArgument = (DirectoryArgument) getSettings().getArgument(this.callgraphEclipseOptions.getTag());
-			final ListArgument atomicChangesArgument = (ListArgument) getSettings().getArgument(this.atomicChangesOptions.getTag());
-			final BooleanArgument useCallGraphArgument = (BooleanArgument) getSettings().getArgument(this.useCallGraphOptions.getTag());
-			final BooleanArgument useChangeCouplingsArgument = (BooleanArgument) getSettings().getArgument(this.useChangeCouplingsOptions.getTag());
-			final BooleanArgument useDataDependenciesArgument = (BooleanArgument) getSettings().getArgument(this.useDataDependenciesOptions.getTag());
-			final BooleanArgument useTestImpactArgument = (BooleanArgument) getSettings().getArgument(this.useTestImpactOptions.getTag());
-			final InputFileArgument testImpactFileArgument = (InputFileArgument) getSettings().getArgument(this.testImpactFileOptions.getTag());
-			final DirectoryArgument dataDependencyEclipseArgument = (DirectoryArgument) getSettings().getArgument(this.datadependencyEclipseOptions.getTag());
-			final LongArgument changeCouplingMinSupportArgument = (LongArgument) getSettings().getArgument(this.changeCouplingsMinSupport.getTag());
-			final DoubleArgument changeCouplingMinConfidenceArgument = (DoubleArgument) getSettings().getArgument(this.changeCouplingsMinConfidence.getTag());
-			final LongArgument packageDistanceArgument = (LongArgument) getSettings().getArgument(this.packageDistanceOptions.getTag());
-			final LongArgument minBlobSizeArgument = (LongArgument) getSettings().getArgument(this.minBlobSizeOptions.getTag());
-			final LongArgument maxBlobSizeArgument = (LongArgument) getSettings().getArgument(this.maxBlobSizeOptions.getTag());
-			final OutputFileArgument outArgument = (OutputFileArgument) getSettings().getArgument(this.outOptions.getTag());
-			final DirectoryArgument callGraphCacheDirArgument = (DirectoryArgument) getSettings().getArgument(this.callGraphCacheDirOptions.getTag());
-			final DirectoryArgument changeCouplingsCacheDirArgument = (DirectoryArgument) getSettings().getArgument(this.changeCouplingsCacheDirOptions.getTag());
-			final DirectoryArgument dataDependencyCacheDirArgument = (DirectoryArgument) getSettings().getArgument(this.dataDependencyCacheDirOptions.getTag());
-			final BooleanArgument dryRunArgument = (BooleanArgument) getSettings().getArgument(this.dryRunOptions.getTag());
-			final LongArgument nArgument = (LongArgument) getSettings().getArgument(this.nOptions.getTag());
-			final LongArgument seedArgument = (LongArgument) getSettings().getArgument(this.seedOptions.getTag());
-			final EnumArgument<UntanglingCollapse> collapseArgument = (EnumArgument<UntanglingCollapse>) getSettings().getArgument(this.collapseModeOptions.getTag());
-			final LongArgument blobWindowSizeArgument = (LongArgument) getSettings().getArgument(this.blobWindowSizeOptions.getTag());
-			final EnumArgument<ScoreCombinationMode> scoreModeArgument = (EnumArgument<ScoreCombinationMode>) getSettings().getArgument(this.scoreModeOptions.getTag());
+			final ArgumentSet<Repository, RepositoryOptions> repositoryArgument = getSettings().getArgumentSet(this.repositoryOptions);
+			final DirectoryArgument callGraphEclipseArgument = getSettings().getArgument(this.callgraphEclipseOptions);
+			final ListArgument atomicChangesArgument = getSettings().getArgument(this.atomicChangesOptions);
+			final BooleanArgument useCallGraphArgument = getSettings().getArgument(this.useCallGraphOptions);
+			final BooleanArgument useChangeCouplingsArgument = getSettings().getArgument(this.useChangeCouplingsOptions);
+			final BooleanArgument useDataDependenciesArgument = getSettings().getArgument(this.useDataDependenciesOptions);
+			final BooleanArgument useTestImpactArgument = getSettings().getArgument(this.useTestImpactOptions);
+			final InputFileArgument testImpactFileArgument = getSettings().getArgument(this.testImpactFileOptions);
+			final DirectoryArgument dataDependencyEclipseArgument = getSettings().getArgument(this.datadependencyEclipseOptions);
+			final LongArgument changeCouplingMinSupportArgument = getSettings().getArgument(this.changeCouplingsMinSupport);
+			final DoubleArgument changeCouplingMinConfidenceArgument = getSettings().getArgument(this.changeCouplingsMinConfidence);
+			final LongArgument packageDistanceArgument = getSettings().getArgument(this.packageDistanceOptions);
+			final LongArgument minBlobSizeArgument = getSettings().getArgument(this.minBlobSizeOptions);
+			final LongArgument maxBlobSizeArgument = getSettings().getArgument(this.maxBlobSizeOptions);
+			final OutputFileArgument outArgument = getSettings().getArgument(this.outOptions);
+			final DirectoryArgument callGraphCacheDirArgument = getSettings().getArgument(this.callGraphCacheDirOptions);
+			final DirectoryArgument changeCouplingsCacheDirArgument = getSettings().getArgument(this.changeCouplingsCacheDirOptions);
+			final DirectoryArgument dataDependencyCacheDirArgument = getSettings().getArgument(this.dataDependencyCacheDirOptions);
+			final BooleanArgument dryRunArgument = getSettings().getArgument(this.dryRunOptions);
+			final LongArgument nArgument = getSettings().getArgument(this.nOptions);
+			final LongArgument seedArgument = getSettings().getArgument(this.seedOptions);
+			final EnumArgument<UntanglingCollapse> collapseArgument = getSettings().getArgument(this.collapseModeOptions);
+			final LongArgument blobWindowSizeArgument = getSettings().getArgument(this.blobWindowSizeOptions);
+			final EnumArgument<ScoreCombinationMode> scoreModeArgument = getSettings().getArgument(this.scoreModeOptions);
 			
 			control.setRepository(repositoryArgument.getValue());
 			control.setCallGraphEclipseDir(callGraphEclipseArgument.getValue());
@@ -416,8 +421,9 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Test impact requirements.
-	 *
-	 * @param set the set
+	 * 
+	 * @param set
+	 *            the set
 	 * @return the map<? extends string,? extends i options<?,?>>
 	 */
 	private Map<? extends String, ? extends IOptions<?, ?>> testImpactRequirements(final ArgumentSet<?, ?> set) {

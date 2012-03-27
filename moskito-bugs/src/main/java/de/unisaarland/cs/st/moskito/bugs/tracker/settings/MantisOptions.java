@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
@@ -34,7 +31,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
 
 /**
  * The Class MantisOptions.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> {
@@ -44,9 +41,11 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/**
 	 * Instantiates a new mantis options.
-	 *
-	 * @param trackerOptions the tracker options
-	 * @param requirement the requirement
+	 * 
+	 * @param trackerOptions
+	 *            the tracker options
+	 * @param requirement
+	 *            the requirement
 	 */
 	@NoneNull
 	public MantisOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -68,13 +67,10 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		
 		try {
 			
-			final URIArgument trackerURIArgument = (URIArgument) getSettings().getArgument(this.trackerOptions.getTrackerURI()
-			                                                                                                  .getTag());
+			final URIArgument trackerURIArgument = getSettings().getArgument(this.trackerOptions.getTrackerURI());
 			
-			final StringArgument trackerUserArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerUser()
-			                                                                                                         .getTag());
-			final StringArgument trackerPasswordArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerPassword()
-			                                                                                                             .getTag());
+			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
+			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
 			
 			final MantisTracker tracker = new MantisTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
@@ -89,9 +85,11 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/**
 	 * Req.
-	 *
-	 * @param option the option
-	 * @param map the map
+	 * 
+	 * @param option
+	 *            the option
+	 * @param map
+	 *            the map
 	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {

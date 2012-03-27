@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
@@ -37,7 +34,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
 
 /**
  * The Class SourceforgeOptions.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> {
@@ -56,9 +53,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/**
 	 * Instantiates a new sourceforge options.
-	 *
-	 * @param trackerOptions the tracker options
-	 * @param requirement the requirement
+	 * 
+	 * @param trackerOptions
+	 *            the tracker options
+	 * @param requirement
+	 *            the requirement
 	 */
 	@NoneNull
 	public SourceforgeOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
@@ -71,7 +70,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/**
 	 * Gets the at id arg.
-	 *
+	 * 
 	 * @return the at id arg
 	 */
 	public LongArgument.Options getAtIdArg() {
@@ -86,7 +85,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/**
 	 * Gets the bug type arg.
-	 *
+	 * 
 	 * @return the bug type arg
 	 */
 	public EnumArgument.Options<Type> getBugTypeArg() {
@@ -101,7 +100,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/**
 	 * Gets the group id arg.
-	 *
+	 * 
 	 * @return the group id arg
 	 */
 	public LongArgument.Options getGroupIdArg() {
@@ -125,19 +124,16 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		
 		try {
 			
-			final URIArgument trackerURIArgument = (URIArgument) getSettings().getArgument(this.trackerOptions.getTrackerURI()
-			                                                                                                  .getTag());
+			final URIArgument trackerURIArgument = getSettings().getArgument(this.trackerOptions.getTrackerURI());
 			
-			final StringArgument trackerUserArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerUser()
-			                                                                                                         .getTag());
-			final StringArgument trackerPasswordArgument = (StringArgument) getSettings().getArgument(this.trackerOptions.getTrackerPassword()
-			                                                                                                             .getTag());
+			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
+			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
 			
-			final LongArgument groupIdArgument = (LongArgument) getSettings().getArgument(getGroupIdArg().getTag());
-			final LongArgument atIdArgument = (LongArgument) getSettings().getArgument(getAtIdArg().getTag());
+			final LongArgument groupIdArgument = getSettings().getArgument(getGroupIdArg());
+			final LongArgument atIdArgument = getSettings().getArgument(getAtIdArg());
 			
 			@SuppressWarnings ("unchecked")
-			final EnumArgument<Type> bugTypeArgument = (EnumArgument<Type>) getSettings().getArgument(getBugTypeArg().getTag());
+			final EnumArgument<Type> bugTypeArgument = getSettings().getArgument(getBugTypeArg());
 			
 			final SourceforgeTracker tracker = new SourceforgeTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
@@ -153,9 +149,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	
 	/**
 	 * Req.
-	 *
-	 * @param option the option
-	 * @param map the map
+	 * 
+	 * @param option
+	 *            the option
+	 * @param map
+	 *            the map
 	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {

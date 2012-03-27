@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -38,7 +35,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 
 /**
  * The Class TrackerOptions.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
@@ -72,10 +69,13 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Instantiates a new tracker options.
-	 *
-	 * @param argumentSet the argument set
-	 * @param requirement the requirement
-	 * @throws ArgumentRegistrationException the argument registration exception
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param requirement
+	 *            the requirement
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
@@ -85,7 +85,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Gets the tracker password.
-	 *
+	 * 
 	 * @return the trackerPassword
 	 */
 	public final StringArgument.Options getTrackerPassword() {
@@ -94,7 +94,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Gets the tracker type.
-	 *
+	 * 
 	 * @return the trackerType
 	 */
 	public final EnumArgument.Options<TrackerType> getTrackerType() {
@@ -103,7 +103,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Gets the tracker uri.
-	 *
+	 * 
 	 * @return the trackerFetchURI
 	 */
 	public final URIArgument.Options getTrackerURI() {
@@ -112,7 +112,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Gets the tracker user.
-	 *
+	 * 
 	 * @return the trackerUser
 	 */
 	public final StringArgument.Options getTrackerUser() {
@@ -128,7 +128,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		
 		try {
 			@SuppressWarnings ("unchecked")
-			final EnumArgument<TrackerType> trackerTypeArgument = (EnumArgument<TrackerType>) getSettings().getArgument(getTrackerType().getTag());
+			final EnumArgument<TrackerType> trackerTypeArgument = getSettings().getArgument(getTrackerType());
 			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
@@ -163,9 +163,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Req.
-	 *
-	 * @param option the option
-	 * @param map the map
+	 * 
+	 * @param option
+	 *            the option
+	 * @param map
+	 *            the map
 	 */
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
