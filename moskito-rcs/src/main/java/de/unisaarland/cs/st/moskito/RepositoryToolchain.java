@@ -58,19 +58,13 @@ public class RepositoryToolchain extends Chain<Settings> {
 			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
 		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			if (Logger.logDebug()) {
+				Logger.debug(e.getMessage(), e);
 			}
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
 			throw new Shutdown(e.getMessage(), e);
 		}
 	}
