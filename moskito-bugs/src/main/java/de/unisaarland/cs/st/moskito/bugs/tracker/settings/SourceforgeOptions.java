@@ -132,7 +132,6 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			final LongArgument groupIdArgument = getSettings().getArgument(getGroupIdArg());
 			final LongArgument atIdArgument = getSettings().getArgument(getAtIdArg());
 			
-			@SuppressWarnings ("unchecked")
 			final EnumArgument<Type> bugTypeArgument = getSettings().getArgument(getBugTypeArg());
 			
 			final SourceforgeTracker tracker = new SourceforgeTracker();

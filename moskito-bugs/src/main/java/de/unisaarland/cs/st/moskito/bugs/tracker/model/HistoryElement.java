@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -58,7 +55,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.StringTuple;
 
 /**
  * The Class HistoryElement.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
@@ -101,10 +98,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Instantiates a new history element.
-	 *
-	 * @param bugId the bug id
-	 * @param author the author
-	 * @param timestamp the timestamp
+	 * 
+	 * @param bugId
+	 *            the bug id
+	 * @param author
+	 *            the author
+	 * @param timestamp
+	 *            the timestamp
 	 */
 	@NoneNull
 	public HistoryElement(final String bugId, final Person author, final DateTime timestamp) {
@@ -115,9 +115,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Adds the change.
-	 *
-	 * @param <T> the generic type
-	 * @param values the values
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param values
+	 *            the values
 	 * @return the tuple
 	 */
 	@SuppressWarnings ("unchecked")
@@ -154,6 +156,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			} else {
 				type = values.get(fieldName).getFirst().getClass();
 			}
+			
+			assert (type != null);
 			
 			if (type == String.class) {
 				final Map<String, StringTuple> stringValues = getChangedStringValues();
@@ -218,10 +222,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Adds the changed value.
-	 *
-	 * @param field the field
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param field
+	 *            the field
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	@SuppressWarnings ("serial")
 	public void addChangedValue(final String field,
@@ -237,10 +244,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Adds the changed value.
-	 *
-	 * @param field the field
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param field
+	 *            the field
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	@SuppressWarnings ("serial")
 	public void addChangedValue(final String field,
@@ -256,10 +266,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Adds the changed value.
-	 *
-	 * @param field the field
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param field
+	 *            the field
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	@SuppressWarnings ("serial")
 	public void addChangedValue(final String field,
@@ -275,10 +288,13 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Adds the changed value.
-	 *
-	 * @param field the field
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param field
+	 *            the field
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	@SuppressWarnings ("serial")
 	public void addChangedValue(final String field,
@@ -301,15 +317,15 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	public int compareTo(final HistoryElement object) {
 		if (object == null) {
 			return 1;
-		} else {
-			return getTimestamp().compareTo(object.getTimestamp());
 		}
+		return getTimestamp().compareTo(object.getTimestamp());
 	}
 	
 	/**
 	 * Contains.
-	 *
-	 * @param fieldName the field name
+	 * 
+	 * @param fieldName
+	 *            the field name
 	 * @return true, if successful
 	 */
 	@Transient
@@ -351,9 +367,11 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param <T> the generic type
-	 * @param field the field
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param field
+	 *            the field
 	 * @return the tuple
 	 */
 	public <T> Tuple<?, ?> get(final String field) {
@@ -388,7 +406,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.model.TextElement#getAuthor()
 	 */
 	@Override
@@ -400,7 +419,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the bug id.
-	 *
+	 * 
 	 * @return the bugId
 	 */
 	public String getBugId() {
@@ -409,7 +428,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the changed date values.
-	 *
+	 * 
 	 * @return the changedDateValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -421,7 +440,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the changed enum values.
-	 *
+	 * 
 	 * @return the changedEnumValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -433,7 +452,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the changed person values.
-	 *
+	 * 
 	 * @return the changedPersonValues
 	 */
 	// @ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -444,7 +463,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the changed string values.
-	 *
+	 * 
 	 * @return the changedStringValues
 	 */
 	// @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -456,7 +475,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the fields.
-	 *
+	 * 
 	 * @return the fields
 	 */
 	@Transient
@@ -472,8 +491,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the for field.
-	 *
-	 * @param field the field
+	 * 
+	 * @param field
+	 *            the field
 	 * @return the for field
 	 */
 	@Transient
@@ -497,7 +517,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	@Id
@@ -508,7 +528,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the java timestamp.
-	 *
+	 * 
 	 * @return the java timestamp
 	 */
 	@SuppressWarnings ("unused")
@@ -520,7 +540,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the person container.
-	 *
+	 * 
 	 * @return the personContainer
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -540,7 +560,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Gets the timestamp.
-	 *
+	 * 
 	 * @return the timestamp
 	 */
 	@Override
@@ -566,7 +586,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Checks if is empty.
-	 *
+	 * 
 	 * @return true, if is empty
 	 */
 	@Transient
@@ -577,8 +597,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the author.
-	 *
-	 * @param author the new author
+	 * 
+	 * @param author
+	 *            the new author
 	 */
 	public void setAuthor(final Person author) {
 		getPersonContainer().add("author", author);
@@ -586,8 +607,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the bug id.
-	 *
-	 * @param bugId the bugId to set
+	 * 
+	 * @param bugId
+	 *            the bugId to set
 	 */
 	public void setBugId(final String bugId) {
 		this.bugId = bugId;
@@ -595,8 +617,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the changed date values.
-	 *
-	 * @param changedDateValues the changedDateValues to set
+	 * 
+	 * @param changedDateValues
+	 *            the changedDateValues to set
 	 */
 	private void setChangedDateValues(final Map<String, DateTimeTuple> changedDateValues) {
 		this.changedDateValues = changedDateValues;
@@ -604,8 +627,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the changed enum values.
-	 *
-	 * @param changedEnumValues the changedEnumValues to set
+	 * 
+	 * @param changedEnumValues
+	 *            the changedEnumValues to set
 	 */
 	private void setChangedEnumValues(final Map<String, EnumTuple> changedEnumValues) {
 		this.changedEnumValues = changedEnumValues;
@@ -613,8 +637,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the changed person values.
-	 *
-	 * @param changedPersonValues the changedPersonValues to set
+	 * 
+	 * @param changedPersonValues
+	 *            the changedPersonValues to set
 	 */
 	private void setChangedPersonValues(final Map<String, PersonTuple> changedPersonValues) {
 		this.changedPersonValues = changedPersonValues;
@@ -622,8 +647,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the changed string values.
-	 *
-	 * @param changedStringValues the changedStringValues to set
+	 * 
+	 * @param changedStringValues
+	 *            the changedStringValues to set
 	 */
 	private void setChangedStringValues(final Map<String, StringTuple> changedStringValues) {
 		this.changedStringValues = changedStringValues;
@@ -631,8 +657,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the id.
-	 *
-	 * @param id the id to set
+	 * 
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(final long id) {
 		this.id = id;
@@ -644,8 +671,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	/**
 	 * Sets the java timestamp.
-	 *
-	 * @param timestamp the new java timestamp
+	 * 
+	 * @param timestamp
+	 *            the new java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	private void setJavaTimestamp(final Date timestamp) {
@@ -654,8 +682,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Sets the person container.
-	 *
-	 * @param personContainer the personContainer to set
+	 * 
+	 * @param personContainer
+	 *            the personContainer to set
 	 */
 	public void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
@@ -667,8 +696,9 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 */
 	/**
 	 * Sets the timestamp.
-	 *
-	 * @param timestamp the timestamp to set
+	 * 
+	 * @param timestamp
+	 *            the timestamp to set
 	 */
 	public void setTimestamp(@NotNull final DateTime timestamp) {
 		this.timestamp = timestamp;
@@ -676,7 +706,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	
 	/**
 	 * Size.
-	 *
+	 * 
 	 * @return the int
 	 */
 	public int size() {

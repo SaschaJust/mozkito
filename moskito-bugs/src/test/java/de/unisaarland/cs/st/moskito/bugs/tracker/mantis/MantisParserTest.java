@@ -102,7 +102,7 @@ public class MantisParserTest {
 		final MantisParser mantisParser = new MantisParser();
 		final Regex regex = mantisParser.getAttachmentRegex();
 		final List<List<RegexGroup>> findAll = regex.findAll(s);
-		assertTrue(findAll != null);
+		assert (findAll != null);
 		assertEquals(3, findAll.size());
 		for (int i = 0; i < 3; ++i) {
 			final List<RegexGroup> list = findAll.get(i);
@@ -249,7 +249,7 @@ public class MantisParserTest {
 		
 		final Iterator<HistoryElement> iterator = history.iterator();
 		HistoryElement hElement = iterator.next();
-		assertTrue(hElement != null);
+		assert (hElement != null);
 		final Map<String, PersonTuple> changedPersonValues = hElement.getChangedPersonValues();
 		assertEquals(1, changedPersonValues.size());
 		assertTrue(changedPersonValues.get("assignedto") != null);
