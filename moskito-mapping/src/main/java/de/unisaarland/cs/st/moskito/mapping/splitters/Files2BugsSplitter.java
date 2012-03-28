@@ -17,7 +17,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.model.File2Bugs;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -26,22 +29,12 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Files2BugsSplitter.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Files2BugsSplitter extends MappingSplitter {
-	
-	/**
-	 * After parse.
-	 */
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -52,17 +45,19 @@ public class Files2BugsSplitter extends MappingSplitter {
 		return "Creates a table that puts files into relation to their bugs.";
 	}
 	
-	/**
-	 * Inits the settings.
-	 *
-	 * @param set the set
-	 * @return true, if successful
-	 * @throws ArgumentRegistrationException the argument registration exception
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -107,6 +102,24 @@ public class Files2BugsSplitter extends MappingSplitter {
 		}
 		
 		return ret;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

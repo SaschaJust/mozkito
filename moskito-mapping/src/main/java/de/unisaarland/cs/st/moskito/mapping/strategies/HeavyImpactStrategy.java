@@ -12,7 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
@@ -26,15 +29,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  */
 public class HeavyImpactStrategy extends MappingStrategy {
 	
-	/**
-	 * After parse.
-	 */
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy# getDescription()
@@ -44,16 +38,19 @@ public class HeavyImpactStrategy extends MappingStrategy {
 		return "Maps according to the highest confidence given by a MappingEngine.";
 	}
 	
-	/**
-	 * Inits the settings.
-	 *
-	 * @param set the set
-	 * @return true, if successful
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -81,6 +78,24 @@ public class HeavyImpactStrategy extends MappingStrategy {
 				mapping.addStrategy(getHandle(), null);
 		}
 		return mapping;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

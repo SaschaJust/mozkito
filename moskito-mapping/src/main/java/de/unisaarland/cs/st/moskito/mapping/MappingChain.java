@@ -15,55 +15,58 @@ package de.unisaarland.cs.st.moskito.mapping;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.BooleanArgument;
-import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Optional;
-import net.ownhero.dev.hiari.settings.requirements.Required;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
+import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappingChain.
  */
-public class MappingChain extends Chain<MappingSettings> {
+public class MappingChain extends Chain<Settings> {
 	
 	/** The database arguments. */
-	private final DatabaseOptions databaseArguments;
+	private final DatabaseOptions                         databaseOptions;
 	
 	/** The thread pool. */
-	private final Pool            threadPool;
+	private final Pool                                    threadPool;
+	
+	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	
+	private MappingOptions                                mappingOptions;
+	
+	private ArgumentSet<MappingFinder, MappingOptions>    mappingArguments;
 	
 	/**
 	 * Instantiates a new mapping chain.
-	 *
+	 * 
 	 */
-	public MappingChain() {
-		super(new MappingSettings(), "mapping"); //$NON-NLS-1$
+	public MappingChain(final Settings settings) {
+		super(settings, "mapping"); //$NON-NLS-1$
 		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
-		final MappingSettings settings = getSettings();
+		
 		try {
-			this.databaseArguments = settings.setDatabaseArgs(Requirement.required, "mapping");
-			this.logSettings = settings.setLoggerArg(new Required());
-			this.mappingArguments = settings.setMappingArgs(settings.getRootArgumentSet(), new Required());
-			new BooleanArgument(settings.getRootArgumentSet(), "headless",
-			                    "Can be enabled when running without graphical interface", "false", new Optional());
-			new LongArgument(settings.getRootArgumentSet(), "cache.size",
-			                 "determines the cache size (number of logs) that are prefetched during reading", "3000",
-			                 new Required());
+			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
+			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
+			
+			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
+			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
 		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final SettingsParseError e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
 	}
@@ -74,8 +77,6 @@ public class MappingChain extends Chain<MappingSettings> {
 	 */
 	@Override
 	public void setup() {
-		this.logSettings.getValue();
-		
 		final MappingFinder finder = this.mappingArguments.getValue();
 		
 		if (finder == null) {
@@ -102,11 +103,11 @@ public class MappingChain extends Chain<MappingSettings> {
 			// getSettings());
 			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
 			// getSettings());
-			for (final MappingEngine engine : this.mappingArguments.getEngines()) {
+			for (final MappingEngine engine : finder.getEngines().values()) {
 				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
 			}
 			
-			for (final MappingStrategy strategy : this.mappingArguments.getStrategies()) {
+			for (final MappingStrategy strategy : finder.getStrategies().values()) {
 				new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
 			}
 			// new ScoringPersister(this.threadPool.getThreadGroup(),

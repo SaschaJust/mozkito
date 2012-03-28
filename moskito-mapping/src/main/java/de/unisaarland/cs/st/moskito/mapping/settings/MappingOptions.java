@@ -13,11 +13,14 @@
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Required;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
@@ -27,63 +30,42 @@ import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappingArguments.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MappingArguments extends ArgumentSet<MappingFinder> {
+public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
+	
+	private static final String        DESCRIPTION = "TODO";
+	public static final String         NAME        = "mapping";
 	
 	/** The engines. */
-	private final Set<MappingEngine>   engines    = new HashSet<MappingEngine>();
+	private final Set<MappingEngine>   engines     = new HashSet<MappingEngine>();
 	
 	/** The strategies. */
-	private final Set<MappingStrategy> strategies = new HashSet<MappingStrategy>();
+	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
 	
 	/** The filters. */
-	private final Set<MappingFilter>   filters    = new HashSet<MappingFilter>();
+	private final Set<MappingFilter>   filters     = new HashSet<MappingFilter>();
 	
 	/** The selectors. */
-	private final Set<MappingSelector> selectors  = new HashSet<MappingSelector>();
+	private final Set<MappingSelector> selectors   = new HashSet<MappingSelector>();
 	
 	/** The splitters. */
-	private final Set<MappingSplitter> splitters  = new HashSet<MappingSplitter>();
+	private final Set<MappingSplitter> splitters   = new HashSet<MappingSplitter>();
 	
 	/** The trainers. */
-	private final Set<MappingTrainer>  trainers   = new HashSet<MappingTrainer>();
+	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
 	
 	/**
-	 * Instantiates a new mapping arguments.
-	 * 
 	 * @param argumentSet
-	 *            the argument set
-	 * @param requirement
-	 *            the requirement
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
+	 * @param name
+	 * @param description
+	 * @param requirements
 	 */
-	public MappingArguments(final ArgumentSet<?> argumentSet, final Requirement requirement)
-	        throws ArgumentRegistrationException {
-		super(argumentSet, "Definies mapping specific settings.", requirement);
-		
-		this.engines.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingEngine.class, "bleh blub",
-		                                                        new Required(), null, "Mapping", "Engines", true));
-		
-		this.filters.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingFilter.class, "bleh blub",
-		                                                        new Required(), null, "Mapping", "Filters", true));
-		
-		this.selectors.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingSelector.class, "bleh blub",
-		                                                          new Required(), null, "Mapping", "Selectors", true));
-		
-		this.splitters.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingSplitter.class, "bleh blub",
-		                                                          new Required(), null, "Mapping", "Splitters", true));
-		
-		this.strategies.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingStrategy.class, "bleh blub",
-		                                                           new Required(), null, "Mapping", "Strategies", true));
-		
-		this.trainers.addAll(ArgumentSet.provideDynamicArguments(argumentSet, MappingTrainer.class, "bleh blub",
-		                                                         new Required(), null, "Mapping", "Trainers", true));
+	public MappingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+		super(argumentSet, NAME, DESCRIPTION, requirements);
 	}
 	
 	/**
@@ -144,8 +126,13 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.ArgumentSet#init()
 	 */
+	/**
+	 * Inits the.
+	 * 
+	 * @return true, if successful
+	 */
 	@Override
-	protected boolean init() {
+	public MappingFinder init() {
 		final MappingFinder finder = new MappingFinder();
 		
 		for (final MappingEngine engine : this.engines) {
@@ -172,8 +159,24 @@ public class MappingArguments extends ArgumentSet<MappingFinder> {
 			finder.addTrainer(trainer);
 		}
 		
-		setCachedValue(finder);
-		return true;
+		return finder;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+	                                                                            SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

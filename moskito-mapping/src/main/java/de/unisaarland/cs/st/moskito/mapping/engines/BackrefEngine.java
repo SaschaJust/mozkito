@@ -74,7 +74,7 @@ public class BackrefEngine extends MappingEngine {
 	 * 
 	 * @return the confidence
 	 */
-	private final Double getConfidence() {
+	public final Double getConfidence() {
 		// PRECONDITIONS
 		
 		try {

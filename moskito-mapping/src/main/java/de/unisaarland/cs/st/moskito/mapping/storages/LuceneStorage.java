@@ -15,7 +15,10 @@ package de.unisaarland.cs.st.moskito.mapping.storages;
 import java.util.HashMap;
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -34,28 +37,27 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class LuceneStorage.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class LuceneStorage extends MappingStorage {
 	
 	/** The analyzer. */
-	private Analyzer                      analyzer         = null;
+	private Analyzer                        analyzer         = null;
 	
 	/** The report directory. */
-	private final Directory               reportDirectory  = new RAMDirectory();
+	private final Directory                 reportDirectory  = new RAMDirectory();
 	
 	/** The iwriter reports. */
-	private IndexWriter                   iwriterReports   = null;
+	private IndexWriter                     iwriterReports   = null;
 	
 	/** The report documents. */
-	private final HashMap<Long, Document> reportDocuments  = new HashMap<Long, Document>();
+	private final HashMap<String, Document> reportDocuments  = new HashMap<String, Document>();
 	
 	/** The isearcher reports. */
-	private IndexSearcher                 isearcherReports = null;
+	private IndexSearcher                   isearcherReports = null;
 	
 	/**
 	 * Instantiates a new lucene storage.
@@ -66,8 +68,9 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Adds the report document.
-	 *
-	 * @param report the report
+	 * 
+	 * @param report
+	 *            the report
 	 */
 	private void addReportDocument(final Report report) {
 		final Document doc = new Document();
@@ -86,17 +89,8 @@ public class LuceneStorage extends MappingStorage {
 	}
 	
 	/**
-	 * After parse.
-	 */
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/**
 	 * Gets the analyzer.
-	 *
+	 * 
 	 * @return the analyzer
 	 */
 	public Analyzer getAnalyzer() {
@@ -114,7 +108,7 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Gets the isearcher reports.
-	 *
+	 * 
 	 * @return the isearcherReports
 	 */
 	public IndexSearcher getIsearcherReports() {
@@ -123,7 +117,7 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Gets the iwriter reports.
-	 *
+	 * 
 	 * @return the iwriterReports
 	 */
 	public IndexWriter getIwriterReports() {
@@ -132,7 +126,7 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Gets the report directory.
-	 *
+	 * 
 	 * @return the reportDirectory
 	 */
 	public Directory getReportDirectory() {
@@ -141,28 +135,26 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Gets the report documents.
-	 *
+	 * 
 	 * @return the reportDocuments
 	 */
-	public HashMap<Long, Document> getReportDocuments() {
+	public HashMap<String, Document> getReportDocuments() {
 		return this.reportDocuments;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
-	 */
-	/**
-	 * Inits the settings.
-	 *
-	 * @param set the set
-	 * @return true, if successful
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -190,10 +182,29 @@ public class LuceneStorage extends MappingStorage {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Sets the analyzer.
-	 *
-	 * @param analyzer the analyzer to set
+	 * 
+	 * @param analyzer
+	 *            the analyzer to set
 	 */
 	public void setAnalyzer(final Analyzer analyzer) {
 		this.analyzer = analyzer;
@@ -207,8 +218,9 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Sets the isearcher reports.
-	 *
-	 * @param isearcherReports the isearcherReports to set
+	 * 
+	 * @param isearcherReports
+	 *            the isearcherReports to set
 	 */
 	public void setIsearcherReports(final IndexSearcher isearcherReports) {
 		this.isearcherReports = isearcherReports;
@@ -216,8 +228,9 @@ public class LuceneStorage extends MappingStorage {
 	
 	/**
 	 * Sets the iwriter reports.
-	 *
-	 * @param iwriterReports the iwriterReports to set
+	 * 
+	 * @param iwriterReports
+	 *            the iwriterReports to set
 	 */
 	public void setIwriterReports(final IndexWriter iwriterReports) {
 		this.iwriterReports = iwriterReports;

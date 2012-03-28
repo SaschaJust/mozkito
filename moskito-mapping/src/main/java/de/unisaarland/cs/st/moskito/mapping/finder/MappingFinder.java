@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
@@ -37,10 +38,9 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappingFinder.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MappingFinder {
@@ -75,8 +75,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the engine.
-	 *
-	 * @param engine the engine
+	 * 
+	 * @param engine
+	 *            the engine
 	 */
 	public void addEngine(final MappingEngine engine) {
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
@@ -86,8 +87,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the filter.
-	 *
-	 * @param filter the filter
+	 * 
+	 * @param filter
+	 *            the filter
 	 */
 	public void addFilter(final MappingFilter filter) {
 		this.filters.put(filter.getClass(), filter);
@@ -97,8 +99,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the selector.
-	 *
-	 * @param selector the selector
+	 * 
+	 * @param selector
+	 *            the selector
 	 */
 	public void addSelector(final MappingSelector selector) {
 		this.selectors.put(selector.getClass(), selector);
@@ -107,8 +110,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the splitter.
-	 *
-	 * @param splitter the splitter
+	 * 
+	 * @param splitter
+	 *            the splitter
 	 */
 	public void addSplitter(final MappingSplitter splitter) {
 		this.splitters.put(splitter.getClass(), splitter);
@@ -117,8 +121,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the storage.
-	 *
-	 * @param storage the storage
+	 * 
+	 * @param storage
+	 *            the storage
 	 */
 	public void addStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
@@ -127,8 +132,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the strategy.
-	 *
-	 * @param strategy the strategy
+	 * 
+	 * @param strategy
+	 *            the strategy
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
 		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
@@ -137,8 +143,9 @@ public class MappingFinder {
 	
 	/**
 	 * Adds the trainer.
-	 *
-	 * @param trainer the trainer
+	 * 
+	 * @param trainer
+	 *            the trainer
 	 */
 	public void addTrainer(final MappingTrainer trainer) {
 		this.trainers.put(trainer.getClass(), trainer);
@@ -147,8 +154,9 @@ public class MappingFinder {
 	
 	/**
 	 * Filter.
-	 *
-	 * @param mapping the mapping
+	 * 
+	 * @param mapping
+	 *            the mapping
 	 * @return the filtered mapping
 	 */
 	public FilteredMapping filter(final IMapping mapping) {
@@ -164,11 +172,15 @@ public class MappingFinder {
 	
 	/**
 	 * Find selectors.
-	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param fromClazz the from clazz
-	 * @param toClazz the to clazz
+	 * 
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param fromClazz
+	 *            the from clazz
+	 * @param toClazz
+	 *            the to clazz
 	 * @return the list
 	 */
 	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz,
@@ -193,11 +205,15 @@ public class MappingFinder {
 	
 	/**
 	 * Gets the candidates.
-	 *
-	 * @param <T> the generic type
-	 * @param source the source
-	 * @param targetClass the target class
-	 * @param util the util
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param source
+	 *            the source
+	 * @param targetClass
+	 *            the target class
+	 * @param util
+	 *            the util
 	 * @return the candidates
 	 */
 	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
@@ -220,9 +236,108 @@ public class MappingFinder {
 	}
 	
 	/**
+	 * @return the engines
+	 */
+	public final Map<String, MappingEngine> getEngines() {
+		// PRECONDITIONS
+		
+		try {
+			return this.engines;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.engines, "Field '%s' in '%s'.", "engines", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the filters
+	 */
+	public final Map<Class<? extends MappingFilter>, MappingFilter> getFilters() {
+		// PRECONDITIONS
+		
+		try {
+			return this.filters;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the selectors
+	 */
+	public final Map<Class<? extends MappingSelector>, MappingSelector> getSelectors() {
+		// PRECONDITIONS
+		
+		try {
+			return this.selectors;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "selectors", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the splitters
+	 */
+	public final Map<Class<? extends MappingSplitter>, MappingSplitter> getSplitters() {
+		// PRECONDITIONS
+		
+		try {
+			return this.splitters;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.splitters, "Field '%s' in '%s'.", "splitters", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the storages
+	 */
+	public final Map<Class<? extends MappingStorage>, MappingStorage> getStorages() {
+		// PRECONDITIONS
+		
+		try {
+			return this.storages;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.storages, "Field '%s' in '%s'.", "storages", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the strategies
+	 */
+	public final Map<String, MappingStrategy> getStrategies() {
+		// PRECONDITIONS
+		
+		try {
+			return this.strategies;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.strategies, "Field '%s' in '%s'.", "strategies", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * @return the trainers
+	 */
+	public final Map<Class<? extends MappingTrainer>, MappingTrainer> getTrainers() {
+		// PRECONDITIONS
+		
+		try {
+			return this.trainers;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.trainers, "Field '%s' in '%s'.", "trainers", getClass().getSimpleName());
+		}
+	}
+	
+	/**
 	 * Load data.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public void loadData(final PersistenceUtil persistenceUtil) {
 		for (final Class<? extends MappingStorage> key : this.storages.keySet()) {
@@ -232,9 +347,11 @@ public class MappingFinder {
 	
 	/**
 	 * Map.
-	 *
-	 * @param strategy the strategy
-	 * @param mapping the mapping
+	 * 
+	 * @param strategy
+	 *            the strategy
+	 * @param mapping
+	 *            the mapping
 	 * @return the mapping
 	 */
 	public Mapping map(final MappingStrategy strategy,
@@ -250,8 +367,9 @@ public class MappingFinder {
 	
 	/**
 	 * Provide storages.
-	 *
-	 * @param accessor the accessor
+	 * 
+	 * @param accessor
+	 *            the accessor
 	 */
 	private void provideStorages(final Node accessor) {
 		for (final Class<? extends MappingStorage> key : accessor.storageDependency()) {
@@ -272,10 +390,13 @@ public class MappingFinder {
 	
 	/**
 	 * Score.
-	 *
-	 * @param engine the engine
-	 * @param element1 the element1
-	 * @param element2 the element2
+	 * 
+	 * @param engine
+	 *            the engine
+	 * @param element1
+	 *            the element1
+	 * @param element2
+	 *            the element2
 	 * @return the computed scoring for transaction/report relation
 	 */
 	public Mapping score(final MappingEngine engine,
@@ -309,9 +430,11 @@ public class MappingFinder {
 	
 	/**
 	 * Split.
-	 *
-	 * @param data the data
-	 * @param util the util
+	 * 
+	 * @param data
+	 *            the data
+	 * @param util
+	 *            the util
 	 * @return the list
 	 */
 	public List<Annotated> split(final FilteredMapping data,

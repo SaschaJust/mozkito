@@ -79,18 +79,18 @@ public abstract class SearchEngine extends MappingEngine {
 	 *            the query parser
 	 * @return the query
 	 */
-	protected Query buildQuery(String queryString,
+	protected Query buildQuery(final String queryString,
 	                           final QueryParser queryParser) {
 		Query query = null;
-		queryString = queryString.replaceAll("[^a-zA-Z0-9]", " "); //$NON-NLS-1$ //$NON-NLS-2$
+		final String modifiedQuery = queryString.replaceAll("[^a-zA-Z0-9]", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (queryString.replaceAll("[^a-zA-Z0-9]", "").length() < 8) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (modifiedQuery.replaceAll("[^a-zA-Z0-9]", "").length() < 8) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		
 		try {
 			// FIXME remove truncate and fix query string accordingly
-			query = queryParser.parse(truncate(queryString));
+			query = queryParser.parse(truncate(modifiedQuery));
 			
 			final Set<Term> terms = new HashSet<Term>();
 			query.extractTerms(terms);
