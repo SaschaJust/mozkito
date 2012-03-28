@@ -127,7 +127,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	public Tracker init() {
 		
 		try {
-			@SuppressWarnings ("unchecked")
 			final EnumArgument<TrackerType> trackerTypeArgument = getSettings().getArgument(getTrackerType());
 			
 			switch (trackerTypeArgument.getValue()) {

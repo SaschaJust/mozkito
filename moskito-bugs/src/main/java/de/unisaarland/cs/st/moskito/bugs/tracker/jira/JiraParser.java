@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
@@ -61,7 +58,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class JiraParser.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class JiraParser implements Parser {
@@ -73,8 +70,9 @@ public class JiraParser implements Parser {
 	
 	/**
 	 * Resolve resolution.
-	 *
-	 * @param resolutionString the resolution string
+	 * 
+	 * @param resolutionString
+	 *            the resolution string
 	 * @return the resolution
 	 */
 	public static Resolution resolveResolution(final String resolutionString) {
@@ -105,8 +103,9 @@ public class JiraParser implements Parser {
 	
 	/**
 	 * Resolve severity.
-	 *
-	 * @param severity the severity
+	 * 
+	 * @param severity
+	 *            the severity
 	 * @return the severity
 	 */
 	public static Severity resolveSeverity(final String severity) {
@@ -129,8 +128,9 @@ public class JiraParser implements Parser {
 	
 	/**
 	 * Resolve status.
-	 *
-	 * @param statusStr the status str
+	 * 
+	 * @param statusStr
+	 *            the status str
 	 * @return the status
 	 */
 	public static Status resolveStatus(final String statusStr) {
@@ -155,8 +155,9 @@ public class JiraParser implements Parser {
 	
 	/**
 	 * Resolve type.
-	 *
-	 * @param typeStr the type str
+	 * 
+	 * @param typeStr
+	 *            the type str
 	 * @return the type
 	 */
 	public static Type resolveType(final String typeStr) {
@@ -196,8 +197,9 @@ public class JiraParser implements Parser {
 	
 	/**
 	 * Instantiates a new jira parser.
-	 *
-	 * @param restClient the rest client
+	 * 
+	 * @param restClient
+	 *            the rest client
 	 */
 	public JiraParser(final JiraRestClient restClient) {
 		// PRECONDITIONS
@@ -315,7 +317,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
 	@Override
@@ -333,15 +336,15 @@ public class JiraParser implements Parser {
 			}
 			if (components.length() > 0) {
 				return components.toString();
-			} else {
-				return null;
 			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	@Override
@@ -642,7 +645,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	@Override
@@ -656,7 +660,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	@Override
@@ -674,7 +679,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	@Override
@@ -688,7 +694,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	@Override
@@ -707,7 +714,8 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	@Override
@@ -732,8 +740,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
@@ -746,8 +756,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
 	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -40,9 +37,10 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class Tracker.
- *
+ * 
  * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
  * mining/parsing/analyzing of a {@link Report}.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Tracker {
@@ -81,7 +79,7 @@ public abstract class Tracker {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the simple class name of the current tracker instance
 	 */
 	public String getHandle() {
@@ -91,27 +89,26 @@ public abstract class Tracker {
 	
 	/**
 	 * this method should be synchronized.
-	 *
+	 * 
 	 * @return the next id that hasn't been requested.
 	 */
 	public final synchronized ReportLink getNextReportLink() {
 		if (!this.reportLinks.isEmpty()) {
 			return this.reportLinks.poll();
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
 	 * Gets the parser.
-	 *
+	 * 
 	 * @return the parser
 	 */
 	public abstract Parser getParser();
 	
 	/**
 	 * Gets the report links.
-	 *
+	 * 
 	 * @return the report links
 	 */
 	public abstract Collection<ReportLink> getReportLinks();
@@ -128,7 +125,7 @@ public abstract class Tracker {
 	
 	/**
 	 * Gets the uri.
-	 *
+	 * 
 	 * @return the fetchURI
 	 */
 	public URI getUri() {
@@ -137,9 +134,11 @@ public abstract class Tracker {
 	
 	/**
 	 * This method is used to fetch persistent reports from the database.
-	 *
-	 * @param id the id of the bug report
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param id
+	 *            the id of the bug report
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the {@link Report}
 	 */
 	public Report loadReport(final Long id,
@@ -156,8 +155,9 @@ public abstract class Tracker {
 	
 	/**
 	 * This method parses a XML document representing a bug report.
-	 *
-	 * @param reportLink the report link
+	 * 
+	 * @param reportLink
+	 *            the report link
 	 * @return the report
 	 */
 	public final Report parse(final ReportLink reportLink) {
@@ -228,12 +228,16 @@ public abstract class Tracker {
 	
 	/**
 	 * sets up the current tracker and fills the queue with the corresponding bug report ids.
-	 *
-	 * @param fetchURI The {@link URI} to be appended by the pattern filled with the bug id. If pattern is null, this is a
-	 * direct link to a site composing all reports in one document.
-	 * @param username The username to be used to login to a bug tracking system. May be null iff password is null.
-	 * @param password The password to be used to login to a bug tracking system. May be null iff username is null.
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            The {@link URI} to be appended by the pattern filled with the bug id. If pattern is null, this is a
+	 *            direct link to a site composing all reports in one document.
+	 * @param username
+	 *            The username to be used to login to a bug tracking system. May be null iff password is null.
+	 * @param password
+	 *            The password to be used to login to a bug tracking system. May be null iff username is null.
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	
 	public void setup(@NotNull final URI fetchURI,
