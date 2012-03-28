@@ -17,7 +17,6 @@ import java.util.Collection;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Enum FieldKey.
  */

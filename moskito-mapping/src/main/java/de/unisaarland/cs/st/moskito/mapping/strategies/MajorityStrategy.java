@@ -22,10 +22,9 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MajorityStrategy.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MajorityStrategy extends MappingStrategy {
@@ -39,7 +38,8 @@ public class MajorityStrategy extends MappingStrategy {
 		return "Maps according to the mayority decision of the MappingEngines.";
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override

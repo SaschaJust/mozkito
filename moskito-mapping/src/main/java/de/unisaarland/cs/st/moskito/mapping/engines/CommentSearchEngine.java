@@ -37,10 +37,9 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CommentSearchEngine.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CommentSearchEngine extends SearchEngine {

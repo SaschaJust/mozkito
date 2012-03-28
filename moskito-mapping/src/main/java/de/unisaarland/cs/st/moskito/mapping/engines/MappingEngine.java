@@ -47,7 +47,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
-// TODO: Auto-generated Javadoc
 /**
  * 
  * Engines analyze two candidates to match certain criteria and score neutral (0) if they don't match or
@@ -314,9 +313,9 @@ public abstract class MappingEngine extends Node {
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
-	                                                                              ArgumentSetRegistrationException,
-	                                                                              ArgumentRegistrationException {
+	protected final ArgumentSet<?, ?> getAnchor(@SuppressWarnings ("hiding") @NotNull final ISettings settings) throws SettingsParseError,
+	                                                                                                           ArgumentSetRegistrationException,
+	                                                                                                           ArgumentRegistrationException {
 		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingEngine.Options.tag);
 		if (anchor == null) {
 			if (this.options == null) {
@@ -335,7 +334,7 @@ public abstract class MappingEngine extends Node {
 	 *            the settings
 	 * @return the options
 	 */
-	protected final SetArgument.Options getOptions(@NotNull final ISettings settings) {
+	protected final SetArgument.Options getOptions(@SuppressWarnings ("hiding") @NotNull final ISettings settings) {
 		if (this.options == null) {
 			this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
 		}

@@ -24,7 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
-// TODO: Auto-generated Javadoc
 /**
  * The any expression evaluates to true if any of the inner expressions evaluate to true. Evaluates to false otherwise.
  * 
@@ -38,8 +37,9 @@ public final class Any extends Expression {
 	
 	/**
 	 * Instantiates a new any.
-	 *
-	 * @param expressions a collection of inner expressions
+	 * 
+	 * @param expressions
+	 *            a collection of inner expressions
 	 */
 	public Any(final Collection<Expression> expressions) {
 		this.expressions.addAll(this.expressions);
@@ -47,8 +47,9 @@ public final class Any extends Expression {
 	
 	/**
 	 * Instantiates a new any.
-	 *
-	 * @param expressions sa collection of inner expressions
+	 * 
+	 * @param expressions
+	 *            sa collection of inner expressions
 	 */
 	public Any(final Expression... expressions) {
 		CollectionUtils.addAll(this.expressions, expressions);
@@ -74,7 +75,7 @@ public final class Any extends Expression {
 	
 	/**
 	 * Gets the expressions.
-	 *
+	 * 
 	 * @return the expressions
 	 */
 	public final Set<Expression> getExpressions() {

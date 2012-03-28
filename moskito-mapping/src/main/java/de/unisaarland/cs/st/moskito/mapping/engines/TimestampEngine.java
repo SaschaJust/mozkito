@@ -46,7 +46,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TimestampEngine.
  * 
@@ -263,8 +262,8 @@ public class TimestampEngine extends MappingEngine {
 		
 		final Report report = ((MappableReport) element2).getReport();
 		
-		final Interval interval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
-		                                       element1Timestamp.plus(getInterval().getEndMillis()));
+		final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
+		                                            element1Timestamp.plus(getInterval().getEndMillis()));
 		
 		if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
 			final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
@@ -274,7 +273,7 @@ public class TimestampEngine extends MappingEngine {
 				@SuppressWarnings ("unchecked")
 				final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
 				if (val.equals(Resolution.RESOLVED)) {
-					if (interval.contains(element.getTimestamp())) {
+					if (localInterval.contains(element.getTimestamp())) {
 						value = 1;
 						
 					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {

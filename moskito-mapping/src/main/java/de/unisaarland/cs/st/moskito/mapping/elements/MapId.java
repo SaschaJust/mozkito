@@ -14,7 +14,6 @@ package de.unisaarland.cs.st.moskito.mapping.elements;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class is used by the {@link PersistenceUtil} only and serves as a composed key in the database.
  * 

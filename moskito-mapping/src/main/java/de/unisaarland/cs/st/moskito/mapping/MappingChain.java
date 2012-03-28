@@ -22,6 +22,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
@@ -85,6 +86,7 @@ public class MappingChain extends Chain<Settings> {
 				shutdown();
 			}
 		}
+		Condition.notNull(finder, "Local variable '%s' in '%s'.", "finder", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		

@@ -10,19 +10,20 @@ import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CandidatesConverter.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CandidatesConverter extends Transformer<Candidate, Mapping> {
 	
 	/**
 	 * Instantiates a new candidates converter.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
 	 */
 	public CandidatesConverter(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);

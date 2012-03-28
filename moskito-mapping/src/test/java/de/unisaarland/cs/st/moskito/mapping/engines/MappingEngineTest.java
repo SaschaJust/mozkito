@@ -228,7 +228,7 @@ public class MappingEngineTest {
 	/**
 	 * Test supported.
 	 */
-	@SuppressWarnings ({ "deprecation", "serial" })
+	@SuppressWarnings ({ "deprecation", "serial", "hiding" })
 	@Test
 	public void testSupported() {
 		int failed = 0;
@@ -246,6 +246,7 @@ public class MappingEngineTest {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
+		
 		final MappableEntity transaction = new MappableTransaction();
 		final MappableEntity report = new MappableReport();
 		

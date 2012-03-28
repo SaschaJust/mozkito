@@ -17,7 +17,6 @@ import java.util.List;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
-// TODO: Auto-generated Javadoc
 /**
  * The and expression evaluates to true if and only if both inner expressions evaluate to true. Evaluates to false
  * otherwise.
@@ -35,9 +34,11 @@ public final class And extends Expression {
 	
 	/**
 	 * Instantiates a new and.
-	 *
-	 * @param expression1 the expression1
-	 * @param expression2 the expression2
+	 * 
+	 * @param expression1
+	 *            the expression1
+	 * @param expression2
+	 *            the expression2
 	 */
 	public And(final Expression expression1, final Expression expression2) {
 		this.expression1 = expression1;
@@ -59,7 +60,7 @@ public final class And extends Expression {
 	
 	/**
 	 * Gets the expression1.
-	 *
+	 * 
 	 * @return the first expression
 	 */
 	public Expression getExpression1() {
@@ -68,7 +69,7 @@ public final class And extends Expression {
 	
 	/**
 	 * Gets the expression2.
-	 *
+	 * 
 	 * @return the second expression
 	 */
 	public Expression getExpression2() {

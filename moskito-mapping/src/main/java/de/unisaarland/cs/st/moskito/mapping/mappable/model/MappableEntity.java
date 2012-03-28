@@ -36,7 +36,6 @@ import org.apache.commons.collections.CollectionUtils;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
-// TODO: Auto-generated Javadoc
 /**
  * Superclass that is used to wrap around classes that shall be mapped. Since inheritance based annotations do not work
  * on interfaces we can't simply use {@link Annotated} here.
@@ -65,8 +64,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param key the key
+	 * 
+	 * @param key
+	 *            the key
 	 * @return the object
 	 */
 	@Transient
@@ -74,9 +74,11 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param key the key
-	 * @param index the index
+	 * 
+	 * @param key
+	 *            the key
+	 * @param index
+	 *            the index
 	 * @return the object
 	 */
 	@Transient
@@ -85,8 +87,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the all.
-	 *
-	 * @param keys the keys
+	 * 
+	 * @param keys
+	 *            the keys
 	 * @return the all
 	 */
 	@Transient
@@ -102,8 +105,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the any.
-	 *
-	 * @param keys the keys
+	 * 
+	 * @param keys
+	 *            the keys
 	 * @return the any
 	 */
 	@Transient
@@ -122,8 +126,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the as one string.
-	 *
-	 * @param keys the keys
+	 * 
+	 * @param keys
+	 *            the keys
 	 * @return the as one string
 	 */
 	@Transient
@@ -143,7 +148,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the base type.
-	 *
+	 * 
 	 * @return the base type
 	 */
 	@Transient
@@ -151,7 +156,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the generated id.
-	 *
+	 * 
 	 * @return the generated id
 	 */
 	@Id
@@ -163,7 +168,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	@Transient
@@ -173,7 +178,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	@Transient
@@ -181,8 +186,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the size.
-	 *
-	 * @param key the key
+	 * 
+	 * @param key
+	 *            the key
 	 * @return the size
 	 */
 	@Transient
@@ -195,7 +201,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the test.
-	 *
+	 * 
 	 * @return the test
 	 */
 	@Basic
@@ -206,7 +212,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the text.
-	 *
+	 * 
 	 * @return A composition of all text fields
 	 */
 	@Transient
@@ -214,8 +220,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Sets the generated id.
-	 *
-	 * @param generatedId the generatedId to set
+	 * 
+	 * @param generatedId
+	 *            the generatedId to set
 	 */
 	public final void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
@@ -223,8 +230,9 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Sets the test.
-	 *
-	 * @param test the new test
+	 * 
+	 * @param test
+	 *            the new test
 	 */
 	public void setTest(final int test) {
 		this.test = test;
@@ -232,7 +240,7 @@ public abstract class MappableEntity implements Annotated {
 	
 	/**
 	 * Supported.
-	 *
+	 * 
 	 * @return the sets the
 	 */
 	@Transient

@@ -20,7 +20,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
-// TODO: Auto-generated Javadoc
 /**
  * Only consider the feature with the highest impact.
  * 

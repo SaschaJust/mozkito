@@ -16,10 +16,9 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Messages.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Messages {
@@ -32,8 +31,9 @@ public class Messages {
 	
 	/**
 	 * Gets the string.
-	 *
-	 * @param key the key
+	 * 
+	 * @param key
+	 *            the key
 	 * @return the string
 	 */
 	public static String getString(final String key) {

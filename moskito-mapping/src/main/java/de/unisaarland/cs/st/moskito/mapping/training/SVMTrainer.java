@@ -29,10 +29,9 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SVMTrainer.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class SVMTrainer extends MappingTrainer {
@@ -41,8 +40,8 @@ public class SVMTrainer extends MappingTrainer {
 	private svm_parameter              param;           // set by
 	                                                     // parse_command_line
 	/** The prob. */
-                                                     	private svm_problem                prob;            // set by read_problem
-	
+	private svm_problem                prob;            // set by read_problem
+	                                                     
 	/** The model. */
 	private svm_model                  model;
 	
@@ -50,10 +49,10 @@ public class SVMTrainer extends MappingTrainer {
 	private String                     input_file_name; // set by
 	                                                     // parse_command_line
 	/** The model_file_name. */
-                                                     	private String                     model_file_name; // set by
-	                                                     // parse_command_line
+	private String                     model_file_name; // set by
+	// parse_command_line
 	/** The error_msg. */
-                                                     	private String                     error_msg;
+	private String                     error_msg;
 	
 	/** The cross_validation. */
 	private int                        cross_validation;
@@ -65,14 +64,15 @@ public class SVMTrainer extends MappingTrainer {
 	private static svm_print_interface svm_print_null = new svm_print_interface() {
 		                                                  
 		                                                  @Override
-		                                                  public void print(final String s) {
+		                                                  public void print(final String s) { // stub
 		                                                  }
 	                                                  };
 	
 	/**
 	 * Atof.
-	 *
-	 * @param s the s
+	 * 
+	 * @param s
+	 *            the s
 	 * @return the double
 	 */
 	private static double atof(final String s) {
@@ -86,8 +86,9 @@ public class SVMTrainer extends MappingTrainer {
 	
 	/**
 	 * Atoi.
-	 *
-	 * @param s the s
+	 * 
+	 * @param s
+	 *            the s
 	 * @return the int
 	 */
 	private static int atoi(final String s) {
@@ -196,8 +197,9 @@ public class SVMTrainer extends MappingTrainer {
 	
 	/**
 	 * Parse_command_line.
-	 *
-	 * @param argv the argv
+	 * 
+	 * @param argv
+	 *            the argv
 	 */
 	private void parse_command_line(final String argv[]) {
 		int i;
@@ -341,8 +343,9 @@ public class SVMTrainer extends MappingTrainer {
 	
 	/**
 	 * Read_problem.
-	 *
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private void read_problem() throws IOException {
 		final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
@@ -405,9 +408,11 @@ public class SVMTrainer extends MappingTrainer {
 	
 	/**
 	 * Run.
-	 *
-	 * @param argv the argv
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param argv
+	 *            the argv
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@SuppressWarnings ("unused")
 	private void run(final String argv[]) throws IOException {

@@ -8,7 +8,6 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Mapping_.
  */

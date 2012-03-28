@@ -39,10 +39,9 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DescriptionSearchEngine.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class DescriptionSearchEngine extends SearchEngine {
@@ -55,7 +54,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	                                                                                                     
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return the description
 	 */
 	@Override

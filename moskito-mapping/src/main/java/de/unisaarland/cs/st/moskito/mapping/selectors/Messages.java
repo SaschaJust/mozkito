@@ -15,10 +15,9 @@ package de.unisaarland.cs.st.moskito.mapping.selectors;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Messages.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Messages {
@@ -30,22 +29,23 @@ public class Messages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	
 	/**
-	 * Instantiates a new messages.
+	 * Gets the string.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the string
 	 */
-	private Messages() {
+	public static String getString(final String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (final MissingResourceException e) {
+			return '!' + key + '!';
+		}
 	}
 	
 	/**
-	 * Gets the string.
-	 *
-	 * @param key the key
-	 * @return the string
+	 * Instantiates a new messages.
 	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	private Messages() {
 	}
 }

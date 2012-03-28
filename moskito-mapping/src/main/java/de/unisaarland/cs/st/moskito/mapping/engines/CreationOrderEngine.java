@@ -32,7 +32,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CreationOrderEngine.
  * 
@@ -202,12 +201,12 @@ public class CreationOrderEngine extends MappingEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
-		double confidence = 0d;
+		double localConfidence = 0d;
 		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
-			confidence = getConfidence();
+			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(),
+		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(),
 		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(),
 		           ((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).toString(), FieldKey.CREATION_TIMESTAMP.name(),
 		           ((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)).toString(),

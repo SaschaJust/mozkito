@@ -31,10 +31,9 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Class2Bugs.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
@@ -67,8 +66,9 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Gets the bug counts.
-	 *
-	 * @param util the util
+	 * 
+	 * @param util
+	 *            the util
 	 * @return the bug counts
 	 */
 	public static List<File2Bugs> getBugCounts(final PersistenceUtil util) {
@@ -125,9 +125,11 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Instantiates a new class2 bugs.
-	 *
-	 * @param file the file
-	 * @param reports the reports
+	 * 
+	 * @param file
+	 *            the file
+	 * @param reports
+	 *            the reports
 	 */
 	public Class2Bugs(final RCSFile file, final Set<Report> reports) {
 		setFile(file);
@@ -162,7 +164,7 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Gets the file.
-	 *
+	 * 
 	 * @return the file
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -172,7 +174,7 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Gets the reports.
-	 *
+	 * 
 	 * @return the reports
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -196,8 +198,9 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Sets the file.
-	 *
-	 * @param file the file to set
+	 * 
+	 * @param file
+	 *            the file to set
 	 */
 	public void setFile(final RCSFile file) {
 		this.file = file;
@@ -205,8 +208,9 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * Sets the reports.
-	 *
-	 * @param reports the reports to set
+	 * 
+	 * @param reports
+	 *            the reports to set
 	 */
 	public void setReports(final Set<Report> reports) {
 		this.reports = reports;
@@ -214,7 +218,7 @@ public class Class2Bugs implements Annotated {
 	
 	/**
 	 * To csv.
-	 *
+	 * 
 	 * @return the string
 	 */
 	public String toCSV() {

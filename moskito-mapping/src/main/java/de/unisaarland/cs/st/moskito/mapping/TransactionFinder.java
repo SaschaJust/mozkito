@@ -20,21 +20,24 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TransactionFinder.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TransactionFinder extends Transformer<Report, Candidate> {
 	
 	/**
 	 * Instantiates a new transaction finder.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param finder the finder
-	 * @param util the util
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param finder
+	 *            the finder
+	 * @param util
+	 *            the util
 	 */
 	public TransactionFinder(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final PersistenceUtil util) {

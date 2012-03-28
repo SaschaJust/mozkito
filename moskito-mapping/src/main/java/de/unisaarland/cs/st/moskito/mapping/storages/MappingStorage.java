@@ -28,7 +28,7 @@ public abstract class MappingStorage extends Node {
 	 * @param util
 	 *            the util
 	 */
-	public void loadData(final PersistenceUtil util) {
+	public void loadData(final PersistenceUtil util) { // stub
 	}
 	
 }

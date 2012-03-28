@@ -14,7 +14,6 @@ package de.unisaarland.cs.st.moskito.mapping.requirements;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
-// TODO: Auto-generated Javadoc
 /**
  * This enum represents the index that is used in {@link Expression}s to determine relations between 'from' and 'to'
  * entities of {@link MappableEntity}.

@@ -16,7 +16,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
-// TODO: Auto-generated Javadoc
 /**
  * 
  * A strategy determines the way reposuite decides whether a mapping is valid or not. In a TotalAgreement strategy all
@@ -38,8 +37,9 @@ public abstract class MappingStrategy extends Node {
 	
 	/**
 	 * Map.
-	 *
-	 * @param mapping the mapping
+	 * 
+	 * @param mapping
+	 *            the mapping
 	 * @return the i mapping
 	 */
 	public abstract IMapping map(Mapping mapping);

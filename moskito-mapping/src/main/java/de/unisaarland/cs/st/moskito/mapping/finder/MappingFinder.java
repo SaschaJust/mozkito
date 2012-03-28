@@ -222,10 +222,10 @@ public class MappingFinder {
 		final Set<T> candidates = new HashSet<T>();
 		
 		try {
-			final List<MappingSelector> selectors = findSelectors(source.getBaseType(),
-			                                                      ((MappableEntity) targetClass.newInstance()).getBaseType());
+			final List<MappingSelector> activeSelectors = findSelectors(source.getBaseType(),
+			                                                            ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
-			for (final MappingSelector selector : selectors) {
+			for (final MappingSelector selector : activeSelectors) {
 				candidates.addAll(selector.parse(source, targetClass, util));
 			}
 		} catch (final Exception e) {

@@ -8,7 +8,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappableReport_.
  */

@@ -34,7 +34,6 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
-// TODO: Auto-generated Javadoc
 /**
  * Class that wraps {@link Report} to be mapped.
  * 
@@ -55,7 +54,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
 	 * Instantiates a new mappable report.
-	 *
+	 * 
 	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
@@ -65,8 +64,9 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
 	 * Instantiates a new mappable report.
-	 *
-	 * @param report the report
+	 * 
+	 * @param report
+	 *            the report
 	 */
 	public MappableReport(final Report report) {
 		super();
@@ -183,7 +183,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the body.
-	 *
+	 * 
 	 * @return the body
 	 */
 	@Transient
@@ -191,7 +191,8 @@ public class MappableReport extends MappableEntity implements Annotated {
 		return getReport().getDescription();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity#getId()
 	 */
 	@Override
@@ -201,7 +202,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
 	 * Gets the report.
-	 *
+	 * 
 	 * @return the report
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -231,8 +232,9 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/**
 	 * Sets the report.
-	 *
-	 * @param report the new report
+	 * 
+	 * @param report
+	 *            the new report
 	 */
 	public void setReport(final Report report) {
 		this.report = report;

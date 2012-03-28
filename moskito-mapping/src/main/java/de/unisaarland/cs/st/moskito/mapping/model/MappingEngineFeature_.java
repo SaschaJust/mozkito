@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappingEngineFeature_.
  */

@@ -41,7 +41,6 @@ import org.apache.lucene.util.Version;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SearchEngine.
  * 
@@ -287,11 +286,11 @@ public abstract class SearchEngine extends MappingEngine {
 	 * (de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage)
 	 */
 	@Override
-	public void provideStorage(final MappingStorage storage) {
-		super.provideStorage(storage);
+	public void provideStorage(final MappingStorage mappingStorage) {
+		super.provideStorage(mappingStorage);
 		this.storage = getStorage(LuceneStorage.class);
 		
-		if (storage != null) {
+		if (mappingStorage != null) {
 			final String value = getLanguage();
 			final String[] split = value.split(":"); //$NON-NLS-1$
 			Class<?> clazz = null;

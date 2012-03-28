@@ -24,7 +24,6 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -37,7 +36,7 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 
 /**
  * The Class RepositoryOptions.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSet<Repository, RepositoryOptions>> {
@@ -71,10 +70,13 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the repositories.
-	 *
-	 * @param argumentSet the argument set
-	 * @param requirement the requirement
-	 * @param databaseOptions the database options
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param requirement
+	 *            the requirement
+	 * @param databaseOptions
+	 *            the database options
 	 */
 	public RepositoryOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement,
 	        final DatabaseOptions databaseOptions) {
@@ -85,7 +87,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the branch factory.
-	 *
+	 * 
 	 * @return the branch factory
 	 */
 	public BranchFactory getBranchFactory() {
@@ -97,7 +99,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the pass arg.
-	 *
+	 * 
 	 * @return the pass arg
 	 */
 	public StringArgument.Options getPassArg() {
@@ -106,7 +108,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the repo dir arg.
-	 *
+	 * 
 	 * @return the repo dir arg
 	 */
 	public URIArgument.Options getRepoDirArg() {
@@ -115,7 +117,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the repo type arg.
-	 *
+	 * 
 	 * @return the repo type arg
 	 */
 	public EnumArgument.Options<RepositoryType> getRepoTypeArg() {
@@ -124,7 +126,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the tmp dir arg.
-	 *
+	 * 
 	 * @return the tmpDirArg
 	 */
 	public final DirectoryArgument.Options getTmpDirArg() {
@@ -140,7 +142,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the user arg.
-	 *
+	 * 
 	 * @return the user arg
 	 */
 	public StringArgument.Options getUserArg() {
@@ -247,8 +249,9 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Sets the persistence util.
-	 *
-	 * @param persistenceUtil the new persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the new persistence util
 	 */
 	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;

@@ -21,7 +21,6 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.SettingsProvider;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Node.
  */
@@ -32,14 +31,14 @@ public abstract class Node implements SettingsProvider {
 	
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return the description
 	 */
 	public abstract String getDescription();
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	public String getHandle() {
@@ -48,9 +47,11 @@ public abstract class Node implements SettingsProvider {
 	
 	/**
 	 * Gets the storage.
-	 *
-	 * @param <T> the generic type
-	 * @param key the key
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param key
+	 *            the key
 	 * @return the storage
 	 */
 	@SuppressWarnings ("unchecked")
@@ -60,8 +61,9 @@ public abstract class Node implements SettingsProvider {
 	
 	/**
 	 * Provide storage.
-	 *
-	 * @param storage the storage
+	 * 
+	 * @param storage
+	 *            the storage
 	 */
 	public void provideStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
@@ -69,11 +71,12 @@ public abstract class Node implements SettingsProvider {
 	
 	/**
 	 * Provide storages.
-	 *
-	 * @param storages the storages
+	 * 
+	 * @param storages
+	 *            the storages
 	 */
-	public final void provideStorages(final Set<? extends MappingStorage> storages) {
-		for (final MappingStorage storage : storages) {
+	public final void provideStorages(final Set<? extends MappingStorage> mappingStorages) {
+		for (final MappingStorage storage : mappingStorages) {
 			this.storages.put(storage.getClass(), storage);
 		}
 	}
@@ -84,7 +87,7 @@ public abstract class Node implements SettingsProvider {
 	 */
 	/**
 	 * Storage dependency.
-	 *
+	 * 
 	 * @return the set< class<? extends mapping storage>>
 	 */
 	public Set<Class<? extends MappingStorage>> storageDependency() {

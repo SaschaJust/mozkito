@@ -26,10 +26,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -37,34 +33,6 @@ import org.junit.Test;
  * 
  */
 public class RegexTest {
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
 	
 	/**
 	 * Test method for {@link net.ownhero.dev.ioda.Regex#checkRegex(String)}
@@ -98,10 +66,10 @@ public class RegexTest {
 	
 	@Test
 	public void testEmailRegex() {
-		String anonEmail = "elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5";
-		String email = "elharo@test-domain.de";
+		final String anonEmail = "elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5";
+		final String email = "elharo@test-domain.de";
 		
-		Regex regex = new Regex("({email}" + Regex.emailPattern + ")");
+		final Regex regex = new Regex("({email}" + Regex.emailPattern + ")");
 		List<RegexGroup> find = regex.find(anonEmail);
 		assertTrue(find.size() > 1);
 		assertEquals("elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5", find.get(1).getMatch());
@@ -115,9 +83,9 @@ public class RegexTest {
 	 */
 	@Test
 	public void testFind() {
-		Regex regex = new Regex("bleh(b+lub)bla(h+)");
-		String text = "blehbbbblubblahh";
-		List<RegexGroup> find = regex.find(text);
+		final Regex regex = new Regex("bleh(b+lub)bla(h+)");
+		final String text = "blehbbbblubblahh";
+		final List<RegexGroup> find = regex.find(text);
 		
 		assertEquals(3, find.size());
 		
@@ -146,11 +114,11 @@ public class RegexTest {
 			text += FileUtils.lineSeparator;
 		}
 		
-		String pattern = "({test}[^\\s]+)";
+		final String pattern = "({test}[^\\s]+)";
 		
-		Regex regex = new Regex(pattern);
+		final Regex regex = new Regex(pattern);
 		
-		List<List<RegexGroup>> findAll = regex.findAll(text);
+		final List<List<RegexGroup>> findAll = regex.findAll(text);
 		assertTrue(findAll != null);
 		assertEquals(90, findAll.size());
 		
@@ -158,12 +126,12 @@ public class RegexTest {
 		System.err.println(findAll.get(8).get(0).getMatch());
 		for (int i = 0; i < 90; ++i) {
 			assertEquals(1, findAll.get(i).size());
-			System.err.println(i + " " + i % 9);
+			System.err.println(i + " " + (i % 9));
 			assertEquals("test", findAll.get(i).get(0).getName());
-			if (i % 9 == 3) {
+			if ((i % 9) == 3) {
 				assertEquals("Oct", findAll.get(i).get(0).getMatch());
 			}
-			if (i % 9 == 6) {
+			if ((i % 9) == 6) {
 				assertEquals("2010", findAll.get(i).get(0).getMatch());
 			}
 		}
@@ -174,10 +142,10 @@ public class RegexTest {
 	 */
 	@Test
 	public void testFindAllPossibleMatches() {
-		Regex regex = new Regex("\\w+");
-		String text = " abc,de ";
-		List<List<RegexGroup>> find = regex.findAllPossibleMatches(text);
-		String[] expected = new String[] { "abc", "ab", "a", "bc", "b", "c", "de", "d", "e" };
+		final Regex regex = new Regex("\\w+");
+		final String text = " abc,de ";
+		final List<List<RegexGroup>> find = regex.findAllPossibleMatches(text);
+		final String[] expected = new String[] { "abc", "ab", "a", "bc", "b", "c", "de", "d", "e" };
 		
 		assertEquals(expected.length, find.size());
 		for (int i = 0; i < expected.length; ++i) {
@@ -190,9 +158,9 @@ public class RegexTest {
 	 */
 	@Test
 	public void testFindLongestMatchingPattern() {
-		String pattern = "^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+:\\s.*(tinkabell+)\\w(?!bleh)";
-		String text = "sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">";
-		String match = Regex.findLongestMatchingPattern(pattern, text);
+		final String pattern = "^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+:\\s.*(tinkabell+)\\w(?!bleh)";
+		final String text = "sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">";
+		final String match = Regex.findLongestMatchingPattern(pattern, text);
 		
 		assertTrue(new Regex("({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+.*").matchesFull(text));
 		assertEquals("^({author}[^\\s]+)\\s+({hash}[^\\s]+)\\s([^+-]+[+-]\\d{4})\\s+[a-zA-Z]+", match);
@@ -226,14 +194,14 @@ public class RegexTest {
 	 */
 	@Test
 	public void testMatches() {
-		String test = "abbatabc";
+		final String test = "abbatabc";
 		Regex regex = new Regex(".*b+a.*");
 		
 		assertTrue(regex.matchesFull(test));
 		assertEquals(new Integer(0), regex.getGroupCount());
 		assertTrue(regex.matched());
 		
-		List<String> lines = new ArrayList<String>();
+		final List<String> lines = new ArrayList<String>();
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <?xml version=\"1.0\"?>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<parent>");
@@ -247,10 +215,10 @@ public class RegexTest {
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<packaging>jar</packaging>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<name>reposuite-fixindchanges</name>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: </project>");
-		String pattern = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
+		final String pattern = "^\\s*([^ ]+)\\s+([^ ]+)\\s+([^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+([^:]+):\\s(.*)$";
 		
 		regex = new Regex(pattern);
-		for (String line : lines) {
+		for (final String line : lines) {
 			assertTrue(regex.matchesFull(line));
 			assertEquals(new Integer(5), regex.getGroupCount());
 		}
@@ -261,9 +229,9 @@ public class RegexTest {
 	 */
 	@Test
 	public void testNamedGroups() {
-		Regex regex = new Regex("({year}[0-9]{4})-({month}\\d{2})-({day}\\d{2})");
-		String text = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
-		List<RegexGroup> find = regex.find(text);
+		final Regex regex = new Regex("({year}[0-9]{4})-({month}\\d{2})-({day}\\d{2})");
+		final String text = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
+		final List<RegexGroup> find = regex.find(text);
 		
 		assertEquals(4, find.size());
 		
@@ -288,7 +256,7 @@ public class RegexTest {
 	
 	@Test
 	public void testNegativeLookAhead() {
-		Regex regex = new Regex(".*b(?!a).*");
+		final Regex regex = new Regex(".*b(?!a).*");
 		assertFalse(regex.matchesFull("ba"));
 		assertTrue(regex.matchesFull("b"));
 		assertTrue(regex.matchesFull("bta"));
@@ -296,7 +264,7 @@ public class RegexTest {
 	
 	@Test
 	public void testNegativeLookBehind() {
-		Regex regex = new Regex(".*(?<!a)b.*");
+		final Regex regex = new Regex(".*(?<!a)b.*");
 		assertFalse(regex.matchesFull("ab"));
 		assertTrue(regex.matchesFull("b"));
 		assertTrue(regex.matchesFull("atb"));
@@ -310,14 +278,14 @@ public class RegexTest {
 		assertFalse(regex.matchesFull("bta"));
 		
 		regex = new Regex("b(?=({test}a))");
-		List<RegexGroup> find = regex.find("ba");
+		final List<RegexGroup> find = regex.find("ba");
 		assertEquals(2, find.size());
 		assertEquals("a", find.get(1).getMatch());
 	}
 	
 	@Test
 	public void testPositiveLookBehind() {
-		Regex regex = new Regex(".*(?<=a)b.*");
+		final Regex regex = new Regex(".*(?<=a)b.*");
 		assertTrue(regex.matchesFull("ab"));
 		assertFalse(regex.matchesFull("b"));
 		assertFalse(regex.matchesFull("atb"));

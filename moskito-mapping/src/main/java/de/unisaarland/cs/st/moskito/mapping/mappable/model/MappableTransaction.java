@@ -32,7 +32,6 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * Class that wraps {@link RCSTransaction} to be mapped.
  * 
@@ -52,7 +51,7 @@ public class MappableTransaction extends MappableEntity {
 	
 	/**
 	 * Instantiates a new mappable transaction.
-	 *
+	 * 
 	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
@@ -62,8 +61,9 @@ public class MappableTransaction extends MappableEntity {
 	
 	/**
 	 * Instantiates a new mappable transaction.
-	 *
-	 * @param transaction the transaction
+	 * 
+	 * @param transaction
+	 *            the transaction
 	 */
 	public MappableTransaction(final RCSTransaction transaction) {
 		super();
@@ -139,8 +139,9 @@ public class MappableTransaction extends MappableEntity {
 	
 	/**
 	 * Gets the file.
-	 *
-	 * @param index the index
+	 * 
+	 * @param index
+	 *            the index
 	 * @return the file
 	 */
 	@Transient
@@ -154,7 +155,8 @@ public class MappableTransaction extends MappableEntity {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity#getId()
 	 */
 	@Override
@@ -175,7 +177,7 @@ public class MappableTransaction extends MappableEntity {
 	
 	/**
 	 * Gets the transaction.
-	 *
+	 * 
 	 * @return the transaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -185,8 +187,9 @@ public class MappableTransaction extends MappableEntity {
 	
 	/**
 	 * Sets the transaction.
-	 *
-	 * @param transaction the new transaction
+	 * 
+	 * @param transaction
+	 *            the new transaction
 	 */
 	public void setTransaction(final RCSTransaction transaction) {
 		this.transaction = transaction;

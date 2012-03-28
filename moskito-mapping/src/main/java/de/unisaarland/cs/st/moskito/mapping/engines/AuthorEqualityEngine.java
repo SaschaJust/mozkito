@@ -205,14 +205,14 @@ public class AuthorEqualityEngine extends MappingEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
-		double confidence = 0d;
+		double localConfidence = 0d;
 		
 		// check if the values in the author fields are equal
 		if (from.get(FieldKey.AUTHOR).equals(to.get(FieldKey.AUTHOR))) {
-			confidence = getConfidence();
+			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, confidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR), from.get(FieldKey.AUTHOR),
+		addFeature(score, localConfidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR), from.get(FieldKey.AUTHOR),
 		           FieldKey.AUTHOR.name(), to.get(FieldKey.AUTHOR), to.get(FieldKey.AUTHOR));
 	}
 	

@@ -6,7 +6,6 @@ package de.unisaarland.cs.st.moskito.mapping.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappableEntity_.
  */

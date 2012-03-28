@@ -8,7 +8,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappableTransaction_.
  */

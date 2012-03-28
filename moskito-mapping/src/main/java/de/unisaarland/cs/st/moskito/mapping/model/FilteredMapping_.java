@@ -7,7 +7,6 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FilteredMapping_.
  */

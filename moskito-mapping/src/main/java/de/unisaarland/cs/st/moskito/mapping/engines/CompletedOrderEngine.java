@@ -33,7 +33,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CompletedOrderEngine.
  * 
@@ -205,14 +204,14 @@ public class CompletedOrderEngine extends MappingEngine {
 	                  final Mapping score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
-		double confidence = 0d;
+		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			confidence = getConfidence();
+			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
+		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
 		           transaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
 		           report.getResolutionTimestamp());
 		

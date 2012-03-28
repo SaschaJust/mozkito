@@ -38,7 +38,6 @@ import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TransactionRegexSelector.
  * 

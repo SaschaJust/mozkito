@@ -10,7 +10,6 @@ import javax.persistence.metamodel.SingularAttribute;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Class2Bugs_.
  */

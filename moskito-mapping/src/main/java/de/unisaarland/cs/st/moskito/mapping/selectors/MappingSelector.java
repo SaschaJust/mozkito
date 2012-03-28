@@ -43,7 +43,6 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * Selectors analyze a {@link MappableEntity} and find possible candidates that can be mapped to the entity, due to some
  * relation.
@@ -60,7 +59,7 @@ public abstract class MappingSelector extends Node {
 		
 		/** The Constant TAG. */
 		static final String         TAG         = "selectors";                                      //$NON-NLS-1$
-		
+		                                                                                             
 		/** The Constant DESCRIPTION. */
 		static final String         DESCRIPTION = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
 		                                                                                             
@@ -69,9 +68,11 @@ public abstract class MappingSelector extends Node {
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, TAG, DESCRIPTION, requirements);
@@ -197,9 +198,9 @@ public abstract class MappingSelector extends Node {
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
-	                                                                              ArgumentSetRegistrationException,
-	                                                                              ArgumentRegistrationException {
+	protected final ArgumentSet<?, ?> getAnchor(@SuppressWarnings ("hiding") @NotNull final ISettings settings) throws SettingsParseError,
+	                                                                                                           ArgumentSetRegistrationException,
+	                                                                                                           ArgumentRegistrationException {
 		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingSelector.Options.TAG);
 		
 		if (anchor == null) {
@@ -214,7 +215,7 @@ public abstract class MappingSelector extends Node {
 	
 	/**
 	 * Gets the settings.
-	 *
+	 * 
 	 * @return the settings
 	 */
 	public final ISettings getSettings() {
@@ -230,11 +231,15 @@ public abstract class MappingSelector extends Node {
 	
 	/**
 	 * Parses the.
-	 *
-	 * @param <T> the generic type
-	 * @param entity the element under subject
-	 * @param targetType the target entity type of the candidate
-	 * @param util the util
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param entity
+	 *            the element under subject
+	 * @param targetType
+	 *            the target entity type of the candidate
+	 * @param util
+	 *            the util
 	 * @return a list of {@link Candidate}s that might be mapped to the given entity
 	 */
 	public abstract <T extends MappableEntity> List<T> parse(MappableEntity entity,
@@ -261,9 +266,11 @@ public abstract class MappingSelector extends Node {
 	
 	/**
 	 * Supports.
-	 *
-	 * @param from the 'from' entity
-	 * @param to the 'to' entity
+	 * 
+	 * @param from
+	 *            the 'from' entity
+	 * @param to
+	 *            the 'to' entity
 	 * @return true if the selector supports this combination of entities
 	 */
 	public abstract boolean supports(Class<?> from,

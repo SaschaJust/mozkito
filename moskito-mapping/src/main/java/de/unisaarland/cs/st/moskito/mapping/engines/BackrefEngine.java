@@ -28,7 +28,6 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
-// TODO: Auto-generated Javadoc
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from' entity in the body text.
  * 
@@ -191,12 +190,12 @@ public class BackrefEngine extends MappingEngine {
 		final String fullText = element2.getText();
 		final String id = element1.get(FieldKey.ID).toString();
 		
-		double confidence = 0d;
+		double localConfidence = 0d;
 		if (fullText.contains(id.toString())) {
-			confidence = getConfidence();
+			localConfidence = getConfidence();
 			
 		}
-		addFeature(score, confidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$
+		addFeature(score, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$
 	}
 	
 	/**
