@@ -20,7 +20,6 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.StringArgument.Options;
-import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -80,16 +79,14 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		
 		try {
 			
-			final URIArgument trackerURIArgument = getSettings().getArgument(this.trackerOptions.getTrackerURI());
-			
 			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
 			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
 			
 			final StringArgument projectNameArgument = getSettings().getArgument(getProjectName());
 			
 			final GoogleTracker tracker = new GoogleTracker();
-			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), projectNameArgument.getValue());
+			tracker.setup(trackerUserArgument.getValue(), trackerPasswordArgument.getValue(),
+			              projectNameArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
