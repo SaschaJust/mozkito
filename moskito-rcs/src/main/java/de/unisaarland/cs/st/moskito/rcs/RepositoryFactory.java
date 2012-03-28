@@ -133,9 +133,8 @@ public final class RepositoryFactory {
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
 			        + repositoryIdentifier.toString() + "`");
-		} else {
-			return repositoryClass;
 		}
+		return repositoryClass;
 	}
 	
 	/**
