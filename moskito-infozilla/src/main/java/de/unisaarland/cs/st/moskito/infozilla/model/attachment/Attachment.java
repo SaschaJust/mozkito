@@ -51,14 +51,20 @@ import de.unisaarland.cs.st.moskito.infozilla.exceptions.MIMETypeDeterminationEx
 import de.unisaarland.cs.st.moskito.infozilla.model.Attachable;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
+/**
+ * The Class Attachment.
+ */
 @Entity
 public class Attachment implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3626906010864829890L;
 	
 	/**
-	 * @param data
-	 * @return
+	 * Compute m d5.
+	 *
+	 * @param data the data
+	 * @return the byte[]
 	 */
 	private static byte[] computeMD5(final byte[] data) {
 		MessageDigest md;
@@ -75,8 +81,10 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param data
-	 * @return
+	 * Compute sh a1.
+	 *
+	 * @param data the data
+	 * @return the byte[]
 	 */
 	private static byte[] computeSHA1(final byte[] data) {
 		MessageDigest md;
@@ -92,8 +100,10 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param attachment
-	 * @return
+	 * Creates the attachable.
+	 *
+	 * @param attachment the attachment
+	 * @return the attachable
 	 */
 	private static Attachable createAttachable(final Attachment attachment) {
 		// TODO Auto-generated method stub
@@ -101,9 +111,11 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param data
-	 * @return
-	 * @throws EncodingDeterminationException
+	 * Determine encoding.
+	 *
+	 * @param data the data
+	 * @return the string
+	 * @throws EncodingDeterminationException the encoding determination exception
 	 */
 	private static String determineEncoding(final byte[] data) throws EncodingDeterminationException {
 		try {
@@ -128,9 +140,11 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param data
-	 * @return
-	 * @throws MIMETypeDeterminationException
+	 * Determine mime.
+	 *
+	 * @param data the data
+	 * @return the string
+	 * @throws MIMETypeDeterminationException the mIME type determination exception
 	 */
 	private static String determineMIME(final byte[] data) throws MIMETypeDeterminationException {
 		MagicMatch match;
@@ -147,9 +161,11 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param entry
-	 * @return
-	 * @throws FetchException
+	 * Fetch.
+	 *
+	 * @param entry the entry
+	 * @return the attachment
+	 * @throws FetchException the fetch exception
 	 */
 	public static Attachment fetch(final AttachmentEntry entry) throws FetchException {
 		try {
@@ -187,8 +203,10 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param mime
-	 * @return
+	 * Guess type.
+	 *
+	 * @param attachment the attachment
+	 * @return the attachment type
 	 */
 	private static AttachmentType guessType(final Attachment attachment) {
 		AttachmentType guessedType = AttachmentType.UNKNOWN;
@@ -240,23 +258,50 @@ public class Attachment implements Annotated {
 		
 	}
 	
+	/** The data. */
 	private byte[]          data;
+	
+	/** The encoding. */
 	private String          encoding;
+	
+	/** The entry. */
 	private AttachmentEntry entry;
+	
+	/** The filename. */
 	private String          filename;
+	
+	/** The generated id. */
 	private long            generatedId;
+	
+	/** The mime. */
 	private String          mime;
+	
+	/** The type. */
 	private AttachmentType  type = AttachmentType.UNKNOWN;
+	
+	/** The md5. */
 	private byte[]          md5  = new byte[16];
+	
+	/** The sha1. */
 	private byte[]          sha1 = new byte[32];
+	
+	/** The attachable. */
 	private Attachable      attachable;
 	
+	/**
+	 * Instantiates a new attachment.
+	 *
+	 * @param entry the entry
+	 * @param data the data
+	 */
 	public Attachment(final AttachmentEntry entry, final byte[] data) {
 		setEntry(entry);
 		setData(data);
 	}
 	
 	/**
+	 * Gets the attachable.
+	 *
 	 * @return the attachable
 	 */
 	public Attachable getAttachable() {
@@ -264,6 +309,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the data.
+	 *
 	 * @return the data
 	 */
 	public byte[] getData() {
@@ -271,6 +318,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the encoding.
+	 *
 	 * @return the encoding
 	 */
 	public String getEncoding() {
@@ -278,6 +327,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the entry.
+	 *
 	 * @return the entry
 	 */
 	@OneToOne (cascade = {}, fetch = FetchType.LAZY)
@@ -286,6 +337,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the filename.
+	 *
 	 * @return the filename
 	 */
 	public String getFilename() {
@@ -293,6 +346,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the generated id.
+	 *
 	 * @return the generatedId
 	 */
 	@Id
@@ -302,6 +357,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the md5.
+	 *
 	 * @return the md5
 	 */
 	public byte[] getMd5() {
@@ -309,6 +366,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the mime.
+	 *
 	 * @return the mime
 	 */
 	public String getMime() {
@@ -316,6 +375,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the sha1.
+	 *
 	 * @return the sha1
 	 */
 	public byte[] getSha1() {
@@ -323,6 +384,8 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
+	 * Gets the type.
+	 *
 	 * @return the type
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -331,80 +394,90 @@ public class Attachment implements Annotated {
 	}
 	
 	/**
-	 * @param attachable
-	 *            the attachable to set
+	 * Sets the attachable.
+	 *
+	 * @param attachable the attachable to set
 	 */
 	public void setAttachable(final Attachable attachable) {
 		this.attachable = attachable;
 	}
 	
 	/**
-	 * @param data
-	 *            the data to set
+	 * Sets the data.
+	 *
+	 * @param data the data to set
 	 */
 	public void setData(final byte[] data) {
 		this.data = data;
 	}
 	
 	/**
-	 * @param encoding
-	 *            the encoding to set
+	 * Sets the encoding.
+	 *
+	 * @param encoding the encoding to set
 	 */
 	public void setEncoding(final String encoding) {
 		this.encoding = encoding;
 	}
 	
 	/**
-	 * @param entry
-	 *            the entry to set
+	 * Sets the entry.
+	 *
+	 * @param entry the entry to set
 	 */
 	public void setEntry(final AttachmentEntry entry) {
 		this.entry = entry;
 	}
 	
 	/**
-	 * @param filename
-	 *            the filename to set
+	 * Sets the filename.
+	 *
+	 * @param filename the filename to set
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 	
 	/**
-	 * @param generatedId
-	 *            the generatedId to set
+	 * Sets the generated id.
+	 *
+	 * @param generatedId the generatedId to set
 	 */
 	public void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	
 	/**
-	 * @param md5
-	 *            the md5 to set
+	 * Sets the md5.
+	 *
+	 * @param md5 the md5 to set
 	 */
 	public void setMd5(final byte[] md5) {
 		this.md5 = md5;
 	}
 	
 	/**
-	 * @param mime
-	 *            the mime to set
+	 * Sets the mime.
+	 *
+	 * @param mime the mime to set
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
 	}
 	
 	/**
-	 * @param sha1
-	 *            the sha1 to set
+	 * Sets the sha1.
+	 *
+	 * @param sha1 the sha1 to set
 	 */
 	public void setSha1(final byte[] sha1) {
 		this.sha1 = sha1;
 	}
 	
 	/**
-	 * @param type
-	 *            the type to set
+	 * Sets the type.
+	 *
+	 * @param type the type to set
 	 */
 	public void setType(final AttachmentType type) {
 		this.type = type;

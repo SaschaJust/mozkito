@@ -36,29 +36,45 @@ import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
 
 /**
+ * The Class RepositoryOptions.
+ *
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
- * 
  */
 public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSet<Repository, RepositoryOptions>> {
 	
+	/** The pass arg. */
 	private StringArgument.Options               passArg;
+	
+	/** The repo dir arg. */
 	private URIArgument.Options                  repoDirArg;
+	
+	/** The repo type arg. */
 	private EnumArgument.Options<RepositoryType> repoTypeArg;
+	
+	/** The user arg. */
 	private StringArgument.Options               userArg;
 	
+	/** The persistence util. */
 	PersistenceUtil                              persistenceUtil;
+	
+	/** The branch factory. */
 	private BranchFactory                        branchFactory;
+	
+	/** The tmp dir arg. */
 	private DirectoryArgument.Options            tmpDirArg;
+	
+	/** The settings. */
 	private final ISettings                      settings;
+	
+	/** The database options. */
 	private final DatabaseOptions                databaseOptions;
 	
 	/**
 	 * Is an argument set that contains all arguments necessary for the repositories.
-	 * 
-	 * @param settings
-	 * @param requirement
-	 * @throws ArgumentRegistrationException
-	 * @throws DuplicateArgumentException
+	 *
+	 * @param argumentSet the argument set
+	 * @param requirement the requirement
+	 * @param databaseOptions the database options
 	 */
 	public RepositoryOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement,
 	        final DatabaseOptions databaseOptions) {
@@ -67,6 +83,11 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		this.databaseOptions = databaseOptions;
 	}
 	
+	/**
+	 * Gets the branch factory.
+	 *
+	 * @return the branch factory
+	 */
 	public BranchFactory getBranchFactory() {
 		if (this.branchFactory == null) {
 			this.branchFactory = new BranchFactory(this.persistenceUtil);
@@ -74,19 +95,36 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		return this.branchFactory;
 	}
 	
+	/**
+	 * Gets the pass arg.
+	 *
+	 * @return the pass arg
+	 */
 	public StringArgument.Options getPassArg() {
 		return this.passArg;
 	}
 	
+	/**
+	 * Gets the repo dir arg.
+	 *
+	 * @return the repo dir arg
+	 */
 	public URIArgument.Options getRepoDirArg() {
 		return this.repoDirArg;
 	}
 	
+	/**
+	 * Gets the repo type arg.
+	 *
+	 * @return the repo type arg
+	 */
 	public EnumArgument.Options<RepositoryType> getRepoTypeArg() {
 		return this.repoTypeArg;
 	}
 	
 	/**
+	 * Gets the tmp dir arg.
+	 *
 	 * @return the tmpDirArg
 	 */
 	public final DirectoryArgument.Options getTmpDirArg() {
@@ -100,6 +138,11 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		}
 	}
 	
+	/**
+	 * Gets the user arg.
+	 *
+	 * @return the user arg
+	 */
 	public StringArgument.Options getUserArg() {
 		return this.userArg;
 	}
@@ -203,6 +246,11 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		}
 	}
 	
+	/**
+	 * Sets the persistence util.
+	 *
+	 * @param persistenceUtil the new persistence util
+	 */
 	public void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;
 	}

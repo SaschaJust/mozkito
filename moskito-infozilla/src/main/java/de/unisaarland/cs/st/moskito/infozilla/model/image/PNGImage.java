@@ -16,13 +16,14 @@
 package de.unisaarland.cs.st.moskito.infozilla.model.image;
 
 /**
+ * The Class PNGImage.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class PNGImage extends Image {
 	
 	/**
-	 * 
+	 * Instantiates a new pNG image.
 	 */
 	public PNGImage() {
 		// REMARK Auto-generated constructor stub

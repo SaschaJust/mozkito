@@ -10,6 +10,9 @@ import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSe
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+/**
+ * The Class RCSPersistenceUtil.
+ */
 public class RCSPersistenceUtil {
 	
 	/**

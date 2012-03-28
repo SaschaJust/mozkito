@@ -15,25 +15,13 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.filters.patch;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class PatchFilter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class PatchFilter extends InfozillaFilter {
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

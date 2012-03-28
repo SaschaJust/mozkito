@@ -36,6 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -52,7 +56,7 @@ import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
-	 * Given a List of Code Regions transform that list to a minimal including set
+	 * Given a List of Code Regions transform that list to a minimal including set.
 	 * 
 	 * @param regionList
 	 *            a List of Code Regions that should be minimized
@@ -89,11 +93,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	/** Stores the code pattern options, read from Java_CodeDB.txt */
 	private final HashMap<String, String>  codePatternOptions;
 	
-	/** The classes own textRemover */
+	/** The classes own textRemover. */
 	private FilterTextRemover              textRemover;
 	
 	/**
-	 * Standard Constructor
+	 * Standard Constructor.
 	 */
 	public JavaSourceCodeFilter() {
 		this.codePatterns = new HashMap<String, Pattern>();
@@ -101,7 +105,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/**
-	 * Overloaded Constructor
+	 * Overloaded Constructor.
 	 * 
 	 * @param filename
 	 *            the name of the file to read Code Patterns from.
@@ -118,7 +122,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/**
-	 * Overloaded Constructor
+	 * Overloaded Constructor.
 	 * 
 	 * @param fileurl
 	 *            a URL to a file to read Code Patterns from.
@@ -136,6 +140,16 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/**
 	 * findMatch() returns the offset where the next closing is found. If not found return 0
+	 * 
+	 * @param where
+	 *            the where
+	 * @param opening
+	 *            the opening
+	 * @param closing
+	 *            the closing
+	 * @param start
+	 *            the start
+	 * @return the int
 	 */
 	private int findMatch(final String where,
 	                      final char opening,
@@ -161,10 +175,12 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/**
-	 * Get a List of Source Code Regions contained in a given Text {@link s}
+	 * Get a List of Source Code Regions contained in a given Text {@link s}.
 	 * 
 	 * @param s
 	 *            the Text we shall look inside for Source Code
+	 * @param minimalSet
+	 *            the minimal set
 	 * @return a List of Source Code Occurences as {@link CodeRegion}s
 	 */
 	private List<CodeRegion> getCodeRegions(final String s,
@@ -207,13 +223,50 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.sourcecode.SourceCodeFilter#getOutputText()
+	 */
 	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
-	 * Read in some Code Patterns from an input stream name {@link instream}
+	 * Read in some Code Patterns from an input stream name {@link instream}.
 	 * 
 	 * @param instream
 	 *            the input stream to read the code patterns from
@@ -246,7 +299,7 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	}
 	
 	/**
-	 * Read in some Code Patterns from a file named {@link filename}
+	 * Read in some Code Patterns from a file named {@link filename}.
 	 * 
 	 * @param filename
 	 *            the full qualified filename from which to read the code patterns.
@@ -278,6 +331,10 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.sourcecode.SourceCodeFilter#runFilter(java.lang.String)
+	 */
 	@Override
 	public List<CodeRegion> runFilter(final String inputText) {
 		// Initialize a TextRemover

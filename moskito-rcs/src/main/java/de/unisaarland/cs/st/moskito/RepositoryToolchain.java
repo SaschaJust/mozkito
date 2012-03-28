@@ -32,19 +32,35 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 
 /**
+ * The Class RepositoryToolchain.
+ * 
  * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class RepositoryToolchain extends Chain<Settings> {
 	
+	/** The thread pool. */
 	private final Pool                                          threadPool;
+	
+	/** The repository arguments. */
 	private final ArgumentSet<Repository, RepositoryOptions>    repositoryArguments;
+	
+	/** The database arguments. */
 	private final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	
+	/** The persistence util. */
 	private PersistenceUtil                                     persistenceUtil;
+	
+	/** The repository. */
 	private Repository                                          repository;
 	
+	/**
+	 * Instantiates a new repository toolchain.
+	 * 
+	 * @param settings
+	 *            the settings
+	 */
 	public RepositoryToolchain(final Settings settings) {
 		super(settings);
 		
@@ -74,10 +90,20 @@ public class RepositoryToolchain extends Chain<Settings> {
 		}
 	}
 	
+	/**
+	 * Gets the persistence util.
+	 * 
+	 * @return the persistence util
+	 */
 	public PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
 	}
 	
+	/**
+	 * Gets the repository.
+	 * 
+	 * @return the repository
+	 */
 	public Repository getRepository() {
 		// PRECONDITIONS
 		

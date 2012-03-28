@@ -30,9 +30,11 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class RepositoryVoidSink extends Sink<RCSTransaction> {
 	
 	/**
+	 * Instantiates a new repository void sink.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
 	 * @see RepoSuiteSinkThread
-	 * @param threadGroup
-	 * @param settings
 	 */
 	public RepositoryVoidSink(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);

@@ -23,15 +23,24 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
+ * The Class Bzip2Archive.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Bzip2Archive extends Archive {
 	
+	/**
+	 * Instantiates a new bzip2 archive.
+	 *
+	 * @param attachment the attachment
+	 */
 	public Bzip2Archive(final Attachment attachment) {
 		super(attachment);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.archive.Archive#extract()
+	 */
 	@Override
 	public File extract() throws IOException {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);

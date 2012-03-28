@@ -16,39 +16,44 @@
 package de.unisaarland.cs.st.moskito.infozilla.exceptions;
 
 /**
+ * The Class EncodingDeterminationException.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class EncodingDeterminationException extends Exception {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8649305536003056411L;
 	
 	/**
-	 * 
+	 * Instantiates a new encoding determination exception.
 	 */
 	public EncodingDeterminationException() {
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new encoding determination exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public EncodingDeterminationException(final String arg0) {
 		super(arg0);
 	}
 	
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * Instantiates a new encoding determination exception.
+	 *
+	 * @param arg0 the arg0
+	 * @param arg1 the arg1
 	 */
 	public EncodingDeterminationException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
 	}
 	
 	/**
-	 * @param arg0
+	 * Instantiates a new encoding determination exception.
+	 *
+	 * @param arg0 the arg0
 	 */
 	public EncodingDeterminationException(final Throwable arg0) {
 		super(arg0);

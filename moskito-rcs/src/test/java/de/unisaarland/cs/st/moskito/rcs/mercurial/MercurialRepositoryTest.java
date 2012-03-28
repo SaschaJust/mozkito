@@ -28,8 +28,14 @@ import org.junit.Test;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class MercurialRepositoryTest.
+ */
 public class MercurialRepositoryTest extends MoskitoTest {
 	
+	/**
+	 * Test fixed date time zone.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testFixedDateTimeZone() {
@@ -38,6 +44,9 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		assertEquals("+07:00", timeZone.toString());
 	}
 	
+	/**
+	 * Test former path regex.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testFormerPathRegex() {
@@ -49,6 +58,9 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		             MercurialRepository.formerPathRegex.getGroup("result"));
 	}
 	
+	/**
+	 * Test plaine name.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testPlaineName() {
@@ -59,6 +71,9 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		assertEquals("just", MercurialRepository.authorRegex.getGroup("plain"));
 	}
 	
+	/**
+	 * Test pre filter lines.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testPreFilterLines() {
@@ -89,6 +104,9 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		             lines.get(1));
 	}
 	
+	/**
+	 * Test replace line breaks.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testReplaceLineBreaks() {
@@ -97,6 +115,9 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		assertEquals("hubba" + FileUtils.lineSeparator + "hubba" + FileUtils.lineSeparator + "hopp", newS);
 	}
 	
+	/**
+	 * Test saschas mega reg exp.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testSaschasMegaRegExp() {

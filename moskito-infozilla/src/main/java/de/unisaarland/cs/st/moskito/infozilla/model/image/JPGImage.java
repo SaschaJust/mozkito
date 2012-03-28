@@ -16,13 +16,14 @@
 package de.unisaarland.cs.st.moskito.infozilla.model.image;
 
 /**
+ * The Class JPGImage.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class JPGImage extends Image {
 	
 	/**
-	 * 
+	 * Instantiates a new jPG image.
 	 */
 	public JPGImage() {
 		// REMARK Auto-generated constructor stub

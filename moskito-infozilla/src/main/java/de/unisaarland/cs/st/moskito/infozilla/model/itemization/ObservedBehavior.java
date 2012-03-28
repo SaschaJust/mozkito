@@ -14,16 +14,26 @@ package de.unisaarland.cs.st.moskito.infozilla.model.itemization;
 
 import de.unisaarland.cs.st.moskito.infozilla.model.Inlineable;
 
+/**
+ * The Class ObservedBehavior.
+ */
 public class ObservedBehavior implements Inlineable {
 	
+	/** The text. */
 	String text;
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getEndPosition()
+	 */
 	@Override
 	public int getEndPosition() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getStartPosition()
+	 */
 	@Override
 	public int getStartPosition() {
 		// TODO Auto-generated method stub

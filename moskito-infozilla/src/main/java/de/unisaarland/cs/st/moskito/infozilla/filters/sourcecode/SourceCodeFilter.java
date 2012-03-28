@@ -17,27 +17,20 @@ package de.unisaarland.cs.st.moskito.infozilla.filters.sourcecode;
 
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class SourceCodeFilter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class SourceCodeFilter extends InfozillaFilter {
 	
 	/**
-	 * 
+	 * Instantiates a new source code filter.
 	 */
 	public SourceCodeFilter() {
 		// REMARK Auto-generated constructor stub
-	}
-	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/*
@@ -48,12 +41,6 @@ public abstract class SourceCodeFilter extends InfozillaFilter {
 	public String getOutputText() {
 		// REMARK Auto-generated method stub
 		return null;
-	}
-	
-	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	/*

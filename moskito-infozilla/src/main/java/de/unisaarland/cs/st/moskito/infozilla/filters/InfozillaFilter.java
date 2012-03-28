@@ -28,16 +28,30 @@ package de.unisaarland.cs.st.moskito.infozilla.filters;
 
 import java.util.List;
 
+import net.ownhero.dev.hiari.settings.SettingsProvider;
+
 /**
  * This interface describes the method interface for every infoZilla InfozillaFilter.
  * 
- * @author Nicolas Bettenburg
+ * @author Nicolas Bettenburg, Sascha Just
  * 
  */
-public abstract class InfozillaFilter implements net.ownhero.dev.hiari.settings.registerable.ArgumentProvider {
+public abstract class InfozillaFilter implements SettingsProvider {
 	
+	/**
+	 * Gets the output text.
+	 * 
+	 * @return the output text
+	 */
 	public abstract String getOutputText();
 	
+	/**
+	 * Run filter.
+	 * 
+	 * @param inputText
+	 *            the input text
+	 * @return the list
+	 */
 	public abstract List<?> runFilter(String inputText);
 	
 }

@@ -15,28 +15,53 @@ package de.unisaarland.cs.st.moskito.infozilla.model.stacktrace;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class TalkbackTrace.
+ */
 public class TalkbackTrace {
 	
+	/** The entries. */
 	private List<TalkbackEntry> entries;
 	
+	/**
+	 * Instantiates a new talkback trace.
+	 *
+	 * @param entries the entries
+	 */
 	public TalkbackTrace(List<TalkbackEntry> entries) {
 		super();
 		this.entries = entries;
 	}
 	
+	/**
+	 * Instantiates a new talkback trace.
+	 */
 	public TalkbackTrace() {
 		super();
 		this.entries = new ArrayList<TalkbackEntry>();
 	}
 	
+	/**
+	 * Gets the entries.
+	 *
+	 * @return the entries
+	 */
 	public List<TalkbackEntry> getEntries() {
 		return entries;
 	}
 	
+	/**
+	 * Sets the entries.
+	 *
+	 * @param entries the new entries
+	 */
 	public void setEntries(List<TalkbackEntry> entries) {
 		this.entries = entries;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		if (entries != null) {
 			StringBuilder sb = new StringBuilder();

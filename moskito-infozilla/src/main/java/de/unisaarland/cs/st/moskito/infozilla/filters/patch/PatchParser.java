@@ -19,18 +19,20 @@ import de.unisaarland.cs.st.moskito.infozilla.model.patch.Patch;
 import de.unisaarland.cs.st.moskito.infozilla.model.patch.PatchHunk;
 import de.unisaarland.cs.st.moskito.infozilla.model.patch.UnifiedDiff;
 
+/**
+ * The Class PatchParser.
+ */
 public class PatchParser {
 	
 	// Uncomment the following line if you need debug output
+	/** The Constant debug. */
 	private final static boolean debug = false;
 	
 	/**
-	 * Find and extract all Hunks in a Patch
-	 * 
-	 * @param lines
-	 *            A set of Patch Lines
-	 * @param start
-	 *            The line to start looking for Hunks
+	 * Find and extract all Hunks in a Patch.
+	 *
+	 * @param lines A set of Patch Lines
+	 * @param start The line to start looking for Hunks
 	 * @return a List<PatchHunk> of Hunks that were found
 	 */
 	private List<PatchHunk> findAllHunks(final String[] lines,
@@ -111,14 +113,11 @@ public class PatchParser {
 	}
 	
 	/**
-	 * Find the first line that starts with a given String
-	 * 
-	 * @param text
-	 *            The text the line we look for starts with
-	 * @param lines
-	 *            An Array of lines
-	 * @param start
-	 *            The line number to start the search with
+	 * Find the first line that starts with a given String.
+	 *
+	 * @param text The text the line we look for starts with
+	 * @param lines An Array of lines
+	 * @param start The line number to start the search with
 	 * @return The index of the first line starting at {@link start} or -1 if there is no such line
 	 */
 	private int findFirstLineBeginningWith(final String text,
@@ -135,14 +134,11 @@ public class PatchParser {
 	}
 	
 	/**
-	 * Find the first line that starts with a given String
-	 * 
-	 * @param text
-	 *            The text the line we look for starts with
-	 * @param lines
-	 *            An Array of lines
-	 * @param start
-	 *            The line number to start the search with
+	 * Find the first line that starts with a given String.
+	 *
+	 * @param text The text the line we look for starts with
+	 * @param lines An Array of lines
+	 * @param start The line number to start the search with
 	 * @return The first line starting at {@link start} or an empty String if there is no such line
 	 */
 	private String findFirstLineBeginningWithS(final String text,

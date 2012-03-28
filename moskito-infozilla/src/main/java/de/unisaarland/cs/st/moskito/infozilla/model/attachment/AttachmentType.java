@@ -18,9 +18,24 @@ package de.unisaarland.cs.st.moskito.infozilla.model.attachment;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 /**
+ * The Enum AttachmentType.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public enum AttachmentType implements Annotated {
-	ARCHIVE, IMAGE, LOG, PATCH, SOURCECODE, STACKTRACE, UNKNOWN;
+	
+	/** The ARCHIVE. */
+	ARCHIVE, 
+ /** The IMAGE. */
+ IMAGE, 
+ /** The LOG. */
+ LOG, 
+ /** The PATCH. */
+ PATCH, 
+ /** The SOURCECODE. */
+ SOURCECODE, 
+ /** The STACKTRACE. */
+ STACKTRACE, 
+ /** The UNKNOWN. */
+ UNKNOWN;
 }

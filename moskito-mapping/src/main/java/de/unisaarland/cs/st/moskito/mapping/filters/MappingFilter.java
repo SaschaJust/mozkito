@@ -18,7 +18,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MappingFilter.
  * 
