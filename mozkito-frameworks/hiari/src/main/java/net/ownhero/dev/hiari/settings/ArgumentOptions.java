@@ -120,15 +120,14 @@ public abstract class ArgumentOptions<T, X extends Argument<T, ? extends Argumen
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final IOptions<?, ?> o) {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
+	public int compareTo(final IOptions<?, ?> arg0) {
+		if (this == arg0) {
 			return 0;
-		} finally {
-			// POSTCONDITIONS
+		} else if (equals(arg0)) {
+			return 0;
 		}
+		
+		return getTag().compareTo(arg0.getTag());
 	}
 	
 	/*

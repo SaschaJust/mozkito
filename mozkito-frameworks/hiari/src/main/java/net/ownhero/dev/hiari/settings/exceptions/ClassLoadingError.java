@@ -257,8 +257,7 @@ public class ClassLoadingError extends UnrecoverableError {
 							builder.append("  ").append(fqSuggestion).append(FileUtils.lineSeparator);
 						}
 					} catch (final IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						builder.append(e.getMessage());
 					}
 					
 				}

@@ -39,7 +39,7 @@ public class Contains extends Requirement {
 	 * @param depender
 	 *            the depender
 	 */
-	public Contains(@NotNull final ListArgument.Options option, @NotNull final IArgument<?, ?> depender) {
+	Contains(@NotNull final ListArgument.Options option, @NotNull final IArgument<?, ?> depender) {
 		try {
 			this.listOption = option;
 			this.depender = depender;
@@ -58,7 +58,7 @@ public class Contains extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Contains(@NotNull final ListArgument.Options option, @NotNull final String value) {
+	Contains(@NotNull final ListArgument.Options option, @NotNull final String value) {
 		try {
 			this.listOption = option;
 		} finally {
@@ -76,7 +76,7 @@ public class Contains extends Requirement {
 	 * @param depender
 	 *            the depender
 	 */
-	public Contains(@NotNull final SetArgument.Options option, @NotNull final IArgument<?, ?> depender) {
+	Contains(@NotNull final SetArgument.Options option, @NotNull final IArgument<?, ?> depender) {
 		try {
 			this.setOption = option;
 			this.depender = depender;
@@ -95,7 +95,7 @@ public class Contains extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Contains(@NotNull final SetArgument.Options option, @NotNull final String value) {
+	Contains(@NotNull final SetArgument.Options option, @NotNull final String value) {
 		try {
 			this.setOption = option;
 		} finally {

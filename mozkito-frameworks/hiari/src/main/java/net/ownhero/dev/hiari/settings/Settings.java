@@ -430,7 +430,6 @@ public class Settings implements ISettings {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ISettings#getArgument(net.ownhero.dev.hiari.settings.IArgumentOptions)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> option) {
 		// PRECONDITIONS
@@ -451,6 +450,7 @@ public class Settings implements ISettings {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ISettings#getArgumentSet(net.ownhero.dev.hiari.settings.IArgumentSetOptions)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public <T, X extends ArgumentSetOptions<T, Y>, Y extends ArgumentSet<T, X>> Y getArgumentSet(final IArgumentSetOptions<T, Y> option) {
 		// PRECONDITIONS

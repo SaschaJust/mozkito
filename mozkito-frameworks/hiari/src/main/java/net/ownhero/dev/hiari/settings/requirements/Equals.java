@@ -41,7 +41,7 @@ public class Equals extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Equals(@NotNull final BooleanArgument.Options argument, @NotNull final boolean value) {
+	Equals(@NotNull final BooleanArgument.Options argument, @NotNull final boolean value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -59,7 +59,7 @@ public class Equals extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Equals(@NotNull final DoubleArgument.Options argument, @NotNull final double value) {
+	Equals(@NotNull final DoubleArgument.Options argument, @NotNull final double value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -77,7 +77,7 @@ public class Equals extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Equals(@NotNull final EnumArgument.Options<?> argument, @NotNull final Enum<?> value) {
+	Equals(@NotNull final EnumArgument.Options<?> argument, @NotNull final Enum<?> value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -95,7 +95,7 @@ public class Equals extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Equals(@NotNull final LongArgument.Options argument, @NotNull final long value) {
+	Equals(@NotNull final LongArgument.Options argument, @NotNull final long value) {
 		try {
 			this.argument = argument;
 			this.value = value;
@@ -113,7 +113,7 @@ public class Equals extends Requirement {
 	 * @param depender
 	 *            the depender
 	 */
-	public Equals(@NotNull final StringArgument.Options argument, @NotNull final IOptions<?, ?> depender) {
+	Equals(@NotNull final StringArgument.Options argument, @NotNull final IOptions<?, ?> depender) {
 		try {
 			this.argument = argument;
 			this.depender = depender;
@@ -132,7 +132,7 @@ public class Equals extends Requirement {
 	 * @param value
 	 *            the value
 	 */
-	public Equals(@NotNull final StringArgument.Options argument, @NotNull final String value) {
+	Equals(@NotNull final StringArgument.Options argument, @NotNull final String value) {
 		try {
 			this.argument = argument;
 			this.value = value;

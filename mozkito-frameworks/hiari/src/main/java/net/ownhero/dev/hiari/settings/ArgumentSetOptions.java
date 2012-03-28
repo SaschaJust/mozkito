@@ -309,7 +309,7 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 	/**
 	 * Requirements.
 	 * 
-	 * @param set
+	 * @param argumentSet
 	 *            the set
 	 * @return the map
 	 * @throws ArgumentRegistrationException
@@ -318,7 +318,7 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 	 *             the settings parse error
 	 */
 	@Override
-	public abstract Map<String, IOptions<?, ?>> requirements(ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+	public abstract Map<String, IOptions<?, ?>> requirements(ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
 	                                                                               SettingsParseError;
 	
 	/*

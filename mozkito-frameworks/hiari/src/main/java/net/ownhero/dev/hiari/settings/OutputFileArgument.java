@@ -140,7 +140,7 @@ public class OutputFileArgument extends Argument<File, OutputFileArgument.Option
 			
 			return ret;
 		} finally {
-			
+			// POSTCONDITIONS
 		}
 	}
 	
