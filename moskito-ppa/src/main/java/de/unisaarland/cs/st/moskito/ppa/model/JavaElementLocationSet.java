@@ -69,7 +69,7 @@ public class JavaElementLocationSet {
 	                                                       @NotNegative final int position,
 	                                                       @NotNegative final int bodyStartLine) {
 		
-		JavaClassDefinition definition = elementFactory.getAnonymousClassDefinition(parent, fullQualifiedName);
+		JavaClassDefinition definition = this.elementFactory.getAnonymousClassDefinition(parent, fullQualifiedName);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.classDefLocations.add(location);
@@ -99,7 +99,7 @@ public class JavaElementLocationSet {
 	                                              @NotNegative final int endLine,
 	                                              @NotNegative final int position,
 	                                              @NotNegative final int bodyStartLine) {
-		JavaClassDefinition definition = elementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
+		JavaClassDefinition definition = this.elementFactory.getClassDefinition(fullQualifiedName, fullQualifiedName);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.classDefLocations.add(location);
@@ -135,7 +135,7 @@ public class JavaElementLocationSet {
 	                                         @NotNegative final int startLine,
 	                                         @NotNegative final int endLine,
 	                                         @NotNegative final int position) {
-		JavaMethodCall call = elementFactory.getMethodCall(objectName, methodName, signature, parent);
+		JavaMethodCall call = this.elementFactory.getMethodCall(objectName, methodName, signature, parent);
 		JavaElementLocation location = new JavaElementLocation(call, startLine, endLine, position, -1, file);
 		this.methodCallLocations.add(location);
 		return location;
@@ -170,7 +170,7 @@ public class JavaElementLocationSet {
 	                                               @NotNegative final int endLine,
 	                                               @NotNegative final int position,
 	                                               final int bodyStartLine) {
-		JavaMethodDefinition definition = elementFactory.getMethodDefinition(objectName, methodName, signature);
+		JavaMethodDefinition definition = this.elementFactory.getMethodDefinition(objectName, methodName, signature);
 		JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position, bodyStartLine,
 		                                                       file);
 		this.methodDefLocations.add(location);

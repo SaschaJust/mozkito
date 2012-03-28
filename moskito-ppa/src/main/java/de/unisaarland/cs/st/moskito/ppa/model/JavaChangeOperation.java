@@ -176,9 +176,8 @@ public class JavaChangeOperation implements Annotated {
 				return false;
 			}
 			return true;
-		} else {
-			return getId() == other.getId();
 		}
+		return getId() == other.getId();
 	}
 	
 	/**
@@ -257,10 +256,9 @@ public class JavaChangeOperation implements Annotated {
 			                                                    ? 0
 			                                                    : getRevision().hashCode());
 			return result;
-		} else {
-			final int prime = 101;
-			result = (prime * result) + ((int) getId());
 		}
+		final int prime = 101;
+		result = (prime * result) + ((int) getId());
 		return result;
 	}
 	

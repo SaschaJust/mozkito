@@ -41,17 +41,17 @@ public class JavaElementFactory {
 		Criteria<JavaClassDefinition> criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
 		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
 		for (JavaClassDefinition def : defs) {
-			classDefs.put(def.getFullQualifiedName(), def);
+			this.classDefs.put(def.getFullQualifiedName(), def);
 		}
 		Criteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
 		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria2);
 		for (JavaMethodDefinition def : mDefs) {
-			methodDefs.put(def.getFullQualifiedName(), def);
+			this.methodDefs.put(def.getFullQualifiedName(), def);
 		}
 		Criteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
 		List<JavaMethodCall> calls = persistenceUtil.load(criteria3);
 		for (JavaMethodCall call : calls) {
-			methodCalls.put(call.getFullQualifiedName(), call);
+			this.methodCalls.put(call.getFullQualifiedName(), call);
 		}
 	}
 	
@@ -80,11 +80,11 @@ public class JavaElementFactory {
 	                                                       @NotNull final String fullQualifiedName) {
 		
 		JavaClassDefinition def = null;
-		if (!classDefs.containsKey(fullQualifiedName)) {
+		if (!this.classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaClassDefinition(parent, fullQualifiedName);
-			classDefs.put(fullQualifiedName, def);
+			this.classDefs.put(fullQualifiedName, def);
 		} else {
-			def = classDefs.get(fullQualifiedName);
+			def = this.classDefs.get(fullQualifiedName);
 		}
 		return def;
 	}
@@ -114,11 +114,11 @@ public class JavaElementFactory {
 	                                              @NotNull final String file) {
 		
 		JavaClassDefinition def = null;
-		if (!classDefs.containsKey(fullQualifiedName)) {
+		if (!this.classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaClassDefinition(fullQualifiedName);
-			classDefs.put(fullQualifiedName, def);
+			this.classDefs.put(fullQualifiedName, def);
 		} else {
-			def = classDefs.get(fullQualifiedName);
+			def = this.classDefs.get(fullQualifiedName);
 		}
 		return def;
 	}
@@ -158,11 +158,11 @@ public class JavaElementFactory {
 		
 		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
 		JavaMethodCall call = null;
-		if (!methodCalls.containsKey(cacheName)) {
+		if (!this.methodCalls.containsKey(cacheName)) {
 			call = new JavaMethodCall(objectName, methodName, signature);
-			methodCalls.put(cacheName, call);
+			this.methodCalls.put(cacheName, call);
 		} else {
-			call = methodCalls.get(cacheName);
+			call = this.methodCalls.get(cacheName);
 		}
 		return call;
 	}
@@ -194,12 +194,12 @@ public class JavaElementFactory {
 		
 		JavaMethodDefinition def = null;
 		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
-		if (!methodDefs.containsKey(cacheName)) {
+		if (!this.methodDefs.containsKey(cacheName)) {
 			
 			def = new JavaMethodDefinition(objectName, methodName, signature);
-			methodDefs.put(cacheName, def);
+			this.methodDefs.put(cacheName, def);
 		} else {
-			def = methodDefs.get(cacheName);
+			def = this.methodDefs.get(cacheName);
 		}
 		return def;
 	}

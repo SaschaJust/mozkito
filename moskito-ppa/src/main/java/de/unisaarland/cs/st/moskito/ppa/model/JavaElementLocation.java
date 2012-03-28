@@ -93,7 +93,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		Attribute idAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR);
+		final Attribute idAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR);
 		if (idAttr == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.id from XML. Returning null.");
@@ -103,14 +103,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		Long id = -1l;
 		try {
 			id = new Long(idAttr.getValue());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.id from XML. Returning null.");
 			}
 			return null;
 		}
 		
-		Attribute slAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR);
+		final Attribute slAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR);
 		Integer startline = -1;
 		if (slAttr == null) {
 			if (Logger.logWarn()) {
@@ -120,14 +120,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		}
 		try {
 			startline = new Integer(slAttr.getValue());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.startline from XML. Returning null.");
 			}
 			return null;
 		}
 		
-		Attribute elAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR);
+		final Attribute elAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR);
 		Integer endline = -1;
 		if (elAttr == null) {
 			if (Logger.logWarn()) {
@@ -137,14 +137,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		}
 		try {
 			endline = new Integer(elAttr.getValue());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.endline from XML. Returning null.");
 			}
 			return null;
 		}
 		
-		Attribute posAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR);
+		final Attribute posAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR);
 		Integer position = -1;
 		if (posAttr == null) {
 			if (Logger.logWarn()) {
@@ -154,14 +154,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		}
 		try {
 			position = new Integer(posAttr.getValue());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.position from XML. Returning null.");
 			}
 			return null;
 		}
 		
-		Attribute bsAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR);
+		final Attribute bsAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR);
 		Integer bodystart = -1;
 		if (bsAttr == null) {
 			if (Logger.logWarn()) {
@@ -171,21 +171,21 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		}
 		try {
 			bodystart = new Integer(bsAttr.getValue());
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.bodystartline from XML. Returning null.");
 			}
 			return null;
 		}
 		
-		org.jdom.Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		final org.jdom.Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
 		if (pathElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.path from XML. Returning null.");
 			}
 			return null;
 		}
-		String path = pathElement.getText();
+		final String path = pathElement.getText();
 		
 		JavaElement javaElement = null;
 		
@@ -216,8 +216,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		JavaElementLocation javaElementLocation = new JavaElementLocation(javaElement, startline, endline, position,
-		                                                                  bodystart, path);
+		final JavaElementLocation javaElementLocation = new JavaElementLocation(javaElement, startline, endline,
+		                                                                        position, bodystart, path);
 		javaElementLocation.setId(id);
 		return javaElementLocation;
 	}
@@ -338,8 +338,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@NoneNull
 	public LineCover coversAllLines(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
-		for (int line : lines) {
-			LineCover tmpLC = coversLine(line);
+		for (final int line : lines) {
+			final LineCover tmpLC = coversLine(line);
 			if (tmpLC.equals(LineCover.FALSE)) {
 				return tmpLC;
 			}
@@ -350,10 +350,12 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 					if (tmpLC.equals(LineCover.DEFINITION)) {
 						lc = LineCover.DEF_AND_BODY;
 					}
+					break;
 				case DEFINITION:
 					if (tmpLC.equals(LineCover.BODY)) {
 						lc = LineCover.DEF_AND_BODY;
 					}
+					break;
 				default:
 					lc = tmpLC;
 					break;
@@ -372,8 +374,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@NoneNull
 	public LineCover coversAnyLine(final Collection<Integer> lines) {
 		LineCover lc = LineCover.FALSE;
-		for (int line : lines) {
-			LineCover tmpLC = coversLine(line);
+		for (final int line : lines) {
+			final LineCover tmpLC = coversLine(line);
 			if (!tmpLC.equals(LineCover.FALSE)) {
 				switch (lc) {
 					case DEF_AND_BODY:
@@ -432,7 +434,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		JavaElementLocation other = (JavaElementLocation) obj;
+		final JavaElementLocation other = (JavaElementLocation) obj;
 		if (getElement() == null) {
 			if (other.getElement() != null) {
 				return false;
@@ -467,7 +469,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the body start line
 	 */
 	public int getBodyStartLine() {
-		return bodyStartLine;
+		return this.bodyStartLine;
 	}
 	
 	/**
@@ -477,7 +479,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@ElementCollection
 	public Set<Integer> getCommentLines() {
-		return commentLines;
+		return this.commentLines;
 	}
 	
 	/**
@@ -488,7 +490,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@Type (JavaElement.class)
 	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public JavaElement getElement() {
-		return element;
+		return this.element;
 	}
 	
 	/**
@@ -497,7 +499,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the end line
 	 */
 	public int getEndLine() {
-		return endLine;
+		return this.endLine;
 	}
 	
 	/**
@@ -506,7 +508,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the file path
 	 */
 	public String getFilePath() {
-		return filePath;
+		return this.filePath;
 	}
 	
 	/**
@@ -518,7 +520,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@Id
 	@GeneratedValue
 	public long getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -527,7 +529,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the position
 	 */
 	public int getPosition() {
-		return position;
+		return this.position;
 	}
 	
 	/**
@@ -536,7 +538,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the start line
 	 */
 	public int getStartLine() {
-		return startLine;
+		return this.startLine;
 	}
 	
 	/**
@@ -547,7 +549,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@NoneNull
 	@Transient
 	public Element getXMLRepresentation() {
-		Element thisElement = new Element(JAVA_ELEMENT_LOCATION_TAG);
+		final Element thisElement = new Element(JAVA_ELEMENT_LOCATION_TAG);
 		
 		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR, "" + getId());
 		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR, "" + getStartLine());
@@ -555,7 +557,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR, "" + getPosition());
 		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR, "" + getBodyStartLine());
 		
-		Element filePathElement = new Element(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		final Element filePathElement = new Element(JAVA_ELEMENT_LOCATION_PATH_TAG);
 		filePathElement.setText(getFilePath());
 		thisElement.addContent(filePathElement);
 		
@@ -674,7 +676,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("element = [");
 		sb.append(getElement().toString());
 		sb.append("]");

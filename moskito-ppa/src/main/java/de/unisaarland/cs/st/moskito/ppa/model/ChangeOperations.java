@@ -37,9 +37,9 @@ public class ChangeOperations {
 	 * Instantiates a new change operations.
 	 */
 	public ChangeOperations() {
-		defOperations.put(ChangeType.Added, new HashMap<JavaElement, JavaChangeOperation>());
-		defOperations.put(ChangeType.Deleted, new HashMap<JavaElement, JavaChangeOperation>());
-		defOperations.put(ChangeType.Modified, new HashMap<JavaElement, JavaChangeOperation>());
+		this.defOperations.put(ChangeType.Added, new HashMap<JavaElement, JavaChangeOperation>());
+		this.defOperations.put(ChangeType.Deleted, new HashMap<JavaElement, JavaChangeOperation>());
+		this.defOperations.put(ChangeType.Modified, new HashMap<JavaElement, JavaChangeOperation>());
 	}
 	
 	/**
@@ -49,28 +49,27 @@ public class ChangeOperations {
 	 *            the op
 	 * @return true, if successful
 	 */
-	public boolean add(JavaChangeOperation op) {
+	public boolean add(final JavaChangeOperation _op) {
 		
+		JavaChangeOperation op = _op;
 		// check if a definition was added and deleted
-		JavaElement element = op.getChangedElementLocation().getElement();
+		final JavaElement element = op.getChangedElementLocation().getElement();
 		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
 			if (op.getChangeType().equals(ChangeType.Added)) {
-				if (defOperations.get(ChangeType.Deleted).containsKey(op.getChangedElementLocation().getElement())) {
-					defOperations.get(ChangeType.Deleted).remove(op.getChangedElementLocation().getElement());
+				if (this.defOperations.get(ChangeType.Deleted).containsKey(op.getChangedElementLocation().getElement())) {
+					this.defOperations.get(ChangeType.Deleted).remove(op.getChangedElementLocation().getElement());
 					op = new JavaChangeOperation(ChangeType.Modified, op.getChangedElementLocation(), op.getRevision());
 				}
 			} else if (op.getChangeType().equals(ChangeType.Deleted)) {
-				if (defOperations.get(ChangeType.Added).containsKey(op.getChangedElementLocation().getElement())) {
-					defOperations.get(ChangeType.Added).remove(op.getChangedElementLocation().getElement());
+				if (this.defOperations.get(ChangeType.Added).containsKey(op.getChangedElementLocation().getElement())) {
+					this.defOperations.get(ChangeType.Added).remove(op.getChangedElementLocation().getElement());
 					op = new JavaChangeOperation(ChangeType.Modified, op.getChangedElementLocation(), op.getRevision());
 				}
 			}
-			defOperations.get(op.getChangeType()).put(op.getChangedElementLocation().getElement(), op);
+			this.defOperations.get(op.getChangeType()).put(op.getChangedElementLocation().getElement(), op);
 			return true;
-		} else {
-			return callOperations.add(op);
 		}
-		
+		return this.callOperations.add(op);
 	}
 	
 	/**
@@ -79,13 +78,13 @@ public class ChangeOperations {
 	 * @return the operations
 	 */
 	public Collection<JavaChangeOperation> getOperations() {
-		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
-		for (Map<JavaElement, JavaChangeOperation> map : defOperations.values()) {
-			for (JavaChangeOperation op : map.values()) {
+		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		for (final Map<JavaElement, JavaChangeOperation> map : this.defOperations.values()) {
+			for (final JavaChangeOperation op : map.values()) {
 				result.add(op);
 			}
 		}
-		for (JavaChangeOperation op : callOperations) {
+		for (final JavaChangeOperation op : this.callOperations) {
 			result.add(op);
 		}
 		return result;

@@ -350,6 +350,8 @@ public class PPAUtils {
 				case Deleted:
 					deleteRevs.put(rev, changedPath);
 					break;
+				default:
+					break;
 			}
 		}
 		
@@ -433,6 +435,7 @@ public class PPAUtils {
 			
 			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
 			
+			@SuppressWarnings ("null")
 			final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 			if (!oldCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
@@ -568,6 +571,8 @@ public class PPAUtils {
 						case BODY:
 							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
 							break;
+						default:
+							break;
 					}
 				}
 			} else if (delta instanceof InsertDelta) {
@@ -582,6 +587,8 @@ public class PPAUtils {
 							break;
 						case BODY:
 							operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
+							break;
+						default:
 							break;
 					}
 				}
@@ -603,6 +610,8 @@ public class PPAUtils {
 						case DEFINITION:
 							addDefCandidates.add(def);
 							break;
+						default:
+							break;
 					}
 				}
 				final Collection<JavaElementLocation> removeDefCandidates = new HashSet<JavaElementLocation>();
@@ -615,6 +624,8 @@ public class PPAUtils {
 						case DEF_AND_BODY:
 						case DEFINITION:
 							removeDefCandidates.add(def);
+							break;
+						default:
 							break;
 					}
 				}
@@ -762,24 +773,24 @@ public class PPAUtils {
 				case Deleted:
 					deleteRevs.put(rev, changedPath);
 					break;
+				default:
+					break;
 			}
 		}
 		
 		// handle the removed files first
-		if (parentTransaction != null) {
-			final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
-			if (!oldCheckoutFile.exists()) {
-				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
-			}
-			
-			for (final Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
-				final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator
-				        + entry.getValue());
-				final CompilationUnit cu = getCUNoPPA(file);
-				generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
-				                                       visitors, elementFactory, packageFilter);
-			}
+		
+		final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+		if (!oldCheckoutFile.exists()) {
+			throw new UnrecoverableError("Could not access checkout directory: " + oldCheckoutFile.getAbsolutePath()
+			        + ". Ignoring!");
+		}
+		
+		for (final Entry<RCSRevision, String> entry : deleteRevs.entrySet()) {
+			final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + entry.getValue());
+			final CompilationUnit cu = getCUNoPPA(file);
+			generateChangeOperationsForDeletedFile(repository, transaction, entry.getKey(), cu, entry.getValue(),
+			                                       visitors, elementFactory, packageFilter);
 		}
 		
 		// handle added files
@@ -801,12 +812,12 @@ public class PPAUtils {
 			
 			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
 			
-			final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
-			if (!oldCheckoutFile.exists()) {
+			final File oldModifiedCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
+			if (!oldModifiedCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
-				        + oldCheckoutFile.getAbsolutePath() + ". Ignoring!");
+				        + oldModifiedCheckoutFile.getAbsolutePath() + ". Ignoring!");
 			}
-			final File oldFile = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator
+			final File oldFile = new File(oldModifiedCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator
 			        + entry.getValue());
 			final CompilationUnit oldCU = getCUNoPPA(oldFile);
 			final JavaElementLocations oldElems = PPAUtils.getJavaElementLocationsByCU(oldCU, entry.getValue(),

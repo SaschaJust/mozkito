@@ -64,7 +64,7 @@ public class PPACUThread implements Runnable {
 	 * @return the cU
 	 */
 	public CompilationUnit getCU() {
-		return cu;
+		return this.cu;
 	}
 	
 	/*
@@ -102,7 +102,7 @@ public class PPACUThread implements Runnable {
 		// ppaEngine.reset();
 		
 		try {
-			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
+			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(this.file);
 			PPATypeRegistry registry = new PPATypeRegistry((JavaProject) JavaCore.create(icu.getUnderlyingResource()
 			                                                                                .getProject()));
 			ASTNode node = null;
@@ -111,11 +111,11 @@ public class PPACUThread implements Runnable {
 			parser2.setResolveBindings(true);
 			parser2.setSource(icu);
 			node = parser2.createAST(false, new NullProgressMonitor());
-			PPAEngine ppaEngine = new PPAEngine(registry, options);
+			PPAEngine ppaEngine = new PPAEngine(registry, this.options);
 			
-			cu = (CompilationUnit) node;
+			this.cu = (CompilationUnit) node;
 			
-			ppaEngine.addUnitToProcess(cu);
+			ppaEngine.addUnitToProcess(this.cu);
 			ppaEngine.doPPA();
 			ppaEngine.reset();
 		} catch (JavaModelException jme) {
