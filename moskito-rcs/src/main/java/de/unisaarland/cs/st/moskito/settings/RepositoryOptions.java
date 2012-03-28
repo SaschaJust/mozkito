@@ -151,7 +151,6 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public Repository init() {
 		// PRECONDITIONS

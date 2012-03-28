@@ -153,6 +153,7 @@ public class MercurialRepository extends Repository {
 			if (Logger.logError()) {
 				Logger.error("filePath and revision must not be null. Abort.");
 			}
+			return new ArrayList<AnnotationEntry>(0);
 		}
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud",
 		        "-r", revision, filePath }, this.cloneDir, null, null);
@@ -464,9 +465,8 @@ public class MercurialRepository extends Repository {
 				return null;
 			}
 			return lines.get(0).trim();
-		} else {
-			return getStartRevision();
 		}
+		return getStartRevision();
 	}
 	
 	/*
@@ -525,9 +525,8 @@ public class MercurialRepository extends Repository {
 				return null;
 			}
 			return lines.get(0).trim();
-		} else {
-			return getEndRevision();
 		}
+		return getEndRevision();
 	}
 	
 	/*
@@ -758,22 +757,22 @@ public class MercurialRepository extends Repository {
 		
 		setUri(address);
 		
-		File cloneDir = null;
+		File localCloneDir = null;
 		if (tmpDir == null) {
-			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		} else {
-			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
 		
 		// clone the remote repository
-		if (!clone(null, cloneDir.getAbsolutePath())) {
+		if (!clone(null, localCloneDir.getAbsolutePath())) {
 			if (Logger.logError()) {
 				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-				        + cloneDir.getAbsolutePath() + "`");
+				        + localCloneDir.getAbsolutePath() + "`");
 				throw new RuntimeException();
 			}
 		}

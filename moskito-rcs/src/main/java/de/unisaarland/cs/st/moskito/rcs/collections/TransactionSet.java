@@ -82,10 +82,9 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 					        + " is not comparable to existing elements. " + "Transaction within the same "
 					        + "TransactionSet must share at " + "least one commong branch. "
 					        + "Exception according to Java specification on non-comparable objects within collections.");
-				} else {
-					this.branchIntersection.clear();
-					this.branchIntersection.addAll(intersection);
 				}
+				this.branchIntersection.clear();
+				this.branchIntersection.addAll(intersection);
 			}
 			return this.treeSet.add(e);
 		} finally {
@@ -164,9 +163,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 			
 			if (this.order.equals(TransactionSetOrder.ASC)) {
 				return o1.getBranchIndices().get(branchName).compareTo(o2.getBranchIndices().get(branchName));
-			} else {
-				return o2.getBranchIndices().get(branchName).compareTo(o1.getBranchIndices().get(branchName));
 			}
+			return o2.getBranchIndices().get(branchName).compareTo(o1.getBranchIndices().get(branchName));
 		} finally {
 			// POSTCONDITIONS
 		}

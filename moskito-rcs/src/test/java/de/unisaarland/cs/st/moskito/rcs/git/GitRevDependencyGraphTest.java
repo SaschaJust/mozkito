@@ -27,9 +27,7 @@ public class GitRevDependencyGraphTest {
 	public static void beforeClass() {
 		try {
 			final URL zipURL = GitRevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-			if (zipURL == null) {
-				fail();
-			}
+			assert (zipURL != null);
 			
 			final File bareDir = new File(
 			                              (new URL(zipURL.toString()

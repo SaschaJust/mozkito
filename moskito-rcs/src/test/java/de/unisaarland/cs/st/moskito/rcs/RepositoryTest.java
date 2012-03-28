@@ -99,6 +99,7 @@ public class RepositoryTest extends MoskitoTest {
 				e1.printStackTrace();
 				fail();
 			}
+			assert (repository != null);
 			repositories.add(repository);
 			
 			final File urlFile = new File(repoMap.get(type));

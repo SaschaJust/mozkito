@@ -388,9 +388,8 @@ public class GitRepository extends Repository {
 			}
 			final List<String> lines = response.getSecond();
 			return lines.get(lines.size() - 1).trim();
-		} else {
-			return getStartRevision();
 		}
+		return getStartRevision();
 	}
 	
 	@Override
@@ -596,10 +595,6 @@ public class GitRepository extends Repository {
 		Condition.check(toIndex >= 0, "End transaction for log() is unknown!");
 		Condition.check(fromIndex <= toIndex, "cannot log from later revision to earlier one!");
 		
-		if ((fromRevision == null) || (toRevision == null)) {
-			return null;
-		}
-		
 		final List<LogEntry> result = new LinkedList<LogEntry>();
 		
 		String revisionSelection = fromRevision + "^.." + toRevision;
@@ -683,25 +678,25 @@ public class GitRepository extends Repository {
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
-		File cloneDir = null;
+		File localCloneDir = null;
 		if (tmpDir == null) {
-			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		} else {
-			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
 		
-		if (!clone(inputStream, cloneDir.getAbsolutePath())) {
+		if (!clone(inputStream, localCloneDir.getAbsolutePath())) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
 		}
 		
 		final String innerPath = ((getUri().getFragment()) != null)
 		                                                           ? (getUri().getFragment())
 		                                                           : "/";
-		this.cloneDir = new File(cloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
+		this.cloneDir = new File(localCloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
 		if (!this.cloneDir.exists()) {
 			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}
