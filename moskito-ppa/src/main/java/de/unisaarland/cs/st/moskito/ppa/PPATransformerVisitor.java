@@ -30,7 +30,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 * @return
 	 */
 	public Iterator<JavaChangeOperation> getIterator() {
-		return list.iterator();
+		return this.list.iterator();
 	}
 	
 	/*
@@ -40,7 +40,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 */
 	@Override
 	public void visit(final JavaChangeOperation change) {
-		list.add(change);
+		this.list.add(change);
 	}
 	
 	/*

@@ -208,7 +208,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
 	}
 	
 	/*

@@ -35,35 +35,35 @@ public class DataDependencyVisitor extends ASTVisitor {
 	
 	@Override
 	public void endVisit(final SimpleName sn) {
-		IBinding binding = sn.resolveBinding();
+		final IBinding binding = sn.resolveBinding();
 		if (binding == null) {
 			return;
 		}
 		if (binding.getKind() == IBinding.VARIABLE) {
-			IVariableBinding vBinding = (IVariableBinding) binding;
+			final IVariableBinding vBinding = (IVariableBinding) binding;
 			if (vBinding.isField()) {
 				// FIELDS and LOCAL VARIABLES
-				int currentLine = cu.getLineNumber(sn.getStartPosition());
-				if (!lineFields.containsKey(vBinding.getVariableId())) {
-					lineFields.put(vBinding.getVariableId(), new HashSet<Integer>());
+				final int currentLine = this.cu.getLineNumber(sn.getStartPosition());
+				if (!this.lineFields.containsKey(vBinding.getVariableId())) {
+					this.lineFields.put(vBinding.getVariableId(), new HashSet<Integer>());
 				}
-				lineFields.get(vBinding.getVariableId()).add(currentLine);
+				this.lineFields.get(vBinding.getVariableId()).add(currentLine);
 			} else if (!vBinding.isParameter()) {
-				int currentLine = cu.getLineNumber(sn.getStartPosition());
-				if (!lineVariables.containsKey(vBinding.getVariableId())) {
-					lineVariables.put(vBinding.getVariableId(), new HashSet<Integer>());
+				final int currentLine = this.cu.getLineNumber(sn.getStartPosition());
+				if (!this.lineVariables.containsKey(vBinding.getVariableId())) {
+					this.lineVariables.put(vBinding.getVariableId(), new HashSet<Integer>());
 				}
-				lineVariables.get(vBinding.getVariableId()).add(currentLine);
+				this.lineVariables.get(vBinding.getVariableId()).add(currentLine);
 			}
 		}
 	}
 	
 	public Map<Integer, Set<Integer>> getFieldAccessesPerLine() {
-		return lineFields;
+		return this.lineFields;
 	}
 	
 	public Map<Integer, Set<Integer>> getVariableAccessesPerLine() {
-		return lineVariables;
+		return this.lineVariables;
 	}
 	
 }

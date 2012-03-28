@@ -185,14 +185,13 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	public int nextAnonCounter(final PPATypeVisitor v) {
 		if (isAnonymClass()) {
 			return getParent().nextAnonCounter(v);
-		} else {
-			final int vId = System.identityHashCode(v);
-			if (!getAnonCounters().containsKey(vId)) {
-				getAnonCounters().put(vId, 0);
-			}
-			getAnonCounters().put(vId, getAnonCounters().get(vId) + 1);
-			return getAnonCounters().get(vId);
 		}
+		final int vId = System.identityHashCode(v);
+		if (!getAnonCounters().containsKey(vId)) {
+			getAnonCounters().put(vId, 0);
+		}
+		getAnonCounters().put(vId, getAnonCounters().get(vId) + 1);
+		return getAnonCounters().get(vId);
 	}
 	
 	/**
