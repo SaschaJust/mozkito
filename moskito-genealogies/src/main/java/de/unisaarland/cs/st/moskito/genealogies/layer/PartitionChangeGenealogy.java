@@ -78,7 +78,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	                            Collection<JavaChangeOperation> to) {
 		for (JavaChangeOperation singleFrom : from) {
 			for (JavaChangeOperation singleTo : to) {
-				if (core.containsEdge(singleFrom, singleTo)) {
+				if (this.core.containsEdge(singleFrom, singleTo)) {
 					return true;
 				}
 			}
@@ -97,7 +97,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 		}
 		boolean result = true;
 		for (JavaChangeOperation op : vertex) {
-			result &= core.hasVertex(op);
+			result &= this.core.hasVertex(op);
 		}
 		return result;
 	}
@@ -111,7 +111,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	                                                                 GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (JavaChangeOperation op : t) {
-			for (JavaChangeOperation dependent : core.getDependants(op, edgeTypes)) {
+			for (JavaChangeOperation dependent : this.core.getDependants(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}
@@ -130,7 +130,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 		Set<GenealogyEdgeType> edges = new HashSet<GenealogyEdgeType>();
 		for (JavaChangeOperation singleFrom : from) {
 			for (JavaChangeOperation singleTo : to) {
-				GenealogyEdgeType edge = core.getEdge(singleFrom, singleTo);
+				GenealogyEdgeType edge = this.core.getEdge(singleFrom, singleTo);
 				if (edge != null) {
 					edges.add(edge);
 				}
@@ -148,11 +148,11 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 			JavaChangeOperation op = iterator.next();
 			
 			sb.append("[");
-			sb.append(core.getNodeId(op));
+			sb.append(this.core.getNodeId(op));
 			while (iterator.hasNext()) {
 				op = iterator.next();
 				sb.append(",");
-				sb.append(sb.append(core.getNodeId(op)));
+				sb.append(sb.append(this.core.getNodeId(op)));
 			}
 			sb.append("]");
 			return sb.toString();
@@ -169,7 +169,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	                                                              GenealogyEdgeType... edgeTypes) {
 		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
 		for (JavaChangeOperation op : t) {
-			for (JavaChangeOperation dependent : core.getParents(op, edgeTypes)) {
+			for (JavaChangeOperation dependent : this.core.getParents(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}
@@ -182,7 +182,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	public Collection<Collection<JavaChangeOperation>> getRoots() {
 		Collection<Collection<JavaChangeOperation>> roots = new LinkedList<Collection<JavaChangeOperation>>();
 		Collection<JavaChangeOperation> vertices = new HashSet<JavaChangeOperation>();
-		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
+		Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
 		while (vertexIterator.hasNext()) {
 			vertices.add(vertexIterator.next());
 		}
@@ -231,7 +231,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 */
 	@Override
 	public Iterable<Collection<JavaChangeOperation>> vertexSet() {
-		Iterator<JavaChangeOperation> vertexIterator = core.vertexIterator();
+		Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
 		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		while (vertexIterator.hasNext()) {
 			JavaChangeOperation elem = vertexIterator.next();
@@ -246,7 +246,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 */
 	@Override
 	public int vertexSize() {
-		return core.vertexSize();
+		return this.core.vertexSize();
 	}
 	
 }

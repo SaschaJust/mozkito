@@ -55,7 +55,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 */
 	@Override
 	public void close() {
-		core.close();
+		this.core.close();
 	}
 	
 	/**
@@ -123,7 +123,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	
 	@Override
 	public final CoreChangeGenealogy getCore() {
-		return core;
+		return this.core;
 	}
 	
 	/**

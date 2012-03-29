@@ -31,7 +31,7 @@ public class OperationCollection {
 	}
 	
 	public Collection<JavaChangeOperation> unpack() {
-		return collection;
+		return this.collection;
 	}
 	
 }
