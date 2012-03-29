@@ -1,22 +1,20 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -53,6 +51,17 @@ public class GoogleTracker extends Tracker {
 	/** The service. */
 	private ProjectHostingService service;
 	
+	public String getIssuesFeedUri() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getUri().toString());
+		if (!getUri().toString().endsWith("/")) {
+			sb.append("/");
+		}
+		sb.append(getProjectName());
+		sb.append("/issues/full");
+		return sb.toString();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getParser()
@@ -77,7 +86,8 @@ public class GoogleTracker extends Tracker {
 		return this.projectName;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#getReportLinks()
 	 */
 	@Override
@@ -92,11 +102,11 @@ public class GoogleTracker extends Tracker {
 				int startIndex = 1;
 				final int maxResults = 100;
 				
-				IssuesFeed resultFeed = this.service.getFeed(new URL(getUri().toString() + "?start-index=" + startIndex
+				final String baseUrlStr = getIssuesFeedUri();
+				IssuesFeed resultFeed = this.service.getFeed(new URL(baseUrlStr + "?start-index=" + startIndex
 				        + "&max-results=" + maxResults), IssuesFeed.class);
 				if (Logger.logDebug()) {
-					Logger.debug(this.trackerURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
-					        + maxResults);
+					Logger.debug(baseUrlStr + "?start-index=" + startIndex + "&amp;max-results=" + maxResults);
 				}
 				List<IssuesEntry> feedEntries = resultFeed.getEntries();
 				while (feedEntries.size() > 0) {
@@ -109,11 +119,10 @@ public class GoogleTracker extends Tracker {
 						}
 					}
 					startIndex += maxResults;
-					resultFeed = this.service.getFeed(new URL(this.trackerURI.toString() + "?start-index=" + startIndex
+					resultFeed = this.service.getFeed(new URL(baseUrlStr + "?start-index=" + startIndex
 					        + "&max-results=" + maxResults), IssuesFeed.class);
 					if (Logger.logDebug()) {
-						Logger.debug(this.trackerURI.toString() + "?start-index=" + startIndex + "&amp;max-results="
-						        + maxResults);
+						Logger.debug(baseUrlStr + "?start-index=" + startIndex + "&max-results=" + maxResults);
 					}
 					feedEntries = resultFeed.getEntries();
 				}
@@ -132,15 +141,40 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param projectName the project name
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param projectName
+	 *            the project name
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
-	public void setup(final URI fetchURI,
-	                  final String username,
+	public void setup(final String projectName) throws InvalidParameterException {
+		this.projectName = projectName;
+		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+		
+		try {
+			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
+			super.setup(fetchURI, this.username, this.password);
+		} catch (final URISyntaxException e) {
+			throw new UnrecoverableError(e);
+		}
+		
+	}
+	
+	/**
+	 * Setup.
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param projectName
+	 *            the project name
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
+	 */
+	public void setup(final String username,
 	                  final String password,
 	                  final String projectName) throws InvalidParameterException {
 		this.projectName = projectName;
@@ -152,6 +186,38 @@ public class GoogleTracker extends Tracker {
 		} catch (final AuthenticationException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
-		super.setup(fetchURI, username, password);
+		
+		try {
+			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
+			super.setup(fetchURI, username, password);
+		} catch (final URISyntaxException e) {
+			throw new UnrecoverableError(e);
+		}
+		
+	}
+	
+	/**
+	 * Setup.
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param projectName
+	 *            the project name
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
+	 */
+	protected void testSetup(final String projectName) throws InvalidParameterException {
+		this.projectName = projectName;
+		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+		try {
+			this.trackerURI = new URI("https://code.google.com/feeds/issues/p/");
+		} catch (final URISyntaxException e) {
+			throw new UnrecoverableError(e);
+		}
+		
 	}
 }

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies;
@@ -76,6 +73,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 				case Deleted:
 					this.deletedDefinitions.add(operation);
 					return true;
+				default:
+					return false;
 			}
 		} else if (element instanceof JavaMethodCall) {
 			switch (operation.getChangeType()) {
@@ -89,6 +88,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 				case Deleted:
 					this.deletedCalls.add(operation);
 					return true;
+				default:
+					return false;
 			}
 		} else {
 			if (Logger.logDebug()) {
@@ -108,33 +109,32 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		
 		if (this.iterator.hasNext()) {
 			return true;
-		} else {
-			switch (this.iteratorMode) {
-				case DD:
-					this.iterator = this.modifiedDefinitions.iterator();
-					this.iteratorMode = IteratorMode.MD;
-					break;
-				case MD:
-					this.iterator = this.addedDefinitions.iterator();
-					this.iteratorMode = IteratorMode.AD;
-					break;
-				case AD:
-					this.iterator = this.deletedCalls.iterator();
-					this.iteratorMode = IteratorMode.DC;
-					break;
-				case DC:
-					this.iterator = this.modifiedCalls.iterator();
-					this.iteratorMode = IteratorMode.MC;
-					break;
-				case MC:
-					this.iterator = this.addedCalls.iterator();
-					this.iteratorMode = IteratorMode.AC;
-					break;
-				case AC:
-					return false;
-			}
-			return hasNext();
 		}
+		switch (this.iteratorMode) {
+			case DD:
+				this.iterator = this.modifiedDefinitions.iterator();
+				this.iteratorMode = IteratorMode.MD;
+				break;
+			case MD:
+				this.iterator = this.addedDefinitions.iterator();
+				this.iteratorMode = IteratorMode.AD;
+				break;
+			case AD:
+				this.iterator = this.deletedCalls.iterator();
+				this.iteratorMode = IteratorMode.DC;
+				break;
+			case DC:
+				this.iterator = this.modifiedCalls.iterator();
+				this.iteratorMode = IteratorMode.MC;
+				break;
+			case MC:
+				this.iterator = this.addedCalls.iterator();
+				this.iteratorMode = IteratorMode.AC;
+				break;
+			case AC:
+				return false;
+		}
+		return hasNext();
 	}
 	
 	@Override

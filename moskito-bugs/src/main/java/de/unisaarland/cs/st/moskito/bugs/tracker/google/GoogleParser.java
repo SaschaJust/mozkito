@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
@@ -20,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -35,6 +33,8 @@ import org.joda.time.DateTimeZone;
 
 import com.google.gdata.client.projecthosting.IssuesQuery;
 import com.google.gdata.client.projecthosting.ProjectHostingService;
+import com.google.gdata.data.TextConstruct;
+import com.google.gdata.data.TextContent;
 import com.google.gdata.data.projecthosting.BlockedOn;
 import com.google.gdata.data.projecthosting.Blocking;
 import com.google.gdata.data.projecthosting.IssueCommentsEntry;
@@ -68,8 +68,9 @@ public class GoogleParser implements Parser {
 	
 	/**
 	 * Resolve priority.
-	 *
-	 * @param priority the priority
+	 * 
+	 * @param priority
+	 *            the priority
 	 * @return the priority
 	 */
 	public static Priority resolvePriority(final String priority) {
@@ -87,8 +88,9 @@ public class GoogleParser implements Parser {
 	
 	/**
 	 * Resolve resolution.
-	 *
-	 * @param status the status
+	 * 
+	 * @param status
+	 *            the status
 	 * @return the resolution
 	 */
 	private static Resolution resolveResolution(final String status) {
@@ -114,8 +116,9 @@ public class GoogleParser implements Parser {
 	
 	/**
 	 * Resolve status.
-	 *
-	 * @param status the status
+	 * 
+	 * @param status
+	 *            the status
 	 * @return the status
 	 */
 	private static Status resolveStatus(final String status) {
@@ -146,8 +149,9 @@ public class GoogleParser implements Parser {
 	
 	/**
 	 * Resolve type.
-	 *
-	 * @param type the type
+	 * 
+	 * @param type
+	 *            the type
 	 * @return the type
 	 */
 	public static Type resolveType(final String type) {
@@ -190,6 +194,8 @@ public class GoogleParser implements Parser {
 	
 	/** The comments. */
 	private SortedSet<Comment>              comments = null;
+	
+	private DateTime                        resolutionTimestamp;
 	
 	/**
 	 * Instantiates a new google parser.
@@ -281,7 +287,13 @@ public class GoogleParser implements Parser {
 				return this.comments;
 			}
 			this.comments = new TreeSet<Comment>();
-			final String fetchUri = this.tracker.getUri().toASCIIString();
+			
+			final String fetchUri = this.tracker.getIssuesFeedUri();
+			
+			final LinkedList<Tuple<Status, HistoryElement>> statusHistory = new LinkedList<Tuple<Status, HistoryElement>>();
+			final LinkedList<Tuple<Resolution, HistoryElement>> resolutionHistory = new LinkedList<Tuple<Resolution, HistoryElement>>();
+			final LinkedList<Tuple<String, HistoryElement>> summaryHistory = new LinkedList<Tuple<String, HistoryElement>>();
+			
 			if (!fetchUri.endsWith("/full")) {
 				if (Logger.logError()) {
 					Logger.error("Could not create feed for comments. getUri() returned unrecognized URI.");
@@ -290,177 +302,238 @@ public class GoogleParser implements Parser {
 				final String baseUri = fetchUri.substring(0, fetchUri.length() - 4);
 				final String commentUri = baseUri + getId() + "/comments/full";
 				try {
-					final IssueCommentsFeed commentsFeed = this.service.getFeed(new URL(commentUri),
-					                                                            IssueCommentsFeed.class);
 					
-					for (int i = 0; i < commentsFeed.getEntries().size(); i++) {
-						
-						final IssueCommentsEntry entry = commentsFeed.getEntries().get(i);
-						Person author = Tracker.unknownPerson;
-						if (!entry.getAuthors().isEmpty()) {
-							final com.google.gdata.data.Person person = entry.getAuthors().get(0);
-							author = new Person(null, person.getName(), person.getEmail());
-						}
-						final com.google.gdata.data.DateTime published = entry.getPublished();
-						final DateTime timestamp = new DateTime(published.getValue(),
-						                                        DateTimeZone.forOffsetHours(published.getTzShift()));
-						
-						this.comments.add(new Comment(i, author, timestamp, entry.getPlainTextContent()));
-						
-						Status lastStatus = null;
-						Resolution lastResolution = null;
-						String lastSummary = null;
-						
-						if (entry.hasUpdates()) {
-							final Updates updates = entry.getUpdates();
-							updates.getBlockedOnUpdates();
+					int startIndex = 1;
+					final int maxResults = 25;
+					
+					IssueCommentsFeed commentsFeed = this.service.getFeed(new URL(commentUri + "?start-index="
+					        + startIndex + "&max-results=" + maxResults), IssueCommentsFeed.class);
+					
+					List<IssueCommentsEntry> commentEntries = commentsFeed.getEntries();
+					
+					while (commentEntries.size() > 0) {
+						for (int i = 0; i < commentEntries.size(); i++) {
 							
-							final HistoryElement hElem = new HistoryElement(getId(), author, timestamp);
-							
-							if (updates.getCcUpdates() != null) {
-								// CCs are not supported by report
-							}
-							
-							Tuple<Type, Type> typeUpdate = null;
-							Tuple<Priority, Priority> priorityUpdate = null;
-							Tuple<String, String> categoryUpdate = null;
-							Tuple<String, String> milestoneUpdate = null;
-							for (final Label l : updates.getLabels()) {
-								final String label = l.getValue();
-								final String compValue = l.getValue().toLowerCase();
-								if (compValue.startsWith("type-")) {
-									final String newValue = label.substring(5).trim();
-									final Type newType = resolveType(newValue);
-									if (typeUpdate == null) {
-										typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
-									}
-									typeUpdate.setSecond(newType);
-								} else if (compValue.startsWith("-type-")) {
-									final String oldValue = label.substring(6).trim();
-									if (typeUpdate == null) {
-										typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
-									}
-									typeUpdate.setFirst(resolveType(oldValue));
-								} else if (compValue.startsWith("priority-")) {
-									final String newValue = label.substring(9).trim();
-									if (priorityUpdate == null) {
-										priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
-										                                               Priority.UNKNOWN);
-									}
-									priorityUpdate.setSecond(resolvePriority(newValue));
-								} else if (compValue.startsWith("-priority-")) {
-									final String oldValue = label.substring(10).trim();
-									if (priorityUpdate == null) {
-										priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
-										                                               Priority.UNKNOWN);
-									}
-									priorityUpdate.setFirst(resolvePriority(oldValue));
-								} else if (compValue.startsWith("category-")) {
-									final String newValue = label.substring(9).trim();
-									if (categoryUpdate == null) {
-										categoryUpdate = new Tuple<String, String>("", "");
-									}
-									categoryUpdate.setSecond(newValue);
-								} else if (compValue.startsWith("-category-")) {
-									final String oldValue = label.substring(10).trim();
-									if (categoryUpdate == null) {
-										categoryUpdate = new Tuple<String, String>("", "");
-									}
-									categoryUpdate.setSecond(oldValue);
-								} else if (compValue.startsWith("milestone-")) {
-									final String newValue = label.substring(10).trim();
-									if (milestoneUpdate == null) {
-										milestoneUpdate = new Tuple<String, String>("", "");
-									}
-									milestoneUpdate.setSecond(newValue);
-								} else if (compValue.startsWith("-milestone-")) {
-									final String oldValue = label.substring(11).trim();
-									if (milestoneUpdate == null) {
-										milestoneUpdate = new Tuple<String, String>("", "");
-									}
-									milestoneUpdate.setFirst(oldValue);
+							final IssueCommentsEntry entry = commentEntries.get(i);
+							Person author = Tracker.unknownPerson;
+							if (!entry.getAuthors().isEmpty()) {
+								final com.google.gdata.data.Person person = entry.getAuthors().get(0);
+								
+								if ((person.getName().contains("@"))
+								        && ((person.getEmail() == null) || person.getEmail().equals(""))) {
+									author = new Person(null, null, person.getName());
 								} else {
-									String keyword = label.trim();
-									if (keyword.startsWith("-")) {
-										keyword = keyword.substring(1);
-										hElem.addChangedValue("keywords", keyword, null);
+									author = new Person(null, person.getName(), person.getEmail());
+								}
+							}
+							final com.google.gdata.data.DateTime published = entry.getPublished();
+							final DateTime timestamp = new DateTime(published.getValue(),
+							                                        DateTimeZone.forOffsetHours(published.getTzShift()));
+							
+							this.comments.add(new Comment(i + startIndex, author, timestamp, entry.getContent()
+							                                                                      .getLang()));
+							
+							if (entry.hasUpdates()) {
+								final Updates updates = entry.getUpdates();
+								updates.getBlockedOnUpdates();
+								
+								final HistoryElement hElem = new HistoryElement(getId(), author, timestamp);
+								
+								if (updates.getCcUpdates() != null) {
+									// CCs are not supported by report
+								}
+								
+								Tuple<Type, Type> typeUpdate = null;
+								Tuple<Priority, Priority> priorityUpdate = null;
+								Tuple<String, String> categoryUpdate = null;
+								Tuple<String, String> milestoneUpdate = null;
+								for (final Label l : updates.getLabels()) {
+									final String label = l.getValue();
+									final String compValue = l.getValue().toLowerCase();
+									if (compValue.startsWith("type-")) {
+										final String newValue = label.substring(5).trim();
+										final Type newType = resolveType(newValue);
+										if (typeUpdate == null) {
+											typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
+										}
+										typeUpdate.setSecond(newType);
+									} else if (compValue.startsWith("-type-")) {
+										final String oldValue = label.substring(6).trim();
+										if (typeUpdate == null) {
+											typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
+										}
+										typeUpdate.setFirst(resolveType(oldValue));
+									} else if (compValue.startsWith("priority-")) {
+										final String newValue = label.substring(9).trim();
+										if (priorityUpdate == null) {
+											priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
+											                                               Priority.UNKNOWN);
+										}
+										priorityUpdate.setSecond(resolvePriority(newValue));
+									} else if (compValue.startsWith("-priority-")) {
+										final String oldValue = label.substring(10).trim();
+										if (priorityUpdate == null) {
+											priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
+											                                               Priority.UNKNOWN);
+										}
+										priorityUpdate.setFirst(resolvePriority(oldValue));
+									} else if (compValue.startsWith("category-")) {
+										final String newValue = label.substring(9).trim();
+										if (categoryUpdate == null) {
+											categoryUpdate = new Tuple<String, String>("", "");
+										}
+										categoryUpdate.setSecond(newValue);
+									} else if (compValue.startsWith("-category-")) {
+										final String oldValue = label.substring(10).trim();
+										if (categoryUpdate == null) {
+											categoryUpdate = new Tuple<String, String>("", "");
+										}
+										categoryUpdate.setSecond(oldValue);
+									} else if (compValue.startsWith("milestone-")) {
+										final String newValue = label.substring(10).trim();
+										if (milestoneUpdate == null) {
+											milestoneUpdate = new Tuple<String, String>("", "");
+										}
+										milestoneUpdate.setSecond(newValue);
+									} else if (compValue.startsWith("-milestone-")) {
+										final String oldValue = label.substring(11).trim();
+										if (milestoneUpdate == null) {
+											milestoneUpdate = new Tuple<String, String>("", "");
+										}
+										milestoneUpdate.setFirst(oldValue);
 									} else {
-										hElem.addChangedValue("keywords", null, keyword);
+										String keyword = label.trim();
+										if (keyword.startsWith("-")) {
+											keyword = keyword.substring(1);
+											hElem.addChangedValue("keywords", keyword, null);
+										} else {
+											hElem.addChangedValue("keywords", null, keyword);
+										}
 									}
 								}
-							}
-							
-							if (typeUpdate != null) {
-								hElem.addChangedValue("type", typeUpdate.getFirst(), typeUpdate.getSecond());
-							}
-							if (priorityUpdate != null) {
-								hElem.addChangedValue("priority", priorityUpdate.getFirst(), priorityUpdate.getSecond());
-							}
-							if (categoryUpdate != null) {
-								hElem.addChangedValue("category", categoryUpdate.getFirst(), categoryUpdate.getSecond());
-							}
-							if (milestoneUpdate != null) {
-								hElem.addChangedValue("version", milestoneUpdate.getFirst(),
-								                      milestoneUpdate.getSecond());
-							}
-							
-							if (updates.getOwnerUpdate() != null) {
-								hElem.addChangedValue("assignedTo", Tracker.unknownPerson,
-								                      new Person(updates.getOwnerUpdate().getValue(), null, null));
-							}
-							
-							if (updates.getStatus() != null) {
-								final String status = updates.getStatus().getValue().toLowerCase();
-								Status newStatus = null;
-								Resolution newResolution = null;
-								if (status.equals("started")) {
-									newStatus = Status.IN_PROGRESS;
-								} else if (status.equals("accepted")) {
-									newStatus = Status.ASSIGNED;
-								} else if (status.equals("fixednotreleased")) {
-									this.resolver = author;
-									newStatus = Status.IN_PROGRESS;
-								} else if (status.equals("needsinfo")) {
-									newStatus = Status.FEEDBACK;
-								} else if (status.equals("new")) {
-									newStatus = Status.NEW;
-								} else if (status.equals("reviewpending")) {
-									newStatus = Status.REVIEWPENDING;
-								} else if (status.equals("duplicate")) {
-									newResolution = Resolution.DUPLICATE;
-									newStatus = Status.CLOSED;
-								} else if (status.equals("fixed")) {
-									this.resolver = author;
-									newResolution = Resolution.RESOLVED;
-									newStatus = Status.CLOSED;
-								} else if (status.equals("invalid")) {
-									newResolution = Resolution.INVALID;
-									newStatus = Status.CLOSED;
-								} else if (status.equals("knownquirk")) {
-									newResolution = Resolution.INVALID;
-									newStatus = Status.CLOSED;
-								} else if (status.equals("notplanned")) {
-									newResolution = Resolution.INVALID;
-									newStatus = Status.CLOSED;
+								
+								if (typeUpdate != null) {
+									hElem.addChangedValue("type", typeUpdate.getFirst(), typeUpdate.getSecond());
 								}
-								if (newStatus != null) {
-									hElem.addChangedValue("status", lastStatus, newStatus);
-									lastStatus = newStatus;
+								if (priorityUpdate != null) {
+									hElem.addChangedValue("priority", priorityUpdate.getFirst(),
+									                      priorityUpdate.getSecond());
 								}
-								if (newResolution != null) {
-									hElem.addChangedValue("resolution", lastResolution, newResolution);
-									lastResolution = newResolution;
+								if (categoryUpdate != null) {
+									hElem.addChangedValue("category", categoryUpdate.getFirst(),
+									                      categoryUpdate.getSecond());
 								}
+								if (milestoneUpdate != null) {
+									hElem.addChangedValue("version", milestoneUpdate.getFirst(),
+									                      milestoneUpdate.getSecond());
+								}
+								
+								if (updates.getOwnerUpdate() != null) {
+									hElem.addChangedValue("assignedTo", Tracker.unknownPerson,
+									                      new Person(updates.getOwnerUpdate().getValue(), null, null));
+								}
+								
+								if (updates.getStatus() != null) {
+									final String status = updates.getStatus().getValue().toLowerCase();
+									Status newStatus = null;
+									Resolution newResolution = null;
+									if (status.equals("started")) {
+										newStatus = Status.IN_PROGRESS;
+									} else if (status.equals("accepted")) {
+										newStatus = Status.ASSIGNED;
+									} else if (status.equals("fixednotreleased")) {
+										this.resolver = author;
+										newStatus = Status.IN_PROGRESS;
+									} else if (status.equals("needsinfo")) {
+										newStatus = Status.FEEDBACK;
+									} else if (status.equals("new")) {
+										newStatus = Status.NEW;
+									} else if (status.equals("reviewpending")) {
+										newStatus = Status.REVIEWPENDING;
+									} else if (status.equals("duplicate")) {
+										newResolution = Resolution.DUPLICATE;
+										newStatus = Status.CLOSED;
+									} else if (status.equals("fixed")) {
+										if (this.resolver == null) {
+											this.resolver = author;
+										}
+										if (this.resolutionTimestamp == null) {
+											this.resolutionTimestamp = hElem.getTimestamp();
+										}
+										
+										newResolution = Resolution.RESOLVED;
+										newStatus = Status.CLOSED;
+									} else if (status.equals("invalid")) {
+										newResolution = Resolution.INVALID;
+										newStatus = Status.CLOSED;
+									} else if (status.equals("knownquirk")) {
+										newResolution = Resolution.INVALID;
+										newStatus = Status.CLOSED;
+									} else if (status.equals("notplanned")) {
+										newResolution = Resolution.INVALID;
+										newStatus = Status.CLOSED;
+									}
+									if (newStatus != null) {
+										statusHistory.addFirst(new Tuple<Status, HistoryElement>(newStatus, hElem));
+									}
+									if (newResolution != null) {
+										resolutionHistory.addFirst(new Tuple<Resolution, HistoryElement>(newResolution,
+										                                                                 hElem));
+									}
+								}
+								
+								if (updates.getSummary() != null) {
+									final String newSummary = updates.getSummary().getValue();
+									summaryHistory.addFirst(new Tuple<String, HistoryElement>(newSummary, hElem));
+								}
+								this.history.add(hElem);
 							}
-							
-							if (updates.getSummary() != null) {
-								final String newSummary = updates.getSummary().getValue();
-								hElem.addChangedValue("summary", lastSummary, newSummary);
-								lastSummary = newSummary;
-							}
-							this.history.add(hElem);
+						}
+						startIndex += maxResults;
+						commentsFeed = this.service.getFeed(new URL(commentUri + "?start-index=" + startIndex
+						        + "&max-results=" + maxResults), IssueCommentsFeed.class);
+						commentEntries = commentsFeed.getEntries();
+					}
+					
+					if (Logger.logTrace()) {
+						Logger.trace("Rebuilding status history");
+					}
+					if (!statusHistory.isEmpty()) {
+						Tuple<Status, HistoryElement> last = statusHistory.getFirst();
+						last.getSecond().addChangedValue("status", Status.NEW, last.getFirst());
+						for (int i = 1; i < statusHistory.size(); ++i) {
+							final Tuple<Status, HistoryElement> next = statusHistory.get(i);
+							next.getSecond().addChangedValue("status", last.getFirst(), next.getFirst());
+							last = next;
 						}
 					}
+					
+					if (Logger.logTrace()) {
+						Logger.trace("Rebuilding resolution history");
+					}
+					if (!resolutionHistory.isEmpty()) {
+						Tuple<Resolution, HistoryElement> last = resolutionHistory.getFirst();
+						last.getSecond().addChangedValue("resolution", Resolution.UNKNOWN, last.getFirst());
+						for (int i = 1; i < resolutionHistory.size(); ++i) {
+							final Tuple<Resolution, HistoryElement> next = resolutionHistory.get(i);
+							next.getSecond().addChangedValue("resultion", last.getFirst(), next.getFirst());
+							last = next;
+						}
+					}
+					
+					if (Logger.logTrace()) {
+						Logger.trace("Rebuilding summary history");
+					}
+					if (!summaryHistory.isEmpty()) {
+						Tuple<String, HistoryElement> last = summaryHistory.getFirst();
+						last.getSecond().addChangedValue("summary", "<unknown>", last.getFirst());
+						for (int i = 1; i < summaryHistory.size(); ++i) {
+							final Tuple<String, HistoryElement> next = summaryHistory.get(i);
+							next.getSecond().addChangedValue("summary", last.getFirst(), next.getFirst());
+							last = next;
+						}
+					}
+					
 				} catch (final MalformedURLException e) {
 					if (Logger.logError()) {
 						Logger.error(e.getMessage(), e);
@@ -524,7 +597,17 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issuesEntry.getPlainTextContent();
+			if (this.issuesEntry.getContent() != null) {
+				final TextContent content = (TextContent) this.issuesEntry.getContent();
+				final TextConstruct lang = content.getContent();
+				if (lang != null) {
+					final String plainText = lang.getPlainText();
+					if (plainText != null) {
+						return plainText;
+					}
+				}
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -611,7 +694,8 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getLastUpdateTimestamp()
 	 */
 	@Override
@@ -620,7 +704,10 @@ public class GoogleParser implements Parser {
 		
 		try {
 			final com.google.gdata.data.DateTime edited = this.issuesEntry.getEdited();
-			return new DateTime(edited.getValue(), DateTimeZone.forOffsetHours(edited.getTzShift()));
+			if (edited != null) {
+				return new DateTime(edited.getValue(), DateTimeZone.forOffsetHours(edited.getTzShift()));
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -682,7 +769,8 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
 	@Override
@@ -690,13 +778,8 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			if (this.issuesEntry.getClosedDate() != null) {
-				final com.google.gdata.data.DateTime closedDate = this.issuesEntry.getClosedDate().getValue();
-				if (closedDate != null) {
-					return new DateTime(closedDate.getValue(), DateTimeZone.forOffsetHours(closedDate.getTzShift()));
-				}
-			}
-			return null;
+			getComments();
+			return this.resolutionTimestamp;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -779,7 +862,8 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	@Override
@@ -841,7 +925,7 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return getDescription();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -861,7 +945,7 @@ public class GoogleParser implements Parser {
 				final String compValue = l.getValue().toLowerCase();
 				if (compValue.startsWith("type-")) {
 					final String type = label.substring(5).trim();
-					return resolveType(type);
+					return resolveType(type.toLowerCase());
 				}
 			}
 			return null;
@@ -919,7 +1003,8 @@ public class GoogleParser implements Parser {
 		try {
 			try {
 				final String bugId = reportLink.getBugId();
-				final IssuesQuery iQuery = new IssuesQuery(this.tracker.getUri().toURL());
+				
+				final IssuesQuery iQuery = new IssuesQuery(new URL(this.tracker.getIssuesFeedUri()));
 				iQuery.setId(Integer.valueOf(bugId));
 				
 				if (Logger.logDebug()) {

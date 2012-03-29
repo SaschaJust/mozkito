@@ -193,7 +193,7 @@ public abstract class Tracker {
 		for (final Comment comment : parser.getComments()) {
 			report.addComment(comment);
 		}
-		
+		report.setResolutionTimestamp(parser.getResolutionTimestamp());
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
 		report.setLastFetch(parser.getFetchTime());

@@ -55,7 +55,6 @@ public class GenealogyOptions extends
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public CoreChangeGenealogy init() {
 		// PRECONDITIONS
