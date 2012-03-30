@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import org.jdom.Element;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
@@ -26,9 +26,9 @@ public class JavaClassDefinitionTest {
 	@Test
 	public void testXML() {
 		
-		JavaClassDefinition orgDef = new JavaClassDefinition(JavaClassDefinition.class.getName());
+		JavaTypeDefinition orgDef = new JavaTypeDefinition(JavaTypeDefinition.class.getName());
 		Element xmlRepresentation = orgDef.getXMLRepresentation();
-		JavaClassDefinition xmlDef = JavaClassDefinition.fromXMLRepresentation(xmlRepresentation);
+		JavaTypeDefinition xmlDef = JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation);
 		assertEquals(orgDef, xmlDef);
 		
 		assertEquals(null, JavaMethodCall.fromXMLRepresentation(xmlRepresentation));

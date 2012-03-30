@@ -20,24 +20,21 @@ import java.util.List;
 import org.jdom.Element;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
-
 public class JavaMethodDefinitionTest {
 	
 	@Test
 	public void testXML() {
-		List<String> argList = new ArrayList<String>(2);
+		final List<String> argList = new ArrayList<String>(2);
 		argList.add("String");
 		argList.add("Object");
-		JavaMethodDefinition orgDef = new JavaMethodDefinition(JavaMethodDefinition.class.getName(), "foo", argList);
-		Element xmlRepresentation = orgDef.getXMLRepresentation();
-		JavaMethodDefinition xmlDef = JavaMethodDefinition.fromXMLRepresentation(xmlRepresentation);
+		final JavaMethodDefinition orgDef = new JavaMethodDefinition(JavaMethodDefinition.class.getName(), "foo",
+		                                                             argList, false);
+		final Element xmlRepresentation = orgDef.getXMLRepresentation();
+		final JavaMethodDefinition xmlDef = JavaMethodDefinition.fromXMLRepresentation(xmlRepresentation);
 		assertEquals(orgDef, xmlDef);
 		
 		assertEquals(null, JavaMethodCall.fromXMLRepresentation(xmlRepresentation));
-		assertEquals(null, JavaClassDefinition.fromXMLRepresentation(xmlRepresentation));
+		assertEquals(null, JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation));
 	}
 	
 }

@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -41,9 +42,9 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition;
 
 /**
  * The Class PPATypeVisitor.
@@ -113,7 +114,7 @@ public class PPATypeVisitor extends ASTVisitor {
 		
 		this.relativeFilePath = relativeFilePath;
 		
-		PackageDeclaration packageDecl = this.cu.getPackage();
+		final PackageDeclaration packageDecl = this.cu.getPackage();
 		if (packageDecl != null) {
 			this.packageName = packageDecl.getName().toString();
 		} else {
@@ -137,8 +138,8 @@ public class PPATypeVisitor extends ASTVisitor {
 			localCalledObject = localCalledObject.substring(4);
 		}
 		
-		String[] calledObjectParts = localCalledObject.split("\\.");
-		String calledObjectName = calledObjectParts[calledObjectParts.length - 1];
+		final String[] calledObjectParts = localCalledObject.split("\\.");
+		final String calledObjectName = calledObjectParts[calledObjectParts.length - 1];
 		if (this.primitives.contains(calledObjectName)) {
 			return false;
 		}
@@ -163,7 +164,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(final CompilationUnit node) {
 		super.endVisit(node);
-		for (PPAVisitor visitor : this.visitors) {
+		for (final PPAVisitor visitor : this.visitors) {
 			if (this.methodStack.isEmpty()) {
 				if (!this.classStack.isEmpty()) {
 					visitor.endVisit(this, this.cu, node, this.classStack.peek(), null, this.elementCache);
@@ -174,7 +175,8 @@ public class PPATypeVisitor extends ASTVisitor {
 					}
 				}
 			} else {
-				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), this.elementCache);
+				visitor.endVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
+				                 this.elementCache);
 			}
 		}
 	}
@@ -206,15 +208,16 @@ public class PPATypeVisitor extends ASTVisitor {
 	@Override
 	public void postVisit(final ASTNode node) {
 		super.postVisit(node);
-		int currentLine = this.cu.getLineNumber(node.getStartPosition());
-		for (PPAVisitor visitor : this.visitors) {
+		final int currentLine = this.cu.getLineNumber(node.getStartPosition());
+		for (final PPAVisitor visitor : this.visitors) {
 			if (this.classStack.isEmpty()) {
 				visitor.postVisit(this, this.cu, node, null, null, currentLine, this.elementCache);
 			} else {
 				if (this.methodStack.isEmpty()) {
 					visitor.postVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, this.elementCache);
 				} else {
-					visitor.postVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), currentLine, this.elementCache);
+					visitor.postVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(),
+					                  currentLine, this.elementCache);
 				}
 			}
 		}
@@ -226,10 +229,11 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom .ASTNode)
 	 */
 	@Override
+	@NoneNull
 	public void preVisit(final ASTNode node) {
 		
-		int currentLine = this.cu.getLineNumber(node.getStartPosition());
-		int endLine = this.cu.getLineNumber(node.getStartPosition() + node.getLength() - 1);
+		final int currentLine = this.cu.getLineNumber(node.getStartPosition());
+		final int endLine = this.cu.getLineNumber((node.getStartPosition() + node.getLength()) - 1);
 		
 		while ((!this.methodStack.isEmpty()) && (this.methodStack.peek().getEndLine() < currentLine)) {
 			this.methodStack.pop();
@@ -242,13 +246,14 @@ public class PPATypeVisitor extends ASTVisitor {
 		// mark comment in definitions and handle them when checking for covered
 		// lines
 		if (node instanceof Comment) {
-			int startline = this.cu.getLineNumber(node.getStartPosition());
-			int endline = this.cu.getLineNumber(node.getStartPosition() + node.getLength());
+			final int startline = this.cu.getLineNumber(node.getStartPosition());
+			final int endline = this.cu.getLineNumber(node.getStartPosition() + node.getLength());
 			boolean markComment = true;
 			if (node instanceof LineComment) {
 				int previousLine = -1;
 				if (this.previousNode != null) {
-					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition() + this.previousNode.getLength());
+					previousLine = this.cu.getLineNumber(this.previousNode.getStartPosition()
+					        + this.previousNode.getLength());
 				}
 				if (previousLine == startline) {
 					markComment = false;
@@ -265,13 +270,13 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 		} else if (node instanceof TypeDeclaration) {
 			
-			TypeDeclaration td = (TypeDeclaration) node;
+			final TypeDeclaration td = (TypeDeclaration) node;
 			
 			int startLine = currentLine;
 			boolean startLineShifted = false;
 			@SuppressWarnings ("unchecked")
-			List<ASTNode> modifiers = (List<ASTNode>) td.getStructuralProperty(td.getModifiersProperty());
-			for (ASTNode modifier : modifiers) {
+			final List<ASTNode> modifiers = (List<ASTNode>) td.getStructuralProperty(td.getModifiersProperty());
+			for (final ASTNode modifier : modifiers) {
 				if (modifier instanceof Modifier) {
 					startLine = this.cu.getLineNumber(modifier.getStartPosition());
 					startLineShifted = true;
@@ -279,36 +284,43 @@ public class PPATypeVisitor extends ASTVisitor {
 				}
 			}
 			if (!startLineShifted) {
-				ASTNode nameNode = (ASTNode) td.getStructuralProperty(td.getNameProperty());
+				final ASTNode nameNode = (ASTNode) td.getStructuralProperty(td.getNameProperty());
 				startLine = this.cu.getLineNumber(nameNode.getStartPosition());
 			}
 			
 			@SuppressWarnings ("unchecked")
-			List<ASTNode> bodyDeclarations = (List<ASTNode>) td.getStructuralProperty(td.getBodyDeclarationsProperty());
+			final List<ASTNode> bodyDeclarations = (List<ASTNode>) td.getStructuralProperty(td.getBodyDeclarationsProperty());
 			// Condition.check(bodyDeclarations.size() > 0,
 			// "A type declaration must have a body declaration");
 			int bodyStartLine = startLine;
 			if (bodyDeclarations.size() > 0) {
-				ASTNode bodyDeclaration = bodyDeclarations.get(0);
+				final ASTNode bodyDeclaration = bodyDeclarations.get(0);
 				bodyStartLine = this.cu.getLineNumber(bodyDeclaration.getStartPosition());
 			}
-			JavaElementLocation classDefLoc = this.elementCache.addClassDefinition(this.packageName + "."
-			                                                                          + td.getName().toString(),
-			                                                                  this.relativeFilePath, startLine, endLine,
-			                                                                  td.getStartPosition(),
-			                                                                  bodyStartLine);
 			
+			JavaElementLocation classDefLoc = null;
+			if (td.isInterface()) {
+				classDefLoc = this.elementCache.addInterfaceDefinition(this.packageName + "." + td.getName().toString(),
+				                                                       this.relativeFilePath, startLine, endLine,
+				                                                       td.getStartPosition(), bodyStartLine);
+			} else {
+				classDefLoc = this.elementCache.addClassDefinition(this.packageName + "." + td.getName().toString(),
+				                                                   this.relativeFilePath, startLine, endLine,
+				                                                   td.getStartPosition(), bodyStartLine);
+			}
+			Condition.notNull(classDefLoc,
+			                  "Must be either a ClassDefinition or InterfaceDefinition location. Cannot be null");
 			if (Logger.logDebug()) {
 				Logger.debug("PPATypevisitor: Adding new class context with package name +`" + this.packageName
 				        + "` and class name `" + td.getName().toString() + "`");
 			}
 			this.classStack.push(classDefLoc);
 			
-			Type superClassType = td.getSuperclassType();
-			JavaClassDefinition element = ((JavaClassDefinition) this.classStack.peek().getElement());
+			final Type superClassType = td.getSuperclassType();
+			final JavaTypeDefinition element = ((JavaTypeDefinition) this.classStack.peek().getElement());
 			if ((superClassType != null)
 			        && ((element.getSuperClassName() == null) || (element.getSuperClassName().equals("")))) {
-				ITypeBinding superClassBinding = superClassType.resolveBinding();
+				final ITypeBinding superClassBinding = superClassType.resolveBinding();
 				if (superClassBinding != null) {
 					String superClassName = superClassBinding.getQualifiedName();
 					if (superClassName.startsWith("src.")) {
@@ -328,9 +340,9 @@ public class PPATypeVisitor extends ASTVisitor {
 				return;
 			}
 			
-			AnonymousClassDeclaration acd = (AnonymousClassDeclaration) node;
+			final AnonymousClassDeclaration acd = (AnonymousClassDeclaration) node;
 			@SuppressWarnings ("unchecked")
-			List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
+			final List<BodyDeclaration> bodyDeclarations = acd.bodyDeclarations();
 			Condition.check(bodyDeclarations.size() > 0, "Found type declaration with " + bodyDeclarations.size()
 			        + " body declarations!");
 			
@@ -338,38 +350,60 @@ public class PPATypeVisitor extends ASTVisitor {
 			if (bodyDeclarations.size() > 0) {
 				bodyStartLine = this.cu.getLineNumber(bodyDeclarations.get(0).getStartPosition());
 			}
-			int anonCount = ((JavaClassDefinition) this.classStack.peek().getElement()).nextAnonCounter(this);
+			final int anonCount = ((JavaTypeDefinition) this.classStack.peek().getElement()).nextAnonCounter(this);
 			if (!this.classStack.peek().getElement().getShortName()
-			               .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
+			                    .equals(this.classStack.peek().getElement().getShortName() + "$" + anonCount)) {
 				
 				String parentName = this.classStack.peek().getElement().getFullQualifiedName();
 				if (parentName.contains("$")) {
-					int index = parentName.lastIndexOf("$");
+					final int index = parentName.lastIndexOf("$");
 					parentName = parentName.substring(0, index);
 				}
 				
-				JavaElementLocation classDefLoc = this.elementCache.addAnonymousClassDefinition(((JavaClassDefinition) this.classStack.peek()
-				                                                                                                            .getElement()),
-				                                                                           parentName + "$" + anonCount,
-				                                                                           this.relativeFilePath,
-				                                                                           currentLine, endLine,
-				                                                                           node.getStartPosition(),
-				                                                                           bodyStartLine);
+				final JavaElementLocation classDefLoc = this.elementCache.addAnonymousClassDefinition(((JavaTypeDefinition) this.classStack.peek()
+				                                                                                                                           .getElement()),
+				                                                                                      parentName
+				                                                                                              + "$"
+				                                                                                              + anonCount,
+				                                                                                      this.relativeFilePath,
+				                                                                                      currentLine,
+				                                                                                      endLine,
+				                                                                                      node.getStartPosition(),
+				                                                                                      bodyStartLine);
 				this.classStack.push(classDefLoc);
 			}
 		} else if (node instanceof MethodDeclaration) {
-			MethodDeclaration md = (MethodDeclaration) node;
+			final MethodDeclaration md = (MethodDeclaration) node;
+			
+			if (Logger.logTrace()) {
+				Logger.trace("Found method declaration %s", md.getName());
+			}
 			
 			int startLine = currentLine;
 			
 			boolean startLineShifted = false;
+			boolean override = false;
+			
 			@SuppressWarnings ("unchecked")
-			List<ASTNode> modifiers = (List<ASTNode>) md.getStructuralProperty(md.getModifiersProperty());
-			for (ASTNode modifier : modifiers) {
-				if (modifier instanceof Modifier) {
+			final List<ASTNode> modifiers = (List<ASTNode>) md.getStructuralProperty(md.getModifiersProperty());
+			for (final ASTNode modifier : modifiers) {
+				if ((modifier.getNodeType() == ASTNode.MODIFIER)
+				        || (modifier.getNodeType() == ASTNode.MARKER_ANNOTATION)) {
+					if (Logger.logTrace()) {
+						Logger.trace("Processing Modifiers of method declaration %s. Startline will eb shifted.",
+						             md.getName());
+					}
 					startLine = this.cu.getLineNumber(modifier.getStartPosition());
 					startLineShifted = true;
-					break;
+					if ((modifier.getNodeType() == ASTNode.MARKER_ANNOTATION)) {
+						final MarkerAnnotation annotation = (MarkerAnnotation) modifier;
+						if (annotation.getTypeName().getFullyQualifiedName().toLowerCase().equals("java.lang.override")) {
+							if (Logger.logTrace()) {
+								Logger.trace("Found method declaration ");
+								override = true;
+							}
+						}
+					}
 				}
 			}
 			if (!startLineShifted) {
@@ -377,8 +411,11 @@ public class PPATypeVisitor extends ASTVisitor {
 					startLine = this.cu.getLineNumber(md.getReturnType2().getStartPosition());
 				}
 			}
+			if (Logger.logTrace()) {
+				Logger.trace("Start line of method declaration %s detected on line: %d", md.getName(), startLine);
+			}
 			
-			Block body = md.getBody();
+			final Block body = md.getBody();
 			int bodyStartLine = -1;
 			if (body != null) {
 				bodyStartLine = this.cu.getLineNumber(body.getStartPosition());
@@ -386,49 +423,53 @@ public class PPATypeVisitor extends ASTVisitor {
 			
 			if (this.classStack.isEmpty()) {
 				if (Logger.logError()) {
-					Logger.error("Found declaration of method outside a proper class in line" + currentLine
-					        + ". Ignoring node!");
+					Logger.error("Found declaration of method %s outside a proper class in line %d. Igoring node.",
+					             md.getName(), currentLine);
 				}
 			} else {
-				List<String> arguments = new ArrayList<String>();
+				final List<String> arguments = new ArrayList<String>();
 				@SuppressWarnings ("rawtypes")
-				List args = md.parameters();
+				final List args = md.parameters();
 				@SuppressWarnings ("rawtypes")
-				Iterator iter = args.iterator();
+				final Iterator iter = args.iterator();
 				while (iter.hasNext()) {
-					SingleVariableDeclaration dec = (SingleVariableDeclaration) iter.next();
+					final SingleVariableDeclaration dec = (SingleVariableDeclaration) iter.next();
 					arguments.add(dec.getType().toString());
 				}
 				
-				JavaClassDefinition parent = ((JavaClassDefinition) this.classStack.peek().getElement());
-				JavaElementLocation methodDefLoc = this.elementCache.addMethodDefinition(parent.getFullQualifiedName(),
-				                                                                    md.getName().toString(), arguments,
-				                                                                    getRelativeFilePath(), startLine,
-				                                                                    endLine, node.getStartPosition(),
-				                                                                    bodyStartLine);
+				final JavaTypeDefinition parent = ((JavaTypeDefinition) this.classStack.peek().getElement());
+				final JavaElementLocation methodDefLoc = this.elementCache.addMethodDefinition(parent.getFullQualifiedName(),
+				                                                                               md.getName().toString(),
+				                                                                               arguments,
+				                                                                               getRelativeFilePath(),
+				                                                                               startLine, endLine,
+				                                                                               node.getStartPosition(),
+				                                                                               bodyStartLine, override);
 				
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {
-						Logger.warn("Adding method definition to method stack while stack is not empty. This is not impossible but happens rarely!");
+						Logger.warn("Adding method definition %s to method stack while stack is not empty. This is not impossible but happens rarely. Filename: $s",
+						            md.getName(), getRelativeFilePath());
 					}
 				}
 				this.methodStack.push(methodDefLoc);
 			}
 		}
 		
-		for (PPAVisitor visitor : this.visitors) {
-			if (this.classStack.isEmpty()) {
-				visitor.preVisit(this, this.cu, node, null, null, currentLine, endLine, this.elementCache);
-			} else {
-				if (this.methodStack.isEmpty()) {
-					visitor.preVisit(this, this.cu, node, this.classStack.peek(), null, currentLine, endLine, this.elementCache);
-				} else {
-					visitor.preVisit(this, this.cu, node, this.classStack.peek(), this.methodStack.peek(), currentLine, endLine,
-					                 this.elementCache);
-				}
-			}
+		if (Logger.logTrace()) {
+			Logger.trace("Running external attached PPAVisitors");
 		}
-		
+		for (final PPAVisitor visitor : this.visitors) {
+			JavaElementLocation classPeek = null;
+			JavaElementLocation methodPeek = null;
+			if (!this.classStack.isEmpty()) {
+				classPeek = this.classStack.peek();
+			}
+			if (!this.methodStack.isEmpty()) {
+				methodPeek = this.methodStack.peek();
+			}
+			visitor.preVisit(this, this.cu, node, classPeek, methodPeek, currentLine, endLine, this.elementCache);
+		}
 	}
 	
 	/**
@@ -438,6 +479,7 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the visitors
 	 * @return true, if successful
 	 */
+	@NoneNull
 	public boolean registerAllVisitor(final Collection<PPAVisitor> visitors) {
 		return this.visitors.addAll(visitors);
 	}
@@ -449,7 +491,11 @@ public class PPATypeVisitor extends ASTVisitor {
 	 *            the visitor
 	 * @return true, if successful
 	 */
+	@NoneNull
 	public boolean registerVisitor(final PPAVisitor visitor) {
+		if (Logger.logTrace()) {
+			Logger.trace("Registering PPAVisitor: %s", visitor.toString());
+		}
 		return this.visitors.add(visitor);
 	}
 }

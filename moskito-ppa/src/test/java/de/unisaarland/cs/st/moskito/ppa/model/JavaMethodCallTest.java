@@ -20,7 +20,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
@@ -36,7 +36,7 @@ public class JavaMethodCallTest {
 		JavaMethodCall xmlCall = JavaMethodCall.fromXMLRepresentation(xmlRepresentation);
 		assertEquals(orgCall, xmlCall);
 		
-		assertEquals(null, JavaClassDefinition.fromXMLRepresentation(xmlRepresentation));
+		assertEquals(null, JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation));
 		assertEquals(null, JavaMethodDefinition.fromXMLRepresentation(xmlRepresentation));
 		
 	}

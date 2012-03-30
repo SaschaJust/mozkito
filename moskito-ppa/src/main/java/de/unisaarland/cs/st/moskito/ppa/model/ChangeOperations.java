@@ -54,7 +54,7 @@ public class ChangeOperations {
 		JavaChangeOperation op = _op;
 		// check if a definition was added and deleted
 		final JavaElement element = op.getChangedElementLocation().getElement();
-		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
+		if ((element instanceof JavaTypeDefinition) || (element instanceof JavaMethodDefinition)) {
 			if (op.getChangeType().equals(ChangeType.Added)) {
 				if (this.defOperations.get(ChangeType.Deleted).containsKey(op.getChangedElementLocation().getElement())) {
 					this.defOperations.get(ChangeType.Deleted).remove(op.getChangedElementLocation().getElement());

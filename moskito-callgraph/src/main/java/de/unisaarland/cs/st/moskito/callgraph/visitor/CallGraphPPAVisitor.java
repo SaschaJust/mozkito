@@ -36,7 +36,7 @@ import de.unisaarland.cs.st.moskito.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.moskito.callgraph.model.ClassVertex;
 import de.unisaarland.cs.st.moskito.callgraph.model.MethodVertex;
 import de.unisaarland.cs.st.moskito.callgraph.model.VertexFactory;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
@@ -199,7 +199,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			}
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
+		JavaTypeDefinition calledObject = (JavaTypeDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -259,7 +259,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
+		JavaTypeDefinition classContext = (JavaTypeDefinition) classContextLocation.getElement();
 		
 		IBinding binding = mi.resolveMethodBinding();
 		
@@ -298,7 +298,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
+		JavaTypeDefinition calledObject = (JavaTypeDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -360,7 +360,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
+		JavaTypeDefinition classContext = (JavaTypeDefinition) classContextLocation.getElement();
 		
 		IMethodBinding mBinding = sci.resolveConstructorBinding();
 		if (mBinding == null) {
@@ -418,7 +418,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
+		JavaTypeDefinition calledObject = (JavaTypeDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
@@ -472,7 +472,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition classContext = (JavaClassDefinition) classContextLocation.getElement();
+		JavaTypeDefinition classContext = (JavaTypeDefinition) classContextLocation.getElement();
 		IBinding binding = smi.resolveMethodBinding();
 		
 		if (binding == null) {
@@ -511,7 +511,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			return;
 		}
 		
-		JavaClassDefinition calledObject = (JavaClassDefinition) javaElementCache.addClassDefinition(calledObjectName,
+		JavaTypeDefinition calledObject = (JavaTypeDefinition) javaElementCache.addClassDefinition(calledObjectName,
 		                                                                                             filename, 0, 0, 0,
 		                                                                                             0).getElement();
 		
