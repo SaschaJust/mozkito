@@ -63,9 +63,9 @@ public class UnrecoverableError extends Error {
 	 * @return
 	 */
 	protected String getArgumentString(final Class<?>[] types) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (Class<?> clazz : types) {
+		for (final Class<?> clazz : types) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -80,9 +80,9 @@ public class UnrecoverableError extends Error {
 	 * @return
 	 */
 	protected String getArgumentString(final Object[] types) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (Object object : types) {
+		for (final Object object : types) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -97,9 +97,9 @@ public class UnrecoverableError extends Error {
 	 * @return
 	 */
 	protected String getArgumentString(final Type[] types) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		for (Type type : types) {
+		for (final Type type : types) {
 			if (builder.length() > 0) {
 				builder.append(", ");
 			}
@@ -114,18 +114,18 @@ public class UnrecoverableError extends Error {
 	 * @return
 	 */
 	protected String getConstructorString(final Constructor<?> constructor) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
-		String modifier = getModifierString(constructor.getModifiers());
+		final String modifier = getModifierString(constructor.getModifiers());
 		if (modifier.length() > 0) {
 			builder.append(modifier).append(" ");
 		}
 		
 		builder.append(constructor.getName()).append('(');
-		String arguments = getArgumentString(constructor.getGenericParameterTypes());
+		final String arguments = getArgumentString(constructor.getGenericParameterTypes());
 		builder.append(arguments).append(')');
 		
-		String exceptions = getArgumentString(constructor.getGenericExceptionTypes());
+		final String exceptions = getArgumentString(constructor.getGenericExceptionTypes());
 		if (exceptions.length() > 0) {
 			builder.append(" throws ").append(exceptions);
 		}
@@ -142,14 +142,14 @@ public class UnrecoverableError extends Error {
 	protected String getConstructorString(final String name,
 	                                      final String modifier,
 	                                      final Object[] arguments) {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		
 		if (modifier.length() > 0) {
 			builder.append(modifier).append(" ");
 		}
 		
 		builder.append(name).append('(');
-		String argumentString = getArgumentString(arguments);
+		final String argumentString = getArgumentString(arguments);
 		builder.append(argumentString).append(')');
 		
 		return builder.toString();
@@ -230,7 +230,7 @@ public class UnrecoverableError extends Error {
 				                           ? file.getAbsolutePath()
 				                           : "(null)").append(FileUtils.lineSeparator);
 			}
-		} catch (final FileNotFoundException e1) {
+		} catch (final FileNotFoundException ignore) { // ignore
 		}
 		
 		return builder.toString();
