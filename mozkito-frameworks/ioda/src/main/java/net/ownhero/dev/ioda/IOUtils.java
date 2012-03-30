@@ -126,7 +126,9 @@ public class IOUtils {
 			final HttpGet request = new HttpGet(uri);
 			final HttpResponse response = httpClient.execute(request);
 			final HttpEntity entity = response.getEntity();
-			return readbinaryData(entity);
+			final byte[] data = readbinaryData(entity);
+			httpClient.getConnectionManager().shutdown();
+			return data;
 		} catch (final Exception e) {
 			throw new FetchException("Providing the binary data of `" + uri.toString() + "` failed.", e);
 		}
@@ -152,7 +154,9 @@ public class IOUtils {
 		final HttpGet request = new HttpGet(uri);
 		final HttpResponse response = httpClient.execute(request);
 		final HttpEntity entity = response.getEntity();
-		return readbinaryData(entity);
+		final byte[] data = readbinaryData(entity);
+		httpClient.getConnectionManager().shutdown();
+		return data;
 	}
 	
 	/**
@@ -541,6 +545,7 @@ public class IOUtils {
 			object.setCached(file.getAbsolutePath());
 			oos.writeObject(object);
 			oos.close();
+			fout.close();
 		} catch (final FileNotFoundException e) {
 			throw new StoringException("Could not create file `" + fileName + "`.", e);
 		} catch (final IOException e) {
