@@ -27,7 +27,6 @@ import java.util.SortedSet;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
@@ -105,9 +104,7 @@ public class BugzillaTracker_4_0_4_Test {
 		
 		this.tracker = new BugzillaTracker();
 		try {
-			// TODO temporary enabling http proxy
-			// this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", null);
-			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", new ProxyConfig("localhost", 3128));
+			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", null);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.SortedSet;
 
+import net.ownhero.dev.ioda.ProxyConfig;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +60,8 @@ public class JiraTracker_NetTest {
 	public void setUp() throws Exception {
 		this.tracker = new JiraTracker();
 		try {
-			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", null);
+			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", new ProxyConfig("localhost",
+			                                                                                           3128));
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
