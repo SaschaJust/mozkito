@@ -13,10 +13,21 @@
 package net.ownhero.dev.andama.messages;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The listener interface for receiving IEvent events. The class that is interested in processing a IEvent event
+ * implements this interface, and the object created with that class is registered with a component using the
+ * component's <code>addIEventListener<code> method. When
+ * the IEvent event occurs, that object's appropriate
+ * method is invoked.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public interface IEventListener {
 	
+	/**
+	 * Handle.
+	 * 
+	 * @param event
+	 *            the event
+	 */
 	void handle(IEvent event);
 }

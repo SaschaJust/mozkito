@@ -58,6 +58,8 @@ public abstract class Chain<T extends Settings> extends Thread {
 	}
 	
 	/**
+	 * Gets the event bus.
+	 * 
 	 * @return the eventBus
 	 */
 	public final EventBus getEventBus() {

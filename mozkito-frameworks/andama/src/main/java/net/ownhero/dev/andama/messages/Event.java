@@ -105,6 +105,26 @@ public abstract class Event implements IEvent {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.messages.IEvent#addCallback(net.ownhero.dev.andama.messages.Callback)
+	 */
+	@Override
+	public final void addCallback(final Callback callback) {
+		// PRECONDITIONS
+		Condition.notNull(this.callbacks, "Field '%s' in '%s'.", "callbacks", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		final int size = this.callbacks.size();
+		
+		try {
+			this.callbacks.add(callback);
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.callbacks, "Field '%s' in '%s'.", "callbacks", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			CollectionCondition.size(this.callbacks, size + 1, "Adding '%s' to the field '%s' failed.", callback,
+			                         "callbacks");
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.messages.IEvent#accept()
 	 */
 	@Override
@@ -126,23 +146,19 @@ public abstract class Event implements IEvent {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.messages.IEvent#addCallback(net.ownhero.dev.andama.messages.Callback)
+	/**
+	 * Fired.
+	 * 
 	 */
 	@Override
-	public final void addCallback(final Callback callback) {
+	public synchronized final void fired() {
 		// PRECONDITIONS
-		Condition.notNull(this.callbacks, "Field '%s' in '%s'.", "callbacks", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		final int size = this.callbacks.size();
 		
 		try {
-			this.callbacks.add(callback);
+			this.fired = new DateTime();
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.callbacks, "Field '%s' in '%s'.", "callbacks", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			CollectionCondition.size(this.callbacks, size + 1, "Adding '%s' to the field '%s' failed.", callback,
-			                         "callbacks");
+			Condition.notNull(this.fired, "Field '%s' in '%s'.", "fired", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -270,22 +286,6 @@ public abstract class Event implements IEvent {
 			return this.type;
 		} finally {
 			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * @param fired
-	 *            the fired to set
-	 */
-	@Override
-	public synchronized final void fired() {
-		// PRECONDITIONS
-		
-		try {
-			this.fired = new DateTime();
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.fired, "Field '%s' in '%s'.", "fired", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

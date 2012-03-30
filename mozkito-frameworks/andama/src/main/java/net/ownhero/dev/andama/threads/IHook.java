@@ -6,16 +6,29 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.andama.messages.EventBus;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Interface IHook.
  * 
+ * @param <K>
+ *            the key type
+ * @param <V>
+ *            the value type
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public interface IHook<K, V> {
 	
 	/**
-	 * @return
+	 * Completed.
+	 * 
+	 * @return true, if successful
 	 */
 	public boolean completed();
 	
+	/**
+	 * Execute.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
 	public void execute() throws InterruptedException;
 	
 	/**
@@ -25,12 +38,17 @@ public interface IHook<K, V> {
 	 */
 	EventBus getEventBus();
 	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
+	 */
 	public String getHandle();
 	
 	/**
-	 * should be implemented as 'final'
+	 * should be implemented as 'final'.
 	 * 
-	 * @return
+	 * @return the thread
 	 */
 	public Node<K, V> getThread();
 }

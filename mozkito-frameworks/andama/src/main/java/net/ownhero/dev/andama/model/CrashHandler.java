@@ -28,7 +28,7 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class CrashHandler.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CrashHandler extends ThreadGroup {
@@ -41,8 +41,9 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Inits the.
-	 *
-	 * @param toolchain the toolchain
+	 * 
+	 * @param toolchain
+	 *            the toolchain
 	 */
 	public static void init(final Chain<?> toolchain) {
 		if (!handlers.containsKey(toolchain)) {
@@ -55,8 +56,9 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Instantiates a new crash handler.
-	 *
-	 * @param application a {@link Chain<?>} instance
+	 * 
+	 * @param application
+	 *            a {@link Chain<?>} instance
 	 */
 	private CrashHandler(final Chain<?> application) {
 		super(Chain.class.getSimpleName());
@@ -68,7 +70,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the class loading information.
-	 *
+	 * 
 	 * @return information about class loading
 	 */
 	private String getClassLoadingInformation() {
@@ -84,8 +86,9 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the crash report.
-	 *
-	 * @param e the error/exception under inspection
+	 * 
+	 * @param e
+	 *            the error/exception under inspection
 	 * @return the complete crash report in one string
 	 */
 	private String getCrashReport(final Throwable e) {
@@ -205,7 +208,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the java information.
-	 *
+	 * 
 	 * @return the java information
 	 */
 	private String getJavaInformation() {
@@ -228,7 +231,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the runtime information.
-	 *
+	 * 
 	 * @return the runtime information
 	 */
 	private String getRuntimeInformation() {
@@ -245,7 +248,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the settings.
-	 *
+	 * 
 	 * @return the reposuite settings of the monitored application, if any
 	 */
 	protected String getSettings() {
@@ -256,7 +259,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the system information.
-	 *
+	 * 
 	 * @return some system information
 	 */
 	private String getSystemInformation() {
@@ -271,7 +274,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the thread information.
-	 *
+	 * 
 	 * @return information about running threads
 	 */
 	private String getThreadInformation() {
@@ -286,7 +289,7 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Gets the tool information.
-	 *
+	 * 
 	 * @return information provided by the {@link Chain<?>}
 	 */
 	protected String getToolInformation() {
@@ -297,8 +300,9 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Sends the given report to the email address using the mail settings in mailProps.
-	 *
-	 * @param report the report to be send
+	 * 
+	 * @param report
+	 *            the report to be send
 	 */
 	private void sendReport(final String report) {
 		if (this.application.getSettings().isCrashEmailDisabled()) {
@@ -383,9 +387,11 @@ public class CrashHandler extends ThreadGroup {
 	
 	/**
 	 * Used by {@link #getThreadInformation()} for a traversal search of {@link Thread}s/{@link ThreadGroup}s.
-	 *
-	 * @param group the group
-	 * @param level the level
+	 * 
+	 * @param group
+	 *            the group
+	 * @param level
+	 *            the level
 	 * @return the string
 	 */
 	private String visit(final ThreadGroup group,

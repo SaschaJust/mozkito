@@ -13,15 +13,17 @@
 package net.ownhero.dev.andama.messages;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class StartupEvent.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class StartupEvent extends Event {
 	
 	/**
+	 * Instantiates a new startup event.
+	 * 
 	 * @param message
-	 * @param type
-	 * @param level
+	 *            the message
 	 */
 	public StartupEvent(final String message) {
 		super(message, EventType.STARTUP, AccessLevel.PUBLIC);

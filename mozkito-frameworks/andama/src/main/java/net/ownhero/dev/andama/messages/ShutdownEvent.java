@@ -13,15 +13,17 @@
 package net.ownhero.dev.andama.messages;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ShutdownEvent.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ShutdownEvent extends Event {
 	
 	/**
+	 * Instantiates a new shutdown event.
+	 * 
 	 * @param message
-	 * @param type
-	 * @param level
+	 *            the message
 	 */
 	public ShutdownEvent(final String message) {
 		super(message, EventType.SHUTDOWN, AccessLevel.PUBLIC);
