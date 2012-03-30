@@ -161,11 +161,6 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	        final boolean override) {
 		super(methodName, JavaMethodDefinition.class.getCanonicalName());
 		
-		StringCondition.matches(parentName, "(([a-zA-Z]+\\s+)?[a-zA-Z]+(\\.[a-zA-Z]+)?)+\\(.*\\)", //$NON-NLS-1$
-		                        Messages.JavaMethodDefinition_parentName_check, parentName);
-		StringCondition.matches(methodName, "(([a-zA-Z]+\\s+)?[a-zA-Z]+(\\.[a-zA-Z]+)?)+\\(.*\\)", //$NON-NLS-1$
-		                        Messages.JavaMethodDefinition_methodName_check, methodName);
-		
 		setSignature(new ArrayList<String>(signature));
 		setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
 		setAnnotatedOverride(override);

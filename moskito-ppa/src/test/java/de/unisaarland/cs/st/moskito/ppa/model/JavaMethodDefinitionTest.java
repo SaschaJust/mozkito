@@ -32,9 +32,6 @@ public class JavaMethodDefinitionTest {
 		final Element xmlRepresentation = orgDef.getXMLRepresentation();
 		final JavaMethodDefinition xmlDef = JavaMethodDefinition.fromXMLRepresentation(xmlRepresentation);
 		assertEquals(orgDef, xmlDef);
-		
-		assertEquals(null, JavaMethodCall.fromXMLRepresentation(xmlRepresentation));
-		assertEquals(null, JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation));
 	}
 	
 }
