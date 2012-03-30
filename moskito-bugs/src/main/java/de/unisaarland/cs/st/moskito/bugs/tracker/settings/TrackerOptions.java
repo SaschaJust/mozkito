@@ -23,13 +23,16 @@ import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 
@@ -41,31 +44,39 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
 	
 	/** The tracker uri arg. */
-	private URIArgument.Options               trackerURIArg;
+	private URIArgument.Options                                 trackerURIArg;
 	
 	/** The tracker type arg. */
-	private EnumArgument.Options<TrackerType> trackerTypeArg;
+	private EnumArgument.Options<TrackerType>                   trackerTypeArg;
 	
 	/** The tracker user arg. */
-	private StringArgument.Options            trackerUserArg;
+	private StringArgument.Options                              trackerUserArg;
 	
 	/** The tracker password arg. */
-	private StringArgument.Options            trackerPasswordArg;
+	private StringArgument.Options                              trackerPasswordArg;
 	
 	/** The bugzilla options. */
-	private BugzillaOptions                   bugzillaOptions;
+	private BugzillaOptions                                     bugzillaOptions;
 	
 	/** The google options. */
-	private GoogleOptions                     googleOptions;
+	private GoogleOptions                                       googleOptions;
 	
 	/** The jira options. */
-	private JiraOptions                       jiraOptions;
+	private JiraOptions                                         jiraOptions;
 	
 	/** The mantis options. */
-	private MantisOptions                     mantisOptions;
+	private MantisOptions                                       mantisOptions;
 	
 	/** The sourceforge options. */
-	private SourceforgeOptions                sourceforgeOptions;
+	private SourceforgeOptions                                  sourceforgeOptions;
+	
+	private Options                                             trackerProxyHostArg;
+	
+	private net.ownhero.dev.hiari.settings.LongArgument.Options trackerProxyPortArg;
+	
+	private Options                                             trackerProxyPasswordArg;
+	
+	private Options                                             trackerProxyUserArg;
 	
 	/**
 	 * Instantiates a new tracker options.
@@ -77,9 +88,10 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
+	@NoneNull
 	public TrackerOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement)
 	        throws ArgumentRegistrationException {
-		super(argumentSet, "tracker", "Tracker settings.", requirement);
+		super(argumentSet, "tracker", "Tracker settings.", requirement); //$NON-NLS-1$ //$NON-NLS-2$
 		argumentSet.getSettings();
 	}
 	
@@ -146,8 +158,9 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 					final ArgumentSet<Tracker, GoogleOptions> googleArgumentSet = ArgumentSetFactory.create(this.googleOptions);
 					return googleArgumentSet.getValue();
 				default:
-					throw new UnrecoverableError("Could not handle " + trackerTypeArgument.getTag() + ": "
-					        + trackerTypeArgument.getValue());
+					throw new UnrecoverableError(
+					                             String.format(Messages.getString("TrackerOptions.unhandled_type_message"), trackerTypeArgument.getTag(), //$NON-NLS-1$
+					                                           trackerTypeArgument.getValue()));
 			}
 		} catch (final SettingsParseError e) {
 			throw new UnrecoverableError(e);
@@ -168,6 +181,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 * @param map
 	 *            the map
 	 */
+	@NoneNull
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);
@@ -178,6 +192,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	@Override
+	@NoneNull
 	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
 	                                                                            SettingsParseError {
 		// PRECONDITIONS
@@ -185,27 +200,60 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			this.trackerURIArg = new URIArgument.Options(
-			                                             set,
-			                                             "uri",
-			                                             "Base URI of the tracker (to fetch reports, e.g. https://bugs.eclipse.org).",
+			this.trackerURIArg = new URIArgument.Options(set, "uri", //$NON-NLS-1$
+			                                             Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
 			                                             null, Requirement.required);
 			req(this.trackerURIArg, map);
 			
-			this.trackerTypeArg = new EnumArgument.Options<TrackerType>(set, "type",
-			                                                            "The type of the bug tracker to analyze.",
+			this.trackerTypeArg = new EnumArgument.Options<TrackerType>(
+			                                                            set,
+			                                                            "type", //$NON-NLS-1$
+			                                                            Messages.getString("TrackerOptions.type_description"), //$NON-NLS-1$
 			                                                            null, Requirement.required,
 			                                                            TrackerType.values());
 			req(this.trackerTypeArg, map);
 			
-			this.trackerUserArg = new StringArgument.Options(set, "user", "Username to access tracker", null,
+			this.trackerUserArg = new StringArgument.Options(
+			                                                 set,
+			                                                 "user", Messages.getString("TrackerOptions.user_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
 			                                                 Requirement.optional);
 			
 			req(this.trackerUserArg, map);
-			this.trackerPasswordArg = new StringArgument.Options(set, "password", "Password to access tracker", null,
-			                                                     Requirement.optional, true);
+			this.trackerPasswordArg = new StringArgument.Options(
+			                                                     set,
+			                                                     "password", Messages.getString("TrackerOptions.password_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
+			                                                     Requirement.iff(this.trackerUserArg), true);
 			
 			req(this.trackerPasswordArg, map);
+			
+			this.trackerProxyHostArg = new StringArgument.Options(
+			                                                      set,
+			                                                      "proxyHost", //$NON-NLS-1$
+			                                                      Messages.getString("TrackerOptions.proxyHost_description"), //$NON-NLS-1$
+			                                                      null, Requirement.optional);
+			req(this.trackerProxyHostArg, map);
+			
+			this.trackerProxyPortArg = new LongArgument.Options(
+			                                                    set,
+			                                                    "proxyPort", Messages.getString("TrackerOptions.proxyPort_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
+			                                                    Requirement.iff(this.trackerProxyHostArg));
+			req(this.trackerProxyPortArg, map);
+			
+			this.trackerProxyUserArg = new StringArgument.Options(
+			                                                      set,
+			                                                      "proxyUser", //$NON-NLS-1$
+			                                                      Messages.getString("TrackerOptions.proxyUser_description"), null, //$NON-NLS-1$
+			                                                      Requirement.iff(this.trackerProxyHostArg));
+			
+			req(this.trackerProxyUserArg, map);
+			this.trackerProxyPasswordArg = new StringArgument.Options(
+			                                                          set,
+			                                                          "proxyPassword", //$NON-NLS-1$
+			                                                          Messages.getString("TrackerOptions.proxyPassword_description"), //$NON-NLS-1$
+			                                                          null, Requirement.iff(this.trackerProxyHostArg),
+			                                                          true);
+			
+			req(this.trackerProxyPasswordArg, map);
 			
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                    TrackerType.BUGZILLA));
@@ -223,20 +271,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			this.sourceforgeOptions = new SourceforgeOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                          TrackerType.SOURCEFORGE));
 			req(this.jiraOptions, map);
-			// this.trackerOverviewURI = new URIArgument.Options(
-			// set,
-			// "overviewURI",
-			// "URI pointing to the overview URL that contains the relevant bug IDs.",
-			// null, Requirement.optional);
-			// this.trackerPattern = new StringArgument.Options(
-			// set,
-			// "pattern",
-			// "The filename pattern the bugs have to match to be accepted. Thus will be appended to the fetchURI and should contain the bug ID placeholder.",
-			// null, Requirement.optional);
-			//
-			// this.trackerStart = new LongArgument.Options(set, "start", "BugID to start with", 1l,
-			// Requirement.optional);
-			// this.trackerStop = new LongArgument.Options(set, "stop", "BugID to stop at", null, Requirement.optional);
+			
 			return map;
 		} finally {
 			// POSTCONDITIONS

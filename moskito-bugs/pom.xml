@@ -67,11 +67,6 @@
 			<version>1.41.5.guava</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-core-1.0</artifactId>
-			<version>1.41.5.guava</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>11.0.2-mozkito</version>
@@ -98,12 +93,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<targetPath>META-INF</targetPath>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

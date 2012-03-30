@@ -154,6 +154,7 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	 * @param map
 	 *            the map
 	 */
+	@NoneNull
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);
