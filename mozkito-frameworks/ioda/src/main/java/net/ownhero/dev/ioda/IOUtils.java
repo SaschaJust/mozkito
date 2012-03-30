@@ -470,7 +470,7 @@ public class IOUtils {
 					ois.close();
 				}
 				
-			} catch (final IOException e) {
+			} catch (final IOException ignore) { // ignore
 			}
 		}
 		return object;
@@ -550,7 +550,7 @@ public class IOUtils {
 			if (oos != null) {
 				try {
 					oos.close();
-				} catch (final IOException e) {
+				} catch (final IOException ignore) { // ignore
 				}
 			}
 		}

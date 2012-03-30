@@ -95,16 +95,16 @@ public class JavaUtils {
 		if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override
-			public boolean evaluate(final Object object) {
-				return object.equals(Collection.class);
+			public boolean evaluate(final Object o) {
+				return o.equals(Collection.class);
 			}
 		})) {
 			return collectionToString((Collection<?>) object);
 		} else if (CollectionUtils.exists(Arrays.asList(object.getClass().getInterfaces()), new Predicate() {
 			
 			@Override
-			public boolean evaluate(final Object object) {
-				return object.equals(Map.class);
+			public boolean evaluate(final Object o) {
+				return o.equals(Map.class);
 			}
 		})) {
 			return mapToString((Map<?, ?>) object);

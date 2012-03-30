@@ -478,31 +478,32 @@ public class FileUtils {
 	 *             the file permission exception
 	 */
 	public static void ensureFilePermissions(@NotNull final File file,
-	                                         int permissions) throws FilePermissionException {
+	                                         final int permissions) throws FilePermissionException {
 		CompareCondition.less(permissions, getMAX_PERM(),
 		                      "Filepermission alias must be less then the maximum known alias bitmask.");
 		
-		if (((permissions &= EXISTING) != 0) && !file.exists()) {
+		int localPermissions = permissions;
+		if (((localPermissions &= EXISTING) != 0) && !file.exists()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
 		}
 		
-		if (((permissions &= READABLE) != 0) && !file.canRead()) {
+		if (((localPermissions &= READABLE) != 0) && !file.canRead()) {
 			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not readable.");
 		}
 		
-		if (((permissions &= EXECUTABLE) != 0) && !file.canExecute()) {
+		if (((localPermissions &= EXECUTABLE) != 0) && !file.canExecute()) {
 			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not executable.");
 		}
 		
-		if (((permissions &= WRITABLE) != 0) && !file.canWrite()) {
+		if (((localPermissions &= WRITABLE) != 0) && !file.canWrite()) {
 			throw new FilePermissionException("File `" + file.getAbsolutePath() + "` is not writable.");
 		}
 		
-		if (((permissions &= FILE) != 0) && !file.isFile()) {
+		if (((localPermissions &= FILE) != 0) && !file.isFile()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a file.");
 		}
 		
-		if (((permissions &= DIRECTORY) != 0) && !file.isDirectory()) {
+		if (((localPermissions &= DIRECTORY) != 0) && !file.isDirectory()) {
 			throw new FilePermissionException("`" + file.getAbsolutePath() + "` is not a directory.");
 		}
 	}
@@ -596,7 +597,7 @@ public class FileUtils {
 			
 			@Override
 			public boolean accept(final File dir,
-			                      final String name) {
+			                      @SuppressWarnings ("hiding") final String name) {
 				return false;
 			}
 		});

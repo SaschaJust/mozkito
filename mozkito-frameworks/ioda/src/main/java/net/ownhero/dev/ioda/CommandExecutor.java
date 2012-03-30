@@ -73,7 +73,7 @@ public class CommandExecutor extends Thread {
 	 *            additional changes to the process environment. This is null in most scenarios.
 	 * @return a tuple with the program's exit code and a list of lines representing the output of the program
 	 */
-	public static Tuple<Integer, List<String>> execute(@NotNull String command,
+	public static Tuple<Integer, List<String>> execute(@NotNull final String command,
 	                                                   final String[] arguments,
 	                                                   final File dir,
 	                                                   final InputStream input,
@@ -83,15 +83,16 @@ public class CommandExecutor extends Thread {
 		                "The specified arguments have to be either null or have to contain at least 1 argument.");
 		
 		// merge command and arguments to one list
-		List<String> lineElements = new LinkedList<String>();
-		lineElements.add(command);
+		final List<String> lineElements = new LinkedList<String>();
+		String localCommand = command;
+		lineElements.add(localCommand);
 		if (arguments != null) {
 			lineElements.addAll(Arrays.asList(arguments));
 		}
 		
 		try {
-			command = FileUtils.checkExecutable(command);
-		} catch (ExternalExecutableException e) {
+			localCommand = FileUtils.checkExecutable(localCommand);
+		} catch (final ExternalExecutableException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -99,7 +100,7 @@ public class CommandExecutor extends Thread {
 		}
 		
 		// create new ProcessBuilder
-		ProcessBuilder processBuilder = new ProcessBuilder(lineElements);
+		final ProcessBuilder processBuilder = new ProcessBuilder(lineElements);
 		
 		/*
 		 * Set the working directory to `dir`. If `dir` is null, the subsequent processes will use the current working
@@ -112,14 +113,14 @@ public class CommandExecutor extends Thread {
 		 * mappings.
 		 */
 		if ((environment != null) && (environment.keySet().size() > 0)) {
-			Map<String, String> actualEnvironment = processBuilder.environment();
-			for (String environmentVariable : environment.keySet()) {
+			final Map<String, String> actualEnvironment = processBuilder.environment();
+			for (final String environmentVariable : environment.keySet()) {
 				actualEnvironment.put(environmentVariable, environment.get(environmentVariable));
 			}
 		}
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Executing: [command:" + command + "][arguments:"
+			Logger.debug("Executing: [command:" + localCommand + "][arguments:"
 			        + StringEscapeUtils.escapeJava(Arrays.toString(arguments)) + "][workingdir:"
 			        + (dir != null
 			                      ? dir.getAbsolutePath()
@@ -141,8 +142,8 @@ public class CommandExecutor extends Thread {
 			process = processBuilder.start();
 			
 			// get the streams
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), charset));
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), charset));
+			final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 			BufferedReader pipe = null;
 			
 			CommandExecutor readTask = null;
@@ -167,7 +168,7 @@ public class CommandExecutor extends Thread {
 				writeTask.join();
 			}
 			
-			int returnValue = process.waitFor();
+			final int returnValue = process.waitFor();
 			
 			// wait for threads to finish
 			readTask.join();
@@ -183,9 +184,9 @@ public class CommandExecutor extends Thread {
 			
 			if ((returnValue != 0) || readTask.error || ((writeTask != null) && writeTask.error)) {
 				if (Logger.logError()) {
-					StringBuilder stringBuilder = new StringBuilder();
+					final StringBuilder stringBuilder = new StringBuilder();
 					stringBuilder.append("Executed: [command:");
-					stringBuilder.append(command);
+					stringBuilder.append(localCommand);
 					stringBuilder.append("][arguments:");
 					stringBuilder.append(StringEscapeUtils.escapeJava(Arrays.toString(arguments)));
 					stringBuilder.append("][workingdir:");
@@ -210,7 +211,7 @@ public class CommandExecutor extends Thread {
 				}
 			}
 			return new Tuple<Integer, List<String>>(returnValue, readTask.getReadLines());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -291,10 +292,10 @@ public class CommandExecutor extends Thread {
 	private void logLinesOnError() {
 		if (Logger.logError()) {
 			Logger.error(getHandle() + "[" + this.task.toString() + "] lines processed:");
-			for (String outputLine : getReadLines()) {
+			for (final String outputLine : getReadLines()) {
 				Logger.error("read<< " + outputLine);
 			}
-			for (String outputLine : getWroteLines()) {
+			for (final String outputLine : getWroteLines()) {
 				Logger.error("wrote<< " + outputLine);
 			}
 		}
@@ -309,7 +310,7 @@ public class CommandExecutor extends Thread {
 			while ((line = this.reader.readLine()) != null) {
 				this.readLines.add(line);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			this.error = true;
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
@@ -351,7 +352,7 @@ public class CommandExecutor extends Thread {
 			}
 			this.writer.flush();
 			this.writer.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
