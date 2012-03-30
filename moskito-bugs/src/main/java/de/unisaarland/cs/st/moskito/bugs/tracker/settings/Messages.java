@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
  */
 public class Messages {
 	
-	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.bugs.tracker.settings"; //$NON-NLS-1$
-	                                                                                                            
+	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.bugs.tracker.settings.messages"; //$NON-NLS-1$
+	                                                                                                                     
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
 	
 	public static String getString(final String key) {
