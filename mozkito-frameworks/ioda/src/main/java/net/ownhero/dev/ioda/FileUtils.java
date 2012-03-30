@@ -225,29 +225,26 @@ public class FileUtils {
 			} else if (!executable.isFile()) {
 				if (executable.isDirectory()) {
 					throw new ExternalExecutableException("Command `" + command + "` is a directory.");
-				} else {
-					throw new ExternalExecutableException("Command `" + command + "` is not a file.");
 				}
+				throw new ExternalExecutableException("Command `" + command + "` is not a file.");
 			} else if (!executable.canExecute()) {
 				throw new ExternalExecutableException("File `" + command + "` is not executable.");
 			}
 			return command;
-		} else {
-			// relative path
-			final String pathVariable = System.getenv("PATH");
-			final String[] paths = pathVariable.split(":");
-			File executable;
-			
-			for (final String path : paths) {
-				executable = new File(path + FileUtils.fileSeparator + command);
-				if (executable.exists() && executable.isFile() && executable.canExecute()) {
-					return executable.getAbsolutePath();
-				}
-			}
-			
-			throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH="
-			        + pathVariable);
 		}
+		// relative path
+		final String pathVariable = System.getenv("PATH");
+		final String[] paths = pathVariable.split(":");
+		File executable;
+		
+		for (final String path : paths) {
+			executable = new File(path + FileUtils.fileSeparator + command);
+			if (executable.exists() && executable.isFile() && executable.canExecute()) {
+				return executable.getAbsolutePath();
+			}
+		}
+		
+		throw new ExternalExecutableException("Command `" + command + "` could not be found in PATH=" + pathVariable);
 	}
 	
 	/**
@@ -321,13 +318,12 @@ public class FileUtils {
 				}
 				addToFileManager(newDir, shutdownAction);
 				return newDir;
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Could not create directory `" + name + "` in parent directory `"
-					        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
-				}
-				return null;
 			}
+			if (Logger.logError()) {
+				Logger.error("Could not create directory `" + name + "` in parent directory `"
+				        + parentDir.getAbsolutePath() + "`. Reason: path exists already as files.");
+			}
+			return null;
 		}
 		if (!newDir.mkdirs()) {
 			if (Logger.logError()) {
@@ -335,13 +331,12 @@ public class FileUtils {
 				        + parentDir.getAbsolutePath() + "`. Reason: permission denied.");
 			}
 			return null;
-		} else {
-			if (Logger.logInfo()) {
-				Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
-			}
-			addToFileManager(newDir, shutdownAction);
-			return newDir;
 		}
+		if (Logger.logInfo()) {
+			Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
+		}
+		addToFileManager(newDir, shutdownAction);
+		return newDir;
 	}
 	
 	/**
@@ -548,33 +543,32 @@ public class FileUtils {
 					return true;
 				}
 			});
-		} else {
-			return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
-				
-				@Override
-				public boolean accept(final File file) {
-					return true;
-				}
-				
-				@Override
-				public boolean accept(final File dir,
-				                      final String name) {
-					return true;
-				}
-			}, new IOFileFilter() {
-				
-				@Override
-				public boolean accept(final File file) {
-					return true;
-				}
-				
-				@Override
-				public boolean accept(final File dir,
-				                      final String name) {
-					return true;
-				}
-			});
 		}
+		return org.apache.commons.io.FileUtils.iterateFiles(topLevelDir, new IOFileFilter() {
+			
+			@Override
+			public boolean accept(final File file) {
+				return true;
+			}
+			
+			@Override
+			public boolean accept(final File dir,
+			                      final String name) {
+				return true;
+			}
+		}, new IOFileFilter() {
+			
+			@Override
+			public boolean accept(final File file) {
+				return true;
+			}
+			
+			@Override
+			public boolean accept(final File dir,
+			                      final String name) {
+				return true;
+			}
+		});
 	}
 	
 	/**
@@ -590,14 +584,13 @@ public class FileUtils {
 			public boolean accept(final File file) {
 				if (file.getName().equals(name)) {
 					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 			
 			@Override
 			public boolean accept(final File dir,
-			                      @SuppressWarnings ("hiding") final String name) {
+			                      final String name) {
 				return false;
 			}
 		});

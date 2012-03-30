@@ -272,6 +272,33 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @return the raw content
+	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetch(@NotNull final URI uri,
+	                               @NotNull final ProxyConfig proxyConfig) throws UnsupportedProtocolException,
+	                                                                      FetchException {
+		if (uri.getScheme().equals("http")) {
+			return fetchHttp(uri, null, null, proxyConfig);
+		} else if (uri.getScheme().equals("https")) {
+			return fetchHttps(uri, null, null, proxyConfig);
+		} else {
+			throw new UnsupportedProtocolException(
+			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
+			                                                     uri.getScheme()));
+		}
+	}
+	
+	/**
 	 * Fetch.
 	 * 
 	 * @param uri
@@ -457,22 +484,16 @@ public class IOUtils {
 	 *            the username
 	 * @param password
 	 *            the password
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @param proxyUsername
-	 *            the proxy username
-	 * @param proxyPassword
-	 *            the proxy password
+	 * @param proxyConfig
+	 *            the proxy config
 	 * @return the raw content
 	 * @throws FetchException
 	 *             the fetch exception
 	 */
-	public static RawContent fetchHttpProxy(@NotNull final URI uri,
-	                                        final String username,
-	                                        final String password,
-	                                        @NotNull final ProxyConfig proxyConfig) throws FetchException {
+	public static RawContent fetchHttp(@NotNull final URI uri,
+	                                   final String username,
+	                                   final String password,
+	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
 			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), "http");
@@ -539,52 +560,17 @@ public class IOUtils {
 	 *            the username
 	 * @param password
 	 *            the password
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @param proxyUsername
-	 *            the proxy username
-	 * @param proxyPassword
-	 *            the proxy password
+	 * @param proxyConfig
+	 *            the proxy config
 	 * @return the raw content
 	 * @throws FetchException
 	 *             the fetch exception
 	 */
-	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
-	                                         final String username,
-	                                         final String password,
-	                                         @NotNull final ProxyConfig proxyConfig) throws FetchException {
-		return fetchHttpProxy(uri, username, password, proxyConfig);
-	}
-	
-	/**
-	 * Fetch proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @return the raw content
-	 * @throws UnsupportedProtocolException
-	 *             the unsupported protocol exception
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchProxy(@NotNull final URI uri,
-	                                    @NotNull final ProxyConfig proxyConfig,
-	                                    final int proxyPort) throws UnsupportedProtocolException, FetchException {
-		if (uri.getScheme().equals("http")) {
-			return fetchHttpProxy(uri, null, null, proxyConfig);
-		} else if (uri.getScheme().equals("https")) {
-			return fetchHttpsProxy(uri, null, null, proxyConfig);
-		} else {
-			throw new UnsupportedProtocolException(
-			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
-			                                                     uri.getScheme()));
-		}
+	public static RawContent fetchHttps(@NotNull final URI uri,
+	                                    final String username,
+	                                    final String password,
+	                                    @NotNull final ProxyConfig proxyConfig) throws FetchException {
+		return fetchHttp(uri, username, password, proxyConfig);
 	}
 	
 	/**
