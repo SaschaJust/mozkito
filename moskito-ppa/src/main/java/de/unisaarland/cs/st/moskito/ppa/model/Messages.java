@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,24 +12,24 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.ppa.model;
 
-import static org.junit.Assert.assertEquals;
+import org.eclipse.osgi.util.NLS;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jdom.Element;
-import org.junit.Test;
-
-public class JavaMethodCallTest {
+/**
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ *
+ */
+public class Messages extends NLS {
 	
-	@Test
-	public void testXML() {
-		final List<String> argList = new ArrayList<String>(2);
-		argList.add("String");
-		argList.add("Object");
-		final JavaMethodCall orgCall = new JavaMethodCall(JavaMethodCall.class.getName(), "foo", argList);
-		final Element xmlRepresentation = orgCall.getXMLRepresentation();
-		final JavaMethodCall xmlCall = JavaMethodCall.fromXMLRepresentation(xmlRepresentation);
-		assertEquals(orgCall, xmlCall);
+	private static final String BUNDLE_NAME = "de.unisaarland.cs.st.moskito.ppa.model.messages"; //$NON-NLS-1$
+	public static String        JavaMethodDefinition_fullQualifiedName_extract_error;
+	public static String        JavaMethodDefinition_methodName_check;
+	public static String        JavaMethodDefinition_parentName_check;
+	public static String        JavaMethodDefinition_unrecognized_root_element;
+	static {
+		// initialize resource bundle
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+	
+	private Messages() {
 	}
 }

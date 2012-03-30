@@ -189,9 +189,9 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		
 		JavaElement javaElement = null;
 		
-		org.jdom.Element elementChild = element.getChild(JavaClassDefinition.JAVA_CLASS_DEFINITION);
+		org.jdom.Element elementChild = element.getChild(JavaTypeDefinition.JAVA_CLASS_DEFINITION);
 		if (elementChild != null) {
-			javaElement = JavaClassDefinition.fromXMLRepresentation(elementChild);
+			javaElement = JavaTypeDefinition.fromXMLRepresentation(elementChild);
 		} else {
 			elementChild = element.getChild(JavaMethodDefinition.JAVA_METHOD_DEFINITION);
 			if (elementChild != null) {
@@ -273,7 +273,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	        @NotNull final String filePath) {
 		Condition.check(startLine <= endLine, "Start line must be smaller or equal than end line");
 		
-		if ((element instanceof JavaClassDefinition) || (element instanceof JavaMethodDefinition)) {
+		if ((element instanceof JavaTypeDefinition) || (element instanceof JavaMethodDefinition)) {
 			Condition.check(bodyStartLine <= endLine,
 			                "Body start line must be smaller or equal than end line: bodyStartLine=" + bodyStartLine
 			                        + " startLine=" + endLine);

@@ -155,7 +155,7 @@
 		<class>de.unisaarland.cs.st.moskito.bugs.tracker.model.Report</class>
 		<class>de.unisaarland.cs.st.moskito.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaElement</class>
-		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition</class>
+		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall</class>
@@ -188,7 +188,7 @@
 		<class>de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction</class>
 		<class>de.unisaarland.cs.st.moskito.persistence.model.StringTuple</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaElement</class>
-		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaClassDefinition</class>
+		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation</class>
 		<class>de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall</class>

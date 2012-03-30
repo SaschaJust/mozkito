@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -23,6 +24,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Element;
@@ -36,7 +38,8 @@ import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
-public class JavaClassDefinition extends JavaElement implements Annotated {
+@DiscriminatorValue ("JAVATYPEDEFINITION")
+public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
 	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";
 	public static final String JAVA_CLASS_DEFINITION = "JavaClassDefinition";
@@ -51,7 +54,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 *            the element
 	 * @return the java class definition is successful, <code>null</code> otherwise.
 	 */
-	public static JavaClassDefinition fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaTypeDefinition fromXMLRepresentation(final org.jdom.Element element) {
 		
 		if (!element.getName().equals(JAVA_CLASS_DEFINITION)) {
 			if (Logger.logWarn()) {
@@ -69,7 +72,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 		}
 		final String name = nameElement.getText();
 		
-		return new JavaClassDefinition(name);
+		return new JavaTypeDefinition(name);
 	}
 	
 	/** The super class name. */
@@ -84,13 +87,15 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	/** The anonym class. */
 	private boolean                         anonymClass    = false;
 	
-	private JavaClassDefinition             parent;
+	private JavaTypeDefinition              parent;
+	
+	private boolean                         interfaze      = false;
 	
 	/**
 	 * Instantiates a new java class definition.
 	 */
 	@Deprecated
-	public JavaClassDefinition() {
+	public JavaTypeDefinition() {
 		super();
 	}
 	
@@ -103,8 +108,8 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final JavaClassDefinition parent, final String fullQualifiedName) {
-		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
+	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName) {
+		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
@@ -120,11 +125,47 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 *            the package name
 	 */
 	@NoneNull
-	protected JavaClassDefinition(final String fullQualifiedName) {
-		super(fullQualifiedName, JavaClassDefinition.class.getCanonicalName());
+	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName,
+	        final boolean isInterface) {
+		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
+		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+			this.anonymClass = true;
+		}
+		setParent(parent);
+		setInterfaze(isInterface);
+	}
+	
+	/**
+	 * Instantiates a new java class definition.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param packageName
+	 *            the package name
+	 */
+	@NoneNull
+	protected JavaTypeDefinition(final String fullQualifiedName) {
+		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
+	}
+	
+	/**
+	 * Instantiates a new java class definition.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @param packageName
+	 *            the package name
+	 */
+	@NoneNull
+	protected JavaTypeDefinition(final String fullQualifiedName, final boolean isInterface) {
+		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
+		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+			throw new UnrecoverableError("Anonymous class must have parent!");
+		}
+		setInterfaze(isInterface);
 	}
 	
 	/**
@@ -136,7 +177,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	}
 	
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
-	public JavaClassDefinition getParent() {
+	public JavaTypeDefinition getParent() {
 		return this.parent;
 	}
 	
@@ -155,6 +196,7 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	@Override
 	@NoneNull
+	@Transient
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
 		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
@@ -170,6 +212,21 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 	 */
 	public boolean isAnonymClass() {
 		return this.anonymClass;
+	}
+	
+	@Transient
+	public boolean isInterface() {
+		return isInterfaze();
+	}
+	
+	public boolean isInterfaze() {
+		// PRECONDITIONS
+		
+		try {
+			return this.interfaze;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -205,10 +262,21 @@ public class JavaClassDefinition extends JavaElement implements Annotated {
 		this.anonymClass = anonymClass;
 	}
 	
+	public void setInterfaze(final boolean interfaze) {
+		// PRECONDITIONS
+		try {
+			this.interfaze = interfaze;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.interfaze, interfaze,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
+	}
+	
 	/**
 	 * @param parent
 	 */
-	protected void setParent(final JavaClassDefinition parent) {
+	protected void setParent(final JavaTypeDefinition parent) {
 		this.parent = parent;
 	}
 	

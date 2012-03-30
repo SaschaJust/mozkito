@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public class JavaElementFactory {
 	
 	/** The class definitions by name. */
-	private final Map<String, JavaClassDefinition>  classDefs   = new HashMap<String, JavaClassDefinition>();
+	private final Map<String, JavaTypeDefinition>   classDefs   = new HashMap<String, JavaTypeDefinition>();
 	
 	/** The method definitions by name. */
 	private final Map<String, JavaMethodDefinition> methodDefs  = new HashMap<String, JavaMethodDefinition>();
@@ -38,19 +38,19 @@ public class JavaElementFactory {
 	}
 	
 	public JavaElementFactory(final PersistenceUtil persistenceUtil) {
-		Criteria<JavaClassDefinition> criteria = persistenceUtil.createCriteria(JavaClassDefinition.class);
-		List<JavaClassDefinition> defs = persistenceUtil.load(criteria);
-		for (JavaClassDefinition def : defs) {
+		final Criteria<JavaTypeDefinition> criteria = persistenceUtil.createCriteria(JavaTypeDefinition.class);
+		final List<JavaTypeDefinition> defs = persistenceUtil.load(criteria);
+		for (final JavaTypeDefinition def : defs) {
 			this.classDefs.put(def.getFullQualifiedName(), def);
 		}
-		Criteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
-		List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria2);
-		for (JavaMethodDefinition def : mDefs) {
+		final Criteria<JavaMethodDefinition> criteria2 = persistenceUtil.createCriteria(JavaMethodDefinition.class);
+		final List<JavaMethodDefinition> mDefs = persistenceUtil.load(criteria2);
+		for (final JavaMethodDefinition def : mDefs) {
 			this.methodDefs.put(def.getFullQualifiedName(), def);
 		}
-		Criteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
-		List<JavaMethodCall> calls = persistenceUtil.load(criteria3);
-		for (JavaMethodCall call : calls) {
+		final Criteria<JavaMethodCall> criteria3 = persistenceUtil.createCriteria(JavaMethodCall.class);
+		final List<JavaMethodCall> calls = persistenceUtil.load(criteria3);
+		for (final JavaMethodCall call : calls) {
 			this.methodCalls.put(call.getFullQualifiedName(), call);
 		}
 	}
@@ -76,12 +76,12 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaClassDefinition getAnonymousClassDefinition(@NotNull final JavaClassDefinition parent,
-	                                                       @NotNull final String fullQualifiedName) {
+	public JavaTypeDefinition getAnonymousClassDefinition(@NotNull final JavaTypeDefinition parent,
+	                                                      @NotNull final String fullQualifiedName) {
 		
-		JavaClassDefinition def = null;
+		JavaTypeDefinition def = null;
 		if (!this.classDefs.containsKey(fullQualifiedName)) {
-			def = new JavaClassDefinition(parent, fullQualifiedName);
+			def = new JavaTypeDefinition(parent, fullQualifiedName);
 			this.classDefs.put(fullQualifiedName, def);
 		} else {
 			def = this.classDefs.get(fullQualifiedName);
@@ -110,12 +110,29 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaClassDefinition getClassDefinition(@NotNull final String fullQualifiedName,
-	                                              @NotNull final String file) {
+	public JavaTypeDefinition getClassDefinition(@NotNull final String fullQualifiedName,
+	                                             @NotNull final String file) {
 		
-		JavaClassDefinition def = null;
+		JavaTypeDefinition def = null;
 		if (!this.classDefs.containsKey(fullQualifiedName)) {
-			def = new JavaClassDefinition(fullQualifiedName);
+			def = new JavaTypeDefinition(fullQualifiedName);
+			this.classDefs.put(fullQualifiedName, def);
+		} else {
+			def = this.classDefs.get(fullQualifiedName);
+		}
+		return def;
+	}
+	
+	/**
+	 * @param fullQualifiedName
+	 * @param fullQualifiedName2
+	 * @return
+	 */
+	public JavaTypeDefinition getInterfaceDefinition(final String fullQualifiedName,
+	                                                 final String fullQualifiedName2) {
+		JavaTypeDefinition def = null;
+		if (!this.classDefs.containsKey(fullQualifiedName)) {
+			def = new JavaTypeDefinition(fullQualifiedName, true);
 			this.classDefs.put(fullQualifiedName, def);
 		} else {
 			def = this.classDefs.get(fullQualifiedName);
@@ -147,7 +164,7 @@ public class JavaElementFactory {
 	                                    @NotNull final List<String> signature,
 	                                    @NotNull final JavaElement parent) {
 		
-		boolean parentPass = ((parent instanceof JavaClassDefinition) || (parent instanceof JavaMethodDefinition));
+		final boolean parentPass = ((parent instanceof JavaTypeDefinition) || (parent instanceof JavaMethodDefinition));
 		Condition.check(parentPass,
 		                "The parent of a JavaMethodCall has to be a JavaMethodDefinition or a JavaClassDefinition");
 		if (!parentPass) {
@@ -156,7 +173,7 @@ public class JavaElementFactory {
 			}
 		}
 		
-		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
+		final String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
 		JavaMethodCall call = null;
 		if (!this.methodCalls.containsKey(cacheName)) {
 			call = new JavaMethodCall(objectName, methodName, signature);
@@ -174,6 +191,7 @@ public class JavaElementFactory {
 	 *            the full qualified name
 	 * @param signature
 	 *            the signature
+	 * @param override
 	 * @param file
 	 *            the file
 	 * @param parent
@@ -190,13 +208,14 @@ public class JavaElementFactory {
 	 */
 	public JavaMethodDefinition getMethodDefinition(@NotNull final String objectName,
 	                                                @NotNull final String methodName,
-	                                                @NotNull final List<String> signature) {
+	                                                @NotNull final List<String> signature,
+	                                                final boolean override) {
 		
 		JavaMethodDefinition def = null;
-		String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
+		final String cacheName = JavaMethodCall.composeFullQualifiedName(objectName, methodName, signature);
 		if (!this.methodDefs.containsKey(cacheName)) {
 			
-			def = new JavaMethodDefinition(objectName, methodName, signature);
+			def = new JavaMethodDefinition(objectName, methodName, signature, override);
 			this.methodDefs.put(cacheName, def);
 		} else {
 			def = this.methodDefs.get(cacheName);
