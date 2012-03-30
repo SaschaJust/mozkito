@@ -168,13 +168,13 @@ public abstract class Tracker {
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Parsing issue report " + reportLink.toString() + " ... ");
+			Logger.info("Parsing issue report %s ... ", reportLink.toString());
 		}
 		
 		parser.setTracker(this);
 		if (!parser.setURI(reportLink)) {
 			if (Logger.logWarn()) {
-				Logger.warn("Could not parse report " + reportLink.toString() + ". See earlier error messages.");
+				Logger.warn("Could not parse report %s. See earlier error messages.", reportLink.toString());
 			}
 			return null;
 		}
