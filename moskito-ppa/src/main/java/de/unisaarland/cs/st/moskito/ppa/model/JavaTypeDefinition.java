@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -37,6 +38,7 @@ import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 @Entity
+@DiscriminatorValue ("JAVATYPEDEFINITION")
 public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
 	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";
