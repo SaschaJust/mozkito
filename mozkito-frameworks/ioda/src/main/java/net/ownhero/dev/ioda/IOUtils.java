@@ -30,7 +30,6 @@ import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.ioda.interfaces.Storable;
-import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.http.Header;
@@ -454,75 +453,6 @@ public class IOUtils {
 	 * 
 	 * @param uri
 	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpProxy(@NotNull final URI uri,
-	                                        final String proxy,
-	                                        final int proxyPort) throws FetchException {
-		return fetchHttpProxy(uri, null, null, proxy, proxyPort);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @param proxyUsername
-	 *            the proxy username
-	 * @param proxyPassword
-	 *            the proxy password
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpProxy(@NotNull final URI uri,
-	                                        final String proxy,
-	                                        final int proxyPort,
-	                                        final String proxyUsername,
-	                                        final String proxyPassword) throws FetchException {
-		return fetchHttpProxy(uri, null, null, proxy, proxyPort, proxyUsername, proxyPassword);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpProxy(@NotNull final URI uri,
-	                                        final String username,
-	                                        final String password,
-	                                        @NotNull final String proxy,
-	                                        @NotNegative final int proxyPort) throws FetchException {
-		return fetchHttpProxy(uri, username, password, proxy, proxyPort, null, null);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
 	 * @param username
 	 *            the username
 	 * @param password
@@ -542,23 +472,19 @@ public class IOUtils {
 	public static RawContent fetchHttpProxy(@NotNull final URI uri,
 	                                        final String username,
 	                                        final String password,
-	                                        @NotNull final String proxy,
-	                                        @NotNegative final int proxyPort,
-	                                        final String proxyUsername,
-	                                        final String proxyPassword) throws FetchException {
+	                                        @NotNull final ProxyConfig proxyConfig) throws FetchException {
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
-			if ((proxy != null) && (!proxy.isEmpty())) {
-				final HttpHost proxyHost = new HttpHost(proxy, proxyPort, "http");
-				
-				if (proxyUsername != null) {
-					httpClient.getCredentialsProvider().setCredentials(new AuthScope(proxy, proxyPort),
-					                                                   new UsernamePasswordCredentials(proxyUsername,
-					                                                                                   proxyPassword));
-				}
-				
-				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), "http");
+			
+			if (proxyConfig.getUsername() != null) {
+				httpClient.getCredentialsProvider()
+				          .setCredentials(new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
+				                          new UsernamePasswordCredentials(proxyConfig.getUsername(),
+				                                                          proxyConfig.getPassword()));
 			}
+			
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
 			
 			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
@@ -609,75 +535,6 @@ public class IOUtils {
 	 * 
 	 * @param uri
 	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
-	                                         final String proxy,
-	                                         final int proxyPort) throws FetchException {
-		return fetchHttpProxy(uri, null, null, proxy, proxyPort);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @param proxyUsername
-	 *            the proxy username
-	 * @param proxyPassword
-	 *            the proxy password
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
-	                                         final String proxy,
-	                                         final int proxyPort,
-	                                         final String proxyUsername,
-	                                         final String proxyPassword) throws FetchException {
-		return fetchHttpProxy(uri, null, null, proxy, proxyPort, proxyUsername, proxyPassword);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
-	                                         final String username,
-	                                         final String password,
-	                                         @NotNull final String proxy,
-	                                         @NotNegative final int proxyPort) throws FetchException {
-		return fetchHttpProxy(uri, username, password, proxy, proxyPort, null, null);
-	}
-	
-	/**
-	 * Fetch http proxy.
-	 * 
-	 * @param uri
-	 *            the uri
 	 * @param username
 	 *            the username
 	 * @param password
@@ -697,11 +554,8 @@ public class IOUtils {
 	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
 	                                         final String username,
 	                                         final String password,
-	                                         @NotNull final String proxy,
-	                                         @NotNegative final int proxyPort,
-	                                         final String proxyUsername,
-	                                         final String proxyPassword) throws FetchException {
-		return fetchHttpProxy(uri, username, password, proxy, proxyPort, proxyUsername, proxyPassword);
+	                                         @NotNull final ProxyConfig proxyConfig) throws FetchException {
+		return fetchHttpProxy(uri, username, password, proxyConfig);
 	}
 	
 	/**
@@ -720,47 +574,12 @@ public class IOUtils {
 	 *             the fetch exception
 	 */
 	public static RawContent fetchProxy(@NotNull final URI uri,
-	                                    final String proxy,
+	                                    @NotNull final ProxyConfig proxyConfig,
 	                                    final int proxyPort) throws UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
-			return fetchHttpProxy(uri, proxy, proxyPort, null, null);
+			return fetchHttpProxy(uri, null, null, proxyConfig);
 		} else if (uri.getScheme().equals("https")) {
-			return fetchHttpsProxy(uri, proxy, proxyPort, null, null);
-		} else {
-			throw new UnsupportedProtocolException(
-			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
-			                                                     uri.getScheme()));
-		}
-	}
-	
-	/**
-	 * Fetch proxy.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param proxy
-	 *            the proxy
-	 * @param proxyPort
-	 *            the proxy port
-	 * @param proxyUsername
-	 *            the proxy username
-	 * @param proxyPassword
-	 *            the proxy password
-	 * @return the raw content
-	 * @throws UnsupportedProtocolException
-	 *             the unsupported protocol exception
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchProxy(@NotNull final URI uri,
-	                                    final String proxy,
-	                                    final int proxyPort,
-	                                    final String proxyUsername,
-	                                    final String proxyPassword) throws UnsupportedProtocolException, FetchException {
-		if (uri.getScheme().equals("http")) {
-			return fetchHttpProxy(uri, proxy, proxyPort, proxyUsername, proxyPassword);
-		} else if (uri.getScheme().equals("https")) {
-			return fetchHttpsProxy(uri, proxy, proxyPort, proxyUsername, proxyPassword);
+			return fetchHttpsProxy(uri, null, null, proxyConfig);
 		} else {
 			throw new UnsupportedProtocolException(
 			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
