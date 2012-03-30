@@ -705,6 +705,70 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @return the raw content
+	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchProxy(@NotNull final URI uri,
+	                                    final String proxy,
+	                                    final int proxyPort) throws UnsupportedProtocolException, FetchException {
+		if (uri.getScheme().equals("http")) {
+			return fetchHttpProxy(uri, proxy, proxyPort, null, null);
+		} else if (uri.getScheme().equals("https")) {
+			return fetchHttpsProxy(uri, proxy, proxyPort, null, null);
+		} else {
+			throw new UnsupportedProtocolException(
+			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
+			                                                     uri.getScheme()));
+		}
+	}
+	
+	/**
+	 * Fetch proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @param proxyUsername
+	 *            the proxy username
+	 * @param proxyPassword
+	 *            the proxy password
+	 * @return the raw content
+	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchProxy(@NotNull final URI uri,
+	                                    final String proxy,
+	                                    final int proxyPort,
+	                                    final String proxyUsername,
+	                                    final String proxyPassword) throws UnsupportedProtocolException, FetchException {
+		if (uri.getScheme().equals("http")) {
+			return fetchHttpProxy(uri, proxy, proxyPort, proxyUsername, proxyPassword);
+		} else if (uri.getScheme().equals("https")) {
+			return fetchHttpsProxy(uri, proxy, proxyPort, proxyUsername, proxyPassword);
+		} else {
+			throw new UnsupportedProtocolException(
+			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
+			                                                     uri.getScheme()));
+		}
+	}
+	
+	/**
 	 * Gets the temporary copy of file.
 	 * 
 	 * @param file
