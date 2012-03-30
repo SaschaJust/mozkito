@@ -63,7 +63,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 			localParentName = localParentName.substring(4);
 		}
 		
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		
 		while (localParentName.endsWith(".")) {
 			localParentName = localParentName.substring(0, localParentName.length() - 1);
@@ -98,14 +98,14 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");
 			}
 			return null;
 		}
-		String name = nameElement.getText();
+		final String name = nameElement.getText();
 		
 		if ((name == null) || (!name.contains("(")) || (!name.contains(")"))) {
 			if (Logger.logWarn()) {
@@ -114,8 +114,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		int dotIndex = name.indexOf(".");
-		int index = name.indexOf("(");
+		final int dotIndex = name.indexOf(".");
+		final int index = name.indexOf("(");
 		
 		if ((dotIndex < 0) || (dotIndex > index)) {
 			if (Logger.logWarn()) {
@@ -124,15 +124,15 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		String tmpName = name.substring(0, index);
-		int lastDotIndex = tmpName.lastIndexOf(".");
-		String parentName = tmpName.substring(0, lastDotIndex);
-		String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
+		final String tmpName = name.substring(0, index);
+		final int lastDotIndex = tmpName.lastIndexOf(".");
+		final String parentName = tmpName.substring(0, lastDotIndex);
+		final String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
 		
-		String argString = name.substring(index + 1, name.indexOf(")"));
-		String[] args = argString.split(",");
-		List<String> argList = new ArrayList<String>(args.length);
-		for (String arg : args) {
+		final String argString = name.substring(index + 1, name.indexOf(")"));
+		final String[] args = argString.split(",");
+		final List<String> argList = new ArrayList<String>(args.length);
+		for (final String arg : args) {
 			argList.add(arg);
 		}
 		
@@ -176,8 +176,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
 		
 		this.signature = new ArrayList<String>(signature);
-		this.setFullQualifiedName(composeFullQualifiedName(objectName, methodName, signature));
-		int index = objectName.lastIndexOf(".");
+		setFullQualifiedName(composeFullQualifiedName(objectName, methodName, signature));
+		final int index = objectName.lastIndexOf(".");
 		if (index < 0) {
 			this.calledPackageName = "";
 			this.calledClassName = objectName.substring(0, objectName.length());
@@ -203,12 +203,12 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		JavaMethodCall other = (JavaMethodCall) obj;
-		if (this.getSignature() == null) {
+		final JavaMethodCall other = (JavaMethodCall) obj;
+		if (getSignature() == null) {
 			if (other.getSignature() != null) {
 				return false;
 			}
-		} else if (!this.getSignature().equals(other.getSignature())) {
+		} else if (!getSignature().equals(other.getSignature())) {
 			return false;
 		}
 		return true;
@@ -221,7 +221,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledClassNameFullQualified() {
-		return this.getFullQualifiedName();
+		return getFullQualifiedName();
 	}
 	
 	/**
@@ -241,7 +241,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getCalledMethodName() {
-		return extractMethodName(this.getFullQualifiedName());
+		return extractMethodName(getFullQualifiedName());
 	}
 	
 	/**
@@ -269,10 +269,11 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	@Override
 	@NoneNull
+	@Transient
 	public Element getXMLRepresentation() {
-		Element thisElement = new Element(JAVA_METHOD_CALL);
-		Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		nameElement.setText(this.getFullQualifiedName());
+		final Element thisElement = new Element(JAVA_METHOD_CALL);
+		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
 	}

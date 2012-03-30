@@ -19,6 +19,7 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
@@ -207,6 +208,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation (org.w3c.dom.Document)
 	 */
 	@Override
+	@Transient
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(JAVA_METHOD_DEFINITION);
 		final Element nameElement = new Element(FULL_QUALIFIED_NAME);

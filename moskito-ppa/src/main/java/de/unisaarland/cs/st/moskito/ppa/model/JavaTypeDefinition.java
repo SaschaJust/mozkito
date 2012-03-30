@@ -23,6 +23,7 @@ import javax.persistence.Transient;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom.Element;
@@ -86,7 +87,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
 	private JavaTypeDefinition              parent;
 	
-	private boolean                         isInterface    = false;
+	private boolean                         interfaze      = false;
 	
 	/**
 	 * Instantiates a new java class definition.
@@ -129,7 +130,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 			this.anonymClass = true;
 		}
 		setParent(parent);
-		setInterface(isInterface);
+		setInterfaze(isInterface);
 	}
 	
 	/**
@@ -162,7 +163,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		if (Pattern.matches(anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
-		setInterface(isInterface);
+		setInterfaze(isInterface);
 	}
 	
 	/**
@@ -193,6 +194,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 */
 	@Override
 	@NoneNull
+	@Transient
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
 		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
@@ -210,8 +212,19 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		return this.anonymClass;
 	}
 	
+	@Transient
 	public boolean isInterface() {
-		return this.isInterface;
+		return isInterfaze();
+	}
+	
+	public boolean isInterfaze() {
+		// PRECONDITIONS
+		
+		try {
+			return this.interfaze;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -247,8 +260,15 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		this.anonymClass = anonymClass;
 	}
 	
-	public void setInterface(final boolean isInterface) {
-		this.isInterface = isInterface;
+	public void setInterfaze(final boolean interfaze) {
+		// PRECONDITIONS
+		try {
+			this.interfaze = interfaze;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.interfaze, interfaze,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/**
