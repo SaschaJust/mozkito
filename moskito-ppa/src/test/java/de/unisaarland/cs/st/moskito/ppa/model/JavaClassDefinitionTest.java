@@ -17,22 +17,14 @@ import static org.junit.Assert.assertEquals;
 import org.jdom.Element;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.ppa.model.JavaTypeDefinition;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
-
 public class JavaClassDefinitionTest {
 	
 	@Test
 	public void testXML() {
 		
-		JavaTypeDefinition orgDef = new JavaTypeDefinition(JavaTypeDefinition.class.getName());
-		Element xmlRepresentation = orgDef.getXMLRepresentation();
-		JavaTypeDefinition xmlDef = JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation);
+		final JavaTypeDefinition orgDef = new JavaTypeDefinition(JavaTypeDefinition.class.getName());
+		final Element xmlRepresentation = orgDef.getXMLRepresentation();
+		final JavaTypeDefinition xmlDef = JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation);
 		assertEquals(orgDef, xmlDef);
-		
-		assertEquals(null, JavaMethodCall.fromXMLRepresentation(xmlRepresentation));
-		assertEquals(null, JavaMethodDefinition.fromXMLRepresentation(xmlRepresentation));
-		
 	}
 }
