@@ -24,6 +24,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -72,9 +73,11 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
 			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
 			
+			final ArgumentSet<ProxyConfig, ProxyOptions> proxyArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
+			
 			final MantisTracker tracker = new MantisTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue());
+			              trackerPasswordArgument.getValue(), proxyArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

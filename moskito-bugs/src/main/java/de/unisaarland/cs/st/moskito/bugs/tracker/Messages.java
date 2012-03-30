@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
+package de.unisaarland.cs.st.moskito.bugs.tracker;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -24,8 +24,8 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class Messages {
 	
-	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.bugs.tracker.settings.messages"; //$NON-NLS-1$
-	                                                                                                                     
+	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.bugs.tracker.messages"; //$NON-NLS-1$
+	                                                                                                            
 	private static final ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
 	public static String getString(final String key) {

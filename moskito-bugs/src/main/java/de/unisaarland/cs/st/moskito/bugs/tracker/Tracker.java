@@ -24,6 +24,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -59,22 +60,25 @@ public abstract class Tracker {
 	protected URI                     trackerURI;
 	
 	/** The username. */
-	protected String                  username;
+	private String                    username;
 	
 	/** The password. */
-	protected String                  password;
+	private String                    password;
 	
 	/** The report links. */
 	private BlockingQueue<ReportLink> reportLinks   = new LinkedBlockingQueue<ReportLink>();
 	
-	/** The Constant unknownPerson. */
-	public final static Person        unknownPerson = new Person("<unknown>", null, null);
+	/** The proxy config. */
+	private ProxyConfig               proxyConfig;
 	
+	/** The Constant unknownPerson. */
+	public final static Person        unknownPerson = new Person("<unknown>", null, null);    //$NON-NLS-1$
+	                                                                                           
 	/**
 	 * Instantiates a new tracker.
 	 */
 	public Tracker() {
-		Condition.notNull(this.reportLinks, "The bugId container must be initialized.");
+		Condition.notNull(this.reportLinks, Messages.getString("Tracker.reportLinks_null")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -107,6 +111,24 @@ public abstract class Tracker {
 	public abstract Parser getParser();
 	
 	/**
+	 * Gets the password.
+	 * 
+	 * @return the password
+	 */
+	public String getPassword() {
+		return this.password;
+	}
+	
+	/**
+	 * Gets the proxy password.
+	 * 
+	 * @return the proxy password
+	 */
+	public ProxyConfig getProxyConfig() {
+		return this.proxyConfig;
+	}
+	
+	/**
 	 * Gets the report links.
 	 * 
 	 * @return the report links
@@ -133,6 +155,21 @@ public abstract class Tracker {
 	}
 	
 	/**
+	 * Gets the username.
+	 * 
+	 * @return the username
+	 */
+	public String getUsername() {
+		// PRECONDITIONS
+		
+		try {
+			return this.username;
+		} finally {
+			
+		}
+	}
+	
+	/**
 	 * This method is used to fetch persistent reports from the database.
 	 * 
 	 * @param id
@@ -144,7 +181,7 @@ public abstract class Tracker {
 	public Report loadReport(final Long id,
 	                         final PersistenceUtil persistenceUtil) {
 		
-		final Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class).eq("id", id);
+		final Criteria<Report> criteria = persistenceUtil.createCriteria(Report.class).eq("id", id); //$NON-NLS-1$
 		final List<Report> list = persistenceUtil.load(criteria);
 		if (list.size() > 0) {
 			final Report bugReport = list.get(0);
@@ -163,24 +200,23 @@ public abstract class Tracker {
 	public final Report parse(final ReportLink reportLink) {
 		final Parser parser = getParser();
 		if (parser == null) {
-			throw new UnrecoverableError(
-			                             "Could not load bug report parser! Maybe your bug tracker version is not supported!");
+			throw new UnrecoverableError(Messages.getString("Tracker.parser_load_error")); //$NON-NLS-1$
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Parsing issue report %s ... ", reportLink.toString());
+			Logger.info(Messages.getString("Tracker.parsing_info"), reportLink.toString()); //$NON-NLS-1$
 		}
 		
 		parser.setTracker(this);
 		if (!parser.setURI(reportLink)) {
 			if (Logger.logWarn()) {
-				Logger.warn("Could not parse report %s. See earlier error messages.", reportLink.toString());
+				Logger.warn(Messages.getString("Tracker.parsing_error"), reportLink.toString()); //$NON-NLS-1$
 			}
 			return null;
 		}
 		
 		final String id = parser.getId();
-		Condition.notNull(id, "The bug id returned by the parser may never be null.");
+		Condition.notNull(id, Messages.getString("Tracker.bugid_null")); //$NON-NLS-1$
 		
 		final Report report = new Report(id);
 		report.setAttachmentEntries(parser.getAttachmentEntries());
@@ -227,6 +263,16 @@ public abstract class Tracker {
 	}
 	
 	/**
+	 * Sets the password.
+	 * 
+	 * @param password
+	 *            the new password
+	 */
+	public void setPassword(final String password) {
+		this.password = password;
+	}
+	
+	/**
 	 * sets up the current tracker and fills the queue with the corresponding bug report ids.
 	 * 
 	 * @param fetchURI
@@ -236,22 +282,34 @@ public abstract class Tracker {
 	 *            The username to be used to login to a bug tracking system. May be null iff password is null.
 	 * @param password
 	 *            The password to be used to login to a bug tracking system. May be null iff username is null.
+	 * @param proxyConfig
+	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
-	
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
-	                  final String password) throws InvalidParameterException {
-		Condition.check((username == null) == (password == null),
-		                "Either username and password are set or none at all. username = `%s`, password = `%s`",
+	                  final String password,
+	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+		Condition.check((username == null) == (password == null), Messages.getString("Tracker.user_passwd_noteq"), //$NON-NLS-1$
 		                username, password);
 		
 		this.trackerURI = fetchURI;
-		this.username = username;
-		this.password = password;
+		setUsername(username);
+		setPassword(password);
+		this.proxyConfig = proxyConfig;
 		
 		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		this.reportLinks.addAll(getReportLinks());
+	}
+	
+	/**
+	 * Sets the username.
+	 * 
+	 * @param username
+	 *            the new username
+	 */
+	public void setUsername(final String username) {
+		this.username = username;
 	}
 }

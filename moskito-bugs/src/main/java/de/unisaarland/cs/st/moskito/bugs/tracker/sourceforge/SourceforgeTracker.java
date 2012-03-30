@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -22,7 +19,9 @@ import java.net.URI;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -83,24 +82,40 @@ public class SourceforgeTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param groupId the group id
-	 * @param atId the at id
-	 * @param bugType the bug type
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param groupId
+	 *            the group id
+	 * @param atId
+	 *            the at id
+	 * @param bugType
+	 *            the bug type
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,
 	                  final Long groupId,
 	                  final Long atId,
-	                  final Type bugType) throws InvalidParameterException {
+	                  final Type bugType,
+	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		this.groupId = groupId;
 		this.atId = atId;
 		this.bugType = bugType;
-		super.setup(fetchURI, username, password);
+		super.setup(fetchURI, username, password, proxyConfig);
+		
+		if (proxyConfig != null) {
+			// TODO support proxy
+			if (Logger.logWarn()) {
+				Logger.warn("HTTP proxy not supported yet.");
+			}
+		}
+		
 	}
 }

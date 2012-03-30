@@ -23,9 +23,7 @@ import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
@@ -44,39 +42,33 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
 	
 	/** The tracker uri arg. */
-	private URIArgument.Options                                 trackerURIArg;
+	private URIArgument.Options               trackerURIArg;
 	
 	/** The tracker type arg. */
-	private EnumArgument.Options<TrackerType>                   trackerTypeArg;
+	private EnumArgument.Options<TrackerType> trackerTypeArg;
 	
 	/** The tracker user arg. */
-	private StringArgument.Options                              trackerUserArg;
+	private StringArgument.Options            trackerUserArg;
 	
 	/** The tracker password arg. */
-	private StringArgument.Options                              trackerPasswordArg;
+	private StringArgument.Options            trackerPasswordArg;
 	
 	/** The bugzilla options. */
-	private BugzillaOptions                                     bugzillaOptions;
+	private BugzillaOptions                   bugzillaOptions;
 	
 	/** The google options. */
-	private GoogleOptions                                       googleOptions;
+	private GoogleOptions                     googleOptions;
 	
 	/** The jira options. */
-	private JiraOptions                                         jiraOptions;
+	private JiraOptions                       jiraOptions;
 	
 	/** The mantis options. */
-	private MantisOptions                                       mantisOptions;
+	private MantisOptions                     mantisOptions;
 	
 	/** The sourceforge options. */
-	private SourceforgeOptions                                  sourceforgeOptions;
+	private SourceforgeOptions                sourceforgeOptions;
 	
-	private Options                                             trackerProxyHostArg;
-	
-	private net.ownhero.dev.hiari.settings.LongArgument.Options trackerProxyPortArg;
-	
-	private Options                                             trackerProxyPasswordArg;
-	
-	private Options                                             trackerProxyUserArg;
+	private ProxyOptions                      proxyOptions;
 	
 	/**
 	 * Instantiates a new tracker options.
@@ -93,6 +85,10 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "tracker", "Tracker settings.", requirement); //$NON-NLS-1$ //$NON-NLS-2$
 		argumentSet.getSettings();
+	}
+	
+	public final ProxyOptions getProxyOptions() {
+		return this.proxyOptions;
 	}
 	
 	/**
@@ -226,35 +222,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			
 			req(this.trackerPasswordArg, map);
 			
-			this.trackerProxyHostArg = new StringArgument.Options(
-			                                                      set,
-			                                                      "proxyHost", //$NON-NLS-1$
-			                                                      Messages.getString("TrackerOptions.proxyHost_description"), //$NON-NLS-1$
-			                                                      null, Requirement.optional);
-			req(this.trackerProxyHostArg, map);
-			
-			this.trackerProxyPortArg = new LongArgument.Options(
-			                                                    set,
-			                                                    "proxyPort", Messages.getString("TrackerOptions.proxyPort_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
-			                                                    Requirement.iff(this.trackerProxyHostArg));
-			req(this.trackerProxyPortArg, map);
-			
-			this.trackerProxyUserArg = new StringArgument.Options(
-			                                                      set,
-			                                                      "proxyUser", //$NON-NLS-1$
-			                                                      Messages.getString("TrackerOptions.proxyUser_description"), null, //$NON-NLS-1$
-			                                                      Requirement.iff(this.trackerProxyHostArg));
-			
-			req(this.trackerProxyUserArg, map);
-			this.trackerProxyPasswordArg = new StringArgument.Options(
-			                                                          set,
-			                                                          "proxyPassword", //$NON-NLS-1$
-			                                                          Messages.getString("TrackerOptions.proxyPassword_description"), //$NON-NLS-1$
-			                                                          null, Requirement.iff(this.trackerProxyHostArg),
-			                                                          true);
-			
-			req(this.trackerProxyPasswordArg, map);
-			
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                    TrackerType.BUGZILLA));
 			req(this.bugzillaOptions, map);
@@ -271,6 +238,9 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			this.sourceforgeOptions = new SourceforgeOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                          TrackerType.SOURCEFORGE));
 			req(this.jiraOptions, map);
+			
+			this.proxyOptions = new ProxyOptions(set, Requirement.optional);
+			req(this.proxyOptions, map);
 			
 			return map;
 		} finally {

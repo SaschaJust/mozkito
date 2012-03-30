@@ -24,6 +24,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -105,10 +106,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			final URIArgument overviewArgument = getSettings().getArgument(getOverviewURI());
 			final StringArgument bugzillaVersionArgument = getSettings().getArgument(getBugzillaVersion());
 			
+			final ArgumentSet<ProxyConfig, ProxyOptions> proxyConfigArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
+			
 			final BugzillaTracker tracker = new BugzillaTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
 			              trackerPasswordArgument.getValue(), overviewArgument.getValue(),
-			              bugzillaVersionArgument.getValue());
+			              bugzillaVersionArgument.getValue(), proxyConfigArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

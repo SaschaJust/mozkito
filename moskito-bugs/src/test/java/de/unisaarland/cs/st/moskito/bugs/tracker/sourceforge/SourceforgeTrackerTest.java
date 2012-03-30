@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
@@ -46,7 +43,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class SourceforgeTrackerTest.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class SourceforgeTrackerTest {
@@ -62,7 +59,7 @@ public class SourceforgeTrackerTest {
 		this.tracker = new SourceforgeTracker();
 		try {
 			this.tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l,
-			                   Type.BUG);
+			                   Type.BUG, null);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -74,8 +71,9 @@ public class SourceforgeTrackerTest {
 	
 	/**
 	 * Test issue history.
-	 *
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	@Test
 	public void testIssueHistory() throws InvalidParameterException {
@@ -247,8 +245,9 @@ public class SourceforgeTrackerTest {
 	
 	/**
 	 * Test issue parser.
-	 *
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	@Test
 	public void testIssueParser() throws InvalidParameterException {
