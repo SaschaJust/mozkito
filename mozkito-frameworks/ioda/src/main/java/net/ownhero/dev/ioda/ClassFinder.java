@@ -209,9 +209,8 @@ public class ClassFinder {
 				if (tmpClass == null) {
 					// Object case
 					break;
-				} else {
-					aClass = tmpClass;
 				}
+				aClass = tmpClass;
 				
 				if (aClass.equals(superClass)) {
 					classList.add((Class<? extends T>) discovered);
@@ -509,9 +508,9 @@ public class ClassFinder {
 	 * @throws IOException
 	 */
 	private static Collection<? extends String> getClassNamesFromClassPath(final String cp) throws IOException {
-		Set<String> classNames = new HashSet<String>();
+		final Set<String> classNames = new HashSet<String>();
 		
-		Iterator<File> iterator = FileUtils.findFiles(new File(cp), new IOFileFilter() {
+		final Iterator<File> iterator = FileUtils.findFiles(new File(cp), new IOFileFilter() {
 			
 			@Override
 			public boolean accept(final File file) {
@@ -546,7 +545,7 @@ public class ClassFinder {
 	 * @return
 	 */
 	private static Set<String> getClassNamesFromJarFile(final String filePath) {
-		Set<String> classNames = new HashSet<String>();
+		final Set<String> classNames = new HashSet<String>();
 		try {
 			final JarFile currentFile = new JarFile(filePath);
 			

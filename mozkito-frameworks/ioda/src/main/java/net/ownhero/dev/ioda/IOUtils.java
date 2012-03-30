@@ -30,10 +30,12 @@ import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.ioda.interfaces.Storable;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -41,21 +43,30 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class IOUtils.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class IOUtils {
 	
 	/**
+	 * Binaryfetch.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the byte[]
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static byte[] binaryfetch(final URI uri) throws IOException, UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
@@ -70,12 +81,19 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Binaryfetch.
+	 * 
 	 * @param uri
+	 *            the uri
 	 * @param username
+	 *            the username
 	 * @param password
-	 * @return
+	 *            the password
+	 * @return the byte[]
 	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static byte[] binaryfetch(final URI uri,
 	                                 final String username,
@@ -99,9 +117,13 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Binaryfetch file.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the byte[]
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private static byte[] binaryfetchFile(final URI uri) throws IOException {
 		// TODO implement for directory
@@ -116,9 +138,13 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Binaryfetch http.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the byte[]
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	private static byte[] binaryfetchHttp(final URI uri) throws FetchException {
 		try {
@@ -135,12 +161,19 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Binaryfetch http.
+	 * 
 	 * @param uri
+	 *            the uri
 	 * @param username
+	 *            the username
 	 * @param password
-	 * @return
+	 *            the password
+	 * @return the byte[]
 	 * @throws ClientProtocolException
+	 *             the client protocol exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private static byte[] binaryfetchHttp(final URI uri,
 	                                      final String username,
@@ -160,14 +193,33 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Binaryfetch https.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the byte[]
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	private static byte[] binaryfetchHttps(final URI uri) throws FetchException {
 		return binaryfetchHttp(uri);
 	}
 	
+	/**
+	 * Binaryfetch https.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @return the byte[]
+	 * @throws ClientProtocolException
+	 *             the client protocol exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private static byte[] binaryfetchHttps(final URI uri,
 	                                       final String username,
 	                                       final String password) throws ClientProtocolException, IOException {
@@ -175,9 +227,14 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Copy input stream.
+	 * 
 	 * @param in
+	 *            the in
 	 * @param out
+	 *            the out
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static final void copyInputStream(final InputStream in,
 	                                         final OutputStream out) throws IOException {
@@ -193,10 +250,15 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the raw content
 	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetch(@NotNull final URI uri) throws UnsupportedProtocolException, FetchException {
 		if (uri.getScheme().equals("http")) {
@@ -211,12 +273,19 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch.
+	 * 
 	 * @param uri
+	 *            the uri
 	 * @param username
+	 *            the username
 	 * @param password
-	 * @return
+	 *            the password
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
 	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
 	 */
 	public static RawContent fetch(@NotNull final URI uri,
 	                               final String username,
@@ -233,9 +302,13 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch file.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetchFile(final URI uri) throws FetchException {
 		try {
@@ -264,9 +337,13 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch http.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetchHttp(final URI uri) throws FetchException {
 		MessageDigest md;
@@ -297,26 +374,59 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch http.
+	 * 
 	 * @param uri
+	 *            the uri
 	 * @param username
+	 *            the username
 	 * @param password
-	 * @return
+	 *            the password
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetchHttp(final URI uri,
 	                                   final String username,
 	                                   final String password) throws FetchException {
-		MessageDigest md;
 		try {
-			md = MessageDigest.getInstance("MD5");
-			
-			final StringBuilder content = new StringBuilder();
-			
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
 			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
 			                             new UsernamePasswordCredentials(username, password));
 			httpClient.setCredentialsProvider(credsProvider);
+			
+			return fetchHttp(uri, username, password, httpClient);
+		} catch (final Exception e) {
+			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
+			        + "` failed.", e);
+		}
+	}
+	
+	/**
+	 * Fetch http.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param httpClient
+	 *            the http client
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttp(@NotNull final URI uri,
+	                                   final String username,
+	                                   final String password,
+	                                   @NotNull final HttpClient httpClient) throws FetchException {
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+			
+			final StringBuilder content = new StringBuilder();
 			
 			final HttpGet request = new HttpGet(uri);
 			final HttpResponse response = httpClient.execute(request);
@@ -340,20 +450,153 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Fetch http proxy.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpProxy(@NotNull final URI uri,
+	                                        final String proxy,
+	                                        final int proxyPort) throws FetchException {
+		return fetchHttpProxy(uri, null, null, proxy, proxyPort);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @param proxyUsername
+	 *            the proxy username
+	 * @param proxyPassword
+	 *            the proxy password
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpProxy(@NotNull final URI uri,
+	                                        final String proxy,
+	                                        final int proxyPort,
+	                                        final String proxyUsername,
+	                                        final String proxyPassword) throws FetchException {
+		return fetchHttpProxy(uri, null, null, proxy, proxyPort, proxyUsername, proxyPassword);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpProxy(@NotNull final URI uri,
+	                                        final String username,
+	                                        final String password,
+	                                        @NotNull final String proxy,
+	                                        @NotNegative final int proxyPort) throws FetchException {
+		return fetchHttpProxy(uri, username, password, proxy, proxyPort, null, null);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @param proxyUsername
+	 *            the proxy username
+	 * @param proxyPassword
+	 *            the proxy password
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpProxy(@NotNull final URI uri,
+	                                        final String username,
+	                                        final String password,
+	                                        @NotNull final String proxy,
+	                                        @NotNegative final int proxyPort,
+	                                        final String proxyUsername,
+	                                        final String proxyPassword) throws FetchException {
+		try {
+			final DefaultHttpClient httpClient = new DefaultHttpClient();
+			if ((proxy != null) && (!proxy.isEmpty())) {
+				final HttpHost proxyHost = new HttpHost(proxy, proxyPort, "http");
+				
+				if (proxyUsername != null) {
+					httpClient.getCredentialsProvider().setCredentials(new AuthScope(proxy, proxyPort),
+					                                                   new UsernamePasswordCredentials(proxyUsername,
+					                                                                                   proxyPassword));
+				}
+				
+				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+			}
+			
+			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
+			                             new UsernamePasswordCredentials(username, password));
+			httpClient.setCredentialsProvider(credsProvider);
+			
+			return fetchHttp(uri, username, password, httpClient);
+		} catch (final Exception e) {
+			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
+			        + "` failed.", e);
+		}
+	}
+	
+	/**
+	 * Fetch https.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetchHttps(final URI uri) throws FetchException {
 		return fetchHttp(uri);
 	}
 	
 	/**
+	 * Fetch https.
+	 * 
 	 * @param uri
+	 *            the uri
 	 * @param username
+	 *            the username
 	 * @param password
-	 * @return
+	 *            the password
+	 * @return the raw content
 	 * @throws FetchException
+	 *             the fetch exception
 	 */
 	public static RawContent fetchHttps(final URI uri,
 	                                    final String username,
@@ -361,6 +604,117 @@ public class IOUtils {
 		return fetchHttp(uri, username, password);
 	}
 	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
+	                                         final String proxy,
+	                                         final int proxyPort) throws FetchException {
+		return fetchHttpProxy(uri, null, null, proxy, proxyPort);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @param proxyUsername
+	 *            the proxy username
+	 * @param proxyPassword
+	 *            the proxy password
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
+	                                         final String proxy,
+	                                         final int proxyPort,
+	                                         final String proxyUsername,
+	                                         final String proxyPassword) throws FetchException {
+		return fetchHttpProxy(uri, null, null, proxy, proxyPort, proxyUsername, proxyPassword);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
+	                                         final String username,
+	                                         final String password,
+	                                         @NotNull final String proxy,
+	                                         @NotNegative final int proxyPort) throws FetchException {
+		return fetchHttpProxy(uri, username, password, proxy, proxyPort, null, null);
+	}
+	
+	/**
+	 * Fetch http proxy.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param proxy
+	 *            the proxy
+	 * @param proxyPort
+	 *            the proxy port
+	 * @param proxyUsername
+	 *            the proxy username
+	 * @param proxyPassword
+	 *            the proxy password
+	 * @return the raw content
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
+	public static RawContent fetchHttpsProxy(@NotNull final URI uri,
+	                                         final String username,
+	                                         final String password,
+	                                         @NotNull final String proxy,
+	                                         @NotNegative final int proxyPort,
+	                                         final String proxyUsername,
+	                                         final String proxyPassword) throws FetchException {
+		return fetchHttpProxy(uri, username, password, proxy, proxyPort, proxyUsername, proxyPassword);
+	}
+	
+	/**
+	 * Gets the temporary copy of file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param uri
+	 *            the uri
+	 * @return the temporary copy of file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public static File getTemporaryCopyOfFile(final File file,
 	                                          final URI uri) throws IOException {
 		try {
@@ -393,12 +747,10 @@ public class IOUtils {
 						copyInputStream(jarFile.getInputStream(entry), outputStream);
 						outputStream.close();
 						return file;
-					} else {
-						throw new IOException("JAR file for resource does not exist: " + jarFilePath);
 					}
-				} else {
-					data = binaryfetchFile(uri);
+					throw new IOException("JAR file for resource does not exist: " + jarFilePath);
 				}
+				data = binaryfetchFile(uri);
 			} else {
 				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
 			}
@@ -423,6 +775,19 @@ public class IOUtils {
 		return file;
 	}
 	
+	/**
+	 * Gets the temporary copy of file.
+	 * 
+	 * @param prefix
+	 *            the prefix
+	 * @param suffix
+	 *            the suffix
+	 * @param uri
+	 *            the uri
+	 * @return the temporary copy of file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public static File getTemporaryCopyOfFile(final String prefix,
 	                                          final String suffix,
 	                                          final URI uri) throws IOException {
@@ -431,9 +796,13 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Gets the temporary copy of file.
+	 * 
 	 * @param uri
-	 * @return
+	 *            the uri
+	 * @return the temporary copy of file
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static File getTemporaryCopyOfFile(final URI uri) throws IOException {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
@@ -441,10 +810,15 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Load.
+	 * 
 	 * @param file
-	 * @return
+	 *            the file
+	 * @return the storable
 	 * @throws LoadingException
+	 *             the loading exception
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static Storable load(@NotNull final File file) throws LoadingException, FilePermissionException {
 		Storable object;
@@ -481,10 +855,15 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Readbinary data.
+	 * 
 	 * @param entity
-	 * @return
+	 *            the entity
+	 * @return the byte[]
 	 * @throws IllegalStateException
+	 *             the illegal state exception
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private static byte[] readbinaryData(final HttpEntity entity) throws IllegalStateException, IOException {
 		final InputStream stream = entity.getContent();
@@ -513,11 +892,20 @@ public class IOUtils {
 	}
 	
 	/**
+	 * Store.
+	 * 
 	 * @param object
+	 *            the object
 	 * @param directory
+	 *            the directory
+	 * @param fileName
+	 *            the file name
 	 * @param overwrite
+	 *            the overwrite
 	 * @throws StoringException
+	 *             the storing exception
 	 * @throws FilePermissionException
+	 *             the file permission exception
 	 */
 	public static void store(@NotNull final Storable object,
 	                         @NotNull final File directory,
