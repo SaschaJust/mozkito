@@ -26,8 +26,8 @@ import net.ownhero.dev.kisa.Logger;
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String   BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.mapping.engines"; //$NON-NLS-1$
-	                                                                                                
+	private static final String   BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.mapping.engines.messages"; //$NON-NLS-1$
+	                                                                                                         
 	/** The Constant RESOURCE_BUNDLE. */
 	private static ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
@@ -61,7 +61,7 @@ public class Messages {
 				                          locale));
 			}
 			
-			return ResourceBundle.getBundle(BUNDLE_NAME);
+			return ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
 		}
 	}
 	
