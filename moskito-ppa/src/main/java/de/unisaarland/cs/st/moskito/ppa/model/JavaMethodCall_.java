@@ -10,7 +10,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.ppa.model.JavaMethodCall.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 30 10:48:35 CEST 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 30 11:02:50 CEST 2012")
 public class JavaMethodCall_ extends JavaElement_  {
     public static volatile SingularAttribute<JavaMethodCall,String> calledPackageName;
     public static volatile ListAttribute<JavaMethodCall,String> signature;

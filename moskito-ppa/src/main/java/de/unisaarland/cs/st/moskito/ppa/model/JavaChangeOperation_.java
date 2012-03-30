@@ -11,7 +11,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 30 10:48:35 CEST 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Mar 30 11:02:50 CEST 2012")
 public class JavaChangeOperation_ {
     public static volatile SingularAttribute<JavaChangeOperation,ChangeType> changeType;
     public static volatile SingularAttribute<JavaChangeOperation,JavaElementLocation> changedElementLocation;
