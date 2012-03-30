@@ -6,20 +6,23 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
+ * The Class Source.
+ *
+ * @param <T> the generic type
  * {@link Source}s are the source elements of a tool chain. In general, these are I/O handlers that read data from some
  * source and provide it to the tool chain. All instances of {@link Source}s must have an output connector but must not
  * have an input connector.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Source<T> extends Node<T, T> {
 	
 	/**
+	 * Instantiates a new source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
 	 * @see Node
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
 	 */
 	public Source(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);

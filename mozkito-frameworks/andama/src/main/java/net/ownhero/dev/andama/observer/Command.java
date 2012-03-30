@@ -16,20 +16,36 @@ package net.ownhero.dev.andama.observer;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The Class Command.
+ */
 public abstract class Command {
 	
+	/** The valid arguments. */
 	private final Set<Class<? extends Argument>> validArguments = new HashSet<Class<? extends Argument>>();
 	
+	/**
+	 * Gets the valid arguments.
+	 *
+	 * @return the valid arguments
+	 */
 	public Set<Class<? extends Argument>> getValidArguments() {
 		return validArguments;
 	}
 	
+	/**
+	 * Instantiates a new command.
+	 *
+	 * @param arguments the arguments
+	 */
 	public Command(Argument... arguments) {
 		// TODO check if arguments ar valid
 	}
 	
 	/**
-	 * @return
+	 * Gets the token.
+	 *
+	 * @return the token
 	 */
 	public String getToken() {
 		return this.getClass().getSimpleName()
@@ -37,6 +53,11 @@ public abstract class Command {
 		           .toLowerCase();
 	}
 	
+	/**
+	 * Execute.
+	 *
+	 * @return true, if successful
+	 */
 	public abstract boolean execute();
 	
 }

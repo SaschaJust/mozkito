@@ -6,13 +6,18 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class ProcessHook.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	
 	/**
-	 * @param thread
+	 * Instantiates a new process hook.
+	 *
+	 * @param thread the thread
 	 */
 	public ProcessHook(final Node<K, V> thread) {
 		super(thread);
@@ -29,12 +34,14 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * 
+	 * Process.
 	 */
 	public abstract void process();
 	
 	/**
-	 * @param data
+	 * Provide output data.
+	 *
+	 * @param data the data
 	 */
 	public final void provideOutputData(final V data) {
 		if (Source.class.isAssignableFrom(getThread().getClass())) {
@@ -46,15 +53,19 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * @param data
+	 * Provide partial output data.
+	 *
+	 * @param data the data
 	 */
 	public final void providePartialOutputData(final V data) {
 		provideOutputData(data, false);
 	}
 	
 	/**
-	 * @param data
-	 * @param fetchNext
+	 * Provide output data.
+	 *
+	 * @param data the data
+	 * @param fetchNext the fetch next
 	 */
 	public final void provideOutputData(final V data,
 	                                    final boolean fetchNext) {
@@ -68,14 +79,16 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * 
+	 * Skip output data.
 	 */
 	public final void skipOutputData() {
 		getThread().setSkipData(true);
 	}
 	
 	/**
-	 * @param data
+	 * Skip output data.
+	 *
+	 * @param data the data
 	 */
 	public final void skipOutputData(final V data) {
 		getThread().setOutputData(data);

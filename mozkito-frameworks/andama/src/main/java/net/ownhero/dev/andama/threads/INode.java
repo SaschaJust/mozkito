@@ -15,10 +15,10 @@ package net.ownhero.dev.andama.threads;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
+import net.ownhero.dev.andama.messages.EventBus;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 
-// TODO: Auto-generated Javadoc
 /**
  * Specification of a thread in the {@link Chain}.
  * 
@@ -179,6 +179,13 @@ public interface INode<K, V> extends Runnable {
 	 */
 	@SuppressWarnings ("rawtypes")
 	public Class<? extends Node> getBaseType();
+	
+	/**
+	 * Gets the event bus.
+	 * 
+	 * @return the event bus
+	 */
+	EventBus getEventBus();
 	
 	/**
 	 * Gets the handle.

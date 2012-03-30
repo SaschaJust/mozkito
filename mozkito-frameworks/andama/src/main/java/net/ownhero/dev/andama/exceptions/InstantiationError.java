@@ -11,23 +11,37 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
+ * The Class InstantiationError.
+ *
  * @author just
- * 
  */
 public class InstantiationError extends UnrecoverableError {
 	
+	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 7635237323775156093L;
+	
+	/** The Constant defaultMessage. */
 	private static final String  defaultMessage   = "";
+	
+	/** The clazz. */
 	private final Class<?>       clazz;
+	
+	/** The constructor. */
 	private final Constructor<?> constructor;
+	
+	/** The arguments. */
 	private final Object[]       arguments;
+	
+	/** The Constant contextSize. */
 	static final private int     contextSize      = 3;
 	
 	/**
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -35,10 +49,12 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -46,11 +62,13 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final String message, final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -61,11 +79,13 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final String message, final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -134,21 +154,27 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @return
+	 * Gets the arguments.
+	 *
+	 * @return the arguments
 	 */
 	public Object[] getArguments() {
 		return this.arguments;
 	}
 	
 	/**
-	 * @return
+	 * Gets the clazz.
+	 *
+	 * @return the clazz
 	 */
 	public Class<?> getClazz() {
 		return this.clazz;
 	}
 	
 	/**
-	 * @return
+	 * Gets the constructor.
+	 *
+	 * @return the constructor
 	 */
 	public Constructor<?> getConstructor() {
 		return this.constructor;

@@ -6,17 +6,30 @@ package net.ownhero.dev.andama.threads;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import net.ownhero.dev.andama.messages.EventBus;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Hook.
  * 
+ * @param <K>
+ *            the key type
+ * @param <V>
+ *            the value type
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Hook<K, V> implements IHook<K, V> {
 	
 	/**
+	 * All completed.
+	 * 
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
 	 * @param hooks
-	 * @return
+	 *            the hooks
+	 * @return true, if successful
 	 */
 	public static <K, V> boolean allCompleted(final Collection<? extends Hook<K, V>> hooks) {
 		for (final IHook<K, V> hook : hooks) {
@@ -28,12 +41,17 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 		return true;
 	}
 	
+	/** The completed. */
 	private boolean          completed = true;
 	
+	/** The thread. */
 	private final Node<K, V> thread;
 	
 	/**
+	 * Instantiates a new hook.
 	 * 
+	 * @param thread
+	 *            the thread
 	 */
 	public Hook(final Node<K, V> thread) {
 		this.thread = thread;
@@ -60,6 +78,8 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 	}
 	
 	/**
+	 * Completed.
+	 * 
 	 * @return if the {@link ProcessHook} is done with the current data
 	 */
 	@Override
@@ -67,9 +87,23 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 		return this.completed;
 	}
 	
+	/**
+	 * Gets the event bus.
+	 * 
+	 * @return the event bus
+	 */
+	public EventBus getEventBus() {
+		return getThread().getEventBus();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.Hook#getHandle()
+	 */
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	@Override
 	public final String getHandle() {
@@ -82,20 +116,25 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.Hook#getThread()
 	 */
+	/**
+	 * Gets the thread.
+	 * 
+	 * @return the thread
+	 */
 	@Override
 	public final Node<K, V> getThread() {
 		return this.thread;
 	}
 	
 	/**
-	 * @return
+	 * Sets the completed.
 	 */
 	public final void setCompleted() {
 		this.completed = true;
 	}
 	
 	/**
-	 * 
+	 * Unset completed.
 	 */
 	public final void unsetCompleted() {
 		this.completed = false;

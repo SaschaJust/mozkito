@@ -25,21 +25,32 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.MapCondition;
 
 /**
+ * The Class Graph.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @SuppressWarnings ("rawtypes")
 public class Graph {
 	
+	/** The connection types. */
 	private final HashSet<Class<?>>                                                    connectionTypes = new HashSet<Class<?>>();
+	
+	/** The input types. */
 	private final HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>> inputTypes      = new HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>>();
 	
+	/** The output types. */
 	private final HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>> outputTypes     = new HashMap<Class<?>, HashMap<Class<? extends Node>, LinkedList<INode>>>();
+	
+	/** The transformers. */
 	private final List<INode>                                                          transformers    = new LinkedList<INode>();
+	
+	/** The group. */
 	private Group                                                                      group;
 	
 	/**
-	 * @param group
+	 * Instantiates a new graph.
+	 *
+	 * @param group the group
 	 */
 	@SuppressWarnings ("unchecked")
 	public Graph(@NotNull final Group group) {
@@ -102,8 +113,9 @@ public class Graph {
 	}
 	
 	/**
-	 * @throws InvalidGraphLayoutException
-	 * 
+	 * Builds the graph.
+	 *
+	 * @throws InvalidGraphLayoutException the invalid graph layout exception
 	 */
 	public void buildGraph() throws InvalidGraphLayoutException {
 		final List<INode> headThreads = new LinkedList<INode>();
@@ -421,8 +433,11 @@ public class Graph {
 	}
 	
 	/**
-	 * @param from
-	 * @param to
+	 * Connect.
+	 *
+	 * @param <T> the generic type
+	 * @param from the from
+	 * @param to the to
 	 */
 	@SuppressWarnings ("unchecked")
 	private <T> void connect(final INode from,

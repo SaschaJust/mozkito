@@ -15,8 +15,9 @@ import net.ownhero.dev.andama.threads.INode;
 import net.ownhero.dev.andama.threads.Transformer;
 
 /**
+ * The Class AndamaThreadComparator.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 @SuppressWarnings ("rawtypes")
 public class AndamaThreadComparator implements Comparator<INode> {

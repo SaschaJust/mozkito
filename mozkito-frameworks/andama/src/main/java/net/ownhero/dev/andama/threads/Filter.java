@@ -6,22 +6,25 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
+ * The Class Filter.
+ *
+ * @param <T> the generic type
  * {@link Filter}s can be used for two things:
  * <ol>
  * <li>filtering elements out in a tool chain</li>
  * <li>analyzing elements in a tool chain (equals null filtering)</li>
  * </ol>
  * Implementations of {@link Filter}s must have as well input as output connectors.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Filter<T> extends Node<T, T> {
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
+	 * Instantiates a new filter.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
 	 */
 	public Filter(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);

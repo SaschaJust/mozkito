@@ -15,16 +15,18 @@ package net.ownhero.dev.andama.exceptions;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
+ * The Class InvalidGraphLayoutException.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class InvalidGraphLayoutException extends Exception {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5758728046599090552L;
 	
+	/**
+	 * Instantiates a new invalid graph layout exception.
+	 */
 	public InvalidGraphLayoutException() {
 		super();
 		// PRECONDITIONS
@@ -36,6 +38,11 @@ public class InvalidGraphLayoutException extends Exception {
 		}
 	}
 	
+	/**
+	 * Instantiates a new invalid graph layout exception.
+	 *
+	 * @param arg0 the arg0
+	 */
 	public InvalidGraphLayoutException(@NotNull final String arg0) {
 		super(arg0);
 		// PRECONDITIONS
@@ -48,6 +55,12 @@ public class InvalidGraphLayoutException extends Exception {
 		}
 	}
 	
+	/**
+	 * Instantiates a new invalid graph layout exception.
+	 *
+	 * @param arg0 the arg0
+	 * @param arg1 the arg1
+	 */
 	public InvalidGraphLayoutException(@NotNull final String arg0, @NotNull final Throwable arg1) {
 		super(arg0, arg1);
 		// PRECONDITIONS
@@ -59,6 +72,11 @@ public class InvalidGraphLayoutException extends Exception {
 		}
 	}
 	
+	/**
+	 * Instantiates a new invalid graph layout exception.
+	 *
+	 * @param arg0 the arg0
+	 */
 	public InvalidGraphLayoutException(@NotNull final Throwable arg0) {
 		super(arg0);
 		// PRECONDITIONS

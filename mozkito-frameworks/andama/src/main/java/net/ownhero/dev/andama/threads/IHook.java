@@ -3,6 +3,8 @@
  */
 package net.ownhero.dev.andama.threads;
 
+import net.ownhero.dev.andama.messages.EventBus;
+
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
@@ -16,6 +18,13 @@ public interface IHook<K, V> {
 	
 	public void execute() throws InterruptedException;
 	
+	/**
+	 * Gets the event bus.
+	 * 
+	 * @return the event bus
+	 */
+	EventBus getEventBus();
+	
 	public String getHandle();
 	
 	/**
@@ -24,5 +33,4 @@ public interface IHook<K, V> {
 	 * @return
 	 */
 	public Node<K, V> getThread();
-	
 }

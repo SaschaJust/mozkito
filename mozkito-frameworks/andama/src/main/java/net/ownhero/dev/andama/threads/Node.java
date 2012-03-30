@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import net.ownhero.dev.andama.messages.EventBus;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.storages.AndamaDataStorage;
 import net.ownhero.dev.andama.threads.comparator.AndamaThreadComparator;
@@ -44,12 +45,14 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * {@link Node}s are the edges of a {@link Chain} graph, connecting the {@link AndamaDataStorage} nodes.
- * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Node.
  * 
  * @param <K>
+ *            the key type
  * @param <V>
+ *            the value type {@link Node}s are the edges of a {@link Chain} graph, connecting the
+ *            {@link AndamaDataStorage} nodes.
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node<?, ?>> {
 	
@@ -82,6 +85,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/**
 	 * Get the actual type arguments a child class has used to extend a generic base class.
 	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param baseClass
 	 *            the base class
 	 * @param childClass
@@ -136,8 +141,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the type name.
+	 * 
 	 * @param type
-	 * @return
+	 *            the type
+	 * @return the type name
 	 */
 	static String getTypeName(final Type type) {
 		if (type == null) {
@@ -156,44 +164,95 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		}
 	}
 	
+	/** The awaiting latches. */
 	private final Set<CountDownLatch>                                  awaitingLatches      = new HashSet<CountDownLatch>();
+	
+	/** The dependencies. */
 	private final Map<Node<?, ?>, CountDownLatch>                      dependencies         = new HashMap<Node<?, ?>, CountDownLatch>();
+	
+	/** The input cache. */
 	private final Map<Class<?>, K>                                     inputCache           = new HashMap<Class<?>, K>();
+	
+	/** The input data tuple. */
 	private Tuple<K, CountDownLatch>                                   inputDataTuple;
+	
+	/** The input hooks. */
 	private final Set<InputHook<K, V>>                                 inputHooks           = new HashSet<InputHook<K, V>>();
+	
+	/** The input storage. */
 	private AndamaDataStorage<K>                                       inputStorage;
+	
+	/** The input threads. */
 	private final LinkedBlockingDeque<INode<?, K>>                     inputThreads         = new LinkedBlockingDeque<INode<?, K>>();
+	
+	/** The known threads. */
 	private final LinkedBlockingDeque<INode<?, ?>>                     knownThreads         = new LinkedBlockingDeque<INode<?, ?>>();
+	
+	/** The output data. */
 	private V                                                          outputData;
+	
+	/** The output hooks. */
 	private final Set<OutputHook<K, V>>                                outputHooks          = new HashSet<OutputHook<K, V>>();
 	
+	/** The output latches. */
 	private Collection<CountDownLatch>                                 outputLatches        = new LinkedList<CountDownLatch>();
 	
+	/** The output threads. */
 	private final ConcurrentHashMap<INode<V, ?>, AndamaDataStorage<V>> outputThreads        = new ConcurrentHashMap<INode<V, ?>, AndamaDataStorage<V>>();
+	
+	/** The parallelizable. */
 	private boolean                                                    parallelizable       = false;
+	
+	/** The post execution hooks. */
 	private final Set<PostExecutionHook<K, V>>                         postExecutionHooks   = new HashSet<PostExecutionHook<K, V>>();
 	
+	/** The post input hooks. */
 	private final Set<PostInputHook<K, V>>                             postInputHooks       = new HashSet<PostInputHook<K, V>>();
+	
+	/** The post output hooks. */
 	private final Set<PostOutputHook<K, V>>                            postOutputHooks      = new HashSet<PostOutputHook<K, V>>();
+	
+	/** The post process hooks. */
 	private final Set<PostProcessHook<K, V>>                           postProcessHooks     = new HashSet<PostProcessHook<K, V>>();
 	
 	// hooks
+	/** The pre execution hooks. */
 	private final Set<PreExecutionHook<K, V>>                          preExecutionHooks    = new HashSet<PreExecutionHook<K, V>>();
+	
+	/** The pre input hooks. */
 	private final Set<PreInputHook<K, V>>                              preInputHooks        = new HashSet<PreInputHook<K, V>>();
+	
+	/** The pre output hooks. */
 	private final Set<PreOutputHook<K, V>>                             preOutputHooks       = new HashSet<PreOutputHook<K, V>>();
 	
+	/** The pre process hooks. */
 	private final Set<PreProcessHook<K, V>>                            preProcessHooks      = new HashSet<PreProcessHook<K, V>>();
+	
+	/** The process hooks. */
 	private final Set<ProcessHook<K, V>>                               processHooks         = new HashSet<ProcessHook<K, V>>();
 	
+	/** The process latches. */
 	private final Set<CountDownLatch>                                  processLatches       = new HashSet<CountDownLatch>();
+	
+	/** The settings. */
 	private final ISettings                                            settings;
 	
+	/** The shutdown. */
 	private boolean                                                    shutdown;
 	
+	/** The skip data. */
 	private boolean                                                    skipData             = false;
+	
+	/** The thread group. */
 	private final Group                                                threadGroup;
+	
+	/** The thread id. */
 	private Integer                                                    threadID             = -1;
+	
+	/** The wait for latch. */
 	private final boolean                                              waitForLatch         = false;
+	
+	/** The warning same inputdata. */
 	private boolean                                                    warningSameInputdata = false;
 	
 	/**
@@ -201,10 +260,10 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * 
 	 * @param threadGroup
 	 *            the {@link Group}. See {@link Group} for details.
-	 * @param name
-	 *            the name of the {@link Group}. See {@link Group} for details.
 	 * @param settings
 	 *            An instance of RepoSuiteSettings
+	 * @param parallelizable
+	 *            the parallelizable
 	 */
 	public Node(@NotNull final Group threadGroup, @NotNull final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, "default");
@@ -235,6 +294,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addInputHook(net.ownhero .dev.andama.threads.InputHook)
 	 */
+	/**
+	 * Adds the input hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addInputHook(final InputHook<K, V> hook) {
 		getInputHooks().add(hook);
@@ -243,6 +308,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addOutputHook(net.ownhero .dev.andama.threads.OutputHook)
+	 */
+	/**
+	 * Adds the output hook.
+	 * 
+	 * @param hook
+	 *            the hook
 	 */
 	@Override
 	public final void addOutputHook(final OutputHook<K, V> hook) {
@@ -254,6 +325,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostExecutionHook(
 	 * net.ownhero.dev.andama.threads.PostExecutionHook)
 	 */
+	/**
+	 * Adds the post execution hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addPostExecutionHook(final PostExecutionHook<K, V> hook) {
 		getPostExecutionHooks().add(hook);
@@ -263,6 +340,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostInputHook(net.
 	 * ownhero.dev.andama.threads.PostInputHook)
+	 */
+	/**
+	 * Adds the post input hook.
+	 * 
+	 * @param hook
+	 *            the hook
 	 */
 	@Override
 	public final void addPostInputHook(final PostInputHook<K, V> hook) {
@@ -274,6 +357,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostOutputHook(net
 	 * .ownhero.dev.andama.threads.PostOutputHook)
 	 */
+	/**
+	 * Adds the post output hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addPostOutputHook(final PostOutputHook<K, V> hook) {
 		getPostOutputHooks().add(hook);
@@ -283,6 +372,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPostProcessHook(net
 	 * .ownhero.dev.andama.threads.PostProcessHook)
+	 */
+	/**
+	 * Adds the post process hook.
+	 * 
+	 * @param hook
+	 *            the hook
 	 */
 	@Override
 	public final void addPostProcessHook(final PostProcessHook<K, V> hook) {
@@ -294,6 +389,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreExecutionHook(net
 	 * .ownhero.dev.andama.threads.PreExecutionHook)
 	 */
+	/**
+	 * Adds the pre execution hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addPreExecutionHook(final PreExecutionHook<K, V> hook) {
 		getPreExecutionHooks().add(hook);
@@ -303,6 +404,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreInputHook(net.ownhero
 	 * .dev.andama.threads.PreInputHook)
+	 */
+	/**
+	 * Adds the pre input hook.
+	 * 
+	 * @param hook
+	 *            the hook
 	 */
 	@Override
 	public final void addPreInputHook(final PreInputHook<K, V> hook) {
@@ -314,6 +421,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreOutputHook(net.
 	 * ownhero.dev.andama.threads.PreOutputHook)
 	 */
+	/**
+	 * Adds the pre output hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addPreOutputHook(final PreOutputHook<K, V> hook) {
 		getPreOutputHooks().add(hook);
@@ -324,6 +437,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addPreProcessHook(net
 	 * .ownhero.dev.andama.threads.PreProcessHook)
 	 */
+	/**
+	 * Adds the pre process hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addPreProcessHook(final PreProcessHook<K, V> hook) {
 		getPreProcessHooks().add(hook);
@@ -333,24 +452,41 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#addProcessHook(net.ownhero .dev.andama.threads.ProcessHook)
 	 */
+	/**
+	 * Adds the process hook.
+	 * 
+	 * @param hook
+	 *            the hook
+	 */
 	@Override
 	public final void addProcessHook(final ProcessHook<K, V> hook) {
 		getProcessHooks().add(hook);
 	}
 	
 	/**
+	 * Adds the process latch.
+	 * 
 	 * @param latch
+	 *            the latch
 	 */
 	final void addProcessLatch(final CountDownLatch latch) {
 		this.processLatches.add(latch);
 	}
 	
+	/**
+	 * Adds the wait for latch.
+	 * 
+	 * @param latch
+	 *            the latch
+	 */
 	@Override
 	public void addWaitForLatch(final CountDownLatch latch) {
 		this.awaitingLatches.add(latch);
 	}
 	
 	/**
+	 * Check connections.
+	 * 
 	 * @return true if there are no glitches found in the connector setup.
 	 */
 	@Override
@@ -392,6 +528,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Check not shutdown.
+	 * 
 	 * @return true if the thread hasn't been shutdown.
 	 */
 	private final boolean checkNotShutdown() {
@@ -408,6 +546,13 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#clone()
 	 */
+	/**
+	 * Clone.
+	 * 
+	 * @return the object
+	 * @throws CloneNotSupportedException
+	 *             the clone not supported exception
+	 */
 	@Override
 	final protected Object clone() throws CloneNotSupportedException {
 		return super.clone();
@@ -416,6 +561,13 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	/**
+	 * Compare to.
+	 * 
+	 * @param o
+	 *            the o
+	 * @return the int
 	 */
 	@Override
 	public final int compareTo(final Node<?, ?> o) {
@@ -427,6 +579,13 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectInput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
+	/**
+	 * Connect input.
+	 * 
+	 * @param thread
+	 *            the thread
+	 * @return true, if successful
 	 */
 	@Override
 	public final boolean connectInput(@NotNull final INode<?, K> thread) {
@@ -452,6 +611,13 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#connectOutput(de
 	 * .unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
+	/**
+	 * Connect output.
+	 * 
+	 * @param thread
+	 *            the thread
+	 * @return true, if successful
 	 */
 	@Override
 	public final boolean connectOutput(@NotNull final INode<V, ?> thread) {
@@ -479,6 +645,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#countStackFrames()
 	 */
+	/**
+	 * Count stack frames.
+	 * 
+	 * @return the int
+	 */
 	@SuppressWarnings ("deprecation")
 	@Override
 	final public int countStackFrames() {
@@ -488,6 +659,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#destroy()
+	 */
+	/**
+	 * Destroy.
 	 */
 	@SuppressWarnings ("deprecation")
 	@Override
@@ -499,6 +673,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectInput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
+	 */
+	/**
+	 * Disconnect input.
+	 * 
+	 * @param thread
+	 *            the thread
 	 */
 	@Override
 	public final void disconnectInput(@NotNull final INode<?, K> thread) {
@@ -524,6 +704,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#disconnectOutput
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
+	/**
+	 * Disconnect output.
+	 * 
+	 * @param thread
+	 *            the thread
+	 */
 	@Override
 	public final void disconnectOutput(@NotNull final INode<V, ?> thread) {
 		if (hasOutputConnector()) {
@@ -547,6 +733,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Object#finalize()
 	 */
+	/**
+	 * Finalize.
+	 * 
+	 * @throws Throwable
+	 *             the throwable
+	 */
 	@Override
 	final protected void finalize() throws Throwable {
 		super.finalize();
@@ -555,6 +747,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#finish()
+	 */
+	/**
+	 * Finish.
 	 */
 	@Override
 	public final synchronized void finish() {
@@ -590,14 +785,33 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#getContextClassLoader()
 	 */
+	/**
+	 * Gets the context class loader.
+	 * 
+	 * @return the context class loader
+	 */
 	@Override
 	final public ClassLoader getContextClassLoader() {
 		return super.getContextClassLoader();
 	}
 	
+	/**
+	 * Gets the event bus.
+	 * 
+	 * @return the event bus
+	 */
+	public EventBus getEventBus() {
+		return this.threadGroup.getToolchain().getEventBus();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getHandle()
+	 */
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	@Override
 	public final String getHandle() {
@@ -608,13 +822,19 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#getId()
 	 */
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
 	@Override
 	public long getId() {
 		return super.getId();
 	}
 	
 	/**
-	 * @param thread
+	 * Gets the input class type.
+	 * 
 	 * @return the type of the input chunks of the given thread
 	 */
 	public final Type getInputClassType() {
@@ -623,6 +843,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the input data.
+	 * 
 	 * @return the inputData
 	 */
 	public final K getInputData() {
@@ -669,6 +891,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the input hooks.
+	 * 
 	 * @return the inputHooks
 	 */
 	protected final Set<InputHook<K, V>> getInputHooks() {
@@ -679,6 +903,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#getInputStorage()
 	 */
+	/**
+	 * Gets the input storage.
+	 * 
+	 * @return the input storage
+	 */
 	@Override
 	public final AndamaDataStorage<K> getInputStorage() {
 		return this.inputStorage;
@@ -687,6 +916,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getInputThreads()
+	 */
+	/**
+	 * Gets the input threads.
+	 * 
+	 * @return the input threads
 	 */
 	@Override
 	public final Collection<INode<?, K>> getInputThreads() {
@@ -700,7 +934,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * @return
+	 * Gets the input type.
+	 * 
+	 * @return the input type
 	 */
 	@Override
 	public final Class<?> getInputType() {
@@ -712,7 +948,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * @param thread
+	 * Gets the output class type.
+	 * 
 	 * @return the type of the output chunks of the given thread
 	 */
 	public final Type getOutputClassType() {
@@ -723,6 +960,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the output data.
+	 * 
 	 * @return the outputData
 	 */
 	public final V getOutputData() {
@@ -730,6 +969,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the output hooks.
+	 * 
 	 * @return the outputHooks
 	 */
 	protected final Set<OutputHook<K, V>> getOutputHooks() {
@@ -739,6 +980,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.model.AndamaThreadable#getOutputThreads()
+	 */
+	/**
+	 * Gets the output threads.
+	 * 
+	 * @return the output threads
 	 */
 	@Override
 	public final Collection<INode<V, ?>> getOutputThreads() {
@@ -752,7 +998,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * @return
+	 * Gets the output type.
+	 * 
+	 * @return the output type
 	 */
 	@Override
 	public final Class<?> getOutputType() {
@@ -766,6 +1014,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the post execution hooks.
+	 * 
 	 * @return the postExecutionHooks
 	 */
 	protected final Set<PostExecutionHook<K, V>> getPostExecutionHooks() {
@@ -773,6 +1023,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the post input hooks.
+	 * 
 	 * @return the postInputHooks
 	 */
 	protected final Set<PostInputHook<K, V>> getPostInputHooks() {
@@ -780,6 +1032,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the post output hooks.
+	 * 
 	 * @return the postOutputHooks
 	 */
 	protected final Set<PostOutputHook<K, V>> getPostOutputHooks() {
@@ -787,6 +1041,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the post process hooks.
+	 * 
 	 * @return the postProcessHooks
 	 */
 	protected final Set<PostProcessHook<K, V>> getPostProcessHooks() {
@@ -794,6 +1050,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the pre execution hooks.
+	 * 
 	 * @return the preExecutionHooks
 	 */
 	protected final Set<PreExecutionHook<K, V>> getPreExecutionHooks() {
@@ -801,6 +1059,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the pre input hooks.
+	 * 
 	 * @return the preInputHooks
 	 */
 	protected final Set<PreInputHook<K, V>> getPreInputHooks() {
@@ -808,6 +1068,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the pre output hooks.
+	 * 
 	 * @return the preOutputHooks
 	 */
 	protected final Set<PreOutputHook<K, V>> getPreOutputHooks() {
@@ -815,6 +1077,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the pre process hooks.
+	 * 
 	 * @return the preProcessHooks
 	 */
 	protected final Set<PreProcessHook<K, V>> getPreProcessHooks() {
@@ -822,6 +1086,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the process hooks.
+	 * 
 	 * @return the processHooks
 	 */
 	protected final Set<ProcessHook<K, V>> getProcessHooks() {
@@ -829,6 +1095,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the process latches.
+	 * 
 	 * @return the processLatches
 	 */
 	protected final Set<CountDownLatch> getProcessLatches() {
@@ -836,6 +1104,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Gets the settings.
+	 * 
 	 * @return the settings
 	 */
 	protected final ISettings getSettings() {
@@ -846,6 +1116,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#getStackTrace()
 	 */
+	/**
+	 * Gets the stack trace.
+	 * 
+	 * @return the stack trace
+	 */
 	@Override
 	final public StackTraceElement[] getStackTrace() {
 		return super.getStackTrace();
@@ -855,11 +1130,21 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#getState()
 	 */
+	/**
+	 * Gets the state.
+	 * 
+	 * @return the state
+	 */
 	@Override
 	final public State getState() {
 		return super.getState();
 	}
 	
+	/**
+	 * Gets the thread id.
+	 * 
+	 * @return the thread id
+	 */
 	@Override
 	public Integer getThreadID() {
 		return this.threadID;
@@ -869,6 +1154,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#getUncaughtExceptionHandler()
 	 */
+	/**
+	 * Gets the uncaught exception handler.
+	 * 
+	 * @return the uncaught exception handler
+	 */
 	@Override
 	final public UncaughtExceptionHandler getUncaughtExceptionHandler() {
 		return super.getUncaughtExceptionHandler();
@@ -877,6 +1167,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
+	 */
+	/**
+	 * Hash code.
+	 * 
+	 * @return the int
 	 */
 	@Override
 	final public int hashCode() {
@@ -901,6 +1196,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#interrupt()
 	 */
+	/**
+	 * Interrupt.
+	 */
 	@Override
 	final public void interrupt() {
 		super.interrupt();
@@ -909,6 +1207,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected()
+	 */
+	/**
+	 * Checks if is input connected.
+	 * 
+	 * @return true, if is input connected
 	 */
 	@Override
 	public final boolean isInputConnected() {
@@ -920,6 +1223,13 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isInputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
+	/**
+	 * Checks if is input connected.
+	 * 
+	 * @param thread
+	 *            the thread
+	 * @return true, if is input connected
+	 */
 	@Override
 	public final boolean isInputConnected(final INode<?, K> thread) {
 		return this.inputThreads.contains(thread);
@@ -929,6 +1239,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#isInterrupted()
 	 */
+	/**
+	 * Checks if is interrupted.
+	 * 
+	 * @return true, if is interrupted
+	 */
 	@Override
 	final public boolean isInterrupted() {
 		return super.isInterrupted();
@@ -937,6 +1252,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected()
+	 */
+	/**
+	 * Checks if is output connected.
+	 * 
+	 * @return true, if is output connected
 	 */
 	@Override
 	public final boolean isOutputConnected() {
@@ -948,12 +1268,21 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#isOutputConnected
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread)
 	 */
+	/**
+	 * Checks if is output connected.
+	 * 
+	 * @param thread
+	 *            the thread
+	 * @return true, if is output connected
+	 */
 	@Override
 	public final boolean isOutputConnected(final INode<V, ?> thread) {
 		return (this.outputThreads.contains(thread));
 	}
 	
 	/**
+	 * Checks if is parallelizable.
+	 * 
 	 * @return the parallelizable
 	 */
 	public final boolean isParallelizable() {
@@ -961,6 +1290,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Checks if is shutdown.
+	 * 
 	 * @return true if {@link INode#shutdown()} has already been called on this object; false otherwise. The shutdown
 	 *         method can also be called internally, after an error occurred.
 	 */
@@ -969,6 +1300,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Checks if is skip data.
+	 * 
 	 * @return the skipData
 	 */
 	protected final boolean isSkipData() {
@@ -976,6 +1309,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Checks if is wait for latch.
+	 * 
 	 * @return the waitForLatch
 	 */
 	public boolean isWaitForLatch() {
@@ -983,29 +1318,39 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
-	 * @return
+	 * Processing completed.
+	 * 
+	 * @return true, if successful
 	 */
 	private final boolean processingCompleted() {
 		return Hook.allCompleted(getProcessHooks());
 	}
 	
 	/**
+	 * Read latch.
+	 * 
 	 * @return the next chunk from the inputStorage. Will be null if there isn't any input left and no writers are
 	 *         attached to the storage anymore.
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	private final Tuple<K, CountDownLatch> readLatch() throws InterruptedException {
 		return this.inputStorage.read();
 	}
 	
 	/**
-	 * @throws InterruptedException
+	 * Read next.
 	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	final void readNext() throws InterruptedException {
 		this.inputDataTuple = readLatch();
 	}
 	
+	/**
+	 * Run.
+	 */
 	@Override
 	public final void run() {
 		CollectionCondition.maxSize(this.inputHooks, 1, "There must not be more than 1 input hooks, but got: %s",
@@ -1419,6 +1764,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#setContextClassLoader(java.lang.ClassLoader)
 	 */
+	/**
+	 * Sets the context class loader.
+	 * 
+	 * @param cl
+	 *            the new context class loader
+	 */
 	@Override
 	final public void setContextClassLoader(final ClassLoader cl) {
 		super.setContextClassLoader(cl);
@@ -1429,6 +1780,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#setInputStorage
 	 * (de.unisaarland.cs.st.reposuite.RepoSuiteDataStorage)
 	 */
+	/**
+	 * Sets the input storage.
+	 * 
+	 * @param storage
+	 *            the new input storage
+	 */
 	@Override
 	public final void setInputStorage(@NotNull final AndamaDataStorage<K> storage) {
 		if (hasInputConnector()) {
@@ -1438,6 +1795,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Sets the output data.
+	 * 
 	 * @param outputData
 	 *            the outputData to set
 	 */
@@ -1450,12 +1809,15 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * proper shutdown.
 	 * 
 	 * @param shutdown
+	 *            the new shutdown
 	 */
 	private void setShutdown(final boolean shutdown) {
 		this.shutdown = shutdown;
 	}
 	
 	/**
+	 * Sets the skip data.
+	 * 
 	 * @param skipData
 	 *            the skipData to set
 	 */
@@ -1463,6 +1825,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 		this.skipData = skipData;
 	}
 	
+	/**
+	 * Sets the thread id.
+	 * 
+	 * @param threadID
+	 *            the new thread id
+	 */
 	private void setThreadID(final Integer threadID) {
 		this.threadID = threadID;
 	}
@@ -1470,6 +1838,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#setUncaughtExceptionHandler(java.lang.Thread. UncaughtExceptionHandler)
+	 */
+	/**
+	 * Sets the uncaught exception handler.
+	 * 
+	 * @param eh
+	 *            the new uncaught exception handler
 	 */
 	@Override
 	final public void setUncaughtExceptionHandler(final UncaughtExceptionHandler eh) {
@@ -1479,6 +1853,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.reposuite.RepoSuiteGeneralThread#shutdown()
+	 */
+	/**
+	 * Shutdown.
 	 */
 	@Override
 	public final synchronized void shutdown() {
@@ -1524,6 +1901,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#skipData()
 	 */
+	/**
+	 * Skip data.
+	 * 
+	 * @return true, if successful
+	 */
 	@Override
 	public boolean skipData() {
 		return this.skipData = true;
@@ -1533,6 +1915,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see java.lang.Thread#start()
 	 */
+	/**
+	 * Start.
+	 */
 	@Override
 	final public synchronized void start() {
 		super.start();
@@ -1541,6 +1926,11 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
+	 */
+	/**
+	 * To string.
+	 * 
+	 * @return the string
 	 */
 	@Override
 	public String toString() {
@@ -1577,6 +1967,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.threads.AndamaThreadable#waitFor(net.ownhero.dev .andama.threads.AndamaThread)
 	 */
+	/**
+	 * Wait for.
+	 * 
+	 * @param thread
+	 *            the thread
+	 */
 	@Override
 	public void waitFor(final Node<?, ?> thread) {
 		this.dependencies.put(thread, null);
@@ -1587,8 +1983,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * 
 	 * @param data
 	 *            a chunk of data, not null
-	 * @return
+	 * @return the collection
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	final Collection<CountDownLatch> write(final V data) throws InterruptedException {
 		Condition.notNull(data, "[write] `data` should not be null.");
@@ -1608,8 +2005,12 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	}
 	
 	/**
+	 * Write output data.
+	 * 
 	 * @param data
+	 *            the data
 	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	final void writeOutputData(final V data) throws InterruptedException {
 		this.outputLatches = write(data);

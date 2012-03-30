@@ -7,13 +7,18 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class DefaultInputHook.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class DefaultInputHook<K, V> extends InputHook<K, V> {
 	
 	/**
-	 * @param thread
+	 * Instantiates a new default input hook.
+	 *
+	 * @param thread the thread
 	 */
 	public DefaultInputHook(final Node<K, V> thread) {
 		super(thread);

@@ -4,24 +4,38 @@
 package net.ownhero.dev.andama.model;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.messages.EventBus;
+import net.ownhero.dev.andama.messages.IEventListener;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link Chain} is a wrapper to a tool chain consisting of {@link AndamaThread}s. It is used to extend
- * {@link Thread}s for parallel tasks.
  * 
+ * @param <T>
+ *            the generic type {@link Thread}s for parallel tasks.
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Chain<T extends Settings> extends Thread {
 	
-	private Pool    pool;
-	private final T settings;
-	private boolean shutdown;
+	/** The pool. */
+	private Pool           pool;
+	
+	/** The settings. */
+	private final T        settings;
+	
+	/** The shutdown. */
+	private boolean        shutdown;
+	
+	/** The event bus. */
+	private final EventBus eventBus = new EventBus();
 	
 	/**
+	 * Instantiates a new chain.
+	 * 
 	 * @param settings
+	 *            the settings
 	 */
 	public Chain(final T settings) {
 		this.settings = settings;
@@ -30,8 +44,12 @@ public abstract class Chain<T extends Settings> extends Thread {
 	}
 	
 	/**
+	 * Instantiates a new chain.
+	 * 
 	 * @param settings
+	 *            the settings
 	 * @param chainName
+	 *            the chain name
 	 */
 	public Chain(final T settings, final String chainName) {
 		this.settings = settings;
@@ -40,17 +58,45 @@ public abstract class Chain<T extends Settings> extends Thread {
 	}
 	
 	/**
-	 * @return
+	 * @return the eventBus
+	 */
+	public final EventBus getEventBus() {
+		// PRECONDITIONS
+		
+		try {
+			return this.eventBus;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.eventBus, "Field '%s' in '%s'.", "eventBus", getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * Gets the pool.
+	 * 
+	 * @return the pool
 	 */
 	public final Pool getPool() {
 		return this.pool;
 	}
 	
 	/**
-	 * @return
+	 * Gets the settings.
+	 * 
+	 * @return the settings
 	 */
 	public final T getSettings() {
 		return this.settings;
+	}
+	
+	/**
+	 * Register event listener.
+	 * 
+	 * @param listener
+	 *            the listener
+	 */
+	public void registerEventListener(final IEventListener listener) {
+		this.eventBus.addListener(listener);
 	}
 	
 	/*
@@ -72,7 +118,10 @@ public abstract class Chain<T extends Settings> extends Thread {
 	}
 	
 	/**
+	 * Sets the pool.
+	 * 
 	 * @param pool
+	 *            the new pool
 	 */
 	final void setPool(final Pool pool) {
 		this.pool = pool;
@@ -84,7 +133,7 @@ public abstract class Chain<T extends Settings> extends Thread {
 	public abstract void setup();
 	
 	/**
-	 * 
+	 * Shutdown.
 	 */
 	public final void shutdown() {
 		

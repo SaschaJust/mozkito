@@ -22,13 +22,15 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class Pool {
 	
+	/** The threads. */
 	private final Group threads;
 	
 	/**
+	 * Instantiates a new pool.
+	 *
+	 * @param name the name of the {@link Group}
+	 * @param toolchain the toolchain
 	 * {@link Pool} constructor. Initializes the {@link Group};
-	 * 
-	 * @param name
-	 *            the name of the {@link Group}
 	 */
 	public Pool(final String name, final Chain<?> toolchain) {
 		this.threads = new Group(name, toolchain);
@@ -36,7 +38,7 @@ public class Pool {
 	}
 	
 	/**
-	 * 
+	 * Connect threads.
 	 */
 	private void connectThreads() {
 		try {
@@ -91,6 +93,8 @@ public class Pool {
 	}
 	
 	/**
+	 * Gets the thread group.
+	 *
 	 * @return the inner thread group
 	 */
 	public Group getThreadGroup() {
@@ -98,7 +102,7 @@ public class Pool {
 	}
 	
 	/**
-	 * shuts down all threads
+	 * shuts down all threads.
 	 */
 	public void shutdown() {
 		

@@ -4,11 +4,19 @@
 package net.ownhero.dev.andama.threads;
 
 /**
+ * The Class PostExecutionHook.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class PostExecutionHook<K, V> extends Hook<K, V> {
 	
+	/**
+	 * Instantiates a new post execution hook.
+	 *
+	 * @param thread the thread
+	 */
 	public PostExecutionHook(final Node<K, V> thread) {
 		super(thread);
 	}
@@ -23,7 +31,7 @@ public abstract class PostExecutionHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * 
+	 * Post execution.
 	 */
 	public abstract void postExecution();
 	

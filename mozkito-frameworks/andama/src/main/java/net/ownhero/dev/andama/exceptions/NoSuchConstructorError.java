@@ -11,30 +11,42 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
+ * The Class NoSuchConstructorError.
+ *
  * @author just
- * 
  */
 public class NoSuchConstructorError extends UnrecoverableError {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8912323102598389733L;
+	
+	/** The default message. */
 	static private String     defaultMessage   = "";
+	
+	/** The arguments. */
 	private final Object[]    arguments;
+	
+	/** The clazz. */
 	private final Class<?>    clazz;
 	
 	/**
-	 * @param t
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new no such constructor error.
+	 *
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param arguments the arguments
 	 */
 	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Object... arguments) {
 		this(defaultMessage, cause, clazz, arguments);
 	}
 	
 	/**
-	 * @param message
-	 * @param t
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new no such constructor error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param arguments the arguments
 	 */
 	public NoSuchConstructorError(final String message, final NoSuchMethodException cause, final Class<?> clazz,
 	        final Object... arguments) {
@@ -97,14 +109,18 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @return
+	 * Gets the arguments.
+	 *
+	 * @return the arguments
 	 */
 	public Object[] getArguments() {
 		return this.arguments;
 	}
 	
 	/**
-	 * @return
+	 * Gets the clazz.
+	 *
+	 * @return the clazz
 	 */
 	public Class<?> getClazz() {
 		return this.clazz;

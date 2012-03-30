@@ -13,11 +13,20 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 
 /**
+ * The Class TextSource.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TextSource extends Source<String> {
 	
+	/**
+	 * Instantiates a new text source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
+	 * @param file the file
+	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final File file) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process File
@@ -25,6 +34,14 @@ public class TextSource extends Source<String> {
 		addHooks();
 	}
 	
+	/**
+	 * Instantiates a new text source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
+	 * @param stream the stream
+	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final InputStream stream) {
 		super(threadGroup, settings, parallelizable);
@@ -32,6 +49,14 @@ public class TextSource extends Source<String> {
 		addHooks();
 	}
 	
+	/**
+	 * Instantiates a new text source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
+	 * @param uri the uri
+	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URI uri) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URI
@@ -39,6 +64,14 @@ public class TextSource extends Source<String> {
 		addHooks();
 	}
 	
+	/**
+	 * Instantiates a new text source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
+	 * @param url the url
+	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URL url) {
 		super(threadGroup, settings, parallelizable);
 		// TODO process URL
@@ -46,13 +79,18 @@ public class TextSource extends Source<String> {
 		addHooks();
 	}
 	
+	/**
+	 * Adds the hooks.
+	 */
 	private void addHooks() {
 		
 	}
 	
 	/**
-	 * @param url
-	 * @return
+	 * Check availability.
+	 *
+	 * @param url the url
+	 * @return true, if successful
 	 */
 	@SuppressWarnings ("unused")
 	private boolean checkAvailability(final URL url) {

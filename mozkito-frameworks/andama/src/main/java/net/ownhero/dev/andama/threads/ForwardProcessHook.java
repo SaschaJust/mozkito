@@ -6,13 +6,17 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class ForwardProcessHook.
+ *
+ * @param <K> the key type
  * @author just
- * 
  */
 public class ForwardProcessHook<K> extends ProcessHook<K, K> {
 	
 	/**
-	 * @param thread
+	 * Instantiates a new forward process hook.
+	 *
+	 * @param thread the thread
 	 */
 	public ForwardProcessHook(final Node<K, K> thread) {
 		super(thread);

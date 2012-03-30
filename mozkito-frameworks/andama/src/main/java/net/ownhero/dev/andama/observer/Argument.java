@@ -13,13 +13,36 @@
 
 package net.ownhero.dev.andama.observer;
 
+/**
+ * The Class Argument.
+ */
 public abstract class Argument {
 	
+	/**
+	 * Checks if is required.
+	 *
+	 * @return true, if is required
+	 */
 	public abstract boolean isRequired();
 	
+	/**
+	 * Default value.
+	 *
+	 * @return the string
+	 */
 	public abstract String defaultValue();
 	
+	/**
+	 * Help string.
+	 *
+	 * @return the string
+	 */
 	public abstract String helpString();
 	
+	/**
+	 * Value.
+	 *
+	 * @return the string
+	 */
 	public abstract String value();
 }

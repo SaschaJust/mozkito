@@ -13,25 +13,29 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * The {@link Group} is an extension of the {@link ThreadGroup} and takes care on the internal management of
+ * The {@link Group} is an extension of the {@link ThreadGroup} and takes care on the internal management of.
+ *
  * {@link Node}s. The primary reasons for this class are the internal managed thread list and the uncaught exception
  * handling.
- * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Group extends ThreadGroup {
 	
+	/** The settings. */
 	private final Settings          settings;
+	
+	/** The threads. */
 	private final List<INode<?, ?>> threads = new LinkedList<INode<?, ?>>();
+	
+	/** The toolchain. */
 	private final Chain<?>          toolchain;
 	
 	/**
-	 * The only valid constructor of {@link Group}
-	 * 
-	 * @param name
-	 *            the name of the thread group. In general, this should be the simple class name of the calling tool
-	 *            chain.
+	 * The only valid constructor of {@link Group}.
+	 *
+	 * @param name the name of the thread group. In general, this should be the simple class name of the calling tool
+	 * chain.
+	 * @param toolchain the toolchain
 	 */
 	public Group(final String name, final Chain<?> toolchain) {
 		super(name);
@@ -42,9 +46,9 @@ public class Group extends ThreadGroup {
 	
 	/**
 	 * Adds a new {@link Node} to the managed thread group.
-	 * 
-	 * @param thread
-	 *            the {@link Node} that shall be managed.
+	 *
+	 * @param thread the {@link Node} that shall be managed.
+	 * @return the integer
 	 */
 	public Integer addThread(final Node<?, ?> thread) {
 		if (getThreads().add(thread)) {
@@ -56,7 +60,9 @@ public class Group extends ThreadGroup {
 	}
 	
 	/**
-	 * @return
+	 * Gets the repo suite settings.
+	 *
+	 * @return the repo suite settings
 	 */
 	protected String getRepoSuiteSettings() {
 		return this.settings.toString();
@@ -72,6 +78,8 @@ public class Group extends ThreadGroup {
 	}
 	
 	/**
+	 * Gets the toolchain.
+	 *
 	 * @return the toolchain
 	 */
 	public final Chain<?> getToolchain() {
@@ -79,7 +87,9 @@ public class Group extends ThreadGroup {
 	}
 	
 	/**
-	 * @return
+	 * Gets the tool information.
+	 *
+	 * @return the tool information
 	 */
 	protected String getToolInformation() {
 		return this.settings.getInformation();

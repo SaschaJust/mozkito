@@ -6,13 +6,19 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
+ * The Class Demultiplexer.
+ *
+ * @param <K> the key type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Demultiplexer<K> extends Node<K, K> {
 	
 	/**
-	 * 
+	 * Instantiates a new demultiplexer.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
 	 */
 	public Demultiplexer(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);

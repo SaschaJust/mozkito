@@ -6,15 +6,19 @@ package net.ownhero.dev.andama.threads;
 import net.ownhero.dev.hiari.settings.ISettings;
 
 /**
+ * The Class Multiplexer.
+ *
+ * @param <K> the key type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Multiplexer<K> extends Node<K, K> {
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
+	 * Instantiates a new multiplexer.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param parallelizable the parallelizable
 	 */
 	public Multiplexer(final Group threadGroup, final ISettings settings, final boolean parallelizable) {
 		super(threadGroup, settings, parallelizable);

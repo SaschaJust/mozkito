@@ -24,70 +24,92 @@ import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
+
 /**
+ * The Class ClassLoadingError.
+ *
  * @author just
- * 
  */
 public class ClassLoadingError extends UnrecoverableError {
 	
+	/** The class path. */
 	private final String      classPath;
+	
+	/** The class name. */
 	private final String      className;
+	
+	/** The default message. */
 	static private String     defaultMessage   = "";
+	
+	/** The Constant suggestionCount. */
 	static final private int  suggestionCount  = 5;
+	
+	/** The Constant contextSize. */
 	static final private int  contextSize      = 3;
-	/**
-     * 
-     */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6022478069512988369L;
 	
 	/**
-	 * @param cause
-	 * @param className
+	 * Instantiates a new class loading error.
+	 *
+	 * @param cause the cause
+	 * @param className the class name
 	 */
 	public ClassLoadingError(final ClassNotFoundException cause, final String className) {
 		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
 	}
 	
 	/**
-	 * @param cause
-	 * @param className
-	 * @param classPath
+	 * Instantiates a new class loading error.
+	 *
+	 * @param cause the cause
+	 * @param className the class name
+	 * @param classPath the class path
 	 */
 	public ClassLoadingError(final ClassNotFoundException cause, final String className, final String classPath) {
 		this(defaultMessage, cause, className, classPath);
 	}
 	
 	/**
-	 * @param cause
-	 * @param className
+	 * Instantiates a new class loading error.
+	 *
+	 * @param cause the cause
+	 * @param className the class name
 	 */
 	public ClassLoadingError(final LinkageError cause, final String className) {
 		this(defaultMessage, cause, className, System.getProperty("java.class.path"));
 	}
 	
 	/**
-	 * @param cause
-	 * @param className
-	 * @param classPath
+	 * Instantiates a new class loading error.
+	 *
+	 * @param cause the cause
+	 * @param className the class name
+	 * @param classPath the class path
 	 */
 	public ClassLoadingError(final LinkageError cause, final String className, final String classPath) {
 		this(defaultMessage, cause, className, classPath);
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param className
+	 * Instantiates a new class loading error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param className the class name
 	 */
 	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className) {
 		this(message, cause, className, System.getProperty("java.class.path"));
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param className
-	 * @param classPath
+	 * Instantiates a new class loading error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param className the class name
+	 * @param classPath the class path
 	 */
 	public ClassLoadingError(final String message, final ClassNotFoundException cause, final String className,
 	        final String classPath) {
@@ -97,19 +119,23 @@ public class ClassLoadingError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param className
+	 * Instantiates a new class loading error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param className the class name
 	 */
 	public ClassLoadingError(final String message, final LinkageError cause, final String className) {
 		this(message, cause, className, System.getProperty("java.class.path"));
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param className
-	 * @param classPath
+	 * Instantiates a new class loading error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param className the class name
+	 * @param classPath the class path
 	 */
 	public ClassLoadingError(final String message, final LinkageError cause, final String className,
 	        final String classPath) {
@@ -283,14 +309,18 @@ public class ClassLoadingError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @return
+	 * Gets the class name.
+	 *
+	 * @return the class name
 	 */
 	public final String getClassName() {
 		return this.className;
 	}
 	
 	/**
-	 * @return
+	 * Gets the class path.
+	 *
+	 * @return the class path
 	 */
 	public final String getClassPath() {
 		return this.classPath;
