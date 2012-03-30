@@ -16,6 +16,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.ownhero.dev.kisa.Logger;
+
 /**
  * The Class Messages.
  * 
@@ -24,10 +26,10 @@ import java.util.ResourceBundle;
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String         BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.mapping.engines";       //$NON-NLS-1$
-	                                                                                                             
+	private static final String   BUNDLE_NAME     = "de.unisaarland.cs.st.moskito.mapping.engines"; //$NON-NLS-1$
+	                                                                                                
 	/** The Constant RESOURCE_BUNDLE. */
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, Locale.GERMANY);
+	private static ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
 	/**
 	 * Gets the string.
@@ -41,6 +43,25 @@ public class Messages {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (final MissingResourceException e) {
 			return '!' + key + '!';
+		}
+	}
+	
+	/**
+	 * Load bundle.
+	 * 
+	 * @return the resource bundle
+	 */
+	private static ResourceBundle loadBundle() {
+		final Locale locale = Locale.getDefault();
+		try {
+			return ResourceBundle.getBundle(BUNDLE_NAME, locale);
+		} catch (final MissingResourceException e) {
+			if (Logger.logWarn()) {
+				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.",
+				                          locale));
+			}
+			
+			return ResourceBundle.getBundle(BUNDLE_NAME);
 		}
 	}
 	

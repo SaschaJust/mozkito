@@ -192,16 +192,16 @@ public abstract class MappingEngine extends Node {
 	}
 	
 	/** The Constant defaultNegative. */
-	private static final String defaultNegative = "-1";                                       //$NON-NLS-1$
+	private static final String DEFAULT_NEGATIVE = "-1";                                       //$NON-NLS-1$
 	                                                                                           
 	/** The Constant defaultPositive. */
-	private static final String defaultPositive = "1";                                        //$NON-NLS-1$
+	private static final String DEFAULT_POSITIVE = "1";                                        //$NON-NLS-1$
 	                                                                                           
 	/** The Constant unknown. */
-	private static final String unknown         = Messages.getString("MappingEngine.unknown"); //$NON-NLS-1$
+	private static final String UNKNOWN         = Messages.getString("MappingEngine.unknown"); //$NON-NLS-1$
 	                                                                                           
 	/** The Constant unused. */
-	private static final String unused          = Messages.getString("MappingEngine.unused"); //$NON-NLS-1$
+	private static final String UNUSED          = Messages.getString("MappingEngine.unused"); //$NON-NLS-1$
 	                                                                                           
 	/**
 	 * Gets the default negative.
@@ -209,7 +209,7 @@ public abstract class MappingEngine extends Node {
 	 * @return the defaultNegative
 	 */
 	public static String getDefaultNegative() {
-		return defaultNegative;
+		return DEFAULT_NEGATIVE;
 	}
 	
 	/**
@@ -218,7 +218,7 @@ public abstract class MappingEngine extends Node {
 	 * @return the defaultPositive
 	 */
 	public static String getDefaultPositive() {
-		return defaultPositive;
+		return DEFAULT_POSITIVE;
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public abstract class MappingEngine extends Node {
 	 * @return the unknown
 	 */
 	public static String getUnknown() {
-		return unknown;
+		return UNKNOWN;
 	}
 	
 	/**
@@ -236,7 +236,7 @@ public abstract class MappingEngine extends Node {
 	 * @return the unused
 	 */
 	public static String getUnused() {
-		return unused;
+		return UNUSED;
 	}
 	
 	/** The settings. */
@@ -278,26 +278,26 @@ public abstract class MappingEngine extends Node {
 	                             final Object toSubstring) {
 		score.addFeature(confidence, truncate(fromFieldName != null
 		                                                           ? fromFieldName
-		                                                           : unused),
+		                                                           : UNUSED),
 		                 truncate(fromFieldContent != null
 		                                                  ? fromFieldContent.toString()
-		                                                  : unknown),
+		                                                  : UNKNOWN),
 		                 truncate(fromSubstring != null
 		                                               ? fromSubstring.toString()
 		                                               : truncate(fromFieldContent != null
 		                                                                                  ? fromFieldContent.toString()
-		                                                                                  : unknown)),
+		                                                                                  : UNKNOWN)),
 		                 truncate(toFieldName != null
 		                                             ? toFieldName
-		                                             : unused),
+		                                             : UNUSED),
 		                 truncate(toFieldContent != null
 		                                                ? toFieldContent.toString()
-		                                                : unknown),
+		                                                : UNKNOWN),
 		                 truncate(toSubstring != null
 		                                             ? toSubstring.toString()
 		                                             : truncate(toFieldContent != null
 		                                                                              ? toFieldContent.toString()
-		                                                                              : unknown)), getClass());
+		                                                                              : UNKNOWN)), getClass());
 	}
 	
 	/**
