@@ -181,14 +181,12 @@ public class GoogleTracker extends Tracker {
 	                  final String projectName,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		this.projectName = projectName;
-		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
-		if (proxyConfig != null) {
-			// TODO support PROXYs
-			if (Logger.logWarn()) {
-				Logger.warn("HTTP proxy not yet supported.");
-			}
-		}
+		// This should suffice as stated on gdata documents: http://code.google.com/apis/gdata/articles/proxy_setup.html
+		System.setProperty("http.proxyHost", proxyConfig.getHost());
+		System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
+		
+		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
 		try {
 			if ((getUsername() != null) && (getPassword() != null) && (!getUsername().trim().equals(""))) {

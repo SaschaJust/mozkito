@@ -32,6 +32,7 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
+import com.sun.jersey.client.apache.config.ApacheHttpClientConfig;
 import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
@@ -140,10 +141,18 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
 		
 		if (proxyConfig != null) {
-			// TODO support PROXYs
-			// cc.getProperties().put(DefaultApacheHttpClientConfig.PROPERTY_PROXY_URI,"proxy.ergogroup.no:3128");
+			// support PROXYs: Atlassian has to enable support first final or we have final to extend the
+			// JIRA version
+			cc.getProperties().put(ApacheHttpClientConfig.PROPERTY_PROXY_URI,
+			                       String.format("%s:%s", proxyConfig.getHost(), proxyConfig.getPort()));
+			if (proxyConfig.getUsername() != null) {
+				cc.getState().setProxyCredentials("Squid", proxyConfig.getHost(), proxyConfig.getPort(),
+				                                  proxyConfig.getUsername(), proxyConfig.getPassword());
+			}
+			System.setProperty("http.proxyHost", proxyConfig.getHost());
+			System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
 			if (Logger.logWarn()) {
-				Logger.warn("HTTP proxy not yet supported.");
+				Logger.warn("JIRA REST API does not support proxy usage yet. It's a missing feature from Atlassian. Configured proxy use but will most likely be ignored.");
 			}
 		}
 		

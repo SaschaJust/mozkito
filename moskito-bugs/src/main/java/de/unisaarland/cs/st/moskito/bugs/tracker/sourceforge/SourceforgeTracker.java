@@ -21,7 +21,6 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -44,6 +43,24 @@ public class SourceforgeTracker extends Tracker {
 	
 	/** The bug type. */
 	private Type bugType;
+	
+	/**
+	 * Gets the at id.
+	 * 
+	 * @return the at id
+	 */
+	public Long getAtId() {
+		return this.atId;
+	}
+	
+	/**
+	 * Gets the group id.
+	 * 
+	 * @return the group id
+	 */
+	public Long getGroupId() {
+		return this.groupId;
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -69,7 +86,7 @@ public class SourceforgeTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			final SourceforgeOverviewParser overviewParser = new SourceforgeOverviewParser(this.atId, this.groupId);
+			final SourceforgeOverviewParser overviewParser = new SourceforgeOverviewParser(this);
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError(
 				                             "Could not parse sourceforge overview to extract report IDs. See earlier errors.");
@@ -95,6 +112,8 @@ public class SourceforgeTracker extends Tracker {
 	 *            the at id
 	 * @param bugType
 	 *            the bug type
+	 * @param proxyConfig
+	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
@@ -109,13 +128,5 @@ public class SourceforgeTracker extends Tracker {
 		this.atId = atId;
 		this.bugType = bugType;
 		super.setup(fetchURI, username, password, proxyConfig);
-		
-		if (proxyConfig != null) {
-			// TODO support proxy
-			if (Logger.logWarn()) {
-				Logger.warn("HTTP proxy not supported yet.");
-			}
-		}
-		
 	}
 }

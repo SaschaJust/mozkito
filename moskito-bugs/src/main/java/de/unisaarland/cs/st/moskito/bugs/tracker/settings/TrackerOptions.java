@@ -155,7 +155,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 					return googleArgumentSet.getValue();
 				default:
 					throw new UnrecoverableError(
-					                             String.format(Messages.getString("TrackerOptions.unhandled_type_message"), trackerTypeArgument.getTag(), //$NON-NLS-1$
+					                             String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
 					                                           trackerTypeArgument.getValue()));
 			}
 		} catch (final SettingsParseError e) {

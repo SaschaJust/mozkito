@@ -18,7 +18,6 @@ import java.util.Collection;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -57,7 +56,7 @@ public class MantisTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			final MantisOverviewParser overviewParser = new MantisOverviewParser(getUri().toASCIIString());
+			final MantisOverviewParser overviewParser = new MantisOverviewParser(this);
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse overview to extract bug report IDs. See earlier error.");
 			}
@@ -77,12 +76,10 @@ public class MantisTracker extends Tracker {
 	                  final String password,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		super.setup(fetchURI, username, password, proxyConfig);
-		if (proxyConfig != null) {
-			// TODO support http proxy
-			if (Logger.logWarn()) {
-				Logger.warn("HTTP proxy not yet supported.");
-			}
-		}
+	}
+	
+	protected void setUri(final URI uri) {
+		this.trackerURI = uri;
 	}
 	
 }

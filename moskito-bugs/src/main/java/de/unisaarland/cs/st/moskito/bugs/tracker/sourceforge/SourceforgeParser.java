@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
@@ -66,7 +63,7 @@ public class SourceforgeParser implements Parser {
 	
 	/**
 	 * The Class AttachmentHistoryEntry.
-	 *
+	 * 
 	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
 	 */
 	private class AttachmentHistoryEntry {
@@ -79,9 +76,11 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Instantiates a new attachment history entry.
-		 *
-		 * @param author the author
-		 * @param timestamp the timestamp
+		 * 
+		 * @param author
+		 *            the author
+		 * @param timestamp
+		 *            the timestamp
 		 */
 		public AttachmentHistoryEntry(final Person author, final DateTime timestamp) {
 			this.author = author;
@@ -90,7 +89,7 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Gets the author.
-		 *
+		 * 
 		 * @return the author
 		 */
 		public Person getAuthor() {
@@ -99,7 +98,7 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Gets the timestamp.
-		 *
+		 * 
 		 * @return the timestamp
 		 */
 		public DateTime getTimestamp() {
@@ -282,8 +281,9 @@ public class SourceforgeParser implements Parser {
 	
 	/**
 	 * Instantiates a new sourceforge parser.
-	 *
-	 * @param bugType the bug type
+	 * 
+	 * @param bugType
+	 *            the bug type
 	 */
 	public SourceforgeParser(final Type bugType) {
 		this.bugType = bugType;
@@ -998,7 +998,13 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final RawContent rawContent = IOUtils.fetch(reportLink.getUri());
+			RawContent rawContent = null;
+			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
+				rawContent = IOUtils.fetch(reportLink.getUri(), this.tracker.getProxyConfig());
+			} else {
+				rawContent = IOUtils.fetch(reportLink.getUri());
+			}
+			
 			this.fetchTime = new DateTime();
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Elements errorElements = document.getElementsByClass("error");

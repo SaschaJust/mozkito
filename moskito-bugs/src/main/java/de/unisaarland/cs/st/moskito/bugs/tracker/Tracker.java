@@ -200,17 +200,17 @@ public abstract class Tracker {
 	public final Report parse(final ReportLink reportLink) {
 		final Parser parser = getParser();
 		if (parser == null) {
-			throw new UnrecoverableError(Messages.getString("Tracker.parser_load_error")); //$NON-NLS-1$
+			throw new UnrecoverableError(Messages.getString("Tracker.load_report_error")); //$NON-NLS-1$
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info(Messages.getString("Tracker.parsing_info"), reportLink.toString()); //$NON-NLS-1$
+			Logger.info("Parsing issue report %s ... ", reportLink.getBugId()); //$NON-NLS-1$
 		}
 		
 		parser.setTracker(this);
 		if (!parser.setURI(reportLink)) {
 			if (Logger.logWarn()) {
-				Logger.warn(Messages.getString("Tracker.parsing_error"), reportLink.toString()); //$NON-NLS-1$
+				Logger.warn("Could not parse report %s. See earlier error messages.", reportLink.toString()); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -291,7 +291,8 @@ public abstract class Tracker {
 	                  final String username,
 	                  final String password,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
-		Condition.check((username == null) == (password == null), Messages.getString("Tracker.user_passwd_noteq"), //$NON-NLS-1$
+		Condition.check((username == null) == (password == null),
+		                "Either username and password are set or none at all. username = `%s`, password = `%s`", //$NON-NLS-1$
 		                username, password);
 		
 		this.trackerURI = fetchURI;

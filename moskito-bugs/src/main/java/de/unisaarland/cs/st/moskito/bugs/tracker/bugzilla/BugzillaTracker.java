@@ -105,7 +105,8 @@ public class BugzillaTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI);
+			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI,
+			                                                                         getProxyConfig());
 			if (!overviewParser.parseOverview()) {
 				if (Logger.logError()) {
 					Logger.error("Could not parse overview URI. See earlier errors.");
