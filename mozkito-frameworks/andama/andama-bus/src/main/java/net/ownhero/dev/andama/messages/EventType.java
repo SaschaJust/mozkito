@@ -24,6 +24,8 @@ public enum EventType {
 	ERROR,
 	/** The NOTIFICATION. */
 	NOTIFICATION,
+	/** The RESULT. */
+	RESULT,
 	/** The SHUTDOWN. */
 	SHUTDOWN,
 	/** The STARTUP. */

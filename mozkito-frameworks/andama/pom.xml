@@ -5,15 +5,16 @@
 	<artifactId>andama</artifactId>
 	<name>andama</name>
 	<version>0.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<description>Toolchain to process data in a flow model.</description>
-	<url>http://www.st.cs.uni-saarland.de/</url>
+	<url>https://dev,own-hero.net/</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
 		<developer>
 			<id>just</id>
 			<name>Sascha Just</name>
 			<email>sascha.just@own-hero.net</email>
-			<url>http://www.own-hero.net/sascha.just</url>
+			<url>https://www.own-hero.net/sascha.just</url>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -22,19 +23,25 @@
 	</developers>
 	<licenses>
 		<license>
-			<name>Eclipse Public License (EPL)</name>
-			<url>http://www.opensource.org/licenses/eclipse-1.0.txt</url>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>manual</distribution>
 		</license>
 	</licenses>
 	<organization>
 		<name>dev//own-hero.net</name>
-		<url>http://dev.own-hero.net/</url>
+		<url>https://dev.own-hero.net/</url>
 	</organization>
+	<modules>
+		<module>andama-bus</module>
+		<module>andama-core</module>
+		<module>andama-eventhandlers</module>
+		<module>andama-cli</module>
+	</modules>
 	<distributionManagement>
 		<repository>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
@@ -134,28 +141,12 @@
 	</build>
 	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
 			<url>https://nexus.own-hero.net/content/groups/public</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
 			<id>dev.own-hero.net</id>
 			<name>Dev//own-hero.net</name>
 			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
@@ -176,14 +167,6 @@
 			<layout>default</layout>
 		</repository>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
 			<id>own-hero.net</id>
 			<name>own-hero.net local Repositories</name>
 			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
@@ -208,11 +191,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
@@ -253,11 +231,6 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-spellchecker</artifactId>
-			<version>3.5.0</version>
 		</dependency>
 	</dependencies>
 	<properties>

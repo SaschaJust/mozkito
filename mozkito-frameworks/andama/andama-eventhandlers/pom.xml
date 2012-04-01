@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>net.ownhero.dev</groupId>
+		<artifactId>andama</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
+	<modules>
+		<module>andama-eventhandler-email</module>
+		<module>andama-eventhandler-irc</module>
+		<module>andama-eventhandler-log</module>
+		<module>andama-eventhandler-xmpp</module>
+	</modules>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.ownhero.dev</groupId>
+	<artifactId>andama-eventhandlers</artifactId>
+	<name>andama-eventhandlers</name>
+	<version>0.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<description>Toolchain to process data in a flow model.</description>
+	<dependencies>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>andama-bus</artifactId>
+			<version>0.3-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>

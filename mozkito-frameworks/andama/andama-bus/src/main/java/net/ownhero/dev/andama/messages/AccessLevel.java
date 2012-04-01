@@ -18,11 +18,12 @@ package net.ownhero.dev.andama.messages;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public enum AccessLevel {
-	
-	/** The PUBLIC. */
-	PUBLIC,
+	/** The COMMUNITY. */
+	COMMUNITY,
+	/** The CONDIFIDENTIAL. */
+	CONDIFIDENTIAL,
 	/** The INTERNAL. */
 	INTERNAL,
-	/** The CONDIFIDENTIAL. */
-	CONDIFIDENTIAL;
+	/** The PUBLIC. */
+	PUBLIC;
 }
