@@ -597,7 +597,7 @@ public class FileUtils {
 			
 			@Override
 			public boolean accept(final File dir,
-			                      @SuppressWarnings ("hiding") final String name) {
+			                      final String name) {
 				return false;
 			}
 		});

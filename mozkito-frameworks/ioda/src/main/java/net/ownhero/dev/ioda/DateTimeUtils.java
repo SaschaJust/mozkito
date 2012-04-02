@@ -4,13 +4,13 @@
 package net.ownhero.dev.ioda;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -186,21 +186,20 @@ public class DateTimeUtils {
 		// Condition.greaterOrEqual(dateTimeString.length(),
 		// "yyyy-MM-dd HH:mm".length());
 		
-		List<RegexGroup> find;
+		Match find;
 		DateTime d = null;
 		
 		if ((find = pattern.find(dateTimeString)) != null) {
 			// with time zone abbreviation
 			if (Logger.logTrace()) {
-				Logger.trace("Parsing date `" + find.get(0).getMatch() + "` with: "
-				        + JavaUtils.collectionToString(find));
+				Logger.trace("Parsing date `" + find.get(0).getMatch() + "` with: " + find);
 			}
-			StringBuilder patternBuilder = new StringBuilder();
-			StringBuilder dateBuilder = new StringBuilder();
-			for (RegexGroup group : find) {
+			final StringBuilder patternBuilder = new StringBuilder();
+			final StringBuilder dateBuilder = new StringBuilder();
+			for (final RegexGroup group : find) {
 				if (!group.getName().equals("") && (group.getMatch() != null)) {
 					if (group.getName().equals("z")) {
-						String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(group.getMatch().trim());
+						final String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(group.getMatch().trim());
 						patternBuilder.append("Z");
 						dateBuilder.append(offset);
 					} else {
@@ -217,7 +216,7 @@ public class DateTimeUtils {
 				        + patternBuilder.toString());
 			}
 			
-			DateTimeFormatter dtf = DateTimeFormat.forPattern(patternBuilder.toString());
+			final DateTimeFormatter dtf = DateTimeFormat.forPattern(patternBuilder.toString());
 			d = dtf.parseDateTime(dateBuilder.toString());
 		}
 		
