@@ -13,6 +13,7 @@
 package net.ownhero.dev.regex;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -128,14 +129,53 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.regex.IMatch#getNumberOfGroups()
+	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public int getNumberOfGroups() {
+	public Iterator<RegexGroup> iterator() {
 		// PRECONDITIONS
-		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		return this.map.size();
+		try {
+			return new Iterator<RegexGroup>() {
+				
+				private final Iterator<RegexGroup> it = MatchImpl.this.map.values().iterator();
+				
+				@Override
+				public boolean hasNext() {
+					// PRECONDITIONS
+					
+					try {
+						return this.it.hasNext();
+					} finally {
+						// POSTCONDITIONS
+					}
+				}
+				
+				@Override
+				public RegexGroup next() {
+					// PRECONDITIONS
+					
+					try {
+						return this.it.next();
+					} finally {
+						// POSTCONDITIONS
+					}
+				}
+				
+				@Override
+				public void remove() {
+					// PRECONDITIONS
+					
+					try {
+						throw new UnsupportedOperationException();
+					} finally {
+						// POSTCONDITIONS
+					}
+				}
+			};
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

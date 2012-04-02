@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public interface Match {
+public interface Match extends Iterable<RegexGroup> {
 	
 	RegexGroup get(final int id);
 	
@@ -27,8 +27,6 @@ public interface Match {
 	Set<String> getGroupNames();
 	
 	RegexGroup[] getGroups();
-	
-	int getNumberOfGroups();
 	
 	int size();
 }
