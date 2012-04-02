@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
@@ -28,6 +25,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -41,7 +39,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
 /**
  * The Class MantisOverviewParser.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class MantisOverviewParser implements OverviewParser {
@@ -60,8 +58,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new mantis overview parser.
-	 *
-	 * @param trackerUri the tracker uri
+	 * 
+	 * @param trackerUri
+	 *            the tracker uri
 	 */
 	public MantisOverviewParser(final String trackerUri) {
 		this.trackerUri = trackerUri;
@@ -69,8 +68,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Determine num pages.
-	 *
-	 * @param uri the uri
+	 * 
+	 * @param uri
+	 *            the uri
 	 * @return the int
 	 */
 	protected int determineNumPages(final URI uri) {
@@ -108,7 +108,7 @@ public class MantisOverviewParser implements OverviewParser {
 			
 			final Element lastATag = aTags.get(aTags.size() - 1);
 			final String href = lastATag.attr("href");
-			final List<RegexGroup> regexGroups = this.pageRegex.find(href);
+			final Match regexGroups = this.pageRegex.find(href);
 			for (final RegexGroup regexGroup : regexGroups) {
 				if ((regexGroup.getName() != null) && (regexGroup.getName().equals("page_number"))) {
 					return Integer.valueOf(regexGroup.getMatch());
@@ -129,8 +129,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Gets the link from id.
-	 *
-	 * @param bugId the bug id
+	 * 
+	 * @param bugId
+	 *            the bug id
 	 * @return the link from id
 	 */
 	public ReportLink getLinkFromId(final String bugId) {
@@ -151,7 +152,8 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#getReportLinks()
 	 */
 	@Override
@@ -167,8 +169,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Handle page.
-	 *
-	 * @param pageUri the page uri
+	 * 
+	 * @param pageUri
+	 *            the page uri
 	 * @return the list
 	 */
 	protected List<ReportLink> handlePage(final URI pageUri) {
@@ -199,7 +202,7 @@ public class MantisOverviewParser implements OverviewParser {
 				}
 				for (final Element aTag : aTags) {
 					final String href = aTag.attr("href").trim();
-					final List<RegexGroup> find = this.reportRegex.find(href);
+					final Match find = this.reportRegex.find(href);
 					if ((find == null) || (find.isEmpty())) {
 						continue;
 					}
@@ -233,7 +236,8 @@ public class MantisOverviewParser implements OverviewParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
 	 */
 	@Override

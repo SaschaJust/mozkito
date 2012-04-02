@@ -26,6 +26,8 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -86,7 +88,7 @@ public class MantisParserTest {
 		final String url = "https://issues.openbravo.com/file_download.php?file_id=5008&amp;type=bug";
 		final MantisParser mantisParser = new MantisParser();
 		final Regex idRegex = mantisParser.getAttachmentIdRegex();
-		final List<List<RegexGroup>> findAll = idRegex.findAll(url);
+		final MultiMatch findAll = idRegex.findAll(url);
 		assertEquals(1, findAll.size());
 		assertEquals(1, findAll.get(0).size());
 		assertEquals("FILE_ID", findAll.get(0).get(0).getName());
@@ -101,11 +103,11 @@ public class MantisParserTest {
 		final String s = "Selection_031.png (37,363) 2012-02-20 10:39 https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug  test.html (1,073) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5010&type=bug";
 		final MantisParser mantisParser = new MantisParser();
 		final Regex regex = mantisParser.getAttachmentRegex();
-		final List<List<RegexGroup>> findAll = regex.findAll(s);
+		final MultiMatch findAll = regex.findAll(s);
 		assert (findAll != null);
 		assertEquals(3, findAll.size());
 		for (int i = 0; i < 3; ++i) {
-			final List<RegexGroup> list = findAll.get(i);
+			final Match list = findAll.get(i);
 			assertEquals(4, list.size());
 			for (int j = 0; j < 4; ++j) {
 				final RegexGroup regexGroup = list.get(j);

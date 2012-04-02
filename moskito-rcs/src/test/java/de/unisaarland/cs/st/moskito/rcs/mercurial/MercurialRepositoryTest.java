@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -39,8 +39,8 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testFixedDateTimeZone() {
-		int offset = 25200;
-		DateTimeZone timeZone = DateTimeZone.forOffsetMillis(offset * 1000);
+		final int offset = 25200;
+		final DateTimeZone timeZone = DateTimeZone.forOffsetMillis(offset * 1000);
 		assertEquals("+07:00", timeZone.toString());
 	}
 	
@@ -50,8 +50,8 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testFormerPathRegex() {
-		String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
-		List<RegexGroup> found = MercurialRepository.formerPathRegex.find(line);
+		final String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
+		final Match found = MercurialRepository.formerPathRegex.find(line);
 		assertTrue(MercurialRepository.formerPathRegex.matches(line));
 		assertEquals(2, found.size());
 		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
@@ -65,7 +65,7 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	@DatabaseSettings (unit = "rcs")
 	public void testPlaineName() {
 		Regex.analyzePattern(MercurialRepository.authorRegex.getPattern());
-		List<RegexGroup> found = MercurialRepository.authorRegex.find("just");
+		final Match found = MercurialRepository.authorRegex.find("just");
 		assertTrue(found.size() > 0);
 		assertTrue(MercurialRepository.authorRegex.getGroup("plain") != null);
 		assertEquals("just", MercurialRepository.authorRegex.getGroup("plain"));
@@ -110,8 +110,8 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testReplaceLineBreaks() {
-		String s = "hubba<br/>hubba<br/>hopp";
-		String newS = s.replaceAll("<br/>", FileUtils.lineSeparator);
+		final String s = "hubba<br/>hubba<br/>hopp";
+		final String newS = s.replaceAll("<br/>", FileUtils.lineSeparator);
 		assertEquals("hubba" + FileUtils.lineSeparator + "hubba" + FileUtils.lineSeparator + "hopp", newS);
 	}
 	
@@ -121,7 +121,7 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testSaschasMegaRegExp() {
-		List<String> lines = new ArrayList<String>();
+		final List<String> lines = new ArrayList<String>();
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <?xml version=\"1.0\"?>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<parent>");
@@ -136,10 +136,10 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<name>reposuite-fixindchanges</name>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: </project>");
 		
-		Regex regex = MercurialRepository.regex;
+		final Regex regex = MercurialRepository.regex;
 		
 		int lineCounter = 0;
-		for (String s : lines) {
+		for (final String s : lines) {
 			++lineCounter;
 			
 			assertTrue(regex.matchesFull(s));

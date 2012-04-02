@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -70,7 +72,7 @@ public class RegexTest {
 		final String email = "elharo@test-domain.de";
 		
 		final Regex regex = new Regex("({email}" + Regex.emailPattern + ")");
-		List<RegexGroup> find = regex.find(anonEmail);
+		Match find = regex.find(anonEmail);
 		assertTrue(find.size() > 1);
 		assertEquals("elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5", find.get(1).getMatch());
 		find = regex.find(email);
@@ -85,7 +87,7 @@ public class RegexTest {
 	public void testFind() {
 		final Regex regex = new Regex("bleh(b+lub)bla(h+)");
 		final String text = "blehbbbblubblahh";
-		final List<RegexGroup> find = regex.find(text);
+		final Match find = regex.find(text);
 		
 		assertEquals(3, find.size());
 		
@@ -118,7 +120,7 @@ public class RegexTest {
 		
 		final Regex regex = new Regex(pattern);
 		
-		final List<List<RegexGroup>> findAll = regex.findAll(text);
+		final MultiMatch findAll = regex.findAll(text);
 		assertTrue(findAll != null);
 		assertEquals(90, findAll.size());
 		
@@ -144,7 +146,7 @@ public class RegexTest {
 	public void testFindAllPossibleMatches() {
 		final Regex regex = new Regex("\\w+");
 		final String text = " abc,de ";
-		final List<List<RegexGroup>> find = regex.findAllPossibleMatches(text);
+		final MultiMatch find = regex.findAllPossibleMatches(text);
 		final String[] expected = new String[] { "abc", "ab", "a", "bc", "b", "c", "de", "d", "e" };
 		
 		assertEquals(expected.length, find.size());
@@ -231,7 +233,7 @@ public class RegexTest {
 	public void testNamedGroups() {
 		final Regex regex = new Regex("({year}[0-9]{4})-({month}\\d{2})-({day}\\d{2})");
 		final String text = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";
-		final List<RegexGroup> find = regex.find(text);
+		final Match find = regex.find(text);
 		
 		assertEquals(4, find.size());
 		
@@ -278,7 +280,7 @@ public class RegexTest {
 		assertFalse(regex.matchesFull("bta"));
 		
 		regex = new Regex("b(?=({test}a))");
-		final List<RegexGroup> find = regex.find("ba");
+		final List<RegexGroup> find = (List<RegexGroup>) regex.find("ba");
 		assertEquals(2, find.size());
 		assertEquals("a", find.get(1).getMatch());
 	}

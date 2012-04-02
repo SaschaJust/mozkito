@@ -15,12 +15,9 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-
 import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.junit.Test;
 
@@ -49,7 +46,7 @@ public class GoogleTracker_NetTest {
 	public void testFetchRegex() {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
 		final Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
-		List<RegexGroup> groups = regex.find(fetchURI);
+		Match groups = regex.find(fetchURI);
 		assertTrue(groups.size() > 1);
 		assertEquals("webtoolkit", regex.getGroup("project"));
 		

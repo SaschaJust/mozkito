@@ -69,16 +69,16 @@ import difflib.Patch;
  */
 public class MercurialRepository extends Repository {
 	
-	protected static Regex             authorRegex          = new Regex(
-	                                                                    "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	protected static final Regex             authorRegex          = new Regex(
+	                                                                          "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
-	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	protected static final DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
-	protected static Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
-	protected static String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
-	protected static Regex             regex                = new Regex(MercurialRepository.pattern);
+	protected static final Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static final String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static final Regex             regex                = new Regex(MercurialRepository.pattern);
 	
 	/**
 	 * Pre-filters log lines. Mercurial cannot replace newlines in the log messages. This method replaces newlines

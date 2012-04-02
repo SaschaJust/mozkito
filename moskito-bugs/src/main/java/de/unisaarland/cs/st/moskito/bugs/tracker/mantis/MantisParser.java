@@ -37,8 +37,9 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -345,7 +346,7 @@ public class MantisParser implements Parser {
 	 */
 	public boolean checkRAW(final RawContent rawReport) {
 		Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
-		List<List<RegexGroup>> findAll = regex.findAll(rawReport.getContent());
+		MultiMatch findAll = regex.findAll(rawReport.getContent());
 		if (findAll != null) {
 			if (Logger.logInfo()) {
 				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
@@ -456,7 +457,7 @@ public class MantisParser implements Parser {
 				final int index = reportLink.lastIndexOf("/");
 				link = reportLink.substring(0, index + 1) + link;
 				if ((attachmentEntry == null) || (!attachmentEntry.getLink().equals(link))) {
-					final List<List<RegexGroup>> attachmentIdGroups = this.attachmentIdRegex.findAll(link);
+					final MultiMatch attachmentIdGroups = this.attachmentIdRegex.findAll(link);
 					if ((attachmentIdGroups == null) || (attachmentIdGroups.size() != 1)) {
 						// throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
 						continue;
@@ -509,14 +510,14 @@ public class MantisParser implements Parser {
 			if (text.isEmpty()) {
 				return result;
 			}
-			final List<List<RegexGroup>> sizeStrings = this.sizeRegex.findAll(text);
+			final MultiMatch sizeStrings = this.sizeRegex.findAll(text);
 			if (result.size() != sizeStrings.size()) {
 				throw new UnrecoverableError("Found " + result.size() + " attachments but " + sizeStrings.size()
 				        + " file size strings.");
 			}
 			
 			for (int i = 0; i < sizeStrings.size(); ++i) {
-				final List<RegexGroup> list = sizeStrings.get(i);
+				final Match list = sizeStrings.get(i);
 				if (list.isEmpty()) {
 					throw new UnrecoverableError("Did not find attachment size for attachment " + result.get(i).getId());
 				}
@@ -964,7 +965,7 @@ public class MantisParser implements Parser {
 		
 		try {
 			final String category = getCategory();
-			final List<List<RegexGroup>> findAll = this.projectRegex.findAll(category);
+			final MultiMatch findAll = this.projectRegex.findAll(category);
 			if (findAll.isEmpty() || findAll.get(0).isEmpty()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not find product description in category.");

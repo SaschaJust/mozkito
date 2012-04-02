@@ -14,11 +14,10 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.junit.Test;
 
@@ -35,7 +34,7 @@ public class SourceforgeParserTest {
 	@Test
 	public void testAttachmentIdRegex() {
 		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
-		final List<RegexGroup> find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
+		final Match find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
 		assert (find != null);
 		assertEquals(2, find.size());
 		assertEquals("336228", find.get(1).getMatch());

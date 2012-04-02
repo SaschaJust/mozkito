@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
@@ -30,6 +27,8 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 import noNamespace.AssignedToDocument.AssignedTo;
@@ -68,7 +67,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/**
 	 * Instantiates a new bugzilla parser.
-	 *
+	 * 
 	 */
 	public BugzillaParser_4_0_4() {
 		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
@@ -345,7 +344,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getKeywords()
 	 */
 	@Override
@@ -566,9 +566,9 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			final LongDesc[] longDescArray = getXmlBug().getLongDescArray();
 			for (final LongDesc dec : longDescArray) {
 				final String comment = dec.getThetext();
-				final List<List<RegexGroup>> groupsList = siblingRegex.findAll(comment);
+				final MultiMatch groupsList = siblingRegex.findAll(comment);
 				if (groupsList != null) {
-					for (final List<RegexGroup> groups : groupsList) {
+					for (final Match groups : groupsList) {
 						for (final RegexGroup group : groups) {
 							if (group.getName().equals("sibling")) {
 								result.add(group.getMatch());
@@ -584,7 +584,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	@Override
@@ -598,7 +599,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
 	@Override
@@ -612,7 +614,8 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	@Override

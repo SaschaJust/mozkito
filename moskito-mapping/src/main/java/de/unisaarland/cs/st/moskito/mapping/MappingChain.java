@@ -12,42 +12,25 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.messages.StartupEvent;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import dev.ownhero.net.andama.eventhandlers.irc.IRCThread;
 
 /**
  * The Class MappingChain.
  */
 public class MappingChain extends Chain<Settings> {
 	
-	/** The database arguments. */
-	private final DatabaseOptions                         databaseOptions;
-	
 	/** The thread pool. */
-	private final Pool                                    threadPool;
-	
-	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
-	
-	private MappingOptions                                mappingOptions;
-	
-	private ArgumentSet<MappingFinder, MappingOptions>    mappingArguments;
+	private final Pool threadPool;
 	
 	/**
 	 * Instantiates a new mapping chain.
@@ -57,19 +40,19 @@ public class MappingChain extends Chain<Settings> {
 		super(settings, "mapping"); //$NON-NLS-1$
 		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
 		
-		try {
-			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
-			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
-			
-			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
-			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
-		} catch (final ArgumentRegistrationException e) {
-			throw new Shutdown(e.getMessage(), e);
-		} catch (final ArgumentSetRegistrationException e) {
-			throw new Shutdown(e.getMessage(), e);
-		} catch (final SettingsParseError e) {
-			throw new Shutdown(e.getMessage(), e);
-		}
+		// try {
+		//			//			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
+		// // this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
+		// //
+		// // this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
+		// // this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
+		// } catch (final ArgumentRegistrationException e) {
+		// throw new Shutdown(e.getMessage(), e);
+		// } catch (final ArgumentSetRegistrationException e) {
+		// throw new Shutdown(e.getMessage(), e);
+		// } catch (final SettingsParseError e) {
+		// throw new Shutdown(e.getMessage(), e);
+		// }
 	}
 	
 	/*
@@ -78,17 +61,17 @@ public class MappingChain extends Chain<Settings> {
 	 */
 	@Override
 	public void setup() {
-		final MappingFinder finder = this.mappingArguments.getValue();
+		final MappingFinder finder = null; // this.mappingArguments.getValue();
 		
-		if (finder == null) {
-			if (Logger.logError()) {
-				Logger.error("MappingFinder initialization failed. Aborting...");
-				shutdown();
-			}
-		}
-		Condition.notNull(finder, "Local variable '%s' in '%s'.", "finder", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		// if (finder == null) {
+		// if (Logger.logError()) {
+		// Logger.error("MappingFinder initialization failed. Aborting...");
+		// shutdown();
+		// }
+		// }
+		//		Condition.notNull(finder, "Local variable '%s' in '%s'.", "finder", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+		final PersistenceUtil persistenceUtil = null; /* this.databaseArguments.getValue(); */
 		
 		if (persistenceUtil != null) {
 			
@@ -127,7 +110,13 @@ public class MappingChain extends Chain<Settings> {
 			if (Logger.logError()) {
 				Logger.error("Database arguments not valid. Aborting...");
 			}
-			shutdown();
+			// shutdown();
+			// return;
 		}
+		
+		final IRCThread t = new IRCThread();
+		t.start();
+		
+		getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
 	}
 }

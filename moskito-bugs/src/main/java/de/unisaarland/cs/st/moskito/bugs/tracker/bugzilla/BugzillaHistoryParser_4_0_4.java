@@ -13,7 +13,6 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import java.net.URI;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,8 +21,8 @@ import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.jdom.Namespace;
 import org.joda.time.DateTime;
@@ -139,7 +138,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		try {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
 			
-			final List<List<RegexGroup>> findAll = skipRegex.findAll(rawContent.getContent());
+			final MultiMatch findAll = skipRegex.findAll(rawContent.getContent());
 			if ((findAll != null) && !findAll.isEmpty()) {
 				if (Logger.logDebug()) {
 					Logger.debug("Skipping history for bug report " + this.reportId

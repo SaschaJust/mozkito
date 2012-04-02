@@ -41,8 +41,8 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -67,23 +67,23 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	private String                          currentRevision = null;
-	protected static Charset                charset         = Charset.defaultCharset();
+	private String                           currentRevision = null;
+	protected static Charset                 charset         = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
 		}
 	}
-	protected static DateTimeFormatter      dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
-	protected static Regex                  regex           = new Regex(
-	                                                                    ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
-	protected static Regex                  formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
-	private File                            cloneDir;
-	private List<String>                    transactionIDs  = new LinkedList<String>();
+	protected static final DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static final Regex             regex           = new Regex(
+	                                                                     ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	protected static final Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	private File                             cloneDir;
+	private List<String>                     transactionIDs  = new LinkedList<String>();
 	
-	private final HashMap<String, LogEntry> logCache        = new HashMap<String, LogEntry>();
-	private BranchFactory                   branchFactory;
-	private GitRevDependencyGraph           revDepGraph;
+	private final HashMap<String, LogEntry>  logCache        = new HashMap<String, LogEntry>();
+	private BranchFactory                    branchFactory;
+	private GitRevDependencyGraph            revDepGraph;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -406,7 +406,7 @@ public class GitRepository extends Repository {
 		}
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
-				final List<RegexGroup> found = formerPathRegex.find(line);
+				final Match found = formerPathRegex.find(line);
 				if (found.size() < 1) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");

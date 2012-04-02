@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
@@ -35,6 +32,8 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.RegexGroup;
 
@@ -66,7 +65,7 @@ public class SourceforgeParser implements Parser {
 	
 	/**
 	 * The Class AttachmentHistoryEntry.
-	 *
+	 * 
 	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
 	 */
 	private class AttachmentHistoryEntry {
@@ -79,9 +78,11 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Instantiates a new attachment history entry.
-		 *
-		 * @param author the author
-		 * @param timestamp the timestamp
+		 * 
+		 * @param author
+		 *            the author
+		 * @param timestamp
+		 *            the timestamp
 		 */
 		public AttachmentHistoryEntry(final Person author, final DateTime timestamp) {
 			this.author = author;
@@ -90,7 +91,7 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Gets the author.
-		 *
+		 * 
 		 * @return the author
 		 */
 		public Person getAuthor() {
@@ -99,7 +100,7 @@ public class SourceforgeParser implements Parser {
 		
 		/**
 		 * Gets the timestamp.
-		 *
+		 * 
 		 * @return the timestamp
 		 */
 		public DateTime getTimestamp() {
@@ -282,8 +283,9 @@ public class SourceforgeParser implements Parser {
 	
 	/**
 	 * Instantiates a new sourceforge parser.
-	 *
-	 * @param bugType the bug type
+	 * 
+	 * @param bugType
+	 *            the bug type
 	 */
 	public SourceforgeParser(final Type bugType) {
 		this.bugType = bugType;
@@ -426,7 +428,7 @@ public class SourceforgeParser implements Parser {
 		try {
 			final SortedSet<Comment> result = new TreeSet<Comment>();
 			for (final Element tr : this.commentTable.getElementsByTag("tr")) {
-				final List<RegexGroup> commentIdMatch = this.artifactCommentIdRegex.find(tr.attr("id"));
+				final Match commentIdMatch = this.artifactCommentIdRegex.find(tr.attr("id"));
 				if (commentIdMatch.isEmpty()) {
 					continue;
 				}
@@ -455,7 +457,7 @@ public class SourceforgeParser implements Parser {
 				
 				final String leftColumm = yui_u_first.text().replaceAll("\"", "").trim();
 				final String rightColumm = htmlCommentRegex.removeAll(yui_u.text()).replaceAll("\"", "").trim();
-				final List<RegexGroup> find = commentRegex.find(leftColumm);
+				final Match find = commentRegex.find(leftColumm);
 				DateTime timestamp = null;
 				Person sender = null;
 				for (final RegexGroup group : find) {
@@ -502,10 +504,9 @@ public class SourceforgeParser implements Parser {
 			for (final Element child : this.leftGBox.children()) {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
-					                                                                                        .trim());
+					final MultiMatch findAll = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
-						final List<RegexGroup> groups = findAll.get(0);
+						final Match groups = findAll.get(0);
 						String dateStr = null;
 						for (final RegexGroup group : groups) {
 							if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
@@ -664,7 +665,7 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final List<List<RegexGroup>> findAll = this.subjectRegex.findAll(this.headerBox.text());
+			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
 			if ((findAll != null) && (!findAll.isEmpty())) {
 				for (final RegexGroup group : findAll.get(0)) {
 					if ((group.getName() != null) && (group.getName().equals("bugid"))) {
@@ -874,7 +875,7 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final List<List<RegexGroup>> findAll = this.subjectRegex.findAll(this.headerBox.text());
+			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
 			if ((findAll != null) && (!findAll.isEmpty())) {
 				for (final RegexGroup group : findAll.get(0)) {
 					if ((group.getName() != null) && (group.getName().equals("subject"))) {
@@ -902,12 +903,11 @@ public class SourceforgeParser implements Parser {
 			for (final Element child : this.leftGBox.children()) {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final List<List<RegexGroup>> findAll = SourceforgeParser.submittedRegex.findAll(pElement.text()
-					                                                                                        .trim());
+					final MultiMatch findAll = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
 					if ((findAll != null) && (!findAll.isEmpty())) {
 						String name = null;
 						String uname = null;
-						final List<RegexGroup> groups = findAll.get(0);
+						final Match groups = findAll.get(0);
 						for (final RegexGroup group : groups) {
 							if ((group.getName() != null) && (group.getName().equals("fullname"))) {
 								name = group.getMatch().trim();
