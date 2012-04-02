@@ -144,8 +144,8 @@ public class CrashHandler extends ThreadGroup {
 			body.append("<<< Crash Report <<<");
 			body.append(FileUtils.lineSeparator);
 			body.append(FileUtils.lineSeparator);
-		} catch (final Throwable t) {
-			
+		} catch (final Throwable ignore) {
+			// ignore
 		}
 		
 		try {
@@ -160,8 +160,8 @@ public class CrashHandler extends ThreadGroup {
 			body.append("<<< System Information <<<");
 			body.append(FileUtils.lineSeparator);
 			body.append(FileUtils.lineSeparator);
-		} catch (final Throwable t) {
-			
+		} catch (final Throwable ignore) {
+			// ignore
 		}
 		
 		try {
@@ -174,8 +174,8 @@ public class CrashHandler extends ThreadGroup {
 			body.append("<<< Application Setup <<<");
 			body.append(FileUtils.lineSeparator);
 			body.append(FileUtils.lineSeparator);
-		} catch (final Throwable t) {
-			
+		} catch (final Throwable ignore) {
+			// ignore
 		}
 		try {
 			body.append(">>> Application ToolInfo >>>");
@@ -185,8 +185,8 @@ public class CrashHandler extends ThreadGroup {
 			body.append("<<< Application ToolInfo <<<");
 			body.append(FileUtils.lineSeparator);
 			body.append(FileUtils.lineSeparator);
-		} catch (final Throwable t) {
-			
+		} catch (final Throwable ignore) {
+			// ignore
 		}
 		
 		try {
@@ -197,8 +197,8 @@ public class CrashHandler extends ThreadGroup {
 			body.append("<<< Active Threads <<<");
 			body.append(FileUtils.lineSeparator);
 			body.append(FileUtils.lineSeparator);
-		} catch (final Throwable t) {
-			
+		} catch (final Throwable ignore) {
+			// ignore
 		}
 		
 		body.append(this.application.getSettings().getBugReportArgument().getValue()).append(FileUtils.lineSeparator);

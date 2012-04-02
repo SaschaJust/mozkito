@@ -14,15 +14,16 @@ import net.ownhero.dev.andama.threads.INode;
 
 /**
  * The Class Observer.
- *
+ * 
  * @author just
  */
 public class Observer {
 	
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		// TODO Auto-generated method stub
@@ -31,8 +32,9 @@ public class Observer {
 	
 	/**
 	 * Gets the progress.
-	 *
-	 * @param chainID the chain id
+	 * 
+	 * @param chainID
+	 *            the chain id
 	 * @return the progress
 	 */
 	public double getProgress(final long chainID) {
@@ -41,8 +43,9 @@ public class Observer {
 	
 	/**
 	 * Gets the running time.
-	 *
-	 * @param chainID the chain id
+	 * 
+	 * @param chainID
+	 *            the chain id
 	 * @return the running time
 	 */
 	public Date getRunningTime(final long chainID) {
@@ -51,8 +54,9 @@ public class Observer {
 	
 	/**
 	 * Gets the state.
-	 *
-	 * @param chaindID the chaind id
+	 * 
+	 * @param chaindID
+	 *            the chaind id
 	 * @return the state
 	 */
 	public Thread.State getState(final long chaindID) {
@@ -61,8 +65,9 @@ public class Observer {
 	
 	/**
 	 * Gets the threads.
-	 *
-	 * @param chainID the chain id
+	 * 
+	 * @param chainID
+	 *            the chain id
 	 * @return the threads
 	 */
 	public Collection<INode<?, ?>> getThreads(final long chainID) {
@@ -71,8 +76,9 @@ public class Observer {
 	
 	/**
 	 * Load settings.
-	 *
-	 * @param file the file
+	 * 
+	 * @param file
+	 *            the file
 	 * @return the properties
 	 */
 	@SuppressWarnings ("unused")
@@ -82,34 +88,38 @@ public class Observer {
 	
 	/**
 	 * Register chain.
-	 *
-	 * @param chain the chain
+	 * 
+	 * @param chain
+	 *            the chain
 	 */
 	@SuppressWarnings ("unused")
 	private void registerChain(final Chain<?> chain) {
-		
+		// stub
 	}
 	
 	/**
 	 * Spawn chain.
-	 *
-	 * @param clazz the clazz
-	 * @param settings the settings
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @param settings
+	 *            the settings
 	 */
 	@SuppressWarnings ("unused")
 	private void spawnChain(final Class<? extends Chain<?>> clazz,
 	                        final Properties settings) {
-		
+		// stub
 	}
 	
 	/**
 	 * Unregister chain.
-	 *
-	 * @param chain the chain
+	 * 
+	 * @param chain
+	 *            the chain
 	 */
 	@SuppressWarnings ("unused")
 	private void unregisterChain(final Chain<?> chain) {
-		
+		// stub
 	}
 	
 }

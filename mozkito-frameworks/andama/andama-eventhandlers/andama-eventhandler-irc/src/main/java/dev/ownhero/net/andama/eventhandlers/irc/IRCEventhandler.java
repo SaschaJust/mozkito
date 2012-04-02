@@ -27,13 +27,13 @@ import org.jibble.pircbot.PircBot;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class IRCBot extends PircBot implements IEventListener {
+public class IRCEventhandler extends PircBot implements IEventListener {
 	
 	public static final String  CHANNEL           = "#mozkito";
 	public static final String  NAME              = "mozkito";
 	private final Queue<IEvent> scheduledMessages = new LinkedList<IEvent>();
 	
-	public IRCBot() {
+	public IRCEventhandler() {
 		setName(NAME);
 		setLogin("otikzom");
 	}

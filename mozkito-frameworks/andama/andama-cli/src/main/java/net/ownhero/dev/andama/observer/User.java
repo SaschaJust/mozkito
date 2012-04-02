@@ -17,5 +17,5 @@ package net.ownhero.dev.andama.observer;
  * The Class User.
  */
 public class User {
-	
+	// stub
 }

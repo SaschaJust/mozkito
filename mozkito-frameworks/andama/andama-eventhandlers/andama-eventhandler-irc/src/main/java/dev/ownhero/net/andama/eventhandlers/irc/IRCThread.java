@@ -26,12 +26,12 @@ import org.jibble.pircbot.NickAlreadyInUseException;
  */
 public class IRCThread extends Thread {
 	
-	private final IRCBot bot = new IRCBot(); ;
+	private final IRCEventhandler bot = new IRCEventhandler(); ;
 	
 	/**
 	 * @return the bot
 	 */
-	public final IRCBot getBot() {
+	public final IRCEventhandler getBot() {
 		// PRECONDITIONS
 		
 		try {
@@ -73,7 +73,7 @@ public class IRCThread extends Thread {
 			}
 			
 			// Join the #pircbot channel.
-			this.bot.joinChannel(IRCBot.CHANNEL);
+			this.bot.joinChannel(IRCEventhandler.CHANNEL);
 		} finally {
 			// POSTCONDITIONS
 		}

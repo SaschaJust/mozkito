@@ -26,7 +26,7 @@ import net.ownhero.dev.kanuni.conditions.MapCondition;
 
 /**
  * The Class Graph.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @SuppressWarnings ("rawtypes")
@@ -49,8 +49,9 @@ public class Graph {
 	
 	/**
 	 * Instantiates a new graph.
-	 *
-	 * @param group the group
+	 * 
+	 * @param group
+	 *            the group
 	 */
 	@SuppressWarnings ("unchecked")
 	public Graph(@NotNull final Group group) {
@@ -114,8 +115,9 @@ public class Graph {
 	
 	/**
 	 * Builds the graph.
-	 *
-	 * @throws InvalidGraphLayoutException the invalid graph layout exception
+	 * 
+	 * @throws InvalidGraphLayoutException
+	 *             the invalid graph layout exception
 	 */
 	public void buildGraph() throws InvalidGraphLayoutException {
 		final List<INode> headThreads = new LinkedList<INode>();
@@ -327,7 +329,7 @@ public class Graph {
 					if ((sourceList != null) && (sourceList.size() > 1)) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss but found no corresponding %s with the same input type: %s",
-						                                                    sinkList.size(),
+						                                                    sourceList.size(),
 						                                                    Source.class.getSimpleName().toLowerCase(),
 						                                                    Demultiplexer.class.getSimpleName()
 						                                                                       .toLowerCase(),
@@ -434,10 +436,13 @@ public class Graph {
 	
 	/**
 	 * Connect.
-	 *
-	 * @param <T> the generic type
-	 * @param from the from
-	 * @param to the to
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
 	 */
 	@SuppressWarnings ("unchecked")
 	private <T> void connect(final INode from,

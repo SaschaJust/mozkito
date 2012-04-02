@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.ownhero.dev</groupId>
 		<artifactId>andama</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modules>
 		<module>andama-eventhandler-email</module>
@@ -15,14 +15,14 @@
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama-eventhandlers</artifactId>
 	<name>andama-eventhandlers</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>Toolchain to process data in a flow model.</description>
 	<dependencies>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-bus</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

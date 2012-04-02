@@ -23,7 +23,7 @@ public class AndamaThreadTest {
 			
 			@Override
 			public void setup() {
-				
+				// stub
 			}
 			
 		}), settings, false);

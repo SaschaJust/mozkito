@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>net.ownhero.dev</groupId>
 		<artifactId>andama</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ownhero.dev</groupId>
 	<artifactId>andama-core</artifactId>
 	<name>andama-core</name>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<description>Toolchain to process data in a flow model.</description>
 	<dependencies>
 		<dependency>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>andama-bus</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

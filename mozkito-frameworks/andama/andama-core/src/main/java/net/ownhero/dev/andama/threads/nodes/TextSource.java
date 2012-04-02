@@ -14,18 +14,22 @@ import net.ownhero.dev.hiari.settings.Settings;
 
 /**
  * The Class TextSource.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TextSource extends Source<String> {
 	
 	/**
 	 * Instantiates a new text source.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param parallelizable the parallelizable
-	 * @param file the file
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param parallelizable
+	 *            the parallelizable
+	 * @param file
+	 *            the file
 	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final File file) {
 		super(threadGroup, settings, parallelizable);
@@ -36,11 +40,15 @@ public class TextSource extends Source<String> {
 	
 	/**
 	 * Instantiates a new text source.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param parallelizable the parallelizable
-	 * @param stream the stream
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param parallelizable
+	 *            the parallelizable
+	 * @param stream
+	 *            the stream
 	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable,
 	        final InputStream stream) {
@@ -51,11 +59,15 @@ public class TextSource extends Source<String> {
 	
 	/**
 	 * Instantiates a new text source.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param parallelizable the parallelizable
-	 * @param uri the uri
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param parallelizable
+	 *            the parallelizable
+	 * @param uri
+	 *            the uri
 	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URI uri) {
 		super(threadGroup, settings, parallelizable);
@@ -66,11 +78,15 @@ public class TextSource extends Source<String> {
 	
 	/**
 	 * Instantiates a new text source.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param parallelizable the parallelizable
-	 * @param url the url
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param parallelizable
+	 *            the parallelizable
+	 * @param url
+	 *            the url
 	 */
 	public TextSource(final Group threadGroup, final Settings settings, final boolean parallelizable, final URL url) {
 		super(threadGroup, settings, parallelizable);
@@ -83,13 +99,14 @@ public class TextSource extends Source<String> {
 	 * Adds the hooks.
 	 */
 	private void addHooks() {
-		
+		// stub
 	}
 	
 	/**
 	 * Check availability.
-	 *
-	 * @param url the url
+	 * 
+	 * @param url
+	 *            the url
 	 * @return true, if successful
 	 */
 	@SuppressWarnings ("unused")

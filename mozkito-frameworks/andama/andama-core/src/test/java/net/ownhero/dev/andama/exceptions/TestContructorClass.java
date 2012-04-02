@@ -22,9 +22,10 @@ public class TestContructorClass {
 	
 	public TestContructorClass(final Collection<String> collection, final int number,
 	        final Tuple<List<Float>, Boolean> tuple) throws NoSuchConstructorError, Exception {
+		// stub
 	}
 	
 	public TestContructorClass(final Integer test) {
-		
+		// stub
 	}
 }

@@ -34,6 +34,7 @@ public class KimTest {
 			
 			@Override
 			public void setup() {
+				// stub
 			}
 			
 		});

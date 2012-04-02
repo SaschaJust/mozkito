@@ -27,12 +27,12 @@ public class InstantiationErrorTest {
 	public void testConstructorError() {
 		try {
 			Bla.class.newInstance();
-		} catch (InstantiationException e) {
+		} catch (final InstantiationException e) {
 			System.err.println(new InstantiationError(e, TestContructorClass.class, null).analyzeFailureCause());
 			return;
-		} catch (IllegalAccessException e) {
-			
-		} catch (Exception e) {
+		} catch (final IllegalAccessException ignore) {
+			// ignore
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return;
 		}
@@ -47,7 +47,8 @@ public class InstantiationErrorTest {
 		} catch (final InstantiationException e) {
 			System.err.println(new InstantiationError(e, TestContructorClass.class, null).analyzeFailureCause());
 			return;
-		} catch (final IllegalAccessException e) {
+		} catch (final IllegalAccessException ignore) {
+			// ignore
 		}
 		fail();
 	}
@@ -58,16 +59,20 @@ public class InstantiationErrorTest {
 		try {
 			constructor = TestContructorClass.class.getConstructor(Integer.class);
 			constructor.newInstance(new LinkedList<String>(), 5);
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalArgumentException e) {
+		} catch (final SecurityException ignore) {
+			// ignore
+		} catch (final NoSuchMethodException ignore) {
+			// ignore
+		} catch (final IllegalArgumentException e) {
 			System.err.println(new InstantiationError(e, TestContructorClass.class, constructor).analyzeFailureCause());
 			return;
-		} catch (InvocationTargetException e) {
-		} catch (InstantiationException e) {
+		} catch (final InvocationTargetException ignore) {
+			// ignore
+		} catch (final InstantiationException e) {
 			System.err.println(new InstantiationError(e, TestContructorClass.class, constructor).analyzeFailureCause());
 			return;
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException ignore) {
+			// ignore
 		}
 		
 		fail();
