@@ -63,9 +63,8 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	public int compareTo(final RawContent arg0) {
 		if (arg0 == null) {
 			return 1;
-		} else {
-			return this.fetchTime.compareTo(arg0.getFetchTime());
 		}
+		return this.fetchTime.compareTo(arg0.getFetchTime());
 	}
 	
 	/**
@@ -124,11 +123,11 @@ public class RawContent implements Comparable<RawContent>, Storable {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("RawReport [md5=");
 		try {
 			builder.append(JavaUtils.byteArrayToHexString(getMd5()));
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			builder.append(Arrays.toString(getMd5()));
 		}
 		builder.append(", fetchTime=");
