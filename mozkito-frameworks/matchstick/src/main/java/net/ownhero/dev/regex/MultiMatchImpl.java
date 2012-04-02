@@ -50,6 +50,21 @@ public class MultiMatchImpl implements MultiMatch {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.MultiMatch#get(int)
+	 */
+	@Override
+	public Match get(final int index) {
+		// PRECONDITIONS
+		
+		try {
+			return getMatch(index);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.regex.MultiMatch#get(int, int)
 	 */
 	@Override
@@ -162,6 +177,21 @@ public class MultiMatchImpl implements MultiMatch {
 		
 		try {
 			return this.matches.get(index);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.MultiMatch#isEmpty()
+	 */
+	@Override
+	public boolean isEmpty() {
+		// PRECONDITIONS
+		
+		try {
+			return this.matches.isEmpty();
 		} finally {
 			// POSTCONDITIONS
 		}

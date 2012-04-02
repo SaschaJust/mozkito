@@ -129,6 +129,21 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#isEmpty()
+	 */
+	@Override
+	public boolean isEmpty() {
+		// PRECONDITIONS
+		
+		try {
+			return this.map.isEmpty();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override

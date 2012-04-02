@@ -20,6 +20,17 @@ package net.ownhero.dev.regex;
 public interface MultiMatch extends Iterable<Match> {
 	
 	/**
+	 * Gets the match with the given index.
+	 * 
+	 * @param index
+	 *            the index
+	 * @return the match
+	 * @deprecated use {@link MultiMatch#getMatch(int)} instead.
+	 */
+	@Deprecated
+	Match get(final int index);
+	
+	/**
 	 * Gets the.
 	 * 
 	 * @param index
@@ -27,8 +38,6 @@ public interface MultiMatch extends Iterable<Match> {
 	 * @param id
 	 *            the id
 	 * @return the regex group with id 'id' of the 'index'th match or null if the id is invalid.
-	 * @throws ArrayIndexOutOfBoundsException
-	 *             if 'index' is not valid.
 	 */
 	RegexGroup get(final int index,
 	               final int id);
@@ -41,8 +50,6 @@ public interface MultiMatch extends Iterable<Match> {
 	 * @param name
 	 *            the name
 	 * @return the regex group with name 'name' of the 'index'th match or null if the id is invalid.
-	 * @throws ArrayIndexOutOfBoundsException
-	 *             if 'index' is not valid.
 	 */
 	RegexGroup get(final int index,
 	               final String name);
@@ -73,6 +80,16 @@ public interface MultiMatch extends Iterable<Match> {
 	 * @return the match
 	 */
 	Match getMatch(final int index);
+	
+	/**
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
+	 * @deprecated Empty MultiMatch instances can't exist by definition. Either regex.findAll() returns a non-empty
+	 *             instance or null.
+	 */
+	@Deprecated
+	boolean isEmpty();
 	
 	/**
 	 * Size.

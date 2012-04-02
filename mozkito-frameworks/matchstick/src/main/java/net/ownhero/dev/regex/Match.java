@@ -15,18 +15,58 @@ package net.ownhero.dev.regex;
 import java.util.Set;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Interface Match.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public interface Match extends Iterable<RegexGroup> {
 	
+	/**
+	 * Gets the.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the regex group
+	 */
 	RegexGroup get(final int id);
 	
+	/**
+	 * Gets the.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return the regex group
+	 */
 	RegexGroup get(final String name);
 	
+	/**
+	 * Gets the group names.
+	 * 
+	 * @return the group names
+	 */
 	Set<String> getGroupNames();
 	
+	/**
+	 * Gets the groups.
+	 * 
+	 * @return the groups
+	 */
 	RegexGroup[] getGroups();
 	
+	/**
+	 * Checks if is empty.
+	 * 
+	 * @return true, if is empty
+	 * @deprecated Empty {@link Match} instances can't exist per definition. The {@link Regex} instance will either
+	 *             return a non-empty {@link Match} or null.
+	 */
+	@Deprecated
+	boolean isEmpty();
+	
+	/**
+	 * Size.
+	 * 
+	 * @return the int
+	 */
 	int size();
 }
