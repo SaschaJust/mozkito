@@ -13,11 +13,7 @@
 
 package net.ownhero.dev.regex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import jregex.MatchIterator;
@@ -33,9 +29,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 
 /**
  * This class provides regular expression support and as well interfaces as extends JRegex.
@@ -84,8 +77,8 @@ public class Regex {
 		}
 		
 		// remove all character classes []
-		Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\][*+]?\\??");
-		String patternWithoutCharacterClasses = characterGroups.removeAll(pattern);
+		final Regex characterGroups = new Regex("((?<!\\\\)\\[|^\\[)[^\\]]*\\][*+]?\\??");
+		final String patternWithoutCharacterClasses = characterGroups.removeAll(pattern);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Pattern without character classes: " + patternWithoutCharacterClasses);
@@ -95,8 +88,8 @@ public class Regex {
 		Regex beginMatch = new Regex("(?<!\\\\)\\(|^\\(");
 		Regex endMatch = new Regex("(?<!\\\\)\\)");
 		
-		List<List<RegexGroup>> allMatchingGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
-		List<List<RegexGroup>> allMatchingGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
+		final MultiMatch allMatchingGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
+		final MultiMatch allMatchingGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
 		
 		int beginCount = (allMatchingGroupsOpen != null
 		                                               ? allMatchingGroupsOpen.size()
@@ -120,22 +113,14 @@ public class Regex {
 		}
 		
 		// check for empty matching groups
-		Regex emptyGroups = new Regex("(\\((\\?<?[!=])?(\\{\\w+\\})?\\))");
-		List<List<RegexGroup>> emptyGroupsList = emptyGroups.findAll(pattern);
+		final Regex emptyGroups = new Regex("(\\((\\?<?[!=])?(\\{\\w+\\})?\\))");
+		final MultiMatch emptyGroupsList = emptyGroups.findAll(pattern);
 		
 		if (emptyGroupsList != null) {
 			
 			if (Logger.logWarn()) {
-				Logger.warn("Empty matching groups: " + CollectionUtils.collect(emptyGroupsList, new Transformer() {
-					
-					@Override
-					public Object transform(final Object input) {
-						@SuppressWarnings ("unchecked")
-						List<RegexGroup> list = (List<RegexGroup>) input;
-						
-						return list.get(0);
-					}
-				}));
+				
+				Logger.warn("Empty matching groups: " + emptyGroupsList.getGroup(0));
 			}
 			return false;
 		}
@@ -145,8 +130,8 @@ public class Regex {
 		endMatch = new Regex("(?<!\\\\)\\][*+]?\\??");
 		// TODO remove trailing multiplicators
 		
-		List<List<RegexGroup>> allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
-		List<List<RegexGroup>> allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
+		final MultiMatch allClosedCharGroupsOpen = beginMatch.findAll(patternWithoutCharacterClasses);
+		final MultiMatch allClosedCharGroupsClosed = endMatch.findAll(patternWithoutCharacterClasses);
 		
 		beginCount = (allClosedCharGroupsOpen != null
 		                                             ? allClosedCharGroupsOpen.size()
@@ -170,7 +155,7 @@ public class Regex {
 		// because this leads to strange behavior)
 		// and check for captured lookbehind groups in general
 		Regex regex = new Regex("(\\(\\?(<=|<!|!)[^()]+\\([^)]*\\))");
-		List<List<RegexGroup>> findAll = regex.findAll(patternWithoutCharacterClasses);
+		MultiMatch findAll = regex.findAll(patternWithoutCharacterClasses);
 		
 		if (findAll != null) {
 			
@@ -202,7 +187,7 @@ public class Regex {
 		
 		try {
 			new NamedPattern(pattern);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			
 			// if (Logger.logError()) {
 			// Logger.error(e.getMessage(), e);
@@ -222,44 +207,44 @@ public class Regex {
 	 *            to be checked against
 	 * @return the {@link String} representation of the matching pattern
 	 */
-	public static String findLongestMatchingPattern(@NotNull ("When trying to find the longest matching pattern to a given text, the pattern is required to be a non-null string.") String pattern,
+	public static String findLongestMatchingPattern(@NotNull ("When trying to find the longest matching pattern to a given text, the pattern is required to be a non-null string.") final String pattern,
 	                                                @NotNull ("When trying to find the longest matching pattern to a given text, the text is required to be a non-null string.") final String text) {
-		Regex regex = new Regex("placeholder");
-		regex.setPattern(pattern);
-		Regex bsReplacer = new Regex("\\\\+$");
+		final Regex regex = new Regex("placeholder");
+		String localPattern = pattern;
+		regex.setPattern(localPattern);
+		final Regex bsReplacer = new Regex("\\\\+$");
 		
-		while ((regex.find(text) == null) && (pattern.length() > 2)) {
+		while ((regex.find(text) == null) && (localPattern.length() > 2)) {
 			
 			try {
-				pattern = pattern.substring(0, pattern.length() - 1);
-				pattern = bsReplacer.removeAll(pattern);
+				localPattern = localPattern.substring(0, localPattern.length() - 1);
+				localPattern = bsReplacer.removeAll(localPattern);
 				
-				if (checkRegex(pattern)) {
-					regex.setPattern(pattern);
+				if (checkRegex(localPattern)) {
+					regex.setPattern(localPattern);
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Skipping invalid pattern: " + pattern);
+						Logger.debug("Skipping invalid pattern: " + localPattern);
 					}
 				}
-			} catch (PatternSyntaxException e) {
-				
+			} catch (final PatternSyntaxException ignore) {
+				// ignore
 			}
 		}
 		
 		return (regex.matched
-		                     ? pattern
+		                     ? localPattern
 		                     : "");
 	}
 	
-	private final List<List<RegexGroup>> allMatches = new LinkedList<List<RegexGroup>>();
+	private MultiMatchImpl multiMatch = new MultiMatchImpl();
 	
-	private Map<String, Integer>         groupNames = new HashMap<String, Integer>();
-	private Boolean                      matched;
-	private Matcher                      matcher;
+	private Boolean        matched;
+	private Matcher        matcher;
 	
-	private final List<RegexGroup>       matches    = new LinkedList<RegexGroup>();
-	private NamedPattern                 pattern;
-	private Replacer                     replacer;
+	private MatchImpl      match      = new MatchImpl();
+	private NamedPattern   pattern;
+	private Replacer       replacer;
 	
 	/**
 	 * @param namedPattern
@@ -277,12 +262,12 @@ public class Regex {
 		
 		try {
 			this.pattern = new NamedPattern(pattern, flags);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (final ArrayIndexOutOfBoundsException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw e;
-		} catch (PatternSyntaxException e) {
+		} catch (final PatternSyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -307,7 +292,7 @@ public class Regex {
 		if (!(obj instanceof Regex)) {
 			return false;
 		}
-		Regex other = (Regex) obj;
+		final Regex other = (Regex) obj;
 		if (this.pattern == null) {
 			if (other.pattern != null) {
 				return false;
@@ -325,7 +310,7 @@ public class Regex {
 	 *            the text to be analyzed
 	 * @return a {@link List} of {@link RegexGroup} representing the matches.
 	 */
-	public List<RegexGroup> find(@NotNull final String text) {
+	public Match find(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
@@ -333,18 +318,14 @@ public class Regex {
 			this.matched = true;
 			
 			for (int i = 0; i < this.matcher.groupCount(); ++i) {
-				this.matches.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i,
-				                                this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
-				
-				if (this.pattern.getGroupName(i) != null) {
-					this.groupNames.put(this.pattern.getGroupName(i), i);
-				}
+				this.match.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i,
+				                              this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
 			}
 		}
 		
-		return (this.matches.size() > 0
-		                               ? this.matches
-		                               : null);
+		return (this.match.size() > 0
+		                             ? this.match
+		                             : null);
 	}
 	
 	/**
@@ -355,31 +336,28 @@ public class Regex {
 	 * @see Regex#find(String)
 	 * @return a {@link List} of {@link List}s of {@link RegexGroup}
 	 */
-	public List<List<RegexGroup>> findAll(@NotNull final String text) {
+	public MultiMatch findAll(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
-		MatchIterator findAll = this.matcher.findAll();
+		final MatchIterator findAll = this.matcher.findAll();
 		
 		this.matched = findAll.hasMore();
 		
 		while (findAll.hasMore()) {
-			MatchResult match = findAll.nextMatch();
-			List<RegexGroup> matches = new ArrayList<RegexGroup>(this.matcher.groupCount());
+			final MatchResult matchResult = findAll.nextMatch();
+			new MatchImpl();
 			
-			for (int i = 1; i < match.groupCount(); ++i) {
-				matches.add(new RegexGroup(this.pattern.toString(), text, match.group(i), i,
-				                           this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
-				if (this.pattern.getGroupName(i) != null) {
-					this.groupNames.put(this.pattern.getGroupName(i), i);
-				}
+			for (int i = 1; i < matchResult.groupCount(); ++i) {
+				this.match.add(new RegexGroup(this.pattern.toString(), text, matchResult.group(i), i,
+				                              this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
 			}
-			this.allMatches.add(matches);
+			this.multiMatch.add(this.match);
 		}
 		
-		return (this.allMatches.size() == 0
+		return (this.multiMatch.size() == 0
 		                                   ? null
-		                                   : this.allMatches);
+		                                   : this.multiMatch);
 	}
 	
 	/**
@@ -390,27 +368,27 @@ public class Regex {
 	 *            the text to be scanned
 	 * @return a list of single element lists containing a {@link RegexGroup}
 	 */
-	public List<List<RegexGroup>> findAllPossibleMatches(@NotNull final String text) {
+	public MultiMatch findAllPossibleMatches(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
 		
 		while (this.matcher.proceed()) {
 			this.matched = true;
-			LinkedList<RegexGroup> candidates = new LinkedList<RegexGroup>();
+			final MatchImpl candidates = new MatchImpl();
 			candidates.add(new RegexGroup(getPattern(), text, this.matcher.toString(), 0, null, this.matcher.start(),
 			                              this.matcher.end()));
-			this.allMatches.add(candidates);
+			this.multiMatch.add(candidates);
 		}
 		
-		return this.allMatches;
+		return this.multiMatch;
 	}
 	
 	/**
 	 * @return the allMatches
 	 */
-	public List<List<RegexGroup>> getAllMatches() {
-		return this.allMatches;
+	public MultiMatch getAllMatches() {
+		return this.multiMatch;
 	}
 	
 	/**
@@ -440,14 +418,14 @@ public class Regex {
 	 * @return the groupNames
 	 */
 	public Set<String> getGroupNames() {
-		return this.groupNames.keySet();
+		return this.pattern.getGroupsNames();
 	}
 	
 	/**
 	 * @return the matches
 	 */
-	public List<RegexGroup> getMatches() {
-		return this.matches;
+	public Match getMatches() {
+		return this.match;
 	}
 	
 	/**
@@ -486,7 +464,7 @@ public class Regex {
 		reset();
 		
 		find(text);
-		return (this.matches != null) && (this.matches.size() > 0);
+		return (this.match != null) && (this.match.size() > 0);
 	}
 	
 	/**
@@ -501,9 +479,6 @@ public class Regex {
 		
 		this.matcher = this.pattern.matcher(text);
 		this.matched = this.matcher.matches();
-		for (int i = 1; i < getGroupCount(); ++i) {
-			this.groupNames.put(this.pattern.getGroupName(i), i);
-		}
 		
 		return this.matched;
 	}
@@ -520,7 +495,7 @@ public class Regex {
 	public boolean prefixMatches(@NotNull final String text) {
 		reset();
 		
-		Matcher matcher = this.pattern.matcher();
+		final Matcher matcher = this.pattern.matcher();
 		this.matched = matcher.matchesPrefix();
 		return this.matched;
 	}
@@ -536,7 +511,7 @@ public class Regex {
 		reset();
 		
 		this.replacer = this.pattern.replacer("");
-		String returnString = this.replacer.replace(text);
+		final String returnString = this.replacer.replace(text);
 		this.matched = returnString.length() < text.length();
 		
 		return returnString;
@@ -559,7 +534,7 @@ public class Regex {
 		reset();
 		
 		this.replacer = this.pattern.replacer(replacement);
-		String returnString = this.replacer.replace(text);
+		final String returnString = this.replacer.replace(text);
 		this.matched = !returnString.equals(text);
 		return returnString;
 	}
@@ -570,10 +545,9 @@ public class Regex {
 	private void reset() {
 		this.matcher = null;
 		this.replacer = null;
-		this.matches.clear();
-		this.allMatches.clear();
+		this.match = new MatchImpl();
+		this.multiMatch = new MultiMatchImpl();
 		this.matched = null;
-		this.groupNames = new HashMap<String, Integer>();
 	}
 	
 	/**
@@ -583,12 +557,12 @@ public class Regex {
 	private void setPattern(@NotNull @MinSize (min = 0) final String pattern) {
 		try {
 			this.pattern = new NamedPattern(pattern);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (final ArrayIndexOutOfBoundsException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
 			throw e;
-		} catch (PatternSyntaxException e) {
+		} catch (final PatternSyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}
@@ -608,7 +582,7 @@ public class Regex {
 	 * @return a string array containing all tokens
 	 */
 	public String[] tokenize(final String text) {
-		String[] split = new RETokenizer(this.pattern, text).split();
+		final String[] split = new RETokenizer(this.pattern, text).split();
 		this.matched = (split != null) && (split.length > 0);
 		return split;
 	}
