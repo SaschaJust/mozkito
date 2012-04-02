@@ -998,7 +998,13 @@ public class SourceforgeParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final RawContent rawContent = IOUtils.fetch(reportLink.getUri());
+			RawContent rawContent = null;
+			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
+				rawContent = IOUtils.fetch(reportLink.getUri(), this.tracker.getProxyConfig());
+			} else {
+				rawContent = IOUtils.fetch(reportLink.getUri());
+			}
+			
 			this.fetchTime = new DateTime();
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Elements errorElements = document.getElementsByClass("error");

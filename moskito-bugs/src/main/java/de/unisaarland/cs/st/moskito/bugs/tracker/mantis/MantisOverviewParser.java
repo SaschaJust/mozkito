@@ -45,7 +45,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 public class MantisOverviewParser implements OverviewParser {
 	
 	/** The tracker uri. */
-	private final String          trackerUri;
+	private final MantisTracker   tracker;
 	
 	/** The report links. */
 	private final Set<ReportLink> reportLinks = new HashSet<ReportLink>();
@@ -62,8 +62,23 @@ public class MantisOverviewParser implements OverviewParser {
 	 * @param trackerUri
 	 *            the tracker uri
 	 */
-	public MantisOverviewParser(final String trackerUri) {
-		this.trackerUri = trackerUri;
+	public MantisOverviewParser(final MantisTracker tracker) {
+		this.tracker = tracker;
+	}
+	
+	/**
+	 * @param asciiString
+	 */
+	protected MantisOverviewParser(final URI uri) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker = new MantisTracker();
+			this.tracker.setUri(uri);
+			
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -77,7 +92,13 @@ public class MantisOverviewParser implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			final RawContent firstPage = IOUtils.fetch(uri);
+			RawContent firstPage = null;
+			if (this.tracker.getProxyConfig() != null) {
+				firstPage = IOUtils.fetch(uri, this.tracker.getProxyConfig());
+			} else {
+				firstPage = IOUtils.fetch(uri);
+			}
+			
 			final Document document = Jsoup.parse(firstPage.getContent());
 			final Element buglistTable = document.getElementById("buglist");
 			if (buglistTable == null) {
@@ -140,7 +161,7 @@ public class MantisOverviewParser implements OverviewParser {
 		try {
 			try {
 				final StringBuilder sb = new StringBuilder();
-				sb.append(this.trackerUri);
+				sb.append(this.tracker.getUri().toASCIIString());
 				sb.append("view.php?id=");
 				sb.append(bugId);
 				return new ReportLink(new URI(sb.toString()), bugId);
@@ -180,7 +201,12 @@ public class MantisOverviewParser implements OverviewParser {
 		final List<ReportLink> result = new LinkedList<ReportLink>();
 		try {
 			
-			final RawContent firstPage = IOUtils.fetch(pageUri);
+			RawContent firstPage = null;
+			if (this.tracker.getProxyConfig() != null) {
+				firstPage = IOUtils.fetch(pageUri, this.tracker.getProxyConfig());
+			} else {
+				firstPage = IOUtils.fetch(pageUri);
+			}
 			final Document document = Jsoup.parse(firstPage.getContent());
 			final Element buglistTable = document.getElementById("buglist");
 			if (buglistTable == null) {
@@ -208,7 +234,8 @@ public class MantisOverviewParser implements OverviewParser {
 					}
 					for (final RegexGroup regexGroup : find) {
 						if ((regexGroup.getName() != null) && (regexGroup.getName().equals("bugid"))) {
-							result.add(new ReportLink(new URI(this.trackerUri + href), regexGroup.getMatch()));
+							result.add(new ReportLink(new URI(this.tracker.getUri().toASCIIString() + href),
+							                          regexGroup.getMatch()));
 							break;
 						}
 					}
@@ -249,7 +276,7 @@ public class MantisOverviewParser implements OverviewParser {
 			
 			// determine the number of pages
 			StringBuilder sb = new StringBuilder();
-			sb.append(this.trackerUri);
+			sb.append(this.tracker.getUri().toASCIIString());
 			sb.append("/");
 			sb.append(firstPage);
 			final int numPages = determineNumPages(new URI(sb.toString()));
@@ -257,7 +284,7 @@ public class MantisOverviewParser implements OverviewParser {
 			// handle each page
 			for (int page = 1; page <= numPages; ++page) {
 				sb = new StringBuilder();
-				sb.append(this.trackerUri);
+				sb.append(this.tracker.getUri().toASCIIString());
 				sb.append("/");
 				sb.append(firstPage);
 				sb.append("?page_number=");

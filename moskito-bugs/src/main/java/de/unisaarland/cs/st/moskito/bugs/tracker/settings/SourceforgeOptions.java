@@ -26,6 +26,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -134,10 +135,12 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			
 			final EnumArgument<Type> bugTypeArgument = getSettings().getArgument(getBugTypeArg());
 			
+			final ArgumentSet<ProxyConfig, ProxyOptions> proxyArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
+			
 			final SourceforgeTracker tracker = new SourceforgeTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
 			              trackerPasswordArgument.getValue(), groupIdArgument.getValue(), atIdArgument.getValue(),
-			              bugTypeArgument.getValue());
+			              bugTypeArgument.getValue(), proxyArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

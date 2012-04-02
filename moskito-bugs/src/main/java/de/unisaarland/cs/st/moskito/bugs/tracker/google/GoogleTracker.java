@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kisa.Logger;
 
 import com.google.gdata.client.projecthosting.ProjectHostingService;
@@ -147,13 +148,14 @@ public class GoogleTracker extends Tracker {
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
-	public void setup(final String projectName) throws InvalidParameterException {
+	public void setup(final String projectName,
+	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		this.projectName = projectName;
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
 		try {
 			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
-			super.setup(fetchURI, this.username, this.password);
+			super.setup(fetchURI, getUsername(), getPassword(), proxyConfig);
 		} catch (final URISyntaxException e) {
 			throw new UnrecoverableError(e);
 		}
@@ -176,12 +178,19 @@ public class GoogleTracker extends Tracker {
 	 */
 	public void setup(final String username,
 	                  final String password,
-	                  final String projectName) throws InvalidParameterException {
+	                  final String projectName,
+	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		this.projectName = projectName;
+		
+		// This should suffice as stated on gdata documents: http://code.google.com/apis/gdata/articles/proxy_setup.html
+		System.setProperty("http.proxyHost", proxyConfig.getHost());
+		System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
+		
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+		
 		try {
-			if ((this.username != null) && (this.password != null) && (!this.username.trim().equals(""))) {
-				this.service.setUserCredentials(this.username, this.password);
+			if ((getUsername() != null) && (getPassword() != null) && (!getUsername().trim().equals(""))) {
+				this.service.setUserCredentials(getUsername(), getPassword());
 			}
 		} catch (final AuthenticationException e) {
 			throw new UnrecoverableError(e.getMessage(), e);
@@ -189,7 +198,7 @@ public class GoogleTracker extends Tracker {
 		
 		try {
 			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
-			super.setup(fetchURI, username, password);
+			super.setup(fetchURI, username, password, proxyConfig);
 		} catch (final URISyntaxException e) {
 			throw new UnrecoverableError(e);
 		}

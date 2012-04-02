@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
@@ -55,7 +52,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class BugzillaTracker_4_0_4_Test.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class BugzillaTracker_4_0_4_Test {
@@ -83,8 +80,9 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	/**
 	 * Sets the up.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -106,7 +104,7 @@ public class BugzillaTracker_4_0_4_Test {
 		
 		this.tracker = new BugzillaTracker();
 		try {
-			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4");
+			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", null);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -115,8 +113,9 @@ public class BugzillaTracker_4_0_4_Test {
 	
 	/**
 	 * Tear down.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@After
 	public void tearDown() throws Exception {

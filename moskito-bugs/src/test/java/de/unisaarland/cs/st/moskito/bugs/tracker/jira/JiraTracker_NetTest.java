@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
@@ -23,6 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.SortedSet;
+
+import net.ownhero.dev.ioda.ProxyConfig;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +42,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
 /**
  * The Class JiraTracker_NetTest.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class JiraTracker_NetTest {
@@ -53,14 +52,16 @@ public class JiraTracker_NetTest {
 	
 	/**
 	 * Sets the up.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 		this.tracker = new JiraTracker();
 		try {
-			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR");
+			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", new ProxyConfig("localhost",
+			                                                                                           3128));
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -73,8 +74,9 @@ public class JiraTracker_NetTest {
 	
 	/**
 	 * Tear down.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@After
 	public void tearDown() throws Exception {
@@ -117,8 +119,9 @@ public class JiraTracker_NetTest {
 	
 	/**
 	 * Test from overview parse.
-	 *
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	@Test
 	public void testFromOverviewParse() throws InvalidParameterException {

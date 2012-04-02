@@ -1273,7 +1273,12 @@ public class MantisParser implements Parser {
 		try {
 			
 			final URI uri = reportLink.getUri();
-			final RawContent rawContent = IOUtils.fetch(uri);
+			RawContent rawContent = null;
+			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
+				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
+			} else {
+				rawContent = IOUtils.fetch(uri);
+			}
 			this.fetchTime = new DateTime();
 			if (!checkRAW(rawContent)) {
 				if (Logger.logWarn()) {

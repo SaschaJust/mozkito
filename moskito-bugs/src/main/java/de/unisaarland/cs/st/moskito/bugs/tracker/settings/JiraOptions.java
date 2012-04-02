@@ -25,6 +25,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -87,9 +88,11 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 			
 			final StringArgument projectNameArgument = getSettings().getArgument(getProjectKey());
 			
+			final ArgumentSet<ProxyConfig, ProxyOptions> proxyArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
+			
 			final JiraTracker tracker = new JiraTracker();
 			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), projectNameArgument.getValue());
+			              trackerPasswordArgument.getValue(), projectNameArgument.getValue(), proxyArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

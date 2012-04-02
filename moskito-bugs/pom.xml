@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client</artifactId>
-			<version>0.5-m6</version>
+			<version>0.5</version>
 		</dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

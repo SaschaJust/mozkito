@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
@@ -229,8 +226,9 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	/**
 	 * Check raw.
-	 *
-	 * @param content the content
+	 * 
+	 * @param content
+	 *            the content
 	 * @return true, if successful
 	 */
 	protected boolean checkRAW(final String content) {
@@ -251,8 +249,9 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	/**
 	 * Check xml.
-	 *
-	 * @param xml the xml
+	 * 
+	 * @param xml
+	 *            the xml
 	 * @return true, if successful
 	 */
 	protected boolean checkXML(final XmlReport xml) {
@@ -278,8 +277,9 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	/**
 	 * Creates the document.
-	 *
-	 * @param rawContent the raw content
+	 * 
+	 * @param rawContent
+	 *            the raw content
 	 * @return the xml report
 	 */
 	protected XmlReport createDocument(@NotNull final RawContent rawContent) {
@@ -307,7 +307,8 @@ public abstract class BugzillaParser implements Parser {
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getFetchTime()
 	 */
 	@Override
@@ -323,7 +324,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/**
 	 * Gets the history parser.
-	 *
+	 * 
 	 * @return the history parser
 	 */
 	protected abstract BugzillaHistoryParser getHistoryParser();
@@ -339,7 +340,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/**
 	 * Gets the xml bug.
-	 *
+	 * 
 	 * @return the xml bug
 	 */
 	public Bug getXmlBug() {
@@ -348,7 +349,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/**
 	 * Gets the xml report.
-	 *
+	 * 
 	 * @return the xml report
 	 */
 	public XmlReport getXmlReport() {
@@ -371,8 +372,10 @@ public abstract class BugzillaParser implements Parser {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
 	 */
 	@Override
 	public final boolean setURI(final ReportLink reportLink) {
@@ -385,7 +388,13 @@ public abstract class BugzillaParser implements Parser {
 				}
 				return false;
 			}
-			final RawContent rawContent = IOUtils.fetch(uri);
+			RawContent rawContent = null;
+			if (this.tracker.getProxyConfig() != null) {
+				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
+			} else {
+				rawContent = IOUtils.fetch(uri);
+			}
+			
 			if (!checkRAW(rawContent.getContent())) {
 				if (Logger.logError()) {
 					Logger.error("Failed to parse report " + uri.toASCIIString() + ": RAW check failed.");

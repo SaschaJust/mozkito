@@ -24,6 +24,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
@@ -84,9 +85,11 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			
 			final StringArgument projectNameArgument = getSettings().getArgument(getProjectName());
 			
+			final ArgumentSet<ProxyConfig, ProxyOptions> proxyConfigArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
+			
 			final GoogleTracker tracker = new GoogleTracker();
 			tracker.setup(trackerUserArgument.getValue(), trackerPasswordArgument.getValue(),
-			              projectNameArgument.getValue());
+			              projectNameArgument.getValue(), proxyConfigArgument.getValue());
 			return tracker;
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

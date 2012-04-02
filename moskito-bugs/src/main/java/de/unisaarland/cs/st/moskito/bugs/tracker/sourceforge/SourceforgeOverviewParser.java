@@ -1,23 +1,19 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -26,7 +22,10 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
@@ -45,7 +44,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
 /**
  * The Class SourceforgeOverviewParser.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class SourceforgeOverviewParser implements OverviewParser {
@@ -58,40 +57,37 @@ public class SourceforgeOverviewParser implements OverviewParser {
 	/** The issue links. */
 	private final Set<ReportLink> issueLinks  = new HashSet<ReportLink>();
 	
-	/** The group id. */
-	private Long                  groupId;
-	
-	/** The at id. */
-	private Long                  atId;
-	
 	/** The base overview uri. */
 	private String                baseOverviewURI;
 	
 	/** The base report uri. */
 	private String                baseReportURI;
+	private SourceforgeTracker    tracker;
 	
 	/**
 	 * Instantiates a new sourceforge overview parser.
-	 *
-	 * @param atId the at id
-	 * @param groupId the group id
+	 * 
+	 * @param atId
+	 *            the at id
+	 * @param groupId
+	 *            the group id
 	 */
-	public SourceforgeOverviewParser(final Long atId, final Long groupId) {
+	public SourceforgeOverviewParser(final SourceforgeTracker tracker) {
 		// PRECONDITIONS
 		
 		try {
-			this.atId = atId;
-			this.groupId = groupId;
-			this.baseOverviewURI = "http://sourceforge.net/tracker/?group_id=" + this.groupId + "&atid=" + this.atId
-			        + "&limit=100&offset=";
-			this.baseReportURI = "http://sourceforge.net/tracker/?func=detail&atid=" + this.atId + "&group_id="
-			        + this.groupId + "&aid=";
+			this.tracker = tracker;
+			this.baseOverviewURI = "http://sourceforge.net/tracker/?group_id=" + this.tracker.getGroupId() + "&atid="
+			        + this.tracker.getAtId() + "&limit=100&offset=";
+			this.baseReportURI = "http://sourceforge.net/tracker/?func=detail&atid=" + this.tracker.getAtId()
+			        + "&group_id=" + this.tracker.getGroupId() + "&aid=";
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#getReportLinks()
 	 */
 	@Override
@@ -105,7 +101,8 @@ public class SourceforgeOverviewParser implements OverviewParser {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser#parseOverview()
 	 */
 	@Override
@@ -122,18 +119,14 @@ public class SourceforgeOverviewParser implements OverviewParser {
 				final URL url = new URL(nextUri);
 				final SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
 				
-				BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
-				
-				final StringBuilder htmlSB = new StringBuilder();
-				// write file to disk
-				String line = "";
-				while ((line = br.readLine()) != null) {
-					htmlSB.append(line);
-					htmlSB.append(FileUtils.lineSeparator);
+				RawContent rawContent = null;
+				if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
+					rawContent = IOUtils.fetch(url.toURI(), this.tracker.getProxyConfig());
+				} else {
+					rawContent = IOUtils.fetch(url.toURI());
 				}
-				br.close();
 				
-				final String html = htmlSB.toString();
+				final String html = rawContent.getContent();
 				
 				if ((html.contains("There was an error processing your request ..."))
 				        || (html.contains("No results were found to match your current search criteria."))) {
@@ -148,7 +141,7 @@ public class SourceforgeOverviewParser implements OverviewParser {
 					outp.setFormat(Format.getPrettyFormat());
 					final String xml = outp.outputString(document);
 					
-					br = new BufferedReader(new StringReader(xml));
+					final BufferedReader br = new BufferedReader(new StringReader(xml));
 					final XMLReader parser = XMLReaderFactory.createXMLReader();
 					parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 					parser.setContentHandler(parseHandler);
@@ -187,6 +180,21 @@ public class SourceforgeOverviewParser implements OverviewParser {
 			}
 			return false;
 		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (final UnsupportedProtocolException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (final FetchException e) {
+			if (Logger.logError()) {
+				Logger.error(e.getMessage(), e);
+			}
+			return false;
+		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e.getMessage(), e);
 			}

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
@@ -22,10 +19,11 @@ import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
@@ -52,6 +50,8 @@ public class BugzillaOverviewParser implements OverviewParser {
 	/** The tracker uri. */
 	private final String          trackerURI;
 	
+	private final ProxyConfig     proxyConfig;
+	
 	/**
 	 * Instantiates a new bugzilla overview parser.
 	 * 
@@ -60,10 +60,11 @@ public class BugzillaOverviewParser implements OverviewParser {
 	 * @param overviewURI
 	 *            the overview uri
 	 */
-	@NoneNull
-	public BugzillaOverviewParser(final URI trackerURI, final URI overviewURI) {
+	public BugzillaOverviewParser(@NotNull final URI trackerURI, @NotNull final URI overviewURI,
+	        final ProxyConfig proxyConfig) {
 		this.overviewURI = overviewURI;
 		this.trackerURI = trackerURI.toASCIIString();
+		this.proxyConfig = proxyConfig;
 	}
 	
 	/**
@@ -119,7 +120,11 @@ public class BugzillaOverviewParser implements OverviewParser {
 				return false;
 			}
 			try {
-				content = IOUtils.fetch(this.overviewURI);
+				if (this.proxyConfig != null) {
+					content = IOUtils.fetch(this.overviewURI, this.proxyConfig);
+				} else {
+					content = IOUtils.fetch(this.overviewURI);
+				}
 			} catch (final UnsupportedProtocolException e1) {
 				if (Logger.logError()) {
 					Logger.error(e1.getMessage(), e1);
