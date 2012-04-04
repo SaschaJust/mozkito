@@ -115,7 +115,7 @@ public class ArgumentFactory {
 				return argument;
 			} catch (final IllegalArgumentException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				
 				throw new ArgumentRegistrationException(
@@ -124,7 +124,7 @@ public class ArgumentFactory {
 				                                        null, options, e);
 			} catch (final SecurityException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ArgumentRegistrationException(
 				                                        String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",
@@ -132,7 +132,7 @@ public class ArgumentFactory {
 				                                        null, options, e);
 			} catch (final NoSuchMethodException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ArgumentRegistrationException(
 				                                        String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",
@@ -140,7 +140,7 @@ public class ArgumentFactory {
 				                                        null, options, e);
 			} catch (final InstantiationException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ArgumentRegistrationException(
 				                                        String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",
@@ -148,7 +148,7 @@ public class ArgumentFactory {
 				                                        null, options, e);
 			} catch (final IllegalAccessException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ArgumentRegistrationException(
 				                                        String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",
@@ -156,7 +156,7 @@ public class ArgumentFactory {
 				                                        null, options, e);
 			} catch (final InvocationTargetException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ArgumentRegistrationException(
 				                                        String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",

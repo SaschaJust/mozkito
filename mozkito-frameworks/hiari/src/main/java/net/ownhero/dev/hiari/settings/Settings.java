@@ -268,7 +268,7 @@ public class Settings implements ISettings {
 			
 		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			
 		}
@@ -356,12 +356,12 @@ public class Settings implements ISettings {
 			this.loggerArgs = ArgumentSetFactory.create(new LoggerOptions(getRoot(), Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new SettingsParseError(e.getMessage(), e.getArgumentSet(), e);
 		} catch (final ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new SettingsParseError(e.getMessage(), e.getArgumentSet(), e);
 			
@@ -669,11 +669,11 @@ public class Settings implements ISettings {
 			return loadByEntity(provider, anchorSet);
 		} catch (final InstantiationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final IllegalAccessException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			
 		}
