@@ -113,6 +113,15 @@ public interface Match extends Iterable<Group> {
 	Group[] getNamedGroups();
 	
 	/**
+	 * Checks for the group with <code>id</code>.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return true, if successful
+	 */
+	boolean hasGroup(@Positive int id);
+	
+	/**
 	 * Checks for any {@link Group}s in the {@link Match}.
 	 * 
 	 * @return true, if there is at least one.
@@ -121,18 +130,27 @@ public interface Match extends Iterable<Group> {
 	boolean hasGroups();
 	
 	/**
+	 * Checks for the named group <code>name</code>.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return true, if successful
+	 */
+	boolean hasNamedGroup(@NotNull @NotEmptyString String name);
+	
+	/**
 	 * Checks for any named {@link Group}s in the {@link Match}.
 	 * 
 	 * @return true, if there is at least one.
 	 * @since 0.2
 	 */
-	boolean hasNamesGroups();
+	boolean hasNamedGroups();
 	
 	/**
 	 * Checks if is empty.
 	 * 
 	 * @return true, if is empty
-	 * @deprecated Use {@link Match#hasGroups()} or {@link Match#hasNamesGroups()} instead. This will be removed with
+	 * @deprecated Use {@link Match#hasGroups()} or {@link Match#hasNamedGroups()} instead. This will be removed with
 	 *             the 0.2 release.
 	 * @since 0.2
 	 */

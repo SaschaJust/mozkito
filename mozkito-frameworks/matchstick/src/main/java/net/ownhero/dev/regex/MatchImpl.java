@@ -81,11 +81,11 @@ class MatchImpl implements Match {
 			}
 		} finally {
 			// POSTCONDITIONS
-			// TODO description
-			MapCondition.containsKey(this.map, group.getIndex(), "");
+			MapCondition.containsKey(this.map, group.getIndex(), "Field '%s' in '%s' lags key '%s'.", "map",
+			                         getHandle(), "group.getIndex()");
 			if (group.getName() != null) {
-				// TODO description
-				MapCondition.containsKey(this.nameMap, group.getName(), "");
+				MapCondition.containsKey(this.nameMap, group.getName(), "Field '%s' in '%s' lags key '%s'.", "nameMap",
+				                         getHandle(), "group.getName()");
 			}
 		}
 	}
@@ -258,6 +258,22 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#hasGroup(int)
+	 */
+	@Override
+	public boolean hasGroup(@Positive final int id) {
+		// PRECONDITIONS
+		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return this.map.containsKey(id);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.regex.Match#hasGroups()
 	 */
 	@Override
@@ -274,10 +290,26 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#hasNamedGroup(java.lang.String)
+	 */
+	@Override
+	public boolean hasNamedGroup(@NotNull @NotEmptyString final String name) {
+		// PRECONDITIONS
+		Condition.notNull(this.nameMap, "Field '%s' in '%s'.", "nameMap", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return this.nameMap.containsKey(name);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.regex.Match#hasNamesGroups()
 	 */
 	@Override
-	public boolean hasNamesGroups() {
+	public boolean hasNamedGroups() {
 		// PRECONDITIONS
 		Condition.notNull(this.nameMap, "Field '%s' in '%s'.", "nameMap", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		

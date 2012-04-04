@@ -227,7 +227,7 @@ public class MultiMatchImpl implements MultiMatch {
 		try {
 			return this.matches.isEmpty()
 			                             ? false
-			                             : this.matches.iterator().next().hasNamesGroups();
+			                             : this.matches.iterator().next().hasNamedGroups();
 		} finally {
 			// POSTCONDITIONS
 		}
