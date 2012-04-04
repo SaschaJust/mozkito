@@ -14,11 +14,14 @@ package net.ownhero.dev.regex;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.MapCondition;
 
@@ -30,16 +33,30 @@ import net.ownhero.dev.kanuni.conditions.MapCondition;
 class MatchImpl implements Match {
 	
 	/** The map. */
-	Map<Integer, RegexGroup> map     = new HashMap<Integer, RegexGroup>();
+	private final Map<Integer, Group>  map     = new HashMap<Integer, Group>();
 	
 	/** The name map. */
-	Map<String, Integer>     nameMap = new HashMap<String, Integer>();
+	private final Map<String, Integer> nameMap = new HashMap<String, Integer>();
+	
+	/** The full match. */
+	private final Group                fullMatch;
 	
 	/**
 	 * Instantiates a new match impl.
+	 * 
+	 * @param fullMatch
+	 *            the full match
 	 */
-	MatchImpl() {
+	MatchImpl(@NotNull final Group fullMatch) {
+		// PRECONDITIONS
+		CompareCondition.equals(fullMatch.getIndex(), 0, "");
+		Condition.isNull(fullMatch.getName(), "");
 		
+		try {
+			this.fullMatch = fullMatch;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -48,11 +65,58 @@ class MatchImpl implements Match {
 	 * @param group
 	 *            the group
 	 */
-	void add(final RegexGroup group) {
-		this.map.put(group.getIndex(), group);
+	void add(@NotNull final Group group) {
+		// PRECONDITIONS
+		Condition.notNull(this.fullMatch, "Field '%s' in '%s'.", "fullMatch", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.nameMap, "Field '%s' in '%s'.", "nameMap", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		CompareCondition.positive(group.getIndex(),
+		                          "Parameter '%s' in '%s:%s'.", "group.getIndex()", getHandle(), "add(RegexGroup)");//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
-		if (group.getName() != null) {
-			this.nameMap.put(group.getName(), group.getIndex());
+		try {
+			this.map.put(group.getIndex(), group);
+			
+			if (group.getName() != null) {
+				this.nameMap.put(group.getName(), group.getIndex());
+			}
+		} finally {
+			// POSTCONDITIONS
+			// TODO description
+			MapCondition.containsKey(this.map, group.getIndex(), "");
+			if (group.getName() != null) {
+				// TODO description
+				MapCondition.containsKey(this.nameMap, group.getName(), "");
+			}
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#get(int)
+	 */
+	@Override
+	public Group get(@Positive final int id) {
+		// PRECONDITIONS
+		
+		try {
+			return getGroup(id);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#getFullMatch()
+	 */
+	@Override
+	public Group getFullMatch() {
+		// PRECONDITIONS
+		
+		try {
+			return this.fullMatch;
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 	
@@ -61,10 +125,9 @@ class MatchImpl implements Match {
 	 * @see net.ownhero.dev.regex.IMatch#get(int)
 	 */
 	@Override
-	public RegexGroup get(@NotNegative final int id) {
+	public Group getGroup(@Positive final int id) {
 		// PRECONDITIONS
 		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		MapCondition.containsKey(this.map, id, "Field '%s' in '%s' lags key '%s'.", "map", getHandle(), "id"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.map.get(id);
@@ -78,17 +141,31 @@ class MatchImpl implements Match {
 	 * @see net.ownhero.dev.regex.IMatch#get(java.lang.String)
 	 */
 	@Override
-	public RegexGroup get(@NotNull final String name) {
+	public Group getGroup(@NotNull @NotEmptyString final String name) {
 		// PRECONDITIONS
 		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		MapCondition.containsKey(this.nameMap, name, "Field '%s' in '%s' lags key '%s'.", "nameMap", getHandle(), name); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			final Integer index = this.nameMap.get(name);
-			Condition.notNull(index, "Local variable '%s' in '%s:%s'.", "index", getHandle(), "get(String)"); //$NON-NLS-1$ //$NON-NLS-2$
-			MapCondition.containsKey(this.map, index, "Field '%s' in '%s' lags key '%s'.", "map", getHandle(), index); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			return this.map.get(index);
+			return index == null
+			                    ? null
+			                    : this.map.get(index);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#size()
+	 */
+	@Override
+	public int getGroupCount() {
+		// PRECONDITIONS
+		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return this.map.size();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -103,7 +180,13 @@ class MatchImpl implements Match {
 		// PRECONDITIONS
 		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		return this.nameMap.keySet();
+		// PRECONDITIONS
+		
+		try {
+			return this.nameMap.keySet();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -111,11 +194,17 @@ class MatchImpl implements Match {
 	 * @see net.ownhero.dev.regex.IMatch#getGroups()
 	 */
 	@Override
-	public RegexGroup[] getGroups() {
+	public Group[] getGroups() {
 		// PRECONDITIONS
 		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		return this.map.values().toArray(new RegexGroup[0]);
+		// PRECONDITIONS
+		
+		try {
+			return this.map.values().toArray(new Group[0]);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -129,11 +218,84 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#getNamedGroupCount()
+	 */
+	@Override
+	public int getNamedGroupCount() {
+		// PRECONDITIONS
+		Condition.notNull(this.nameMap, "Field '%s' in '%s'.", "nameMap", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return this.nameMap.size();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gets the named groups.
+	 * 
+	 * @return the named groups
+	 */
+	@Override
+	public Group[] getNamedGroups() {
+		// PRECONDITIONS
+		
+		try {
+			final LinkedList<Group> list = new LinkedList<Group>();
+			
+			for (final Group group : this) {
+				if (group.getName() != null) {
+					list.add(group);
+				}
+			}
+			
+			return list.toArray(new Group[0]);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#hasGroups()
+	 */
+	@Override
+	public boolean hasGroups() {
+		// PRECONDITIONS
+		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return !this.map.isEmpty();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.Match#hasNamesGroups()
+	 */
+	@Override
+	public boolean hasNamesGroups() {
+		// PRECONDITIONS
+		Condition.notNull(this.nameMap, "Field '%s' in '%s'.", "nameMap", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return !this.nameMap.isEmpty();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.regex.Match#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
 		// PRECONDITIONS
+		Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.map.isEmpty();
@@ -147,31 +309,33 @@ class MatchImpl implements Match {
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<RegexGroup> iterator() {
+	public Iterator<Group> iterator() {
 		// PRECONDITIONS
 		
 		try {
-			return new Iterator<RegexGroup>() {
+			return new Iterator<Group>() {
 				
-				private final Iterator<RegexGroup> it = MatchImpl.this.map.values().iterator();
+				private final Iterator<Group> groupIterator = MatchImpl.this.map.values().iterator();
 				
 				@Override
 				public boolean hasNext() {
 					// PRECONDITIONS
+					Condition.notNull(this.groupIterator, "Field '%s' in '%s'.", "groupIterator", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					try {
-						return this.it.hasNext();
+						return this.groupIterator.hasNext();
 					} finally {
 						// POSTCONDITIONS
 					}
 				}
 				
 				@Override
-				public RegexGroup next() {
+				public Group next() {
 					// PRECONDITIONS
+					Condition.notNull(this.groupIterator, "Field '%s' in '%s'.", "groupIterator", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					try {
-						return this.it.next();
+						return this.groupIterator.next();
 					} finally {
 						// POSTCONDITIONS
 					}
@@ -195,20 +359,36 @@ class MatchImpl implements Match {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.regex.Match#size()
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public int size() {
-		// PRECONDITIONS
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("MatchImpl [map={");
 		
-		try {
-			// PRECONDITIONS
-			Condition.notNull(this.map, "Field '%s' in '%s'.", "map", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuilder builder2 = new StringBuilder();
+		for (final Integer key : this.map.keySet()) {
+			if (builder2.length() > 0) {
+				builder2.append(", ");
+			}
 			
-			return this.map.size();
-		} finally {
-			// POSTCONDITIONS
+			builder2.append(key).append(" => ").append(this.map.get(key));
 		}
+		builder.append(builder2);
+		builder.append("}, names={");
+		
+		builder2 = new StringBuilder();
+		for (final String key : this.nameMap.keySet()) {
+			if (builder2.length() > 0) {
+				builder2.append(", ");
+			}
+			
+			builder2.append(key).append(" => ").append(this.map.get(key));
+		}
+		builder.append(builder2);
+		builder.append("}]");
+		
+		return builder.toString();
 	}
 	
 }

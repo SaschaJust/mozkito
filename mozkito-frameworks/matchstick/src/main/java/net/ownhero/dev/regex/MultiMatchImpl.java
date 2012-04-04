@@ -19,22 +19,32 @@ import java.util.List;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MultiMatchImpl.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MultiMatchImpl implements MultiMatch {
 	
+	/** The matches. */
 	private final List<Match> matches = new LinkedList<Match>();
 	
+	/**
+	 * Instantiates a new {@link MultiMatchImpl}.
+	 */
 	MultiMatchImpl() {
 		
 	}
 	
 	/**
-	 * @param matches
+	 * Adds the match to the local list.
+	 * 
+	 * @param match
+	 *            the match
 	 */
 	void add(@NotNull final Match match) {
 		// PRECONDITIONS
@@ -53,7 +63,7 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#get(int)
 	 */
 	@Override
-	public Match get(final int index) {
+	public Match get(@NotNegative final int index) {
 		// PRECONDITIONS
 		
 		try {
@@ -68,8 +78,8 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#get(int, int)
 	 */
 	@Override
-	public RegexGroup get(@NotNegative final int index,
-	                      @NotNegative final int id) {
+	public Group get(@NotNegative final int index,
+	                 @NotNegative final int id) {
 		// PRECONDITIONS
 		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -79,7 +89,7 @@ public class MultiMatchImpl implements MultiMatch {
 				throw new ArrayIndexOutOfBoundsException("Invalid index: " + index);
 			}
 			
-			return match.get(id);
+			return match.getGroup(id);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -90,8 +100,8 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#get(int, java.lang.String)
 	 */
 	@Override
-	public RegexGroup get(final int index,
-	                      final String name) {
+	public Group get(@NotNegative final int index,
+	                 @NotNull @NotEmptyString final String name) {
 		// PRECONDITIONS
 		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -101,7 +111,7 @@ public class MultiMatchImpl implements MultiMatch {
 				throw new ArrayIndexOutOfBoundsException("Invalid index: " + index);
 			}
 			
-			return match.get(name);
+			return match.getGroup(name);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -112,18 +122,22 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#getGroup(int)
 	 */
 	@Override
-	public RegexGroup[] getGroup(final int id) {
+	public Group[] getGroup(@Positive final int id) {
 		// PRECONDITIONS
 		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		final List<RegexGroup> groups = new ArrayList<RegexGroup>(this.matches.size());
+		final List<Group> groups = new ArrayList<Group>(this.matches.size());
 		
 		try {
 			for (final Match match : this.matches) {
-				groups.add(match.get(id));
+				final Group group = match.getGroup(id);
+				
+				if (group != null) {
+					groups.add(group);
+				}
 			}
 			
-			return groups.toArray(new RegexGroup[0]);
+			return groups.toArray(new Group[0]);
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(groups, "Local variable '%s' in '%s:%s'.", "groups", getHandle(), "getGroup(int)"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -135,18 +149,18 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#getGroup(java.lang.String)
 	 */
 	@Override
-	public RegexGroup[] getGroup(final String name) {
+	public Group[] getGroup(@NotNull @NotEmptyString final String name) {
 		// PRECONDITIONS
 		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		final List<RegexGroup> groups = new ArrayList<RegexGroup>(this.matches.size());
+		final List<Group> groups = new ArrayList<Group>(this.matches.size());
 		
 		try {
 			for (final Match match : this.matches) {
-				groups.add(match.get(name));
+				groups.add(match.getGroup(name));
 			}
 			
-			return groups.toArray(new RegexGroup[0]);
+			return groups.toArray(new Group[0]);
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(groups, "Local variable '%s' in '%s:%s'.", "groups", getHandle(), "getGroup(int)"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -154,7 +168,9 @@ public class MultiMatchImpl implements MultiMatch {
 	}
 	
 	/**
-	 * @return
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	public final String getHandle() {
 		// PRECONDITIONS
@@ -171,7 +187,7 @@ public class MultiMatchImpl implements MultiMatch {
 	 * @see net.ownhero.dev.regex.MultiMatch#getMatch(int)
 	 */
 	@Override
-	public Match getMatch(final int index) {
+	public Match getMatch(@NotNegative final int index) {
 		// PRECONDITIONS
 		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -184,11 +200,47 @@ public class MultiMatchImpl implements MultiMatch {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.MultiMatch#hasGroups()
+	 */
+	@Override
+	public boolean hasGroups() {
+		// PRECONDITIONS
+		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			return this.matches.isEmpty()
+			                             ? false
+			                             : this.matches.iterator().next().hasGroups();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.regex.MultiMatch#hasNamedGroups()
+	 */
+	@Override
+	public boolean hasNamedGroups() {
+		// PRECONDITIONS
+		
+		try {
+			return this.matches.isEmpty()
+			                             ? false
+			                             : this.matches.iterator().next().hasNamesGroups();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.regex.MultiMatch#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
 		// PRECONDITIONS
+		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.matches.isEmpty();
@@ -204,18 +256,20 @@ public class MultiMatchImpl implements MultiMatch {
 	@Override
 	public Iterator<Match> iterator() {
 		// PRECONDITIONS
+		Condition.notNull(this.matches, "Field '%s' in '%s'.", "matches", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return new Iterator<Match>() {
 				
-				private final Iterator<Match> it = MultiMatchImpl.this.matches.iterator();
+				private final Iterator<Match> matchIterator = MultiMatchImpl.this.matches.iterator();
 				
 				@Override
 				public boolean hasNext() {
 					// PRECONDITIONS
+					Condition.notNull(this.matchIterator, "Field '%s' in '%s'.", "matchIterator", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					try {
-						return this.it.hasNext();
+						return this.matchIterator.hasNext();
 					} finally {
 						// POSTCONDITIONS
 					}
@@ -224,14 +278,19 @@ public class MultiMatchImpl implements MultiMatch {
 				@Override
 				public Match next() {
 					// PRECONDITIONS
+					Condition.notNull(this.matchIterator, "Field '%s' in '%s'.", "matchIterator", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					try {
-						return this.it.next();
+						return this.matchIterator.next();
 					} finally {
 						// POSTCONDITIONS
 					}
 				}
 				
+				/**
+				 * @throws UnsupportedOperationException
+				 *             guaranteed.
+				 */
 				@Override
 				public void remove() {
 					// PRECONDITIONS

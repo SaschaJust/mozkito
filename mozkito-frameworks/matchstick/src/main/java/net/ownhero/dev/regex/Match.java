@@ -14,59 +14,128 @@ package net.ownhero.dev.regex;
 
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+
 /**
  * The Interface Match.
  * 
+ * Used when {@link Regex} returns matches like in {@link Regex#find(String)}.
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public interface Match extends Iterable<RegexGroup> {
+public interface Match extends Iterable<Group> {
 	
 	/**
-	 * Gets the.
+	 * Gets the {@link Group}s that corresponds to the <code>id</code>. Keep in mind that actual groups within a pattern
+	 * are enumerated starting at 1, not at 0. Thus, 0 is not a valid <code>id</code>.
 	 * 
 	 * @param id
-	 *            the id
-	 * @return the regex group
+	 *            the {@link Positive} id
+	 * @return the {@link Group}
+	 * @deprecated use {@link Match#getGroup(int)} instead. This will be removed in the 0.2 release.
+	 * @since 0.1
 	 */
-	RegexGroup get(final int id);
+	@Deprecated
+	Group get(@Positive final int id);
 	
 	/**
-	 * Gets the.
+	 * Gets the full match of the pattern. This is guaranteed to not return null.
+	 * 
+	 * @return the full match
+	 */
+	Group getFullMatch();
+	
+	/**
+	 * Gets the {@link Group}s that corresponds to the <code>id</code>. Keep in mind that actual groups within a pattern
+	 * are enumerated starting at 1, not at 0. Thus, 0 is not a valid <code>id</code>.
+	 * 
+	 * @param id
+	 *            the {@link Positive} id
+	 * @return the {@link Group} if <code>id</code> is valid; null otherwise
+	 * @since 0.2
+	 */
+	Group getGroup(@Positive final int id);
+	
+	/**
+	 * Gets the {@link Group}s that corresponds to the <code>name</code>. Returns <code>null</code> if there is no such
+	 * group.
 	 * 
 	 * @param name
-	 *            the name
-	 * @return the regex group
+	 *            the {@link NotNull} {@link NotEmptyString} name
+	 * @return the {@link Group} if <code>name</code> is valid; null otherwise
+	 * @since 0.2
 	 */
-	RegexGroup get(final String name);
+	Group getGroup(@NotNull @NotEmptyString final String name);
 	
 	/**
-	 * Gets the group names.
+	 * Gets the number of {@link Group}s in the {@link Match}.
 	 * 
-	 * @return the group names
+	 * @return the number of {@link Group}s
+	 * @since 0.2
+	 */
+	int getGroupCount();
+	
+	/**
+	 * Gets name of all groups in the {@link Match}.
+	 * 
+	 * @return a {@link Set} containing all names of the {@link Group}s in the {@link Match}. Guaranteed to not be
+	 *         <code>null</code>.
+	 * @since 0.2
 	 */
 	Set<String> getGroupNames();
 	
 	/**
-	 * Gets the groups.
+	 * Gets all {@link Group}s in the {@link Match}.
 	 * 
-	 * @return the groups
+	 * @return all {@link Group}s in the {@link Match}. Will return an empty array if there are none. Guaranteed to not
+	 *         return <code>null</code>.
+	 * @since 0.2
 	 */
-	RegexGroup[] getGroups();
+	Group[] getGroups();
+	
+	/**
+	 * Gets the number of named {@link Group}s in the {@link Match}.
+	 * 
+	 * @return the number of named {@link Group}s
+	 * @since 0.2
+	 */
+	int getNamedGroupCount();
+	
+	/**
+	 * Gets all named {@link Group}s in the {@link Match}.
+	 * 
+	 * @return all named {@link Group}s in the {@link Match}. Will return an empty array if there are none. Guaranteed
+	 *         to not return <code>null</code>.
+	 * @since 0.2
+	 */
+	Group[] getNamedGroups();
+	
+	/**
+	 * Checks for any {@link Group}s in the {@link Match}.
+	 * 
+	 * @return true, if there is at least one.
+	 * @since 0.2
+	 */
+	boolean hasGroups();
+	
+	/**
+	 * Checks for any named {@link Group}s in the {@link Match}.
+	 * 
+	 * @return true, if there is at least one.
+	 * @since 0.2
+	 */
+	boolean hasNamesGroups();
 	
 	/**
 	 * Checks if is empty.
 	 * 
 	 * @return true, if is empty
-	 * @deprecated Empty {@link Match} instances can't exist per definition. The {@link Regex} instance will either
-	 *             return a non-empty {@link Match} or null.
+	 * @deprecated Use {@link Match#hasGroups()} or {@link Match#hasNamesGroups()} instead. This will be removed with
+	 *             the 0.2 release.
+	 * @since 0.2
 	 */
 	@Deprecated
 	boolean isEmpty();
-	
-	/**
-	 * Size.
-	 * 
-	 * @return the int
-	 */
-	int size();
 }

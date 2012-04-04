@@ -242,7 +242,7 @@ public class Regex {
 	private Boolean        matched;
 	private Matcher        matcher;
 	
-	private MatchImpl      match      = new MatchImpl();
+	private MatchImpl      match      = null;
 	private NamedPattern   pattern;
 	private Replacer       replacer;
 	
@@ -308,7 +308,7 @@ public class Regex {
 	 * 
 	 * @param text
 	 *            the text to be analyzed
-	 * @return a {@link List} of {@link RegexGroup} representing the matches.
+	 * @return a {@link List} of {@link Group} representing the matches.
 	 */
 	public Match find(@NotNull final String text) {
 		reset();
@@ -316,16 +316,15 @@ public class Regex {
 		this.matcher = this.pattern.matcher(text);
 		if (this.matcher.find()) {
 			this.matched = true;
-			
-			for (int i = 0; i < this.matcher.groupCount(); ++i) {
-				this.match.add(new RegexGroup(this.pattern.toString(), text, this.matcher.group(i), i,
-				                              this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+			this.match = new MatchImpl(new Group(this.pattern.toString(), text, this.matcher.group(0), 0, null,
+			                                     this.matcher.start(), this.matcher.end()));
+			for (int i = 1; i < this.matcher.groupCount(); ++i) {
+				this.match.add(new Group(this.pattern.toString(), text, this.matcher.group(i), i,
+				                         this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
 			}
 		}
 		
-		return (this.match.size() > 0
-		                             ? this.match
-		                             : null);
+		return this.match;
 	}
 	
 	/**
@@ -334,7 +333,7 @@ public class Regex {
 	 * @param text
 	 *            the text to be analyzed
 	 * @see Regex#find(String)
-	 * @return a {@link List} of {@link List}s of {@link RegexGroup}
+	 * @return a {@link List} of {@link List}s of {@link Group}
 	 */
 	public MultiMatch findAll(@NotNull final String text) {
 		reset();
@@ -343,16 +342,18 @@ public class Regex {
 		final MatchIterator findAll = this.matcher.findAll();
 		
 		this.matched = findAll.hasMore();
+		this.multiMatch = new MultiMatchImpl();
 		
 		while (findAll.hasMore()) {
 			final MatchResult matchResult = findAll.nextMatch();
-			new MatchImpl();
+			final MatchImpl match = new MatchImpl(new Group(this.pattern.toString(), text, matchResult.group(0), 0,
+			                                                null, this.matcher.start(), this.matcher.end()));
 			
 			for (int i = 1; i < matchResult.groupCount(); ++i) {
-				this.match.add(new RegexGroup(this.pattern.toString(), text, matchResult.group(i), i,
-				                              this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+				match.add(new Group(this.pattern.toString(), text, matchResult.group(i), i,
+				                    this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
 			}
-			this.multiMatch.add(this.match);
+			this.multiMatch.add(match);
 		}
 		
 		return (this.multiMatch.size() == 0
@@ -366,18 +367,18 @@ public class Regex {
 	 * 
 	 * @param text
 	 *            the text to be scanned
-	 * @return a list of single element lists containing a {@link RegexGroup}
+	 * @return a list of single element lists containing a {@link Group}
 	 */
 	public MultiMatch findAllPossibleMatches(@NotNull final String text) {
 		reset();
 		
 		this.matcher = this.pattern.matcher(text);
+		this.multiMatch = new MultiMatchImpl();
 		
 		while (this.matcher.proceed()) {
 			this.matched = true;
-			final MatchImpl candidates = new MatchImpl();
-			candidates.add(new RegexGroup(getPattern(), text, this.matcher.toString(), 0, null, this.matcher.start(),
-			                              this.matcher.end()));
+			final MatchImpl candidates = new MatchImpl(new Group(getPattern(), text, this.matcher.toString(), 0, null,
+			                                                     this.matcher.start(), this.matcher.end()));
 			this.multiMatch.add(candidates);
 		}
 		
@@ -419,6 +420,15 @@ public class Regex {
 	 */
 	public Set<String> getGroupNames() {
 		return this.pattern.getGroupsNames();
+	}
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
+	 */
+	public final String getHandle() {
+		return getClass().getSimpleName();
 	}
 	
 	/**
@@ -464,7 +474,7 @@ public class Regex {
 		reset();
 		
 		find(text);
-		return (this.match != null) && (this.match.size() > 0);
+		return (this.match != null) && (this.match.getGroupCount() > 0);
 	}
 	
 	/**
@@ -543,11 +553,22 @@ public class Regex {
 	 * Resets storage to guarantee consistent getter outputs.
 	 */
 	private void reset() {
-		this.matcher = null;
-		this.replacer = null;
-		this.match = new MatchImpl();
-		this.multiMatch = new MultiMatchImpl();
-		this.matched = null;
+		// PRECONDITIONS
+		
+		try {
+			this.matcher = null;
+			this.replacer = null;
+			this.match = null;
+			this.multiMatch = null;
+			this.matched = null;
+		} finally {
+			// POSTCONDITIONS
+			Condition.isNull(this.match, "Field '%s' in '%s'.", "match", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.isNull(this.replacer, "Field '%s' in '%s'.", "replacer", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.isNull(this.match, "Field '%s' in '%s'.", "match", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.isNull(this.multiMatch, "Field '%s' in '%s'.", "multiMatch", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.isNull(this.matched, "Field '%s' in '%s'.", "matched", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/**

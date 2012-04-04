@@ -12,8 +12,16 @@
  ******************************************************************************/
 package net.ownhero.dev.regex;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.simple.Positive;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+
 /**
  * The Interface MultiMatch.
+ * 
+ * This interface is used in {@link Regex} when returning multiple {@link Match}es like in {@link Regex#findAll(String)}
+ * .
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
@@ -26,75 +34,112 @@ public interface MultiMatch extends Iterable<Match> {
 	 *            the index
 	 * @return the match
 	 * @deprecated use {@link MultiMatch#getMatch(int)} instead.
+	 * @since 0.1
 	 */
 	@Deprecated
-	Match get(final int index);
+	Match get(@NotNegative final int index);
 	
 	/**
-	 * Gets the.
+	 * Gets the {@link Group} with id <code>id</code> in the {@link Match} with index <code>index</code>. If you have a
+	 * pattern <code>"(a) (b)"</code> and a string <code>"a b a b"</code>, <code>get(1, 1)</code> will return the
 	 * 
 	 * @param index
-	 *            the index
+	 *            the {@link NotNegative} index
 	 * @param id
-	 *            the id
-	 * @return the regex group with id 'id' of the 'index'th match or null if the id is invalid.
+	 *            the {@link Positive} id
+	 * @return the {@link Group} with id <code>id</code> of the <code>index</code>th match or <code>null</code> if the
+	 *         id is invalid. {@link Group} for the second a in the string since it is the 1st {@link Group} (
+	 *         <code>id = 1</code>) within the 2nd {@link Match} (<code>index = 1</code>).
+	 * 
+	 *         Note: Please keep in mind that <code>id = 0</code> is not valid and won't return a {@link Group} that
+	 *         corresponds to the complete match of the pattern. Requesting <code>id = 0</code> will result in the
+	 *         function returning null (if the index is valid).
+	 * @since 0.2
 	 */
-	RegexGroup get(final int index,
-	               final int id);
+	Group get(@NotNegative final int index,
+	          @Positive final int id);
 	
 	/**
-	 * Gets the.
+	 * Gets the {@link Group} with name <code>name</code> in the {@link Match} with index <code>index</code>. If you
+	 * have a pattern <code>"({x}a) ({y}b)"</code> and a string <code>"a b a b"</code>, <code>get(1, "x")</code> will
+	 * return the {@link Group} for the second a in the string since it is the {@link Group} with name "x" within the
+	 * 2nd {@link Match} (<code>index = 1</code>).
 	 * 
 	 * @param index
-	 *            the index
+	 *            the {@link NotNegative} index
 	 * @param name
-	 *            the name
-	 * @return the regex group with name 'name' of the 'index'th match or null if the id is invalid.
+	 *            the {@link NotNull} name
+	 * @return the {@link Group} with name <code>name</code> of the <code>index</code>th match or <code>null</code> if
+	 *         the id is invalid.
+	 * @since 0.2
 	 */
-	RegexGroup get(final int index,
-	               final String name);
+	Group get(@NotNegative final int index,
+	          @NotNull @NotEmptyString final String name);
 	
 	/**
-	 * Gets the group.
+	 * Returns an array containing all {@link Group}s that corresponds to the given <code>id</code> of all {@link Match}
+	 * es. Will return an empty array if the <code>id</code> is invalid.
 	 * 
 	 * @param id
-	 *            the id
-	 * @return the all {@link RegexGroup}s for the given id.
+	 *            the {@link Positive} id
+	 * @return all {@link Group}s for the given id.
+	 * @since 0.2
 	 */
-	RegexGroup[] getGroup(final int id);
+	Group[] getGroup(@Positive final int id);
 	
 	/**
-	 * Gets the group.
+	 * Returns an array containing all {@link Group}s that corresponds to the given <code>name</code> of all.
 	 * 
 	 * @param name
-	 *            the name
-	 * @return the all {@link RegexGroup}s for the given name.
+	 *            the {@link NotNull} {@link NotEmptyString} name
+	 * @return all {@link Group}s for the given id. {@link Match}es. Will return an empty array if there are no
+	 *         {@link Group}s with that <code>name</code> is invalid.
+	 * @since 0.2
 	 */
-	RegexGroup[] getGroup(final String name);
+	Group[] getGroup(@NotNull @NotEmptyString final String name);
 	
 	/**
 	 * Gets the match with the given index.
 	 * 
 	 * @param index
-	 *            the index
-	 * @return the match
+	 *            the {@link NotNegative} index
+	 * @return the match with that corresponds to the index
+	 * @since 0.2
 	 */
-	Match getMatch(final int index);
+	Match getMatch(@NotNegative final int index);
 	
 	/**
-	 * Checks if is empty.
+	 * Checks if there are any {@link Group}s in the pattern that matched.
+	 * 
+	 * @return true, if successful
+	 * @since 0.2
+	 */
+	boolean hasGroups();
+	
+	/**
+	 * Checks if there are any names {@link Group}s in the pattern that matched.
+	 * 
+	 * @return true, if successful
+	 * @since 0.2
+	 */
+	boolean hasNamedGroups();
+	
+	/**
+	 * Checks if there aren't any groups aside the full match of the pattern.
 	 * 
 	 * @return true, if is empty
-	 * @deprecated Empty MultiMatch instances can't exist by definition. Either regex.findAll() returns a non-empty
-	 *             instance or null.
+	 * @since 0.1
+	 * @deprecated You want to use {@link MultiMatch#hasGroups()} or {@link MultiMatch#hasNamedGroups()} instead. This
+	 *             will be removed in the 0.2 release.
 	 */
 	@Deprecated
 	boolean isEmpty();
 	
 	/**
-	 * Size.
+	 * Returns the number of {@link Match}es in the {@link MultiMatch}.
 	 * 
-	 * @return the int
+	 * @return the number of {@link Match}es.
+	 * @since 0.1
 	 */
 	int size();
 	
