@@ -140,30 +140,16 @@
 		</repository>
 		<repository>
 			<releases>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<id>dev.own-hero.net</id>
 			<name>Dev//own-hero.net</name>
 			<url>https://nexus.own-hero.net/content/repositories/dev.own-hero.net</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<id>own-hero.net</id>
-			<name>own-hero.net local Repositories</name>
-			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
