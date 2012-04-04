@@ -46,15 +46,15 @@ public class Main {
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 	}

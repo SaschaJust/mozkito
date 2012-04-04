@@ -27,10 +27,10 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import noNamespace.AssignedToDocument.AssignedTo;
 import noNamespace.AttachmentDocument.Attachment;
 import noNamespace.LongDescDocument.LongDesc;
@@ -335,7 +335,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				bugId = getXmlBug().getBugId();
 			} catch (final NumberFormatException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 			return bugId;
@@ -569,7 +569,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				final MultiMatch groupsList = siblingRegex.findAll(comment);
 				if (groupsList != null) {
 					for (final Match groups : groupsList) {
-						for (final RegexGroup group : groups) {
+						for (final Group group : groups) {
 							if (group.getName().equals("sibling")) {
 								result.add(group.getMatch());
 							}

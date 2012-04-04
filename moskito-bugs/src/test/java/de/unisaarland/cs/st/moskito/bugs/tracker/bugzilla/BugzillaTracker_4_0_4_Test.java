@@ -31,7 +31,6 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -109,16 +108,6 @@ public class BugzillaTracker_4_0_4_Test {
 			e.printStackTrace();
 			fail();
 		}
-	}
-	
-	/**
-	 * Tear down.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@After
-	public void tearDown() throws Exception {
 	}
 	
 	/**
@@ -305,7 +294,7 @@ public class BugzillaTracker_4_0_4_Test {
 			
 		} catch (final SecurityException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}
@@ -435,12 +424,12 @@ public class BugzillaTracker_4_0_4_Test {
 			assertEquals(DateTimeUtils.parseDate("2005-11-03 23:17:37 EST"), resolutionTimestamp);
 		} catch (final SecurityException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}

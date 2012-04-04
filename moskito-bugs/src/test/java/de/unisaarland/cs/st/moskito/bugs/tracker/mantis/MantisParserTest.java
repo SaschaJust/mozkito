@@ -26,10 +26,10 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -90,9 +90,9 @@ public class MantisParserTest {
 		final Regex idRegex = mantisParser.getAttachmentIdRegex();
 		final MultiMatch findAll = idRegex.findAll(url);
 		assertEquals(1, findAll.size());
-		assertEquals(1, findAll.get(0).size());
-		assertEquals("FILE_ID", findAll.get(0).get(0).getName());
-		assertEquals("5008", findAll.get(0).get(0).getMatch());
+		assertEquals(1, findAll.getMatch(0).getGroupCount());
+		assertEquals("FILE_ID", findAll.getMatch(0).getGroup(1).getName());
+		assertEquals("5008", findAll.getMatch(0).getGroup(1).getMatch());
 	}
 	
 	/**
@@ -107,10 +107,10 @@ public class MantisParserTest {
 		assert (findAll != null);
 		assertEquals(3, findAll.size());
 		for (int i = 0; i < 3; ++i) {
-			final Match list = findAll.get(i);
-			assertEquals(4, list.size());
-			for (int j = 0; j < 4; ++j) {
-				final RegexGroup regexGroup = list.get(j);
+			final Match list = findAll.getMatch(i);
+			assertEquals(3, list.getGroupCount());
+			for (int j = 1; j <= 4; ++j) {
+				final Group regexGroup = list.getGroup(j);
 				switch (j) {
 					case 0:
 						regexGroup.getName().equals("FILE");
@@ -127,11 +127,11 @@ public class MantisParserTest {
 				}
 			}
 		}
-		findAll.get(0).get(0).getMatch().equals("Selection_031.png");
-		findAll.get(0).get(1).getMatch().equals("37,363");
-		findAll.get(0).get(2).getMatch().equals("2012-02-20 10:39");
-		findAll.get(0)
-		       .get(3)
+		findAll.getMatch(0).getGroup(1).getMatch().equals("Selection_031.png");
+		findAll.getMatch(0).getGroup(2).getMatch().equals("37,363");
+		findAll.getMatch(0).getGroup(3).getMatch().equals("2012-02-20 10:39");
+		findAll.getMatch(0)
+		       .getGroup(4)
 		       .getMatch()
 		       .equals("https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug");
 	}

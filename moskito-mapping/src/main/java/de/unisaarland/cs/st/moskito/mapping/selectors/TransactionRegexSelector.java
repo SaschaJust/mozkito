@@ -24,8 +24,9 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -170,21 +171,21 @@ public class TransactionRegexSelector extends MappingSelector {
 		
 		final Criteria<Report> criteria = util.createCriteria(Report.class);
 		
-		final List<List<RegexGroup>> findAll = regex.findAll(element.get(FieldKey.BODY).toString());
+		final MultiMatch multiMatch = regex.findAll(element.get(FieldKey.BODY).toString());
 		if (Logger.logDebug()) {
 			Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
-			        + (findAll != null
-			                          ? findAll.size()
-			                          : 0) + " matches for regex '" + this.pattern + "'.");
+			        + (multiMatch != null
+			                             ? multiMatch.size()
+			                             : 0) + " matches for regex '" + this.pattern + "'.");
 		}
 		
-		if (findAll != null) {
-			for (final List<RegexGroup> match : findAll) {
+		if (multiMatch != null) {
+			for (final Match match : multiMatch) {
 				if (Logger.logDebug()) {
 					Logger.debug("While parsing transaction " + element.get(FieldKey.ID).toString()
-					        + " i stumbled upon this match: " + match.get(0).getMatch());
+					        + " i stumbled upon this match: " + match.getGroup(1).getMatch());
 				}
-				ids.add(Long.parseLong(match.get(0).getMatch()));
+				ids.add(Long.parseLong(match.getGroup(1).getMatch()));
 			}
 		}
 		criteria.in("id", ids);

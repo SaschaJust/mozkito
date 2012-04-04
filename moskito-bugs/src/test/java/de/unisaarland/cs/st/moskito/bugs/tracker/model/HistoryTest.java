@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -23,10 +20,7 @@ import static org.junit.Assert.assertEquals;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
@@ -36,28 +30,10 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class HistoryTest.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class HistoryTest {
-	
-	/**
-	 * Sets the up before class.
-	 *
-	 * @throws Exception the exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-	
-	/**
-	 * Tear down after class.
-	 *
-	 * @throws Exception the exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
 	
 	/** The report. */
 	private Report                  report;
@@ -67,8 +43,9 @@ public class HistoryTest {
 	
 	/**
 	 * Sets the up.
-	 *
-	 * @throws Exception the exception
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -97,33 +74,6 @@ public class HistoryTest {
 		element.addChangedValue("resolution", new Report("0").getResolution(), Resolution.RESOLVED);
 		element.addChangedValue("status", Status.NEW, Status.FEEDBACK);
 		this.report.addHistoryElement(element);
-	}
-	
-	/**
-	 * Tear down.
-	 *
-	 * @throws Exception the exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-	
-	/**
-	 * Test method for.
-	 *
-	 * {@link de.unisaarland.cs.st.moskito.bugs.tracker.model.History#rollback(de.unisaarland.cs.st.moskito.bugs.tracker.model.Report, org.joda.time.DateTime)}
-	 * .
-	 */
-	@Test
-	public final void testRollback() {
-	}
-	
-	/**
-	 * Test method for {@link Report#timewarp(org.joda.time.Interval, String)}
-	 */
-	@Test
-	public final void testTimewarpInterval() {
-		
 	}
 	
 	/**

@@ -65,15 +65,15 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 					result = (SVMAggregation) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}

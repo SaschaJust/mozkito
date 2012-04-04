@@ -407,7 +407,7 @@ public class GitRepository extends Repository {
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
 				final Match found = formerPathRegex.find(line);
-				if (found.size() < 1) {
+				if (!found.hasGroups()) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");
 					}

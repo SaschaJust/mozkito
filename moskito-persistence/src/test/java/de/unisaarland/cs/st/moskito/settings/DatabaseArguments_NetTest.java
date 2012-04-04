@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
-public class DatabaseArgumentsTest {
+public class DatabaseArguments_NetTest {
 	
 	@Test
 	public void test() throws SettingsParseError {

@@ -23,8 +23,9 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -102,12 +103,12 @@ public class ReportRegexSelector extends MappingSelector {
 			
 			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
 				final Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
-				final List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
+				final MultiMatch multiMatch = regex.findAll(comment.getMessage());
 				
-				if (findAll != null) {
-					for (final List<RegexGroup> match : findAll) {
+				if (multiMatch != null) {
+					for (final Match match : multiMatch) {
 						
-						ids.add(match.get(0).getMatch());
+						ids.add(match.getGroup(1).getMatch());
 					}
 				}
 			}

@@ -107,7 +107,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			return true;
 		} catch (final RestClientException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {

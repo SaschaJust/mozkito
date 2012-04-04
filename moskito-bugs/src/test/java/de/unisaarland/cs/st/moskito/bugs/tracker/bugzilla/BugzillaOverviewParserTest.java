@@ -60,7 +60,7 @@ public class BugzillaOverviewParserTest {
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}
@@ -92,7 +92,7 @@ public class BugzillaOverviewParserTest {
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}

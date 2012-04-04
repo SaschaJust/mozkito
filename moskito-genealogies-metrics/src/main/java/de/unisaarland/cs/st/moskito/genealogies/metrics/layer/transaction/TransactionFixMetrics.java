@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
@@ -31,8 +28,10 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
@@ -43,7 +42,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class TransactionFixMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class TransactionFixMetrics extends GenealogyTransactionMetric {
@@ -62,8 +61,9 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	
 	/**
 	 * Instantiates a new transaction fix metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public TransactionFixMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
@@ -106,20 +106,22 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 	
 	/**
 	 * Gets the bug id.
-	 *
-	 * @param regex the regex
-	 * @param message the message
+	 * 
+	 * @param regex
+	 *            the regex
+	 * @param message
+	 *            the message
 	 * @return the bug id
 	 */
 	private List<String> getBugId(final Regex regex,
 	                              final String message) {
-		final List<List<RegexGroup>> findAll = regex.findAll(message.toLowerCase());
+		final MultiMatch findAll = regex.findAll(message.toLowerCase());
 		if (findAll == null) {
 			return new ArrayList<String>(0);
 		}
 		final List<String> result = new LinkedList<String>();
-		for (final List<RegexGroup> regexGroups : findAll) {
-			for (final RegexGroup regexGroup : regexGroups) {
+		for (final Match regexGroups : findAll) {
+			for (final Group regexGroup : regexGroups) {
 				if (regexGroup.getName().equals("bugids")) {
 					if (regexGroup.getMatch() != null) {
 						final String[] bugids = regexGroup.getMatch().split(",");
@@ -134,7 +136,8 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
@@ -145,7 +148,8 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override

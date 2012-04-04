@@ -116,17 +116,17 @@ public abstract class MappingEngine extends Node {
 				return set;
 			} catch (final ClassNotFoundException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			} catch (final InstantiationException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			} catch (final IllegalAccessException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			} finally {
@@ -161,17 +161,17 @@ public abstract class MappingEngine extends Node {
 					}
 				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				} catch (final WrongClassSearchMethodException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				}

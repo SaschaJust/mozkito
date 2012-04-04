@@ -21,8 +21,9 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.TalkbackEntry;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.TalkbackTrace;
@@ -114,8 +115,8 @@ public class TalkBackFilter extends StackTraceFilter {
 		final Regex rptl1 = new Regex(trace, Pattern.MULTILINE);
 		
 		// Find all talkback lines
-		final List<List<RegexGroup>> list = rptl1.findAll(inputText);
-		for (final List<RegexGroup> matches : list) {
+		final MultiMatch list = rptl1.findAll(inputText);
+		for (final Match matches : list) {
 			talkbackLines.add(matches.get(0).getMatch().trim());
 			this.textRemover.markForDeletion(matches.get(0).start(), matches.get(0).end());
 		}

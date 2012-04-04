@@ -47,12 +47,12 @@ public class GoogleTracker_NetTest {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
 		final Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
 		Match groups = regex.find(fetchURI);
-		assertTrue(groups.size() > 1);
+		assertTrue(groups.hasGroups());
 		assertEquals("webtoolkit", regex.getGroup("project"));
 		
 		fetchURI = "http://code.google.com/p/google-web-toolkit/issues/list";
 		groups = regex.find(fetchURI);
-		assertTrue(groups.size() > 1);
+		assertTrue(groups.hasGroups());
 		assertEquals("google-web-toolkit", regex.getGroup("project"));
 	}
 	
@@ -106,8 +106,6 @@ public class GoogleTracker_NetTest {
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} finally {
-			
 		}
 	}
 }

@@ -90,7 +90,7 @@ class GitLogParser {
 				final MultiMatch findList = usernameRegex.findAll(authorString);
 				if (findList != null) {
 					if (findList.size() > 1) {
-						username = findList.get(0).get(1).getMatch();
+						username = findList.getMatch(0).getGroup(1).getMatch();
 					}
 				}
 				authorString = usernameRegex.removeAll(authorString);

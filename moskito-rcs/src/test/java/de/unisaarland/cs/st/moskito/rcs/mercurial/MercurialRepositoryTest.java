@@ -53,7 +53,7 @@ public class MercurialRepositoryTest extends MoskitoTest {
 		final String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
 		final Match found = MercurialRepository.formerPathRegex.find(line);
 		assertTrue(MercurialRepository.formerPathRegex.matches(line));
-		assertEquals(2, found.size());
+		assertEquals(1, found.getGroupCount());
 		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
 		             MercurialRepository.formerPathRegex.getGroup("result"));
 	}
@@ -66,7 +66,7 @@ public class MercurialRepositoryTest extends MoskitoTest {
 	public void testPlaineName() {
 		Regex.analyzePattern(MercurialRepository.authorRegex.getPattern());
 		final Match found = MercurialRepository.authorRegex.find("just");
-		assertTrue(found.size() > 0);
+		assertTrue(found.hasGroups());
 		assertTrue(MercurialRepository.authorRegex.getGroup("plain") != null);
 		assertEquals("just", MercurialRepository.authorRegex.getGroup("plain"));
 	}

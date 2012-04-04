@@ -84,7 +84,7 @@ public class Merge_NetTest extends MoskitoTest {
 			personsMerger.run();
 		} catch (final ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			
 		}

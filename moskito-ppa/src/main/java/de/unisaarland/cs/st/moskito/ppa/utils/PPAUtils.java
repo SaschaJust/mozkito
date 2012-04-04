@@ -1329,7 +1329,7 @@ public class PPAUtils {
 			                                     elementFactory);
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 		return new JavaElementLocations();
@@ -1486,7 +1486,7 @@ public class PPAUtils {
 			}
 		} catch (final CoreException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 		return project;

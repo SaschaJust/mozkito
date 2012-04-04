@@ -201,7 +201,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 				return repository;
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return null;
 			}

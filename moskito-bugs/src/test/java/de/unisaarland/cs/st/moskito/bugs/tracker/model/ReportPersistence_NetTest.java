@@ -67,8 +67,6 @@ public class ReportPersistence_NetTest extends MoskitoTest {
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
-		} finally {
-			
 		}
 	}
 }

@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kisa</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
@@ -50,11 +50,6 @@
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tika</groupId>
-			<artifactId>tika-parsers</artifactId>
-			<version>0.10</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.jponge</groupId>

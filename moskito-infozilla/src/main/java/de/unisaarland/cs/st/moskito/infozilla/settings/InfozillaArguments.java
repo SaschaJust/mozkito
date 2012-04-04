@@ -95,7 +95,7 @@ public class InfozillaArguments extends
 			// }
 			// } catch (final Exception e) {
 			// if (Logger.logError()) {
-			// Logger.error(e.getMessage(), e);
+			// Logger.error(e);
 			// }
 			// throw new RuntimeException();
 			// }

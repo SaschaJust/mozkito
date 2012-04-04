@@ -91,15 +91,15 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -119,11 +119,11 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					out.close();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}

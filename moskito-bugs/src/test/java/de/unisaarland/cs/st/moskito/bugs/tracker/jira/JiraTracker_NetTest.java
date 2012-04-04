@@ -23,7 +23,6 @@ import java.util.SortedSet;
 
 import net.ownhero.dev.ioda.ProxyConfig;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,16 +72,6 @@ public class JiraTracker_NetTest {
 	}
 	
 	/**
-	 * Tear down.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-	
-	/**
 	 * Test attachments.
 	 */
 	@Test
@@ -112,8 +101,6 @@ public class JiraTracker_NetTest {
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
-		} finally {
-			
 		}
 	}
 	

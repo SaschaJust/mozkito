@@ -47,7 +47,7 @@ public class BugzillaTracker extends Tracker {
 	// bugId + "")), bugId);
 	// } catch (final URISyntaxException e) {
 	// if (Logger.logError()) {
-	// Logger.error(e.getMessage(), e);
+	// Logger.error(e);
 	// }
 	// return null;
 	// }

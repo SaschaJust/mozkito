@@ -116,8 +116,9 @@ public class RepositoryTest extends MoskitoTest {
 	
 	/**
 	 * Gets the date from string.
-	 *
-	 * @param timestamp the timestamp
+	 * 
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the date from string
 	 */
 	private static DateTime getDateFromString(final String timestamp) {
@@ -301,7 +302,7 @@ public class RepositoryTest extends MoskitoTest {
 	public void testGetFirstRevisionID() {
 		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				
+				// ignore
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("1", repository.getFirstRevisionId());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
@@ -332,7 +333,7 @@ public class RepositoryTest extends MoskitoTest {
 	public void testGetLastRevisionID() {
 		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				
+				// ignore
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("17", repository.getEndRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {

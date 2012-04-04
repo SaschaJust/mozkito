@@ -536,15 +536,15 @@ public class GoogleParser implements Parser {
 					
 				} catch (final MalformedURLException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final ServiceException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -1030,22 +1030,22 @@ public class GoogleParser implements Parser {
 				return true;
 			} catch (final NumberFormatException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError("Got wrongly encoded URL.");
 			} catch (final MalformedURLException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return false;
 			} catch (final IOException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return false;
 			} catch (final ServiceException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return false;
 			}

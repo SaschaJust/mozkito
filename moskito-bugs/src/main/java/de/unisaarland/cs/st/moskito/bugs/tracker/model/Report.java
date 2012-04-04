@@ -403,15 +403,15 @@ public class Report implements Annotated, Comparable<Report> {
 					return method.invoke(this);
 				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -801,15 +801,15 @@ public class Report implements Annotated, Comparable<Report> {
 					method.invoke(this, fieldValue);
 				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}

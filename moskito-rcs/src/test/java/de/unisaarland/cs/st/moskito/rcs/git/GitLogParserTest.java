@@ -14,9 +14,9 @@ package de.unisaarland.cs.st.moskito.rcs.git;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.junit.Test;
 
@@ -127,8 +127,8 @@ public class GitLogParserTest {
 		final String message = "Author: jvanzyl <jvanzyl>\nDate:   Tue Jan 13 22:54:37 2004 +0000\n o http://jira.codehaus.org/secure/ViewIssue.jspa?key=XSTR-17\n\ngit-svn-id: file:///scratch/kim/miner_repos/xstream/svn_repo_09_03_2011/trunk@61 f887afa5-a9cb-4ae6-b411-6339e5819859";
 		final Match groups = GitLogParser.gitLogDateFormatRegex.find(message);
 		int found = 0;
-		assertEquals(9, groups.size());
-		for (final RegexGroup group : groups) {
+		assertEquals(8, groups.getGroupCount());
+		for (final Group group : groups) {
 			if ((group.getName().equals("Z")) && (group.getMatch().equals("+0000"))) {
 				++found;
 			} else if ((group.getName().equals("EEE")) && (group.getMatch().equals("Tue"))) {

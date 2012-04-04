@@ -20,8 +20,9 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.moskito.infozilla.model.itemization.Itemization;
@@ -163,10 +164,10 @@ public class EnumerationFilter extends InfozillaFilter {
 				// Store the Symbol we found this time
 				String foundEnumSymbol = "";
 				final Regex regex = new Regex(regex_EnumStart);
-				final List<List<RegexGroup>> findAll = regex.findAll(line);
+				final MultiMatch findAll = regex.findAll(line);
 				
-				for (final List<RegexGroup> list : findAll) {
-					foundEnumSymbol = list.get(1).getMatch();
+				for (final Match list : findAll) {
+					foundEnumSymbol = list.getGroup(1).getMatch();
 				}
 				
 				// Check whether the Symbol is an increase over the previous
@@ -361,10 +362,10 @@ public class EnumerationFilter extends InfozillaFilter {
 				// Store the Symbol we found this time
 				int foundEnumSymbol = -1;
 				final Regex regex = new Regex(regex_EnumStart);
-				final List<List<RegexGroup>> list = regex.findAll(line);
-				for (final List<RegexGroup> matches : list) {
+				final MultiMatch list = regex.findAll(line);
+				for (final Match matches : list) {
 					try {
-						foundEnumSymbol = Integer.valueOf(matches.get(1).getMatch());
+						foundEnumSymbol = Integer.valueOf(matches.getGroup(1).getMatch());
 					} catch (final NumberFormatException e) {
 						foundEnumSymbol = Integer.MAX_VALUE;
 					}

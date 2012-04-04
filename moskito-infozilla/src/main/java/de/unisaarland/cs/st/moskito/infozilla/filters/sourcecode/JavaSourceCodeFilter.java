@@ -40,8 +40,9 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import com.Ostermiller.util.CSVParser;
 
@@ -192,9 +193,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			final String patternOptions = this.codePatternOptions.get(keyword);
 			if (patternOptions.contains("MATCH")) {
 				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
-				final List<List<RegexGroup>> list = regex.findAll(s);
+				final MultiMatch list = regex.findAll(s);
 				
-				for (final List<RegexGroup> matches : list) {
+				for (final Match matches : list) {
 					final int offset = findMatch(s, '{', '}', matches.get(0).end());
 					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(),
 					                                              matches.get(0).end() + offset, keyword,
@@ -205,9 +206,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				}
 			} else {
 				final Regex regex = new Regex(this.codePatterns.get(keyword).pattern());
-				final List<List<RegexGroup>> list = regex.findAll(s);
+				final MultiMatch list = regex.findAll(s);
 				
-				for (final List<RegexGroup> matches : list) {
+				for (final Match matches : list) {
 					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end(),
 					                                              keyword, matches.get(0).getMatch());
 					codeRegions.add(foundRegion);

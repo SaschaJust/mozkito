@@ -162,11 +162,11 @@ public class ChangeCouplings {
 				out.close();
 			} catch (final FileNotFoundException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			} catch (final IOException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 			

@@ -18,7 +18,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
  * 
  */
 @DatabaseSettings (unit = "rcs")
-public class MoskitoDerivationTest extends MoskitoTest {
+public class MoskitoDerivationTest_NetTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {

@@ -79,17 +79,17 @@ public class Persons extends Chain<Settings> {
 			settings.loadByInheritance(MergingEngine.class.getPackage(), settings.getRoot());
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e.getMessage(), e);
 		}
@@ -119,19 +119,19 @@ public class Persons extends Chain<Settings> {
 			} catch (final ArgumentRegistrationException e) {
 				// TODO Auto-generated catch block
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				
 			} catch (final ArgumentSetRegistrationException e) {
 				// TODO Auto-generated catch block
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				
 			} catch (final SettingsParseError e) {
 				// TODO Auto-generated catch block
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				
 			}

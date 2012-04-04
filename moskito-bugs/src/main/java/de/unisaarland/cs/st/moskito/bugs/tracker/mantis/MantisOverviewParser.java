@@ -25,9 +25,9 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -130,7 +130,7 @@ public class MantisOverviewParser implements OverviewParser {
 			final Element lastATag = aTags.get(aTags.size() - 1);
 			final String href = lastATag.attr("href");
 			final Match regexGroups = this.pageRegex.find(href);
-			for (final RegexGroup regexGroup : regexGroups) {
+			for (final Group regexGroup : regexGroups) {
 				if ((regexGroup.getName() != null) && (regexGroup.getName().equals("page_number"))) {
 					return Integer.valueOf(regexGroup.getMatch());
 				}
@@ -229,10 +229,10 @@ public class MantisOverviewParser implements OverviewParser {
 				for (final Element aTag : aTags) {
 					final String href = aTag.attr("href").trim();
 					final Match find = this.reportRegex.find(href);
-					if ((find == null) || (find.isEmpty())) {
+					if (find == null) {
 						continue;
 					}
-					for (final RegexGroup regexGroup : find) {
+					for (final Group regexGroup : find) {
 						if ((regexGroup.getName() != null) && (regexGroup.getName().equals("bugid"))) {
 							result.add(new ReportLink(new URI(this.tracker.getUri().toASCIIString() + href),
 							                          regexGroup.getMatch()));
@@ -245,17 +245,17 @@ public class MantisOverviewParser implements OverviewParser {
 			return result;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return result;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return result;
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return result;
 		} finally {

@@ -36,8 +36,8 @@ public class SourceforgeParserTest {
 		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
 		final Match find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
 		assert (find != null);
-		assertEquals(2, find.size());
-		assertEquals("336228", find.get(1).getMatch());
+		assertEquals(1, find.getGroupCount());
+		assertEquals("336228", find.getGroup(1).getMatch());
 	}
 	
 	/**

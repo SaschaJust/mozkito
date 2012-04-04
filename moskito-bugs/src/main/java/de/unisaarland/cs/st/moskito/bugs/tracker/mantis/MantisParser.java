@@ -462,10 +462,8 @@ public class MantisParser implements Parser {
 						// throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
 						continue;
 					}
-					if (attachmentIdGroups.get(0).size() != 1) {
-						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
-					}
-					attachmentEntry = new AttachmentEntry(attachmentIdGroups.get(0).get(0).getMatch());
+					
+					attachmentEntry = new AttachmentEntry(attachmentIdGroups.getMatch(0).getGroup(1).getMatch());
 					attachmentEntry.setLink(link);
 					result.add(attachmentEntry);
 					final Element filenameTag = aTag.nextElementSibling();
@@ -517,11 +515,11 @@ public class MantisParser implements Parser {
 			}
 			
 			for (int i = 0; i < sizeStrings.size(); ++i) {
-				final Match list = sizeStrings.get(i);
-				if (list.isEmpty()) {
+				final Match match = sizeStrings.getMatch(i);
+				if (!match.hasGroups()) {
 					throw new UnrecoverableError("Did not find attachment size for attachment " + result.get(i).getId());
 				}
-				final String sizeString = list.get(0).getMatch().replace(",", "");
+				final String sizeString = match.getGroup(1).getMatch().replace(",", "");
 				try {
 					result.get(i).setSize(Long.parseLong(sizeString));
 				} catch (final NumberFormatException e) {
@@ -966,13 +964,13 @@ public class MantisParser implements Parser {
 		try {
 			final String category = getCategory();
 			final MultiMatch findAll = this.projectRegex.findAll(category);
-			if (findAll.isEmpty() || findAll.get(0).isEmpty()) {
+			if ((findAll == null) || !findAll.getMatch(0).hasGroups()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not find product description in category.");
 				}
 				return "";
 			}
-			return findAll.get(0).get(0).getMatch();
+			return findAll.getMatch(0).getGroup(1).getMatch();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -1298,12 +1296,12 @@ public class MantisParser implements Parser {
 			return true;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {

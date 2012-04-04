@@ -130,8 +130,8 @@ public class TransactionSetTest {
 		try {
 			tSet.add(this.otherT);
 			fail();
-		} catch (final IllegalArgumentException e) {
-			
+		} catch (final IllegalArgumentException ignore) {
+			// ignore
 		}
 	}
 	

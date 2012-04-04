@@ -95,17 +95,17 @@ public abstract class MergingEngine implements SettingsProvider {
 				return set;
 			} catch (final ClassNotFoundException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new ClassLoadingError(e, className);
 			} catch (final InstantiationException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			} catch (final IllegalAccessException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			} finally {
@@ -140,17 +140,17 @@ public abstract class MergingEngine implements SettingsProvider {
 					}
 				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				} catch (final WrongClassSearchMethodException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					
 				}

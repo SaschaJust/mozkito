@@ -189,7 +189,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}
@@ -220,7 +220,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}
@@ -248,7 +248,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}

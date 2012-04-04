@@ -255,12 +255,12 @@ public class Untangling {
 			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			} catch (final ClassNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 		}

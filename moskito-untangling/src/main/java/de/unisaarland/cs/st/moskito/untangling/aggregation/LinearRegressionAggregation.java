@@ -89,15 +89,15 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 					this.trained = true;
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 				
@@ -127,7 +127,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			return this.model.distributionForInstance(instance)[0];
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return MultilevelClustering.IGNORE_SCORE;
 		}

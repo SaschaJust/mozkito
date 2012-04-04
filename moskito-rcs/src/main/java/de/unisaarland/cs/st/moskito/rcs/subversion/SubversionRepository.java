@@ -130,7 +130,7 @@ public class SubversionRepository extends Repository {
 			return annotateHandler.getResults();
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -171,7 +171,7 @@ public class SubversionRepository extends Repository {
 		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -232,7 +232,7 @@ public class SubversionRepository extends Repository {
 			return this.workingDirectory;
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return null;
 		}
@@ -343,7 +343,7 @@ public class SubversionRepository extends Repository {
 			return map;
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -410,7 +410,7 @@ public class SubversionRepository extends Repository {
 			
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -437,7 +437,7 @@ public class SubversionRepository extends Repository {
 		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -492,7 +492,7 @@ public class SubversionRepository extends Repository {
 		} catch (final SVNException e) {
 			
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -546,7 +546,7 @@ public class SubversionRepository extends Repository {
 			return list;
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new RuntimeException();
 		}
@@ -567,7 +567,7 @@ public class SubversionRepository extends Repository {
 			                                       : SVNRevision.create(this.repository.getLatestRevision()));
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown();
 		}

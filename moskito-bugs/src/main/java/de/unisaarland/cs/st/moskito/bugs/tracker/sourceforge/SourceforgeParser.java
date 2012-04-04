@@ -32,10 +32,10 @@ import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
@@ -345,7 +345,7 @@ public class SourceforgeParser implements Parser {
 				}
 				String link = aTags.get(0).attr("href");
 				String attachId = null;
-				for (final RegexGroup group : fileIdPattern.find(link)) {
+				for (final Group group : fileIdPattern.find(link)) {
 					if ((group.getName() != null) && (group.getName().equals("fileid"))) {
 						attachId = group.getMatch().trim();
 					}
@@ -369,23 +369,23 @@ public class SourceforgeParser implements Parser {
 					attachmentEntry.setMime(MimeUtils.determineMIME(new URI(link)));
 				} catch (final MIMETypeDeterminationException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final UnsupportedProtocolException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final FetchException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final URISyntaxException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 				result.add(attachmentEntry);
@@ -429,11 +429,11 @@ public class SourceforgeParser implements Parser {
 			final SortedSet<Comment> result = new TreeSet<Comment>();
 			for (final Element tr : this.commentTable.getElementsByTag("tr")) {
 				final Match commentIdMatch = this.artifactCommentIdRegex.find(tr.attr("id"));
-				if (commentIdMatch.isEmpty()) {
+				if (commentIdMatch == null) {
 					continue;
 				}
 				int commentId = -1;
-				for (final RegexGroup group : commentIdMatch) {
+				for (final Group group : commentIdMatch) {
 					if ((group.getName() != null) && (group.getName().equals("comment_id"))) {
 						commentId = Integer.valueOf(group.getMatch().trim()).intValue();
 					}
@@ -460,7 +460,7 @@ public class SourceforgeParser implements Parser {
 				final Match find = commentRegex.find(leftColumm);
 				DateTime timestamp = null;
 				Person sender = null;
-				for (final RegexGroup group : find) {
+				for (final Group group : find) {
 					if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
 						timestamp = DateTimeUtils.parseDate(group.getMatch());
 					} else if ((group.getName() != null) && (group.getName().equals("username"))) {
@@ -505,10 +505,10 @@ public class SourceforgeParser implements Parser {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
 					final MultiMatch findAll = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
-					if ((findAll != null) && (!findAll.isEmpty())) {
-						final Match groups = findAll.get(0);
+					if (findAll != null) {
+						final Match groups = findAll.getMatch(0);
 						String dateStr = null;
-						for (final RegexGroup group : groups) {
+						for (final Group group : groups) {
 							if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
 								dateStr = group.getMatch().trim();
 								break;
@@ -666,13 +666,13 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
-			if ((findAll != null) && (!findAll.isEmpty())) {
-				for (final RegexGroup group : findAll.get(0)) {
-					if ((group.getName() != null) && (group.getName().equals("bugid"))) {
-						return group.getMatch().trim();
-					}
+			if (findAll != null) {
+				final Group[] groups = findAll.getGroup("bugid");
+				if (groups.length > 0) {
+					return groups[0].getMatch().trim();
 				}
 			}
+			
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -876,13 +876,13 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			final MultiMatch findAll = this.subjectRegex.findAll(this.headerBox.text());
-			if ((findAll != null) && (!findAll.isEmpty())) {
-				for (final RegexGroup group : findAll.get(0)) {
-					if ((group.getName() != null) && (group.getName().equals("subject"))) {
-						return group.getMatch().trim();
-					}
+			if (findAll != null) {
+				final Group[] groups = findAll.getGroup("subject");
+				if (groups.length > 0) {
+					return groups[0].getMatch().trim();
 				}
 			}
+			
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -903,12 +903,12 @@ public class SourceforgeParser implements Parser {
 			for (final Element child : this.leftGBox.children()) {
 				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
 					final Element pElement = child.nextElementSibling();
-					final MultiMatch findAll = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
-					if ((findAll != null) && (!findAll.isEmpty())) {
+					final MultiMatch multiMatch = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
+					if (multiMatch != null) {
 						String name = null;
 						String uname = null;
-						final Match groups = findAll.get(0);
-						for (final RegexGroup group : groups) {
+						final Match groups = multiMatch.getMatch(0);
+						for (final Group group : groups) {
 							if ((group.getName() != null) && (group.getName().equals("fullname"))) {
 								name = group.getMatch().trim();
 							} else if ((group.getName() != null) && (group.getName().equals("username"))) {
@@ -1140,12 +1140,12 @@ public class SourceforgeParser implements Parser {
 			return true;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {

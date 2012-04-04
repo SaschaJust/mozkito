@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -53,7 +50,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
  * The Class History.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
@@ -80,8 +77,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Instantiates a new history.
-	 *
-	 * @param bugId the bug id
+	 * 
+	 * @param bugId
+	 *            the bug id
 	 */
 	public History(@NotNegative final String bugId) {
 		setBugId(bugId);
@@ -89,8 +87,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Adds the.
-	 *
-	 * @param element the element
+	 * 
+	 * @param element
+	 *            the element
 	 * @return true, if successful
 	 */
 	@Transient
@@ -107,8 +106,9 @@ public class History implements Annotated {
 	
 	/**
 	 * After.
-	 *
-	 * @param dateTime the date time
+	 * 
+	 * @param dateTime
+	 *            the date time
 	 * @return the history
 	 */
 	@Transient
@@ -126,8 +126,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Before.
-	 *
-	 * @param dateTime the date time
+	 * 
+	 * @param dateTime
+	 *            the date time
 	 * @return the history
 	 */
 	@Transient
@@ -145,7 +146,7 @@ public class History implements Annotated {
 	
 	/**
 	 * First.
-	 *
+	 * 
 	 * @return the history element
 	 */
 	@Transient
@@ -155,9 +156,11 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param from the from
-	 * @param to the to
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
 	 * @return the history
 	 */
 	@Transient
@@ -177,8 +180,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param author the author
+	 * 
+	 * @param author
+	 *            the author
 	 * @return the history
 	 */
 	@Transient
@@ -196,9 +200,11 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param author the author
-	 * @param timestamp the timestamp
+	 * 
+	 * @param author
+	 *            the author
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the history element
 	 */
 	public HistoryElement get(final Person author,
@@ -216,8 +222,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the.
-	 *
-	 * @param field the field
+	 * 
+	 * @param field
+	 *            the field
 	 * @return the history
 	 */
 	@Transient
@@ -236,7 +243,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the bug id.
-	 *
+	 * 
 	 * @return the bugId
 	 */
 	public String getBugId() {
@@ -245,8 +252,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the by bug id.
-	 *
-	 * @param bugId the bug id
+	 * 
+	 * @param bugId
+	 *            the bug id
 	 * @return the by bug id
 	 */
 	@Transient
@@ -264,7 +272,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the elements.
-	 *
+	 * 
 	 * @return the elements
 	 */
 	@OrderBy
@@ -275,7 +283,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	@Id
@@ -286,9 +294,11 @@ public class History implements Annotated {
 	
 	/**
 	 * Gets the old value.
-	 *
-	 * @param fieldName the field name
-	 * @param element the element
+	 * 
+	 * @param fieldName
+	 *            the field name
+	 * @param element
+	 *            the element
 	 * @return the old value
 	 */
 	public Object getOldValue(final String fieldName,
@@ -311,7 +321,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Checks if is empty.
-	 *
+	 * 
 	 * @return true, if is empty
 	 */
 	@Transient
@@ -321,7 +331,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Iterator.
-	 *
+	 * 
 	 * @return the iterator
 	 */
 	public Iterator<HistoryElement> iterator() {
@@ -330,7 +340,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Last.
-	 *
+	 * 
 	 * @return the history element
 	 */
 	@Transient
@@ -340,8 +350,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Removes the.
-	 *
-	 * @param element the element
+	 * 
+	 * @param element
+	 *            the element
 	 * @return true, if successful
 	 */
 	private boolean remove(final HistoryElement element) {
@@ -354,9 +365,11 @@ public class History implements Annotated {
 	
 	/**
 	 * Rollback.
-	 *
-	 * @param report the report
-	 * @param timestamp the timestamp
+	 * 
+	 * @param report
+	 *            the report
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the report
 	 */
 	@SuppressWarnings ("deprecation")
@@ -390,7 +403,8 @@ public class History implements Annotated {
 				newReport.setComments(newComments);
 				
 				return newReport;
-			} catch (final CloneNotSupportedException e) {
+			} catch (final CloneNotSupportedException ignore) {
+				// ignore
 			}
 		}
 		
@@ -399,8 +413,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Sets the bug id.
-	 *
-	 * @param bugId the bugId to set
+	 * 
+	 * @param bugId
+	 *            the bugId to set
 	 */
 	private void setBugId(final String bugId) {
 		this.bugId = bugId;
@@ -408,8 +423,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Sets the elements.
-	 *
-	 * @param elements the elements to set
+	 * 
+	 * @param elements
+	 *            the elements to set
 	 */
 	private void setElements(final SortedSet<HistoryElement> elements) {
 		this.elements = elements;
@@ -417,8 +433,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Sets the id.
-	 *
-	 * @param id the id to set
+	 * 
+	 * @param id
+	 *            the id to set
 	 */
 	@SuppressWarnings ("unused")
 	private void setId(final long id) {
@@ -427,7 +444,7 @@ public class History implements Annotated {
 	
 	/**
 	 * Size.
-	 *
+	 * 
 	 * @return the int
 	 */
 	@Transient
@@ -452,8 +469,9 @@ public class History implements Annotated {
 	
 	/**
 	 * Whithin.
-	 *
-	 * @param interval the interval
+	 * 
+	 * @param interval
+	 *            the interval
 	 * @return the history
 	 */
 	public History whithin(final Interval interval) {

@@ -163,12 +163,12 @@ public class SourceforgeOverviewParser implements OverviewParser {
 					return false;
 				} catch (final SAXException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					return false;
 				} catch (final URISyntaxException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 					return false;
 				}
@@ -176,27 +176,27 @@ public class SourceforgeOverviewParser implements OverviewParser {
 			return true;
 		} catch (final MalformedURLException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final UnsupportedProtocolException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FetchException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {

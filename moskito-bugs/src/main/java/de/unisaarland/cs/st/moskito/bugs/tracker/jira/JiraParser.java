@@ -267,7 +267,7 @@ public class JiraParser implements Parser {
 					aEntry.setLink(attachment.getContentUri().toURL());
 				} catch (final MalformedURLException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 				aEntry.setMime(attachment.getMimeType());
@@ -412,7 +412,7 @@ public class JiraParser implements Parser {
 			return this.history;
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return new TreeSet<HistoryElement>();
 		} finally {
@@ -778,7 +778,7 @@ public class JiraParser implements Parser {
 			
 		} catch (final RestClientException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {

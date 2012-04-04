@@ -65,11 +65,11 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 			return readOperations(document.getRootElement(), persistenceUtil);
 		} catch (final JDOMException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 		return new ArrayList<JavaChangeOperation>(0);

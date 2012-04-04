@@ -182,7 +182,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				reader = new BufferedReader(new FileReader(eclipseOutFile));
 			} catch (final FileNotFoundException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				this.cache.put(file.getAbsolutePath(), null);
 			}
@@ -200,7 +200,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				}
 			} catch (final IOException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				this.cache.put(file.getAbsolutePath(), null);
 			}
@@ -215,11 +215,11 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				this.currentCacheFile = cacheFile;
 			} catch (final FileNotFoundException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			} catch (final IOException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 		}

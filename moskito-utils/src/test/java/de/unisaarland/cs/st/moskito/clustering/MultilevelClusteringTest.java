@@ -22,15 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.clustering.Cluster;
-import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
-import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringCollapseVisitor;
-import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
-import de.unisaarland.cs.st.moskito.clustering.SumAggregation;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering.ComparableTuple;
 
 public class MultilevelClusteringTest {
@@ -57,8 +51,8 @@ public class MultilevelClusteringTest {
 			 * one does not cause an out of memory condition when calculating the LD over two very large strings.
 			 */
 			
-			int n = s.length(); // length of s
-			int m = t.length(); // length of t
+			final int n = s.length(); // length of s
+			final int m = t.length(); // length of t
 			
 			if (n == 0) {
 				return m;
@@ -117,9 +111,9 @@ public class MultilevelClusteringTest {
 		                       final Cluster<String> otherCluster,
 		                       final Map<String, Map<String, Double>> originalScoreMatrix) {
 			double d = 1000d;
-			for (String s : newCluster.getAllElements()) {
-				for (String t : otherCluster.getAllElements()) {
-					double tmp = getLevenshteinDistance(s, t);
+			for (final String s : newCluster.getAllElements()) {
+				for (final String t : otherCluster.getAllElements()) {
+					final double tmp = getLevenshteinDistance(s, t);
 					if (tmp < d) {
 						d = tmp;
 					}
@@ -139,7 +133,7 @@ public class MultilevelClusteringTest {
 			if (t1.equals(t2)) {
 				return 2d;
 			} else {
-				double d = getLevenshteinDistance(t1, t2);
+				final double d = getLevenshteinDistance(t1, t2);
 				return 1d / d;
 			}
 			
@@ -160,13 +154,13 @@ public class MultilevelClusteringTest {
 		public double getScore(final Cluster<Integer> newCluster,
 		                       final Cluster<Integer> otherCluster,
 		                       final Map<Integer, Map<Integer, Double>> originalScoreMatrix) {
-			return (++counter);
+			return (++this.counter);
 		}
 		
 		@Override
 		public double getScore(final Integer t1,
 		                       final Integer t2) {
-			return (++counter);
+			return (++this.counter);
 		}
 		
 	}
@@ -175,8 +169,8 @@ public class MultilevelClusteringTest {
 	
 	@Test
 	public void comparatorTest() {
-		ComparableTuple<Double, Integer> t1 = new ComparableTuple<Double, Integer>(1d, 1);
-		ComparableTuple<Double, Integer> t2 = new ComparableTuple<Double, Integer>(2d, 0);
+		final ComparableTuple<Double, Integer> t1 = new ComparableTuple<Double, Integer>(1d, 1);
+		final ComparableTuple<Double, Integer> t2 = new ComparableTuple<Double, Integer>(2d, 0);
 		
 		assert (t1.compareTo(t2) > 0);
 		
@@ -184,24 +178,25 @@ public class MultilevelClusteringTest {
 	
 	@Before
 	public void setUp() {
-		visitor = new TestScoreVisitor();
+		this.visitor = new TestScoreVisitor();
 	}
 	
 	@Test
 	public void simpleTest() {
-		Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
-		List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(1);
-		l.add(visitor);
-		SumAggregation<Integer> aggregator = new SumAggregation<Integer>();
-		MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, aggregator, visitor);
+		final Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
+		final List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(
+		                                                                                                                   1);
+		l.add(this.visitor);
+		final SumAggregation<Integer> aggregator = new SumAggregation<Integer>();
+		final MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, aggregator, this.visitor);
 		
-		Set<Set<Integer>> partitions = mp.getPartitions(3);
+		final Set<Set<Integer>> partitions = mp.getPartitions(3);
 		assertEquals(3, partitions.size());
 		
 		int oneCount = 0;
 		int threeCount = 0;
 		
-		for (Set<Integer> set : partitions) {
+		for (final Set<Integer> set : partitions) {
 			if (set.size() == 1) {
 				++oneCount;
 			} else if (set.size() == 4) {
@@ -219,38 +214,34 @@ public class MultilevelClusteringTest {
 	@Test
 	public void stringTest() {
 		
-		StringScoreVisitor visitor = new StringScoreVisitor();
+		final StringScoreVisitor visitor = new StringScoreVisitor();
 		
-		String[] nodes = { "hallo", "hubba", "wurstsalat", "halli", "hubbo", "hullo", "habbo" };
-		List<MultilevelClusteringScoreVisitor<String>> l = new ArrayList<MultilevelClusteringScoreVisitor<String>>(1);
+		final String[] nodes = { "hallo", "hubba", "wurstsalat", "halli", "hubbo", "hullo", "habbo" };
+		final List<MultilevelClusteringScoreVisitor<String>> l = new ArrayList<MultilevelClusteringScoreVisitor<String>>(
+		                                                                                                                 1);
 		l.add(visitor);
-		SumAggregation<String> aggregator = new SumAggregation<String>();
-		MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, l, aggregator, visitor);
+		final SumAggregation<String> aggregator = new SumAggregation<String>();
+		final MultilevelClustering<String> mp = new MultilevelClustering<String>(nodes, l, aggregator, visitor);
 		
-		Set<Set<String>> clusters = mp.getPartitions(3);
+		final Set<Set<String>> clusters = mp.getPartitions(3);
 		assertEquals(3, clusters.size());
 		
-		Set<String> s1 = new HashSet<String>();
+		final Set<String> s1 = new HashSet<String>();
 		s1.add("hallo");
 		s1.add("halli");
 		s1.add("hullo");
 		
-		Set<String> s2 = new HashSet<String>();
+		final Set<String> s2 = new HashSet<String>();
 		s2.add("hubba");
 		s2.add("hubbo");
 		s2.add("habbo");
 		
-		Set<String> s3 = new HashSet<String>();
+		final Set<String> s3 = new HashSet<String>();
 		s3.add("wurstsalat");
 		
 		assertTrue(clusters.contains(s1));
 		assertTrue(clusters.contains(s2));
 		assertTrue(clusters.contains(s3));
-		
-	}
-	
-	@After
-	public void tearDown() {
 		
 	}
 	

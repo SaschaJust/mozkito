@@ -81,17 +81,17 @@ public class Bugs extends Chain<Settings> {
 			                                                3000l, Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e);
 		} catch (final SettingsParseError e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e);
 		} catch (final ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown(e);
 		}

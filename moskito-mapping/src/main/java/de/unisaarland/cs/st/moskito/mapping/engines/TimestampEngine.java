@@ -12,7 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
@@ -26,8 +25,8 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -192,7 +191,7 @@ public class TimestampEngine extends MappingEngine {
 		final Regex regex = new Regex(
 		                              "\\s*[+-]?({days}[0-9]+)d\\s*({hours}[0-9]+)h\\s*({minutes}[0-9]+)m\\s*({seconds}[0-9]+)s", //$NON-NLS-1$
 		                              Pattern.CASE_INSENSITIVE);
-		final List<RegexGroup> find = regex.find(string);
+		final Match find = regex.find(string);
 		
 		if (find == null) {
 			throw new Shutdown(

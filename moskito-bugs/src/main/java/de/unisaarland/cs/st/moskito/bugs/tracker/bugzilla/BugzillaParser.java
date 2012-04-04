@@ -263,7 +263,7 @@ public abstract class BugzillaParser implements Parser {
 			return bugArray.length == 1;
 		} catch (final XmlException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}
@@ -293,15 +293,15 @@ public abstract class BugzillaParser implements Parser {
 			return new XmlReport(rawContent, document);
 		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final JDOMException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 		return null;
@@ -365,8 +365,8 @@ public abstract class BugzillaParser implements Parser {
 	@NoneNull
 	public final void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
-		this.tracker = tracker;
 		try {
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -428,16 +428,16 @@ public abstract class BugzillaParser implements Parser {
 			return true;
 		} catch (final XmlException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} finally {
-			
+			// POSTCONDITIONS
 		}
 	}
 	

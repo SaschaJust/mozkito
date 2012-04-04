@@ -38,7 +38,7 @@ public class Main {
 			persons.join();
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown();
 		}

@@ -100,7 +100,7 @@ public class JiraHistoryParser {
 			try {
 				final RawContent rawContent = IOUtils.fetch(this.uri);
 				final MultiMatch findAll = skipRegex.findAll(rawContent.getContent());
-				if ((findAll != null) && !findAll.isEmpty()) {
+				if (findAll != null) {
 					return true;
 				}
 				
@@ -221,12 +221,12 @@ public class JiraHistoryParser {
 				}
 			} catch (final UnsupportedProtocolException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return false;
 			} catch (final FetchException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				return false;
 			}

@@ -95,15 +95,15 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 					couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -117,11 +117,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 					out.close();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}

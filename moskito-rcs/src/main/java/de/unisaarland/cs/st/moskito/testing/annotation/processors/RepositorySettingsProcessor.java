@@ -187,7 +187,7 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 	@Override
 	public void tearDown(final Class<?> aClass,
 	                     final Annotation annotation) throws TestSettingsError {
-		
+		// stub
 	}
 	
 }
