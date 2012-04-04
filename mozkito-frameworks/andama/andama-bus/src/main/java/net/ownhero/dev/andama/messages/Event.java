@@ -22,8 +22,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
-import com.sun.istack.internal.Nullable;
-
 /**
  * The Class Event.
  * 
@@ -167,7 +165,6 @@ public abstract class Event implements IEvent {
 	 * @see net.ownhero.dev.andama.messages.IEvent#getFired()
 	 */
 	@Override
-	@Nullable
 	public DateTime getFired() {
 		// PRECONDITIONS
 		
