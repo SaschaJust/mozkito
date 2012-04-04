@@ -191,12 +191,12 @@ public class FileUtils {
 			zis.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}
@@ -302,7 +302,7 @@ public class FileUtils {
 			ensureFilePermissions(parentDir, WRITABLE_DIR);
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return null;
 		}
@@ -408,7 +408,7 @@ public class FileUtils {
 			return file;
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return null;
 		}
@@ -429,7 +429,7 @@ public class FileUtils {
 			return file;
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return null;
 		}
@@ -791,12 +791,12 @@ public class FileUtils {
 			zis.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}
@@ -893,12 +893,12 @@ public class FileUtils {
 			zis.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}
@@ -1008,12 +1008,12 @@ public class FileUtils {
 			zis.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}
@@ -1064,12 +1064,12 @@ public class FileUtils {
 			zis.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		} catch (final FilePermissionException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return false;
 		}

@@ -94,7 +94,7 @@ public class CommandExecutor extends Thread {
 			localCommand = FileUtils.checkExecutable(localCommand);
 		} catch (final ExternalExecutableException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return new Tuple<Integer, List<String>>(-1, null);
 		}
@@ -213,7 +213,7 @@ public class CommandExecutor extends Thread {
 			return new Tuple<Integer, List<String>>(returnValue, readTask.getReadLines());
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return new Tuple<Integer, List<String>>(-1, null);
 		}
@@ -313,7 +313,7 @@ public class CommandExecutor extends Thread {
 		} catch (final IOException e) {
 			this.error = true;
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		}
 	}
@@ -354,7 +354,7 @@ public class CommandExecutor extends Thread {
 			this.writer.close();
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			this.error = true;
 		}
