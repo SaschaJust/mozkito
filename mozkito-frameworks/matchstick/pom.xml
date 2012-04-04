@@ -131,7 +131,7 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<id>own-hero.net-public</id>
 			<name>own-hero.net Public Repositories</name>
@@ -159,7 +159,7 @@
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
-				<checksumPolicy>fail</checksumPolicy>
+				<checksumPolicy>warn</checksumPolicy>
 			</snapshots>
 			<id>own-hero.net</id>
 			<name>own-hero.net local Repositories</name>
