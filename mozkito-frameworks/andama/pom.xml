@@ -197,7 +197,7 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>net.ownhero.dev</groupId>
