@@ -190,7 +190,7 @@ public class Regex {
 		} catch (final Exception e) {
 			
 			// if (Logger.logError()) {
-			// Logger.error(e.getMessage(), e);
+			// Logger.error(e);
 			// }
 			
 			return false;
@@ -264,12 +264,12 @@ public class Regex {
 			this.pattern = new NamedPattern(pattern, flags);
 		} catch (final ArrayIndexOutOfBoundsException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw e;
 		} catch (final PatternSyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw e;
 		}
@@ -580,12 +580,12 @@ public class Regex {
 			this.pattern = new NamedPattern(pattern);
 		} catch (final ArrayIndexOutOfBoundsException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw e;
 		} catch (final PatternSyntaxException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw e;
 		}
