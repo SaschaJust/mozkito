@@ -37,64 +37,153 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.varia.LevelRangeFilter;
-import org.slf4j.LoggerFactory;
 
 /**
- * Logger class to instrument SLF4J
+ * Logger class to instrument SLF4J.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Logger {
 	
-	private static class LoggerOutputStream extends OutputStream {
+	/**
+	 * The Class DebugOutputStream.
+	 */
+	private static class DebugOutputStream extends LogOutputStream {
 		
-		private static class LogDebugWrapper implements LogWrapper {
-			
-			@Override
-			public void log(final String s) {
-				if (Logger.logDebug()) {
-					Logger.debug(s, null, null, 6);
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			if (Logger.logDebug()) {
+				Logger.debug(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			if (Logger.logDebug()) {
+				this.stream.write(b);
+				if (((char) b == '\n') || (b == 0)) {
+					super.flush();
+				} else {
+					this.logger.debug(this.stream.toString());
 				}
 			}
 		}
+	}
+	
+	/**
+	 * The Class ErrorOutputStream.
+	 */
+	private static class ErrorOutputStream extends LogOutputStream {
 		
-		private static interface LogWrapper {
-			
-			public void log(String s);
-		}
-		
-		private ByteArrayOutputStream stream  = new ByteArrayOutputStream();
-		private LogDebugWrapper       wrapper = new LogDebugWrapper();
-		
-		public LoggerOutputStream(final LogLevel level) {
-			switch (level) {
-				case DEBUG:
-					this.wrapper = new LogDebugWrapper();
-					break;
-				default:
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			if (Logger.logError()) {
+				Logger.error(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
 			}
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			if (Logger.logError()) {
+				this.stream.write(b);
+				if (((char) b == '\n') || (b == 0)) {
+					super.flush();
+				} else {
+					this.logger.error(this.stream.toString());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The Class InfoOutputStream.
+	 */
+	private static class InfoOutputStream extends LogOutputStream {
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			if (Logger.logInfo()) {
+				Logger.info(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			if (Logger.logInfo()) {
+				this.stream.write(b);
+				if (((char) b == '\n') || (b == 0)) {
+					super.flush();
+				} else {
+					this.logger.info(this.stream.toString());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The Class LoggerOutputStream.
+	 */
+	private static abstract class LogOutputStream extends OutputStream {
+		
+		/** The stream. */
+		protected ByteArrayOutputStream         stream = new ByteArrayOutputStream();
+		
+		/** The logger. */
+		protected final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#close()
+		 */
 		@Override
 		public void close() throws IOException {
 			flush();
 			super.close();
 		}
 		
-		@Override
-		public void flush() throws IOException {
-			System.err.println("flush");
-			this.wrapper.log(this.stream.toString());
-			this.stream = new ByteArrayOutputStream();
-			super.flush();
-		}
-		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(byte[])
+		 */
 		@Override
 		public void write(final byte[] b) throws IOException {
 			super.write(b, 0, b.length);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(byte[], int, int)
+		 */
 		@Override
 		public void write(final byte[] b,
 		                  final int off,
@@ -102,49 +191,149 @@ public class Logger {
 			super.write(b, off, len);
 		}
 		
-		@Override
-		public void write(final int b) throws IOException {
-			this.stream.write(b);
-			if (((char) b == '\n') || (b == 0)) {
-				this.wrapper.log(this.stream.toString());
-				this.stream = new ByteArrayOutputStream();
-				super.flush();
-			}
-		}
 	}
 	
+	/**
+	 * The Class LogStream.
+	 */
 	public static class LogStream extends PrintStream {
 		
-		public LogStream(final LogLevel level) {
-			super(new LoggerOutputStream(level));
+		/**
+		 * Creates the.
+		 * 
+		 * @param level
+		 *            the level
+		 * @return the output stream
+		 */
+		private static OutputStream create(final LogLevel level) {
+			switch (level) {
+				case DEBUG:
+					return new DebugOutputStream();
+				case ERROR:
+					return new ErrorOutputStream();
+				case INFO:
+					return new InfoOutputStream();
+				case WARN:
+					return new WarnOutputStream();
+				case TRACE:
+					return new TraceOutputStream();
+				default:
+					return new OffOutputStream();
+			}
 		}
 		
+		/**
+		 * Instantiates a new log stream.
+		 * 
+		 * @param level
+		 *            the level
+		 */
+		public LogStream(final LogLevel level) {
+			super(create(level));
+		}
 	}
 	
+	/**
+	 * The Class OffOutputStream.
+	 */
+	private static class OffOutputStream extends LogOutputStream {
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			// ignore
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			// ignore
+			
+		}
+	}
+	
+	/**
+	 * The Enum TerminalColor.
+	 */
 	public static enum TerminalColor {
+		
+		/** The BLACK. */
 		BLACK ("\u001b[30m"),
+		
+		/** The BACKGROUND_BLACK. */
 		BGBLACK ("\u001b[40m"),
+		
+		/** The RED. */
 		RED ("\u001b[31m"),
+		
+		/** The BACKGROUND_RED. */
 		BGRED ("\u001b[41m"),
+		
+		/** The GREEN. */
 		GREEN ("\u001b[32m"),
+		
+		/** The BACKGROUND_GREEN. */
 		BGGREEN ("\u001b[42m"),
+		
+		/** The YELLOW. */
 		YELLOW ("\u001b[33m"),
+		
+		/** The BACKGROUND_YELLOW. */
 		BGYELLOW ("\u001b[43m"),
+		
+		/** The BLUE. */
 		BLUE ("\u001b[34m"),
+		
+		/** The BACKGROUND_BLUE. */
 		BGBLUE ("\u001b[44m"),
+		
+		/** The MAGENTA. */
 		MAGENTA ("\u001b[35m"),
+		
+		/** The BACKGROUND_MAGENTA. */
 		BGMAGENTA ("\u001b[45m"),
+		
+		/** The CYAN. */
 		CYAN ("\u001b[36m"),
+		
+		/** The BACKGROUND_CYAN. */
 		BGCYAN ("\u001b[46m"),
+		
+		/** The WHITE. */
 		WHITE ("\u001b[37m"),
+		
+		/** The BACKGROUND_WHITE. */
 		BGWHITE ("\u001b[47m"),
+		
+		/** The BOLD. */
 		BOLD ("\u001b[1m"),
+		
+		/** The UNDERLINE. */
 		UNDERLINE ("\u001b[4m"),
+		
+		/** The BLINK. */
 		BLINK ("\u001b[5m"),
+		
+		/** The INVERT. */
 		INVERT ("\u001b[7m"),
+		
+		/** The NONE. */
 		NONE ("\u001b[m"),
+		
+		/** The BACKGROUND_NONE. */
 		BGNONE ("\u001b[48m");
 		
+		/**
+		 * Checks if is supported.
+		 * 
+		 * @return true, if is supported
+		 */
 		public static boolean isSupported() {
 			if (System.getProperty("disableTermColors") == null) {
 				if (System.console() != null) { // avoid colors when piping output
@@ -159,12 +348,24 @@ public class Logger {
 			return false;
 		}
 		
+		/** The tag. */
 		private final String tag;
 		
+		/**
+		 * Instantiates a new terminal color.
+		 * 
+		 * @param tag
+		 *            the tag
+		 */
 		TerminalColor(final String tag) {
 			this.tag = tag;
 		}
 		
+		/**
+		 * Gets the tag.
+		 * 
+		 * @return the tag
+		 */
 		public String getTag() {
 			return isSupported()
 			                    ? this.tag
@@ -172,17 +373,73 @@ public class Logger {
 		}
 	}
 	
+	/**
+	 * The Class TraceOutputStream.
+	 */
+	private static class TraceOutputStream extends LogOutputStream {
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			if (Logger.logTrace()) {
+				Logger.trace(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			if (Logger.logTrace()) {
+				this.stream.write(b);
+				if (((char) b == '\n') || (b == 0)) {
+					super.flush();
+				} else {
+					this.logger.trace(this.stream.toString());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * The Class Tuple.
+	 * 
+	 * @param <K>
+	 *            the key type
+	 * @param <M>
+	 *            the generic type
+	 */
 	private static class Tuple<K, M> {
 		
+		/** The first. */
 		private final K first;
+		
+		/** The second. */
 		private final M second;
 		
+		/**
+		 * Instantiates a new tuple.
+		 * 
+		 * @param f
+		 *            the f
+		 * @param s
+		 *            the s
+		 */
 		public Tuple(final K f, final M s) {
 			this.first = f;
 			this.second = s;
 		}
 		
 		/**
+		 * Gets the first.
+		 * 
 		 * @return the first
 		 */
 		public K getFirst() {
@@ -190,6 +447,8 @@ public class Logger {
 		}
 		
 		/**
+		 * Gets the second.
+		 * 
 		 * @return the second
 		 */
 		public M getSecond() {
@@ -206,291 +465,346 @@ public class Logger {
 		}
 	}
 	
+	/**
+	 * The Class WarnOutputStream.
+	 */
+	private static class WarnOutputStream extends LogOutputStream {
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#flush()
+		 */
+		@Override
+		public void flush() throws IOException {
+			if (Logger.logWarn()) {
+				Logger.error(this.stream.toString());
+				this.stream = new ByteArrayOutputStream();
+				super.flush();
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.OutputStream#write(int)
+		 */
+		@Override
+		public void write(final int b) throws IOException {
+			if (Logger.logWarn()) {
+				this.stream.write(b);
+				if (((char) b == '\n') || (b == 0)) {
+					super.flush();
+				} else {
+					this.logger.error(this.stream.toString());
+				}
+			}
+		}
+	}
+	
+	/** The registered appenders. */
 	private static Set<String>          registeredAppenders = new HashSet<String>();
 	
+	/** The log level. */
 	private static LogLevel             logLevel            = LogLevel.WARN;
 	
+	/** The debug enabled. */
 	private static boolean              debugEnabled        = false;
 	
+	/** The max level. */
 	private static LogLevel             maxLevel            = null;
-	private static Layout               defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n");
-	private static Layout               errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] "
-	                                                                + TerminalColor.RED.getTag() + "%-5p"
-	                                                                + TerminalColor.NONE.getTag() + " %m%n");
-	private static Layout               warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] "
-	                                                                + TerminalColor.YELLOW.getTag() + "%-5p"
-	                                                                + TerminalColor.NONE.getTag() + " %m%n");
+	
+	/** The default layout. */
+	private static Layout               defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n"); //$NON-NLS-1$
+	                                                                                                                
+	/** The error layout. */
+	private static Layout               errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                + TerminalColor.RED.getTag() + "%-5p" //$NON-NLS-1$
+	                                                                + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
+	                                                                                                                
+	/** The warning layout. */
+	private static Layout               warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                + TerminalColor.YELLOW.getTag() + "%-5p" //$NON-NLS-1$
+	                                                                + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
+	                                                                                                                
+	/** The console appenders. */
 	private static List<WriterAppender> consoleAppenders    = new LinkedList<WriterAppender>();
 	
 	static {
 		readConfiguration();
-		
 	}
 	
+	/** The Constant debug. */
 	public static final PrintStream     debug               = new LogStream(LogLevel.DEBUG);
+	
+	/** The Constant info. */
 	public static final PrintStream     info                = new LogStream(LogLevel.INFO);
+	
+	/** The Constant warn. */
 	public static final PrintStream     warn                = new LogStream(LogLevel.WARN);
+	
+	/** The Constant trace. */
 	public static final PrintStream     trace               = new LogStream(LogLevel.TRACE);
+	
+	/** The Constant error. */
 	public static final PrintStream     error               = new LogStream(LogLevel.ERROR);
+	
+	/** The Constant formatString. */
+	private static final String         formatString        = "[%s] %s";
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with debug log level
+	 * information to log the message with debug log level.
+	 * 
+	 * @param offset
+	 *            determines the offset in the stacktrace
+	 * @param throwable
+	 *            exception to be logged along the error message supplied
+	 * @param message
+	 *            the string to be logged or format string if arguments are not null
+	 * @param arguments
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
+	 */
+	private static void debug(@GreaterInt (ref = 2) final int offset,
+	                          final Throwable throwable,
+	                          final String message,
+	                          final Object... arguments) {
+		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
+		                        || ((arguments == null) && (throwable == null)),
+		                "Arguments and exception may not be set at the same time.");
+		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
+		
+		final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
+		
+		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+		
+		String formattedMessage;
+		
+		if (arguments != null) {
+			formattedMessage = String.format(message, arguments);
+		} else {
+			formattedMessage = message;
+		}
+		
+		if (throwable != null) {
+			ret.getFirst().debug(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+		} else {
+			ret.getFirst().debug(String.format(formatString, ret.getSecond(), formattedMessage));
+		}
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with debug log level.
 	 * 
 	 * @param message
 	 *            the string to be logged
 	 */
 	public static void debug(final String message) {
-		debug(message, null, null, 3);
+		debug(3, null, message);
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with debug log level
+	 * information to log the argument using the format string with debug log level.
 	 * 
-	 * @category external loggers
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void debug(final String formatString,
+	                         final Object... arguments) {
+		debug(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with debug log level.
 	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
+	 */
+	public static void debug(final Throwable throwable) {
+		debug(3, throwable, null);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with debug log level.
+	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
 	 * @param message
-	 *            the string to be logged
+	 *            the format string to be used
+	 */
+	public static void debug(final Throwable throwable,
+	                         final String message) {
+		debug(3, throwable, message);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with debug log level.
+	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void debug(final Throwable throwable,
+	                         final String formatString,
+	                         final Object... arguments) {
+		debug(3, throwable, formatString, arguments);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with error log level.
+	 * 
 	 * @param offset
 	 *            determines the offset in the stacktrace
-	 */
-	public static void debug(final String message,
-	                         final int offset) {
-		debug(message, null, null, offset);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the argument using the format string with debug log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj
-	 *            the object that shall be logged
-	 */
-	public static void debug(final String fmt,
-	                         final Object obj) {
-		debug(fmt, new Object[] { obj }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the arguments using the format string with debug log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj1
-	 *            an object that shall be logged
-	 * @param obj2
-	 *            an object that shall be logged
-	 */
-	public static void debug(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
-		debug(fmt, new Object[] { obj1, obj2 }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with debug log level
-	 * 
+	 * @param throwable
+	 *            exception to be logged along the error message supplied
 	 * @param message
 	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
 	 *            array of 1 or 2 objects to be logged with the corresponding format string
-	 * @param t
-	 *            exception to be logged along the error message supplied
-	 * @param offset
-	 *            determines the offset in the stacktrace
 	 */
-	private static void debug(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
+	private static void error(@GreaterInt (ref = 2) final int offset,
+	                          final Throwable throwable,
+	                          final String message,
+	                          final Object... arguments) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
 		                        || (arguments == null),
 		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
-		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
+		                        || ((arguments == null) && (throwable == null)),
+		                "Arguments and exception may not be set at the same time.");
+		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
 		
-		final Tuple<org.slf4j.Logger, String> ret = tags(offset);
-		
-		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
-		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-		
-		if (arguments != null) {
-			if (arguments.length == 2) {
-				ret.getFirst().debug("[" + ret.getSecond() + "] " + message, arguments[0], arguments[1]);
-			} else if (arguments.length == 1) {
-				ret.getFirst().debug("[" + ret.getSecond() + "] " + message, arguments[0]);
+		if (debugEnabled) {
+			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
+			
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+			
+			String formattedMessage;
+			
+			if (arguments != null) {
+				formattedMessage = String.format(message, arguments);
+			} else {
+				formattedMessage = message;
 			}
-			return;
-		} else if (t != null) {
-			ret.getFirst().debug("[" + ret.getSecond() + "] " + message, t);
+			
+			if (throwable != null) {
+				ret.getFirst().error(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+			} else {
+				ret.getFirst().error(String.format(formatString, ret.getSecond(), formattedMessage));
+			}
 		} else {
-			ret.getFirst().debug("[" + ret.getSecond() + "] " + message);
+			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
+			
+			String formattedMessage;
+			
+			if (arguments != null) {
+				formattedMessage = String.format(message, arguments);
+			} else {
+				formattedMessage = message;
+			}
+			
+			if (throwable != null) {
+				logger.error(formattedMessage, throwable);
+			} else {
+				logger.error(formattedMessage);
+			}
 		}
+		
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message and the exception string with debug log level
-	 * 
-	 * @param message
-	 *            the format string to be used
-	 * @param t
-	 *            the exception that shall be logged
-	 */
-	public static void debug(final String message,
-	                         final Throwable t) {
-		debug(message, null, t, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with error log level
+	 * information to log the message with error log level.
 	 * 
 	 * @param message
 	 *            the string to be logged
 	 */
 	public static void error(final String message) {
-		error(message, null, null, 3);
+		error(3, null, message);
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with error log level
+	 * information to log the argument using the format string with error log level.
 	 * 
-	 * @category external loggers
-	 * 
-	 * @param message
-	 *            the string to be logged
-	 * @param offset
-	 *            determines the offset in the stacktrace
-	 */
-	public static void error(final String message,
-	                         final int offset) {
-		error(message, null, null, offset);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the argument using the format string with error log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj
-	 *            the object that shall be logged
-	 */
-	public static void error(final String fmt,
-	                         final Object obj) {
-		error(fmt, new Object[] { obj }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the arguments using the format string with error log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj1
-	 *            an object that shall be logged
-	 * @param obj2
-	 *            an object that shall be logged
-	 */
-	public static void error(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
-		error(fmt, new Object[] { obj1, obj2 }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with error log level
-	 * 
-	 * @param message
-	 *            the string to be logged or format string if arguments are not null
+	 * @param formatString
+	 *            the format string
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding format string
-	 * @param t
-	 *            exception to be logged along the error message supplied
-	 * @param offset
-	 *            determines the offset in the stacktrace
+	 *            the arguments
 	 */
-	private static void error(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
-		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
-		
-		if (debugEnabled) {
-			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
-			
-			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
-			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-			
-			if (arguments != null) {
-				if (arguments.length >= 2) {
-					ret.getFirst().error("[" + ret.getSecond() + "] " + message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					ret.getFirst().error("[" + ret.getSecond() + "] " + message, arguments[0]);
-				}
-				return;
-			} else if (t != null) {
-				ret.getFirst().error("[" + ret.getSecond() + "] " + message, t);
-			} else {
-				ret.getFirst().error("[" + ret.getSecond() + "] " + message);
-			}
-		} else {
-			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
-			
-			if (arguments != null) {
-				if (arguments.length >= 2) {
-					
-					logger.error(message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					logger.error(message, arguments[0]);
-					
-				}
-				return;
-			} else if (t != null) {
-				logger.error(message, t);
-			} else {
-				logger.error(message);
-			}
-		}
+	public static void error(final String formatString,
+	                         final Object... arguments) {
+		error(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 */
+	public static void error(final Throwable throwable) {
+		error(3, throwable, null);
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message and the exception string with error log level
+	 * information to log the message and the exception string with error log level.
 	 * 
+	 * @param throwable
+	 *            , String message the exception that shall be logged
 	 * @param message
 	 *            the format string to be used
-	 * @param t
-	 *            the exception that shall be logged
 	 */
-	public static void error(final String message,
-	                         final Throwable t) {
-		error(message, null, t, 3);
+	public static void error(final Throwable throwable,
+	                         final String message) {
+		error(3, throwable, message);
 	}
 	
 	/**
-	 * @return
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @param message
+	 *            the message
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void error(final Throwable throwable,
+	                         final String message,
+	                         final Object... arguments) {
+		error(3, throwable, message, arguments);
+	}
+	
+	/**
+	 * Gets the log level.
+	 * 
+	 * @return the log level
 	 */
 	public static Enum<LogLevel> getLogLevel() {
 		return logLevel;
 	}
 	
 	/**
+	 * Increase log level.
+	 * 
 	 * @param logLevel
+	 *            the log level
 	 */
 	public static void increaseLogLevel(final LogLevel logLevel) {
 		if (Logger.logLevel.compareTo(logLevel) < 0) {
@@ -500,176 +814,187 @@ public class Logger {
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with info log level
+	 * information to log the message with info log level.
 	 * 
-	 * @param message
-	 *            the string to be logged
-	 */
-	public static void info(final String message) {
-		info(message, null, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with info log level
-	 * 
-	 * @category external loggers
-	 * 
-	 * @param message
-	 *            the string to be logged
 	 * @param offset
 	 *            determines the offset in the stacktrace
-	 */
-	public static void info(final String message,
-	                        final int offset) {
-		info(message, null, null, offset);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the argument using the format string with info log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj
-	 *            the object that shall be logged
-	 */
-	public static void info(final String fmt,
-	                        final Object obj) {
-		info(fmt, new Object[] { obj }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the arguments using the format string with info log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj1
-	 *            an object that shall be logged
-	 * @param obj2
-	 *            an object that shall be logged
-	 */
-	public static void info(final String fmt,
-	                        final Object obj1,
-	                        final Object obj2) {
-		info(fmt, new Object[] { obj1, obj2 }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with info log level
-	 * 
+	 * @param throwable
+	 *            exception to be logged along the error message supplied
 	 * @param message
 	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
 	 *            array of 1 or 2 objects to be logged with the corresponding format string
-	 * @param t
-	 *            exception to be logged along the error message supplied
-	 * @param offset
-	 *            determines the offset in the stacktrace
 	 */
-	private static void info(final String message,
-	                         final Object[] arguments,
-	                         final Throwable t,
-	                         @GreaterInt (ref = 2) final int offset) {
+	private static void info(@GreaterInt (ref = 2) final int offset,
+	                         final Throwable throwable,
+	                         final String message,
+	                         final Object... arguments) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
 		                        || (arguments == null),
 		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
+		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
+		                        || ((arguments == null) && (throwable == null)),
+		                "Arguments and exception may not be set at the same time.");
 		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
 		
 		if (debugEnabled) {
-			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
+			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 			
-			if (arguments != null) {
-				if (arguments.length == 2) {
-					ret.getFirst().info("[" + ret.getSecond() + "] " + message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					ret.getFirst().info("[" + ret.getSecond() + "] " + message, arguments[0]);
-				}
-				return;
-			} else if (t != null) {
-				ret.getFirst().info("[" + ret.getSecond() + "] " + message, t);
-			} else {
-				ret.getFirst().info("[" + ret.getSecond() + "] " + message);
-			}
-		} else {
-			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
+			String formattedMessage;
 			
 			if (arguments != null) {
-				if (arguments.length >= 2) {
-					
-					logger.info(message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					logger.info(message, arguments[0]);
-					
-				}
-				return;
-			} else if (t != null) {
-				logger.info(message, t);
+				formattedMessage = String.format(message, arguments);
 			} else {
-				logger.info(message);
+				formattedMessage = message;
+			}
+			
+			if (throwable != null) {
+				ret.getFirst().info(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+			} else {
+				ret.getFirst().info(String.format(formatString, ret.getSecond(), formattedMessage));
+			}
+		} else {
+			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
+			
+			String formattedMessage;
+			
+			if (arguments != null) {
+				formattedMessage = String.format(message, arguments);
+			} else {
+				formattedMessage = message;
+			}
+			
+			if (throwable != null) {
+				logger.info(formattedMessage, throwable);
+			} else {
+				logger.info(formattedMessage);
 			}
 		}
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message and the exception string with info log level
+	 * information to log the message with info log level.
 	 * 
 	 * @param message
-	 *            the format string to be used
-	 * @param t
-	 *            the exception that shall be logged
+	 *            the string to be logged
 	 */
-	public static void info(final String message,
-	                        final Throwable t) {
-		info(message, null, t, 3);
+	public static void info(final String message) {
+		info(3, null, message);
 	}
 	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with info log level.
+	 * 
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void info(final String formatString,
+	                        final Object... arguments) {
+		info(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Info.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 */
+	public static void info(final Throwable throwable) {
+		info(3, throwable, null);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with info log level.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @param message
+	 *            the format string to be used
+	 */
+	public static void info(final Throwable throwable,
+	                        final String message) {
+		info(3, throwable, message);
+	}
+	
+	/**
+	 * Info.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void info(final Throwable throwable,
+	                        final String formatString,
+	                        final Object... arguments) {
+		info(3, throwable, formatString, arguments);
+	}
+	
+	/**
+	 * Log debug.
+	 * 
+	 * @return true, if successful
+	 */
 	public static boolean logDebug() {
 		return logLevel.compareTo(LogLevel.DEBUG) >= 0;
 	}
 	
+	/**
+	 * Log error.
+	 * 
+	 * @return true, if successful
+	 */
 	public static boolean logError() {
 		return logLevel.compareTo(LogLevel.ERROR) >= 0;
 	}
 	
+	/**
+	 * Log info.
+	 * 
+	 * @return true, if successful
+	 */
 	public static boolean logInfo() {
 		return logLevel.compareTo(LogLevel.INFO) >= 0;
 	}
 	
+	/**
+	 * Log trace.
+	 * 
+	 * @return true, if successful
+	 */
 	public static boolean logTrace() {
 		return logLevel.compareTo(LogLevel.TRACE) >= 0;
 	}
 	
+	/**
+	 * Log warn.
+	 * 
+	 * @return true, if successful
+	 */
 	public static boolean logWarn() {
 		return logLevel.compareTo(LogLevel.WARN) >= 0;
 	}
 	
-	public static void main(final String[] args) {
-		Logger.error.println("YihaaH!");
-		
-		Logger.error.print("yop");
-		Logger.error.print("yep");
-		Logger.error.flush();
-	}
-	
+	/**
+	 * Read configuration.
+	 */
 	public static void readConfiguration() {
-		// FIXME what if we do not use log4j?
-		
 		updateConsoleLevel();
 		updateFileLevel();
 		updateClassLevels();
 		
 		setLogLevel(maxLevel);
 		
-		// org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.toLevel(getLogLevel().toString()));
 		if ((System.getProperty("debug") != null) || (logLevel.compareTo(LogLevel.DEBUG) >= 0)) {
 			Logger.debugEnabled = true;
 		}
@@ -695,6 +1020,12 @@ public class Logger {
 		PropertyConfigurator.configure(url);
 	}
 	
+	/**
+	 * Sets the console level.
+	 * 
+	 * @param level
+	 *            the new console level
+	 */
 	public static synchronized void setConsoleLevel(final LogLevel level) {
 		final Properties properties = System.getProperties();
 		properties.put("log.console.level", level.name());
@@ -702,6 +1033,12 @@ public class Logger {
 		updateConsoleLevel();
 	}
 	
+	/**
+	 * Sets the file level.
+	 * 
+	 * @param level
+	 *            the new file level
+	 */
 	public static void setFileLevel(final LogLevel level) {
 		final Properties properties = System.getProperties();
 		properties.put("log.file.level", level.name());
@@ -709,6 +1046,12 @@ public class Logger {
 		updateFileLevel();
 	}
 	
+	/**
+	 * Sets the log level.
+	 * 
+	 * @param logLevel
+	 *            the new log level
+	 */
 	public static void setLogLevel(final LogLevel logLevel) {
 		if (Logger.logLevel.compareTo(LogLevel.DEBUG) >= 0) {
 			Logger.debug("Setting log level to " + logLevel.name());
@@ -722,11 +1065,14 @@ public class Logger {
 	}
 	
 	/**
+	 * Tags.
 	 * 
+	 * @param offset
+	 *            the offset
 	 * @return a tuple containing the corresponding logger to the calling instance and the exact calling location
 	 *         (class, method, line number). Both entries are guaranteed to not be null
 	 */
-	private static Tuple<org.slf4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
+	private static Tuple<org.apache.log4j.Logger, String> tags(@GreaterInt (ref = 1) final int offset) {
 		final Throwable throwable = new Throwable();
 		throwable.fillInStackTrace();
 		
@@ -738,7 +1084,7 @@ public class Logger {
 		final String methodName = throwable.getStackTrace()[offset].getMethodName();
 		final String className = throwable.getStackTrace()[offset].getClassName();
 		
-		final org.slf4j.Logger logger = LoggerFactory.getLogger(className);
+		final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(className);
 		
 		Condition.notNull(lineNumber, "Linenumber determined from stacktrace must never be null.");
 		CompareCondition.greater(lineNumber, 0, "Determined line number has to be always greater than 0.");
@@ -746,10 +1092,10 @@ public class Logger {
 		Condition.notNull(className, "Classname determined from stacktrace must never be null.");
 		Condition.notNull(logger, "Requested logger must never be null.");
 		
-		return new Tuple<org.slf4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
+		return new Tuple<org.apache.log4j.Logger, String>(logger, className + "::" + methodName + "#" + lineNumber);
 	}
 	
-	protected static void testDebug() {
+	static void testDebug() {
 		if (Logger.logDebug()) {
 			Logger.debug("This is a test debug message");
 		}
@@ -757,121 +1103,118 @@ public class Logger {
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with trace log level
+	 * information to log the message with trace log level.
 	 * 
-	 * @param message
-	 *            the string to be logged
-	 */
-	public static void trace(final String message) {
-		trace(message, null, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with trace log level
-	 * 
-	 * @category external loggers
-	 * 
-	 * @param message
-	 *            the string to be logged
 	 * @param offset
 	 *            determines the offset in the stacktrace
-	 */
-	public static void trace(final String message,
-	                         final int offset) {
-		trace(message, null, null, offset);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the argument using the format string with trace log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj
-	 *            the object that shall be logged
-	 */
-	public static void trace(final String fmt,
-	                         final Object obj) {
-		trace(fmt, new Object[] { obj }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the arguments using the format string with trace log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj1
-	 *            an object that shall be logged
-	 * @param obj2
-	 *            an object that shall be logged
-	 */
-	public static void trace(final String fmt,
-	                         final Object obj1,
-	                         final Object obj2) {
-		trace(fmt, new Object[] { obj1, obj2 }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with trace log level
-	 * 
+	 * @param throwable
+	 *            exception to be logged along the error message supplied
 	 * @param message
 	 *            the string to be logged or format string if arguments are not null
 	 * @param arguments
 	 *            array of 1 or 2 objects to be logged with the corresponding format string
-	 * @param t
-	 *            exception to be logged along the error message supplied
-	 * @param offset
-	 *            determines the offset in the stacktrace
 	 */
-	private static void trace(final String message,
-	                          final Object[] arguments,
-	                          final Throwable t,
-	                          @GreaterInt (ref = 2) final int offset) {
+	private static void trace(@GreaterInt (ref = 2) final int offset,
+	                          final Throwable throwable,
+	                          final String message,
+	                          final Object... arguments) {
 		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
 		                        || (arguments == null),
 		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
-		Condition.check(logTrace(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
+		                        || ((arguments == null) && (throwable == null)),
+		                "Arguments and exception may not be set at the same time.");
+		Condition.check(logDebug(), "Calling the trace method requires trace to be enabled.");
 		
-		final Tuple<org.slf4j.Logger, String> ret = tags(offset);
+		final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 		
 		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
 		
+		String formattedMessage;
+		
 		if (arguments != null) {
-			if (arguments.length == 2) {
-				ret.getFirst().trace("[" + ret.getSecond() + "] " + message, arguments[0], arguments[1]);
-			} else if (arguments.length == 1) {
-				ret.getFirst().trace("[" + ret.getSecond() + "] " + message, arguments[0]);
-			}
-			return;
-		} else if (t != null) {
-			ret.getFirst().trace("[" + ret.getSecond() + "] " + message, t);
+			formattedMessage = String.format(message, arguments);
 		} else {
-			ret.getFirst().trace("[" + ret.getSecond() + "] " + message);
+			formattedMessage = message;
+		}
+		
+		if (throwable != null) {
+			ret.getFirst().trace(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+		} else {
+			ret.getFirst().trace(String.format(formatString, ret.getSecond(), formattedMessage));
 		}
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message and the exception string with trace log level
+	 * information to log the message with trace log level.
 	 * 
 	 * @param message
-	 *            the format string to be used
-	 * @param t
-	 *            the exception that shall be logged
+	 *            the string to be logged
 	 */
-	public static void trace(final String message,
-	                         final Throwable t) {
-		trace(message, null, t, 3);
+	public static void trace(final String message) {
+		trace(3, null, message);
 	}
 	
 	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with trace log level.
 	 * 
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void trace(final String formatString,
+	                         final Object... arguments) {
+		trace(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with trace log level.
+	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
+	 */
+	public static void trace(final Throwable throwable) {
+		trace(3, throwable, null);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with trace log level.
+	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
+	 * @param message
+	 *            the format string to be used
+	 */
+	public static void trace(final Throwable throwable,
+	                         final String message) {
+		trace(3, throwable, message);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with trace log level.
+	 * 
+	 * @param throwable
+	 *            the exception that shall be logged
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void trace(final Throwable throwable,
+	                         final String formatString,
+	                         final Object... arguments) {
+		trace(3, throwable, formatString, arguments);
+	}
+	
+	/**
+	 * Update class levels.
 	 */
 	public static void updateClassLevels() {
 		for (final Entry<Object, Object> prop : System.getProperties().entrySet()) {
@@ -903,6 +1246,9 @@ public class Logger {
 		}
 	}
 	
+	/**
+	 * Update console level.
+	 */
 	public static void updateConsoleLevel() {
 		// CONSOLE APPENDER
 		
@@ -972,7 +1318,7 @@ public class Logger {
 	}
 	
 	/**
-	 * 
+	 * Update file level.
 	 */
 	public static void updateFileLevel() {
 		// FILE APPENDER
@@ -999,136 +1345,130 @@ public class Logger {
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with warn log level
+	 * information to log the message with warn log level.
+	 * 
+	 * @param offset
+	 *            determines the offset in the stacktrace
+	 * @param throwable
+	 *            exception to be logged along the warn message supplied
+	 * @param message
+	 *            the string to be logged or format string if arguments are not null
+	 * @param arguments
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
+	 */
+	private static void warn(@GreaterInt (ref = 2) final int offset,
+	                         final Throwable throwable,
+	                         final String message,
+	                         final Object... arguments) {
+		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
+		                        || (arguments == null),
+		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
+		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
+		                        || ((arguments == null) && (throwable == null)),
+		                "Arguments and exception may not be set at the same time.");
+		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
+		
+		if (debugEnabled) {
+			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
+			
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+			
+			String formattedMessage;
+			
+			if (arguments != null) {
+				formattedMessage = String.format(message, arguments);
+			} else {
+				formattedMessage = message;
+			}
+			
+			if (throwable != null) {
+				ret.getFirst().warn(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+			} else {
+				ret.getFirst().warn(String.format(formatString, ret.getSecond(), formattedMessage));
+			}
+		} else {
+			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
+			
+			String formattedMessage;
+			
+			if (arguments != null) {
+				formattedMessage = String.format(message, arguments);
+			} else {
+				formattedMessage = message;
+			}
+			
+			if (throwable != null) {
+				logger.warn(formattedMessage, throwable);
+			} else {
+				logger.warn(formattedMessage);
+			}
+		}
+		
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with warn log level.
 	 * 
 	 * @param message
 	 *            the string to be logged
 	 */
 	public static void warn(final String message) {
-		warn(message, null, null, 3);
+		warn(3, null, message);
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with warn log level
+	 * information to log the argument using the format string with warn log level.
 	 * 
-	 * @category external loggers
-	 * 
-	 * @param message
-	 *            the string to be logged
-	 * @param offset
-	 *            determines the offset in the stacktrace
-	 */
-	public static void warn(final String message,
-	                        final int offset) {
-		warn(message, null, null, offset);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the argument using the format string with warn log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj
-	 *            the object that shall be logged
-	 */
-	public static void warn(final String fmt,
-	                        final Object obj) {
-		warn(fmt, new Object[] { obj }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the arguments using the format string with warn log level
-	 * 
-	 * @param fmt
-	 *            the format string to be used
-	 * @param obj1
-	 *            an object that shall be logged
-	 * @param obj2
-	 *            an object that shall be logged
-	 */
-	public static void warn(final String fmt,
-	                        final Object obj1,
-	                        final Object obj2) {
-		warn(fmt, new Object[] { obj1, obj2 }, null, 3);
-	}
-	
-	/**
-	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message with warn log level
-	 * 
-	 * @param message
-	 *            the string to be logged or format string if arguments are not null
+	 * @param formatString
+	 *            the format string
 	 * @param arguments
-	 *            array of 1 or 2 objects to be logged with the corresponding format string
-	 * @param t
-	 *            exception to be logged along the error message supplied
-	 * @param offset
-	 *            determines the offset in the stacktrace
+	 *            the arguments
 	 */
-	private static void warn(final String message,
-	                         final Object[] arguments,
-	                         final Throwable t,
-	                         @GreaterInt (ref = 2) final int offset) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (t == null)) || ((t != null) && (arguments == null))
-		        || ((arguments == null) && (t == null)), "Arguments and exception may not be set at the same time.");
-		Condition.check(logWarn(), "Calling the debug method requires debug to be enabled.");
-		
-		if (debugEnabled) {
-			final Tuple<org.slf4j.Logger, String> ret = tags(offset);
-			
-			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
-			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-			
-			if (arguments != null) {
-				if (arguments.length == 2) {
-					ret.getFirst().warn("[" + ret.getSecond() + "] " + message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					ret.getFirst().warn("[" + ret.getSecond() + "] " + message, arguments[0]);
-				}
-				return;
-			} else if (t != null) {
-				ret.getFirst().warn("[" + ret.getSecond() + "] " + message, t);
-			} else {
-				ret.getFirst().warn("[" + ret.getSecond() + "] " + message);
-			}
-		} else {
-			final org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
-			
-			if (arguments != null) {
-				if (arguments.length >= 2) {
-					
-					logger.warn(message, arguments[0], arguments[1]);
-				} else if (arguments.length == 1) {
-					logger.warn(message, arguments[0]);
-					
-				}
-				return;
-			} else if (t != null) {
-				logger.warn(message, t);
-			} else {
-				logger.warn(message);
-			}
-		}
+	public static void warn(final String formatString,
+	                        final Object... arguments) {
+		warn(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 */
+	public static void warn(final Throwable throwable) {
+		warn(3, throwable, null);
 	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
-	 * information to log the message and the exception string with warn log level
+	 * information to log the message and the exception string with warn log level.
 	 * 
+	 * @param throwable
+	 *            , String message the exception that shall be logged
 	 * @param message
 	 *            the format string to be used
-	 * @param t
-	 *            the exception that shall be logged
 	 */
-	public static void warn(final String message,
-	                        final Throwable t) {
-		warn(message, null, t, 3);
+	public static void warn(final Throwable throwable,
+	                        final String message) {
+		warn(3, throwable, message);
 	}
 	
+	/**
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @param message
+	 *            the message
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void warn(final Throwable throwable,
+	                        final String message,
+	                        final Object... arguments) {
+		warn(3, throwable, message, arguments);
+	}
 }

@@ -71,6 +71,7 @@ public class LoggerTest {
 		System.setErr(this.orgStdOut);
 	}
 	
+	@SuppressWarnings ("null")
 	@Test
 	public void testAll() {
 		System.setProperty("log.console.level", "DEBUG");
@@ -103,14 +104,14 @@ public class LoggerTest {
 		// CHECK LOG FILE CONTENT
 		try {
 			reader = new BufferedReader(new FileReader(this.logFile));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			fail();
 		}
 		String line = null;
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -118,7 +119,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" warn"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -126,7 +127,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" error"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -138,14 +139,14 @@ public class LoggerTest {
 		
 		try {
 			reader = new BufferedReader(new FileReader(this.stdoutFile));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			fail();
 		}
 		line = null;
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -153,7 +154,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" debug"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -161,7 +162,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" info"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -169,7 +170,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" warn"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -177,7 +178,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" error"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -185,7 +186,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" This is a test debug message"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -194,14 +195,14 @@ public class LoggerTest {
 		// CHECK CLASS LOG CONTENT
 		try {
 			reader = new BufferedReader(new FileReader(this.classLogFile));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 			fail();
 		}
 		line = null;
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -209,7 +210,7 @@ public class LoggerTest {
 		assertTrue(line.endsWith(" This is a test debug message"));
 		try {
 			line = reader.readLine();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
