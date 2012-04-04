@@ -10,9 +10,9 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -192,11 +192,11 @@ public class DateTimeUtils {
 		if ((find = pattern.find(dateTimeString)) != null) {
 			// with time zone abbreviation
 			if (Logger.logTrace()) {
-				Logger.trace("Parsing date `" + find.get(0).getMatch() + "` with: " + find);
+				Logger.trace("Parsing date `" + find.getGroup(1).getMatch() + "` with: " + find);
 			}
 			final StringBuilder patternBuilder = new StringBuilder();
 			final StringBuilder dateBuilder = new StringBuilder();
-			for (final RegexGroup group : find) {
+			for (final Group group : find) {
 				if (!group.getName().equals("") && (group.getMatch() != null)) {
 					if (group.getName().equals("z")) {
 						final String offset = DateTimeUtils.timeZoneAbbreviationToUTCOffset(group.getMatch().trim());
