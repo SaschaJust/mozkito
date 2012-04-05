@@ -501,54 +501,54 @@ public class Logger {
 	}
 	
 	/** The registered appenders. */
-	private static Set<String>          registeredAppenders = new HashSet<String>();
+	private static Set<String>                   registeredAppenders = new HashSet<String>();
 	
 	/** The log level. */
-	private static LogLevel             logLevel            = LogLevel.WARN;
+	private static LogLevel                      logLevel            = LogLevel.WARN;
 	
 	/** The debug enabled. */
-	private static boolean              debugEnabled        = false;
+	private static boolean                       debugEnabled        = false;
 	
 	/** The max level. */
-	private static LogLevel             maxLevel            = null;
+	private static LogLevel                      maxLevel            = null;
 	
 	/** The default layout. */
-	private static Layout               defaultLayout       = new EnhancedPatternLayout("%d (%8r) [%t] %-5p %m%n"); //$NON-NLS-1$
-	                                                                                                                
+	private static Layout                        defaultLayout       = new EnhancedPatternLayout(
+	                                                                                             "%d (%8r) [%t] %-5p %m%n"); //$NON-NLS-1$
+	                                                                                                                         
 	/** The error layout. */
-	private static Layout               errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
-	                                                                + TerminalColor.RED.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
-	                                                                                                                
+	private static Layout                        errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                         + TerminalColor.RED.getTag() + "%-5p" //$NON-NLS-1$
+	                                                                         + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
+	                                                                                                                         
 	/** The warning layout. */
-	private static Layout               warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
-	                                                                + TerminalColor.YELLOW.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
-	                                                                                                                
+	private static Layout                        warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                         + TerminalColor.YELLOW.getTag() + "%-5p" //$NON-NLS-1$
+	                                                                         + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
+	                                                                                                                         
 	/** The console appenders. */
-	private static List<WriterAppender> consoleAppenders    = new LinkedList<WriterAppender>();
+	private static List<WriterAppender>          consoleAppenders    = new LinkedList<WriterAppender>();
 	
 	static {
 		readConfiguration();
 	}
 	
 	/** The Constant debug. */
-	public static final PrintStream     debug               = new LogStream(LogLevel.DEBUG);
+	public static final PrintStream              debug               = new LogStream(LogLevel.DEBUG);
 	
 	/** The Constant info. */
-	public static final PrintStream     info                = new LogStream(LogLevel.INFO);
+	public static final PrintStream              info                = new LogStream(LogLevel.INFO);
 	
 	/** The Constant warn. */
-	public static final PrintStream     warn                = new LogStream(LogLevel.WARN);
+	public static final PrintStream              warn                = new LogStream(LogLevel.WARN);
 	
 	/** The Constant trace. */
-	public static final PrintStream     trace               = new LogStream(LogLevel.TRACE);
+	public static final PrintStream              trace               = new LogStream(LogLevel.TRACE);
 	
 	/** The Constant error. */
-	public static final PrintStream     error               = new LogStream(LogLevel.ERROR);
+	public static final PrintStream              error               = new LogStream(LogLevel.ERROR);
 	
-	/** The Constant formatString. */
-	private static final String         formatString        = "[%s] %s";
+	private static final org.apache.log4j.Logger logger              = org.apache.log4j.Logger.getLogger(Logger.class);
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
@@ -567,31 +567,44 @@ public class Logger {
 	                          final Throwable throwable,
 	                          final String message,
 	                          final Object... arguments) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
-		                        || ((arguments == null) && (throwable == null)),
-		                "Arguments and exception may not be set at the same time.");
-		Condition.check(logDebug(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(logDebug(), "Calling the debug method requires debug logging to be enabled.");
 		
 		final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 		
 		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+		final String prefix = String.format("[%s] ", ret.getSecond());
+		final org.apache.log4j.Logger log = ret.getFirst();
 		
-		String formattedMessage;
-		
-		if (arguments != null) {
-			formattedMessage = String.format(message, arguments);
-		} else {
-			formattedMessage = message;
-		}
+		String formattedMessage = null;
 		
 		if (throwable != null) {
-			ret.getFirst().debug(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else {
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			}
+			log.debug(formattedMessage, throwable);
 		} else {
-			ret.getFirst().debug(String.format(formatString, ret.getSecond(), formattedMessage));
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
+			} else {
+				formattedMessage = String.format("%sERROR", prefix);
+			}
+			log.debug(formattedMessage);
 		}
 	}
 	
@@ -679,51 +692,49 @@ public class Logger {
 	                          final Throwable throwable,
 	                          final String message,
 	                          final Object... arguments) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
-		                        || ((arguments == null) && (throwable == null)),
-		                "Arguments and exception may not be set at the same time.");
-		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(logError(), "Calling the error method requires error logging to be enabled.");
+		org.apache.log4j.Logger log = logger;
+		String prefix = "";
 		
 		if (debugEnabled) {
 			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
-			} else {
-				formattedMessage = message;
-			}
-			
-			if (throwable != null) {
-				ret.getFirst().error(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
-			} else {
-				ret.getFirst().error(String.format(formatString, ret.getSecond(), formattedMessage));
-			}
-		} else {
-			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
-			} else {
-				formattedMessage = message;
-			}
-			
-			if (throwable != null) {
-				logger.error(formattedMessage, throwable);
-			} else {
-				logger.error(formattedMessage);
-			}
+			prefix = String.format("[%s] ", ret.getSecond());
+			log = ret.getFirst();
 		}
 		
+		String formattedMessage = null;
+		
+		if (throwable != null) {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else {
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			}
+			log.error(formattedMessage, throwable);
+		} else {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
+			} else {
+				formattedMessage = String.format("%sERROR", prefix);
+			}
+			log.error(formattedMessage);
+		}
 	}
 	
 	/**
@@ -829,49 +840,48 @@ public class Logger {
 	                         final Throwable throwable,
 	                         final String message,
 	                         final Object... arguments) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
-		                        || ((arguments == null) && (throwable == null)),
-		                "Arguments and exception may not be set at the same time.");
-		Condition.check(logInfo(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(logInfo(), "Calling the info method requires info logging to be enabled.");
+		org.apache.log4j.Logger log = logger;
+		String prefix = "";
 		
 		if (debugEnabled) {
 			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
+			prefix = String.format("[%s] ", ret.getSecond());
+			log = ret.getFirst();
+		}
+		
+		String formattedMessage = null;
+		
+		if (throwable != null) {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
 			} else {
-				formattedMessage = message;
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
 			}
-			
-			if (throwable != null) {
-				ret.getFirst().info(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
-			} else {
-				ret.getFirst().info(String.format(formatString, ret.getSecond(), formattedMessage));
-			}
+			log.info(formattedMessage, throwable);
 		} else {
-			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
 			} else {
-				formattedMessage = message;
+				formattedMessage = String.format("%sERROR", prefix);
 			}
-			
-			if (throwable != null) {
-				logger.info(formattedMessage, throwable);
-			} else {
-				logger.info(formattedMessage);
-			}
+			log.info(formattedMessage);
 		}
 	}
 	
@@ -1118,31 +1128,44 @@ public class Logger {
 	                          final Throwable throwable,
 	                          final String message,
 	                          final Object... arguments) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
-		                        || ((arguments == null) && (throwable == null)),
-		                "Arguments and exception may not be set at the same time.");
-		Condition.check(logDebug(), "Calling the trace method requires trace to be enabled.");
+		Condition.check(logTrace(), "Calling the trace method requires trace logging to be enabled.");
 		
 		final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 		
 		Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 		Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+		final String prefix = String.format("[%s] ", ret.getSecond());
+		final org.apache.log4j.Logger log = ret.getFirst();
 		
-		String formattedMessage;
-		
-		if (arguments != null) {
-			formattedMessage = String.format(message, arguments);
-		} else {
-			formattedMessage = message;
-		}
+		String formattedMessage = null;
 		
 		if (throwable != null) {
-			ret.getFirst().trace(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else {
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			}
+			log.trace(formattedMessage, throwable);
 		} else {
-			ret.getFirst().trace(String.format(formatString, ret.getSecond(), formattedMessage));
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
+			} else {
+				formattedMessage = String.format("%sERROR", prefix);
+			}
+			log.trace(formattedMessage);
 		}
 	}
 	
@@ -1377,51 +1400,49 @@ public class Logger {
 	                         final Throwable throwable,
 	                         final String message,
 	                         final Object... arguments) {
-		Condition.check(((arguments != null) && (arguments.length <= 2) && (arguments.length > 0))
-		                        || (arguments == null),
-		                "Either no arguments may be given at all or the number of arguments has to be between 1 and 2.");
-		Condition.check(((arguments != null) && (throwable == null)) || ((throwable != null) && (arguments == null))
-		                        || ((arguments == null) && (throwable == null)),
-		                "Arguments and exception may not be set at the same time.");
-		Condition.check(logError(), "Calling the debug method requires debug to be enabled.");
+		Condition.check(logWarn(), "Calling the warn method requires warn logging to be enabled.");
+		org.apache.log4j.Logger log = logger;
+		String prefix = "";
 		
 		if (debugEnabled) {
 			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
 			
 			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
 			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
-			} else {
-				formattedMessage = message;
-			}
-			
-			if (throwable != null) {
-				ret.getFirst().warn(String.format(formatString, ret.getSecond(), formattedMessage), throwable);
-			} else {
-				ret.getFirst().warn(String.format(formatString, ret.getSecond(), formattedMessage));
-			}
-		} else {
-			final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
-			
-			String formattedMessage;
-			
-			if (arguments != null) {
-				formattedMessage = String.format(message, arguments);
-			} else {
-				formattedMessage = message;
-			}
-			
-			if (throwable != null) {
-				logger.warn(formattedMessage, throwable);
-			} else {
-				logger.warn(formattedMessage);
-			}
+			prefix = String.format("[%s] ", ret.getSecond());
+			log = ret.getFirst();
 		}
 		
+		String formattedMessage = null;
+		
+		if (throwable != null) {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else {
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			}
+			log.warn(formattedMessage, throwable);
+		} else {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
+			} else {
+				formattedMessage = String.format("%sERROR", prefix);
+			}
+			log.warn(formattedMessage);
+		}
 	}
 	
 	/**
