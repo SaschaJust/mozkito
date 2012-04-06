@@ -55,10 +55,12 @@ public class ArgumentFactory {
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
 	 */
-	public static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final X options) throws ArgumentRegistrationException,
-	                                                                                                               SettingsParseError,
-	                                                                                                               ArgumentSetRegistrationException {
+	@SuppressWarnings ("unchecked")
+	private static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final Object option) throws ArgumentRegistrationException,
+	                                                                                                                    SettingsParseError,
+	                                                                                                                    ArgumentSetRegistrationException {
 		boolean initialize = true;
+		final X options = (X) option;
 		
 		if (options.getArgumentSet().getSettings().getProperty("help") != null) {
 			initialize = false;
@@ -67,7 +69,6 @@ public class ArgumentFactory {
 		options.getArgumentSet().getSettings().addOption(options);
 		
 		if (initialize) {
-			@SuppressWarnings ("unchecked")
 			final Class<Y> clazz = (Class<Y>) getTypeArguments(ArgumentOptions.class, options.getClass()).get(1);
 			
 			Constructor<Y> constructor;
@@ -166,6 +167,12 @@ public class ArgumentFactory {
 		} else {
 			return null;
 		}
+	}
+	
+	public static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final X options) throws ArgumentRegistrationException,
+	                                                                                                               SettingsParseError,
+	                                                                                                               ArgumentSetRegistrationException {
+		return ArgumentFactory.<T, Y, X> create((Object) options);
 	}
 	
 	/**

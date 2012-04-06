@@ -240,11 +240,10 @@ public class ArgumentSetFactory {
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
 	 */
-	@SuppressWarnings ("unchecked")
 	public static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final X options) throws SettingsParseError,
 	                                                                                                            ArgumentSetRegistrationException,
 	                                                                                                            ArgumentRegistrationException {
-		return (Y) create((Object) options);
+		return ArgumentSetFactory.<T, Y, X> create((Object) options);
 	}
 	
 	/**
