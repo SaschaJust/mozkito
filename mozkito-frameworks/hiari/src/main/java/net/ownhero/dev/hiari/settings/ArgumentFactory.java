@@ -56,9 +56,9 @@ public class ArgumentFactory {
 	 * @throws ArgumentSetRegistrationException
 	 */
 	@SuppressWarnings ("unchecked")
-	private static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final Object option) throws ArgumentRegistrationException,
-	                                                                                                                    SettingsParseError,
-	                                                                                                                    ArgumentSetRegistrationException {
+	static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final Object option) throws ArgumentRegistrationException,
+	                                                                                                            SettingsParseError,
+	                                                                                                            ArgumentSetRegistrationException {
 		boolean initialize = true;
 		final X options = (X) option;
 		
