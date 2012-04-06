@@ -38,7 +38,6 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.checks.Check;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -800,6 +799,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * 
 	 * @return the event bus
 	 */
+	@Override
 	public EventBus getEventBus() {
 		return this.threadGroup.getToolchain().getEventBus();
 	}
@@ -1185,9 +1185,9 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 	 * @return the size of the input storage
 	 */
 	protected final int inputSize() {
-		Check.notNull(this.inputStorage,
-		              "When requesting the inputSize, there has to be already an inputStorage attached");
-		Check.check(hasInputConnector(), "When requesting the inputSize, there has to exist an inputConnector");
+		Condition.notNull(this.inputStorage,
+		                  "When requesting the inputSize, there has to be already an inputStorage attached");
+		Condition.check(hasInputConnector(), "When requesting the inputSize, there has to exist an inputConnector");
 		
 		return this.inputStorage.size();
 	}

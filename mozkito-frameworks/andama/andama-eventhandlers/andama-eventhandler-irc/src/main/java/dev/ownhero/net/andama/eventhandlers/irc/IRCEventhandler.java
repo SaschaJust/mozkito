@@ -24,20 +24,39 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import org.jibble.pircbot.PircBot;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class IRCEventhandler.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class IRCEventhandler extends PircBot implements IEventListener {
 	
+	/** The Constant CHANNEL. */
 	public static final String  CHANNEL           = "#mozkito";
+	
+	/** The Constant NAME. */
 	public static final String  NAME              = "mozkito";
+	
+	/** The scheduled messages. */
 	private final Queue<IEvent> scheduledMessages = new LinkedList<IEvent>();
 	
-	public IRCEventhandler() {
+	/**
+	 * Instantiates a new iRC eventhandler.
+	 * 
+	 * @param owner
+	 *            the owner
+	 */
+	public IRCEventhandler(final String owner) {
 		setName(NAME);
 		setLogin("otikzom");
 	}
 	
+	/**
+	 * Event to string.
+	 * 
+	 * @param event
+	 *            the event
+	 * @return the list
+	 */
 	private List<String> eventToString(@NotNull final IEvent event) {
 		final List<String> list = new LinkedList<String>();
 		list.add(String.format("New event [%s issued:%s/fired:%s instance:%s type:%s level:%s origin:%s]",
@@ -57,7 +76,7 @@ public class IRCEventhandler extends PircBot implements IEventListener {
 		
 		try {
 			if (event.getLevel().equals(AccessLevel.PUBLIC)) {
-				if (isConnected()) {
+				if (isConnected() && (getChannels().length > 0)) {
 					for (final String s : eventToString(event)) {
 						sendMessage(CHANNEL, s);
 					}
