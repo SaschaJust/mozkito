@@ -55,10 +55,10 @@ public class ArgumentFactory {
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
 	 */
-	@SuppressWarnings ("unchecked")
-	static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final Object option) throws ArgumentRegistrationException,
-	                                                                                                            SettingsParseError,
-	                                                                                                            ArgumentSetRegistrationException {
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
+	static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Argument create(@NotNull final Object option) throws ArgumentRegistrationException,
+	                                                                                                                   SettingsParseError,
+	                                                                                                                   ArgumentSetRegistrationException {
 		boolean initialize = true;
 		final X options = (X) option;
 		
@@ -169,10 +169,11 @@ public class ArgumentFactory {
 		}
 	}
 	
+	@SuppressWarnings ("unchecked")
 	public static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final X options) throws ArgumentRegistrationException,
 	                                                                                                               SettingsParseError,
 	                                                                                                               ArgumentSetRegistrationException {
-		return ArgumentFactory.<T, Y, X> create((Object) options);
+		return (Y) ArgumentFactory.<T, Y, X> create((Object) options);
 	}
 	
 	/**

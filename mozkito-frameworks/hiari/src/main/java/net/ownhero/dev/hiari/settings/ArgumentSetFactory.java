@@ -37,9 +37,9 @@ import net.ownhero.dev.kisa.Logger;
 public class ArgumentSetFactory {
 	
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
-	private static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final Object option) throws SettingsParseError,
-	                                                                                                                 ArgumentSetRegistrationException,
-	                                                                                                                 ArgumentRegistrationException {
+	private static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> ArgumentSet create(final Object option) throws SettingsParseError,
+	                                                                                                                           ArgumentSetRegistrationException,
+	                                                                                                                           ArgumentRegistrationException {
 		boolean initialize = true;
 		final ArgumentSetOptions options = (ArgumentSetOptions) option;
 		
@@ -240,10 +240,11 @@ public class ArgumentSetFactory {
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
 	 */
+	@SuppressWarnings ("unchecked")
 	public static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final X options) throws SettingsParseError,
 	                                                                                                            ArgumentSetRegistrationException,
 	                                                                                                            ArgumentRegistrationException {
-		return ArgumentSetFactory.<T, Y, X> create((Object) options);
+		return (Y) ArgumentSetFactory.<T, Y, X> create((Object) options);
 	}
 	
 	/**
