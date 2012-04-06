@@ -129,7 +129,7 @@ public class ArgumentSetFactory {
 							Logger.trace(String.format("Required Argument with tag '%s' not present. Calling factory to create it with options: %s",
 							                           iOptions.getTag(), iOptions));
 						}
-						final Argument create = ArgumentFactory.create(ao);
+						final Argument create = ArgumentFactory.create((Object) ao);
 						
 						if (Logger.logTrace()) {
 							Logger.trace(String.format("Creation of Argument with tag '%s' successful.",
@@ -144,7 +144,7 @@ public class ArgumentSetFactory {
 							                           iOptions.getTag(), iOptions));
 						}
 						
-						final ArgumentSet create = ArgumentSetFactory.create(ao);
+						final ArgumentSet create = ArgumentSetFactory.create((Object) ao);
 						
 						if (Logger.logTrace()) {
 							Logger.trace(String.format("Creation of Argument with tag '%s' successful.",
