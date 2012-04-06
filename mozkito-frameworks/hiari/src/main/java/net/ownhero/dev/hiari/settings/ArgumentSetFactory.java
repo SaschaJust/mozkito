@@ -37,9 +37,9 @@ import net.ownhero.dev.kisa.Logger;
 public class ArgumentSetFactory {
 	
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
-	private static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> ArgumentSet create(final Object option) throws SettingsParseError,
-	                                                                                                                           ArgumentSetRegistrationException,
-	                                                                                                                           ArgumentRegistrationException {
+	private static ArgumentSet create(final Object option) throws SettingsParseError,
+	                                                      ArgumentSetRegistrationException,
+	                                                      ArgumentRegistrationException {
 		boolean initialize = true;
 		final ArgumentSetOptions options = (ArgumentSetOptions) option;
 		
@@ -54,12 +54,14 @@ public class ArgumentSetFactory {
 		// add this argumentSet to the settings help table
 		options.getArgumentSet().getSettings().addOption(options);
 		
-		final Class<Y> clazz = (Class<Y>) getTypeArguments(ArgumentSetOptions.class, options.getClass()).get(1);
+		final Class<? extends ArgumentSet> clazz = (Class<? extends ArgumentSet>) getTypeArguments(
+		                                                                                           ArgumentSetOptions.class,
+		                                                                                           options.getClass()).get(1);
 		
-		Constructor<Y> constructor = null;
+		Constructor<? extends ArgumentSet> constructor = null;
 		try {
-			final Constructor<Y>[] constructors = (Constructor<Y>[]) clazz.getDeclaredConstructors();
-			for (final Constructor<Y> c : constructors) {
+			final Constructor<? extends ArgumentSet>[] constructors = (Constructor<? extends ArgumentSet>[]) clazz.getDeclaredConstructors();
+			for (final Constructor<? extends ArgumentSet> c : constructors) {
 				if (Logger.logTrace()) {
 					Logger.trace("Checking for valid constructor: " + c.getName());
 				}
@@ -93,7 +95,7 @@ public class ArgumentSetFactory {
 				                           options.getHandle()));
 			}
 			
-			final Y argument = constructor.newInstance(options);
+			final ArgumentSet argument = constructor.newInstance(options);
 			
 			if (Logger.logTrace()) {
 				Logger.trace(String.format("Requesting requirements for '%s'.", argument));
@@ -168,7 +170,7 @@ public class ArgumentSetFactory {
 					                           options));
 				}
 				
-				final T value = (T) options.init();
+				final Object value = options.init();
 				
 				if (value != null) {
 					if (Logger.logTrace()) {
@@ -244,7 +246,7 @@ public class ArgumentSetFactory {
 	public static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final X options) throws SettingsParseError,
 	                                                                                                            ArgumentSetRegistrationException,
 	                                                                                                            ArgumentRegistrationException {
-		return (Y) ArgumentSetFactory.<T, Y, X> create((Object) options);
+		return (Y) create((Object) options);
 	}
 	
 	/**

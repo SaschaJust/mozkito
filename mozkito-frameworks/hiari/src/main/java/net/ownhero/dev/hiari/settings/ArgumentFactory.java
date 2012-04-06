@@ -56,11 +56,11 @@ public class ArgumentFactory {
 	 * @throws ArgumentSetRegistrationException
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
-	static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Argument create(@NotNull final Object option) throws ArgumentRegistrationException,
-	                                                                                                                   SettingsParseError,
-	                                                                                                                   ArgumentSetRegistrationException {
+	static Argument create(@NotNull final Object option) throws ArgumentRegistrationException,
+	                                                    SettingsParseError,
+	                                                    ArgumentSetRegistrationException {
 		boolean initialize = true;
-		final X options = (X) option;
+		final ArgumentOptions options = (ArgumentOptions) option;
 		
 		if (options.getArgumentSet().getSettings().getProperty("help") != null) {
 			initialize = false;
@@ -69,12 +69,13 @@ public class ArgumentFactory {
 		options.getArgumentSet().getSettings().addOption(options);
 		
 		if (initialize) {
-			final Class<Y> clazz = (Class<Y>) getTypeArguments(ArgumentOptions.class, options.getClass()).get(1);
+			final Class<? extends Argument> clazz = (Class<? extends Argument>) getTypeArguments(ArgumentOptions.class,
+			                                                                                     options.getClass()).get(1);
 			
-			Constructor<Y> constructor;
+			Constructor<? extends Argument> constructor;
 			try {
 				constructor = clazz.getDeclaredConstructor(options.getClass());
-				final Y argument = constructor.newInstance(options);
+				final Argument argument = constructor.newInstance(options);
 				final ISettings settings = options.getArgumentSet().getSettings();
 				
 				final String property = settings.getProperty(argument.getTag());
@@ -173,7 +174,7 @@ public class ArgumentFactory {
 	public static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final X options) throws ArgumentRegistrationException,
 	                                                                                                               SettingsParseError,
 	                                                                                                               ArgumentSetRegistrationException {
-		return (Y) ArgumentFactory.<T, Y, X> create((Object) options);
+		return (Y) create((Object) options);
 	}
 	
 	/**
