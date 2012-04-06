@@ -31,66 +31,45 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class ArgumentSet.
  * 
- * @param <T>
+ * @param <TYPE>
  *            the generic type
- * @param <X>
+ * @param <ARGSETOPTIONS>
  *            the generic type
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSet<T, ?>>> implements IArgument<T, X> {
+public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? extends ArgumentSet<TYPE, ?>>>
+        implements IArgument<TYPE, ARGSETOPTIONS> {
 	
 	/** The arguments. */
-	private final HashMap<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>>    arguments    = new HashMap<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>>();
+	@SuppressWarnings ("rawtypes")
+	private final HashMap<String, Argument>    arguments    = new HashMap<String, Argument>();
+	
 	/** The argument sets. */
-	private final HashMap<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>> argumentSets = new HashMap<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>>();
+	@SuppressWarnings ("rawtypes")
+	private final HashMap<String, ArgumentSet> argumentSets = new HashMap<String, ArgumentSet>();
 	/** The name. */
-	private final String                                                                  name;
+	private final String                       name;
 	
 	/** The description. */
-	private final String                                                                  description;
+	private final String                       description;
 	
 	/** The requirements. */
-	private final Requirement                                                             requirements;
+	private final Requirement                  requirements;
 	
 	/** The settings. */
-	private final ISettings                                                               settings;
+	private final ISettings                    settings;
 	
 	/** The cached value. */
-	private T                                                                             cachedValue  = null;
+	private TYPE                               cachedValue  = null;
 	
 	/** The argument set. */
-	private final ArgumentSet<?, ?>                                                       argumentSet;
+	private final ArgumentSet<?, ?>            argumentSet;
 	
 	/** The configurator. */
-	private X                                                                             configurator;
+	private ARGSETOPTIONS                      configurator;
 	
 	/** The initialized. */
-	private boolean                                                                       initialized  = false;
-	
-	/**
-	 * Instantiates a new argument set (for root argument set only).
-	 * 
-	 * @param settings
-	 *            the settings
-	 * @param name
-	 *            the name
-	 * @param description
-	 *            the description
-	 */
-	@Deprecated
-	ArgumentSet(final ISettings settings, final String name, final String description) {
-		if (Logger.logTrace()) {
-			Logger.trace("Deprecated constructor used. This should only be done by Settings to create the ROOT element. Element: "
-			        + name);
-		}
-		
-		this.name = name;
-		this.settings = settings;
-		this.description = description;
-		this.requirements = Requirement.required;
-		this.argumentSet = null;
-		this.configurator = null;
-	}
+	private boolean                            initialized  = false;
 	
 	/**
 	 * Instantiates a new argument set.
@@ -100,8 +79,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * @throws ArgumentSetRegistrationException
 	 *             the argument set registration exception
 	 */
-	@SuppressWarnings ("unchecked")
-	ArgumentSet(final @NotNull X options) throws ArgumentSetRegistrationException {
+	ArgumentSet(final @NotNull ARGSETOPTIONS options) throws ArgumentSetRegistrationException {
 		// PRECONDITIONS
 		
 		try {
@@ -135,7 +113,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 			}
 			this.configurator = options;
 			
-			if (!this.argumentSet.addArgument((ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
+			if (!this.argumentSet.addArgument(this)) {
 				if (Logger.logTrace()) {
 					Logger.trace(String.format("Attaching this ArgumentSet (tag: '%s') to the parent (tag: '%s') failed.",
 					                           options.getTag(), getParent().getTag()));
@@ -155,6 +133,31 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	}
 	
 	/**
+	 * Instantiates a new argument set (for root argument set only).
+	 * 
+	 * @param settings
+	 *            the settings
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 */
+	@Deprecated
+	ArgumentSet(final ISettings settings, final String name, final String description) {
+		if (Logger.logTrace()) {
+			Logger.trace("Deprecated constructor used. This should only be done by Settings to create the ROOT element. Element: "
+			        + name);
+		}
+		
+		this.name = name;
+		this.settings = settings;
+		this.description = description;
+		this.requirements = Requirement.required;
+		this.argumentSet = null;
+		this.configurator = null;
+	}
+	
+	/**
 	 * Call this method to add an argument to the set of arguments. But be aware that you have to set all arguments
 	 * before adding it to the MinerSettings!
 	 * 
@@ -162,7 +165,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 *            MinerArgument to be added
 	 * @return <code>true</code> if the argument could be added. <code>false</code> otherwise.
 	 */
-	boolean addArgument(@NotNull final Argument<?, ? extends IOptions<?, IArgument<?, ?>>> argument) {
+	boolean addArgument(@SuppressWarnings ("rawtypes") @NotNull final Argument argument) {
 		try {
 			if (Logger.logTrace()) {
 				Logger.trace(">>> addArgument(argument)");
@@ -226,7 +229,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 *            the argument
 	 * @return true, if successful
 	 */
-	private final boolean addArgument(@NotNull final ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>> argumentSet) {
+	@SuppressWarnings ("rawtypes")
+	private final boolean addArgument(@NotNull final ArgumentSet argumentSet) {
 		try {
 			if (Logger.logTrace()) {
 				Logger.trace(">>> addArgument(argumentSet)");
@@ -359,7 +363,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * 
 	 * @return the arguments
 	 */
-	private final Map<String, Argument<?, ? extends IOptions<?, IArgument<?, ?>>>> getArguments() {
+	@SuppressWarnings ("rawtypes")
+	private final Map<String, Argument> getArguments() {
 		return this.arguments;
 	}
 	
@@ -403,7 +408,8 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * 
 	 * @return the argument sets
 	 */
-	Map<String, ArgumentSet<?, ? extends IOptions<?, IArgument<?, ?>>>> getArgumentSets() {
+	@SuppressWarnings ("rawtypes")
+	Map<String, ArgumentSet> getArgumentSets() {
 		return this.argumentSets;
 	}
 	
@@ -412,7 +418,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * 
 	 * @return the cached value
 	 */
-	protected final T getCachedValue() {
+	protected final TYPE getCachedValue() {
 		return this.cachedValue;
 	}
 	
@@ -421,8 +427,9 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * 
 	 * @return the children
 	 */
-	public Collection<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>> getChildren() {
-		final LinkedList<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>> list = new LinkedList<IArgument<?, ? extends IOptions<?, IArgument<?, ?>>>>();
+	@SuppressWarnings ("rawtypes")
+	public Collection<IArgument> getChildren() {
+		final LinkedList<IArgument> list = new LinkedList<IArgument>();
 		list.addAll(getArguments().values());
 		list.addAll(getArgumentSets().values());
 		return list;
@@ -564,7 +571,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * @see net.ownhero.dev.andama.settings.IArgument#getOptions()
 	 */
 	@Override
-	public X getOptions() {
+	public ARGSETOPTIONS getOptions() {
 		// PRECONDITIONS
 		
 		try {
@@ -646,7 +653,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
 	 */
 	@Override
-	public final T getValue() {
+	public final TYPE getValue() {
 		return this.getCachedValue();
 	}
 	
@@ -654,11 +661,12 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
 	 */
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public void parse() throws SettingsParseError {
-		LinkedList<IArgument<?, ?>> list = new LinkedList<IArgument<?, ?>>(this.arguments.values());
+		LinkedList<IArgument> list = new LinkedList<IArgument>(this.arguments.values());
 		list.addAll(this.argumentSets.values());
-		LinkedList<IArgument<?, ?>> list2 = new LinkedList<IArgument<?, ?>>();
+		LinkedList<IArgument> list2 = new LinkedList<IArgument>();
 		
 		while (!list.isEmpty()) {
 			for (final IArgument<?, ?> argument : list) {
@@ -687,7 +695,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 				break;
 			} else {
 				list = list2;
-				list2 = new LinkedList<IArgument<?, ?>>();
+				list2 = new LinkedList<IArgument>();
 			}
 		}
 		
@@ -709,7 +717,7 @@ public class ArgumentSet<T, X extends ArgumentSetOptions<T, ? extends ArgumentSe
 	 * @param cachedValue
 	 *            the new cached value
 	 */
-	protected final void setCachedValue(final T cachedValue) {
+	protected final void setCachedValue(final TYPE cachedValue) {
 		this.initialized = true;
 		this.cachedValue = cachedValue;
 	}

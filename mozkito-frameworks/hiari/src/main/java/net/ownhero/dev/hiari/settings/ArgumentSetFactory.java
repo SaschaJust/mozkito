@@ -36,27 +36,12 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class ArgumentSetFactory {
 	
-	/**
-	 * Creates the requested argument instance.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param <X>
-	 *            the generic type
-	 * @param options
-	 *            the options
-	 * @return the x
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 * @throws ArgumentSetRegistrationException
-	 */
-	@SuppressWarnings ("unchecked")
-	public static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final X options) throws SettingsParseError,
-	                                                                                                            ArgumentSetRegistrationException,
-	                                                                                                            ArgumentRegistrationException {
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
+	private static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final Object option) throws SettingsParseError,
+	                                                                                                                 ArgumentSetRegistrationException,
+	                                                                                                                 ArgumentRegistrationException {
 		boolean initialize = true;
+		final ArgumentSetOptions options = (ArgumentSetOptions) option;
 		
 		// skip initialization if 'help' is set
 		if (options.getArgumentSet().getSettings().getProperty("help") != null) {
@@ -139,13 +124,11 @@ public class ArgumentSetFactory {
 					}
 				} else {
 					if (ArgumentOptions.class.isAssignableFrom(iOptions.getClass())) {
-						@SuppressWarnings ("rawtypes")
 						final ArgumentOptions<?, ? extends Argument> ao = (ArgumentOptions<?, ? extends Argument>) iOptions;
 						if (Logger.logTrace()) {
 							Logger.trace(String.format("Required Argument with tag '%s' not present. Calling factory to create it with options: %s",
 							                           iOptions.getTag(), iOptions));
 						}
-						@SuppressWarnings ("rawtypes")
 						final Argument create = ArgumentFactory.create(ao);
 						
 						if (Logger.logTrace()) {
@@ -154,7 +137,6 @@ public class ArgumentSetFactory {
 						}
 						requirements.put(key, create);
 					} else if (ArgumentSetOptions.class.isAssignableFrom(iOptions.getClass())) {
-						@SuppressWarnings ("rawtypes")
 						final ArgumentSetOptions<?, ? extends ArgumentSet> ao = (ArgumentSetOptions<?, ? extends ArgumentSet>) iOptions;
 						
 						if (Logger.logTrace()) {
@@ -162,7 +144,6 @@ public class ArgumentSetFactory {
 							                           iOptions.getTag(), iOptions));
 						}
 						
-						@SuppressWarnings ("rawtypes")
 						final ArgumentSet create = ArgumentSetFactory.create(ao);
 						
 						if (Logger.logTrace()) {
@@ -187,7 +168,7 @@ public class ArgumentSetFactory {
 					                           options));
 				}
 				
-				final T value = options.init();
+				final T value = (T) options.init();
 				
 				if (value != null) {
 					if (Logger.logTrace()) {
@@ -241,6 +222,29 @@ public class ArgumentSetFactory {
 			                                           null, options, e);
 			
 		}
+	}
+	
+	/**
+	 * Creates the requested argument instance.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param options
+	 *            the options
+	 * @return the x
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentSetRegistrationException
+	 */
+	@SuppressWarnings ("unchecked")
+	public static <T, Y extends ArgumentSet<T, X>, X extends ArgumentSetOptions<T, Y>> Y create(final X options) throws SettingsParseError,
+	                                                                                                            ArgumentSetRegistrationException,
+	                                                                                                            ArgumentRegistrationException {
+		return (Y) create((Object) options);
 	}
 	
 	/**

@@ -26,22 +26,23 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class Argument.
  * 
- * @param <T>
+ * @param <TYPE>
  *            the generic type
- * @param <X>
+ * @param <ARGOPTIONS>
  *            the generic type
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argument<T, ?>>> implements IArgument<T, X> {
+public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? extends Argument<TYPE, ?>>> implements
+        IArgument<TYPE, ARGOPTIONS> {
 	
 	/** The string value. */
 	private String              stringValue;
 	
 	/** The cached value. */
-	private T                   cachedValue;
+	private TYPE                cachedValue;
 	
 	/** The options. */
-	private X                   options;
+	private ARGOPTIONS          options;
 	
 	/** The Constant maskString. */
 	private final static String MASK_STRING = "******** (masked)";
@@ -54,8 +55,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	@SuppressWarnings ("unchecked")
-	Argument(@NotNull final X options) throws ArgumentRegistrationException {
+	Argument(@NotNull final ARGOPTIONS options) throws ArgumentRegistrationException {
 		// PRECONDITIONS
 		
 		try {
@@ -76,7 +76,8 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 				Logger.trace(String.format("Trying to register Argument (tag: '%s') to its parent ArgumentSet (tag: '%s').",
 				                           options.getTag(), options.getParent().getTag()));
 			}
-			if (!options.getArgumentSet().addArgument((Argument<?, ? extends IOptions<?, IArgument<?, ?>>>) this)) {
+			
+			if (!options.getArgumentSet().addArgument(this)) {
 				if (Logger.logWarn()) {
 					Logger.warn(String.format("Registration of Argument (tag: '%s') to its parent ArgumentSet (tag: '%s') failed.",
 					                          options.getTag(), options.getParent().getTag()));
@@ -177,7 +178,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * 
 	 * @return the cached value
 	 */
-	protected final T getCachedValue() {
+	protected final TYPE getCachedValue() {
 		return this.cachedValue;
 	}
 	
@@ -186,7 +187,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * 
 	 * @return the default value
 	 */
-	public final T getDefaultValue() {
+	public final TYPE getDefaultValue() {
 		return this.options.getDefaultValue();
 	}
 	
@@ -276,7 +277,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * @see net.ownhero.dev.andama.settings.IArgument#getOptions()
 	 */
 	@Override
-	public X getOptions() {
+	public ARGOPTIONS getOptions() {
 		// PRECONDITIONS
 		
 		try {
@@ -353,7 +354,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#getValue()
 	 */
 	@Override
-	public final T getValue() {
+	public final TYPE getValue() {
 		return this.getCachedValue();
 	}
 	
@@ -426,7 +427,7 @@ public abstract class Argument<T, X extends ArgumentOptions<T, ? extends Argumen
 	 * @param cachedValue
 	 *            the new cached value
 	 */
-	protected final void setCachedValue(final T cachedValue) {
+	protected final void setCachedValue(final TYPE cachedValue) {
 		this.cachedValue = cachedValue;
 	}
 	
