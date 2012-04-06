@@ -152,8 +152,6 @@ public class CallGraphToolChain {
 			throw new UnrecoverableError(e);
 		} catch (final ArgumentRegistrationException e) {
 			throw new UnrecoverableError(e);
-		} finally {
-			
 		}
 	}
 	
