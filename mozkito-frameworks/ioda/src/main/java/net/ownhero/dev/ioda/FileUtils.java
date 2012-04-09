@@ -100,7 +100,7 @@ public class FileUtils {
 									deleteDirectory(f);
 								} catch (final IOException e) {
 									if (Logger.logWarn()) {
-										Logger.warn("Could not delete directory: " + f.getAbsolutePath(), e);
+										Logger.warn(e, "Could not delete directory: '%s'", f.getAbsolutePath());
 									}
 								}
 							} else {
@@ -112,7 +112,7 @@ public class FileUtils {
 										FileUtils.forceDelete(f);
 									} catch (final IOException e) {
 										if (Logger.logWarn()) {
-											Logger.warn("Could not delete file: " + f.getAbsolutePath(), e);
+											Logger.warn(e, "Could not delete file: '%s'", f.getAbsolutePath());
 										}
 									}
 								}

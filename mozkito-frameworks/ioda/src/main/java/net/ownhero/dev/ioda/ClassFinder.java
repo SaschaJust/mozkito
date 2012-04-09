@@ -569,7 +569,7 @@ public class ClassFinder {
 			}
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
-				Logger.warn("Skipping invalid JAR file `" + filePath + "`: " + e.getMessage(), e);
+				Logger.warn(e, "Skipping invalid JAR file '%s'.", filePath);
 			}
 		}
 		return classNames;

@@ -108,8 +108,6 @@ public class IOUtils {
 			} else {
 				throw new UnsupportedProtocolException("This protocol hasn't been implemented yet: " + uri.getScheme());
 			}
-		} catch (final ClientProtocolException e) {
-			throw new FetchException(e.getMessage(), e);
 		} catch (final IOException e) {
 			throw new FetchException(e.getMessage(), e);
 		}
@@ -337,13 +335,12 @@ public class IOUtils {
 	 *             the fetch exception
 	 */
 	public static RawContent fetchFile(final URI uri) throws FetchException {
-		try {
-			final StringBuilder builder = new StringBuilder();
-			final File file = new File(uri.getPath());
-			
+		
+		final StringBuilder builder = new StringBuilder();
+		final File file = new File(uri.getPath());
+		
+		try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			FileUtils.ensureFilePermissions(file, FileUtils.READABLE_FILE);
-			
-			final BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line;
 			
 			while ((line = reader.readLine()) != null) {
