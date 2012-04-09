@@ -863,7 +863,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 								final Throwable throwable = new Throwable();
 								throwable.fillInStackTrace();
 								
-								Logger.debug("Caller: " + caller.getSimpleName(), throwable);
+								Logger.debug(throwable, "Caller: %s", caller.getSimpleName());
 							}
 							Logger.warn("Multiple request of input data element (" + localCache.toString()
 							        + ") within " + this.toString());
@@ -883,7 +883,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			}
 		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
-				Logger.error("Determining calling class failed.", e);
+				Logger.error(e, "Determining calling class failed.");
 			}
 		}
 		
@@ -1746,7 +1746,7 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			
 			if (Logger.logError()) {
 				Logger.error("Caught exception: " + e.getClass().getSimpleName());
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 				Logger.error("Shutting down.");
 			}
 			throw new UnrecoverableError(e);

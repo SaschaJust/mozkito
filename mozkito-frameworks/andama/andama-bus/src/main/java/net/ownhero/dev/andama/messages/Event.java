@@ -83,7 +83,7 @@ public abstract class Event implements IEvent {
 				this.origin = Class.forName(className);
 			} catch (final ClassNotFoundException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 				this.origin = getClass();
 			}

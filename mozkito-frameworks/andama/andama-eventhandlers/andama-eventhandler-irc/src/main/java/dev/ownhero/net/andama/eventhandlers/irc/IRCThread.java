@@ -192,15 +192,11 @@ public class IRCThread extends Thread implements SettingsProvider {
 				this.bot.connect(this.host, this.port);
 			} catch (final NickAlreadyInUseException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
-			} catch (final IOException e) {
+			} catch (final IOException | IrcException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
-				}
-			} catch (final IrcException e) {
-				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 			

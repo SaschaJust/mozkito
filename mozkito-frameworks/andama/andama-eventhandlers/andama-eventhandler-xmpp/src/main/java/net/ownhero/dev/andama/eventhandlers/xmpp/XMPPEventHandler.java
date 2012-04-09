@@ -70,7 +70,7 @@ public class XMPPEventHandler implements IEventListener {
 				connection.sendPacket(presence);
 			} catch (final XMPPException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 		} finally {

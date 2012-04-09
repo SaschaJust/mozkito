@@ -328,11 +328,11 @@ public class CrashHandler extends ThreadGroup {
 				transport.close();
 			} catch (final MessagingException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 			} catch (final UnsupportedEncodingException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 			}
 		}
@@ -353,14 +353,14 @@ public class CrashHandler extends ThreadGroup {
 			} else if (arg1 instanceof Shutdown) {
 				
 				if (Logger.logError()) {
-					Logger.error("Received shutdown notification from " + arg0.getName() + " with notice: "
-					                     + arg1.getMessage(), arg1);
+					Logger.error(arg1, "Received shutdown notification from '%s' with notice: %s.", arg0.getName(),
+					             arg1.getMessage());
 				}
 			} else {
 				
 				if (Logger.logError()) {
 					Logger.error("[[ " + arg1.getClass().getSimpleName() + " ]] Generating crash report.");
-					Logger.error(arg1.getMessage(), arg1);
+					Logger.error(arg1);
 				}
 				
 				final String crashReport = getCrashReport(arg1);

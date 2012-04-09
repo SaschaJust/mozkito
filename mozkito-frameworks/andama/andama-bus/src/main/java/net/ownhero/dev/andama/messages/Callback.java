@@ -43,7 +43,7 @@ public abstract class Callback {
 				this.latch.await();
 			} catch (final InterruptedException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 			}
 		} finally {

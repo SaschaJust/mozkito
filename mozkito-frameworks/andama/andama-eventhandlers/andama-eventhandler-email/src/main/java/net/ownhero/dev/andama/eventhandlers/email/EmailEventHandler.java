@@ -83,11 +83,11 @@ public class EmailEventHandler implements IEventListener {
 				transport.close();
 			} catch (final MessagingException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 			} catch (final UnsupportedEncodingException e) {
 				if (Logger.logWarn()) {
-					Logger.warn(e.getMessage(), e);
+					Logger.warn(e);
 				}
 			}
 		} finally {

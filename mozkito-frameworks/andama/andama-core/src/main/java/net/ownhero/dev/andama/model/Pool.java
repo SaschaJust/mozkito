@@ -27,10 +27,11 @@ public class Pool {
 	
 	/**
 	 * Instantiates a new pool.
-	 *
-	 * @param name the name of the {@link Group}
-	 * @param toolchain the toolchain
-	 * {@link Pool} constructor. Initializes the {@link Group};
+	 * 
+	 * @param name
+	 *            the name of the {@link Group}
+	 * @param toolchain
+	 *            the toolchain {@link Pool} constructor. Initializes the {@link Group};
 	 */
 	public Pool(final String name, final Chain<?> toolchain) {
 		this.threads = new Group(name, toolchain);
@@ -79,7 +80,7 @@ public class Pool {
 			} catch (final InterruptedException e) {
 				
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new Shutdown();
 			}
@@ -94,7 +95,7 @@ public class Pool {
 	
 	/**
 	 * Gets the thread group.
-	 *
+	 * 
 	 * @return the inner thread group
 	 */
 	public Group getThreadGroup() {
