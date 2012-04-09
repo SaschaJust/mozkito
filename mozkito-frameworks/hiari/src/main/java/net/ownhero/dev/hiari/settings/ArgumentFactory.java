@@ -42,18 +42,15 @@ public class ArgumentFactory {
 	/**
 	 * Creates the requested argument instance.
 	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param <X>
-	 *            the generic type
-	 * @param options
-	 *            the options
+	 * @param option
+	 *            the option
 	 * @return the x
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 * @throws SettingsParseError
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	static Argument create(@NotNull final Object option) throws ArgumentRegistrationException,
@@ -170,6 +167,25 @@ public class ArgumentFactory {
 		}
 	}
 	
+	/**
+	 * Creates the.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param <Y>
+	 *            the generic type
+	 * @param <X>
+	 *            the generic type
+	 * @param options
+	 *            the options
+	 * @return the y
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 */
 	@SuppressWarnings ("unchecked")
 	public static <T, Y extends Argument<T, X>, X extends ArgumentOptions<T, Y>> Y create(@NotNull final X options) throws ArgumentRegistrationException,
 	                                                                                                               SettingsParseError,
