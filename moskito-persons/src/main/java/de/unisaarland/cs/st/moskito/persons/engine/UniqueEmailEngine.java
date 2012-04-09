@@ -35,7 +35,7 @@ public class UniqueEmailEngine extends MergingEngine {
 	
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION = Messages.getString("UniqueEmailEngine.description"); //$NON-NLS-1$
-	
+	                                                                                               
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.persons.engine.MergingEngine#collides(de
@@ -75,12 +75,7 @@ public class UniqueEmailEngine extends MergingEngine {
 	 */
 	@Override
 	public void init() {
-		// PRECONDITIONS
-		
-		try {
-		} finally {
-			// POSTCONDITIONS
-		}
+		// ignore
 	}
 	
 	/*
@@ -94,7 +89,7 @@ public class UniqueEmailEngine extends MergingEngine {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return root;
 		} finally {
 			// POSTCONDITIONS
 		}

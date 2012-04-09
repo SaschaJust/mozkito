@@ -158,7 +158,7 @@ public class SourceforgeOverviewParser implements OverviewParser {
 					}
 				} catch (final JDOMException e) {
 					if (Logger.logError()) {
-						Logger.error("Could not convert overview to XHTML!", e);
+						Logger.error(e, "Could not convert overview to XHTML!");
 					}
 					return false;
 				} catch (final SAXException e) {

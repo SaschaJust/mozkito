@@ -127,12 +127,12 @@ public class BugzillaOverviewParser implements OverviewParser {
 				}
 			} catch (final UnsupportedProtocolException e1) {
 				if (Logger.logError()) {
-					Logger.error(e1.getMessage(), e1);
+					Logger.error(e1);
 				}
 				return false;
 			} catch (final FetchException e1) {
 				if (Logger.logError()) {
-					Logger.error(e1.getMessage(), e1);
+					Logger.error(e1);
 				}
 				return false;
 			}

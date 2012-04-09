@@ -114,7 +114,7 @@ public class MappingChain extends Chain<Settings> {
 			// return;
 		}
 		
-		final IRCThread t = new IRCThread();
+		final IRCThread t = new IRCThread("mapping");
 		t.start();
 		
 		getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));

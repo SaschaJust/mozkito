@@ -128,7 +128,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public PersistenceUtil init() {
 		// PRECONDITIONS

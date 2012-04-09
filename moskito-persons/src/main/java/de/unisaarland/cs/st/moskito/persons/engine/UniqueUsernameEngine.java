@@ -33,7 +33,7 @@ import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
 public class UniqueUsernameEngine extends MergingEngine {
 	
 	private static final String DESCRIPTION = Messages.getString("UniqueUsernameEngine.description"); //$NON-NLS-1$
-	
+	                                                                                                  
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.persons.engine.MergingEngine#collides(de
@@ -73,12 +73,7 @@ public class UniqueUsernameEngine extends MergingEngine {
 	 */
 	@Override
 	public void init() {
-		// PRECONDITIONS
-		
-		try {
-		} finally {
-			// POSTCONDITIONS
-		}
+		// ignore
 	}
 	
 	/*
@@ -92,7 +87,7 @@ public class UniqueUsernameEngine extends MergingEngine {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return root;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -51,6 +51,7 @@ public class Merge_NetTest extends MoskitoTest {
 	 * @throws ArgumentRegistrationException
 	 * @throws SettingsParseError
 	 */
+	@SuppressWarnings ("deprecation")
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testMergePerson() throws SettingsParseError, ArgumentRegistrationException {

@@ -63,6 +63,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	                     final JavaElementLocation classContext,
 	                     final JavaElementLocation methodContext,
 	                     @NotNull final JavaElementLocationSet elementCache) {
+		// ignore
 	}
 	
 	/**
@@ -98,10 +99,10 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		String methodName = null;
 		if (node instanceof MethodInvocation) {
-			MethodInvocation mi = (MethodInvocation) node;
+			final MethodInvocation mi = (MethodInvocation) node;
 			binding = mi.resolveMethodBinding();
 			methodName = mi.getName().toString();
-			int index = node.toString().indexOf(methodName);
+			final int index = node.toString().indexOf(methodName);
 			position = position + index + 1;
 			thisLine = cu.getLineNumber(position);
 		} else if (node instanceof ClassInstanceCreation) {
@@ -115,7 +116,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		}
 		
 		if (binding == null) {
-			StringBuilder ss = new StringBuilder();
+			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation");
 			ss.append("\n\t");
 			if (classContext != null) {
@@ -135,12 +136,12 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			}
 			return;
 		}
-		IMethodBinding mBinding = (IMethodBinding) binding;
+		final IMethodBinding mBinding = (IMethodBinding) binding;
 		
-		String calledObject = mBinding.getDeclaringClass().getQualifiedName();
+		final String calledObject = mBinding.getDeclaringClass().getQualifiedName();
 		
 		if (calledObject.equals("UNKNOWN") || calledObject.equals("")) {
-			StringBuilder ss = new StringBuilder();
+			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation in revision ");
 			if (classContext != null) {
 				ss.append(" in class `");
@@ -164,8 +165,8 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			return;
 		}
 		
-		ITypeBinding[] args = mBinding.getParameterTypes();
-		List<String> arguments = new ArrayList<String>();
+		final ITypeBinding[] args = mBinding.getParameterTypes();
+		final List<String> arguments = new ArrayList<String>();
 		for (int i = 0; i < args.length; ++i) {
 			arguments.add(args[i].getName());
 		}
@@ -175,10 +176,11 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 			parent = methodContext.getElement();
 		}
 		
-		String filename = ppaVisitor.getRelativeFilePath();
+		final String filename = ppaVisitor.getRelativeFilePath();
 		
-		JavaElementLocation javaMethodCall = locationSet.addMethodCall(calledObject, methodName, arguments, filename,
-		                                                               parent, thisLine, thisLine, position);
+		final JavaElementLocation javaMethodCall = locationSet.addMethodCall(calledObject, methodName, arguments,
+		                                                                     filename, parent, thisLine, thisLine,
+		                                                                     position);
 		
 		if (!this.methodCallsByFile.containsKey(filename)) {
 			this.methodCallsByFile.put(filename, new LinkedList<JavaMethodCall>());
@@ -204,6 +206,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	                     @NotNegative final int currentLine,
 	                     @NotNegative final int endLine,
 	                     @NotNull final JavaElementLocationSet elementCache) {
+		// ignore
 	}
 	
 }

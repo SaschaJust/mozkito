@@ -391,15 +391,15 @@ public class MantisParser implements Parser {
 			return new XmlReport(rawReport, document);
 		} catch (final TransformerFactoryConfigurationError e) {
 			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
+				Logger.error(e, "Cannot create XML document!");
 			}
 		} catch (final IOException e) {
 			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
+				Logger.error(e, "Cannot create XML document!");
 			}
 		} catch (final JDOMException e) {
 			if (Logger.logError()) {
-				Logger.error("Cannot create XML document!", e);
+				Logger.error(e, "Cannot create XML document!");
 			}
 		}
 		return null;
@@ -476,8 +476,8 @@ public class MantisParser implements Parser {
 						        + attachmentEntry.getLink()).toURI()));
 					} catch (final Exception e) {
 						if (Logger.logError()) {
-							Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
-							             e);
+							Logger.error(e, "Could not determine MIME type of attachment '%s'.",
+							             attachmentEntry.getFilename());
 						}
 						
 					}

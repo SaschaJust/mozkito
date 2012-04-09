@@ -260,7 +260,6 @@ public class UntanglingOptions extends
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public UntanglingControl init() {
 		// PRECONDITIONS

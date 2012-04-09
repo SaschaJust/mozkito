@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -68,12 +65,17 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/**
 	 * Instantiates a new change coupling voter.
-	 *
-	 * @param transaction the transaction
-	 * @param minSupport the min support
-	 * @param minConfidence the min confidence
-	 * @param persistenceUtil the persistence util
-	 * @param cacheDir the cache dir
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param cacheDir
+	 *            the cache dir
 	 */
 	
 	@SuppressWarnings ("unchecked")
@@ -86,46 +88,57 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
 			        + ".cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
-					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
-				} catch (FileNotFoundException e) {
+					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					this.couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
+				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (ClassNotFoundException e) {
+				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
 				}
 			}
-			if (couplings == null) {
+			if (this.couplings == null) {
 				// run query and save tmp file
-				couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport, minConfidence,
-				                                                               new HashSet<String>(), persistenceUtil);
+				this.couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport,
+				                                                                    minConfidence,
+				                                                                    new HashSet<String>(),
+				                                                                    persistenceUtil);
 				try {
-					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
-					out.writeObject(couplings);
+					final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
+					out.writeObject(this.couplings);
 					out.close();
-				} catch (FileNotFoundException e) {
+				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
+	 */
+	public final String getHandle() {
+		return getClass().getSimpleName();
 	}
 	
 	/*
@@ -151,11 +164,12 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
 		Condition.check(t2.getChangedElementLocation() != null, "The changed element location must not be null!");
 		
-		JavaElement element1 = t1.getChangedElementLocation().getElement();
-		JavaElement element2 = t2.getChangedElementLocation().getElement();
+		final JavaElement element1 = t1.getChangedElementLocation().getElement();
+		final JavaElement element2 = t2.getChangedElementLocation().getElement();
 		
-		Condition.check(element1 != null, "The changed elements must not be null!");
-		Condition.check(element2 != null, "The changed elements must not be null!");
+		Condition.notNull(element1, "Local variable '%s' in '%s:%s'.", "element1", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(element2, "Local variable '%s' in '%s:%s'.", "element2", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		Condition.check(element1.getElementType().equals(element2.getElementType()),
 		                "The change operations must be on the same types of elements");
 		
@@ -168,14 +182,14 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		}
 		
 		// get relevant method names
-		Set<String> relevantMethodNames = new HashSet<String>();
+		final Set<String> relevantMethodNames = new HashSet<String>();
 		relevantMethodNames.add(element1.getFullQualifiedName());
 		relevantMethodNames.add(element2.getFullQualifiedName());
 		
 		List<MethodChangeCoupling> currentCouplings = new LinkedList<MethodChangeCoupling>();
 		
-		if (couplings != null) {
-			for (MethodChangeCoupling cc : couplings) {
+		if (this.couplings != null) {
+			for (final MethodChangeCoupling cc : this.couplings) {
 				if (((cc.getPremise().size() == 1) && (cc.getPremise().contains(element1)) && (cc.getImplication().equals(element2)))
 				        || ((cc.getPremise().size() == 1) && (cc.getPremise().contains(element2)) && (cc.getImplication().equals(element1)))) {
 					currentCouplings.add(cc);
@@ -183,9 +197,10 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			}
 		} else {
-			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport,
-			                                                                      minConfidence, relevantMethodNames,
-			                                                                      persistenceUtil);
+			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.transaction, this.minSupport,
+			                                                                      this.minConfidence,
+			                                                                      relevantMethodNames,
+			                                                                      this.persistenceUtil);
 		}
 		
 		if (!currentCouplings.isEmpty()) {

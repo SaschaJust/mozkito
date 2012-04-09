@@ -24,6 +24,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 */
 	@Override
 	public void endVisit() {
+		// ignore
 	}
 	
 	/**
@@ -50,6 +51,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 */
 	@Override
 	public void visit(final RCSTransaction transaction) {
+		// ignore
 	}
 	
 }

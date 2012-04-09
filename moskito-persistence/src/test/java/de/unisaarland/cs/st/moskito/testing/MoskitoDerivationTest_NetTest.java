@@ -44,7 +44,7 @@ public class MoskitoDerivationTest_NetTest extends MoskitoTest {
 	@Ignore
 	@DatabaseSettings (unit = "ppa", util = OpenJPAUtil.class)
 	public void testIgnore() {
-		
+		// ignore
 	}
 	
 	@Test

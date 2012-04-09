@@ -60,26 +60,14 @@ public class TrackerFactory {
 				// check if someone missed to add a corresponding enum entry in
 				// TrackerType
 				if (e.getCause() instanceof IllegalArgumentException) {
-					Logger.error("You probably missed to add an enum constant to " + TrackerType.getHandle()
-					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
+					             TrackerType.getHandle());
 				}
 			}
 			throw new UnrecoverableError(e);
-		} catch (final ClassNotFoundException e) {
-			throw new UnrecoverableError(e);
-		} catch (final WrongClassSearchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IOException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalArgumentException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SecurityException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalAccessException e) {
-			throw new UnrecoverableError(e);
-		} catch (final NoSuchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final InstantiationException e) {
+		} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
+		        | IllegalArgumentException | SecurityException | IllegalAccessException | NoSuchMethodException
+		        | InstantiationException e) {
 			throw new UnrecoverableError(e);
 		}
 	}

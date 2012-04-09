@@ -79,9 +79,6 @@ public class RepositoryToolchain extends Chain<Settings> {
 			}
 			
 		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logDebug()) {
-				Logger.debug(e.getMessage(), e);
-			}
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);

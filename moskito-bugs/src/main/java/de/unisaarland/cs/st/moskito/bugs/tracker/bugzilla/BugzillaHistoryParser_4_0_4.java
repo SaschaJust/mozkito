@@ -278,7 +278,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error("Could not parse bugzilla report history.", e);
+				Logger.error(e, "Could not parse bugzilla report history.");
 			}
 		}
 		this.parsed = true;

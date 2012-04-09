@@ -226,7 +226,7 @@ public class PersistenceManager {
 	 * @param query
 	 */
 	public static synchronized <T> void registerPreparedQuery(final PreparedQuery<T> query) {
-		
+		// ignore
 	}
 	
 	/**

@@ -106,12 +106,7 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 	 */
 	@Override
 	public void init() {
-		// PRECONDITIONS
-		
-		try {
-		} finally {
-			// POSTCONDITIONS
-		}
+		// ignore
 	}
 	
 	/*
@@ -125,7 +120,7 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 		// PRECONDITIONS
 		
 		try {
-			return null;
+			return root;
 		} finally {
 			// POSTCONDITIONS
 		}

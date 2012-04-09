@@ -153,7 +153,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 							unit = activeClass.getSimpleName().toLowerCase();
 							break;
 						}
-					} catch (final ClassNotFoundException e) {
+					} catch (final ClassNotFoundException ignore) {
+						// ignore
 					}
 				}
 				

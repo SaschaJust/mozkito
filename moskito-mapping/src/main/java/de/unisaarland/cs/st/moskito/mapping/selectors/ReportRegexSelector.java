@@ -144,7 +144,7 @@ public class ReportRegexSelector extends MappingSelector {
 		try {
 			new StringArgument.Options(root, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
 			                           Requirement.required);
-			return null;
+			return root;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -64,8 +64,8 @@ public final class RepositoryFactory {
 				// check if someone missed to add a corresponding enum entry in
 				// RepositoryType
 				if (e.getCause() instanceof IllegalArgumentException) {
-					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
-					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
+					             RepositoryType.getHandle());
 				}
 			}
 			throw new UnrecoverableError(e);
