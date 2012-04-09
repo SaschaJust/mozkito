@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
 import java.util.Arrays;
@@ -74,14 +77,15 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	
 	/** The max package distance. */
 	private final int  maxPackageDistance;
+	
+	/** The time window size. */
 	private final Long timeWindowSize;
 	
 	/**
 	 * Instantiates a new blob transaction combine operator.
-	 * 
-	 * @param maxPackageDistance
-	 *            the max package distance
-	 * @param timeWindowSize
+	 *
+	 * @param maxPackageDistance the max package distance
+	 * @param timeWindowSize the time window size
 	 */
 	public BlobTransactionCombineOperator(final int maxPackageDistance, final Long timeWindowSize) {
 		this.maxPackageDistance = maxPackageDistance;

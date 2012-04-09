@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics;
 
@@ -18,12 +21,18 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
-import net.ownhero.dev.hiari.settings.arguments.EnumArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
@@ -42,52 +51,109 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.Geneal
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyArguments;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogySettings;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
 
-public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
+/**
+ * The Class GenealogyMetricsToolChain.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
+public class GenealogyMetricsToolChain extends Chain<Settings> {
 	
-	private final GenealogyArguments        genealogyArgs;
-	private final Pool                      threadPool;
-	private CoreChangeGenealogy             genealogy;
-	private final EnumArgument<MetricLevel> granularityArg;
-	private final OutputFileArgument        outputFileArgument;
-	private GenealogyMetricSink             genealogyMetricSink;
+	/** The genealogy arguments. */
+	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArguments;
 	
-	public GenealogyMetricsToolChain(final GenealogySettings setting, final EnumArgument<MetricLevel> granularityArg,
-	        final GenealogyArguments genealogyArgs) {
+	/** The thread pool. */
+	private final Pool                                               threadPool;
+	
+	/** The genealogy. */
+	private CoreChangeGenealogy                                      genealogy;
+	
+	/** The granularity argument. */
+	private final EnumArgument<MetricLevel>                          granularityArgument;
+	
+	/** The output file argument. */
+	private final OutputFileArgument                                 outputFileArgument;
+	
+	/** The genealogy metric sink. */
+	private GenealogyMetricSink                                      genealogyMetricSink;
+	
+	/** The granularity. */
+	private MetricLevel                                              granularity;
+	
+	/**
+	 * Instantiates a new genealogy metrics tool chain.
+	 *
+	 * @param setting the setting
+	 * @param granularityOptions the granularity options
+	 * @param genealogyOptions the genealogy options
+	 */
+	public GenealogyMetricsToolChain(final Settings setting,
+	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions) {
 		super(setting);
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
-			this.genealogyArgs = genealogyArgs;
-			this.granularityArg = granularityArg;
-			this.outputFileArgument = new OutputFileArgument(setting.getRootArgumentSet(), "genealogy.metric.out",
-			                                                 "Filename to write result metric matrix into.", null,
-			                                                 Requirement.required, true);
-			new StringArgument(
-			                   setting.getRootArgumentSet(),
-			                   "fix.pattern",
-			                   "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
-			                   null, Requirement.required);
-		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getMessage(), e);
+			this.genealogyArguments = ArgumentSetFactory.create(genealogyOptions);
+			this.granularityArgument = ArgumentFactory.create(granularityOptions);
+			this.outputFileArgument = ArgumentFactory.create(new OutputFileArgument.Options(
+			                                                                                setting.getRoot(),
+			                                                                                "metricOut",
+			                                                                                "Filename to write result metric matrix into.",
+			                                                                                null, Requirement.required,
+			                                                                                true));
+			
+			new StringArgument.Options(
+			                           setting.getRoot(),
+			                           "fixPattern",
+			                           "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
+			                           null, Requirement.required);
+		} catch (final ArgumentRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} finally {
+			
 		}
 		
 	}
 	
+	/**
+	 * Gets the genealogy.
+	 *
+	 * @return the genealogy
+	 */
+	public CoreChangeGenealogy getGenealogy() {
+		return this.genealogy;
+	}
+	
+	/**
+	 * Gets the granularity.
+	 *
+	 * @return the granularity
+	 */
+	public MetricLevel getGranularity() {
+		return this.granularity;
+	}
+	
+	/**
+	 * Gets the metrics values.
+	 *
+	 * @return the metrics values
+	 */
 	public Map<String, Map<String, Double>> getMetricsValues() {
 		return this.genealogyMetricSink.getMetricValues();
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.ownhero.dev.andama.model.Chain#setup()
+	 */
 	@Override
 	public void setup() {
-		this.genealogy = this.genealogyArgs.getValue();
+		this.genealogy = this.genealogyArguments.getValue();
 		
-		// allow different genealogy layers
-		final MetricLevel granularity = this.granularityArg.getValue();
+		this.granularity = this.granularityArgument.getValue();
 		
 		/*
 		 * we always enable all metrics. Otherwise this would require far too many arguments The idea is to load all
@@ -95,7 +161,7 @@ public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 		 * the granularity level selected for this run.
 		 */
 		
-		if (granularity.equals(MetricLevel.CHANGEOPERATIONPARTITION)) {
+		if (this.granularity.equals(MetricLevel.CHANGEOPERATIONPARTITION)) {
 			final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
 			                                                                                       this.genealogy,
 			                                                                                       new DefaultPartitionGenerator(
@@ -123,12 +189,12 @@ public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}
 			
-		} else if (granularity.equals(MetricLevel.TRANSACTION)) {
+		} else if (this.granularity.equals(MetricLevel.TRANSACTION)) {
 			final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
 			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
 			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
@@ -154,7 +220,7 @@ public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}
@@ -182,7 +248,7 @@ public class GenealogyMetricsToolChain extends Chain<GenealogySettings> {
 				}
 			} catch (final Exception e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 				throw new UnrecoverableError(e);
 			}

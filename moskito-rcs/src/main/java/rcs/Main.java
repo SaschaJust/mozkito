@@ -16,6 +16,8 @@
 package rcs;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.GraphBuilder;
@@ -36,7 +38,8 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			final RepositoryToolchain rCS = new RepositoryToolchain();
+			final Settings settings = new Settings();
+			final RepositoryToolchain rCS = new RepositoryToolchain(settings);
 			rCS.setName(rCS.getClass().getSimpleName());
 			rCS.start();
 			rCS.join();
@@ -56,11 +59,15 @@ public class Main {
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
+			}
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e);
 			}
 		}
 	}

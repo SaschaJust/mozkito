@@ -11,15 +11,19 @@ import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class CandidatesConverter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CandidatesConverter extends Transformer<Candidate, Mapping> {
 	
 	/**
+	 * Instantiates a new candidates converter.
+	 * 
 	 * @param threadGroup
+	 *            the thread group
 	 * @param settings
-	 * @param parallelizable
+	 *            the settings
 	 */
 	public CandidatesConverter(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);

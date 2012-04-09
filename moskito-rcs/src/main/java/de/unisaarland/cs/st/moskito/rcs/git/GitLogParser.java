@@ -21,8 +21,9 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 
@@ -70,7 +71,7 @@ class GitLogParser {
 			return new Person("<unknown>", null, null);
 		} else if (authorParts.length == 1) {
 			// can be email or username
-			final List<RegexGroup> find = emailRegex.find(authorString);
+			final Match find = emailRegex.find(authorString);
 			if (find != null) {
 				email = authorString.replaceAll("<", "").replaceAll(">", "").trim();
 			} else {
@@ -78,7 +79,7 @@ class GitLogParser {
 			}
 		} else if (authorParts.length == 2) {
 			// could be full name or username and email OR username and username
-			final List<RegexGroup> find = emailRegex.find(authorString);
+			final Match find = emailRegex.find(authorString);
 			if (find != null) {
 				emailRegex.find(authorString);
 				email = emailRegex.getGroup("email");
@@ -86,10 +87,10 @@ class GitLogParser {
 				username = username.replaceAll("<", "").replaceAll(">", "");
 				username = username.trim();
 			} else {
-				final List<List<RegexGroup>> findList = usernameRegex.findAll(authorString);
+				final MultiMatch findList = usernameRegex.findAll(authorString);
 				if (findList != null) {
 					if (findList.size() > 1) {
-						username = findList.get(0).get(1).getMatch();
+						username = findList.getMatch(0).getGroup(1).getMatch();
 					}
 				}
 				authorString = usernameRegex.removeAll(authorString);

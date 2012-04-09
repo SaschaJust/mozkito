@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import java.net.MalformedURLException;
@@ -24,12 +24,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import noNamespace.AssignedToDocument.AssignedTo;
 import noNamespace.AttachmentDocument.Attachment;
 import noNamespace.LongDescDocument.LongDesc;
@@ -58,9 +59,7 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
-	/** The tracker. */
-	private Tracker               tracker      = null;
-	
+	/** The history parser. */
 	private BugzillaHistoryParser historyParser;
 	
 	/** The sibling regex. */
@@ -69,8 +68,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	/**
 	 * Instantiates a new bugzilla parser.
 	 * 
-	 * @param tracker
-	 *            the tracker
 	 */
 	public BugzillaParser_4_0_4() {
 		super(new HashSet<String>(Arrays.asList(new String[] { "4.0.4", "4.0.5+" })));
@@ -329,16 +326,16 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
 	@Override
-	public Long getId() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			Long bugId = null;
+			String bugId = null;
 			try {
-				bugId = Long.valueOf(getXmlBug().getBugId());
+				bugId = getXmlBug().getBugId();
 			} catch (final NumberFormatException e) {
 				if (Logger.logError()) {
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 			return bugId;
@@ -347,6 +344,10 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getKeywords()
+	 */
 	@Override
 	public Set<String> getKeywords() {
 		// PRECONDITIONS
@@ -541,26 +542,20 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	 */
 	
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
-		final Set<Long> result = new HashSet<Long>();
+		final Set<String> result = new HashSet<String>();
 		try {
 			// first check for dependencies and blocking bugs
 			final String[] dependsOn = getXmlBug().getDependsonArray();
 			for (final String dep : dependsOn) {
-				try {
-					result.add(Long.valueOf(dep));
-				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
-					}
-				}
+				result.add(dep);
 			}
 			
 			final String[] blockedArray = getXmlBug().getBlockedArray();
 			for (final String dep : blockedArray) {
 				try {
-					result.add(Long.valueOf(dep));
+					result.add(dep);
 				} catch (final NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not intepret bug reference as a Long: " + dep + ". Ignoring sibling.");
@@ -571,18 +566,12 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			final LongDesc[] longDescArray = getXmlBug().getLongDescArray();
 			for (final LongDesc dec : longDescArray) {
 				final String comment = dec.getThetext();
-				final List<List<RegexGroup>> groupsList = siblingRegex.findAll(comment);
+				final MultiMatch groupsList = siblingRegex.findAll(comment);
 				if (groupsList != null) {
-					for (final List<RegexGroup> groups : groupsList) {
-						for (final RegexGroup group : groups) {
+					for (final Match groups : groupsList) {
+						for (final Group group : groups) {
 							if (group.getName().equals("sibling")) {
-								try {
-									final Long sibling = Long.valueOf(group.getMatch());
-									result.add(sibling);
-								} catch (final NumberFormatException e) {
-									Logger.error("Could not intepret bug reference as a Long: " + group.getMatch()
-									        + ". Ignoring sibling.");
-								}
+								result.add(group.getMatch());
 							}
 						}
 					}
@@ -595,6 +584,10 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 */
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -606,6 +599,10 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 */
 	@Override
 	public String getSubject() {
 		// PRECONDITIONS
@@ -617,6 +614,10 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 */
 	@Override
 	public Person getSubmitter() {
 		// PRECONDITIONS
@@ -681,22 +682,6 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 		
 		try {
 			return getXmlBug().getVersion();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
-	@Override
-	@NoneNull
-	public void setTracker(final Tracker tracker) {
-		// PRECONDITIONS
-		this.tracker = tracker;
-		try {
 		} finally {
 			// POSTCONDITIONS
 		}

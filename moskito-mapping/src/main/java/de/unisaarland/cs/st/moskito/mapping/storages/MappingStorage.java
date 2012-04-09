@@ -16,15 +16,19 @@ import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MappingStorage.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class MappingStorage extends Node {
 	
 	/**
+	 * Load data.
+	 * 
 	 * @param util
+	 *            the util
 	 */
-	public void loadData(final PersistenceUtil util) {
+	public void loadData(final PersistenceUtil util) { // stub
 	}
 	
 }

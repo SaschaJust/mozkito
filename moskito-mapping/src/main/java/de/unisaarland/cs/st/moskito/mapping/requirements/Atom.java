@@ -38,11 +38,18 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public final class Atom extends Expression {
 	
+	/** The idx. */
 	private final Index         idx;
+	
+	/** The type. */
 	private Class<?>            type;
+	
+	/** The keys. */
 	private final Set<FieldKey> keys = new HashSet<FieldKey>();
 	
 	/**
+	 * Instantiates a new atom.
+	 * 
 	 * @param idx
 	 *            the index the atom refers to
 	 * @param type
@@ -54,6 +61,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Instantiates a new atom.
+	 * 
 	 * @param idx
 	 *            the index the atom refers to
 	 * @param key
@@ -65,6 +74,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Instantiates a new atom.
+	 * 
 	 * @param idx
 	 *            the index the atom refers to
 	 * @param keys
@@ -201,6 +212,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the idx.
+	 * 
 	 * @return the index the atom refers to
 	 */
 	public Index getIdx() {
@@ -208,6 +221,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the keys.
+	 * 
 	 * @return the {@link FieldKey}s the atom refers to, if any. Returns an empty set if none were specified.
 	 */
 	public Set<FieldKey> getKeys() {
@@ -215,6 +230,8 @@ public final class Atom extends Expression {
 	}
 	
 	/**
+	 * Gets the type.
+	 * 
 	 * @return the type the atom refers to. Returns <code>null</code> otherwise.
 	 */
 	public Class<?> getType() {

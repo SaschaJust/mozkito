@@ -16,8 +16,9 @@
 package de.unisaarland.cs.st.moskito.infozilla.model.image;
 
 /**
+ * The Class BMPImage.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class BMPImage extends Image {
 	

@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
 import static org.junit.Assert.assertEquals;
@@ -25,41 +28,87 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.BlobTransactionCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.blob.CombineOperator;
 
+/**
+ * The Class ArtificialBlobGeneratorTest.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class ArtificialBlobGeneratorTest {
 	
+	/**
+	 * The Class TestObject.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	private class TestObject {
 		
+		/** The id. */
 		private final String id;
+		
+		/** The path. */
 		private final String path;
 		
+		/**
+		 * Instantiates a new test object.
+		 *
+		 * @param id the id
+		 * @param path the path
+		 */
 		public TestObject(final String id, final String path) {
 			this.id = id;
 			this.path = path;
 		}
 		
+		/**
+		 * Gets the id.
+		 *
+		 * @return the id
+		 */
 		@SuppressWarnings ("unused")
 		public String getId() {
 			return id;
 		}
 		
+		/**
+		 * Gets the path.
+		 *
+		 * @return the path
+		 */
 		public String getPath() {
 			return path;
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		@Override
 		public String toString() {
 			return id;
 		}
 	}
 	
+	/**
+	 * The Class TestObjectCombineOperator.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	private class TestObjectCombineOperator implements CombineOperator<TestObject> {
 		
+		/** The pd. */
 		private final int pd;
 		
+		/**
+		 * Instantiates a new test object combine operator.
+		 *
+		 * @param pd the pd
+		 */
 		public TestObjectCombineOperator(final int pd) {
 			this.pd = pd;
 		}
 		
+		/* (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.untangling.blob.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
+		 */
 		@Override
 		public boolean canBeCombined(final TestObject t1,
 		                             final TestObject t2) {
@@ -68,6 +117,9 @@ public class ArtificialBlobGeneratorTest {
 		
 	}
 	
+	/**
+	 * Test get all combinations1.
+	 */
 	@Test
 	public void testGetAllCombinations1() {
 		
@@ -93,6 +145,9 @@ public class ArtificialBlobGeneratorTest {
 		
 	}
 	
+	/**
+	 * Test get all combinations2.
+	 */
 	@Test
 	public void testGetAllCombinations2() {
 		
@@ -118,6 +173,9 @@ public class ArtificialBlobGeneratorTest {
 		
 	}
 	
+	/**
+	 * Test get all combinations3.
+	 */
 	@Test
 	public void testGetAllCombinations3() {
 		

@@ -19,10 +19,13 @@ import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom.Element;
 
@@ -37,9 +40,10 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @DiscriminatorValue ("JAVAMETHODDEFINITION")
 public class JavaMethodDefinition extends JavaElement implements Annotated, Serializable {
 	
-	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";
-	public static final String JAVA_METHOD_DEFINITION = "JavaMethodDefinition";
-	
+	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";   //$NON-NLS-1$
+	public static final String JAVA_METHOD_DEFINITION = "JavaMethodDefinition"; //$NON-NLS-1$
+	public static final String ANNOTATED_OVERRIDE     = "annotatedOverride";   //$NON-NLS-1$
+	                                                                            
 	/** The Constant serialVersionUID. */
 	private static final long  serialVersionUID       = -6574764154587254697L;
 	
@@ -58,14 +62,14 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	public static String composeFullQualifiedName(final String parentName,
 	                                              final String methodName,
 	                                              final List<String> signature) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		
 		String localParentName = parentName;
-		while (localParentName.endsWith(".")) {
+		while (localParentName.endsWith(".")) { //$NON-NLS-1$
 			localParentName = localParentName.substring(0, localParentName.length() - 1);
 		}
 		sb.append(localParentName);
-		sb.append(".");
+		sb.append("."); //$NON-NLS-1$
 		sb.append(methodName);
 		sb.append(getSignatureString(signature));
 		return sb.toString();
@@ -78,68 +82,61 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 *            the element
 	 * @return the java method definition is successful, <code>null</code> otherwise.
 	 */
+	@NoneNull
 	public static JavaMethodDefinition fromXMLRepresentation(final org.jdom.Element element) {
-		if (!element.getName().equals(JAVA_METHOD_DEFINITION)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
-			}
-			return null;
-		}
+		StringCondition.equals(element.getName(), JAVA_METHOD_DEFINITION,
+		                       Messages.JavaMethodDefinition_unrecognized_root_element, element.getName());
 		
-		org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
-		if (nameElement == null) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
-			}
-			return null;
-		}
-		String name = nameElement.getText();
+		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		Condition.notNull(nameElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
-		if ((name == null) || (!name.contains("(")) || (!name.contains(")"))) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
-			}
-			return null;
-		}
+		final String name = nameElement.getText();
 		
-		int dotIndex = name.indexOf(".");
-		int index = name.indexOf("(");
+		Condition.notNull(name, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
+		StringCondition.matches(name, ".*\\(.*\\).*", Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
-		if ((dotIndex < 0) || (dotIndex > index)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not extract JavaMethodDefinfition.fullQualifidName. Returning null.");
-			}
-			return null;
-		}
+		final int dotIndex = name.indexOf("."); //$NON-NLS-1$
+		final int index = name.indexOf("("); //$NON-NLS-1$
 		
-		String tmpName = name.substring(0, index);
-		int lastDotIndex = tmpName.lastIndexOf(".");
-		String parentName = tmpName.substring(0, lastDotIndex);
-		String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
+		CompareCondition.greater(dotIndex, 0, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
+		CompareCondition.less(dotIndex, index, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
-		String argString = name.substring(index + 1, name.indexOf(")"));
-		String[] args = argString.split(",");
-		List<String> argList = new ArrayList<String>(args.length);
-		for (String arg : args) {
+		final org.jdom.Element overrideElement = element.getChild(ANNOTATED_OVERRIDE);
+		Condition.notNull(overrideElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
+		
+		final boolean override = Boolean.valueOf(overrideElement.getText());
+		
+		final String tmpName = name.substring(0, index);
+		final int lastDotIndex = tmpName.lastIndexOf("."); //$NON-NLS-1$
+		final String parentName = tmpName.substring(0, lastDotIndex);
+		final String methodName = tmpName.substring(lastDotIndex + 1, tmpName.length());
+		
+		final String argString = name.substring(index + 1, name.indexOf(")")); //$NON-NLS-1$
+		final String[] args = argString.split(","); //$NON-NLS-1$
+		final List<String> argList = new ArrayList<String>(args.length);
+		for (final String arg : args) {
 			argList.add(arg);
 		}
 		
-		return new JavaMethodDefinition(parentName, methodName, argList);
+		return new JavaMethodDefinition(parentName, methodName, argList, override);
 	}
 	
-	public static String getSignatureString(final List<String> signature) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+	@NoneNull
+	public static String getSignatureString(@NotEmpty final List<String> signature) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("("); //$NON-NLS-1$
 		if (!signature.isEmpty()) {
 			sb.append(signature.get(0));
 		}
 		for (int i = 1; i < signature.size(); ++i) {
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 			sb.append(signature.get(i));
 		}
-		sb.append(")");
+		sb.append(")"); //$NON-NLS-1$
 		return sb.toString();
 	}
+	
+	private boolean      annotatedOverride = false;
 	
 	/** The signature. */
 	private List<String> signature;
@@ -161,18 +158,13 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 *            the signature
 	 */
 	@NoneNull
-	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature) {
+	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature,
+	        final boolean override) {
 		super(methodName, JavaMethodDefinition.class.getCanonicalName());
-		
-		Condition.check(parentName.contains("."), "The parentName of a method call MUST contain at least one DOT.");
-		Condition.check(!parentName.contains("("), "The parentName name of a method call must not contain '('.");
-		Condition.check(!parentName.contains(")"), "The parentName name of a method call must not contain ')'.");
-		Condition.check(!methodName.contains("."), "The methodName name of a method call MUST NOT contains any DOT.");
-		Condition.check(!methodName.contains("("), "The methodName name of a method call must not contain '('.");
-		Condition.check(!methodName.contains(")"), "The methodName name of a method call must not contain ')'.");
 		
 		setSignature(new ArrayList<String>(signature));
 		setFullQualifiedName(composeFullQualifiedName(parentName, methodName, signature));
+		setAnnotatedOverride(override);
 	}
 	
 	/*
@@ -190,7 +182,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		JavaMethodDefinition other = (JavaMethodDefinition) obj;
+		final JavaMethodDefinition other = (JavaMethodDefinition) obj;
 		if (getSignature() == null) {
 			if (other.getSignature() != null) {
 				return false;
@@ -208,7 +200,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 */
 	@ElementCollection
 	public List<String> getSignature() {
-		return signature;
+		return this.signature;
 	}
 	
 	/*
@@ -216,11 +208,15 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * @see de.unisaarland.cs.st.moskito.ppa.model.JavaElement#getXMLRepresentation (org.w3c.dom.Document)
 	 */
 	@Override
+	@Transient
 	public Element getXMLRepresentation() {
-		Element thisElement = new Element(JAVA_METHOD_DEFINITION);
-		Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element thisElement = new Element(JAVA_METHOD_DEFINITION);
+		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element overrideElement = new Element(ANNOTATED_OVERRIDE);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
+		overrideElement.setText(String.valueOf(isAnnotatedOverride()));
+		thisElement.addContent(overrideElement);
 		return thisElement;
 	}
 	
@@ -236,6 +232,27 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		                                                     ? 0
 		                                                     : getSignature().hashCode());
 		return result;
+	}
+	
+	public boolean isAnnotatedOverride() {
+		// PRECONDITIONS
+		
+		try {
+			return this.annotatedOverride;
+		} finally {
+			// POSTCONDITIONS
+			
+		}
+	}
+	
+	public void setAnnotatedOverride(final boolean annotatedOverride) {
+		// PRECONDITIONS
+		
+		try {
+			this.annotatedOverride = annotatedOverride;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**

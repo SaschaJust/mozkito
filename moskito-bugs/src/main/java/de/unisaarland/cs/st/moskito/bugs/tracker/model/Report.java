@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 /**
  * 
  */
@@ -68,59 +68,118 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Report.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
+	/** The Constant serialVersionUID. */
 	private static final long     serialVersionUID  = 3241584366125944268L;
+	
+	/** The attachment entries. */
 	private List<AttachmentEntry> attachmentEntries = new LinkedList<AttachmentEntry>();
+	
+	/** The category. */
 	private String                category;
+	
+	/** The comments. */
 	private SortedSet<Comment>    comments          = new TreeSet<Comment>(new CommentComparator());
+	
+	/** The component. */
 	private String                component;
+	
+	/** The creation timestamp. */
 	private DateTime              creationTimestamp;
+	
+	/** The description. */
 	private String                description;
+	
+	/** The hash. */
 	private byte[]                hash              = new byte[33];
+	
+	/** The history. */
 	private History               history;
-	private long                  id                = -1l;
+	
+	/** The id. */
+	private String                id;
+	
+	/** The last fetch. */
 	private DateTime              lastFetch;
+	
+	/** The last update timestamp. */
 	private DateTime              lastUpdateTimestamp;
 	// assignedTo
 	// submitter
 	// resolver
+	/** The person container. */
 	private PersonContainer       personContainer   = new PersonContainer();
+	
+	/** The priority. */
 	private Priority              priority          = Priority.UNKNOWN;
+	
+	/** The product. */
 	private String                product;
+	
+	/** The resolution. */
 	private Resolution            resolution        = Resolution.UNKNOWN;
+	
+	/** The resolution timestamp. */
 	private DateTime              resolutionTimestamp;
+	
+	/** The severity. */
 	private Severity              severity          = Severity.UNKNOWN;
-	private SortedSet<Long>       siblings          = new TreeSet<Long>();
+	
+	/** The siblings. */
+	private SortedSet<String>     siblings          = new TreeSet<String>();
+	
+	/** The status. */
 	private Status                status            = Status.UNKNOWN;
+	
+	/** The subject. */
 	private String                subject;
+	
+	/** The summary. */
 	private String                summary;
+	
+	/** The type. */
 	private Type                  type              = Type.UNKNOWN;
+	
+	/** The version. */
 	private String                version;
+	
+	/** The scm fix version. */
 	private String                scmFixVersion;
 	
+	/** The keywords. */
 	private Set<String>           keywords          = new HashSet<String>();
 	
+	/**
+	 * Instantiates a new report.
+	 */
 	private Report() {
 		super();
 	}
 	
 	/**
+	 * Instantiates a new report.
+	 * 
 	 * @param id
+	 *            the id
 	 */
-	public Report(final long id) {
+	public Report(final String id) {
 		this();
 		setId(id);
 		setHistory(new History(getId()));
 	}
 	
 	/**
+	 * Adds the attachment entry.
+	 * 
 	 * @param entry
+	 *            the entry
 	 */
 	@Transient
 	public void addAttachmentEntry(final AttachmentEntry entry) {
@@ -129,8 +188,11 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Adds the comment.
+	 * 
 	 * @param comment
-	 * @return
+	 *            the comment
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addComment(@NotNull final Comment comment) {
@@ -148,8 +210,11 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Adds the history element.
+	 * 
 	 * @param historyElement
-	 * @return
+	 *            the history element
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addHistoryElement(@NotNull final HistoryElement historyElement) {
@@ -161,24 +226,38 @@ public class Report implements Annotated, Comparable<Report> {
 		return ret;
 	}
 	
+	/**
+	 * Adds the keyword.
+	 * 
+	 * @param keyword
+	 *            the keyword
+	 * @return true, if successful
+	 */
 	@Transient
 	public boolean addKeyword(final String keyword) {
 		return this.keywords.add(keyword);
 	}
 	
 	/**
+	 * Adds the sibling.
+	 * 
 	 * @param sibling
-	 * @return
+	 *            the sibling
+	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addSibling(@NotNull final Long sibling) {
+	public boolean addSibling(@NotNull final String sibling) {
 		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
-		final SortedSet<Long> siblings = getSiblings();
+		final SortedSet<String> siblings = getSiblings();
 		final boolean ret = siblings.add(sibling);
 		setSiblings(siblings);
 		return ret;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	protected Report clone() throws CloneNotSupportedException {
 		final Report report = new Report();
@@ -213,16 +292,16 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Override
 	public int compareTo(final Report o) {
-		if (getId() > o.getId()) {
-			return 1;
-		} else if (getId() < o.getId()) {
-			return -1;
-		} else {
-			return 0;
+		final int comp = Integer.valueOf(this.id.length()).compareTo(Integer.valueOf(o.id.length()));
+		if (comp == 0) {
+			return this.id.compareTo(o.id);
 		}
+		return comp;
 	}
 	
 	/**
+	 * Gets the assigned to.
+	 * 
 	 * @return the assignedTo
 	 */
 	@Transient
@@ -231,6 +310,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the attachment entries.
+	 * 
 	 * @return the attachmentEntries
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -239,6 +320,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the category.
+	 * 
 	 * @return the category
 	 */
 	@Basic
@@ -247,6 +330,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the comments.
+	 * 
 	 * @return the comments
 	 */
 	@OrderBy
@@ -256,7 +341,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the component.
+	 * 
+	 * @return the component
 	 */
 	@Basic
 	public String getComponent() {
@@ -264,7 +351,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the creation java timestamp.
+	 * 
+	 * @return the creation java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -276,6 +365,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the creation timestamp.
+	 * 
 	 * @return the creationTimestamp
 	 */
 	@Transient
@@ -284,6 +375,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the description.
+	 * 
 	 * @return the description
 	 */
 	@Basic
@@ -293,6 +386,13 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.description;
 	}
 	
+	/**
+	 * Gets the field.
+	 * 
+	 * @param lowerFieldName
+	 *            the lower field name
+	 * @return the field
+	 */
 	public Object getField(final String lowerFieldName) {
 		final Method[] methods = this.getClass().getDeclaredMethods();
 		final String getter = "get" + lowerFieldName;
@@ -303,15 +403,15 @@ public class Report implements Annotated, Comparable<Report> {
 					return method.invoke(this);
 				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -325,6 +425,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the hash.
+	 * 
 	 * @return the hash
 	 */
 	@Basic
@@ -333,6 +435,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the history.
+	 * 
 	 * @return the history
 	 */
 	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -341,13 +445,20 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the id.
+	 * 
 	 * @return the id
 	 */
 	@Id
-	public long getId() {
+	public String getId() {
 		return this.id;
 	}
 	
+	/**
+	 * Gets the keywords.
+	 * 
+	 * @return the keywords
+	 */
 	@ElementCollection
 	public Set<String> getKeywords() {
 		// PRECONDITIONS
@@ -360,6 +471,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the last fetch.
+	 * 
 	 * @return the lastFetch
 	 */
 	@Transient
@@ -368,7 +481,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the last fetch java.
+	 * 
+	 * @return the last fetch java
 	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -380,7 +495,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the last update java timestamp.
+	 * 
+	 * @return the last update java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -392,7 +509,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the last update timestamp.
+	 * 
+	 * @return the last update timestamp
 	 */
 	@Transient
 	public DateTime getLastUpdateTimestamp() {
@@ -400,6 +519,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the person container.
+	 * 
 	 * @return the personContainer
 	 */
 	@OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -408,6 +529,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the priority.
+	 * 
 	 * @return the priority
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -416,7 +539,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the product.
+	 * 
+	 * @return the product
 	 */
 	@Basic
 	public String getProduct() {
@@ -424,6 +549,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the resolution.
+	 * 
 	 * @return the resolution
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -432,7 +559,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the resolution java timestamp.
+	 * 
+	 * @return the resolution java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
@@ -444,7 +573,9 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
-	 * @return
+	 * Gets the resolution timestamp.
+	 * 
+	 * @return the resolution timestamp
 	 */
 	@Transient
 	public DateTime getResolutionTimestamp() {
@@ -452,6 +583,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the resolver.
+	 * 
 	 * @return the resolver
 	 */
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
@@ -460,6 +593,11 @@ public class Report implements Annotated, Comparable<Report> {
 		return getPersonContainer().get("resolver");
 	}
 	
+	/**
+	 * Gets the scm fix version.
+	 * 
+	 * @return the scm fix version
+	 */
 	public String getScmFixVersion() {
 		// PRECONDITIONS
 		
@@ -471,6 +609,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the severity.
+	 * 
 	 * @return the severity
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -479,15 +619,19 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the siblings.
+	 * 
 	 * @return the siblings
 	 */
 	@ElementCollection
 	@OrderBy
-	public SortedSet<Long> getSiblings() {
+	public SortedSet<String> getSiblings() {
 		return this.siblings;
 	}
 	
 	/**
+	 * Gets the status.
+	 * 
 	 * @return the status
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -496,6 +640,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the subject.
+	 * 
 	 * @return the subject
 	 */
 	@Basic
@@ -506,6 +652,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the submitter.
+	 * 
 	 * @return the submitter
 	 */
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
@@ -515,6 +663,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the summary.
+	 * 
 	 * @return the summary
 	 */
 	@Basic
@@ -525,6 +675,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the type.
+	 * 
 	 * @return the type
 	 */
 	@Enumerated (EnumType.STRING)
@@ -533,6 +685,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Gets the version.
+	 * 
 	 * @return the version
 	 */
 	@Basic
@@ -541,6 +695,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the assigned to.
+	 * 
 	 * @param assignedTo
 	 *            the assignedTo to set
 	 */
@@ -549,6 +705,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the attachment entries.
+	 * 
 	 * @param attachmentEntries
 	 *            the attachmentEntries to set
 	 */
@@ -557,6 +715,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the category.
+	 * 
 	 * @param category
 	 *            the category to set
 	 */
@@ -577,14 +737,20 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the component.
+	 * 
 	 * @param component
+	 *            the new component
 	 */
 	public void setComponent(final String component) {
 		this.component = component;
 	}
 	
 	/**
+	 * Sets the creation java timestamp.
+	 * 
 	 * @param creationTimestamp
+	 *            the new creation java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	private void setCreationJavaTimestamp(final Date creationTimestamp) {
@@ -594,6 +760,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the creation timestamp.
+	 * 
 	 * @param creationTimestamp
 	 *            the creationTimestamp to set
 	 */
@@ -602,6 +770,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the description.
+	 * 
 	 * @param description
 	 *            the description to set
 	 */
@@ -610,8 +780,12 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the field.
+	 * 
 	 * @param fieldName
+	 *            the field name
 	 * @param fieldValue
+	 *            the field value
 	 */
 	@Transient
 	public void setField(final String fieldName,
@@ -627,15 +801,15 @@ public class Report implements Annotated, Comparable<Report> {
 					method.invoke(this, fieldValue);
 				} catch (final IllegalArgumentException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IllegalAccessException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final InvocationTargetException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -647,6 +821,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the hash.
+	 * 
 	 * @param hash
 	 *            the hash to set
 	 */
@@ -655,6 +831,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the history.
+	 * 
 	 * @param history
 	 *            the history to set
 	 */
@@ -663,13 +841,21 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the id.
+	 * 
 	 * @param id
 	 *            the id to set
 	 */
-	private void setId(final long id) {
+	private void setId(final String id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Sets the keywords.
+	 * 
+	 * @param keywords
+	 *            the new keywords
+	 */
 	public void setKeywords(final Set<String> keywords) {
 		// PRECONDITIONS
 		try {
@@ -682,6 +868,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the last fetch.
+	 * 
 	 * @param lastFetch
 	 *            the lastFetch to set
 	 */
@@ -690,7 +878,10 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the last fetch java.
+	 * 
 	 * @param lastFetch
+	 *            the new last fetch java
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastFetchJava(final Date lastFetch) {
@@ -700,7 +891,10 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the last update java timestamp.
+	 * 
 	 * @param date
+	 *            the new last update java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	private void setLastUpdateJavaTimestamp(final Date date) {
@@ -710,13 +904,18 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the last update timestamp.
+	 * 
 	 * @param lastUpdateTimestamp
+	 *            the new last update timestamp
 	 */
 	public void setLastUpdateTimestamp(final DateTime lastUpdateTimestamp) {
 		this.lastUpdateTimestamp = lastUpdateTimestamp;
 	}
 	
 	/**
+	 * Sets the person container.
+	 * 
 	 * @param personContainer
 	 *            the personContainer to set
 	 */
@@ -725,6 +924,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the priority.
+	 * 
 	 * @param priority
 	 *            the priority to set
 	 */
@@ -733,13 +934,18 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the product.
+	 * 
 	 * @param product
+	 *            the new product
 	 */
 	public void setProduct(final String product) {
 		this.product = product;
 	}
 	
 	/**
+	 * Sets the resolution.
+	 * 
 	 * @param resolution
 	 *            the resolution to set
 	 */
@@ -748,7 +954,10 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the resolution java timestamp.
+	 * 
 	 * @param date
+	 *            the new resolution java timestamp
 	 */
 	@SuppressWarnings ("unused")
 	private void setResolutionJavaTimestamp(final Date date) {
@@ -758,13 +967,18 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the resolution timestamp.
+	 * 
 	 * @param resolutionTimestamp
+	 *            the new resolution timestamp
 	 */
 	public void setResolutionTimestamp(final DateTime resolutionTimestamp) {
 		this.resolutionTimestamp = resolutionTimestamp;
 	}
 	
 	/**
+	 * Sets the resolver.
+	 * 
 	 * @param resolver
 	 *            the resolver to set
 	 */
@@ -772,6 +986,12 @@ public class Report implements Annotated, Comparable<Report> {
 		getPersonContainer().add("resolver", resolver);
 	}
 	
+	/**
+	 * Sets the scm fix version.
+	 * 
+	 * @param scmFixVersion
+	 *            the new scm fix version
+	 */
 	public void setScmFixVersion(final String scmFixVersion) {
 		// PRECONDITIONS
 		try {
@@ -782,6 +1002,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the severity.
+	 * 
 	 * @param severity
 	 *            the severity to set
 	 */
@@ -790,14 +1012,18 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the siblings.
+	 * 
 	 * @param siblings
 	 *            the siblings to set
 	 */
-	public void setSiblings(final SortedSet<Long> siblings) {
+	public void setSiblings(final SortedSet<String> siblings) {
 		this.siblings = siblings;
 	}
 	
 	/**
+	 * Sets the status.
+	 * 
 	 * @param status
 	 *            the status to set
 	 */
@@ -806,6 +1032,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the subject.
+	 * 
 	 * @param subject
 	 *            the subject to set
 	 */
@@ -814,6 +1042,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the submitter.
+	 * 
 	 * @param submitter
 	 *            the submitter to set
 	 */
@@ -822,6 +1052,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the summary.
+	 * 
 	 * @param summary
 	 *            the summary to set
 	 */
@@ -830,6 +1062,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the type.
+	 * 
 	 * @param type
 	 *            the type to set
 	 */
@@ -838,6 +1072,8 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Sets the version.
+	 * 
 	 * @param version
 	 *            the version to set
 	 */
@@ -846,16 +1082,24 @@ public class Report implements Annotated, Comparable<Report> {
 	}
 	
 	/**
+	 * Timewarp.
+	 * 
 	 * @param timestamp
-	 * @return
+	 *            the timestamp
+	 * @return the report
 	 */
 	public Report timewarp(final DateTime timestamp) {
 		return getHistory().rollback(this, timestamp);
 	}
 	
 	/**
+	 * Timewarp.
+	 * 
 	 * @param interval
-	 * @return
+	 *            the interval
+	 * @param field
+	 *            the field
+	 * @return the collection
 	 */
 	public Collection<Report> timewarp(final Interval interval,
 	                                   final String field) {

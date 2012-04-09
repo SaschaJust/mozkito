@@ -20,10 +20,10 @@ import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
@@ -42,8 +42,7 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 	 * @param settings
 	 * @param persistenceUtil
 	 */
-	public RepositoryPersister(final Group threadGroup, final RepositorySettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public RepositoryPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {

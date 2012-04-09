@@ -27,9 +27,7 @@ public class GitRevDependencyGraphTest {
 	public static void beforeClass() {
 		try {
 			final URL zipURL = GitRevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-			if (zipURL == null) {
-				fail();
-			}
+			assert (zipURL != null);
 			
 			final File bareDir = new File(
 			                              (new URL(zipURL.toString()
@@ -42,8 +40,8 @@ public class GitRevDependencyGraphTest {
 			}
 			branchFactory = new BranchFactory(null);
 			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"), null,
-			           null, branchFactory, null);
+			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
+			           branchFactory, null);
 		} catch (final Exception e) {
 			fail();
 		}

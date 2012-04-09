@@ -15,15 +15,16 @@
  */
 package de.unisaarland.cs.st.moskito;
 
+import java.util.Iterator;
+
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.elements.LogEntry;
-import de.unisaarland.cs.st.moskito.rcs.elements.LogIterator;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
@@ -33,14 +34,14 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
  */
 public class RepositoryReader extends Source<LogEntry> {
 	
-	private LogIterator logIterator;
+	private Iterator<LogEntry> logIterator;
 	
 	/**
 	 * @param threadGroup
 	 * @param settings
 	 * @param repository
 	 */
-	public RepositoryReader(final Group threadGroup, final RepositorySettings settings, final Repository repository) {
+	public RepositoryReader(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<LogEntry, LogEntry>(this) {
@@ -53,10 +54,8 @@ public class RepositoryReader extends Source<LogEntry> {
 				}
 				
 				repository.getTransactionCount();
-				final long cacheSize = (Long) getSettings().getSetting("cache.size").getValue();
-				RepositoryReader.this.logIterator = (LogIterator) repository.log(repository.getFirstRevisionId(),
-				                                                                 repository.getEndRevision(),
-				                                                                 (int) cacheSize);
+				RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
+				                                                   repository.getEndRevision()).iterator();
 				
 				if (Logger.logInfo()) {
 					Logger.info("Created iterator.");

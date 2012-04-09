@@ -16,8 +16,14 @@ import de.unisaarland.cs.st.moskito.infozilla.model.Attachable;
 import de.unisaarland.cs.st.moskito.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
+/**
+ * The Class Stacktrace.
+ */
 public abstract class Stacktrace implements Attachable, Inlineable {
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Attachable#getAttachment()
+	 */
 	@Override
 	public Attachment getAttachment() {
 		// TODO Auto-generated method stub

@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 
 import java.util.HashSet;
@@ -19,23 +22,51 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * The Class SourceforgeSummaryParser.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class SourceforgeSummaryParser extends DefaultHandler {
 	
+	/**
+	 * The Enum SummaryParserMode.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	private static enum SummaryParserMode {
-		DEFAULT, TABLE, TR, TD
+		
+		/** The DEFAULT. */
+		DEFAULT, 
+ /** The TABLE. */
+ TABLE, 
+ /** The TR. */
+ TR, 
+ /** The TD. */
+ TD
 	}
 	
-	private StringBuffer        content = null;
-	private SummaryParserMode   currentMode;
+	/** The content. */
+	private StringBuffer          content = null;
 	
-	private final HashSet<Long> ids;            ;
+	/** The current mode. */
+	private SummaryParserMode     currentMode;
 	
+	/** The ids. */
+	private final HashSet<String> ids;            ;
+	
+	/**
+	 * Instantiates a new sourceforge summary parser.
+	 */
 	public SourceforgeSummaryParser() {
 		this.content = new StringBuffer();
 		this.currentMode = SummaryParserMode.DEFAULT;
-		this.ids = new HashSet<Long>();
+		this.ids = new HashSet<String>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
 	@Override
 	public void characters(final char[] ch,
 	                       final int start,
@@ -45,6 +76,9 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void endElement(final String uri,
 	                       final String localName,
@@ -53,16 +87,24 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		if (localName.equals("tfoot")) {
 			this.currentMode = SummaryParserMode.TABLE;
 		} else if ((this.currentMode == SummaryParserMode.TD) && (localName.equals("td"))) {
-			String idString = this.content.toString().trim();
-			this.ids.add(new Long(idString));
+			final String idString = this.content.toString().trim();
+			this.ids.add(idString);
 			this.currentMode = SummaryParserMode.TABLE;
 		}
 	}
 	
-	public Set<Long> getIDs() {
+	/**
+	 * Gets the i ds.
+	 *
+	 * @return the i ds
+	 */
+	public Set<String> getIDs() {
 		return this.ids;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
 	@Override
 	public void startElement(final String uri,
 	                         final String localName,

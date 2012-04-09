@@ -9,15 +9,19 @@ import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ScoringFilterMux.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ScoringFilterMux extends Multiplexer<FilteredMapping> {
 	
 	/**
+	 * Instantiates a new scoring filter mux.
+	 * 
 	 * @param threadGroup
+	 *            the thread group
 	 * @param settings
-	 * @param parallelizable
+	 *            the settings
 	 */
 	public ScoringFilterMux(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);

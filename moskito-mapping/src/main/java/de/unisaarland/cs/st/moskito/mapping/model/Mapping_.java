@@ -8,16 +8,32 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+/**
+ * The Class Mapping_.
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.mapping.model.Mapping.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Wed Jan 18 19:05:50 CET 2012")
 public class Mapping_ {
 	
+	/** The class1. */
 	public static volatile SingularAttribute<Mapping, String>                 class1;
+	
+	/** The class2. */
 	public static volatile SingularAttribute<Mapping, String>                 class2;
+	
+	/** The features. */
 	public static volatile CollectionAttribute<Mapping, MappingEngineFeature> features;
+	
+	/** The from id. */
 	public static volatile SingularAttribute<Mapping, String>                 fromId;
+	
+	/** The strategies. */
 	public static volatile MapAttribute<Mapping, String, Boolean>             strategies;
+	
+	/** The to id. */
 	public static volatile SingularAttribute<Mapping, String>                 toId;
+	
+	/** The total confidence. */
 	public static volatile SingularAttribute<Mapping, Double>                 totalConfidence;
 }

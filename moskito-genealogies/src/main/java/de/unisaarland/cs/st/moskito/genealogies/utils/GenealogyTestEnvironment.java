@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
@@ -63,102 +66,102 @@ public class GenealogyTestEnvironment {
 	
 	public void checkConsistency() {
 		
-		CompareCondition.equals(41, changeGenealogy.vertexSize(), "GenealogyTestEnvironment.consistenceCheck");
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-		                                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		CompareCondition.equals(41, this.changeGenealogy.vertexSize(), "GenealogyTestEnvironment.consistenceCheck");
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T3F1D),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T1F1),
 		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T2F3),
-		                                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T2F3),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T1F2),
 		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F1D),
-		                                        environmentOperations.get(TestEnvironmentOperation.T1F1),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T3F1D),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T1F1),
 		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2M),
-		                                        environmentOperations.get(TestEnvironmentOperation.T1F2),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T3F2M),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T1F2),
 		                                        GenealogyEdgeType.DefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T3F2),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T3F2),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F1A),
 		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3D),
-		                                        environmentOperations.get(TestEnvironmentOperation.T2F3),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T4F3D),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T2F3),
 		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F3A),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T4F3A),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F1A),
 		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T4F4),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T4F4),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F1A),
 		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T5F4),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T5F4),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F1A),
 		                                        GenealogyEdgeType.CallOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T6F2),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F2M),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T6F2),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F2M),
 		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T7F2),
-		                                        environmentOperations.get(TestEnvironmentOperation.T6F2),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T7F2),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T6F2),
 		                                        GenealogyEdgeType.DefinitionOnDeletedDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T8F2),
-		                                        environmentOperations.get(TestEnvironmentOperation.T7F2),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T8F2),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T7F2),
 		                                        GenealogyEdgeType.DefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T9F1),
-		                                        environmentOperations.get(TestEnvironmentOperation.T3F1A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T9F1),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T3F1A),
 		                                        GenealogyEdgeType.DeletedDefinitionOnDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-		                                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T10F3),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T9F1),
 		                                        GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-		                                        environmentOperations.get(TestEnvironmentOperation.T9F1),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T10F4),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T9F1),
 		                                        GenealogyEdgeType.DeletedCallOnDeletedDefinition), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F3),
-		                                        environmentOperations.get(TestEnvironmentOperation.T4F3A),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T10F3),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T4F3A),
 		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 		
-		Condition.check(changeGenealogy.addEdge(environmentOperations.get(TestEnvironmentOperation.T10F4),
-		                                        environmentOperations.get(TestEnvironmentOperation.T5F4),
+		Condition.check(this.changeGenealogy.addEdge(this.environmentOperations.get(TestEnvironmentOperation.T10F4),
+		                                        this.environmentOperations.get(TestEnvironmentOperation.T5F4),
 		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 	}
 	
 	public CoreChangeGenealogy getChangeGenealogy() {
-		return changeGenealogy;
+		return this.changeGenealogy;
 	}
 	
 	public Map<TestEnvironmentOperation, JavaChangeOperation> getEnvironmentOperations() {
-		return environmentOperations;
+		return this.environmentOperations;
 	}
 	
 	public Map<Integer, RCSTransaction> getEnvironmentTransactions() {
-		return environmentTransactions;
+		return this.environmentTransactions;
 	}
 	
 	public PersistenceUtil getPersistenceUtil() {
-		return persistenceUtil;
+		return this.persistenceUtil;
 	}
 	
 	public Repository getRepository() {
-		return repository;
+		return this.repository;
 	}
 	
 	public File getTmpGraphDBFile() {
-		return tmpGraphDBFile;
+		return this.tmpGraphDBFile;
 	}
 	
 	public Map<RCSTransaction, Set<JavaChangeOperation>> getTransactionMap() {
-		return transactionMap;
+		return this.transactionMap;
 	}
 	
 }

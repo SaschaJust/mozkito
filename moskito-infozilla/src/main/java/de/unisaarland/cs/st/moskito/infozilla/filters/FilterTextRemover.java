@@ -39,11 +39,23 @@ import java.util.List;
  */
 public class FilterTextRemover {
 	
+	/**
+	 * The Class CutPoint.
+	 */
 	private class CutPoint {
 		
+		/** The start. */
 		private int start;
+		
+		/** The end. */
 		private int end;
 		
+		/**
+		 * Instantiates a new cut point.
+		 *
+		 * @param start the start
+		 * @param end the end
+		 */
 		public CutPoint(final int start, final int end) {
 			super();
 			this.setStart(start);
@@ -51,6 +63,8 @@ public class FilterTextRemover {
 		}
 		
 		/**
+		 * Gets the end.
+		 *
 		 * @return the end
 		 */
 		@SuppressWarnings ("unused")
@@ -59,6 +73,8 @@ public class FilterTextRemover {
 		}
 		
 		/**
+		 * Gets the start.
+		 *
 		 * @return the start
 		 */
 		@SuppressWarnings ("unused")
@@ -67,26 +83,38 @@ public class FilterTextRemover {
 		}
 		
 		/**
-		 * @param end
-		 *            the end to set
+		 * Sets the end.
+		 *
+		 * @param end the end to set
 		 */
 		public void setEnd(final int end) {
 			this.end = end;
 		}
 		
 		/**
-		 * @param start
-		 *            the start to set
+		 * Sets the start.
+		 *
+		 * @param start the start to set
 		 */
 		public void setStart(final int start) {
 			this.start = start;
 		}
 	}
 	
+	/** The original text. */
 	private String               originalText = "";
+	
+	/** The deletion mask. */
 	private final boolean[]      deletionMask;
+	
+	/** The cut points. */
 	private final List<CutPoint> cutPoints;
 	
+	/**
+	 * Instantiates a new filter text remover.
+	 *
+	 * @param originalText the original text
+	 */
 	public FilterTextRemover(final String originalText) {
 		// Set the Text
 		this.originalText = originalText;
@@ -102,6 +130,11 @@ public class FilterTextRemover {
 		this.cutPoints = new ArrayList<CutPoint>();
 	}
 	
+	/**
+	 * Do delete.
+	 *
+	 * @return the string
+	 */
 	public String doDelete() {
 		StringBuilder myStringBuilder = new StringBuilder();
 		
@@ -113,10 +146,21 @@ public class FilterTextRemover {
 		return myStringBuilder.toString();
 	}
 	
+	/**
+	 * Gets the text.
+	 *
+	 * @return the text
+	 */
 	public String getText() {
 		return this.originalText;
 	}
 	
+	/**
+	 * Mark for deletion.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 */
 	public void markForDeletion(final int start,
 	                            final int end) {
 		this.cutPoints.add(new CutPoint(start, end));

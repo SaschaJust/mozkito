@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>moskito</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
@@ -31,22 +31,22 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-rcs</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-infozilla</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-bugs</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>2.1</version>
+			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers</artifactId>
-			<version>3.1.0</version>
+			<version>3.5.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -104,7 +104,7 @@
 						<groupId>org.apache.openjpa</groupId>
 						<artifactId>openjpa</artifactId>
 						<!-- set the version to be the same as the level in your runtime -->
-						<version>2.1.1.1</version>
+						<version>2.2.0</version>
 					</dependency>
 					<dependency>
 						<groupId>log4j</groupId>

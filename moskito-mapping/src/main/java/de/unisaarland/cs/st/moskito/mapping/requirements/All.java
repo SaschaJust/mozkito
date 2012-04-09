@@ -33,9 +33,12 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public final class All extends Expression {
 	
+	/** The expressions. */
 	private final Set<Expression> expressions = new HashSet<Expression>();
 	
 	/**
+	 * Instantiates a new all.
+	 * 
 	 * @param expressions
 	 *            a collection of inner expressions
 	 */
@@ -44,6 +47,8 @@ public final class All extends Expression {
 	}
 	
 	/**
+	 * Instantiates a new all.
+	 * 
 	 * @param expressions
 	 *            a collection of inner expressions
 	 */

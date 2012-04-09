@@ -19,11 +19,24 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ScoringSplitter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ScoringSplitter extends Sink<FilteredMapping> {
 	
+	/**
+	 * Instantiates a new scoring splitter.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param finder
+	 *            the finder
+	 * @param persistenceUtil
+	 *            the persistence util
+	 */
 	public ScoringSplitter(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);

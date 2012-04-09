@@ -499,9 +499,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			if (iter.hasNext()) {
 				iter.next();
 				return iter;
-			} else {
-				return new ArrayList<String>(0);
 			}
+			return new ArrayList<String>(0);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -597,9 +596,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			}
 			if (node.hasProperty(BRANCH)) {
 				return node.getProperty(BRANCH).toString();
-			} else {
-				return null;
 			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -45,7 +45,8 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 			try {
 				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
 				                                settings.type(), settings.driver());
-			} catch (final SQLException e) {
+			} catch (final SQLException ignore) {
+				// ignore
 			}
 			try {
 				PersistenceManager.createDatabase(settings.hostname(), dbName, settings.username(),

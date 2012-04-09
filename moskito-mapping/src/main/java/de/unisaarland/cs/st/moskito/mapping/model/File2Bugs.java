@@ -32,15 +32,14 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class File2Bugs.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 public class File2Bugs implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5780165055568852588L;
 	
 	static {
@@ -66,7 +65,11 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the bug counts.
+	 * 
+	 * @param util
+	 *            the util
+	 * @return the bug counts
 	 */
 	public static List<File2Bugs> getBugCounts(final PersistenceUtil util) {
 		final List<File2Bugs> ret = new LinkedList<File2Bugs>();
@@ -107,19 +110,25 @@ public class File2Bugs implements Annotated {
 		return ret;
 	}
 	
+	/** The file. */
 	RCSFile     file;
 	
+	/** The reports. */
 	Set<Report> reports;
 	
 	/**
-	 * used by persistence provider only
+	 * used by persistence provider only.
 	 */
 	public File2Bugs() {
 	}
 	
 	/**
+	 * Instantiates a new file2 bugs.
+	 * 
 	 * @param file
+	 *            the file
 	 * @param reports
+	 *            the reports
 	 */
 	public File2Bugs(final RCSFile file, final Set<Report> reports) {
 		setFile(file);
@@ -153,6 +162,8 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Gets the file.
+	 * 
 	 * @return the file
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -161,6 +172,8 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Gets the reports.
+	 * 
 	 * @return the reports
 	 */
 	@OneToMany (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -183,6 +196,8 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Sets the file.
+	 * 
 	 * @param file
 	 *            the file to set
 	 */
@@ -191,6 +206,8 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
+	 * Sets the reports.
+	 * 
 	 * @param reports
 	 *            the reports to set
 	 */
@@ -199,7 +216,9 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * To csv.
+	 * 
+	 * @return the string
 	 */
 	public String toCSV() {
 		final StringBuilder builder = new StringBuilder();

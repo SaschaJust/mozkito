@@ -20,11 +20,15 @@ import de.unisaarland.cs.st.moskito.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
+ * The Class Patch.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public abstract class Patch implements Attachable, Inlineable {
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Attachable#getAttachment()
+	 */
 	@Override
 	public Attachment getAttachment() {
 		// TODO Auto-generated method stub

@@ -18,24 +18,41 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.SettingsProvider;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
-public abstract class Node implements net.ownhero.dev.hiari.settings.registerable.ArgumentProvider {
+/**
+ * The Class Node.
+ */
+public abstract class Node implements SettingsProvider {
 	
+	/** The storages. */
 	private final Map<Class<? extends MappingStorage>, MappingStorage> storages = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
 	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
 	public abstract String getDescription();
 	
 	/**
-	 * @return
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	public String getHandle() {
 		return getClass().getSimpleName();
 	}
 	
 	/**
+	 * Gets the storage.
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param key
-	 * @return
+	 *            the key
+	 * @return the storage
 	 */
 	@SuppressWarnings ("unchecked")
 	public final <T extends MappingStorage> T getStorage(final Class<T> key) {
@@ -43,17 +60,23 @@ public abstract class Node implements net.ownhero.dev.hiari.settings.registerabl
 	}
 	
 	/**
+	 * Provide storage.
+	 * 
 	 * @param storage
+	 *            the storage
 	 */
 	public void provideStorage(final MappingStorage storage) {
 		this.storages.put(storage.getClass(), storage);
 	}
 	
 	/**
+	 * Provide storages.
+	 * 
 	 * @param storages
+	 *            the storages
 	 */
-	public final void provideStorages(final Set<? extends MappingStorage> storages) {
-		for (final MappingStorage storage : storages) {
+	public final void provideStorages(final Set<? extends MappingStorage> mappingStorages) {
+		for (final MappingStorage storage : mappingStorages) {
 			this.storages.put(storage.getClass(), storage);
 		}
 	}
@@ -61,6 +84,11 @@ public abstract class Node implements net.ownhero.dev.hiari.settings.registerabl
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#storageDependency ()
+	 */
+	/**
+	 * Storage dependency.
+	 * 
+	 * @return the set< class<? extends mapping storage>>
 	 */
 	public Set<Class<? extends MappingStorage>> storageDependency() {
 		return new HashSet<Class<? extends MappingStorage>>();

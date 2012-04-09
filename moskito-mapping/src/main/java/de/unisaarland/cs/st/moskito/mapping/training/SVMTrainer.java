@@ -24,33 +24,57 @@ import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class SVMTrainer.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class SVMTrainer extends MappingTrainer {
 	
+	/** The param. */
 	private svm_parameter              param;           // set by
 	                                                     // parse_command_line
+	/** The prob. */
 	private svm_problem                prob;            // set by read_problem
+	                                                     
+	/** The model. */
 	private svm_model                  model;
+	
+	/** The input_file_name. */
 	private String                     input_file_name; // set by
 	                                                     // parse_command_line
+	/** The model_file_name. */
 	private String                     model_file_name; // set by
-	                                                     // parse_command_line
+	// parse_command_line
+	/** The error_msg. */
 	private String                     error_msg;
+	
+	/** The cross_validation. */
 	private int                        cross_validation;
+	
+	/** The nr_fold. */
 	private int                        nr_fold;
 	
+	/** The svm_print_null. */
 	private static svm_print_interface svm_print_null = new svm_print_interface() {
 		                                                  
 		                                                  @Override
-		                                                  public void print(final String s) {
+		                                                  public void print(final String s) { // stub
 		                                                  }
 	                                                  };
 	
+	/**
+	 * Atof.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the double
+	 */
 	private static double atof(final String s) {
 		final double d = Double.valueOf(s).doubleValue();
 		if (Double.isNaN(d) || Double.isInfinite(d)) {
@@ -60,10 +84,20 @@ public class SVMTrainer extends MappingTrainer {
 		return (d);
 	}
 	
+	/**
+	 * Atoi.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the int
+	 */
 	private static int atoi(final String s) {
 		return Integer.parseInt(s);
 	}
 	
+	/**
+	 * Exit_with_help.
+	 */
 	private static void exit_with_help() {
 		System.out.print("Usage: svm_train [options] training_set_file [model_file]\n"
 		        + "options:\n"
@@ -94,12 +128,9 @@ public class SVMTrainer extends MappingTrainer {
 		System.exit(1);
 	}
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	/**
+	 * Do_cross_validation.
+	 */
 	private void do_cross_validation() {
 		int i;
 		int total_correct = 0;
@@ -133,20 +164,43 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
-	// read in a problem (in svmlight format)
-	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
+	 */
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
+	/**
+	 * Parse_command_line.
+	 * 
+	 * @param argv
+	 *            the argv
+	 */
 	private void parse_command_line(final String argv[]) {
 		int i;
 		svm_print_interface print_func = null; // default printing to stdout
@@ -269,6 +323,30 @@ public class SVMTrainer extends MappingTrainer {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Read_problem.
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void read_problem() throws IOException {
 		final BufferedReader fp = new BufferedReader(new FileReader(this.input_file_name));
 		final Vector<Double> vy = new Vector<Double>();
@@ -328,6 +406,14 @@ public class SVMTrainer extends MappingTrainer {
 		fp.close();
 	}
 	
+	/**
+	 * Run.
+	 * 
+	 * @param argv
+	 *            the argv
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@SuppressWarnings ("unused")
 	private void run(final String argv[]) throws IOException {
 		parse_command_line(argv);
@@ -353,7 +439,13 @@ public class SVMTrainer extends MappingTrainer {
 	 */
 	@Override
 	public void train() {
-		// TODO Auto-generated method stub
+		// PRECONDITIONS
 		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
+	
 }

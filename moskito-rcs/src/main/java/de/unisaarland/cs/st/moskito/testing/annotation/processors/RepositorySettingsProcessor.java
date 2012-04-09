@@ -68,9 +68,8 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 			final String string = baseDir + File.separator + type.name().toLowerCase() + "_" + aClass.getSimpleName();
 			
 			return string;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*
@@ -188,7 +187,7 @@ public class RepositorySettingsProcessor implements MoskitoSettingsProcessor {
 	@Override
 	public void tearDown(final Class<?> aClass,
 	                     final Annotation annotation) throws TestSettingsError {
-		
+		// stub
 	}
 	
 }

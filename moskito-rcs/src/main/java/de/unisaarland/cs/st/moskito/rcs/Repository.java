@@ -505,8 +505,6 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address,
-	                           String startRevision,
-	                           String endRevision,
 	                           BranchFactory branchFactory,
 	                           File tmpDir) throws MalformedURLException,
 	                                       InvalidProtocolType,
@@ -540,8 +538,6 @@ public abstract class Repository {
 	 *             the unsupported protocol type
 	 */
 	public abstract void setup(URI address,
-	                           String startRevision,
-	                           String endRevision,
 	                           String username,
 	                           String password,
 	                           BranchFactory branchFactory,

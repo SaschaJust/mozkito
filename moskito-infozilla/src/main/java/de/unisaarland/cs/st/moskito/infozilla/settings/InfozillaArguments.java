@@ -15,80 +15,101 @@
  */
 package de.unisaarland.cs.st.moskito.infozilla.settings;
 
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.SetArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilterChain;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class InfozillaArguments.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
+public class InfozillaArguments extends
+        ArgumentSetOptions<InfozillaFilterChain, ArgumentSet<InfozillaFilterChain, InfozillaArguments>> {
 	
+	/** The filters. */
 	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
 	
-	public InfozillaArguments(final ArgumentSet<Boolean> argumentSet, final Requirement requirement)
-	        throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		super(argumentSet, "TODO bla bla", requirement);
+	/**
+	 * Instantiates a new infozilla arguments.
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param requirements
+	 *            the requirements
+	 */
+	public InfozillaArguments(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+		super(argumentSet, "infozilla", "description", requirements);
+		// PRECONDITIONS
 		
 		try {
-			final Package package1 = InfozillaFilter.class.getPackage();
-			final Collection<Class<? extends InfozillaFilter>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                                InfozillaFilter.class,
-			                                                                                                                Modifier.ABSTRACT
-			                                                                                                                        | Modifier.INTERFACE
-			                                                                                                                        | Modifier.PRIVATE);
-			final Collection<InfozillaFilter> collection = ArgumentSet.provideDynamicArguments(this,
-			                                                                                   InfozillaFilter.class,
-			                                                                                   "XYZ", requirement,
-			                                                                                   null, "infozilla",
-			                                                                                   "filter", true);
-			new SetArgument(this, "mapping.filters", "A list of mapping filters that shall be used.",
-			                buildFilterList(classesExtendingClass), Requirement.optional);
-			
-			final String filters = System.getProperty("mapping.filters");
-			final Set<String> filterNames = new HashSet<String>();
-			
-			if (filters != null) {
-				for (final String filterName : filters.split(",")) {
-					filterNames.add(InfozillaFilter.class.getPackage().getName() + "." + filterName);
-				}
-				
-			}
-			
-			for (final InfozillaFilter filter : collection) {
-				if (filterNames.isEmpty() || filterNames.contains(filter.getClass().getSimpleName())) {
-					if (Logger.logInfo()) {
-						Logger.info("Adding new InfozillaFilter " + filter.getClass().getSimpleName());
-					}
-					
-					this.filters.add(filter);
-				} else {
-					if (Logger.logInfo()) {
-						Logger.info("Not loading available filter: " + filter.getClass().getSimpleName());
-					}
-				}
-			}
-		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new RuntimeException();
+			//
+			// try {
+			// final Package package1 = InfozillaFilter.class.getPackage();
+			// final Collection<Class<? extends InfozillaFilter>> classesExtendingClass =
+			// ClassFinder.getClassesExtendingClass(package1,
+			// InfozillaFilter.class,
+			// Modifier.ABSTRACT
+			// | Modifier.INTERFACE
+			// | Modifier.PRIVATE);
+			// final Collection<InfozillaFilter> collection = ArgumentSet.provideDynamicArguments(this,
+			// InfozillaFilter.class,
+			// "XYZ", requirement,
+			// null, "infozilla",
+			// "filter", true);
+			// new SetArgument(this, "mapping.filters", "A list of mapping filters that shall be used.",
+			// buildFilterList(classesExtendingClass), Requirement.optional);
+			//
+			// final String filters = System.getProperty("mapping.filters");
+			// final Set<String> filterNames = new HashSet<String>();
+			//
+			// if (filters != null) {
+			// for (final String filterName : filters.split(",")) {
+			// filterNames.add(InfozillaFilter.class.getPackage().getName() + "." + filterName);
+			// }
+			//
+			// }
+			//
+			// for (final InfozillaFilter filter : collection) {
+			// if (filterNames.isEmpty() || filterNames.contains(filter.getClass().getSimpleName())) {
+			// if (Logger.logInfo()) {
+			// Logger.info("Adding new InfozillaFilter " + filter.getClass().getSimpleName());
+			// }
+			//
+			// this.filters.add(filter);
+			// } else {
+			// if (Logger.logInfo()) {
+			// Logger.info("Not loading available filter: " + filter.getClass().getSimpleName());
+			// }
+			// }
+			// }
+			// } catch (final Exception e) {
+			// if (Logger.logError()) {
+			// Logger.error(e);
+			// }
+			// throw new RuntimeException();
+			// }
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 	
 	/**
+	 * Builds the filter list.
+	 * 
 	 * @param filters
-	 * @return
+	 *            the filters
+	 * @return the string
 	 */
 	private String buildFilterList(final Collection<Class<? extends InfozillaFilter>> filters) {
 		final StringBuilder builder = new StringBuilder();
@@ -101,10 +122,31 @@ public class InfozillaArguments extends ArgumentSet<InfozillaFilterChain> {
 		return builder.toString();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+	 */
 	@Override
-	protected boolean init() {
+	public InfozillaFilterChain init() {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+	                                                                            SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

@@ -17,8 +17,8 @@ package de.unisaarland.cs.st.moskito;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * This class is a end point for the {@link RepositoryToolchain} tool chain in case no database connection is used. The
@@ -30,11 +30,13 @@ import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 public class RepositoryVoidSink extends Sink<RCSTransaction> {
 	
 	/**
+	 * Instantiates a new repository void sink.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
 	 * @see RepoSuiteSinkThread
-	 * @param threadGroup
-	 * @param settings
 	 */
-	public RepositoryVoidSink(final Group threadGroup, final RepositorySettings settings) {
+	public RepositoryVoidSink(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 	}
 }

@@ -201,8 +201,8 @@ public final class MoskitoTestBuilder extends Thread {
 		Failure failure = null;
 		this.runNotifier.fireTestStarted(this.testRun.getDescription());
 		try {
-			final String testTag = "[" + this.testRun.getDescription().getMethodName() + "] ";
-			System.err.println(testTag + "Running test (" + this.exampleCommandLine + ").");
+			final String testTag = "[" + this.testRun.getDescription().getMethodName() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
+			System.err.println(testTag + "Running test (" + this.exampleCommandLine + ")."); //$NON-NLS-2$
 			final DateTime start = new DateTime();
 			this.testResult = exec();
 			final DateTime end = new DateTime();

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
@@ -21,25 +36,50 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
+/**
+ * The Class TransactionCodeAgeMetrics.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	
+	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
 	
+	/** The Constant avgLastModifiedName. */
 	private final static String   avgLastModifiedName    = "AvgLastModified";
+	
+	/** The Constant minLastModifiedName. */
 	private final static String   minLastModifiedName    = "MinLastModified";
 	
+	/** The Constant avgAgeName. */
 	private final static String   avgAgeName             = "AvgAge";
+	
+	/** The Constant minAgeName. */
 	private final static String   minAgeName             = "MinAge";
+	
+	/** The Constant maxAgeName. */
 	private final static String   maxAgeName             = "MaxAge";
 	
+	/** The Constant avgNumChangesLastMonth. */
 	private final static String   avgNumChangesLastMonth = "AvgNumChangesLastMonth";
+	
+	/** The Constant maxNumChangesLastMonth. */
 	private final static String   maxNumChangesLastMonth = "MaxNumChangesLastMonth";
 	
+	/**
+	 * Instantiates a new transaction code age metrics.
+	 *
+	 * @param genealogy the genealogy
+	 */
 	public TransactionCodeAgeMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#getMetricNames()
+	 */
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
@@ -53,6 +93,9 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
+	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
 		final RCSTransaction transaction = item.getNode();

@@ -16,26 +16,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
 import de.unisaarland.cs.st.moskito.infozilla.model.itemization.Itemization;
 
+/**
+ * The Class EnumerationFilter.
+ */
 public class EnumerationFilter extends InfozillaFilter {
 	
+	/** The text remover. */
 	private FilterTextRemover textRemover;
+	
+	/** The processed text. */
 	private String            processedText = "";
 	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	/**
-	 * Create an Itemization by a given regions
+	 * Create an Itemization by a given regions.
 	 * 
 	 * @param startline
 	 *            the line where some enumeration starts
@@ -90,10 +94,12 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * Used internally to remove enumeration lines later
+	 * Used internally to remove enumeration lines later.
 	 * 
 	 * @param lineNum
+	 *            the line num
 	 * @param text
+	 *            the text
 	 */
 	private void filterLine(final int lineNum,
 	                        final String text) {
@@ -117,7 +123,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * Retrieve all Enumerations that have some alphabetical letter as enumerator
+	 * Retrieve all Enumerations that have some alphabetical letter as enumerator.
 	 * 
 	 * @param s
 	 *            The text to look inside for character enumerations
@@ -158,10 +164,10 @@ public class EnumerationFilter extends InfozillaFilter {
 				// Store the Symbol we found this time
 				String foundEnumSymbol = "";
 				final Regex regex = new Regex(regex_EnumStart);
-				final List<List<RegexGroup>> findAll = regex.findAll(line);
+				final MultiMatch findAll = regex.findAll(line);
 				
-				for (final List<RegexGroup> list : findAll) {
-					foundEnumSymbol = list.get(1).getMatch();
+				for (final Match list : findAll) {
+					foundEnumSymbol = list.getGroup(1).getMatch();
 				}
 				
 				// Check whether the Symbol is an increase over the previous
@@ -210,7 +216,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * Runs this method to extract all Character- and Number Enumerations as well as Itemizations
+	 * Runs this method to extract all Character- and Number Enumerations as well as Itemizations.
 	 * 
 	 * @param s
 	 *            The Text to look inside for enumerations and itemizations
@@ -243,7 +249,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * Find all Itemizations in a given Text
+	 * Find all Itemizations in a given Text.
 	 * 
 	 * @param s
 	 *            The text to look inside for itemizations
@@ -314,7 +320,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	}
 	
 	/**
-	 * Retrieve all Enumerations that have some number as enumerator
+	 * Retrieve all Enumerations that have some number as enumerator.
 	 * 
 	 * @param s
 	 *            The text to look inside for number enumerations
@@ -356,10 +362,10 @@ public class EnumerationFilter extends InfozillaFilter {
 				// Store the Symbol we found this time
 				int foundEnumSymbol = -1;
 				final Regex regex = new Regex(regex_EnumStart);
-				final List<List<RegexGroup>> list = regex.findAll(line);
-				for (final List<RegexGroup> matches : list) {
+				final MultiMatch list = regex.findAll(line);
+				for (final Match matches : list) {
 					try {
-						foundEnumSymbol = Integer.valueOf(matches.get(1).getMatch());
+						foundEnumSymbol = Integer.valueOf(matches.getGroup(1).getMatch());
 					} catch (final NumberFormatException e) {
 						foundEnumSymbol = Integer.MAX_VALUE;
 					}
@@ -410,13 +416,17 @@ public class EnumerationFilter extends InfozillaFilter {
 		return foundEnumerations;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#getOutputText()
+	 */
 	@Override
 	public String getOutputText() {
 		return getProcessedText();
 	}
 	
 	/**
-	 * get the text after being processed by getEnumerationsAndItemizations() method this is initially empty string
+	 * get the text after being processed by getEnumerationsAndItemizations() method this is initially empty string.
 	 * 
 	 * @return a String that contains the text after being processed.
 	 */
@@ -430,18 +440,55 @@ public class EnumerationFilter extends InfozillaFilter {
 		return this.processedText;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 */
 	@Override
 	public List<Itemization> runFilter(final String inputText) {
 		return getEnumerationsAndItemizations(inputText);
 	}
 	
 	// This method shall only be used internally !!
+	/**
+	 * Sets the processed text.
+	 * 
+	 * @param processedText
+	 *            the new processed text
+	 */
 	private void setProcessedText(final String processedText) {
 		this.textRemover = new FilterTextRemover(processedText);
 	}

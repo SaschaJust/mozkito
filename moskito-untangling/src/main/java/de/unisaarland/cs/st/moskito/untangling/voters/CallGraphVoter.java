@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
 import java.io.File;
@@ -39,6 +42,8 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
  * The Class CallGraphHandler.
  * 
  * Works only for JavaMethodDefinitions so far.
+ *
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
@@ -47,18 +52,17 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/** The dijkstra transformer. */
 	private static EdgeWeightTransformer dijkstraTransformer = new EdgeWeightTransformer();
+	
+	/** The used graph file. */
 	private File                         usedGraphFile;
 	
 	/**
 	 * Instantiates a new call graph handler.
-	 * 
-	 * @param eclipseDir
-	 *            the eclipse dir
-	 * @param eclipseArguments
-	 *            the eclipse arguments
-	 * @param file
-	 * @param transactionId
-	 *            the transaction id
+	 *
+	 * @param eclipseDir the eclipse dir
+	 * @param eclipseArguments the eclipse arguments
+	 * @param transaction the transaction
+	 * @param cacheDir the cache dir
 	 */
 	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
 	        final File cacheDir) {

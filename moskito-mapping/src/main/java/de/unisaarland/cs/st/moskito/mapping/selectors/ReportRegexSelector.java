@@ -16,12 +16,16 @@ import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -31,22 +35,17 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ReportRegexSelector.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ReportRegexSelector extends MappingSelector {
 	
-	private String         pattern;
-	private StringArgument patternArgument;
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
-	 */
-	@Override
-	public void afterParse() {
-		setPattern(this.patternArgument.getValue());
-	}
+	/** The pattern. */
+	private String              pattern;
 	
 	/*
 	 * (non-Javadoc)
@@ -54,10 +53,12 @@ public class ReportRegexSelector extends MappingSelector {
 	 */
 	@Override
 	public String getDescription() {
-		return "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
+		return DESCRIPTION;
 	}
 	
 	/**
+	 * Gets the pattern.
+	 * 
 	 * @return the pattern
 	 */
 	public String getPattern() {
@@ -69,11 +70,19 @@ public class ReportRegexSelector extends MappingSelector {
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
 	 * DynamicArgumentSet)
 	 */
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		this.patternArgument = new StringArgument(set, "pattern", "Pattern of report ids to scan for.",
-		                                          "(\\p{XDigit}{7,})", set.getRequirements());
-		return true;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -94,12 +103,12 @@ public class ReportRegexSelector extends MappingSelector {
 			
 			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
 				final Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
-				final List<List<RegexGroup>> findAll = regex.findAll(comment.getMessage());
+				final MultiMatch multiMatch = regex.findAll(comment.getMessage());
 				
-				if (findAll != null) {
-					for (final List<RegexGroup> match : findAll) {
+				if (multiMatch != null) {
+					for (final Match match : multiMatch) {
 						
-						ids.add(match.get(0).getMatch());
+						ids.add(match.getGroup(1).getMatch());
 					}
 				}
 			}
@@ -122,7 +131,28 @@ public class ReportRegexSelector extends MappingSelector {
 		return list;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			new StringArgument.Options(root, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
+			                           Requirement.required);
+			return root;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
+	 * Sets the pattern.
+	 * 
 	 * @param pattern
 	 *            the pattern to set
 	 */

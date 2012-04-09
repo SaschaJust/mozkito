@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
 	<groupId>de.unisaarland.cs.st</groupId>
 	<artifactId>moskito</artifactId>
 	<name>moskito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://www.st.cs.uni-saarland.de/moskito</url>
 	<inceptionYear>2010</inceptionYear>
@@ -86,22 +89,27 @@
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>hiari</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
-			<artifactId>andama</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<artifactId>andama-core</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.ownhero.dev</groupId>
+			<artifactId>andama-eventhandler-irc</artifactId>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.surefire</groupId>
 			<artifactId>surefire-junit4</artifactId>
-			<version>2.8.1</version>
+			<version>2.12</version>
 		</dependency>
 	</dependencies>
 	<repositories>
@@ -205,7 +213,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.8.1</version>
+				<version>2.12</version>
 				<configuration>
 					<excludes>
 						<exclude>**/**/*LongTest.java</exclude>
@@ -291,8 +299,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
@@ -369,7 +377,7 @@
 					<show>private</show>
 					<linksource>true</linksource>
 					<quiet>true</quiet>
-					<source>1.6</source>
+					<source>1.7</source>
 					<stylesheetfile>javadoc.css</stylesheetfile>
 				</configuration>
 			</plugin>
@@ -544,11 +552,11 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId> 
-						<configuration> 
-							<source>1.6</source> 
-							<target>1.6</target> 
-							<compilerArgument>-Aopenjpa.metamodel=true</compilerArgument> 
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<source>1.6</source>
+							<target>1.6</target>
+							<compilerArgument>-Aopenjpa.metamodel=true</compilerArgument>
 							<includes>
 								<include>**/model/*.java</include>
 							</includes>
@@ -556,6 +564,6 @@
 					</plugin>
 				</plugins>
 			</build>
-			</profile>
+		</profile>
 	</profiles>
 </project>

@@ -3,8 +3,9 @@
  */
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -13,36 +14,50 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class StacktraceParserEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class StacktraceParserEngine extends MappingEngine {
+	
+	/** The constant description. */
+	private static final String description = Messages.getString("StacktraceParserEngine.description"); //$NON-NLS-1$
+	                                                                                                    
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.register.Node#getDescription()
+	 */
+	@Override
+	public String getDescription() {
+		return description;
+	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
 	 */
 	@Override
-	public void afterParse() {
+	public void init() {
 		// TODO Auto-generated method stub
 		
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.Registered#getDescription()
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
 	 */
 	@Override
-	public String getDescription() {
-		// TODO this requires PPA
-		return "Analyzes stacktraces with one of the entities to contain JavaElements, that have been touched in the transaction under suspect. "
-		        + "Additionally, the change made to the JavaElement has to be a fix.";
-	}
-	
-	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws ArgumentRegistrationException {
-		// TODO Auto-generated method stub
-		return false;
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

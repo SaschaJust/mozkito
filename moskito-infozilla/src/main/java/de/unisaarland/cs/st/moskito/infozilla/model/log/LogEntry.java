@@ -23,16 +23,27 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTime;
 
 /**
+ * The Class LogEntry.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class LogEntry {
 	
+	/** The tokens. */
 	Map<String, String> tokens = new HashMap<String, String>();
 	
+	/** The timestamp. */
 	DateTime            timestamp;
+	
+	/** The line. */
 	String              line;
 	
+	/**
+	 * Instantiates a new log entry.
+	 *
+	 * @param regex the regex
+	 * @param string the string
+	 */
 	public LogEntry(final Regex regex, final String string) {
 		regex.find(string);
 		for (String groupName : regex.getGroupNames()) {
@@ -42,12 +53,20 @@ public class LogEntry {
 		setLine(string);
 	}
 	
+	/**
+	 * Builds the timestamp.
+	 *
+	 * @param regex the regex
+	 * @return the date time
+	 */
 	private DateTime buildTimestamp(final Regex regex) {
 		// TODO Auto-generated method stub
 		return new DateTime();
 	}
 	
 	/**
+	 * Gets the line.
+	 *
 	 * @return the line
 	 */
 	public String getLine() {
@@ -55,6 +74,8 @@ public class LogEntry {
 	}
 	
 	/**
+	 * Gets the timestamp.
+	 *
 	 * @return the timestamp
 	 */
 	public DateTime getTimestamp() {
@@ -62,6 +83,8 @@ public class LogEntry {
 	}
 	
 	/**
+	 * Gets the tokens.
+	 *
 	 * @return the tokens
 	 */
 	public Map<String, String> getTokens() {
@@ -69,24 +92,27 @@ public class LogEntry {
 	}
 	
 	/**
-	 * @param line
-	 *            the line to set
+	 * Sets the line.
+	 *
+	 * @param line the line to set
 	 */
 	public void setLine(final String line) {
 		this.line = line;
 	}
 	
 	/**
-	 * @param timestamp
-	 *            the timestamp to set
+	 * Sets the timestamp.
+	 *
+	 * @param timestamp the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
 	}
 	
 	/**
-	 * @param tokens
-	 *            the tokens to set
+	 * Sets the tokens.
+	 *
+	 * @param tokens the tokens to set
 	 */
 	public void setTokens(final Map<String, String> tokens) {
 		this.tokens = tokens;

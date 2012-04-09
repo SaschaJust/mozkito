@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph;
 
 import java.io.File;
@@ -18,11 +18,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.hiari.settings.arguments.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
-import net.ownhero.dev.hiari.settings.arguments.SetArgument;
-import net.ownhero.dev.hiari.settings.arguments.StringArgument;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
+import net.ownhero.dev.hiari.settings.SetArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
@@ -38,73 +44,124 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocationSet;
 import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
-import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 
+/**
+ * The Class CallGraphToolChain.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class CallGraphToolChain {
 	
-	private final StringArgument      transactionArg;
-	private final DirectoryArgument   dirArg;
-	private final OutputFileArgument  outArg;
-	private final RepositoryArguments repoSettings;
-	private Repository                repository = null;
-	private final SetArgument         packageFilterArg;
-	private File                      sourceDir;
-	private final DirectoryArgument   cacheDirArg;
-	private final String              transactionId;
+	/** The repository. */
+	private Repository                                 repository = null;
 	
-	public CallGraphToolChain() {
-		final RepositorySettings settings = new RepositorySettings();
+	/** The package filter argument. */
+	private final SetArgument                          packageFilterArgument;
+	
+	/** The source dir. */
+	private File                                       sourceDir;
+	
+	/** The transaction id. */
+	private final String                               transactionId;
+	
+	/** The repository arguments. */
+	private ArgumentSet<Repository, RepositoryOptions> repositoryArguments;
+	
+	/** The transaction argument. */
+	private StringArgument                             transactionArgument;
+	
+	/** The source dir argument. */
+	private DirectoryArgument                          sourceDirArgument;
+	
+	/** The cache dir argument. */
+	private DirectoryArgument                          cacheDirArgument;
+	
+	/** The out argument. */
+	private OutputFileArgument                         outArgument;
+	
+	/**
+	 * Instantiates a new call graph tool chain.
+	 * 
+	 * @param settings
+	 *            the settings
+	 */
+	public CallGraphToolChain(final Settings settings) {
 		
 		try {
-			this.repoSettings = settings.setRepositoryArg(Requirement.required);
-			this.transactionArg = new StringArgument(settings.getRootArgumentSet(), "transaction.id",
-			                                         "The transaction id to create the call graph for.", null,
-			                                         Requirement.optional);
-			this.dirArg = new DirectoryArgument(settings.getRootArgumentSet(), "source.directory", "(Only used when "
-			        + this.transactionArg.getName()
-			        + " not set) Use files from from.directory to build the call graph on.", null,
-			                                    Requirement.optional, false);
-			this.packageFilterArg = new SetArgument(
-			                                        settings.getRootArgumentSet(),
-			                                        "package.filter",
-			                                        "A white list of package names to be considered. Entities not mathings any of these packages will be ignores",
-			                                        "", Requirement.optional);
 			
-			this.cacheDirArg = new DirectoryArgument(
-			                                         settings.getRootArgumentSet(),
-			                                         "cache.dir",
-			                                         "Directory containing call graphs using the name converntion <transaction_id>.cg",
-			                                         null, Requirement.optional, false);
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			ArgumentSetFactory.create(databaseOptions);
+			final RepositoryOptions repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required,
+			                                                                  databaseOptions);
+			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
-			this.outArg = new OutputFileArgument(settings.getRootArgumentSet(), "output",
-			                                     "File to store the serialized CallGraph in.", null,
-			                                     Requirement.required, true);
-		} catch (final net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+			final StringArgument.Options transactionIdOptions = new StringArgument.Options(
+			                                                                               settings.getRoot(),
+			                                                                               "transactionId",
+			                                                                               "The transaction id to create the call graph for.",
+			                                                                               null, Requirement.optional);
+			this.transactionArgument = ArgumentFactory.create(transactionIdOptions);
+			
+			this.sourceDirArgument = ArgumentFactory.create(new DirectoryArgument.Options(
+			                                                                              settings.getRoot(),
+			                                                                              "sourceDirectory",
+			                                                                              "Use files from from.directory to build the call graph on. (Only used when "
+			                                                                                      + this.transactionArgument.getTag()
+			                                                                                      + " not set)",
+			                                                                              null,
+			                                                                              Requirement.unset(transactionIdOptions),
+			                                                                              false));
+			
+			this.packageFilterArgument = ArgumentFactory.create(new SetArgument.Options(
+			                                                                            settings.getRoot(),
+			                                                                            "packageFilter",
+			                                                                            "A white list of package names to be considered. Entities not mathings any of these packages will be ignores.",
+			                                                                            new HashSet<String>(),
+			                                                                            Requirement.optional));
+			
+			this.cacheDirArgument = ArgumentFactory.create(new DirectoryArgument.Options(
+			                                                                             settings.getRoot(),
+			                                                                             "cacheDir",
+			                                                                             "Directory containing call graphs using the name converntion <transaction_id>.cg.",
+			                                                                             null, Requirement.optional,
+			                                                                             false));
+			
+			this.outArgument = ArgumentFactory.create(new OutputFileArgument.Options(
+			                                                                         settings.getRoot(),
+			                                                                         "output",
+			                                                                         "File to store the serialized CallGraph in.",
+			                                                                         null, Requirement.required, true));
+			
+			this.transactionId = this.transactionArgument.getValue();
+			
+			if (this.transactionId != null) {
+				this.repository = this.repositoryArguments.getValue();
+				this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
+				if (this.sourceDir == null) {
+					throw new UnrecoverableError("Could not checkout transaction " + this.transactionId
+					        + " from repository " + this.repository.getUri().toString() + ". See errors above.");
+				}
+			} else {
+				this.sourceDir = this.sourceDirArgument.getValue();
 			}
-			throw new Shutdown(e.getLocalizedMessage(), e);
-		}
-		
-		this.transactionId = this.transactionArg.getValue();
-		
-		if (this.transactionId != null) {
-			this.repository = this.repoSettings.getValue();
-			this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
-			if (this.sourceDir == null) {
-				throw new UnrecoverableError("Could not checkout transaction " + this.transactionId
-				        + " from repository " + this.repository.getUri().toString() + ". See errors above.");
-			}
-		} else {
-			this.sourceDir = this.dirArg.getValue();
+		} catch (final SettingsParseError e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentRegistrationException e) {
+			throw new UnrecoverableError(e);
 		}
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run() {
 		final String[] fileExtensions = { "java" };
 		final Collection<File> files = FileUtils.listFiles(this.sourceDir, fileExtensions, true);
-		final HashSet<String> packageFilter = this.packageFilterArg.getValue();
+		final HashSet<String> packageFilter = this.packageFilterArgument.getValue();
 		
 		final JavaElementFactory elementFactory = new JavaElementFactory();
 		
@@ -112,7 +169,7 @@ public class CallGraphToolChain {
 		
 		final Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		
-		final File cacheDir = this.cacheDirArg.getValue();
+		final File cacheDir = this.cacheDirArgument.getValue();
 		
 		// generate the call graph
 		CallGraph callGraph = null;
@@ -157,7 +214,7 @@ public class CallGraphToolChain {
 			Logger.info(sb.toString());
 			
 		}
-		final File outFile = this.outArg.getValue();
+		final File outFile = this.outArgument.getValue();
 		callGraph.serialize(outFile);
 	}
 }

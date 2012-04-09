@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 /**
  * 
  */
@@ -29,14 +29,13 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.UnregisteredTrackerTypeException;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * A factory for creating Tracker objects.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TrackerFactory {
 	
-	/**
-	 * container for repository connector mappings
-	 */
+	/** container for repository connector mappings. */
 	private static Map<TrackerType, Class<? extends Tracker>> trackerHandlers = new HashMap<TrackerType, Class<? extends Tracker>>();
 	
 	/**
@@ -61,33 +60,25 @@ public class TrackerFactory {
 				// check if someone missed to add a corresponding enum entry in
 				// TrackerType
 				if (e.getCause() instanceof IllegalArgumentException) {
-					Logger.error("You probably missed to add an enum constant to " + TrackerType.getHandle()
-					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
+					             TrackerType.getHandle());
 				}
 			}
 			throw new UnrecoverableError(e);
-		} catch (final ClassNotFoundException e) {
-			throw new UnrecoverableError(e);
-		} catch (final WrongClassSearchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IOException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalArgumentException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SecurityException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalAccessException e) {
-			throw new UnrecoverableError(e);
-		} catch (final NoSuchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final InstantiationException e) {
+		} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
+		        | IllegalArgumentException | SecurityException | IllegalAccessException | NoSuchMethodException
+		        | InstantiationException e) {
 			throw new UnrecoverableError(e);
 		}
 	}
 	
 	/**
+	 * Adds the tracker handler.
+	 * 
 	 * @param trackerIdentifier
+	 *            the tracker identifier
 	 * @param trackerClass
+	 *            the tracker class
 	 */
 	private static void addTrackerHandler(final TrackerType trackerIdentifier,
 	                                      final Class<? extends Tracker> trackerClass) {
@@ -106,7 +97,7 @@ public class TrackerFactory {
 	}
 	
 	/**
-	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null)
+	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null).
 	 * 
 	 * @param trackerIdentifier
 	 *            not null
@@ -126,18 +117,19 @@ public class TrackerFactory {
 		if (trackerClass == null) {
 			throw new UnregisteredTrackerTypeException("Unsupported repository type `" + trackerIdentifier.toString()
 			        + "`");
-		} else {
-			return trackerClass;
 		}
+		return trackerClass;
 	}
 	
 	/**
-	 * private constructor avoids instantiation
+	 * private constructor avoids instantiation.
 	 */
 	private TrackerFactory() {
 	}
 	
 	/**
+	 * Gets the handle.
+	 * 
 	 * @return the simple class name
 	 */
 	public String getHandle() {

@@ -12,20 +12,19 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class TotalConfidenceStrategy.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TotalConfidenceStrategy extends MappingStrategy {
-	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -38,13 +37,17 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -53,7 +56,7 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		switch (Double.compare(mapping.getTotalConfidence(), 0d)) {
 			case -1:
 				mapping.addStrategy(getHandle(), false);
@@ -65,6 +68,24 @@ public class TotalConfidenceStrategy extends MappingStrategy {
 				mapping.addStrategy(getHandle(), null);
 		}
 		return mapping;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

@@ -16,16 +16,26 @@ import java.util.ArrayList;
 
 import de.unisaarland.cs.st.moskito.infozilla.model.Inlineable;
 
+/**
+ * The Class StepsToReproduce.
+ */
 public class StepsToReproduce implements Inlineable {
 	
+	/** The steps. */
 	ArrayList<String> steps;
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getEndPosition()
+	 */
 	@Override
 	public int getEndPosition() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getStartPosition()
+	 */
 	@Override
 	public int getStartPosition() {
 		// TODO Auto-generated method stub

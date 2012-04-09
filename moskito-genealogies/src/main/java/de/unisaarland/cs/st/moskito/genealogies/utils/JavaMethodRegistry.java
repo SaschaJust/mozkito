@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.utils;
 
@@ -165,14 +165,13 @@ public class JavaMethodRegistry {
 		
 		if (!matchLines) {
 			return true;
-		} else {
-			final Iterator<JavaChangeOperation> invIter = invocations.iterator();
-			while (invIter.hasNext()) {
-				final JavaChangeOperation i = invIter.next();
-				final JavaElementLocation l = i.getChangedElementLocation();
-				if (l.getStartLine() == location.getStartLine()) {
-					return true;
-				}
+		}
+		final Iterator<JavaChangeOperation> invIter = invocations.iterator();
+		while (invIter.hasNext()) {
+			final JavaChangeOperation i = invIter.next();
+			final JavaElementLocation l = i.getChangedElementLocation();
+			if (l.getStartLine() == location.getStartLine()) {
+				return true;
 			}
 		}
 		return false;
@@ -200,16 +199,15 @@ public class JavaMethodRegistry {
 			final JavaElementLocation tmpLocation = tmpOperation.getChangedElementLocation();
 			if (location.getStartLine() == location.getStartLine()) {
 				return tmpOperation;
+			}
+			final int d = Math.abs(location.getStartLine() - tmpLocation.getStartLine());
+			if (distance == -1) {
+				distance = d;
+				closest = tmpOperation;
 			} else {
-				final int d = Math.abs(location.getStartLine() - tmpLocation.getStartLine());
-				if (distance == -1) {
+				if (d < distance) {
 					distance = d;
 					closest = tmpOperation;
-				} else {
-					if (d < distance) {
-						distance = d;
-						closest = tmpOperation;
-					}
 				}
 			}
 		}
@@ -304,10 +302,9 @@ public class JavaMethodRegistry {
 				}
 			}
 			return null;
-		} else {
-			final JavaChangeOperation closest = findClosestMethodCall(call, location, invocations);
-			return closest;
 		}
+		final JavaChangeOperation closest = findClosestMethodCall(call, location, invocations);
+		return closest;
 		
 	}
 	
@@ -354,9 +351,8 @@ public class JavaMethodRegistry {
 		}
 		if ((candidates == null) || (candidates.size() < 1)) {
 			return null;
-		} else {
-			return findClosestMethodCall(call, location, candidates);
 		}
+		return findClosestMethodCall(call, location, candidates);
 		
 	}
 	

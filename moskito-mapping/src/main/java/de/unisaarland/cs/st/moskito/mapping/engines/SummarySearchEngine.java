@@ -12,6 +12,10 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.document.Document;
@@ -31,12 +35,17 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class SummarySearchEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class SummarySearchEngine extends SearchEngine {
 	
-	private QueryParser parser = null;
+	/** The Constant description. */
+	private static final String description = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	                                                                                                 
+	/** The parser. */
+	private QueryParser         parser      = null;
 	
 	/*
 	 * (non-Javadoc)
@@ -44,7 +53,40 @@ public class SummarySearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores based on document similarity/relevance based on commit message and report summary.";
+		return description;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			super.init();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			return super.provide(root);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -62,7 +104,7 @@ public class SummarySearchEngine extends SearchEngine {
 		String toContent = null;
 		String toSubstring = null;
 		try {
-			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer());
+			this.parser = new QueryParser(Version.LUCENE_31, "summary", getStorage().getAnalyzer()); //$NON-NLS-1$
 			final Query query = buildQuery(element1.get(FieldKey.BODY).toString(), this.parser);
 			
 			if (query != null) {
@@ -75,9 +117,9 @@ public class SummarySearchEngine extends SearchEngine {
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
 						// TODO change hardcoded strings
-						final Long bugId = Long.parseLong(hitDoc.get("bugid"));
+						final Long bugId = Long.parseLong(hitDoc.get("bugid")); //$NON-NLS-1$
 						
-						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) {
+						if ((bugId + "").compareTo(element2.get(FieldKey.ID).toString()) == 0) { //$NON-NLS-1$
 							confidence = hit.score;
 							toContent = element2.get(FieldKey.SUMMARY).toString();
 							toSubstring = element2.get(FieldKey.SUMMARY).toString();
@@ -87,8 +129,8 @@ public class SummarySearchEngine extends SearchEngine {
 					}
 				}
 			}
-			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY),
-			           "summary", toContent, toSubstring);
+			addFeature(score, confidence, "message", element1.get(FieldKey.BODY), element1.get(FieldKey.BODY), //$NON-NLS-1$
+			           "summary", toContent, toSubstring); //$NON-NLS-1$
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
 		}

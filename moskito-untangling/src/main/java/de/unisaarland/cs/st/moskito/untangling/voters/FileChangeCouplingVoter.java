@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
 import java.io.File;
@@ -44,23 +47,29 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/** The couplings. */
 	private LinkedList<SerialFileChangeCoupling> couplings;
+	
+	/** The transaction. */
 	private final RCSTransaction                 transaction;
+	
+	/** The min support. */
 	private final int                            minSupport;
+	
+	/** The min confidence. */
 	private final double                         minConfidence;
+	
+	/** The persistence util. */
 	private final PersistenceUtil                persistenceUtil;
 	
 	/**
 	 * Instantiates a new change coupling voter.
-	 * 
-	 * @param transaction
-	 *            the transaction
-	 * @param minSupport
-	 *            the min support
-	 * @param minConfidence
-	 *            the min confidence
-	 * @param persistenceUtil
-	 *            the persistence util
+	 *
+	 * @param transaction the transaction
+	 * @param minSupport the min support
+	 * @param minConfidence the min confidence
+	 * @param persistenceUtil the persistence util
+	 * @param cacheDir the cache dir
 	 */
 	
 	@SuppressWarnings ("unchecked")
@@ -82,15 +91,15 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}
@@ -110,11 +119,11 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					out.close();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 			}

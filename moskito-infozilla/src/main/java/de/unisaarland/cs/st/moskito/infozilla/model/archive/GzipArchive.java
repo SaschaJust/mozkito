@@ -23,15 +23,24 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
+ * The Class GzipArchive.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class GzipArchive extends Archive {
 	
+	/**
+	 * Instantiates a new gzip archive.
+	 *
+	 * @param attachment the attachment
+	 */
 	public GzipArchive(final Attachment attachment) {
 		super(attachment);
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.archive.Archive#extract()
+	 */
 	@Override
 	public File extract() throws IOException {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);

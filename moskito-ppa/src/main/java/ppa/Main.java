@@ -16,6 +16,8 @@
 package ppa;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.ppa.PPAToolChain;
 
@@ -34,7 +36,8 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			final PPAToolChain toolChain = new PPAToolChain();
+			final Settings settings = new Settings();
+			final PPAToolChain toolChain = new PPAToolChain(settings);
 			toolChain.setName(toolChain.getClass().getSimpleName());
 			toolChain.start();
 			toolChain.join();
@@ -43,11 +46,15 @@ public class Main {
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
+			}
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e);
 			}
 		}
 	}

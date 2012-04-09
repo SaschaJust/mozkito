@@ -20,14 +20,23 @@ import de.unisaarland.cs.st.moskito.infozilla.model.Attachable;
 import de.unisaarland.cs.st.moskito.infozilla.model.Inlineable;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
+/**
+ * The Class Log.
+ */
 public class Log implements Attachable, Inlineable {
 	
+	/** The start. */
 	DateTime            start;
 	
+	/** The end. */
 	DateTime            end;
 	
+	/** The entities. */
 	ArrayList<LogEntry> entities;
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Attachable#getAttachment()
+	 */
 	@Override
 	public Attachment getAttachment() {
 		// TODO Auto-generated method stub
@@ -35,12 +44,17 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
+	 * Gets the end.
+	 *
 	 * @return the end
 	 */
 	public DateTime getEnd() {
 		return this.end;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getEndPosition()
+	 */
 	@Override
 	public int getEndPosition() {
 		// TODO Auto-generated method stub
@@ -48,6 +62,8 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
+	 * Gets the entities.
+	 *
 	 * @return the entities
 	 */
 	public ArrayList<LogEntry> getEntities() {
@@ -55,12 +71,17 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
+	 * Gets the start.
+	 *
 	 * @return the start
 	 */
 	public DateTime getStart() {
 		return this.start;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getStartPosition()
+	 */
 	@Override
 	public int getStartPosition() {
 		// TODO Auto-generated method stub
@@ -68,7 +89,9 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
-	 * @return
+	 * Gets the text.
+	 *
+	 * @return the text
 	 */
 	public String getText() {
 		StringBuilder builder = new StringBuilder();
@@ -79,31 +102,36 @@ public class Log implements Attachable, Inlineable {
 	}
 	
 	/**
-	 * @param end
-	 *            the end to set
+	 * Sets the end.
+	 *
+	 * @param end the end to set
 	 */
 	public void setEnd(final DateTime end) {
 		this.end = end;
 	}
 	
 	/**
-	 * @param entities
-	 *            the entities to set
+	 * Sets the entities.
+	 *
+	 * @param entities the entities to set
 	 */
 	public void setEntities(final ArrayList<LogEntry> entities) {
 		this.entities = entities;
 	}
 	
 	/**
-	 * @param start
-	 *            the start to set
+	 * Sets the start.
+	 *
+	 * @param start the start to set
 	 */
 	public void setStart(final DateTime start) {
 		this.start = start;
 	}
 	
 	/**
-	 * @return
+	 * Size.
+	 *
+	 * @return the int
 	 */
 	public int size() {
 		return getEntities().size();

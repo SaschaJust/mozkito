@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,112 +9,65 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.google;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
+/**
+ * The Class GoogleTracker_NetTest.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class GoogleTracker_NetTest {
 	
+	/** The Constant dateTimeHistoryFormatRegex. */
 	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
 	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
 	
-	@AfterClass
-	public static void afterClass() {
-		// delete all reposuite directories and files
-		final Map<FileShutdownAction, Set<File>> openFiles = FileUtils.getManagedOpenFiles();
-		final Set<File> set = openFiles.get(FileShutdownAction.DELETE);
-		if (set != null) {
-			for (final File f : set) {
-				try {
-					if (f.isFile()) {
-						FileUtils.forceDelete(f);
-					} else {
-						FileUtils.deleteDirectory(f);
-					}
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	@Before
-	public void setUp() throws Exception {
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-	}
-	
+	/**
+	 * Test fetch regex.
+	 */
 	@Test
 	public void testFetchRegex() {
 		String fetchURI = "https://code.google.com/feeds/issues/p/webtoolkit/issues/full";
 		final Regex regex = new Regex(GoogleTracker.fetchRegexPattern);
-		List<RegexGroup> groups = regex.find(fetchURI);
-		assertTrue(groups.size() > 1);
+		Match groups = regex.find(fetchURI);
+		assertTrue(groups.hasGroups());
 		assertEquals("webtoolkit", regex.getGroup("project"));
 		
 		fetchURI = "http://code.google.com/p/google-web-toolkit/issues/list";
 		groups = regex.find(fetchURI);
-		assertTrue(groups.size() > 1);
+		assertTrue(groups.hasGroups());
 		assertEquals("google-web-toolkit", regex.getGroup("project"));
 	}
 	
+	/**
+	 * Test tracker.
+	 */
 	@Test
-	public void testTracker() {
-		final File cacheDir = FileUtils.createRandomDir("test", "googletracker", FileShutdownAction.DELETE);
+	public void testParse() {
 		try {
-			if (System.getProperties().contains("test.skipnet")) {
-				return;
-			}
 			
 			final GoogleTracker tracker = new GoogleTracker();
-			tracker.setup(new URI("https://code.google.com/feeds/issues/p/google-web-toolkit/issues/full"), null, null,
-			              null, null, 4380l, 4380l, cacheDir);
+			tracker.testSetup("google-web-toolkit");
 			
-			final Long nextId = tracker.getNextId();
-			assertEquals(4380, nextId, 0);
-			final URI linkFromId = tracker.getLinkFromId(nextId);
-			assertEquals(new URI("4380"), linkFromId);
-			final RawReport rawReport = tracker.fetchSource(linkFromId);
-			assert (rawReport instanceof GoogleRawContent);
-			final XmlReport xmlReport = tracker.createDocument(rawReport);
-			assertEquals(rawReport, xmlReport);
-			assert (xmlReport instanceof GoogleRawContent);
-			final Report report = tracker.parse(xmlReport);
-			assertEquals(4380, report.getId());
+			final Report report = tracker.parse(new ReportLink(null, "4380"));
+			assertEquals("4380", report.getId());
 			assertEquals(1, report.getAssignedTo().getUsernames().size());
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));
 			assertEquals("DevPlugin", report.getCategory());
@@ -128,46 +81,31 @@ public class GoogleTracker_NetTest {
 			assertTrue(report.getHistory() != null);
 			assertEquals(2, report.getHistory().size());
 			
-			assertEquals(rawReport.getFetchTime(), report.getLastFetch());
-			assertEquals(new Report(0).getPriority(), report.getPriority());
-			assertEquals(new Report(0).getProduct(), report.getProduct());
+			assertEquals(null, report.getPriority());
+			assertEquals(new Report("0").getProduct(), report.getProduct());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z", dateTimeHistoryFormatRegex)
 			                        .isEqual(report.getResolutionTimestamp()));
 			assertTrue(report.getResolver() != null);
-			assertEquals(1, report.getResolver().getUsernames().size());
-			assertTrue(report.getResolver().getUsernames().contains("jat@google.com"));
-			assertEquals(new Report(0).getSeverity(), report.getSeverity());
-			report.getSiblings();
+			assertEquals(1, report.getResolver().getEmailAddresses().size());
+			assertTrue(report.getResolver().getEmailAddresses().contains("jat@google.com"));
+			assertEquals(null, report.getSeverity());
+			assert report.getSiblings() != null;
+			assertEquals(0, report.getSiblings().size());
 			assertEquals(Status.CLOSED, report.getStatus());
 			assertEquals("DevMode plug-in doesn't work in Firefox 3.6", report.getSubject());
 			assertTrue(report.getSubmitter() != null);
-			assertEquals(1, report.getSubmitter().getUsernames().size());
-			assertTrue(report.getSubmitter().getUsernames().contains("t.broyer"));
-			assertEquals("", report.getSummary());
+			assertEquals(1, report.getSubmitter().getFullnames().size());
+			assertTrue(report.getSubmitter().getFullnames().contains("t.broyer"));
+			assertEquals(report.getDescription(), report.getSummary());
 			assertEquals(Type.RFE, report.getType());
 			assertEquals(null, report.getVersion());
 			assertTrue(report.getDescription().length() > 0);
-			assertTrue(report.getDescription().contains("Firefox keeps saying the page needs a plugin when passing"));
+			assertTrue(report.getDescription().contains("Firefox keeps saying the page needs a plugin when"));
 			
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
-		} catch (final URISyntaxException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final FetchException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final UnsupportedProtocolException e) {
-			e.printStackTrace();
-			fail();
-		} finally {
-			try {
-				FileUtils.deleteDirectory(cacheDir);
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 }

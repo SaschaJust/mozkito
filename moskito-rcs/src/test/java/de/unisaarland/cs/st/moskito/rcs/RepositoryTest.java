@@ -48,14 +48,23 @@ import de.unisaarland.cs.st.moskito.testing.annotation.RepositorySettings;
 import de.unisaarland.cs.st.moskito.testing.annotation.processors.RepositorySettingsProcessor;
 import difflib.Delta;
 
+/**
+ * The Class RepositoryTest.
+ */
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
 public class RepositoryTest extends MoskitoTest {
 	
+	/** The repositories. */
 	private static List<Repository>         repositories = new LinkedList<Repository>();
+	
+	/** The repo map. */
 	private static Map<RepositoryType, URI> repoMap;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		repoMap = new HashMap<RepositoryType, URI>();
@@ -90,12 +99,13 @@ public class RepositoryTest extends MoskitoTest {
 				e1.printStackTrace();
 				fail();
 			}
+			assert (repository != null);
 			repositories.add(repository);
 			
 			final File urlFile = new File(repoMap.get(type));
 			
 			try {
-				repository.setup(urlFile.toURI(), null, null, new BranchFactory(null), null);
+				repository.setup(urlFile.toURI(), new BranchFactory(null), null);
 			} catch (final Exception e) {
 				System.err.println(e.getMessage());
 				fail(e.getMessage());
@@ -104,11 +114,21 @@ public class RepositoryTest extends MoskitoTest {
 		
 	}
 	
+	/**
+	 * Gets the date from string.
+	 * 
+	 * @param timestamp
+	 *            the timestamp
+	 * @return the date from string
+	 */
 	private static DateTime getDateFromString(final String timestamp) {
 		final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 		return dtf.parseDateTime(timestamp);
 	}
 	
+	/**
+	 * Test annotate.
+	 */
 	@Test
 	public void testAnnotate() {
 		for (final Repository repository : repositories) {
@@ -153,6 +173,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test checkout.
+	 */
 	@Test
 	public void testCheckout() {
 		for (final Repository repository : repositories) {
@@ -180,6 +203,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test checkout dir.
+	 */
 	@Test
 	public void testCheckoutDir() {
 		for (final Repository repository : repositories) {
@@ -203,6 +229,9 @@ public class RepositoryTest extends MoskitoTest {
 		
 	}
 	
+	/**
+	 * Test checkout file.
+	 */
 	@Test
 	public void testCheckoutFile() {
 		for (final Repository repository : repositories) {
@@ -214,6 +243,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test diff.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testDiff() {
@@ -228,6 +260,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test diff move.
+	 */
 	@Test
 	public void testDiffMove() {
 		for (final Repository repository : repositories) {
@@ -241,6 +276,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test get changed paths.
+	 */
 	@Test
 	public void testGetChangedPaths() {
 		for (final Repository repository : repositories) {
@@ -257,11 +295,14 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test get first revision id.
+	 */
 	@Test
 	public void testGetFirstRevisionID() {
 		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				
+				// ignore
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("1", repository.getFirstRevisionId());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
@@ -272,6 +313,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test get former path name.
+	 */
 	@Test
 	public void testGetFormerPathName() {
 		for (final Repository repository : repositories) {
@@ -282,11 +326,14 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test get last revision id.
+	 */
 	@Test
 	public void testGetLastRevisionID() {
 		for (final Repository repository : repositories) {
 			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				
+				// ignore
 			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("17", repository.getEndRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
@@ -298,6 +345,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test get relative transaction id.
+	 */
 	@Test
 	public void testGetRelativeTransactionId() {
 		for (final Repository repository : repositories) {
@@ -306,6 +356,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test log.
+	 */
 	@Test
 	public void testLog() {
 		for (final Repository repository : repositories) {
@@ -416,6 +469,9 @@ public class RepositoryTest extends MoskitoTest {
 		}
 	}
 	
+	/**
+	 * Test move edit.
+	 */
 	@Test
 	public void testMoveEdit() {
 		for (final Repository repository : repositories) {

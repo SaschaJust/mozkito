@@ -25,9 +25,12 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public class Not extends Expression {
 	
+	/** The expression. */
 	private final Expression expression;
 	
 	/**
+	 * Instantiates a new not.
+	 * 
 	 * @param expression
 	 *            the inner expression used in the evaluation
 	 */
@@ -48,6 +51,8 @@ public class Not extends Expression {
 	}
 	
 	/**
+	 * Gets the expression.
+	 * 
 	 * @return the inner expression
 	 */
 	public Expression getExpression() {

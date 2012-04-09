@@ -41,8 +41,8 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -67,23 +67,23 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
-	private String                          currentRevision = null;
-	protected static Charset                charset         = Charset.defaultCharset();
+	private String                           currentRevision = null;
+	protected static Charset                 charset         = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
 		}
 	}
-	protected static DateTimeFormatter      dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
-	protected static Regex                  regex           = new Regex(
-	                                                                    ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
-	protected static Regex                  formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
-	private File                            cloneDir;
-	private List<String>                    transactionIDs  = new LinkedList<String>();
+	protected static final DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static final Regex             regex           = new Regex(
+	                                                                     ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	protected static final Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	private File                             cloneDir;
+	private List<String>                     transactionIDs  = new LinkedList<String>();
 	
-	private final HashMap<String, LogEntry> logCache        = new HashMap<String, LogEntry>();
-	private BranchFactory                   branchFactory;
-	private GitRevDependencyGraph           revDepGraph;
+	private final HashMap<String, LogEntry>  logCache        = new HashMap<String, LogEntry>();
+	private BranchFactory                    branchFactory;
+	private GitRevDependencyGraph            revDepGraph;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -388,9 +388,8 @@ public class GitRepository extends Repository {
 			}
 			final List<String> lines = response.getSecond();
 			return lines.get(lines.size() - 1).trim();
-		} else {
-			return getStartRevision();
 		}
+		return getStartRevision();
 	}
 	
 	@Override
@@ -407,8 +406,8 @@ public class GitRepository extends Repository {
 		}
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
-				final List<RegexGroup> found = formerPathRegex.find(line);
-				if (found.size() < 1) {
+				final Match found = formerPathRegex.find(line);
+				if (!found.hasGroups()) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");
 					}
@@ -596,10 +595,6 @@ public class GitRepository extends Repository {
 		Condition.check(toIndex >= 0, "End transaction for log() is unknown!");
 		Condition.check(fromIndex <= toIndex, "cannot log from later revision to earlier one!");
 		
-		if ((fromRevision == null) || (toRevision == null)) {
-			return null;
-		}
-		
 		final List<LogEntry> result = new LinkedList<LogEntry>();
 		
 		String revisionSelection = fromRevision + "^.." + toRevision;
@@ -655,13 +650,11 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
+		setup(address, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -677,8 +670,6 @@ public class GitRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(@NotNull final URI address,
-	                   final String startRevision,
-	                   final String endRevision,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir) {
@@ -687,39 +678,31 @@ public class GitRepository extends Repository {
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
-		File cloneDir = null;
+		File localCloneDir = null;
 		if (tmpDir == null) {
-			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		} else {
-			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
 		
-		if (!clone(inputStream, cloneDir.getAbsolutePath())) {
+		if (!clone(inputStream, localCloneDir.getAbsolutePath())) {
 			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
 		}
 		
 		final String innerPath = ((getUri().getFragment()) != null)
 		                                                           ? (getUri().getFragment())
 		                                                           : "/";
-		this.cloneDir = new File(cloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
+		this.cloneDir = new File(localCloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
 		if (!this.cloneDir.exists()) {
 			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
 		}
 		
-		if ((startRevision == null) || (startRevision.equals("HEAD"))) {
-			setStartRevision(getFirstRevisionId());
-		} else {
-			setStartRevision(startRevision);
-		}
-		if ((endRevision == null) || (endRevision.equals("HEAD"))) {
-			setEndRevision(getHEADRevisionId());
-		} else {
-			setEndRevision(endRevision);
-		}
+		setStartRevision(getFirstRevisionId());
+		setEndRevision(getHEADRevisionId());
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
 		                                                                              "--pretty=format:%H",
@@ -749,8 +732,6 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
@@ -758,7 +739,7 @@ public class GitRepository extends Repository {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
-		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
+		      tmpDir);
 	}
 }

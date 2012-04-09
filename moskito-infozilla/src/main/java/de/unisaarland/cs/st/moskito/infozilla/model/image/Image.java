@@ -15,8 +15,14 @@ package de.unisaarland.cs.st.moskito.infozilla.model.image;
 import de.unisaarland.cs.st.moskito.infozilla.model.Attachable;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
+/**
+ * The Class Image.
+ */
 public abstract class Image implements Attachable {
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Attachable#getAttachment()
+	 */
 	@Override
 	public Attachment getAttachment() {
 		// TODO Auto-generated method stub

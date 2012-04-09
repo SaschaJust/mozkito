@@ -16,30 +16,36 @@
 package de.unisaarland.cs.st.moskito.mapping;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ScoringFilterPersister.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ScoringFilterPersister extends Sink<FilteredMapping> {
 	
+	/** The i. */
 	private Integer i = 0;
 	
 	/**
+	 * Instantiates a new scoring filter persister.
+	 * 
 	 * @param threadGroup
-	 * @param name
+	 *            the thread group
 	 * @param settings
+	 *            the settings
 	 * @param persistenceUtil
+	 *            the persistence util
 	 */
-	public ScoringFilterPersister(final Group threadGroup, final MappingSettings settings,
+	public ScoringFilterPersister(final Group threadGroup, final Settings settings,
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
@@ -55,7 +61,7 @@ public class ScoringFilterPersister extends Sink<FilteredMapping> {
 			
 			@Override
 			public void process() {
-				FilteredMapping score = getInputData();
+				final FilteredMapping score = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + score);

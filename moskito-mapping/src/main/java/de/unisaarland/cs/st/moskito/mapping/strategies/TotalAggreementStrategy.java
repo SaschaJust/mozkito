@@ -14,21 +14,20 @@ package de.unisaarland.cs.st.moskito.mapping.strategies;
 
 import java.util.Queue;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class TotalAggreementStrategy.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TotalAggreementStrategy extends MappingStrategy {
-	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -41,13 +40,17 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -56,7 +59,7 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Mapping map(final Mapping mapping) {
+	public IMapping map(final Mapping mapping) {
 		int value = 0;
 		
 		final Queue<MappingEngineFeature> features = mapping.getFeatures();
@@ -64,7 +67,6 @@ public class TotalAggreementStrategy extends MappingStrategy {
 			final int cache = Double.compare(feature.getConfidence(), 0.0d);
 			if (Math.abs(value - cache) > 1) {
 				value = 0;
-				break;
 			} else {
 				value = cache;
 			}
@@ -79,6 +81,24 @@ public class TotalAggreementStrategy extends MappingStrategy {
 		}
 		
 		return mapping;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

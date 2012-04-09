@@ -1,67 +1,100 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.bugs.tracker.RawReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 
+/**
+ * The Class BugzillaOverviewParserTest.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class BugzillaOverviewParserTest {
 	
+	/**
+	 * Test eclipse.
+	 */
 	@Test
 	public void testEclipse() {
 		try {
-			final RawReport rawReport = new RawReport(
-			                                          1l,
-			                                          IOUtils.fetch(this.getClass()
-			                                                            .getResource(FileUtils.fileSeparator
-			                                                                                 + "bugzilla_eclipse_overview.html")
-			                                                            .toURI()));
-			final BugzillaOverviewParser parser = new BugzillaOverviewParser();
-			assertTrue(parser.parse(rawReport.getContent()));
-			final Set<? extends Long> bugIds = parser.getBugIds();
-			assertEquals(22, bugIds.size());
-			assertTrue(bugIds.contains(314163l));
-			assertTrue(bugIds.contains(158767l));
+			final BugzillaOverviewParser parser = new BugzillaOverviewParser(
+			                                                                 new URI("https://bugs.eclipse.org/bugs/"),
+			                                                                 this.getClass()
+			                                                                     .getResource(FileUtils.fileSeparator
+			                                                                                          + "bugzilla_eclipse_overview.html")
+			                                                                     .toURI(), null);
+			assertTrue(parser.parseOverview());
+			
+			int counter = 0;
+			final Set<String> bugIds = new HashSet<String>();
+			for (final ReportLink reportLink : parser.getReportLinks()) {
+				++counter;
+				bugIds.add(reportLink.getBugId());
+			}
+			assertEquals(22, counter);
+			assertTrue(bugIds.contains("314163"));
+			assertTrue(bugIds.contains("158767"));
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}
 	}
 	
+	/**
+	 * Test mozilla.
+	 */
 	@Test
 	public void testMozilla() {
 		try {
-			final RawReport rawReport = new RawReport(
-			                                          1l,
-			                                          IOUtils.fetch(this.getClass()
-			                                                            .getResource(FileUtils.fileSeparator
-			                                                                                 + "bugzilla_mozilla_overview.html")
-			                                                            .toURI()));
-			final BugzillaOverviewParser parser = new BugzillaOverviewParser();
-			assertTrue(parser.parse(rawReport.getContent()));
-			final Set<? extends Long> bugIds = parser.getBugIds();
-			assertEquals(1016, bugIds.size());
-			assertTrue(bugIds.contains(642368l));
-			assertTrue(bugIds.contains(61267l));
+			final BugzillaOverviewParser parser = new BugzillaOverviewParser(
+			                                                                 new URI("https://bugzilla.mozilla.org/"),
+			                                                                 this.getClass()
+			                                                                     .getResource(FileUtils.fileSeparator
+			                                                                                          + "bugzilla_mozilla_overview.html")
+			                                                                     .toURI(), null);
+			assertTrue(parser.parseOverview());
+			
+			int counter = 0;
+			final Set<String> bugIds = new HashSet<String>();
+			for (final ReportLink reportLink : parser.getReportLinks()) {
+				++counter;
+				bugIds.add(reportLink.getBugId());
+			}
+			assertEquals(1016, counter);
+			assertTrue(bugIds.contains("642368"));
+			assertTrue(bugIds.contains("61267"));
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			fail();
 		}
 	}
-	
 }

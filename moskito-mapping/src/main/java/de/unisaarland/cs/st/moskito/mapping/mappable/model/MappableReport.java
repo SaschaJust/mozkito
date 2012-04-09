@@ -46,10 +46,15 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 @DiscriminatorValue ("MAPPABLEREPORT")
 public class MappableReport extends MappableEntity implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1097712059403322470L;
+	
+	/** The report. */
 	private Report            report;
 	
 	/**
+	 * Instantiates a new mappable report.
+	 * 
 	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
@@ -58,7 +63,10 @@ public class MappableReport extends MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * Instantiates a new mappable report.
+	 * 
 	 * @param report
+	 *            the report
 	 */
 	public MappableReport(final Report report) {
 		super();
@@ -174,19 +182,27 @@ public class MappableReport extends MappableEntity implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the body.
+	 * 
+	 * @return the body
 	 */
 	@Transient
 	public String getBody() {
 		return getReport().getDescription();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity#getId()
+	 */
 	@Override
 	public String getId() {
 		return getReport().getId() + "";
 	}
 	
 	/**
+	 * Gets the report.
+	 * 
 	 * @return the report
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
@@ -215,7 +231,10 @@ public class MappableReport extends MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * Sets the report.
+	 * 
 	 * @param report
+	 *            the new report
 	 */
 	public void setReport(final Report report) {
 		this.report = report;

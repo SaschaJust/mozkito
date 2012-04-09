@@ -13,13 +13,16 @@
 package mapping;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.MappingChain;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class Main.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Main {
 	
@@ -28,11 +31,15 @@ public class Main {
 	}
 	
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		try {
-			final MappingChain scoring = new MappingChain();
+			final Settings settings = new Settings();
+			final MappingChain scoring = new MappingChain(settings);
 			scoring.setName(scoring.getClass().getSimpleName());
 			scoring.start();
 			scoring.join();
@@ -42,12 +49,17 @@ public class Main {
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			
 		}
 	}
 	

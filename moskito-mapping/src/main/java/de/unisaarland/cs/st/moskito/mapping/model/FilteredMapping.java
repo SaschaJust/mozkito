@@ -26,35 +26,45 @@ import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class FilteredMapping.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
 public class FilteredMapping implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4228229393714955483L;
+	
+	/** The mapping. */
 	private Mapping           mapping;
+	
+	/** The filters. */
 	private List<String>      filters          = new LinkedList<String>();
 	
 	/**
-	 * used by persistence provider only
+	 * used by persistence provider only.
 	 */
 	public FilteredMapping() {
 	}
 	
 	/**
-	 * @param score
+	 * Instantiates a new filtered mapping.
+	 * 
+	 * @param mapping
+	 *            the mapping
+	 * @param triggeringFilters
+	 *            the triggering filters
 	 */
-	public FilteredMapping(final Mapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
+	public FilteredMapping(final IMapping mapping, final Collection<? extends MappingFilter> triggeringFilters) {
 		for (final MappingFilter filter : triggeringFilters) {
 			getFilters().add(filter.getClass().getCanonicalName());
 		}
 	}
 	
 	/**
+	 * Gets the filters.
+	 * 
 	 * @return the filters
 	 */
 	@ElementCollection
@@ -63,6 +73,8 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
+	 * Gets the mapping.
+	 * 
 	 * @return the mapping
 	 */
 	@Id
@@ -72,6 +84,8 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
+	 * Sets the filters.
+	 * 
 	 * @param filters
 	 *            the filters to set
 	 */
@@ -80,6 +94,8 @@ public class FilteredMapping implements Annotated {
 	}
 	
 	/**
+	 * Sets the mapping.
+	 * 
 	 * @param mapping
 	 *            the mapping to set
 	 */

@@ -14,20 +14,18 @@ package de.unisaarland.cs.st.moskito.mapping.filters;
 
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class ReportFieldFilter.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ReportFieldFilter extends MappingFilter {
-	
-	@Override
-	public void afterParse() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -35,7 +33,7 @@ public class ReportFieldFilter extends MappingFilter {
 	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
 	 */
 	@Override
-	public Set<? extends MappingFilter> filter(final Mapping mapping,
+	public Set<? extends MappingFilter> filter(final IMapping mapping,
 	                                           final Set<? extends MappingFilter> triggeringFilters) {
 		// TODO Auto-generated method stub
 		return triggeringFilters;
@@ -52,13 +50,35 @@ public class ReportFieldFilter extends MappingFilter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) {
-		// TODO Auto-generated method stub
-		return false;
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 }

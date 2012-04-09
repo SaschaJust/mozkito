@@ -43,13 +43,15 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 @DiscriminatorValue ("MAPPABLETRANSACTION")
 public class MappableTransaction extends MappableEntity {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3493346151115096823L;
+	
+	/** The transaction. */
 	private RCSTransaction    transaction;
 	
 	/**
+	 * Instantiates a new mappable transaction.
+	 * 
 	 * @deprecated used only by persistence utility
 	 */
 	@Deprecated
@@ -58,7 +60,10 @@ public class MappableTransaction extends MappableEntity {
 	}
 	
 	/**
+	 * Instantiates a new mappable transaction.
+	 * 
 	 * @param transaction
+	 *            the transaction
 	 */
 	public MappableTransaction(final RCSTransaction transaction) {
 		super();
@@ -133,8 +138,11 @@ public class MappableTransaction extends MappableEntity {
 	}
 	
 	/**
+	 * Gets the file.
+	 * 
 	 * @param index
-	 * @return
+	 *            the index
+	 * @return the file
 	 */
 	@Transient
 	public RCSFile getFile(@NotNegative final int index) {
@@ -147,8 +155,9 @@ public class MappableTransaction extends MappableEntity {
 		}
 	}
 	
-	/**
-	 * @return
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity#getId()
 	 */
 	@Override
 	@Transient
@@ -167,7 +176,9 @@ public class MappableTransaction extends MappableEntity {
 	}
 	
 	/**
-	 * @return
+	 * Gets the transaction.
+	 * 
+	 * @return the transaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
 	public RCSTransaction getTransaction() {
@@ -175,7 +186,10 @@ public class MappableTransaction extends MappableEntity {
 	}
 	
 	/**
+	 * Sets the transaction.
+	 * 
 	 * @param transaction
+	 *            the new transaction
 	 */
 	public void setTransaction(final RCSTransaction transaction) {
 		this.transaction = transaction;

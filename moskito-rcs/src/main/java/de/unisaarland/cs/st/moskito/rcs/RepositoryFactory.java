@@ -28,7 +28,6 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -65,8 +64,8 @@ public final class RepositoryFactory {
 				// check if someone missed to add a corresponding enum entry in
 				// RepositoryType
 				if (e.getCause() instanceof IllegalArgumentException) {
-					Logger.error("You probably missed to add an enum constant to " + RepositoryType.getHandle()
-					        + ". Error was: " + e.getCause().getMessage(), e.getCause());
+					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
+					             RepositoryType.getHandle());
 				}
 			}
 			throw new UnrecoverableError(e);
@@ -102,10 +101,8 @@ public final class RepositoryFactory {
 		Condition.isNull(repositoryHandlers.get(repositoryIdentifier),
 		                 "The should not be a reposiotry with the same identifier already");
 		
-		if (RepositorySettings.debug) {
-			if (Logger.logDebug()) {
-				Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
-			}
+		if (Logger.logDebug()) {
+			Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 		}
 		
 		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
@@ -127,19 +124,17 @@ public final class RepositoryFactory {
 	 */
 	@NoneNull
 	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier) throws UnregisteredRepositoryTypeException {
-		if (RepositorySettings.debug) {
-			if (Logger.logDebug()) {
-				Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
-			}
+		if (Logger.logDebug()) {
+			Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 		}
+		
 		final Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
 			        + repositoryIdentifier.toString() + "`");
-		} else {
-			return repositoryClass;
 		}
+		return repositoryClass;
 	}
 	
 	/**

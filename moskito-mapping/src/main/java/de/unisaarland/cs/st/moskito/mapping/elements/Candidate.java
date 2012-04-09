@@ -25,17 +25,15 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public class Candidate {
 	
-	/**
-	 * the entity under subject
-	 */
+	/** the entity under subject. */
 	MappableEntity from;
 	
-	/**
-	 * a potential target
-	 */
+	/** a potential target. */
 	MappableEntity to;
 	
 	/**
+	 * Instantiates a new candidate.
+	 * 
 	 * @param candidatePair
 	 *            a {@link Tuple} representing the pair (from/to)
 	 */
@@ -45,6 +43,8 @@ public class Candidate {
 	}
 	
 	/**
+	 * Gets the from.
+	 * 
 	 * @return the from entity
 	 */
 	public final MappableEntity getFrom() {
@@ -52,6 +52,8 @@ public class Candidate {
 	}
 	
 	/**
+	 * Gets the to.
+	 * 
 	 * @return the to entity
 	 */
 	public final MappableEntity getTo() {
@@ -64,6 +66,6 @@ public class Candidate {
 	 */
 	@Override
 	public String toString() {
-		return "Candidate [from=" + from + ", to=" + to + "]";
+		return "Candidate [from=" + this.from + ", to=" + this.to + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

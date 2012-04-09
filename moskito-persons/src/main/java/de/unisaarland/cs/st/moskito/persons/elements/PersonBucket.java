@@ -18,11 +18,11 @@ package de.unisaarland.cs.st.moskito.persons.elements;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
 import de.unisaarland.cs.st.moskito.persons.processing.PersonManager;
-import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.ioda.Tuple;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -51,7 +51,7 @@ public class PersonBucket {
 	 * @param container
 	 */
 	public PersonBucket(final Person person, final PersonContainer container) {
-		LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
+		final LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
 		list.add(container);
 		this.persons.add(new Tuple<Person, List<PersonContainer>>(person, list));
 	}
@@ -64,19 +64,20 @@ public class PersonBucket {
 		// We actually should never have empty buckets
 		if (!this.persons.isEmpty()) {
 			if (Logger.logDebug()) {
-				Logger.debug("Consolidating " + this.hashCode());
+				Logger.debug(String.format(Messages.getString("PersonBucket.consolidating")), hashCode()); //$NON-NLS-1$
 			}
 			
 			// Since we checked the entries to be not empty, we can safely
 			// remove the first entry and take it as the main one.
-			Tuple<Person, List<PersonContainer>> mainEntry = this.persons.remove(0);
+			final Tuple<Person, List<PersonContainer>> mainEntry = this.persons.remove(0);
 			
-			for (Tuple<Person, List<PersonContainer>> entry : this.persons) {
+			for (final Tuple<Person, List<PersonContainer>> entry : this.persons) {
 				// Check if we already processed/deleted the person in this
 				// entry.
 				if (!manager.isProcessed(entry.getFirst().getGeneratedId())) {
 					if (Logger.logDebug()) {
-						Logger.debug("Deleting " + entry.getFirst() + " and merging data into " + mainEntry.getFirst());
+						Logger.debug(String.format(Messages.getString("PersonBucket.deleting"), entry.getFirst(), //$NON-NLS-1$
+						                           mainEntry.getFirst()));
 					}
 					
 					// Merge the data of person in the entry into the person in
@@ -84,7 +85,7 @@ public class PersonBucket {
 					Person.merge(mainEntry.getFirst(), entry.getFirst());
 					
 					// Step through all containers in the current entry
-					for (PersonContainer container : entry.getSecond()) {
+					for (final PersonContainer container : entry.getSecond()) {
 						// Replace the person in the container by the person in
 						// the mainEntry
 						container.replace(entry.getFirst(), mainEntry.getFirst());
@@ -98,8 +99,8 @@ public class PersonBucket {
 					manager.delete(entry.getFirst());
 				} else {
 					if (Logger.logWarn()) {
-						Logger.warn("Skipping " + entry.getFirst()
-						        + ". We shouldn't see a person twice on unmerged data.");
+						Logger.warn(String.format(Messages.getString("PersonBucket.skipping"), //$NON-NLS-1$
+						                          entry.getFirst()));
 					}
 				}
 			}
@@ -108,7 +109,7 @@ public class PersonBucket {
 			this.persons.add(mainEntry);
 			
 			if (Logger.logDebug()) {
-				Logger.debug("Keeping " + mainEntry);
+				Logger.debug(String.format(Messages.getString("PersonBucket.keeping"), mainEntry)); //$NON-NLS-1$
 			}
 		}
 	}
@@ -119,7 +120,7 @@ public class PersonBucket {
 	 */
 	private Tuple<Person, List<PersonContainer>> find(final Person person) {
 		// step through all entries in the person list
-		for (Tuple<Person, List<PersonContainer>> p : this.persons) {
+		for (final Tuple<Person, List<PersonContainer>> p : this.persons) {
 			// if one person equals the person under suspect (exact same data)
 			if (p.getFirst().equals(person)) {
 				// return the entry
@@ -135,8 +136,8 @@ public class PersonBucket {
 	 * @return
 	 */
 	public List<String> getEmails() {
-		List<String> list = new LinkedList<String>();
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		final List<String> list = new LinkedList<String>();
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			
 			list.addAll(key.getFirst().getEmailAddresses());
 		}
@@ -147,8 +148,8 @@ public class PersonBucket {
 	 * @return
 	 */
 	public List<String> getFullnames() {
-		List<String> list = new LinkedList<String>();
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		final List<String> list = new LinkedList<String>();
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			
 			list.addAll(key.getFirst().getFullnames());
 		}
@@ -159,8 +160,8 @@ public class PersonBucket {
 	 * @return
 	 */
 	public List<String> getUsernames() {
-		List<String> list = new LinkedList<String>();
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		final List<String> list = new LinkedList<String>();
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			list.addAll(key.getFirst().getUsernames());
 		}
 		return list;
@@ -171,7 +172,7 @@ public class PersonBucket {
 	 * @return
 	 */
 	public boolean hasEmail(final String email) {
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			if (key.getFirst().getEmailAddresses().contains(email)) {
 				return true;
 			}
@@ -184,7 +185,7 @@ public class PersonBucket {
 	 * @return
 	 */
 	public boolean hasFullname(final String fullname) {
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			if (key.getFirst().getFullnames().contains(fullname)) {
 				return true;
 			}
@@ -197,7 +198,7 @@ public class PersonBucket {
 	 * @return
 	 */
 	public boolean hasUsername(final String username) {
-		for (Tuple<Person, List<PersonContainer>> key : this.persons) {
+		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
 			if (key.getFirst().getUsernames().contains(username)) {
 				return true;
 			}
@@ -215,13 +216,13 @@ public class PersonBucket {
 	                   final PersonManager manager) {
 		// look-up the person in the present mappings (a person with the exact
 		// same data)
-		Tuple<Person, List<PersonContainer>> bucketEntry = find(person);
+		final Tuple<Person, List<PersonContainer>> bucketEntry = find(person);
 		
 		// if we found a matching entry
 		if (bucketEntry != null) {
 			if (bucketEntry.getFirst().getGeneratedId() != person.getGeneratedId()) {
 				if (Logger.logDebug()) {
-					Logger.debug("Replacing " + person + " by " + bucketEntry.getFirst());
+					Logger.debug(String.format(Messages.getString("PersonBucket.replacing"), person, bucketEntry.getFirst())); //$NON-NLS-1$
 				}
 				
 				// replace the person in the container under subject by the
@@ -233,7 +234,7 @@ public class PersonBucket {
 				manager.delete(person);
 			} else {
 				if (Logger.logDebug()) {
-					Logger.debug("Ignoring replace for identical " + person + ".");
+					Logger.debug(String.format(Messages.getString("PersonBucket.ignoring"), person)); //$NON-NLS-1$
 				}
 			}
 			
@@ -242,12 +243,12 @@ public class PersonBucket {
 			bucketEntry.getSecond().add(container);
 		} else {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding person " + person);
+				Logger.debug(String.format(Messages.getString("PersonBucket.adding"), person)); //$NON-NLS-1$
 			}
 			
 			// add a new entry for this person since there hasn't been a person
 			// with the exact same data yet
-			LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
+			final LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
 			list.add(container);
 			this.persons.add(new Tuple<Person, List<PersonContainer>>(person, list));
 		}
@@ -259,8 +260,8 @@ public class PersonBucket {
 	 */
 	private void insertAll(final List<Tuple<Person, List<PersonContainer>>> tuples,
 	                       final PersonManager manager) {
-		for (Tuple<Person, List<PersonContainer>> key : tuples) {
-			for (PersonContainer container : key.getSecond()) {
+		for (final Tuple<Person, List<PersonContainer>> key : tuples) {
+			for (final PersonContainer container : key.getSecond()) {
 				insert(key.getFirst(), container, manager);
 			}
 		}

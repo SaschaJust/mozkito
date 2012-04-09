@@ -1,15 +1,18 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ * Copyright 2012 Kim Herzig, Sascha Just
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling;
 
 import java.io.BufferedWriter;
@@ -23,10 +26,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -50,16 +56,16 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseArguments;
-import de.unisaarland.cs.st.moskito.settings.RepositoryArguments;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.LinearRegressionAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
-import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingArguments;
-import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingSettings;
+import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
+import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
 import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.FileChangeCouplingVoter;
@@ -74,10 +80,24 @@ import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter;
  */
 public class Untangling {
 	
+	/**
+	 * The Enum ScoreCombinationMode.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	public enum ScoreCombinationMode {
 		
-		SUM, VARSUM, LINEAR_REGRESSION, SVM;
+		/** The SUM. */
+		SUM, /** The VARSUM. */
+ VARSUM, /** The LINEA r_ regression. */
+ LINEAR_REGRESSION, /** The SVM. */
+ SVM;
 		
+		/**
+		 * String values.
+		 *
+		 * @return the string[]
+		 */
 		public static String[] stringValues() {
 			final Set<String> values = new HashSet<String>();
 			for (final ScoreCombinationMode g : ScoreCombinationMode.values()) {
@@ -87,9 +107,25 @@ public class Untangling {
 		}
 	}
 	
+	/**
+	 * The Enum UntanglingCollapse.
+	 *
+	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 */
 	public enum UntanglingCollapse {
-		AVG, MAX, RATIO;
 		
+		/** The AVG. */
+		AVG, 
+ /** The MAX. */
+ MAX, 
+ /** The RATIO. */
+ RATIO;
+		
+		/**
+		 * String values.
+		 *
+		 * @return the string[]
+		 */
 		public static String[] stringValues() {
 			final Set<String> values = new HashSet<String>();
 			for (final UntanglingCollapse g : UntanglingCollapse.values()) {
@@ -99,69 +135,68 @@ public class Untangling {
 		}
 	}
 	
+	/** The random. */
 	public static Random                          random          = new Random();
 	
+	/** The seed. */
 	public long                                   seed;
 	
+	/** The aggregator. */
 	private ScoreAggregation<JavaChangeOperation> aggregator      = null;
 	
+	/** The test impact voter. */
 	private TestImpactVoter                       testImpactVoter = null;
 	
-	private final Repository                      repository;
-	
-	private final boolean                         dryrun;
-	
+	/** The persistence util. */
 	private final PersistenceUtil                 persistenceUtil;
 	
-	private final RepositoryArguments             repositoryArg;
+	/** The untangling control. */
+	private UntanglingControl                     untanglingControl;
 	
-	private final DatabaseArguments               databaseArgs;
+	/** The repository options. */
+	private RepositoryOptions                     repositoryOptions;
 	
-	private final UntanglingArguments             untanglingArgs;
+	/** The repository username. */
+	private String                                repositoryUsername;
+	
+	/** The repository password. */
+	private String                                repositoryPassword;
 	
 	/**
 	 * Instantiates a new untangling.
-	 * 
-	 * @throws ArgumentRegistrationException
-	 * @throws SettingsParseError
+	 *
+	 * @param settings the settings
 	 */
-	public Untangling() {
-		final UntanglingSettings settings = new UntanglingSettings();
+	public Untangling(final Settings settings) {
 		
 		try {
-			this.repositoryArg = settings.setRepositoryArg(Requirement.required);
-			this.databaseArgs = settings.setDatabaseArgs(Requirement.required, "untangling");
-			this.untanglingArgs = settings.setUntanglingArgs(Requirement.required);
-			settings.setLoggerArg(Requirement.optional);
+			
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			
+			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
+			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
+			                                                                  this.repositoryOptions);
+			
+			this.untanglingControl = ArgumentSetFactory.create(untanglingOptions).getValue();
+			
+			if (this.untanglingControl.getSeed() != null) {
+				this.seed = this.untanglingControl.getSeed();
+			} else {
+				this.seed = random.nextLong();
+			}
+			random.setSeed(this.seed);
+			this.persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
+			
+			this.repositoryUsername = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
+			this.repositoryPassword = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
+			
 		} catch (final ArgumentRegistrationException e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getMessage(), e);
-		}
-		
-		try {
-			settings.parse();
+			throw new UnrecoverableError(e);
 		} catch (final SettingsParseError e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
-			}
-			throw new Shutdown(e.getMessage(), e);
+			throw new UnrecoverableError(e);
+		} catch (final ArgumentSetRegistrationException e) {
+			throw new UnrecoverableError(e);
 		}
-		
-		if (this.untanglingArgs.getSeedArg().getValue() != null) {
-			this.seed = this.untanglingArgs.getSeedArg().getValue();
-		} else {
-			this.seed = random.nextLong();
-		}
-		random.setSeed(this.seed);
-		
-		this.repository = this.repositoryArg.getValue();
-		this.dryrun = this.untanglingArgs.getDryRunArg().getValue();
-		
-		this.databaseArgs.getValue();
-		this.persistenceUtil = this.databaseArgs.getValue();
-		
 	}
 	
 	/**
@@ -201,78 +236,74 @@ public class Untangling {
 		return minDiff;
 	}
 	
+	/**
+	 * Generate score visitors.
+	 *
+	 * @param transaction the transaction
+	 * @return the list
+	 */
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction transaction) {
 		
-		if ((this.testImpactVoter == null) && (this.untanglingArgs.getUseTestImpact().getValue())) {
-			final File testCoverageIn = this.untanglingArgs.getTestImpactFileArg().getValue();
+		if ((this.testImpactVoter == null) && (this.untanglingControl.isTestImpactEnabled())) {
+			final File testCoverageIn = this.untanglingControl.getTestImpactFile();
 			if (testCoverageIn == null) {
 				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
-				        + this.untanglingArgs.getTestImpactFileArg().getName());
+				        + this.untanglingControl.getTestImpactFile());
 			}
 			try {
 				this.testImpactVoter = new TestImpactVoter(testCoverageIn);
 			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			} catch (final ClassNotFoundException e) {
 				if (Logger.logError()) {
 					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e.getMessage(), e);
+					Logger.error(e);
 				}
 			}
 		}
 		
+		final Repository repository = this.untanglingControl.getRepository();
+		
 		final List<String> eclipseArgs = new LinkedList<String>();
 		eclipseArgs.add("-vmargs");
 		eclipseArgs.add(" -Dppa");
-		eclipseArgs.add(" -Drepository.uri=file://" + this.repositoryArg.getRepoDirArg().getValue().toString());
-		if (this.repositoryArg.getPassArg().getValue() != null) {
-			eclipseArgs.add(" -Drepository.password=" + this.repositoryArg.getPassArg().getValue());
+		eclipseArgs.add(" -Drepository.uri=" + repository.getUri().toASCIIString());
+		
+		if (this.repositoryPassword != null) {
+			eclipseArgs.add(" -Drepository.password=" + this.repositoryPassword);
 		}
-		eclipseArgs.add(" -Drepository.type=" + this.repositoryArg.getRepoTypeArg().getValue());
-		if (this.repositoryArg.getUserArg().getValue() != null) {
-			eclipseArgs.add(" -Drepository.user=" + this.repositoryArg.getUserArg().getValue());
+		eclipseArgs.add(" -Drepository.type=" + repository.getRepositoryType().toString());
+		if (this.repositoryUsername != null) {
+			eclipseArgs.add(" -Drepository.user=" + this.repositoryUsername);
 		}
 		
 		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());
 		// add call graph visitor
-		if (this.untanglingArgs.getUseCallGraph().getValue()) {
-			scoreVisitors.add(new CallGraphVoter(this.untanglingArgs.getCallgraphArg().getValue(),
+		if (this.untanglingControl.isCallGraphEnabled()) {
+			scoreVisitors.add(new CallGraphVoter(this.untanglingControl.getCallGraphEclipseDir(),
 			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]), transaction,
-			                                     this.untanglingArgs.getCallGraphCacheDirArg().getValue()));
+			                                     this.untanglingControl.getCallGraphCacheDir()));
 		}
 		
 		// add change coupling visitor
-		if (this.untanglingArgs.getUseChangeCouplings().getValue()) {
-			if ((this.untanglingArgs.getChangeCouplingsMinConfidence().getValue() == null)
-			        || (this.untanglingArgs.getChangeCouplingsMinSupport().getValue() == null)) {
-				throw new UnrecoverableError(
-				                             "When using change couplings, you have to specify a min support and min confidence value.");
-			}
-			
-			final File ccCacheDir = this.untanglingArgs.getChangeCouplingsCacheDirArg().getValue();
+		if (this.untanglingControl.isChangeCouplingsEnabled()) {
 			scoreVisitors.add(new FileChangeCouplingVoter(transaction,
-			                                              this.untanglingArgs.getChangeCouplingsMinSupport().getValue()
-			                                                                 .intValue(),
-			                                              this.untanglingArgs.getChangeCouplingsMinConfidence()
-			                                                                 .getValue().doubleValue(),
-			                                              this.persistenceUtil, ccCacheDir));
+			                                              this.untanglingControl.getChangeCouplingMinSupport()
+			                                                                    .intValue(),
+			                                              this.untanglingControl.getChangeCouplingMinConfidence()
+			                                                                    .doubleValue(), this.persistenceUtil,
+			                                              this.untanglingControl.getChangeCouplingsCacheDir()));
 		}
 		
 		// add data dependency visitor
-		if (this.untanglingArgs.getUseDataDependencies().getValue()) {
-			final File dataDepEclipseDir = this.untanglingArgs.getDatadepArg().getValue();
-			if (dataDepEclipseDir == null) {
-				throw new UnrecoverableError("When using data dependencies -D"
-				        + this.untanglingArgs.getUseDataDependencies().getName() + " you must set the -D"
-				        + this.untanglingArgs.getDatadepArg().getName() + "!");
-			}
-			scoreVisitors.add(new DataDependencyVoter(dataDepEclipseDir, this.repository, transaction,
-			                                          this.untanglingArgs.getDataDependencyCacheDirArg().getValue()));
+		if (this.untanglingControl.isDataDependenciesEnabled()) {
+			scoreVisitors.add(new DataDependencyVoter(this.untanglingControl.getDataDependencyEclipseDir(), repository,
+			                                          transaction, this.untanglingControl.getDataDependencyCacheDir()));
 		}
 		
 		// add test impact visitor
@@ -284,20 +315,25 @@ public class Untangling {
 		
 	}
 	
+	/**
+	 * Gets the score visitor names.
+	 *
+	 * @return the score visitor names
+	 */
 	public List<String> getScoreVisitorNames() {
 		final List<String> result = new LinkedList<String>();
 		result.add(LineDistanceVoter.class.getSimpleName());
 		result.add(FileDistanceVoter.class.getSimpleName());
-		if (this.untanglingArgs.getUseCallGraph().getValue()) {
+		if (this.untanglingControl.isCallGraphEnabled()) {
 			result.add(CallGraphVoter.class.getSimpleName());
 		}
-		if (this.untanglingArgs.getUseChangeCouplings().getValue()) {
+		if (this.untanglingControl.isChangeCouplingsEnabled()) {
 			result.add(FileChangeCouplingVoter.class.getSimpleName());
 		}
-		if (this.untanglingArgs.getUseDataDependencies().getValue()) {
+		if (this.untanglingControl.isDataDependenciesEnabled()) {
 			result.add(DataDependencyVoter.class.getSimpleName());
 		}
-		if (this.untanglingArgs.getUseTestImpact().getValue()) {
+		if (this.untanglingControl.isTestImpactEnabled()) {
 			result.add(TestImpactVoter.class.getSimpleName());
 		}
 		return result;
@@ -311,12 +347,13 @@ public class Untangling {
 		// load the atomic transactions and their change operations
 		final List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
 		
-		if (this.untanglingArgs.getAtomicChangesArg().getValue() != null) {
-			for (final String transactionId : this.untanglingArgs.getAtomicChangesArg().getValue()) {
+		if ((this.untanglingControl.getAtomicChanges() != null)
+		        && (!this.untanglingControl.getAtomicChanges().isEmpty())) {
+			for (final String transactionId : this.untanglingControl.getAtomicChanges()) {
 				final RCSTransaction t = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				
 				// FIXME this is required due to some unknown problem which
-				// causes NullpointerExceptions becaus Fetch.LAZY returns null.
+				// causes NullpointerExceptions because Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
 				
@@ -365,13 +402,11 @@ public class Untangling {
 		}
 		
 		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
-		                                                           this.untanglingArgs.getPackageDistanceArg()
-		                                                                              .getValue().intValue(),
-		                                                           this.untanglingArgs.getMinBlobSizeArg().getValue()
-		                                                                              .intValue(),
-		                                                           this.untanglingArgs.getMaxBlobSizeArg().getValue()
-		                                                                              .intValue(),
-		                                                           this.untanglingArgs.getTimeArg().getValue()));
+		                                                           this.untanglingControl.getPackageDistance()
+		                                                                                 .intValue(),
+		                                                           this.untanglingControl.getMinBlobSize().intValue(),
+		                                                           this.untanglingControl.getMaxBlobSize().intValue(),
+		                                                           this.untanglingControl.getBlobWindowSize()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -382,7 +417,7 @@ public class Untangling {
 			return;
 		}
 		
-		final File outFile = this.untanglingArgs.getOutArg().getValue();
+		final File outFile = this.untanglingControl.getOutputFile();
 		BufferedWriter outWriter;
 		try {
 			outWriter = new BufferedWriter(new FileWriter(outFile));
@@ -392,10 +427,9 @@ public class Untangling {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 		
-		if ((this.untanglingArgs.getnArg().getValue() != -1l)
-		        && (this.untanglingArgs.getnArg().getValue() < artificialBlobs.size())) {
+		if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
 			final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
-			for (int i = 0; i < this.untanglingArgs.getnArg().getValue(); ++i) {
+			for (int i = 0; i < this.untanglingControl.getN(); ++i) {
 				final int r = random.nextInt(artificialBlobs.size());
 				selectedArtificialBlobs.add(artificialBlobs.remove(r));
 			}
@@ -406,8 +440,7 @@ public class Untangling {
 		final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 		
 		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
-		final UntanglingCollapse collapse = this.untanglingArgs.getCollapseArg().getValue();
-		switch (collapse) {
+		switch (this.untanglingControl.getCollapseMode()) {
 			case AVG:
 				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
 				break;
@@ -420,8 +453,7 @@ public class Untangling {
 		}
 		
 		// create the corresponding score aggregation model
-		final ScoreCombinationMode scoreAggregationMode = this.untanglingArgs.getScoreModeArg().getValue();
-		switch (scoreAggregationMode) {
+		switch (this.untanglingControl.getScoreMode()) {
 			case SUM:
 				this.aggregator = new SumAggregation<JavaChangeOperation>();
 				break;
@@ -450,7 +482,7 @@ public class Untangling {
 				break;
 			default:
 				throw new UnrecoverableError("Unknown score aggregation mode found: "
-				        + this.untanglingArgs.getScoreModeArg().getValue());
+				        + this.untanglingControl.getScoreMode());
 		}
 		
 		// for each artificial blob
@@ -466,7 +498,7 @@ public class Untangling {
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(blob.getLatestTransaction());
 			
 			// run the partitioning algorithm
-			if (!this.dryrun) {
+			if (!this.untanglingControl.isDryRun()) {
 				
 				final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
 				                                                                                                           blob.getAllChangeOperations(),
@@ -527,5 +559,4 @@ public class Untangling {
 			throw new UnrecoverableError(e.getMessage(), e);
 		}
 	}
-	
 }

@@ -16,19 +16,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.JavaStacktrace;
 import de.unisaarland.cs.st.moskito.infozilla.model.stacktrace.Stacktrace;
 
+/**
+ * The Class JavaStacktraceFilter.
+ */
 public class JavaStacktraceFilter extends StackTraceFilter {
 	
+	/** The text remover. */
 	private FilterTextRemover   textRemover;
 	
 	// Define a reusable Regular Expression for finding Java Stack Traces
+	/** The Constant JAVA_EXCEPTION. */
 	@SuppressWarnings ("unused")
 	private static final String JAVA_EXCEPTION = "^(([\\w<>\\$_]+\\.)+[\\w<>\\$_]+(Error|Exception){1}(\\s|:))";
+	
+	/** The Constant JAVA_REASON. */
 	@SuppressWarnings ("unused")
 	private static final String JAVA_REASON    = "(:?.*?)(at\\s+([\\w<>\\$_]+\\.)+[\\w<>\\$_]+\\s*\\(.+?\\.java(:)?(\\d+)?\\)";
+	
+	/** The Constant JAVA_TRACE. */
 	@SuppressWarnings ("unused")
 	private static final String JAVA_TRACE     = "(\\s*?at\\s+([\\w<>\\$_\\s]+\\.)+[\\w<>\\$_\\s]+\\s*\\(.+?\\.java(:)?(\\d+)?\\))*)";
 	
@@ -199,7 +212,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	}
 	
 	/**
-	 * Find Stacktraces or Causes that match against our exhaustive patterns
+	 * Find Stacktraces or Causes that match against our exhaustive patterns.
 	 * 
 	 * @param s
 	 *            The CharSequence to look in for Stack Traces or Causes
@@ -222,13 +235,17 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	}
 	
 	// Auto-generated Message from InfozillaFilter interface
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.stacktrace.StackTraceFilter#getOutputText()
+	 */
 	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
 	}
 	
 	/**
-	 * Get a List of Stacktraces that are inside the Text s
+	 * Get a List of Stacktraces that are inside the Text s.
 	 * 
 	 * @param inputSequence
 	 *            A CharSequence containing the Text to look for Stack Traces in
@@ -318,7 +335,44 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 		return stackTraces;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	// Auto-generated Message from InfozillaFilter interface
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.stacktrace.StackTraceFilter#runFilter(java.lang.String)
+	 */
 	@Override
 	public List<Stacktrace> runFilter(final String inputText) {
 		// Initialize TextRemover

@@ -8,10 +8,14 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 
+/**
+ * The Class MappableReport_.
+ */
 @javax.persistence.metamodel.StaticMetamodel (value = de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Nov 03 18:46:21 CET 2011")
 public class MappableReport_ extends MappableEntity_ {
 	
+	/** The report. */
 	public static volatile SingularAttribute<MappableReport, Report> report;
 }

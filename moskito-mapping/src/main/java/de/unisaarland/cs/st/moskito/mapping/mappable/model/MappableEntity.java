@@ -53,29 +53,44 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @DiscriminatorValue ("MAPPABLEENTITY")
 public abstract class MappableEntity implements Annotated {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2350328785752088197L;
+	
+	/** The generated id. */
 	private long              generatedId;
+	
+	/** The test. */
 	private int               test;
 	
 	/**
+	 * Gets the.
+	 * 
 	 * @param key
-	 * @return
+	 *            the key
+	 * @return the object
 	 */
 	@Transient
 	public abstract Object get(FieldKey key);
 	
 	/**
+	 * Gets the.
+	 * 
 	 * @param key
+	 *            the key
 	 * @param index
-	 * @return
+	 *            the index
+	 * @return the object
 	 */
 	@Transient
 	public abstract Object get(FieldKey key,
 	                           int index);
 	
 	/**
+	 * Gets the all.
+	 * 
 	 * @param keys
-	 * @return
+	 *            the keys
+	 * @return the all
 	 */
 	@Transient
 	public Map<FieldKey, Object> getAll(final FieldKey... keys) {
@@ -89,8 +104,11 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * Gets the any.
+	 * 
 	 * @param keys
-	 * @return
+	 *            the keys
+	 * @return the any
 	 */
 	@Transient
 	public Object getAny(final FieldKey... keys) {
@@ -107,8 +125,11 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * Gets the as one string.
+	 * 
 	 * @param keys
-	 * @return
+	 *            the keys
+	 * @return the as one string
 	 */
 	@Transient
 	public String getAsOneString(final FieldKey... keys) {
@@ -126,13 +147,17 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the base type.
+	 * 
+	 * @return the base type
 	 */
 	@Transient
 	public abstract Class<?> getBaseType();
 	
 	/**
-	 * @return
+	 * Gets the generated id.
+	 * 
+	 * @return the generated id
 	 */
 	@Id
 	@GeneratedValue
@@ -142,19 +167,29 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	@Transient
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
 	
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
 	@Transient
 	public abstract String getId();
 	
 	/**
+	 * Gets the size.
+	 * 
 	 * @param key
-	 * @return
+	 *            the key
+	 * @return the size
 	 */
 	@Transient
 	public int getSize(final FieldKey key) {
@@ -164,6 +199,11 @@ public abstract class MappableEntity implements Annotated {
 		                : -1;
 	}
 	
+	/**
+	 * Gets the test.
+	 * 
+	 * @return the test
+	 */
 	@Basic
 	@Access (AccessType.PROPERTY)
 	public int getTest() {
@@ -171,12 +211,16 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
+	 * Gets the text.
+	 * 
 	 * @return A composition of all text fields
 	 */
 	@Transient
 	public abstract String getText();
 	
 	/**
+	 * Sets the generated id.
+	 * 
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
@@ -184,12 +228,20 @@ public abstract class MappableEntity implements Annotated {
 		this.generatedId = generatedId;
 	}
 	
+	/**
+	 * Sets the test.
+	 * 
+	 * @param test
+	 *            the new test
+	 */
 	public void setTest(final int test) {
 		this.test = test;
 	}
 	
 	/**
-	 * @return
+	 * Supported.
+	 * 
+	 * @return the sets the
 	 */
 	@Transient
 	public abstract Set<FieldKey> supported();

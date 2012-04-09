@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
 		<artifactId>moskito</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>moskito-untangling</artifactId>
@@ -17,22 +17,22 @@
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-ppa</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-callgraph</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-changecouplings</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.uncommons.maths</groupId>
 			<artifactId>uncommons-maths</artifactId>
-			<version>1.2</version>
+			<version>1.2.2a</version>
 		</dependency>
 		<dependency>
 			<groupId>commons.math</groupId>

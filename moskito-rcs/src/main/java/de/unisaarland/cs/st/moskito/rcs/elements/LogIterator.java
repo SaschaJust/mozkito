@@ -91,12 +91,11 @@ public class LogIterator implements Iterator<LogEntry> {
 				Logger.debug("LogIterator: hasNext false due to done flag.");
 			}
 			return false;
-		} else {
-			if (Logger.logDebug()) {
-				Logger.debug("LogIterator: hasN" + this.endRevision);
-			}
-			return this.currentEntries.size() > 0;
 		}
+		if (Logger.logDebug()) {
+			Logger.debug("LogIterator: hasN" + this.endRevision);
+		}
+		return this.currentEntries.size() > 0;
 	}
 	
 	@Override
@@ -106,39 +105,38 @@ public class LogIterator implements Iterator<LogEntry> {
 				Logger.debug("LogIterator done flag is set.");
 			}
 			return null;
+		}
+		
+		if (Logger.logTrace()) {
+			Logger.trace("LogIterator.currentIndex: " + this.currentIndex);
+		}
+		
+		final LogEntry entry = this.currentEntries.get(this.currentIndex);
+		this.currentIndex++;
+		
+		if (entry.getRevision().equals(this.endRevision)
+		        || entry.getRevision().equals(this.repository.getEndRevision())) {
+			this.done = true;
 		} else {
 			
-			if (Logger.logTrace()) {
-				Logger.trace("LogIterator.currentIndex: " + this.currentIndex);
-			}
-			
-			final LogEntry entry = this.currentEntries.get(this.currentIndex);
-			this.currentIndex++;
-			
-			if (entry.getRevision().equals(this.endRevision)
-			        || entry.getRevision().equals(this.repository.getEndRevision())) {
-				this.done = true;
-			} else {
-				
-				if (this.currentIndex >= this.currentEntries.size()) {
-					if ((this.nextEntries != null) && this.nextEntries.isEmpty()) {
-						if (Logger.logDebug()) {
-							Logger.debug("LogIterator no more entries to be cached.");
-						}
-						this.done = true;
-					} else {
-						this.currentEntries = this.nextEntries;
-						this.nextEntries = null;
-						this.currentIndex = 0;
-						update();
+			if (this.currentIndex >= this.currentEntries.size()) {
+				if ((this.nextEntries != null) && this.nextEntries.isEmpty()) {
+					if (Logger.logDebug()) {
+						Logger.debug("LogIterator no more entries to be cached.");
 					}
+					this.done = true;
+				} else {
+					this.currentEntries = this.nextEntries;
+					this.nextEntries = null;
+					this.currentIndex = 0;
+					update();
 				}
 			}
-			if (Logger.logDebug()) {
-				Logger.debug("LogIterator.next(): " + entry.getRevision());
-			}
-			return entry;
 		}
+		if (Logger.logDebug()) {
+			Logger.debug("LogIterator.next(): " + entry.getRevision());
+		}
+		return entry;
 	}
 	
 	@Override

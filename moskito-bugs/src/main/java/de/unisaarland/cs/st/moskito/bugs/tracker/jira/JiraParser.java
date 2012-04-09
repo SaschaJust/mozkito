@@ -9,18 +9,43 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
+
+import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
+import com.atlassian.jira.rest.client.IssueRestClient;
+import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.NullProgressMonitor;
+import com.atlassian.jira.rest.client.RestClientException;
+import com.atlassian.jira.rest.client.domain.Attachment;
+import com.atlassian.jira.rest.client.domain.BasicComponent;
+import com.atlassian.jira.rest.client.domain.BasicIssueType;
+import com.atlassian.jira.rest.client.domain.BasicResolution;
+import com.atlassian.jira.rest.client.domain.BasicStatus;
+import com.atlassian.jira.rest.client.domain.BasicUser;
+import com.atlassian.jira.rest.client.domain.Field;
+import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.domain.IssueLink;
+import com.atlassian.jira.rest.client.domain.Version;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
-import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
@@ -32,8 +57,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class JiraParser.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class JiraParser implements Parser {
 	
@@ -42,79 +68,144 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
-	@Override
-	public Person getAssignedTo() {
+	/**
+	 * Resolve resolution.
+	 * 
+	 * @param resolutionString
+	 *            the resolution string
+	 * @return the resolution
+	 */
+	public static Resolution resolveResolution(final String resolutionString) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			if (resolutionString.equals("unresolved")) {
+				return Resolution.UNRESOLVED;
+			} else if (resolutionString.equals("fixed")) {
+				return Resolution.RESOLVED;
+			} else if (resolutionString.equals("won't fix")) {
+				return Resolution.WONT_FIX;
+			} else if (resolutionString.equals("duplicate")) {
+				return Resolution.DUPLICATE;
+			} else if (resolutionString.equals("incomplete")) {
+				return Resolution.UNRESOLVED;
+			} else if (resolutionString.equals("cannot reproduce")) {
+				return Resolution.WORKS_FOR_ME;
+			} else if (resolutionString.equals("not a bug")) {
+				return Resolution.INVALID;
+			} else {
+				return Resolution.UNKNOWN;
+			}
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachmentEntries()
+	/**
+	 * Resolve severity.
+	 * 
+	 * @param severity
+	 *            the severity
+	 * @return the severity
 	 */
-	@Override
-	public List<AttachmentEntry> getAttachmentEntries() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
+	public static Severity resolveSeverity(final String severity) {
+		if (severity.equals("blocker")) {
+			return Severity.BLOCKER;
+		} else if (severity.equals("critical")) {
+			return Severity.CRITICAL;
+		} else if (severity.equals("major")) {
+			return Severity.MAJOR;
+		} else if (severity.equals("minor")) {
+			return Severity.MINOR;
+		} else if (severity.equals("trivial")) {
+			return Severity.TRIVIAL;
+		} else if (severity.equals("")) {
 			return null;
-		} finally {
-			// POSTCONDITIONS
+		} else {
+			return Severity.UNKNOWN;
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
+	/**
+	 * Resolve status.
+	 * 
+	 * @param statusStr
+	 *            the status str
+	 * @return the status
 	 */
-	
-	@Override
-	public String getCategory() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
+	public static Status resolveStatus(final String statusStr) {
+		if (statusStr.equals("open")) {
+			return Status.NEW;
+		} else if (statusStr.equals("in progress")) {
+			return Status.IN_PROGRESS;
+		} else if (statusStr.equals("reopened")) {
+			return Status.REOPENED;
+		} else if (statusStr.equals("resolved")) {
+			return Status.VERIFIED;
+		} else if (statusStr.equals("closed")) {
+			return Status.CLOSED;
+		} else if (statusStr.equals("patch reviewed")) {
+			return Status.VERIFIED;
+		} else if (statusStr.equals("ready to review")) {
+			return Status.REVIEWPENDING;
+		} else {
+			return Status.UNKNOWN;
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComment(int)
+	/**
+	 * Resolve type.
+	 * 
+	 * @param typeStr
+	 *            the type str
+	 * @return the type
 	 */
-	
-	public Comment getComment(final int index) {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
+	public static Type resolveType(final String typeStr) {
+		if (typeStr.equals("bug")) {
+			return Type.BUG;
+		} else if (typeStr.equals("new feature")) {
+			return Type.RFE;
+		} else if (typeStr.equals("task")) {
+			return Type.TASK;
+		} else if (typeStr.equals("improvement")) {
+			return Type.IMPROVEMENT;
+		} else if (typeStr.equals("test")) {
+			return Type.TEST;
+		} else if (typeStr.equals("")) {
+			return Type.OTHER;
 		}
+		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComments()
-	 */
+	/** The rest client. */
+	private JiraRestClient            restClient;
 	
-	@Override
-	public SortedSet<Comment> getComments() {
+	/** The issue. */
+	private Issue                     issue;
+	
+	/** The fetch time. */
+	private DateTime                  fetchTime;
+	
+	/** The tracker. */
+	private Tracker                   tracker;
+	
+	/** The history. */
+	private SortedSet<HistoryElement> history = null;
+	
+	/** The resolver. */
+	private Person                    resolver;
+	
+	/**
+	 * Instantiates a new jira parser.
+	 * 
+	 * @param restClient
+	 *            the rest client
+	 */
+	public JiraParser(final JiraRestClient restClient) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			this.restClient = restClient;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -126,11 +217,15 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getComponent() {
+	public Person getAssignedTo() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			//
+			final BasicUser assignee = this.issue.getAssignee();
+			if (assignee != null) {
+				return new Person(assignee.getDisplayName(), assignee.getName(), null);
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -142,13 +237,122 @@ public class JiraParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachmentEntries()
+	 */
+	@Override
+	public List<AttachmentEntry> getAttachmentEntries() {
+		// PRECONDITIONS
+		
+		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
+		
+		try {
+			for (final Attachment attachment : this.issue.getAttachments()) {
+				final URI link = attachment.getSelf();
+				final String[] linkParts = link.toASCIIString().split("/");
+				int idIndex = 0;
+				for (idIndex = 0; idIndex < linkParts.length; ++idIndex) {
+					if (linkParts[idIndex].equals("attachment")) {
+						break;
+					}
+				}
+				
+				final AttachmentEntry aEntry = new AttachmentEntry(linkParts[++idIndex]);
+				final BasicUser author = attachment.getAuthor();
+				aEntry.setAuthor(new Person(null, author.getDisplayName(), author.getName()));
+				aEntry.setFilename(attachment.getFilename());
+				aEntry.setTimestamp(attachment.getCreationDate());
+				try {
+					aEntry.setLink(attachment.getContentUri().toURL());
+				} catch (final MalformedURLException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				}
+				aEntry.setMime(attachment.getMimeType());
+				aEntry.setSize(attachment.getSize());
+				result.add(aEntry);
+			}
+			return result;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
+	 */
+	@Override
+	public String getCategory() {
+		// PRECONDITIONS
+		
+		try {
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComments()
+	 */
+	@Override
+	public SortedSet<Comment> getComments() {
+		// PRECONDITIONS
+		
+		final SortedSet<Comment> result = new TreeSet<Comment>();
+		try {
+			int counter = 0;
+			for (final com.atlassian.jira.rest.client.domain.Comment comment : this.issue.getComments()) {
+				final BasicUser jiraAuthor = comment.getAuthor();
+				final Person author = new Person(jiraAuthor.getName(), jiraAuthor.getDisplayName(), null);
+				result.add(new Comment(counter++, author, comment.getCreationDate(), comment.getBody()));
+			}
+			return result;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
+	 */
+	@Override
+	public String getComponent() {
+		// PRECONDITIONS
+		
+		try {
+			final StringBuilder components = new StringBuilder();
+			final Iterator<BasicComponent> componentIter = this.issue.getComponents().iterator();
+			while (componentIter.hasNext()) {
+				components.append(componentIter.next().getName());
+				if (componentIter.hasNext()) {
+					components.append(",");
+				}
+			}
+			if (components.length() > 0) {
+				return components.toString();
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
+	 */
 	@Override
 	public DateTime getCreationTimestamp() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.issue.getCreationDate();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -158,14 +362,12 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
 	 */
-	
 	@Override
 	public String getDescription() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.issue.getDescription();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -175,30 +377,12 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryElement(int)
 	 */
-	
-	public HistoryElement getHistoryElement(final int index) {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
-	 */
-	
 	@Override
-	public SortedSet<HistoryElement> getHistoryElements() {
+	public DateTime getFetchTime() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.fetchTime;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -208,30 +392,29 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
-	
-	public int getHistoryLength() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return 0;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
-	 */
-	
 	@Override
-	public Long getId() {
+	public SortedSet<HistoryElement> getHistoryElements() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			if (this.history == null) {
+				final StringBuilder historyUrlBuilder = new StringBuilder();
+				historyUrlBuilder.append(this.tracker.getUri());
+				historyUrlBuilder.append("/browse/");
+				historyUrlBuilder.append(getId());
+				historyUrlBuilder.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+				final JiraHistoryParser jiraHistoryParser = new JiraHistoryParser(getId(),
+				                                                                  new URI(historyUrlBuilder.toString()));
+				jiraHistoryParser.parse();
+				this.history = jiraHistoryParser.getHistory();
+				this.resolver = jiraHistoryParser.getResolver();
+			}
+			return this.history;
+		} catch (final URISyntaxException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return new TreeSet<HistoryElement>();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -241,14 +424,12 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
 	 */
-	
 	@Override
-	public Set<String> getKeywords() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.issue.getKey();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -258,14 +439,22 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
-	
 	@Override
-	public DateTime getLastUpdateTimestamp() {
+	public Set<String> getKeywords() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			final Set<String> result = new HashSet<String>();
+			final Field field = this.issue.getField("labels");
+			if (field.getValue() != null) {
+				final String fields = field.getValue().toString();
+				final String[] split = fields.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "")
+				                             .split(",");
+				for (final String s : split) {
+					result.add(s);
+				}
+			}
+			return result;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -275,63 +464,12 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getProduct()
 	 */
-	
-	public int getNumberOfAttachments() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return 0;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolution()
-	 */
-	
-	public int getNumberOfComments() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return 0;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
-	 */
-	
 	@Override
-	public Priority getPriority() {
+	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
-	 */
-	
-	@Override
-	public String getProduct() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
+			return this.issue.getUpdateDate();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -341,14 +479,12 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
 	 */
-	
 	@Override
-	public Resolution getResolution() {
+	public Priority getPriority() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return Priority.NORMAL;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -358,13 +494,11 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
-	
 	@Override
-	public DateTime getResolutionTimestamp() {
+	public String getProduct() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -375,13 +509,16 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
-	
 	@Override
-	public Person getResolver() {
+	public Resolution getResolution() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicResolution basicResolution = this.issue.getResolution();
+			if ((basicResolution != null) && (!basicResolution.getName().isEmpty())) {
+				final String resolutionString = basicResolution.getName().toLowerCase();
+				return resolveResolution(resolutionString);
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -392,13 +529,18 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
-	
 	@Override
-	public String getScmFixVersion() {
+	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final Field field = this.issue.getField("resolved");
+			if (field != null) {
+				final String dateStr = field.getValue().toString();
+				if (!dateStr.isEmpty()) {
+					return DateTimeUtils.parseDate(dateStr);
+				}
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -409,14 +551,13 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
-	
 	@Override
-	public Severity getSeverity() {
+	public Person getResolver() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			getHistoryElements();
+			return this.resolver;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -426,47 +567,11 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
-	
 	@Override
-	public Set<Long> getSiblings() {
+	public String getScmFixVersion() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
-	 */
-	
-	@Override
-	public Status getStatus() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
-	 */
-	
-	@Override
-	public String getSubject() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
 			return null;
 		} finally {
 			// POSTCONDITIONS
@@ -479,13 +584,39 @@ public class JiraParser implements Parser {
 	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 */
 	@Override
-	public Person getSubmitter() {
+	public Severity getSeverity() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			if ((this.issue.getPriority() != null) && (!this.issue.getPriority().getName().isEmpty())) {
+				final String priority = this.issue.getPriority().getName().toLowerCase();
+				return resolveSeverity(priority);
+			}
 			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
+	@Override
+	public Set<String> getSiblings() {
+		// PRECONDITIONS
+		
+		try {
+			final Set<String> result = new HashSet<String>();
+			for (final IssueLink link : this.issue.getIssueLinks()) {
+				result.add(link.getTargetIssueKey());
+			}
+			return result;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -499,61 +630,159 @@ public class JiraParser implements Parser {
 	 */
 	
 	@Override
-	public String getSummary() {
+	public Status getStatus() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicStatus basicStatus = this.issue.getStatus();
+			if ((basicStatus != null) && (!basicStatus.getName().isEmpty())) {
+				final String statusStr = basicStatus.getName().toLowerCase();
+				return resolveStatus(statusStr);
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 */
+	@Override
+	public String getSubject() {
+		// PRECONDITIONS
+		
+		try {
+			return this.issue.getSummary();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 */
+	@Override
+	public Person getSubmitter() {
+		// PRECONDITIONS
+		
+		try {
+			final BasicUser reporter = this.issue.getReporter();
+			if (reporter != null) {
+				return new Person(reporter.getName(), reporter.getDisplayName(), null);
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 */
+	@Override
+	public String getSummary() {
+		// PRECONDITIONS
+		
+		try {
+			return this.issue.getDescription();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 */
 	@Override
 	public Type getType() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final BasicIssueType issueType = this.issue.getIssueType();
+			if (issueType != null) {
+				final String typeStr = issueType.getName().toLowerCase();
+				return resolveType(typeStr);
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
 	@Override
 	public String getVersion() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			final StringBuilder result = new StringBuilder();
+			final Iterator<Version> iterator = this.issue.getAffectedVersions().iterator();
+			while (iterator.hasNext()) {
+				result.append(iterator.next().getName());
+				if (iterator.hasNext()) {
+					result.append(",");
+				}
+			}
+			if (result.length() > 0) {
+				return result.toString();
+			}
 			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			this.tracker = tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	 */
 	@Override
-	public void setXMLReport(final XmlReport report) {
+	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			
+			final IssueRestClient issueClient = this.restClient.getIssueClient();
+			System.err.println(reportLink.getBugId());
+			this.issue = issueClient.getIssue(reportLink.getBugId(), new NullProgressMonitor());
+			if (this.issue == null) {
+				return false;
+			}
+			this.fetchTime = new DateTime();
+			return true;
+			
+		} catch (final RestClientException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return false;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
 }

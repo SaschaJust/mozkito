@@ -18,10 +18,16 @@ package de.unisaarland.cs.st.moskito.infozilla.model;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
+ * The Interface Attachable.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public interface Attachable {
 	
+	/**
+	 * Gets the attachment.
+	 *
+	 * @return the attachment
+	 */
 	public Attachment getAttachment();
 }

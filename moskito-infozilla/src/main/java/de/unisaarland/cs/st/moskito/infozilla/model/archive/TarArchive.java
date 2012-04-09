@@ -23,16 +23,25 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
+ * The Class TarArchive.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class TarArchive extends Archive {
 	
+	/**
+	 * Instantiates a new tar archive.
+	 *
+	 * @param attachment the attachment
+	 */
 	public TarArchive(final Attachment attachment) {
 		super(attachment);
 		// TODO Auto-generated constructor stub
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.model.archive.Archive#extract()
+	 */
 	@Override
 	public File extract() throws IOException {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);

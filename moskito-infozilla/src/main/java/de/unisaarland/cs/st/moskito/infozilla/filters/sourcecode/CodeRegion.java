@@ -39,13 +39,13 @@ package de.unisaarland.cs.st.moskito.infozilla.filters.sourcecode;
  */
 public class CodeRegion implements Comparable<CodeRegion> {
 	
-	/** Stores the start position of the source code region in the original input text */
+	/** Stores the start position of the source code region in the original input text. */
 	public int    start = 0;
 	
-	/** Stores the end position of the source code region in the original input text */
+	/** Stores the end position of the source code region in the original input text. */
 	public int    end   = 0;
 	
-	/** Stores the textual representation of the source code region */
+	/** Stores the textual representation of the source code region. */
 	public String text;
 	
 	/**
@@ -55,16 +55,12 @@ public class CodeRegion implements Comparable<CodeRegion> {
 	public String keyword;
 	
 	/**
-	 * Standard Constructor
-	 * 
-	 * @param start
-	 *            start position of code region
-	 * @param end
-	 *            end position of code region
-	 * @param keyword
-	 *            type of code region
-	 * @param text
-	 *            textual representation
+	 * Standard Constructor.
+	 *
+	 * @param start start position of code region
+	 * @param end end position of code region
+	 * @param keyword type of code region
+	 * @param text textual representation
 	 */
 	public CodeRegion(int start, int end, String keyword, String text) {
 		super();
@@ -75,10 +71,9 @@ public class CodeRegion implements Comparable<CodeRegion> {
 	}
 	
 	/**
-	 * Copy Constructor
-	 * 
-	 * @param that
-	 *            another <code>CodeRegion</code> object to copy from.
+	 * Copy Constructor.
+	 *
+	 * @param that another <code>CodeRegion</code> object to copy from.
 	 */
 	public CodeRegion(CodeRegion that) {
 		super();
@@ -88,6 +83,9 @@ public class CodeRegion implements Comparable<CodeRegion> {
 		this.text = new String(that.text);
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(CodeRegion that) {
 		if (this.start < that.start) return -1;
 		if (this.start > that.start) return +1;

@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
@@ -42,15 +42,37 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
 
+/**
+ * The Class LinearRegressionAggregation.
+ * 
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
+	/** The TRAI n_ fraction. */
 	private static double        TRAIN_FRACTION = .5;
+	
+	/** The model. */
 	private LinearRegression     model          = new LinearRegression();
+	
+	/** The trained. */
 	private boolean              trained        = false;
+	
+	/** The attributes. */
 	private ArrayList<Attribute> attributes     = new ArrayList<Attribute>();
+	
+	/** The untangling. */
 	private final Untangling     untangling;
+	
+	/** The training instances. */
 	private Instances            trainingInstances;
 	
+	/**
+	 * Instantiates a new linear regression aggregation.
+	 * 
+	 * @param untangling
+	 *            the untangling
+	 */
 	public LinearRegressionAggregation(final Untangling untangling) {
 		super();
 		this.untangling = untangling;
@@ -65,15 +87,15 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 					this.trained = true;
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final IOException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
-						Logger.error(e.getMessage(), e);
+						Logger.error(e);
 					}
 				}
 				
@@ -103,12 +125,16 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			return this.model.distributionForInstance(instance)[0];
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.ScoreAggregation#getInfo()
+	 */
 	@Override
 	public String getInfo() {
 		final StringBuilder sb = new StringBuilder();
@@ -121,6 +147,8 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	/**
 	 * Train the underlying linear regression.
 	 * 
+	 * @param transactionSet
+	 *            the transaction set
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
@@ -202,11 +230,11 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			}
 		} catch (final FileNotFoundException e1) {
 			if (Logger.logError()) {
-				Logger.error(e1.getMessage(), e1);
+				Logger.error(e1);
 			}
 		} catch (final IOException e1) {
 			if (Logger.logError()) {
-				Logger.error(e1.getMessage(), e1);
+				Logger.error(e1);
 			}
 		}
 		

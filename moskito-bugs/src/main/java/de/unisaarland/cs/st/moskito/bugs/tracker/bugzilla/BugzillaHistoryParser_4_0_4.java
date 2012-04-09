@@ -1,22 +1,29 @@
+/*******************************************************************************
+ * Copyright 2012 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.ioda.exceptions.FetchException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
@@ -43,7 +50,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	private final URI                       historyUri;
 	
 	/** The report id. */
-	private final long                      reportId;
+	private final String                    reportId;
 	
 	/** The resolver. */
 	private Person                          resolver;
@@ -57,6 +64,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	/** The parsed. */
 	private boolean                         parsed    = false;
 	
+	/** The skip regex. */
 	private static Regex                    skipRegex = new Regex("No changes have been made to this bug yet.");
 	
 	/**
@@ -67,7 +75,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	 * @param reportId
 	 *            the report id
 	 */
-	public BugzillaHistoryParser_4_0_4(final URI historyUri, final long reportId) {
+	public BugzillaHistoryParser_4_0_4(final URI historyUri, final String reportId) {
 		this.historyUri = historyUri;
 		this.reportId = reportId;
 		
@@ -103,6 +111,10 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		return this.resolver;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaHistoryParser#hasParsed()
+	 */
 	@Override
 	public boolean hasParsed() {
 		return this.parsed;
@@ -111,18 +123,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	/**
 	 * Parses the.
 	 * 
-	 * @throws UnsupportedProtocolException
-	 *             the unsupported protocol exception
-	 * @throws FetchException
-	 *             the fetch exception
-	 * @throws JDOMException
-	 *             the jDOM exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws SecurityException
-	 *             the security exception
-	 * @throws NoSuchFieldException
-	 *             the no such field exception
+	 * @return true, if successful
 	 */
 	@Override
 	@NoneNull
@@ -137,8 +138,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		try {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
 			
-			final List<List<RegexGroup>> findAll = skipRegex.findAll(rawContent.getContent());
-			if ((findAll != null) && !findAll.isEmpty()) {
+			final MultiMatch multiMatch = skipRegex.findAll(rawContent.getContent());
+			if (multiMatch == null) {
 				if (Logger.logDebug()) {
 					Logger.debug("Skipping history for bug report " + this.reportId
 					        + ". No changes have been made to this bug yet.");
@@ -150,7 +151,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			final Element bugzillaBody = document.getElementById("bugzilla-body");
 			if (bugzillaBody == null) {
 				if (Logger.logError()) {
-					Logger.error(errorHeader + "Could not find bugzills-body.");
+					Logger.error(errorHeader + "Could not find bugzilla-body.");
 				}
 				return false;
 			}
@@ -249,12 +250,11 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					final Person oldValue = new Person(removed, null, null);
 					final Person newValue = new Person(added, null, null);
 					hElement.addChangedValue(field, oldValue, newValue);
-				} else if (what.equals("target milestone")) {
-					
-				} else if (what.equals("cc")) {
-					// TODO to be implemented
 				} else if (what.equals("component")) {
 					field = ("component");
+					hElement.addChangedValue(field, removed, added);
+				} else if (what.equals("version")) {
+					field = ("version");
 					hElement.addChangedValue(field, removed, added);
 				} else if (what.equals("summary")) {
 					field = ("summary");
@@ -263,10 +263,6 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					field = ("severity");
 					hElement.addChangedValue(field, BugzillaParser.getSeverity(removed),
 					                         BugzillaParser.getSeverity(added));
-				} else if (what.equals("blocks")) {
-					// TODO how shall I do that?
-				} else if (what.equals("depends on")) {
-					// TODO how shall I do that?
 				} else if (what.equals("status")) {
 					field = ("status");
 					hElement.addChangedValue(field, BugzillaParser.getStatus(removed), BugzillaParser.getStatus(added));
@@ -282,7 +278,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error("Could not parse bugzilla report history.", e);
+				Logger.error(e, "Could not parse bugzilla report history.");
 			}
 		}
 		this.parsed = true;

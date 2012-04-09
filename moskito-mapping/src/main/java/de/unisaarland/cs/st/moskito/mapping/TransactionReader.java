@@ -19,39 +19,44 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.settings.MappingSettings;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class TransactionReader.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TransactionReader extends Source<RCSTransaction> {
 	
+	/** The iterator. */
 	private Iterator<RCSTransaction> iterator;
 	
 	/**
+	 * Instantiates a new transaction reader.
+	 * 
 	 * @param threadGroup
-	 * @param name
+	 *            the thread group
 	 * @param settings
+	 *            the settings
 	 * @param persistenceUtil
+	 *            the persistence util
 	 */
-	public TransactionReader(final Group threadGroup, final MappingSettings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public TransactionReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				List<RCSTransaction> list = persistenceUtil.load(criteria);
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final List<RCSTransaction> list = persistenceUtil.load(criteria);
 				TransactionReader.this.iterator = list.iterator();
 			}
 		};
@@ -61,7 +66,7 @@ public class TransactionReader extends Source<RCSTransaction> {
 			@Override
 			public void process() {
 				if (TransactionReader.this.iterator.hasNext()) {
-					RCSTransaction report = TransactionReader.this.iterator.next();
+					final RCSTransaction report = TransactionReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + report);

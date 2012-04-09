@@ -1,15 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
 
@@ -23,20 +26,49 @@ import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.DayTimeDiff;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
+/**
+ * The Class UniversalTempParentsMetrics.
+ *
+ * @param <T> the generic type
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ */
 public class UniversalTempParentsMetrics<T> {
 	
+	/** The max temp parent depth1. */
 	private static String maxTempParentDepth1  = "maxTempParentDepth_1";
+	
+	/** The max temp parent depth2. */
 	private static String maxTempParentDepth2  = "maxTempParentDepth_2";
+	
+	/** The max temp parent depth5. */
 	private static String maxTempParentDepth5  = "maxTempParentDepth_5";
+	
+	/** The max temp parent depth10. */
 	private static String maxTempParentDepth10 = "maxTempParentDepth_10";
+	
+	/** The max temp parent depth14. */
 	private static String maxTempParentDepth14 = "maxTempParentDepth_14";
 	
+	/** The num temp parents1. */
 	private static String numTempParents1      = "numTempParents_1";
+	
+	/** The num temp parents2. */
 	private static String numTempParents2      = "numTempParents_2";
+	
+	/** The num temp parents5. */
 	private static String numTempParents5      = "numTempParents_5";
+	
+	/** The num temp parents10. */
 	private static String numTempParents10     = "numTempParents_10";
+	
+	/** The num temp parents14. */
 	private static String numTempParents14     = "numTempParents_14";
 	
+	/**
+	 * Gets the metric names.
+	 *
+	 * @return the metric names
+	 */
 	public static Collection<String> getMetricNames() {
 		Collection<String> result = new LinkedList<String>();
 		result.add(maxTempParentDepth1);
@@ -52,20 +84,44 @@ public class UniversalTempParentsMetrics<T> {
 		return result;
 	}
 	
+	/** The genealogy. */
 	private ChangeGenealogy<T> genealogy;
+	
+	/** The day time diff. */
 	private DayTimeDiff<T>     dayTimeDiff;
+	
+	/** The parents_1. */
 	private Set<String>        parents_1  = new HashSet<String>();
+	
+	/** The parents_2. */
 	private Set<String>        parents_2  = new HashSet<String>();
+	
+	/** The parents_5. */
 	private Set<String>        parents_5  = new HashSet<String>();
+	
+	/** The parents_10. */
 	private Set<String>        parents_10 = new HashSet<String>();
 	
+	/** The parents_14. */
 	private Set<String>        parents_14 = new HashSet<String>();
 	
+	/**
+	 * Instantiates a new universal temp parents metrics.
+	 *
+	 * @param genealogy the genealogy
+	 * @param dayTimeDiff the day time diff
+	 */
 	public UniversalTempParentsMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
 		this.genealogy = genealogy;
 		this.dayTimeDiff = dayTimeDiff;
 	}
 	
+	/**
+	 * Handle.
+	 *
+	 * @param node the node
+	 * @return the collection
+	 */
 	public Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> result = new ArrayList<GenealogyMetricValue>(10);
 		
@@ -99,6 +155,14 @@ public class UniversalTempParentsMetrics<T> {
 		return result;
 	}
 	
+	/**
+	 * Longest path.
+	 *
+	 * @param originalNode the original node
+	 * @param node the node
+	 * @param seen the seen
+	 * @return the int[]
+	 */
 	private int[] longestPath(T originalNode,
 	                          T node,
 	                          Collection<T> seen) {

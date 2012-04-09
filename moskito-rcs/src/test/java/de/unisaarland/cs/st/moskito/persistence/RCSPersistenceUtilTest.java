@@ -19,20 +19,50 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class RCSPersistenceUtilTest.
+ */
 public class RCSPersistenceUtilTest extends MoskitoTest {
 	
+	/** The t_280b1b. */
 	private RCSTransaction t_280b1b;
+	
+	/** The t_702abf. */
 	private RCSTransaction t_702abf;
+	
+	/** The t_cce07f. */
 	private RCSTransaction t_cce07f;
+	
+	/** The t_94f8b9. */
 	private RCSTransaction t_94f8b9;
+	
+	/** The t_5813ab. */
 	private RCSTransaction t_5813ab;
+	
+	/** The t_8bc067. */
 	private RCSTransaction t_8bc067;
+	
+	/** The t_9f6f10. */
 	private RCSTransaction t_9f6f10;
+	
+	/** The t_6bfee3. */
 	private RCSTransaction t_6bfee3;
+	
+	/** The t_45702d. */
 	private RCSTransaction t_45702d;
+	
+	/** The t_9c7c6d. */
 	private RCSTransaction t_9c7c6d;
+	
+	/** The t_d52295. */
 	private RCSTransaction t_d52295;
 	
+	/**
+	 * Setup.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @return the list
+	 */
 	private List<RCSTransaction> setup(final PersistenceUtil persistenceUtil) {
 		/*
 		 * @formatter:off
@@ -152,6 +182,9 @@ public class RCSPersistenceUtilTest extends MoskitoTest {
 		return tList;
 	}
 	
+	/**
+	 * Test branch asc.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testBranchASC() {
@@ -191,6 +224,9 @@ public class RCSPersistenceUtilTest extends MoskitoTest {
 		
 	}
 	
+	/**
+	 * Test branch desc.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testBranchDESC() {
@@ -230,6 +266,9 @@ public class RCSPersistenceUtilTest extends MoskitoTest {
 		
 	}
 	
+	/**
+	 * Test previous desc.
+	 */
 	@Test
 	@DatabaseSettings (unit = "rcs")
 	public void testPreviousDESC() {
@@ -237,6 +276,7 @@ public class RCSPersistenceUtilTest extends MoskitoTest {
 		setup(getPersistenceUtil());
 		final RCSTransaction t = getPersistenceUtil().loadById(this.t_9f6f10.getId(), RCSTransaction.class);
 		
+		@SuppressWarnings ("deprecation")
 		final Iterator<RCSTransaction> iterator = RCSPersistenceUtil.getPreviousTransactions(getPersistenceUtil(), t,
 		                                                                                     TransactionSetOrder.DESC)
 		                                                            .iterator();

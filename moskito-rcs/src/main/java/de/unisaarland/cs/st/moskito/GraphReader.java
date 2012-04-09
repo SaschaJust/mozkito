@@ -21,11 +21,11 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.RepositorySettings;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -38,7 +38,7 @@ public class GraphReader extends Source<RCSTransaction> {
 	 * @param name
 	 * @param settings
 	 */
-	public GraphReader(final Group threadGroup, final RepositorySettings settings, final PersistenceUtil persistenceUtil) {
+	public GraphReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
 		

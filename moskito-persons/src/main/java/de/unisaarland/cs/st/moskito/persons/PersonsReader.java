@@ -53,7 +53,7 @@ public class PersonsReader extends Source<PersonContainer> {
 				final List<PersonContainer> containerList = persistenceUtil.load(criteria);
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Analyzing " + containerList.size() + " person containers.");
+					Logger.debug(String.format(Messages.getString("PersonsReader.analzying"), containerList.size())); //$NON-NLS-1$
 				}
 				PersonsReader.this.iterator = containerList.listIterator();
 			}

@@ -9,9 +9,14 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,13 +26,23 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.MimeUtils;
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import net.ownhero.dev.regex.RegexGroup;
 
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,6 +50,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
+import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
@@ -48,8 +64,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MantisParser.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MantisParser implements Parser {
 	
@@ -58,6 +75,13 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
+	/**
+	 * Gets the priority.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the priority
+	 */
 	private static Priority getPriority(final String s) {
 		if (s == null) {
 			return null;
@@ -80,6 +104,13 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Gets the resolution.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the resolution
+	 */
 	private static Resolution getResolution(final String s) {
 		if (s == null) {
 			return null;
@@ -106,6 +137,13 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Gets the severity.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the severity
+	 */
 	private static Severity getSeverity(final String s) {
 		if (s == null) {
 			return null;
@@ -124,6 +162,13 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Gets the status.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the status
+	 */
 	private static Status getStatus(final String s) {
 		if (s == null) {
 			return null;
@@ -146,6 +191,13 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Gets the type.
+	 * 
+	 * @param s
+	 *            the s
+	 * @return the type
+	 */
 	private static Type getType(final String s) {
 		if (s == null) {
 			return null;
@@ -163,31 +215,56 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/** The document. */
 	private Document                        document;
 	
+	/** The main content table. */
 	private Element                         mainContentTable;
 	
+	/** The attachment regex. */
 	private final Regex                     attachmentRegex   = new Regex(
 	                                                                      "({FILE}[^ ]+)\\s\\(({SIZE}[0-9,]+)\\)\\s({DATE}[1-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]\\s[0-2][0-9]:[0-5][0-9])\\s({URL}https://[^ ]+)");
 	
+	/** The attachment id regex. */
 	private final Regex                     attachmentIdRegex = new Regex("file_id=({FILE_ID}\\d+)");
+	
+	/** The size regex. */
 	private final Regex                     sizeRegex         = new Regex("\\(({SIZE}[0-9,]+)\\sbytes\\)");
 	
+	/** The project regex. */
 	private final Regex                     projectRegex      = new Regex("\\[({PRJECT}[^\\]]+)\\]");
 	
-	@SuppressWarnings ("unused")
+	/** The tracker. */
 	private Tracker                         tracker;
 	
+	/** The history elements. */
 	private final SortedSet<HistoryElement> historyElements   = null;
 	
+	/** The resolution timestamp. */
 	private DateTime                        resolutionTimestamp;
 	
+	/** The resolver. */
 	private Person                          resolver;
 	
+	/** The attachters. */
 	private final Map<String, Person>       attachters        = new HashMap<String, Person>();
 	
+	/** The report. */
 	private XmlReport                       report;
 	
+	/** The fetch time. */
+	private DateTime                        fetchTime;
+	
+	/**
+	 * Adds the change field.
+	 * 
+	 * @param historyElement
+	 *            the history element
+	 * @param field
+	 *            the field
+	 * @param change
+	 *            the change
+	 */
 	private void addChangeField(final HistoryElement historyElement,
 	                            final String field,
 	                            final String change) {
@@ -260,6 +337,79 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/**
+	 * Check raw.
+	 * 
+	 * @param rawReport
+	 *            the raw report
+	 * @return true, if successful
+	 */
+	public boolean checkRAW(final RawContent rawReport) {
+		Regex regex = new Regex("Issue\\s+\\d+\\s+not\\s+found.");
+		MultiMatch findAll = regex.findAll(rawReport.getContent());
+		if (findAll != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+				        + ". checkRaw() failed: issue seems not to exist.");
+			}
+			return false;
+		}
+		regex = new Regex("Access Denied.");
+		findAll = regex.findAll(rawReport.getContent());
+		if (findAll != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+				        + ". checkRaw() failed: issue requires special permission.");
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Tracker#createDocument(de.unisaarland.cs.st.moskito.bugs.tracker.RawReport
+	 * )
+	 */
+	/**
+	 * Creates the document.
+	 * 
+	 * @param rawReport
+	 *            the raw report
+	 * @return the xml report
+	 */
+	public XmlReport createDocument(final RawContent rawReport) {
+		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+		
+		try {
+			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+			final org.jdom.Document document = saxBuilder.build(reader);
+			reader.close();
+			
+			return new XmlReport(rawReport, document);
+		} catch (final TransformerFactoryConfigurationError e) {
+			if (Logger.logError()) {
+				Logger.error(e, "Cannot create XML document!");
+			}
+		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e, "Cannot create XML document!");
+			}
+		} catch (final JDOMException e) {
+			if (Logger.logError()) {
+				Logger.error(e, "Cannot create XML document!");
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
+	 */
+	
 	@Override
 	public Person getAssignedTo() {
 		// PRECONDITIONS
@@ -278,6 +428,11 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComment(int)
+	 */
 	
 	@Override
 	public List<AttachmentEntry> getAttachmentEntries() {
@@ -302,15 +457,13 @@ public class MantisParser implements Parser {
 				final int index = reportLink.lastIndexOf("/");
 				link = reportLink.substring(0, index + 1) + link;
 				if ((attachmentEntry == null) || (!attachmentEntry.getLink().equals(link))) {
-					final List<List<RegexGroup>> attachmentIdGroups = this.attachmentIdRegex.findAll(link);
+					final MultiMatch attachmentIdGroups = this.attachmentIdRegex.findAll(link);
 					if ((attachmentIdGroups == null) || (attachmentIdGroups.size() != 1)) {
 						// throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
 						continue;
 					}
-					if (attachmentIdGroups.get(0).size() != 1) {
-						throw new UnrecoverableError("Could not extract attachment id from link url: " + link);
-					}
-					attachmentEntry = new AttachmentEntry(attachmentIdGroups.get(0).get(0).getMatch());
+					
+					attachmentEntry = new AttachmentEntry(attachmentIdGroups.getMatch(0).getGroup(1).getMatch());
 					attachmentEntry.setLink(link);
 					result.add(attachmentEntry);
 					final Element filenameTag = aTag.nextElementSibling();
@@ -318,16 +471,16 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find filenameTag for attachmentEntry.");
 					}
 					attachmentEntry.setFilename(filenameTag.text());
-					// try {
-					// FIXME Sascha told me to ignore this (he did use the words, but anyway).
-					// attachmentEntry.setMime(MimeUtils.determineMIME(new URL(attachmentEntry.getLink()).toURI()));
-					// } catch (final Exception e) {
-					// if (Logger.logError()) {
-					// Logger.error("Could not determine MIME type of attachment " + attachmentEntry.getFilename(),
-					// e);
-					// }
-					//
-					// }
+					try {
+						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(this.tracker.getUri().toASCIIString()
+						        + attachmentEntry.getLink()).toURI()));
+					} catch (final Exception e) {
+						if (Logger.logError()) {
+							Logger.error(e, "Could not determine MIME type of attachment '%s'.",
+							             attachmentEntry.getFilename());
+						}
+						
+					}
 					
 					final Person person = this.attachters.get(attachmentEntry.getFilename());
 					if (person == null) {
@@ -355,18 +508,18 @@ public class MantisParser implements Parser {
 			if (text.isEmpty()) {
 				return result;
 			}
-			final List<List<RegexGroup>> sizeStrings = this.sizeRegex.findAll(text);
+			final MultiMatch sizeStrings = this.sizeRegex.findAll(text);
 			if (result.size() != sizeStrings.size()) {
 				throw new UnrecoverableError("Found " + result.size() + " attachments but " + sizeStrings.size()
 				        + " file size strings.");
 			}
 			
 			for (int i = 0; i < sizeStrings.size(); ++i) {
-				final List<RegexGroup> list = sizeStrings.get(i);
-				if (list.isEmpty()) {
+				final Match match = sizeStrings.getMatch(i);
+				if (!match.hasGroups()) {
 					throw new UnrecoverableError("Did not find attachment size for attachment " + result.get(i).getId());
 				}
-				final String sizeString = list.get(0).getMatch().replace(",", "");
+				final String sizeString = match.getGroup(1).getMatch().replace(",", "");
 				try {
 					result.get(i).setSize(Long.parseLong(sizeString));
 				} catch (final NumberFormatException e) {
@@ -382,21 +535,31 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCategory()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
 	
+	/**
+	 * Gets the attachment id regex.
+	 * 
+	 * @return the attachment id regex
+	 */
 	public Regex getAttachmentIdRegex() {
 		return this.attachmentIdRegex;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComment(int)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getAttachmentEntries()
+	 */
+	/**
+	 * Gets the attachment regex.
+	 * 
+	 * @return the attachment regex
 	 */
 	Regex getAttachmentRegex() {
 		return this.attachmentRegex;
@@ -404,7 +567,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
 	 */
 	
 	@Override
@@ -421,7 +584,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
 	 */
 	
 	@Override
@@ -501,7 +664,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getDescription()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
 	 */
 	
 	@Override
@@ -521,7 +684,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryLength()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
 	 */
 	
 	@Override
@@ -538,7 +701,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getId()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
 	 */
 	
 	@Override
@@ -551,6 +714,7 @@ public class MantisParser implements Parser {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not detect description of bug report " + getId());
 				}
+				return null;
 			}
 			return cell.text().trim();
 		} finally {
@@ -560,9 +724,24 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfAttachments()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
 	 */
 	
+	@Override
+	public DateTime getFetchTime() {
+		// PRECONDITIONS
+		
+		try {
+			return this.fetchTime;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getHistoryElements()
+	 */
 	@Override
 	public SortedSet<HistoryElement> getHistoryElements() {
 		// PRECONDITIONS
@@ -632,22 +811,16 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getNumberOfComments()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
 	 */
 	
 	@Override
-	public Long getId() {
+	public String getId() {
 		// PRECONDITIONS
 		
 		try {
 			final Element td = getMainTableCell(2, 0);
-			final String stringId = td.text();
-			
-			try {
-				return Long.parseLong(stringId);
-			} catch (final NumberFormatException e) {
-				throw new UnrecoverableError("Could not interpret bug id `" + stringId + "` as long value.", e);
-			}
+			return td.text().trim();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -655,9 +828,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getPriority()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getKeywords()
 	 */
-	
 	@Override
 	public Set<String> getKeywords() {
 		// PRECONDITIONS
@@ -678,6 +850,11 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 */
+	
 	@Override
 	public DateTime getLastUpdateTimestamp() {
 		// PRECONDITIONS
@@ -692,9 +869,18 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
 	 */
 	
+	/**
+	 * Gets the main table cell.
+	 * 
+	 * @param row
+	 *            the row
+	 * @param column
+	 *            the column
+	 * @return the main table cell
+	 */
 	private Element getMainTableCell(final int row,
 	                                 final int column) {
 		final Elements trTags = this.mainContentTable.getElementsByTag("tr");
@@ -710,6 +896,20 @@ public class MantisParser implements Parser {
 		return tdTags.get(column);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 */
+	
+	/**
+	 * Gets the main table cell.
+	 * 
+	 * @param rowName
+	 *            the row name
+	 * @param column
+	 *            the column
+	 * @return the main table cell
+	 */
 	private Element getMainTableCell(final String rowName,
 	                                 final int column) {
 		final Elements trTags = this.mainContentTable.getElementsByTag("tr");
@@ -733,7 +933,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	/*
@@ -754,7 +954,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	
 	@Override
@@ -763,14 +963,14 @@ public class MantisParser implements Parser {
 		
 		try {
 			final String category = getCategory();
-			final List<List<RegexGroup>> findAll = this.projectRegex.findAll(category);
-			if (findAll.isEmpty() || findAll.get(0).isEmpty()) {
+			final MultiMatch findAll = this.projectRegex.findAll(category);
+			if ((findAll == null) || !findAll.getMatch(0).hasGroups()) {
 				if (Logger.logWarn()) {
 					Logger.warn("Could not find product description in category.");
 				}
 				return "";
 			}
-			return findAll.get(0).get(0).getMatch();
+			return findAll.getMatch(0).getGroup(1).getMatch();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -778,7 +978,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -795,9 +995,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
 	 */
-	
 	@Override
 	public DateTime getResolutionTimestamp() {
 		// PRECONDITIONS
@@ -812,7 +1011,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
@@ -829,7 +1028,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -850,7 +1050,9 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -865,11 +1067,15 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSiblings()
+	 */
 	@Override
-	public Set<Long> getSiblings() {
+	public Set<String> getSiblings() {
 		// PRECONDITIONS
 		
-		final Set<Long> result = new HashSet<Long>();
+		final Set<String> result = new HashSet<String>();
 		try {
 			final Element openRelationsDiv = this.document.getElementById("relationships_open");
 			if (openRelationsDiv == null) {
@@ -892,7 +1098,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find relationship id cell.");
 					}
 					try {
-						result.add(Long.parseLong(openTdTag.text().trim()));
+						result.add(openTdTag.text().trim());
 					} catch (final NumberFormatException e) {
 						throw new UnrecoverableError("Could not interprete relationship id " + openTdTag.text().trim()
 						        + " as Long.");
@@ -920,7 +1126,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find relationship id cell.");
 					}
 					try {
-						result.add(Long.parseLong(closedTdTag.text().trim()));
+						result.add(closedTdTag.text().trim());
 					} catch (final NumberFormatException e) {
 						throw new UnrecoverableError("Could not interprete relationship id "
 						        + closedTdTag.text().trim() + " as Long.");
@@ -935,9 +1141,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
-	
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -952,10 +1157,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
 	 */
-	
 	@Override
 	public String getSubject() {
 		// PRECONDITIONS
@@ -970,11 +1173,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
-	
 	@Override
 	public Person getSubmitter() {
 		// PRECONDITIONS
@@ -991,6 +1191,10 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 */
 	@Override
 	public String getSummary() {
 		// PRECONDITIONS
@@ -1003,6 +1207,10 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 */
 	@Override
 	public Type getType() {
 		// PRECONDITIONS
@@ -1015,6 +1223,10 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
 	@Override
 	public String getVersion() {
 		// PRECONDITIONS
@@ -1030,6 +1242,11 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
 		// PRECONDITIONS
@@ -1041,24 +1258,55 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	 */
 	@Override
-	public void setXMLReport(final XmlReport report) {
+	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		Elements tables = null;
 		try {
-			this.report = report;
-			this.document = Jsoup.parse(report.getContent());
+			
+			final URI uri = reportLink.getUri();
+			RawContent rawContent = null;
+			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
+				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
+			} else {
+				rawContent = IOUtils.fetch(uri);
+			}
+			this.fetchTime = new DateTime();
+			if (!checkRAW(rawContent)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
+				}
+				return false;
+			}
+			
+			this.report = createDocument(rawContent);
+			this.document = Jsoup.parse(this.report.getContent());
 			tables = this.document.getElementsByClass("width100");
-			if (tables.isEmpty()) {
+			if ((tables == null) || (tables.isEmpty())) {
 				throw new UnrecoverableError("Could not find main table tag for report with id "
-				        + report.getUri().toASCIIString());
+				        + this.report.getUri().toASCIIString());
 			}
 			this.mainContentTable = tables.get(0);
-			
+			return true;
+		} catch (final UnsupportedProtocolException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return false;
+		} catch (final FetchException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return false;
 		} finally {
 			// POSTCONDITIONS
-			Condition.check(tables.size() > 1, "There must be two tables within bug report.");
+			Condition.check((tables != null) && (tables.size() > 1), "There must be two tables within bug report.");
 			Condition.notNull(this.document, "The document must not be null");
 			Condition.notNull(this.mainContentTable, "The mainContentTable must not be null");
 		}

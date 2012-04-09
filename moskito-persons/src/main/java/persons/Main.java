@@ -16,6 +16,7 @@
 package persons;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persons.Persons;
 
@@ -30,13 +31,14 @@ public class Main {
 	 */
 	public static void main(final String[] args) {
 		try {
-			final Persons persons = new Persons();
+			final Settings settings = new Settings();
+			final Persons persons = new Persons(settings);
 			persons.setName(persons.getClass().getSimpleName());
 			persons.start();
 			persons.join();
 		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error(e.getMessage(), e);
+				Logger.error(e);
 			}
 			throw new Shutdown();
 		}

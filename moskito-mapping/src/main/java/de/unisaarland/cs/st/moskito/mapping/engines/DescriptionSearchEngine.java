@@ -12,8 +12,13 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
@@ -35,20 +40,66 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.storages.LuceneStorage;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class DescriptionSearchEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class DescriptionSearchEngine extends SearchEngine {
 	
-	private QueryParser parser;
+	/** The parser. */
+	private QueryParser         parser;
+	
+	/** The Constant description. */
+	private static final String description = Messages.getString("DescriptionSearchEngine.description"); //$NON-NLS-1$
+	                                                                                                     
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
+	@Override
+	public final String getDescription() {
+		// PRECONDITIONS
+		
+		try {
+			return description;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(DescriptionSearchEngine.description, "Field '%s' in '%s'.", "description", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.register.Registered#getDescription ()
+	 * @see de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#init()
 	 */
 	@Override
-	public String getDescription() {
-		return "Scores based on document similarity/relevance based on commit message and report description.";
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			super.init();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			return super.provide(root);
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -61,7 +112,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Mapping score) {
-		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.",
+		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.", //$NON-NLS-1$
 		                        to.getBaseType());
 		double confidence = 0d;
 		String toContent = null;
@@ -70,7 +121,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 			final String fromBody = from.get(FieldKey.BODY).toString();
 			final String toId = to.get(FieldKey.ID).toString();
 			
-			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer());
+			this.parser = new QueryParser(Version.LUCENE_31, "description", getStorage().getAnalyzer()); //$NON-NLS-1$
 			final Query query = buildQuery(fromBody, this.parser);
 			
 			if (query != null) {
@@ -84,12 +135,12 @@ public class DescriptionSearchEngine extends SearchEngine {
 						// Iterate through the results:
 						for (final ScoreDoc hit : hits) {
 							final Document hitDoc = getStorage().getIsearcherReports().doc(hit.doc);
-							final String bugId = hitDoc.get("bugid");
+							final String bugId = hitDoc.get("bugid"); //$NON-NLS-1$
 							
 							if (bugId.compareTo(toId) == 0) {
 								confidence = hit.score;
-								toContent = hitDoc.get("description");
-								toSubstring = hitDoc.get("description");
+								toContent = hitDoc.get("description"); //$NON-NLS-1$
+								toSubstring = hitDoc.get("description"); //$NON-NLS-1$
 								break;
 							}
 						}

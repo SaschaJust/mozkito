@@ -64,7 +64,7 @@ public class PPACUThread implements Runnable {
 	 * @return the cU
 	 */
 	public CompilationUnit getCU() {
-		return cu;
+		return this.cu;
 	}
 	
 	/*
@@ -102,34 +102,35 @@ public class PPACUThread implements Runnable {
 		// ppaEngine.reset();
 		
 		try {
-			ICompilationUnit icu = JavaCore.createCompilationUnitFrom(file);
-			PPATypeRegistry registry = new PPATypeRegistry((JavaProject) JavaCore.create(icu.getUnderlyingResource()
-			                                                                                .getProject()));
+			final ICompilationUnit icu = JavaCore.createCompilationUnitFrom(this.file);
+			final PPATypeRegistry registry = new PPATypeRegistry(
+			                                                     (JavaProject) JavaCore.create(icu.getUnderlyingResource()
+			                                                                                      .getProject()));
 			ASTNode node = null;
-			PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
+			final PPAASTParser parser2 = new PPAASTParser(AST.JLS3);
 			parser2.setStatementsRecovery(true);
 			parser2.setResolveBindings(true);
 			parser2.setSource(icu);
 			node = parser2.createAST(false, new NullProgressMonitor());
-			PPAEngine ppaEngine = new PPAEngine(registry, options);
+			final PPAEngine ppaEngine = new PPAEngine(registry, this.options);
 			
-			cu = (CompilationUnit) node;
+			this.cu = (CompilationUnit) node;
 			
-			ppaEngine.addUnitToProcess(cu);
+			ppaEngine.addUnitToProcess(this.cu);
 			ppaEngine.doPPA();
 			ppaEngine.reset();
-		} catch (JavaModelException jme) {
+		} catch (final JavaModelException jme) {
 			// Retry with the file version.
 			if (Logger.logWarn()) {
 				Logger.warn("Warning while getting CU from PPA");
 			}
 			if (Logger.logDebug()) {
-				Logger.debug("Exception", jme);
+				Logger.debug(jme);
 			}
 			
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			if (Logger.logError()) {
-				Logger.error("Error while getting CU from PPA", e);
+				Logger.error(e, "Error while getting CU from PPA");
 			}
 		}
 	}

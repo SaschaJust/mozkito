@@ -12,9 +12,15 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.hiari.settings.DynamicArgumentSet;
-import net.ownhero.dev.hiari.settings.arguments.DoubleArgument;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -28,57 +34,162 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class CompletedOrderEngine.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class CompletedOrderEngine extends MappingEngine {
 	
-	private double         scoreReportResolvedBeforeTransaction = -1d;
-	private DoubleArgument doubleArgument;
+	/** The constant description. */
+	private static final String description       = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
+	                                                                                                        
+	/** The constant defaultConfidence. */
+	private static final Double defaultConfidence = -1d;
 	
 	/**
+	 * Gets the default confidence.
 	 * 
+	 * @return the defaultConfidences
 	 */
-	public CompletedOrderEngine() {
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#afterParse()
-	 */
-	@Override
-	public void afterParse() {
-		setScoreReportResolvedBeforeTransaction(this.doubleArgument.getValue());
+	private static final Double getDefaultConfidence() {
+		// PRECONDITIONS
 		
+		try {
+			return defaultConfidence;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(defaultConfidence, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			                  CompletedOrderEngine.class.getSimpleName());
+		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine#getDescription ()
+	/** The confidence option. */
+	private DoubleArgument.Options confidenceOption;
+	
+	/** The confidence argument. */
+	private DoubleArgument         confidenceArgument;
+	
+	/** The confidence. */
+	private Double                 confidence;
+	
+	/**
+	 * Gets the confidence.
+	 * 
+	 * @return the confidence
+	 */
+	private final Double getConfidence() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidence;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Gets the confidence argument.
+	 * 
+	 * @return the confidenceArgument
+	 */
+	private final DoubleArgument getConfidenceArgument() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidenceArgument;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceArgument, "Field '%s' in '%s'.", "confidenceArgument", //$NON-NLS-1$ //$NON-NLS-2$
+			                  getHandle());
+		}
+	}
+	
+	/**
+	 * Gets the confidence option.
+	 * 
+	 * @return the confidenceOption
+	 */
+	private final DoubleArgument.Options getConfidenceOption() {
+		// PRECONDITIONS
+		
+		try {
+			return this.confidenceOption;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", //$NON-NLS-1$ //$NON-NLS-2$
+			                  getHandle());
+		}
+	}
+	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
 	 */
 	@Override
 	public String getDescription() {
-		return "Scores negative if the report was resolved before the transaction was committed.";
+		return description;
 	}
 	
 	/**
-	 * @return the scoreReportResolvedBeforeTransaction
-	 */
-	public double getScoreReportResolvedBeforeTransaction() {
-		return this.scoreReportResolvedBeforeTransaction;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
+	 * After parse.
 	 */
 	@Override
-	public boolean initSettings(final DynamicArgumentSet<Boolean> set) throws net.ownhero.dev.hiari.settings.registerable.ArgumentRegistrationException {
-		this.doubleArgument = new DoubleArgument(set, "confidence",
-		                                         "Score in case the report was resolved before the transaction.",
-		                                         this.scoreReportResolvedBeforeTransaction + "", Requirement.required);
-		return true;
+	public void init() {
+		// PRECONDITIONS
+		Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			setConfidenceArgument(getSettings().getArgument(getConfidenceOption()));
+			setConfidence(getConfidenceArgument().getValue());
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.confidenceArgument, "Field '%s' in '%s'.", "confidenceArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidence, "Field '%s' in '%s'.", "confidence", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Provide.
+	 * 
+	 * @param anchorSet
+	 *            the anchor set
+	 * @return the argument set
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(@NotNull final ArgumentSet<?, ?> anchorSet) throws ArgumentRegistrationException,
+	                                                                            ArgumentSetRegistrationException,
+	                                                                            SettingsParseError {
+		// PRECONDITIONS
+		setSettings(anchorSet.getSettings());
+		Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		final ArgumentSet<?, ?> anchor = super.getAnchor(getSettings());
+		
+		try {
+			
+			setConfidenceOption(new DoubleArgument.Options(
+			                                               anchor,
+			                                               "confidence", //$NON-NLS-1$
+			                                               Messages.getString("CompletedOrderEngine.confidenceDescription"), //$NON-NLS-1$
+			                                               getDefaultConfidence(),
+			                                               Requirement.contains(getOptions(getSettings()),
+			                                                                    getClass().getSimpleName())));
+			
+			return anchor;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.confidenceOption, "Field '%s' in '%s'.", "confidenceOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(anchor, "Field '%s' in '%s'.", "anchor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/*
@@ -93,25 +204,71 @@ public class CompletedOrderEngine extends MappingEngine {
 	                  final Mapping score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
-		double confidence = 0d;
+		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
-			confidence = getScoreReportResolvedBeforeTransaction();
+			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, confidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
+		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
 		           transaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
 		           report.getResolutionTimestamp());
 		
 	}
 	
 	/**
-	 * @param scoreReportResolvedBeforeTransaction
-	 *            the scoreReportResolvedBeforeTransaction to set
+	 * Sets the confidence.
+	 * 
+	 * @param confidence
+	 *            the confidence to set
 	 */
-	public void setScoreReportResolvedBeforeTransaction(final double scoreReportResolvedBeforeTransaction) {
-		this.scoreReportResolvedBeforeTransaction = scoreReportResolvedBeforeTransaction;
+	private final void setConfidence(@NotNull final Double confidence) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidence = confidence;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidence, confidence,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Sets the confidence argument.
+	 * 
+	 * @param confidenceArgument
+	 *            the confidenceArgument to set
+	 */
+	private final void setConfidenceArgument(@NotNull final DoubleArgument confidenceArgument) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidenceArgument = confidenceArgument;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidenceArgument, confidenceArgument,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Sets the confidence option.
+	 * 
+	 * @param confidenceOption
+	 *            the confidenceOption to set
+	 */
+	private final void setConfidenceOption(@NotNull final DoubleArgument.Options confidenceOption) {
+		// PRECONDITIONS
+		
+		try {
+			this.confidenceOption = confidenceOption;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.confidenceOption, confidenceOption,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
 	}
 	
 	/*

@@ -14,6 +14,10 @@ package de.unisaarland.cs.st.moskito.infozilla.filters.patch;
 
 import java.util.List;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.infozilla.filters.FilterTextRemover;
 import de.unisaarland.cs.st.moskito.infozilla.model.patch.Patch;
 
@@ -26,19 +30,29 @@ import de.unisaarland.cs.st.moskito.infozilla.model.patch.Patch;
  */
 public class UnifiedDiffPatchFilter extends PatchFilter {
 	
+	/** The text remover. */
 	private FilterTextRemover textRemover;
+	
+	/** The relaxed. */
 	private boolean           relaxed = false;
 	
+	/**
+	 * Instantiates a new unified diff patch filter.
+	 */
 	public UnifiedDiffPatchFilter() {
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#getOutputText()
+	 */
 	@Override
 	public String getOutputText() {
 		return this.textRemover.doDelete();
 	}
 	
 	/**
-	 * InfozillaFilter a list of {@link Patch}es from a text {@link s}
+	 * InfozillaFilter a list of {@link Patch}es from a text {@link s}.
 	 * 
 	 * @param text
 	 *            the text we should look for patches inside
@@ -66,15 +80,63 @@ public class UnifiedDiffPatchFilter extends PatchFilter {
 		return foundPatches;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 */
+	@Override
+	public void init() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Checks if is relaxed.
+	 * 
+	 * @return true, if is relaxed
+	 */
 	public boolean isRelaxed() {
 		return this.relaxed;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	 */
+	@Override
+	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
+	                                                              ArgumentSetRegistrationException,
+	                                                              SettingsParseError {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter#runFilter(java.lang.String)
+	 */
 	@Override
 	public List<Patch> runFilter(final String inputText) {
 		return getPatches(inputText);
 	}
 	
+	/**
+	 * Sets the relaxed.
+	 * 
+	 * @param relaxed
+	 *            the new relaxed
+	 */
 	public void setRelaxed(final boolean relaxed) {
 		this.relaxed = relaxed;
 	}

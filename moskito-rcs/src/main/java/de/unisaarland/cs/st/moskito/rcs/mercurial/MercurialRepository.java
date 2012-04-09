@@ -69,16 +69,16 @@ import difflib.Patch;
  */
 public class MercurialRepository extends Repository {
 	
-	protected static Regex             authorRegex          = new Regex(
-	                                                                    "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	protected static final Regex             authorRegex          = new Regex(
+	                                                                          "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
-	protected static DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	protected static final DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
-	protected static Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
-	protected static String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
-	protected static Regex             regex                = new Regex(MercurialRepository.pattern);
+	protected static final Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static final String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static final Regex             regex                = new Regex(MercurialRepository.pattern);
 	
 	/**
 	 * Pre-filters log lines. Mercurial cannot replace newlines in the log messages. This method replaces newlines
@@ -153,6 +153,7 @@ public class MercurialRepository extends Repository {
 			if (Logger.logError()) {
 				Logger.error("filePath and revision must not be null. Abort.");
 			}
+			return new ArrayList<AnnotationEntry>(0);
 		}
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud",
 		        "-r", revision, filePath }, this.cloneDir, null, null);
@@ -464,9 +465,8 @@ public class MercurialRepository extends Repository {
 				return null;
 			}
 			return lines.get(0).trim();
-		} else {
-			return getStartRevision();
 		}
+		return getStartRevision();
 	}
 	
 	/*
@@ -525,9 +525,8 @@ public class MercurialRepository extends Repository {
 				return null;
 			}
 			return lines.get(0).trim();
-		} else {
-			return getEndRevision();
 		}
+		return getEndRevision();
 	}
 	
 	/*
@@ -734,11 +733,9 @@ public class MercurialRepository extends Repository {
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
-		setup(address, startRevision, endRevision, null, branchFactory, tmpDir);
+		setup(address, null, branchFactory, tmpDir);
 	}
 	
 	/**
@@ -754,45 +751,35 @@ public class MercurialRepository extends Repository {
 	 *            the input stream
 	 */
 	private void setup(@NotNull final URI address,
-	                   final String startRevision,
-	                   final String endRevision,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir) {
 		
 		setUri(address);
 		
-		File cloneDir = null;
+		File localCloneDir = null;
 		if (tmpDir == null) {
-			cloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		} else {
-			cloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
 		
 		// clone the remote repository
-		if (!clone(null, cloneDir.getAbsolutePath())) {
+		if (!clone(null, localCloneDir.getAbsolutePath())) {
 			if (Logger.logError()) {
 				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-				        + cloneDir.getAbsolutePath() + "`");
+				        + localCloneDir.getAbsolutePath() + "`");
 				throw new RuntimeException();
 			}
 		}
 		
-		if (startRevision == null) {
-			setStartRevision(getFirstRevisionId());
-		} else {
-			setStartRevision(startRevision);
-		}
+		setStartRevision(getFirstRevisionId());
+		setEndRevision(getHEADRevisionId());
 		
-		if (endRevision == null) {
-			setEndRevision(getHEADRevisionId());
-		} else {
-			setEndRevision(startRevision);
-		}
 	}
 	
 	/*
@@ -802,13 +789,11 @@ public class MercurialRepository extends Repository {
 	@Override
 	@NoneNull
 	public void setup(@NotNull final URI address,
-	                  final String startRevision,
-	                  final String endRevision,
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir) {
-		setup(URIUtils.encodeUsername(address, username), startRevision, endRevision,
-		      new ByteArrayInputStream(password.getBytes()), branchFactory, tmpDir);
+		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
+		      tmpDir);
 	}
 }

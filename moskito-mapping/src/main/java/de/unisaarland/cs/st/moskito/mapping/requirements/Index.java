@@ -23,19 +23,15 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  */
 public enum Index {
 	
-	/** the from entity */
+	/** the from entity. */
 	FROM,
 	
-	/** the to entity */
+	/** the to entity. */
 	TO,
 	
-	/**
-	 * the one entity (in contrast to the 'OTHER' entity)
-	 */
+	/** the one entity (in contrast to the 'OTHER' entity). */
 	ONE,
 	
-	/**
-	 * the other entity (in contrast to the 'ONE' entity)
-	 */
+	/** the other entity (in contrast to the 'ONE' entity). */
 	OTHER;
 }
