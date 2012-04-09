@@ -634,6 +634,22 @@ public class Logger {
 	}
 	
 	/**
+	 * Debug.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 * @deprecated Use {@link Logger#debug(Throwable)} or {@link Logger#debug(Throwable, String))} or
+	 *             {@link Logger#debug(Throwable, String, Object...)} instead
+	 */
+	@Deprecated
+	public static void debug(final String message,
+	                         final Throwable t) {
+		debug(3, t, message);
+	}
+	
+	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
 	 * information to log the message and the exception string with debug log level.
 	 * 
@@ -760,6 +776,22 @@ public class Logger {
 	public static void error(final String formatString,
 	                         final Object... arguments) {
 		error(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Error.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 * @deprecated Use {@link Logger#error(Throwable)} or {@link Logger#error(Throwable, String))} or
+	 *             {@link Logger#error(Throwable, String, Object...)} instead
+	 */
+	@Deprecated
+	public static void error(final String message,
+	                         final Throwable t) {
+		error(3, t, message);
 	}
 	
 	/**
@@ -908,6 +940,22 @@ public class Logger {
 	public static void info(final String formatString,
 	                        final Object... arguments) {
 		info(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Info.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 * @deprecated Use {@link Logger#info(Throwable)} or {@link Logger#info(Throwable, String))} or
+	 *             {@link Logger#info(Throwable, String, Object...)} instead
+	 */
+	@Deprecated
+	public static void info(final String message,
+	                        final Throwable t) {
+		info(3, t, message);
 	}
 	
 	/**
@@ -1195,6 +1243,22 @@ public class Logger {
 	}
 	
 	/**
+	 * Trace.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 * @deprecated Use {@link Logger#trace(Throwable)} or {@link Logger#trace(Throwable, String))} or
+	 *             {@link Logger#trace(Throwable, String, Object...)} instead
+	 */
+	@Deprecated
+	public static void trace(final String message,
+	                         final Throwable t) {
+		trace(3, t, message);
+	}
+	
+	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
 	 * information to log the message and the exception string with trace log level.
 	 * 
@@ -1468,6 +1532,22 @@ public class Logger {
 	public static void warn(final String formatString,
 	                        final Object... arguments) {
 		warn(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Warn.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param t
+	 *            the t
+	 * @deprecated Use {@link Logger#warn(Throwable)} or {@link Logger#warn(Throwable, String))} or
+	 *             {@link Logger#warn(Throwable, String, Object...)} instead
+	 */
+	@Deprecated
+	public static void warn(final String message,
+	                        final Throwable t) {
+		warn(3, t, message);
 	}
 	
 	/**
