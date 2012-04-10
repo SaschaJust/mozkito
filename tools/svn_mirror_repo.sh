@@ -112,29 +112,43 @@ if [[ -n "$4" ]]; then
 	export SVN_AUTHSTRING=" --source-username=${SVN_USERNAME} --source-password=${SVN_PASSWORD} "
 fi
 
-if [ ! -d "${TARGET_DIR}" ]; then
-	mkdir -p "${TARGET_DIR}" || exception "Cannot create target directory: ${TARGET_DIR}"
-else
-	exception "Target directory already exists: ${TARGET_DIR}"
-fi
-
 TARGET_DIR=$(make_absolut_path "${TARGET_DIR}")
 [[ $? -ne 0 ]] && exception "Target directory invalid."
 
 SOURCE_URL=$(make_url ${SOURCE_URL})
 [[ $? -ne 0 ]] && exception "Source URL invalid."
 
-svnadmin create "${TARGET_DIR}" || exception "Creating an empty, local SVN repository failed." 
+if [ ! -d "${TARGET_DIR}" ]; then
+	mkdir -p "${TARGET_DIR}" || exception "Cannot create target directory: ${TARGET_DIR}"
+	svnadmin create "${TARGET_DIR}" || exception "Creating an empty, local SVN repository failed." 
 
-cat <<EOF >"${TARGET_DIR}/hooks/pre-revprop-change"
-#!/bin/sh
-exit 0
-EOF
-chmod +x "${TARGET_DIR}/hooks/pre-revprop-change"
+	cat <<-EOF >"${TARGET_DIR}/hooks/pre-revprop-change"
+	#!/bin/sh
+	exit 0
+	EOF
+	chmod +x "${TARGET_DIR}/hooks/pre-revprop-change"
 
-svnsync init ${SVN_AUTHSTRING} "file://${TARGET_DIR}" "${SOURCE_URL}" || exception "Initializing the sync repository failed."
+	svnsync init ${SVN_AUTHSTRING} "file://${TARGET_DIR}" "${SOURCE_URL}" || exception "Initializing the sync repository failed."
+else
+	while [[ -z ANS ]]; do
+		read -p "Repository already exists. Resume? [y|N] " ANS
+		case ANS in
+			y|Y|yes|Yes)
+				ANS=YES
+				;;
+			*)
+			unset ANS
+		esac
+	done
+	
+	if [ "$ANS" != "YES" ]; then
+		echo "Abort due to user decision."
+		exit 0
+	fi
+fi
+
 svnsync synchronize ${SVN_AUTHSTRING} "file://${TARGET_DIR}" || exception "Sync failed on ${TARGET_DIR}."
 
-rm -f "${TARGET_DIR}/hooks/pre-revprop-change"
+#rm -f "${TARGET_DIR}/hooks/pre-revprop-change"
 
 echo "All done."
