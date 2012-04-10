@@ -253,6 +253,11 @@
 			<version>3.2.1</version>
 		</dependency>
 		<dependency>
+		  <groupId>commons-validator</groupId>
+		  <artifactId>commons-validator</artifactId>
+		  <version>1.4.0</version>
+	  	</dependency>
+		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-spellchecker</artifactId>
 			<version>3.5.0</version>
