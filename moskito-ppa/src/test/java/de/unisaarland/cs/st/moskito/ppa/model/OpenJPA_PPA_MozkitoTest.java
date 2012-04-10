@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class OpenJPA_PPA_NetTest extends MoskitoTest {
+public class OpenJPA_PPA_MozkitoTest extends MoskitoTest {
 	
 	@Test
 	@DatabaseSettings (unit = "ppa")

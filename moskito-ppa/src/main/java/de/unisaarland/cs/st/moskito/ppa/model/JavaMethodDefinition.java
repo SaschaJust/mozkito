@@ -93,7 +93,9 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		final String name = nameElement.getText();
 		
 		Condition.notNull(name, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
-		StringCondition.matches(name, ".*\\(.*\\).*", Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
+		
+		// FIXME why do we have to use escapes in find but not in matches?
+		StringCondition.matches(name, ".*(.*)", Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
 		final int dotIndex = name.indexOf("."); //$NON-NLS-1$
 		final int index = name.indexOf("("); //$NON-NLS-1$
