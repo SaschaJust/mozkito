@@ -22,7 +22,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.util.Patterns;
 
@@ -46,7 +45,7 @@ class GitLogParser {
 	
 	protected static Regex emailBaseRegex        = new Regex("({email}" + Patterns.EMAIL_ADDRESS + ")");
 	
-	protected static Regex usernameBaseRegex     = new Regex("(^|[\\s<]+)({username}[a-z0-9]{4,})[\\s>]");
+	protected static Regex usernameBaseRegex     = new Regex("\\s*<({username}[a-z0-9]{4,})>");
 	
 	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
 	
@@ -88,16 +87,15 @@ class GitLogParser {
 				username = username.replaceAll("<", "").replaceAll(">", "");
 				username = username.trim();
 			} else {
-				final MultiMatch findList = usernameRegex.findAll(authorString);
-				if (findList != null) {
-					if (findList.size() > 1) {
-						username = findList.getMatch(0).getGroup(1).getMatch();
+				// could be fullname or username and username
+				final Match match = usernameRegex.find(authorString);
+				if (match != null) {
+					username = match.getGroup("username").getMatch().trim();
+				} else {
+					fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
+					if (fullname.equals("")) {
+						fullname = null;
 					}
-				}
-				authorString = usernameRegex.removeAll(authorString);
-				fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
-				if (fullname.equals("")) {
-					fullname = null;
 				}
 			}
 		} else {
