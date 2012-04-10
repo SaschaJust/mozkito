@@ -317,8 +317,10 @@ public class Regex {
 			this.match = new MatchImpl(new Group(this.pattern.toString(), text, this.matcher.group(0), 0, null,
 			                                     this.matcher.start(), this.matcher.end()));
 			for (int i = 1; i < this.matcher.groupCount(); ++i) {
-				this.match.add(new Group(this.pattern.toString(), text, this.matcher.group(i), i,
-				                         this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+				if (this.matcher.group(i) != null) {
+					this.match.add(new Group(this.pattern.toString(), text, this.matcher.group(i), i,
+					                         this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+				}
 			}
 		}
 		
@@ -348,8 +350,10 @@ public class Regex {
 			                                                null, this.matcher.start(), this.matcher.end()));
 			
 			for (int i = 1; i < matchResult.groupCount(); ++i) {
-				match.add(new Group(this.pattern.toString(), text, matchResult.group(i), i,
-				                    this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+				if (matchResult.group(i) != null) {
+					match.add(new Group(this.pattern.toString(), text, matchResult.group(i), i,
+					                    this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+				}
 			}
 			this.multiMatch.add(match);
 		}
