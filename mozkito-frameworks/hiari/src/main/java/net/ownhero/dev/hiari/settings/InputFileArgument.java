@@ -82,6 +82,9 @@ public class InputFileArgument extends Argument<File, InputFileArgument.Options>
 						             getOptions());
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

@@ -64,6 +64,9 @@ public class HostArgument extends Argument<String, HostArgument.Options> {
 						             getOptions());
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

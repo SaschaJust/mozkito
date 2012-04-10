@@ -79,6 +79,9 @@ public class DoubleArgument extends Argument<Double, DoubleArgument.Options> {
 						             getOptions());
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}
