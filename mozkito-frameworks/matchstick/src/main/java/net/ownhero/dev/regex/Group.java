@@ -71,7 +71,6 @@ public class Group {
 			// POSTCONDITIONS
 			Condition.notNull(this.pattern, "Field '%s' in '%s'.", "pattern", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			Condition.notNull(this.text, "Field '%s' in '%s'.", "text", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			//			Condition.notNull(this.match, "Field '%s' in '%s'.", "match", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			CompareCondition.notNegative(this.index, "Field '%s' in '%s'.", "index", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			CompareCondition.notNegative(this.start, "Field '%s' in '%s'.", "start", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			CompareCondition.notNegative(this.end, "Field '%s' in '%s'.", "end", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -79,9 +78,9 @@ public class Group {
 	}
 	
 	/**
-	 * End.
+	 * Determines the end of the match (string index). Guaranteed to be non-negative.
 	 * 
-	 * @return the int
+	 * @return the character index that determines the end of the match.
 	 */
 	public int end() {
 		// PRECONDITIONS
@@ -131,9 +130,9 @@ public class Group {
 	}
 	
 	/**
-	 * Gets the handle.
+	 * Gets the simple class name.
 	 * 
-	 * @return the handle
+	 * @return the simple class name
 	 */
 	public final String getHandle() {
 		return getClass().getSimpleName();
