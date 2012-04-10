@@ -83,7 +83,7 @@ public class JiraTracker_NetTest {
 			                                                     "jira.codehaus.org/si/jira.issueviews:issue-xml/XPR-451/XPR-451.xml"),
 			                                             "XPR-451");
 			final Report report = this.tracker.parse(reportLink);
-			
+			assert (report != null);
 			final List<AttachmentEntry> attachments = report.getAttachmentEntries();
 			assertEquals(1, attachments.size());
 			
@@ -118,7 +118,7 @@ public class JiraTracker_NetTest {
 			                                                     "jira.codehaus.org/si/jira.issueviews:issue-xml/JAXEN-177/JAXEN-177.xml"),
 			                                             "JAXEN-177");
 			final Report report = this.tracker.parse(reportLink);
-			
+			assert (report != null);
 			assertEquals("JAXEN-177", report.getId());
 			assertEquals(null, report.getAssignedTo());
 			assertEquals(null, report.getCategory());

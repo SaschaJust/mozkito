@@ -486,7 +486,9 @@ public class GoogleParser implements Parser {
 									final String newSummary = updates.getSummary().getValue();
 									summaryHistory.addFirst(new Tuple<String, HistoryElement>(newSummary, hElem));
 								}
-								this.history.add(hElem);
+								if (!hElem.isEmpty()) {
+									this.history.add(hElem);
+								}
 							}
 						}
 						startIndex += maxResults;

@@ -129,4 +129,8 @@ public class SourceforgeTracker extends Tracker {
 		this.bugType = bugType;
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
+	
+	protected void setUri(final URI uri) {
+		this.trackerURI = uri;
+	}
 }

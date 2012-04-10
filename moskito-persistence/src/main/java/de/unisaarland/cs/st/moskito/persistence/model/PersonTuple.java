@@ -12,6 +12,8 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.persistence.model;
 
+import java.util.Arrays;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -19,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 @Embeddable
@@ -42,8 +45,10 @@ public class PersonTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
-	@NoneNull
 	public PersonTuple(final Person oldValue, final Person newValue) {
+		CollectionCondition.notAllNull(Arrays.asList(new Person[] { oldValue, newValue }),
+		                               "A PersonTuple cannot contain NULL as new and old value. Got newValue=%s, oldValue=%s.",
+		                               newValue, oldValue);
 		setOldValue("oldValue", oldValue);
 		setNewValue("newValue", newValue);
 	}
@@ -52,6 +57,7 @@ public class PersonTuple implements Annotated {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@NoneNull
 	public PersonTuple(final PersonContainer oldValue, final PersonContainer newValue) {
 		setOldValue(oldValue);
 		setNewValue(newValue);
@@ -72,7 +78,7 @@ public class PersonTuple implements Annotated {
 		if (!(obj instanceof PersonTuple)) {
 			return false;
 		}
-		PersonTuple other = (PersonTuple) obj;
+		final PersonTuple other = (PersonTuple) obj;
 		if (getNewValue() == null) {
 			if (other.getNewValue() != null) {
 				return false;
@@ -114,12 +120,12 @@ public class PersonTuple implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getNewValue() == null)
-		                                                  ? 0
-		                                                  : getNewValue().hashCode());
-		result = prime * result + ((getOldValue() == null)
-		                                                  ? 0
-		                                                  : getOldValue().hashCode());
+		result = (prime * result) + ((getNewValue() == null)
+		                                                    ? 0
+		                                                    : getNewValue().hashCode());
+		result = (prime * result) + ((getOldValue() == null)
+		                                                    ? 0
+		                                                    : getOldValue().hashCode());
 		return result;
 	}
 	
@@ -167,7 +173,7 @@ public class PersonTuple implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("PersonTuple [old=");
 		builder.append(getOldValue());
 		builder.append(", new=");

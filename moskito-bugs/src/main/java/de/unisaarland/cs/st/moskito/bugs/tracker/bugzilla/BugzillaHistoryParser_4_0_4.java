@@ -139,7 +139,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
 			
 			final MultiMatch multiMatch = skipRegex.findAll(rawContent.getContent());
-			if (multiMatch == null) {
+			if (multiMatch != null) {
 				if (Logger.logDebug()) {
 					Logger.debug("Skipping history for bug report " + this.reportId
 					        + ". No changes have been made to this bug yet.");

@@ -67,6 +67,7 @@ public class GoogleTracker_NetTest {
 			tracker.testSetup("google-web-toolkit");
 			
 			final Report report = tracker.parse(new ReportLink(null, "4380"));
+			assert (report != null);
 			assertEquals("4380", report.getId());
 			assertEquals(1, report.getAssignedTo().getUsernames().size());
 			assertTrue(report.getAssignedTo().getUsernames().contains("jat@google.com"));

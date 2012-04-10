@@ -20,6 +20,8 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
@@ -168,5 +170,23 @@ public class SourceforgeTracker_NetTest {
 		assertTrue(ids.contains("954058"));
 		assertTrue(ids.contains("949267"));
 		assertTrue(ids.contains("943071"));
+	}
+	
+	/**
+	 * Test setup.
+	 */
+	@Test
+	public void testSetup() {
+		final SourceforgeTracker tracker = new SourceforgeTracker();
+		try {
+			tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l,
+			              Type.BUG, null);
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
 	}
 }

@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,6 @@ import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
-import net.ownhero.dev.regex.Group;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
@@ -100,40 +100,39 @@ public class MantisParserTest {
 	 */
 	@Test
 	public void testAttachmentRegex() {
-		final String s = "Selection_031.png (37,363) 2012-02-20 10:39 https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug  test.html (1,073) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5010&type=bug";
+		final String s = "Selection_031.png (37,363) 2012-02-20 10:39 https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug  test.html (1,073) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5010&type=bug";
 		final MantisParser mantisParser = new MantisParser();
 		final Regex regex = mantisParser.getAttachmentRegex();
 		final MultiMatch findAll = regex.findAll(s);
 		assert (findAll != null);
-		assertEquals(3, findAll.size());
-		for (int i = 0; i < 3; ++i) {
-			final Match list = findAll.getMatch(i);
-			assertEquals(3, list.getGroupCount());
-			for (int j = 1; j <= 4; ++j) {
-				final Group regexGroup = list.getGroup(j);
-				switch (j) {
-					case 0:
-						regexGroup.getName().equals("FILE");
-						break;
-					case 1:
-						regexGroup.getName().equals("SIZE");
-						break;
-					case 2:
-						regexGroup.getName().equals("DATE");
-						break;
-					case 3:
-						regexGroup.getName().equals("URL");
-						break;
-				}
+		for (final Match match : findAll) {
+			assertTrue(match.hasNamedGroup("FILE"));
+			assertTrue(match.hasNamedGroup("SIZE"));
+			assertTrue(match.hasNamedGroup("DATE"));
+			assertTrue(match.hasNamedGroup("URL"));
+			switch (match.getGroup("FILE").getMatch().trim()) {
+				case "Selection_031.png":
+					assertEquals("37,363", match.getGroup("SIZE").getMatch());
+					assertEquals("2012-02-20 10:39", match.getGroup("DATE").getMatch());
+					assertEquals("https://issues.openbravo.com/file_download.php?file_id=5008&type=bug",
+					             match.getGroup("URL").getMatch());
+					break;
+				case "Selection_032.png":
+					assertEquals("150,567", match.getGroup("SIZE").getMatch());
+					assertEquals("2012-02-20 10:40", match.getGroup("DATE").getMatch());
+					assertEquals("https://issues.openbravo.com/file_download.php?file_id=5009&type=bug",
+					             match.getGroup("URL").getMatch());
+					break;
+				case "test.html":
+					assertEquals("1,073", match.getGroup("SIZE").getMatch());
+					assertEquals("2012-02-20 10:40", match.getGroup("DATE").getMatch());
+					assertEquals("https://issues.openbravo.com/file_download.php?file_id=5010&type=bug",
+					             match.getGroup("URL").getMatch());
+					break;
+				default:
+					fail(String.format("Unknown FILE group with match `%s`", match.getGroup("FILE").getMatch().trim()));
 			}
 		}
-		findAll.getMatch(0).getGroup(1).getMatch().equals("Selection_031.png");
-		findAll.getMatch(0).getGroup(2).getMatch().equals("37,363");
-		findAll.getMatch(0).getGroup(3).getMatch().equals("2012-02-20 10:39");
-		findAll.getMatch(0)
-		       .getGroup(4)
-		       .getMatch()
-		       .equals("https://issues.openbravo.com/file_download.php?file_id=5008&type=bug  Selection_032.png (150,567) 2012-02-20 10:40 https://issues.openbravo.com/file_download.php?file_id=5009&type=bug");
 	}
 	
 	/**
