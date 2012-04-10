@@ -45,7 +45,7 @@ public class LongArgument extends Argument<Long, LongArgument.Options> {
 		 *            the requirements
 		 */
 		public Options(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
-		        @NotNull @NotEmptyString final String description, final Long defaultValue,
+		        @NotNull @NotEmptyString final String description, @NotNull final Long defaultValue,
 		        @NotNull final Requirement requirements) {
 			super(argumentSet, name, description, defaultValue, requirements);
 		}
@@ -61,7 +61,7 @@ public class LongArgument extends Argument<Long, LongArgument.Options> {
 	 *             the argument registration exception
 	 * @see de.unisaarland.cs.st.reposuite.settings.RepoSuiteArguments
 	 */
-	private LongArgument(@NotNull final Options options) throws ArgumentRegistrationException {
+	LongArgument(@NotNull final Options options) throws ArgumentRegistrationException {
 		super(options);
 	}
 	
@@ -76,7 +76,10 @@ public class LongArgument extends Argument<Long, LongArgument.Options> {
 		try {
 			if (!validStringValue()) {
 				if (required()) {
-					// TODO error log
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
 				} else {
 					setCachedValue(null);
 					ret = true;

@@ -82,15 +82,16 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final IOptions<?, ?> o) {
+	public final int compareTo(final IOptions<?, ?> arg0) {
 		// PRECONDITIONS
 		
-		try {
-			// TODO Auto-generated method stub
+		if (this == arg0) {
 			return 0;
-		} finally {
-			// POSTCONDITIONS
+		} else if (equals(arg0)) {
+			return 0;
 		}
+		
+		return getTag().compareTo(arg0.getTag());
 	}
 	
 	/*
@@ -319,7 +320,7 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 	 */
 	@Override
 	public abstract Map<String, IOptions<?, ?>> requirements(ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
-	                                                                               SettingsParseError;
+	                                                                                       SettingsParseError;
 	
 	/*
 	 * (non-Javadoc)

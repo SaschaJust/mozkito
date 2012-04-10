@@ -77,7 +77,10 @@ public class InputFileArgument extends Argument<File, InputFileArgument.Options>
 		try {
 			if (!validStringValue()) {
 				if (required()) {
-					// TODO error log
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
 				} else {
 					setCachedValue(null);
 					ret = true;

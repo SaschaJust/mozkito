@@ -200,7 +200,10 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T, EnumArgument.Op
 		try {
 			if (!validStringValue()) {
 				if (required()) {
-					// TODO error logs
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
 				} else {
 					setCachedValue(null);
 					ret = true;

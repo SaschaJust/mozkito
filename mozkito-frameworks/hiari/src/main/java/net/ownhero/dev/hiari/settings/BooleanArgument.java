@@ -15,6 +15,7 @@ package net.ownhero.dev.hiari.settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class BooleanArgument.
@@ -72,7 +73,10 @@ public class BooleanArgument extends Argument<Boolean, BooleanArgument.Options> 
 		try {
 			if (getStringValue() == null) {
 				if (required()) {
-					// TODO Error log
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
 				} else {
 					// TODO Warn log
 					setCachedValue(null);
