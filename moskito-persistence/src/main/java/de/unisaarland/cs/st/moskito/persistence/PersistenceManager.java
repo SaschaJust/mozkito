@@ -188,9 +188,8 @@ public class PersistenceManager {
 		
 		if (nativeQueries.containsKey(databaseType) && nativeQueries.get(databaseType).containsKey(id)) {
 			return nativeQueries.get(databaseType).get(id);
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**

@@ -256,9 +256,8 @@ public abstract class MoskitoTest {
 				testLog("Test failed.");
 				if (t.getCause() != null) {
 					throw t.getCause();
-				} else {
-					throw t;
 				}
+				throw t;
 			}
 			
 			if (o != null) {
@@ -276,20 +275,6 @@ public abstract class MoskitoTest {
 				}
 			}
 			
-			if (c != null) {
-				if (!afterClassMethods.isEmpty()) {
-					testLog("@AfterClass: ");
-					for (final Method method : afterClassMethods) {
-						testLog(" * " + method.getName());
-						try {
-							method.invoke(null, new Object[0]);
-						} catch (final Throwable t) {
-							testLog("@AfterClass failed in: " + method.getName(), t);
-							throw t;
-						}
-					}
-				}
-			}
 		} catch (final Throwable t) {
 			failureCauses.add(t);
 		} finally {

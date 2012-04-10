@@ -280,9 +280,8 @@ public class Person implements Annotated {
 			if ((getUsernames().isEmpty() && person.getEmailAddresses().isEmpty())
 			        || (person.getUsernames().isEmpty() && getEmailAddresses().isEmpty())) {
 				return !CollectionUtils.intersection(getFullnames(), person.getFullnames()).isEmpty();
-			} else {
-				return false;
 			}
+			return false;
 		}
 	}
 	

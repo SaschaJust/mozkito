@@ -393,14 +393,12 @@ public class OpenJPAUtil implements PersistenceUtil {
 					final List<T> list = load(criteria);
 					if (!list.isEmpty()) {
 						return list.get(0);
-					} else {
-						return null;
 					}
-				} else {
-					throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
-					        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
-					        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
+					return null;
 				}
+				throw new UnrecoverableError("Id type (" + id.getClass().getCanonicalName()
+				        + ") does not match actual id type (" + m.getReturnType().getCanonicalName()
+				        + ") which is not assignable from " + id.getClass().getCanonicalName() + ".");
 			}
 		}
 		
