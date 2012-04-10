@@ -478,7 +478,7 @@
 												<show>private</show>
 												<linksource>true</linksource>
 												<quiet>true</quiet>
-												<source>1.6</source> -->
+												<source>1.7</source> -->
 							<aggregate>true</aggregate>
 						</configuration>
 					</plugin>
