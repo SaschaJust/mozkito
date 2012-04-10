@@ -127,7 +127,7 @@
 					<show>private</show>
 					<linksource>true</linksource>
 					<quiet>true</quiet>
-					<source>1.6</source>
+					<source>1.7</source>
 					<stylesheetfile>javadoc.css</stylesheetfile>
 				</configuration>
 			</plugin>
