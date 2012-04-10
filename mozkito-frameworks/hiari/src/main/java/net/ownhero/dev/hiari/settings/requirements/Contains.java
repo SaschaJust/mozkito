@@ -15,6 +15,8 @@ import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.apache.commons.lang.ArrayUtils;
+
 /**
  * The Class Contains.
  * 
@@ -23,13 +25,16 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 public class Contains extends Requirement {
 	
 	/** The list argument. */
-	private IOptions<?, ?>  listOption = null;
+	private ListArgument.Options listOption = null;
 	
 	/** The set argument. */
-	private IOptions<?, ?>  setOption  = null;
+	private SetArgument.Options  setOption  = null;
 	
 	/** The depender. */
-	private IArgument<?, ?> depender   = null;
+	private IArgument<?, ?>      depender   = null;
+	
+	/** The value. */
+	private String               value      = null;
 	
 	/**
 	 * Instantiates a new contains.
@@ -61,10 +66,10 @@ public class Contains extends Requirement {
 	Contains(@NotNull final ListArgument.Options option, @NotNull final String value) {
 		try {
 			this.listOption = option;
+			this.value = value;
 		} finally {
 			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
-			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
-			                  getHandle());
+			Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -81,7 +86,7 @@ public class Contains extends Requirement {
 			this.setOption = option;
 			this.depender = depender;
 		} finally {
-			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
+			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
 			                  getHandle());
 		}
@@ -98,10 +103,10 @@ public class Contains extends Requirement {
 	Contains(@NotNull final SetArgument.Options option, @NotNull final String value) {
 		try {
 			this.setOption = option;
+			this.value = value;
 		} finally {
-			Condition.notNull(this.listOption, "The referring argument in %s may never be null.", getHandle());
-			Condition.notNull(this.depender, "The depender argument set in the constructor in %s may never be null.",
-			                  getHandle());
+			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -147,21 +152,33 @@ public class Contains extends Requirement {
 	 */
 	@Override
 	public boolean required() {
-		// if (this.listOption != null) {
-		// return this.listOption.required()
-		// && this.listOption.getValue().contains(this.depender != null
-		// ? this.depender.getName()
-		// : this.value);
-		// } else if (this.setOption != null) {
-		// return this.setOption.required()
-		// && this.setOption.getValue().contains(this.depender != null
-		// ? this.depender.getName()
-		// : this.value);
-		// } else {
-		// return false;
-		// }
-		// TODO FIXME IMPLEMENT THIS
-		return false;
+		String[] split = null;
+		String delimiter = null;
+		String property = null;
+		
+		if (this.listOption != null) {
+			delimiter = this.listOption.getDelimiter();
+			property = this.listOption.getSettings().getProperty(this.listOption.getTag());
+			
+		} else {
+			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			delimiter = this.setOption.getDelimiter();
+			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
+		}
+		
+		Condition.notNull(property, "Local variable '%s' in '%s:%s'.", "property", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(delimiter, "Local variable '%s' in '%s:%s'.", "delimiter", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		split = property.split(delimiter);
+		
+		Condition.notNull(split, "Local variable '%s' in '%s:%s'.", "split", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		if (this.depender != null) {
+			return ArrayUtils.contains(split, this.depender.getName());
+		} else {
+			Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			return ArrayUtils.contains(split, this.value);
+		}
 	}
 	
 	/*
@@ -171,8 +188,8 @@ public class Contains extends Requirement {
 	@Override
 	public String toString() {
 		return ("(∈ " + this.listOption) != null
-		                                          ? this.listOption.getName()
-		                                          : this.setOption.getName() + ".value() )";
+		                                        ? this.listOption.getName()
+		                                        : this.setOption.getName() + ".value() )";
 	};
 	
 }
