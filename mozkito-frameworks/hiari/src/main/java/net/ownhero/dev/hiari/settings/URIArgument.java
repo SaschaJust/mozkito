@@ -86,7 +86,9 @@ public class URIArgument extends Argument<URI, URIArgument.Options> {
 						             getOptions());
 					}
 				} else {
-					// TODO warn log
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

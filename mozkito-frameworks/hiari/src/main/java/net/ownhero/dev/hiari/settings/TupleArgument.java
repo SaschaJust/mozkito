@@ -145,10 +145,19 @@ public class TupleArgument extends Argument<Tuple<String, String>, TupleArgument
 		boolean ret = false;
 		
 		try {
-			
-			if (getStringValue() == null) {
-				setCachedValue(null);
-				ret = true;
+			if (!validStringValue()) {
+				if (required()) {
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
+					setCachedValue(null);
+					ret = true;
+				}
 			} else {
 				final String[] split = getStringValue().split(this.delimiter);
 				

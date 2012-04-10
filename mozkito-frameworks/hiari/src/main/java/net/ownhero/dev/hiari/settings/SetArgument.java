@@ -20,6 +20,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -152,9 +153,19 @@ public class SetArgument extends Argument<HashSet<String>, SetArgument.Options> 
 		boolean ret = false;
 		
 		try {
-			if (getStringValue() == null) {
-				setCachedValue(null);
-				ret = true;
+			if (!validStringValue()) {
+				if (required()) {
+					if (Logger.logError()) {
+						Logger.error("Argument required but doesn't have a valid string value (from options '%s').",
+						             getOptions());
+					}
+				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
+					setCachedValue(null);
+					ret = true;
+				}
 			} else {
 				final HashSet<String> result = new HashSet<String>();
 				

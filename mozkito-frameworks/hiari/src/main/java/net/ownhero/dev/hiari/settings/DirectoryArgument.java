@@ -99,6 +99,9 @@ public class DirectoryArgument extends Argument<File, DirectoryArgument.Options>
 						Logger.error("The required file argument '" + getName() + "' is not set.");
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

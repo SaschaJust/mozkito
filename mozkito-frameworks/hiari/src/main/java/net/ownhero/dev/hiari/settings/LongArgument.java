@@ -81,6 +81,9 @@ public class LongArgument extends Argument<Long, LongArgument.Options> {
 						             getOptions());
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

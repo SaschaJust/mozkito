@@ -78,7 +78,9 @@ public class BooleanArgument extends Argument<Boolean, BooleanArgument.Options> 
 						             getOptions());
 					}
 				} else {
-					// TODO Warn log
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}

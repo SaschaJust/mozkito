@@ -205,6 +205,9 @@ public class EnumArgument<T extends Enum<?>> extends Argument<T, EnumArgument.Op
 						             getOptions());
 					}
 				} else {
+					if (Logger.logWarn()) {
+						Logger.warn("Optional argument is not set: %s", getTag());
+					}
 					setCachedValue(null);
 					ret = true;
 				}
