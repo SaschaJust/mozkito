@@ -54,7 +54,7 @@ import difflib.Delta;
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
-public class RepositoryTest extends MoskitoTest {
+public class Repository_MozkitoTest extends MoskitoTest {
 	
 	/** The repositories. */
 	private static List<Repository>         repositories = new LinkedList<Repository>();
@@ -74,7 +74,7 @@ public class RepositoryTest extends MoskitoTest {
 				continue;
 			}
 			
-			final String pathName = RepositorySettingsProcessor.getPathName(RepositoryTest.class, type);
+			final String pathName = RepositorySettingsProcessor.getPathName(Repository_MozkitoTest.class, type);
 			if (pathName != null) {
 				try {
 					repoMap.put(type, new URI("file://" + pathName + File.separator + "repotest."

@@ -145,4 +145,8 @@ public class BugzillaTracker extends Tracker {
 		this.bugzillaVersion = bugzillaVersion;
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
+	
+	protected void setUri(final URI uri) {
+		this.trackerURI = uri;
+	}
 }

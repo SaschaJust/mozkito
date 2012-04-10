@@ -43,7 +43,7 @@ import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class CoreChangeGenealogy_MoskitoTest extends MoskitoTest {
+public class CoreChangeGenealogy_MozkitoTest extends MoskitoTest {
 	
 	@Test
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)

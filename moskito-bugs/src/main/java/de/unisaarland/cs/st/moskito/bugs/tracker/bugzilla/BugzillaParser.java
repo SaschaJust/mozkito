@@ -389,7 +389,7 @@ public abstract class BugzillaParser implements Parser {
 				return false;
 			}
 			RawContent rawContent = null;
-			if (this.tracker.getProxyConfig() != null) {
+			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
 				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
 			} else {
 				rawContent = IOUtils.fetch(uri);
