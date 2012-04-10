@@ -38,8 +38,6 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class Regex {
 	
-	public static final String emailPattern = "((?#email user)[A-Za-z0-9._%-+]+@(((?#email real domain)[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})|((?#email anonymous domain)\\p{XDigit}{4,}(-\\p{XDigit}{4,}){4})))";
-	
 	/**
 	 * @param namedPattern
 	 */

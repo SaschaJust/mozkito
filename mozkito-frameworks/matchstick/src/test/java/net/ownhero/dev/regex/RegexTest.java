@@ -10,9 +10,6 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
 package net.ownhero.dev.regex;
 
 import static org.junit.Assert.assertEquals;
@@ -21,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.ownhero.dev.regex.util.Patterns;
 
 import org.junit.Test;
 
@@ -65,7 +64,7 @@ public class RegexTest {
 		final String anonEmail = "elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5";
 		final String email = "elharo@test-domain.de";
 		
-		final Regex regex = new Regex("({email}" + Regex.emailPattern + ")");
+		final Regex regex = new Regex("({email}" + Patterns.EMAIL_ADDRESS + ")");
 		Match find = regex.find(anonEmail);
 		assertTrue(find.getGroupCount() > 1);
 		assertEquals("elharo@6c29f813-dae2-4a2d-94c1-d0531c44c0a5", find.getGroup(1).getMatch());

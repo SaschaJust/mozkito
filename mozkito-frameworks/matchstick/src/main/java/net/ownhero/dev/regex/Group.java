@@ -55,8 +55,7 @@ public class Group {
 	 *            the end
 	 */
 	public Group(@NotNull final String pattern, @NotNull final String text, @NotNull final String match,
-	        @NotNegative final int index, @NotNull final String name, @NotNegative final int start,
-	        @NotNegative final int end) {
+	        @NotNegative final int index, final String name, @NotNegative final int start, @NotNegative final int end) {
 		// PRECONDITIONS
 		
 		try {
