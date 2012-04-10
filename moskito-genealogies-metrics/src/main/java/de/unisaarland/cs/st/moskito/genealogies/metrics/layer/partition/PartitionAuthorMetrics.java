@@ -68,10 +68,10 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
 		Collection<JavaChangeOperation> transaction = item.getNode();
-		String nodeId = genealogy.getNodeId(transaction);
+		String nodeId = this.genealogy.getNodeId(transaction);
 		
 		Set<Long> depAuthors = new HashSet<Long>();
-		for (Collection<JavaChangeOperation> dependant : genealogy.getAllDependants(transaction)) {
+		for (Collection<JavaChangeOperation> dependant : this.genealogy.getAllDependants(transaction)) {
 			for (JavaChangeOperation tmpOp : dependant) {
 				depAuthors.add(tmpOp.getRevision().getTransaction().getPersons().getGeneratedId());
 			}
@@ -80,7 +80,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 		metricValues.add(new GenealogyMetricValue(numDepAuthors, nodeId, depAuthors.size()));
 		
 		Set<Long> parentAuthors = new HashSet<Long>();
-		for (Collection<JavaChangeOperation> parent : genealogy.getAllParents(transaction)) {
+		for (Collection<JavaChangeOperation> parent : this.genealogy.getAllParents(transaction)) {
 			for (JavaChangeOperation tmpOp : parent) {
 				parentAuthors.add(tmpOp.getRevision().getTransaction().getPersons().getGeneratedId());
 			}

@@ -48,7 +48,7 @@ public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 	 */
 	public PartitionDwReachMetric(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalDwReachMetric<Collection<JavaChangeOperation>>(
+		this.universalMetric = new UniversalDwReachMetric<Collection<JavaChangeOperation>>(
 		                                                                              genealogy,
 		                                                                              new Comparator<Collection<JavaChangeOperation>>() {
 			                                                                              
@@ -111,7 +111,7 @@ public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

@@ -41,7 +41,7 @@ public class CoreInOutDegreeMetrics extends GenealogyCoreMetric {
 	 */
 	public CoreInOutDegreeMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalInOutDegreeMetrics<JavaChangeOperation>(genealogy);
+		this.universalMetric = new UniversalInOutDegreeMetrics<JavaChangeOperation>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CoreInOutDegreeMetrics extends GenealogyCoreMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

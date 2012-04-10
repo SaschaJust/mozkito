@@ -82,11 +82,11 @@ public class UniversalParentAgeMetrics<T> {
 	public final Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(3);
 		
-		String nodeId = genealogy.getNodeId(node);
+		String nodeId = this.genealogy.getNodeId(node);
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		
-		for (T parent : genealogy.getAllParents(node)) {
-			stats.addValue(dayComparator.daysDiff(node, parent));
+		for (T parent : this.genealogy.getAllParents(node)) {
+			stats.addValue(this.dayComparator.daysDiff(node, parent));
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgParentAge, nodeId, (stats.getN() < 1)

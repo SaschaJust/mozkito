@@ -88,14 +88,14 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
 		Collection<JavaChangeOperation> partition = item.getNode();
-		String nodeId = genealogy.getNodeId(partition);
+		String nodeId = this.genealogy.getNodeId(partition);
 		
 		DescriptiveStatistics dependantStats = new DescriptiveStatistics();
 		DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
 		metricValues.add(new GenealogyMetricValue(changeSize, nodeId, partition.size()));
 		
-		for (Collection<JavaChangeOperation> dependant : genealogy.getAllDependants(partition)) {
+		for (Collection<JavaChangeOperation> dependant : this.genealogy.getAllDependants(partition)) {
 			dependantStats.addValue(dependant.size());
 		}
 		
@@ -103,7 +103,7 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId, dependantStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId, dependantStats.getSum()));
 		
-		for (Collection<JavaChangeOperation> dependant : genealogy.getAllParents(partition)) {
+		for (Collection<JavaChangeOperation> dependant : this.genealogy.getAllParents(partition)) {
 			parentStats.addValue(dependant.size());
 		}
 		

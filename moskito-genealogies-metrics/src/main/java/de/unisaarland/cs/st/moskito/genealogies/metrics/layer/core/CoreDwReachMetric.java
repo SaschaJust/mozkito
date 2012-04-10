@@ -48,7 +48,7 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 	 */
 	public CoreDwReachMetric(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalDwReachMetric<JavaChangeOperation>(genealogy,
+		this.universalMetric = new UniversalDwReachMetric<JavaChangeOperation>(genealogy,
 		                                                                  new Comparator<JavaChangeOperation>() {
 			                                                                  
 			                                                                  @Override
@@ -85,7 +85,7 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

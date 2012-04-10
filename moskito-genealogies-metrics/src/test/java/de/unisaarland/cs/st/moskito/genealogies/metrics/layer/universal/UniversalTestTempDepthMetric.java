@@ -38,7 +38,7 @@ public class UniversalTestTempDepthMetric implements DayTimeDiff<String> {
 	 * @param genealogy the genealogy
 	 */
 	public UniversalTestTempDepthMetric(ChangeGenealogy<String> genealogy) {
-		universalMetric = new UniversalTempDepthMetrics<String>(genealogy, this);
+		this.universalMetric = new UniversalTempDepthMetrics<String>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -59,7 +59,7 @@ public class UniversalTestTempDepthMetric implements DayTimeDiff<String> {
 	 * @return the collection
 	 */
 	public Collection<GenealogyMetricValue> handle(String item) {
-		return universalMetric.handle(item);
+		return this.universalMetric.handle(item);
 	}
 	
 }

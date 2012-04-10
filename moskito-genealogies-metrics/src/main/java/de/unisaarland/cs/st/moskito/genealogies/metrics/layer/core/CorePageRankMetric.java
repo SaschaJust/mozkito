@@ -41,7 +41,7 @@ public class CorePageRankMetric extends GenealogyCoreMetric {
 	 */
 	public CorePageRankMetric(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalPageRankMetric<JavaChangeOperation>(genealogy);
+		this.universalMetric = new UniversalPageRankMetric<JavaChangeOperation>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CorePageRankMetric extends GenealogyCoreMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode(), item.isLast());
+		return this.universalMetric.handle(item.getNode(), item.isLast());
 	}
 	
 }

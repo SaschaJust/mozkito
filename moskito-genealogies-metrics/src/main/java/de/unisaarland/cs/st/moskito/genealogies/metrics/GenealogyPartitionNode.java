@@ -67,7 +67,7 @@ public class GenealogyPartitionNode {
 	 * @return the node
 	 */
 	public Collection<JavaChangeOperation> getNode() {
-		return t;
+		return this.t;
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class GenealogyPartitionNode {
 	 * @return the node id
 	 */
 	public String getNodeId() {
-		return nodeId;
+		return this.nodeId;
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class GenealogyPartitionNode {
 	 * @return true, if is last
 	 */
 	public boolean isLast() {
-		return lastNode;
+		return this.lastNode;
 	}
 	
 }

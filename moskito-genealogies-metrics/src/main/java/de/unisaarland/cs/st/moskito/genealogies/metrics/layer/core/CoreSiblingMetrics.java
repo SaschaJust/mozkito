@@ -41,7 +41,7 @@ public class CoreSiblingMetrics extends GenealogyCoreMetric {
 	 */
 	public CoreSiblingMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalSiblingMetrics<JavaChangeOperation>(genealogy);
+		this.universalMetric = new UniversalSiblingMetrics<JavaChangeOperation>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CoreSiblingMetrics extends GenealogyCoreMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

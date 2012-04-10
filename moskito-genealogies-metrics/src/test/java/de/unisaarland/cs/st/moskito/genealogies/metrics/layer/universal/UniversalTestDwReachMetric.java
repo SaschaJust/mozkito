@@ -38,7 +38,7 @@ public class UniversalTestDwReachMetric {
 	 * @param genealogy the genealogy
 	 */
 	public UniversalTestDwReachMetric(ChangeGenealogy<String> genealogy) {
-		universalMetric = new UniversalDwReachMetric<String>(genealogy, new Comparator<String>() {
+		this.universalMetric = new UniversalDwReachMetric<String>(genealogy, new Comparator<String>() {
 			
 			@Override
 			public int compare(String o1,
@@ -55,7 +55,7 @@ public class UniversalTestDwReachMetric {
 	 * @return the collection
 	 */
 	public Collection<GenealogyMetricValue> handle(String item) {
-		return universalMetric.handle(item);
+		return this.universalMetric.handle(item);
 	}
 	
 }

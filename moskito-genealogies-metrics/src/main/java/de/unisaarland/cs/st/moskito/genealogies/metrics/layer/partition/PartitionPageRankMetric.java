@@ -41,7 +41,7 @@ public class PartitionPageRankMetric extends GenealogyPartitionMetric {
 	 */
 	public PartitionPageRankMetric(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalPageRankMetric<Collection<JavaChangeOperation>>(genealogy);
+		this.universalMetric = new UniversalPageRankMetric<Collection<JavaChangeOperation>>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class PartitionPageRankMetric extends GenealogyPartitionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode(), item.isLast());
+		return this.universalMetric.handle(item.getNode(), item.isLast());
 	}
 	
 }

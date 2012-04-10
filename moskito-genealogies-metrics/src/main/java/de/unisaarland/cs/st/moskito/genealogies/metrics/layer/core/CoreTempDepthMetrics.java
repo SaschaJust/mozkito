@@ -43,7 +43,7 @@ public class CoreTempDepthMetrics extends GenealogyCoreMetric implements DayTime
 	 */
 	public CoreTempDepthMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalTempDepthMetrics<JavaChangeOperation>(genealogy, this);
+		this.universalMetric = new UniversalTempDepthMetrics<JavaChangeOperation>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +68,7 @@ public class CoreTempDepthMetrics extends GenealogyCoreMetric implements DayTime
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

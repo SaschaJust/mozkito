@@ -41,7 +41,7 @@ public class PartitionStructuralHolesMetrics extends GenealogyPartitionMetric {
 	 */
 	public PartitionStructuralHolesMetrics(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalStructuralHolesMetrics<Collection<JavaChangeOperation>>(genealogy);
+		this.universalMetric = new UniversalStructuralHolesMetrics<Collection<JavaChangeOperation>>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class PartitionStructuralHolesMetrics extends GenealogyPartitionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

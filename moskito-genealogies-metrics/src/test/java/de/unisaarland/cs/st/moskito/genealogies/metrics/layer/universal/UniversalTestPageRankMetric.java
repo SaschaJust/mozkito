@@ -37,7 +37,7 @@ public class UniversalTestPageRankMetric {
 	 * @param genealogy the genealogy
 	 */
 	public UniversalTestPageRankMetric(ChangeGenealogy<String> genealogy) {
-		universalMetric = new UniversalPageRankMetric<String>(genealogy);
+		this.universalMetric = new UniversalPageRankMetric<String>(genealogy);
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class UniversalTestPageRankMetric {
 	 */
 	public Collection<GenealogyMetricValue> handle(String item,
 	                                               boolean last) {
-		return universalMetric.handle(item, last);
+		return this.universalMetric.handle(item, last);
 	}
 	
 }

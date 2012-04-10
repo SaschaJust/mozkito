@@ -82,8 +82,8 @@ public class UniversalInbreedMetrics<T> {
 	public Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
 		
-		Collection<T> vertexParents = genealogy.getAllDependants(node);
-		Collection<T> vertexChildren = genealogy.getAllDependants(node);
+		Collection<T> vertexParents = this.genealogy.getAllDependants(node);
+		Collection<T> vertexChildren = this.genealogy.getAllDependants(node);
 		
 		DescriptiveStatistics inbreedChildrenStat = new DescriptiveStatistics();
 		DescriptiveStatistics inbreedParentsStat = new DescriptiveStatistics();
@@ -91,23 +91,23 @@ public class UniversalInbreedMetrics<T> {
 		Collection<T> inbreedChildren = new HashSet<T>();
 		Collection<T> inbreedParents = new HashSet<T>();
 		
-		for (T child : genealogy.getAllDependants(node)) {
-			Collection<T> grandChildren = genealogy.getAllDependants(child);
+		for (T child : this.genealogy.getAllDependants(node)) {
+			Collection<T> grandChildren = this.genealogy.getAllDependants(child);
 			@SuppressWarnings ("rawtypes")
 			Collection intersection = CollectionUtils.intersection(vertexChildren, grandChildren);
 			inbreedChildren.addAll(intersection);
 			inbreedChildrenStat.addValue(intersection.size());
 		}
 		
-		for (T parent : genealogy.getAllParents(node)) {
-			Collection<T> grandParents = genealogy.getAllParents(parent);
+		for (T parent : this.genealogy.getAllParents(node)) {
+			Collection<T> grandParents = this.genealogy.getAllParents(parent);
 			@SuppressWarnings ("rawtypes")
 			Collection intersection = CollectionUtils.intersection(vertexParents, grandParents);
 			inbreedParents.addAll(intersection);
 			inbreedParentsStat.addValue(intersection.size());
 		}
 		
-		String nodeId = genealogy.getNodeId(node);
+		String nodeId = this.genealogy.getNodeId(node);
 		
 		result.add(new GenealogyMetricValue(numInbreedChildren, nodeId, inbreedChildren.size()));
 		result.add(new GenealogyMetricValue(numInbreedParents, nodeId, inbreedParents.size()));

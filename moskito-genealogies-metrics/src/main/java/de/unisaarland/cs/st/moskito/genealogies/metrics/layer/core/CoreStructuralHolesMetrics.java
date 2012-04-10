@@ -41,7 +41,7 @@ public class CoreStructuralHolesMetrics extends GenealogyCoreMetric {
 	 */
 	public CoreStructuralHolesMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalStructuralHolesMetrics<JavaChangeOperation>(genealogy);
+		this.universalMetric = new UniversalStructuralHolesMetrics<JavaChangeOperation>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class CoreStructuralHolesMetrics extends GenealogyCoreMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

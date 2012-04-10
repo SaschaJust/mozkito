@@ -82,11 +82,11 @@ public class UniversalResponseTimeMetrics<T> {
 	public final Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(3);
 		
-		String nodeId = genealogy.getNodeId(node);
+		String nodeId = this.genealogy.getNodeId(node);
 		DescriptiveStatistics stats = new DescriptiveStatistics();
 		
-		for (T dependant : genealogy.getAllDependants(node)) {
-			stats.addValue(dayComparator.daysDiff(node, dependant));
+		for (T dependant : this.genealogy.getAllDependants(node)) {
+			stats.addValue(this.dayComparator.daysDiff(node, dependant));
 		}
 		
 		metricValues.add(new GenealogyMetricValue(avgResponseTime, nodeId, (stats.getN() < 1)

@@ -44,7 +44,7 @@ public class PartitionTempDepthMetrics extends GenealogyPartitionMetric implemen
 	 */
 	public PartitionTempDepthMetrics(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalTempDepthMetrics<Collection<JavaChangeOperation>>(genealogy, this);
+		this.universalMetric = new UniversalTempDepthMetrics<Collection<JavaChangeOperation>>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -69,7 +69,7 @@ public class PartitionTempDepthMetrics extends GenealogyPartitionMetric implemen
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

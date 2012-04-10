@@ -44,7 +44,7 @@ public class PartitionResponseTimeMetrics extends GenealogyPartitionMetric imple
 	 */
 	public PartitionResponseTimeMetrics(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalResponseTimeMetrics<Collection<JavaChangeOperation>>(genealogy, this);
+		this.universalMetric = new UniversalResponseTimeMetrics<Collection<JavaChangeOperation>>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -70,7 +70,7 @@ public class PartitionResponseTimeMetrics extends GenealogyPartitionMetric imple
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

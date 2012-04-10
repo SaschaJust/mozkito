@@ -64,7 +64,7 @@ public class UniversalPageRankMetric<T> {
 	public UniversalPageRankMetric(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
 		JungGenealogyGraph<T> jungGraph = new JungGenealogyGraph<T>(genealogy);
-		pageRank = new PageRank<T, JungGenealogyGraph.Edge<T>>(jungGraph, 0.1);
+		this.pageRank = new PageRank<T, JungGenealogyGraph.Edge<T>>(jungGraph, 0.1);
 	}
 	
 	/**
@@ -76,9 +76,9 @@ public class UniversalPageRankMetric<T> {
 	 */
 	public Collection<GenealogyMetricValue> handle(final T node,
 	                                               final boolean finalNode) {
-		Double vertexScore = pageRank.getVertexScore(node);
+		Double vertexScore = this.pageRank.getVertexScore(node);
 		Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
-		result.add(new GenealogyMetricValue(pageRankName, genealogy.getNodeId(node), vertexScore));
+		result.add(new GenealogyMetricValue(pageRankName, this.genealogy.getNodeId(node), vertexScore));
 		return result;
 	}
 }

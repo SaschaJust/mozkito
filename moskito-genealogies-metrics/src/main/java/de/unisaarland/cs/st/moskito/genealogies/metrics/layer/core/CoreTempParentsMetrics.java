@@ -43,7 +43,7 @@ public class CoreTempParentsMetrics extends GenealogyCoreMetric implements DayTi
 	 */
 	public CoreTempParentsMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalTempParentsMetrics<JavaChangeOperation>(genealogy, this);
+		this.universalMetric = new UniversalTempParentsMetrics<JavaChangeOperation>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +68,7 @@ public class CoreTempParentsMetrics extends GenealogyCoreMetric implements DayTi
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

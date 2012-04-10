@@ -41,7 +41,7 @@ public class PartitionChildrenMetrics extends GenealogyPartitionMetric {
 	 */
 	public PartitionChildrenMetrics(PartitionChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalChildrenMetrics<Collection<JavaChangeOperation>>(genealogy);
+		this.universalMetric = new UniversalChildrenMetrics<Collection<JavaChangeOperation>>(genealogy);
 	}
 	
 	/* (non-Javadoc)
@@ -57,7 +57,7 @@ public class PartitionChildrenMetrics extends GenealogyPartitionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }

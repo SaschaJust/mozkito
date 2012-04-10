@@ -125,20 +125,20 @@ public class UniversalTempParentsMetrics<T> {
 	public Collection<GenealogyMetricValue> handle(T node) {
 		Collection<GenealogyMetricValue> result = new ArrayList<GenealogyMetricValue>(10);
 		
-		parents_1.clear();
-		parents_2.clear();
-		parents_5.clear();
-		parents_10.clear();
-		parents_14.clear();
+		this.parents_1.clear();
+		this.parents_2.clear();
+		this.parents_5.clear();
+		this.parents_10.clear();
+		this.parents_14.clear();
 		
 		int[] longestPaths = longestPath(node, node, new HashSet<T>());
 		
-		parents_2.addAll(parents_1);
-		parents_5.addAll(parents_2);
-		parents_10.addAll(parents_5);
-		parents_14.addAll(parents_10);
+		this.parents_2.addAll(this.parents_1);
+		this.parents_5.addAll(this.parents_2);
+		this.parents_10.addAll(this.parents_5);
+		this.parents_14.addAll(this.parents_10);
 		
-		String nodeId = genealogy.getNodeId(node);
+		String nodeId = this.genealogy.getNodeId(node);
 		
 		result.add(new GenealogyMetricValue(maxTempParentDepth1, nodeId, longestPaths[0]));
 		result.add(new GenealogyMetricValue(maxTempParentDepth2, nodeId, longestPaths[1]));
@@ -146,11 +146,11 @@ public class UniversalTempParentsMetrics<T> {
 		result.add(new GenealogyMetricValue(maxTempParentDepth10, nodeId, longestPaths[3]));
 		result.add(new GenealogyMetricValue(maxTempParentDepth14, nodeId, longestPaths[4]));
 		
-		result.add(new GenealogyMetricValue(numTempParents1, nodeId, parents_1.size()));
-		result.add(new GenealogyMetricValue(numTempParents2, nodeId, parents_2.size()));
-		result.add(new GenealogyMetricValue(numTempParents5, nodeId, parents_5.size()));
-		result.add(new GenealogyMetricValue(numTempParents10, nodeId, parents_10.size()));
-		result.add(new GenealogyMetricValue(numTempParents14, nodeId, parents_14.size()));
+		result.add(new GenealogyMetricValue(numTempParents1, nodeId, this.parents_1.size()));
+		result.add(new GenealogyMetricValue(numTempParents2, nodeId, this.parents_2.size()));
+		result.add(new GenealogyMetricValue(numTempParents5, nodeId, this.parents_5.size()));
+		result.add(new GenealogyMetricValue(numTempParents10, nodeId, this.parents_10.size()));
+		result.add(new GenealogyMetricValue(numTempParents14, nodeId, this.parents_14.size()));
 		
 		return result;
 	}
@@ -169,16 +169,16 @@ public class UniversalTempParentsMetrics<T> {
 		
 		int[] result = { 0, 0, 0, 0, 0 };
 		
-		int diff = dayTimeDiff.daysDiff(originalNode, node);
+		int diff = this.dayTimeDiff.daysDiff(originalNode, node);
 		if (diff > 14) {
 			return result;
 		}
 		
-		String nodeId = genealogy.getNodeId(node);
+		String nodeId = this.genealogy.getNodeId(node);
 		
 		int[] toAdd = { 0, 0, 0, 0, 0 };
 		
-		for (T dependant : genealogy.getAllParents(node)) {
+		for (T dependant : this.genealogy.getAllParents(node)) {
 			if (seen.contains(dependant)) {
 				continue;
 			}
@@ -198,19 +198,19 @@ public class UniversalTempParentsMetrics<T> {
 		
 		int j = 0;
 		if (diff < 2) {
-			parents_1.add(nodeId);
+			this.parents_1.add(nodeId);
 		} else if (diff < 3) {
 			j = 1;
-			parents_2.add(nodeId);
+			this.parents_2.add(nodeId);
 		} else if (diff < 6) {
 			j = 2;
-			parents_5.add(nodeId);
+			this.parents_5.add(nodeId);
 		} else if (diff < 11) {
 			j = 3;
-			parents_10.add(nodeId);
+			this.parents_10.add(nodeId);
 		} else {
 			j = 4;
-			parents_14.add(nodeId);
+			this.parents_14.add(nodeId);
 		}
 		
 		for (int i = j; i < 5; ++i) {

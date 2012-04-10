@@ -65,7 +65,7 @@ public class GenealogyCoreNode {
 	 * @return the node
 	 */
 	public JavaChangeOperation getNode() {
-		return t;
+		return this.t;
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class GenealogyCoreNode {
 	 * @return the node id
 	 */
 	public String getNodeId() {
-		return nodeId;
+		return this.nodeId;
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class GenealogyCoreNode {
 	 * @return true, if is last
 	 */
 	public boolean isLast() {
-		return lastNode;
+		return this.lastNode;
 	}
 	
 }

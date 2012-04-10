@@ -43,7 +43,7 @@ public class CoreResponseTimeMetrics extends GenealogyCoreMetric implements DayT
 	 */
 	public CoreResponseTimeMetrics(CoreChangeGenealogy genealogy) {
 		super(genealogy);
-		universalMetric = new UniversalResponseTimeMetrics<JavaChangeOperation>(genealogy, this);
+		this.universalMetric = new UniversalResponseTimeMetrics<JavaChangeOperation>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +68,7 @@ public class CoreResponseTimeMetrics extends GenealogyCoreMetric implements DayT
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		return universalMetric.handle(item.getNode());
+		return this.universalMetric.handle(item.getNode());
 	}
 	
 }
