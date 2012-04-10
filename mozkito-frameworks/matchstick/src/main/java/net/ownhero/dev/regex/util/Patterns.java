@@ -19,4 +19,6 @@ package net.ownhero.dev.regex.util;
 public final class Patterns {
 	
 	public static final String GIT_LOG_DATE_FORMAT = "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})";
+	public static final String EMAIL_ADDRESS       = "((?#email user)[A-Za-z0-9._%-+]+@(((?#email real domain)[A-Za-z0-9.-]+\\.[A-Za-z]{2,4})|((?#email anonymous domain)\\p{XDigit}{4,}(-\\p{XDigit}{4,}){4})))";
+	
 }
