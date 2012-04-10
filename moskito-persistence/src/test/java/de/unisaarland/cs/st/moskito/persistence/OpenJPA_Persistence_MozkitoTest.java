@@ -25,7 +25,7 @@ import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 @DatabaseSettings (unit = "persistence")
-public class OpenJPA_Persistence_NetTest extends MoskitoTest {
+public class OpenJPA_Persistence_MozkitoTest extends MoskitoTest {
 	
 	@Test
 	public void testPerson() {

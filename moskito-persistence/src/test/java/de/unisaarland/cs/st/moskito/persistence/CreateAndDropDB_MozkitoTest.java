@@ -21,7 +21,7 @@ import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 @DatabaseSettings (database = "just_test", unit = "persistence")
-public class CreateAndDropDB extends MoskitoTest {
+public class CreateAndDropDB_MozkitoTest extends MoskitoTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
