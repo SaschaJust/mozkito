@@ -46,7 +46,7 @@ public class CTLTrue extends CTLFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLTrue getFromXMLRepresentation(Element element) {
+	public static CTLTrue getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-true");
 		return CTLTrue.get();
 	}
@@ -71,12 +71,11 @@ public class CTLTrue extends CTLFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof CTLTrue) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	/*
@@ -84,7 +83,7 @@ public class CTLTrue extends CTLFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "true";
 	}
 	
@@ -93,8 +92,8 @@ public class CTLTrue extends CTLFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-true");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-true");
 		return ctlXML;
 	}
 	
@@ -103,12 +102,12 @@ public class CTLTrue extends CTLFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			kripkeStruct.markEvaluatedFormula(state, this, true);
 		}
 		
@@ -116,7 +115,7 @@ public class CTLTrue extends CTLFormula {
 	}
 	
 	@Override
-	public void putAttomicFormulas(Collection<CTLAtomicFormula> atomicFormulas) {
+	public void putAttomicFormulas(final Collection<CTLAtomicFormula> atomicFormulas) {
 		
 	}
 }

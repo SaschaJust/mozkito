@@ -68,25 +68,24 @@ public class KripkeStructure<V> {
 		// Automatic Verification Methods for Finite State Systems, 179-188.
 		// Lecture Notes in Computer Science 407. Berlin: Springer-Verlag
 		
-		KripkeStructure<T> kripkeStruct = new KripkeStructure<T>();
-		Set<State> finalTransitionStates = new HashSet<State>();
+		final KripkeStructure<T> kripkeStruct = new KripkeStructure<T>();
+		final Set<State> finalTransitionStates = new HashSet<State>();
 		
 		// Create states in the Kripke structure.
 		// FIXME this is not nice but should work. :-)
-		State initialState = kripkeStruct.createNewState(null);
+		final State initialState = kripkeStruct.createNewState(null);
 		
 		kripkeStruct.markStateAsInitial(initialState);
 		
-		HashMap<T, State> vertices2States = new HashMap<T, State>();
-		for (T v : changeGenealogy.vertexSet()) {
-			Collection<T> allParents = changeGenealogy.getAllParents(v);
+		final HashMap<T, State> vertices2States = new HashMap<T, State>();
+		for (final T v : changeGenealogy.vertexSet()) {
+			final Collection<T> allParents = changeGenealogy.getAllParents(v);
 			if (allParents.isEmpty()) {
 				continue;
-			} else {
-				vertices2States.put(v, kripkeStruct.createNewState(v));
 			}
-			State state = vertices2States.get(v);
-			Collection<T> allDependents = changeGenealogy.getAllDependants(v);
+			vertices2States.put(v, kripkeStruct.createNewState(v));
+			final State state = vertices2States.get(v);
+			final Collection<T> allDependents = changeGenealogy.getAllDependants(v);
 			if (allDependents.isEmpty()) {
 				// if there are no outgoing edges, the state is a final state
 				finalTransitionStates.add(state);
@@ -95,17 +94,17 @@ public class KripkeStructure<V> {
 			if (!kripkeStruct.getInitialStates().contains(state)) {
 				// add file path as labels
 				
-				Collection<Label> labels = labelGenerator.getLabels(v);
-				for (Label label : labels) {
+				final Collection<Label> labels = labelGenerator.getLabels(v);
+				for (final Label label : labels) {
 					kripkeStruct.addLabelToState(state, label);
 				}
 			}
 		}
 		
-		for (T from : vertices2States.keySet()) {
-			for (T to : changeGenealogy.getAllDependants(from)) {
-				State fromState = vertices2States.get(from);
-				State toState = vertices2States.get(to);
+		for (final T from : vertices2States.keySet()) {
+			for (final T to : changeGenealogy.getAllDependants(from)) {
+				final State fromState = vertices2States.get(from);
+				final State toState = vertices2States.get(to);
 				kripkeStruct.addState(fromState, toState);
 			}
 		}
@@ -195,10 +194,10 @@ public class KripkeStructure<V> {
 	 * @author Kim Herzig <kim@cs.uni-saarland.de>
 	 */
 	public void clear() {
-		for (Set<CTLFormula> m : this.trueFormulas.values()) {
+		for (final Set<CTLFormula> m : this.trueFormulas.values()) {
 			m.clear();
 		}
-		for (Set<CTLFormula> m : this.falseFormulas.values()) {
+		for (final Set<CTLFormula> m : this.falseFormulas.values()) {
 			m.clear();
 		}
 		this.evaluatedFormulas.clear();
@@ -215,7 +214,7 @@ public class KripkeStructure<V> {
 	 * @return The state that was created.
 	 */
 	public State createNewState(final V vertex) {
-		State state = new State();
+		final State state = new State();
 		this.state2successors.put(state, new HashSet<State>());
 		this.state2predecessors.put(state, new HashSet<State>());
 		this.state2labels.put(state, new HashSet<Label>());
@@ -231,8 +230,8 @@ public class KripkeStructure<V> {
 	 * @return Set of all labels in this Kripke structure.
 	 */
 	public Set<Label> getAllLabels() {
-		Set<Label> labels = new HashSet<Label>();
-		for (Set<Label> stateLabels : this.state2labels.values()) {
+		final Set<Label> labels = new HashSet<Label>();
+		for (final Set<Label> stateLabels : this.state2labels.values()) {
 			labels.addAll(stateLabels);
 		}
 		return Collections.unmodifiableSet(labels);
@@ -295,31 +294,31 @@ public class KripkeStructure<V> {
 	 */
 	private Map<Triple<Integer, Integer, Set<Label>>, Set<State>> getStatesClasses() {
 		// calculate all states' indegree
-		Map<State, Integer> state2indegree = new HashMap<State, Integer>();
-		for (State state : this.state2successors.keySet()) {
+		final Map<State, Integer> state2indegree = new HashMap<State, Integer>();
+		for (final State state : this.state2successors.keySet()) {
 			state2indegree.put(state, 0);
 		}
-		for (Set<State> statesSet : this.state2successors.values()) {
-			for (State state : statesSet) {
+		for (final Set<State> statesSet : this.state2successors.values()) {
+			for (final State state : statesSet) {
 				state2indegree.put(state, state2indegree.get(state) + 1);
 			}
 		}
 		
 		// calculate all states' outdegree
-		Map<State, Integer> state2outdegree = new HashMap<State, Integer>();
-		for (State state : this.state2successors.keySet()) {
+		final Map<State, Integer> state2outdegree = new HashMap<State, Integer>();
+		for (final State state : this.state2successors.keySet()) {
 			state2outdegree.put(state, this.state2successors.get(state).size());
 		}
 		
 		// partition the space of states into equivalence classes
-		Map<Triple<Integer, Integer, Set<Label>>, Set<State>> result = new HashMap<Triple<Integer, Integer, Set<Label>>, Set<State>>();
-		for (State state : this.state2labels.keySet()) {
-			Integer indegree = state2indegree.get(state);
-			Integer outdegree = state2outdegree.get(state);
-			Set<Label> labels = this.state2labels.get(state);
-			Triple<Integer, Integer, Set<Label>> equivClass = new Triple<Integer, Integer, Set<Label>>(indegree,
-			                                                                                           outdegree,
-			                                                                                           labels);
+		final Map<Triple<Integer, Integer, Set<Label>>, Set<State>> result = new HashMap<Triple<Integer, Integer, Set<Label>>, Set<State>>();
+		for (final State state : this.state2labels.keySet()) {
+			final Integer indegree = state2indegree.get(state);
+			final Integer outdegree = state2outdegree.get(state);
+			final Set<Label> labels = this.state2labels.get(state);
+			final Triple<Integer, Integer, Set<Label>> equivClass = new Triple<Integer, Integer, Set<Label>>(indegree,
+			                                                                                                 outdegree,
+			                                                                                                 labels);
 			if (!result.containsKey(equivClass)) {
 				result.put(equivClass, new HashSet<State>());
 			}
@@ -329,8 +328,8 @@ public class KripkeStructure<V> {
 	}
 	
 	public Set<State> getStatesFormulaIsTrue(final CTLFormula formula) {
-		Set<State> result = new HashSet<State>();
-		for (State state : this.trueFormulas.keySet()) {
+		final Set<State> result = new HashSet<State>();
+		for (final State state : this.trueFormulas.keySet()) {
 			if (this.trueFormulas.get(state).contains(formula)) {
 				result.add(state);
 			}
@@ -416,9 +415,9 @@ public class KripkeStructure<V> {
 	// }
 	
 	public Set<V> getVerticesFormulaIsTrue(final CTLFormula formula) {
-		Set<State> states = this.getStatesFormulaIsTrue(formula);
-		Set<V> result = new HashSet<V>();
-		for (State state : states) {
+		final Set<State> states = this.getStatesFormulaIsTrue(formula);
+		final Set<V> result = new HashSet<V>();
+		for (final State state : states) {
 			result.add(this.states2vertices.get(state));
 		}
 		return result;
@@ -474,8 +473,8 @@ public class KripkeStructure<V> {
 		
 		// prepare sets of potentially equivalent states for both Kripke
 		// structures; partition based on in- and out-degree, and on labels
-		Map<Triple<Integer, Integer, Set<Label>>, Set<State>> thisClasses = this.getStatesClasses();
-		Map<Triple<Integer, Integer, Set<Label>>, Set<State>> otherClasses = other.getStatesClasses();
+		final Map<Triple<Integer, Integer, Set<Label>>, Set<State>> thisClasses = this.getStatesClasses();
+		final Map<Triple<Integer, Integer, Set<Label>>, Set<State>> otherClasses = other.getStatesClasses();
 		if (thisClasses.size() != otherClasses.size()) {
 			return false;
 		}
@@ -485,19 +484,19 @@ public class KripkeStructure<V> {
 		
 		// make sure all classes in both Kripke structures have the same size
 		// remove classes of size one and create mappings for them
-		List<List<State>> thisClassesList = new ArrayList<List<State>>();
-		List<List<State>> otherClassesList = new ArrayList<List<State>>();
-		Map<State, State> this2other = new HashMap<State, State>();
-		for (Triple<Integer, Integer, Set<Label>> properties : new HashSet<Triple<Integer, Integer, Set<Label>>>(
-		                                                                                                         thisClasses.keySet())) {
-			Set<State> thisClass = thisClasses.get(properties);
-			Set<State> otherClass = otherClasses.get(properties);
+		final List<List<State>> thisClassesList = new ArrayList<List<State>>();
+		final List<List<State>> otherClassesList = new ArrayList<List<State>>();
+		final Map<State, State> this2other = new HashMap<State, State>();
+		for (final Triple<Integer, Integer, Set<Label>> properties : new HashSet<Triple<Integer, Integer, Set<Label>>>(
+		                                                                                                               thisClasses.keySet())) {
+			final Set<State> thisClass = thisClasses.get(properties);
+			final Set<State> otherClass = otherClasses.get(properties);
 			if (thisClass.size() != otherClass.size()) {
 				return false;
 			}
 			if (thisClass.size() == 1) {
-				State thisState = thisClass.iterator().next();
-				State otherState = otherClass.iterator().next();
+				final State thisState = thisClass.iterator().next();
+				final State otherState = otherClass.iterator().next();
 				this2other.put(thisState, otherState);
 				thisClasses.remove(properties);
 				otherClasses.remove(properties);
@@ -587,11 +586,11 @@ public class KripkeStructure<V> {
 		this.falseFormulas.remove(state);
 		this.state2labels.remove(state);
 		this.state2predecessors.remove(state);
-		for (State s : this.state2predecessors.keySet()) {
+		for (final State s : this.state2predecessors.keySet()) {
 			this.state2predecessors.get(s).remove(state);
 		}
 		this.state2successors.remove(state);
-		for (State s : this.state2successors.keySet()) {
+		for (final State s : this.state2successors.keySet()) {
 			this.state2successors.get(s).remove(state);
 		}
 		this.trueFormulas.remove(state);
@@ -604,36 +603,36 @@ public class KripkeStructure<V> {
 	@Override
 	public String toString() {
 		// assign unique ids to states so that we can output anything
-		Map<State, Integer> state2id = new HashMap<State, Integer>();
-		for (State state : this.state2successors.keySet()) {
+		final Map<State, Integer> state2id = new HashMap<State, Integer>();
+		for (final State state : this.state2successors.keySet()) {
 			state2id.put(state, state2id.size() + 1);
 		}
-		Map<Integer, State> id2state = new HashMap<Integer, State>();
-		for (State state : this.state2successors.keySet()) {
+		final Map<Integer, State> id2state = new HashMap<Integer, State>();
+		for (final State state : this.state2successors.keySet()) {
 			id2state.put(state2id.get(state), state);
 		}
-		List<Integer> ids = new ArrayList<Integer>(id2state.keySet());
+		final List<Integer> ids = new ArrayList<Integer>(id2state.keySet());
 		Collections.sort(ids);
 		
 		// output the states and their labels + mark initial states
-		StringBuffer result = new StringBuffer();
-		for (Integer id : ids) {
-			State state = id2state.get(id);
+		final StringBuffer result = new StringBuffer();
+		for (final Integer id : ids) {
+			final State state = id2state.get(id);
 			result.append("State ").append(state2id.get(state));
 			if (this.initialStates.contains(state)) {
 				result.append(" (initial state)");
 			}
 			result.append(":\n");
-			for (Label label : this.state2labels.get(state)) {
+			for (final Label label : this.state2labels.get(state)) {
 				result.append("    ").append(label.toString());
 				result.append('\n');
 			}
 		}
 		
 		// output the transition relation
-		for (Integer id : ids) {
-			State state = id2state.get(id);
-			for (State succ : this.state2successors.get(state)) {
+		for (final Integer id : ids) {
+			final State state = id2state.get(id);
+			for (final State succ : this.state2successors.get(state)) {
 				result.append("Transition ").append(state2id.get(state));
 				result.append(" -> ").append(state2id.get(succ));
 				result.append('\n');

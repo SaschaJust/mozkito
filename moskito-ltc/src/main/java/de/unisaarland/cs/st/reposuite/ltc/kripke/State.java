@@ -31,7 +31,23 @@ public class State {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object other) {
+	public boolean equals(final Object other) {
 		return this == other;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			return super.hashCode();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 }
