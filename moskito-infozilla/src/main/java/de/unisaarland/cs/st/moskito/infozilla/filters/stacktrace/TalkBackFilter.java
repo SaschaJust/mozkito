@@ -117,8 +117,8 @@ public class TalkBackFilter extends StackTraceFilter {
 		// Find all talkback lines
 		final MultiMatch list = rptl1.findAll(inputText);
 		for (final Match matches : list) {
-			talkbackLines.add(matches.get(0).getMatch().trim());
-			this.textRemover.markForDeletion(matches.get(0).start(), matches.get(0).end());
+			talkbackLines.add(matches.getFullMatch().getMatch().trim());
+			this.textRemover.markForDeletion(matches.getFullMatch().start(), matches.getFullMatch().end());
 		}
 		
 		// From each set of talkback lines create a talkback trace

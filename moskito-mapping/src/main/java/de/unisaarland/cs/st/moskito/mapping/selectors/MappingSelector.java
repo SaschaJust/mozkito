@@ -198,9 +198,9 @@ public abstract class MappingSelector extends Node {
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	protected final ArgumentSet<?, ?> getAnchor(@SuppressWarnings ("hiding") @NotNull final ISettings settings) throws SettingsParseError,
-	                                                                                                           ArgumentSetRegistrationException,
-	                                                                                                           ArgumentRegistrationException {
+	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
+	                                                                              ArgumentSetRegistrationException,
+	                                                                              ArgumentRegistrationException {
 		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingSelector.Options.TAG);
 		
 		if (anchor == null) {

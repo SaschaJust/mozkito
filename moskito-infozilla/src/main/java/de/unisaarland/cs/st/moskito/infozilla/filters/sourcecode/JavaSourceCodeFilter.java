@@ -196,12 +196,11 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				final MultiMatch list = regex.findAll(s);
 				
 				for (final Match matches : list) {
-					final int offset = findMatch(s, '{', '}', matches.get(0).end());
-					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(),
-					                                              matches.get(0).end() + offset, keyword,
-					                                              s.substring(matches.get(0).start(), matches.get(0)
-					                                                                                         .end()
-					                                                      + offset));
+					final int offset = findMatch(s, '{', '}', matches.getFullMatch().end());
+					final CodeRegion foundRegion = new CodeRegion(matches.getFullMatch().start(),
+					                                              matches.getFullMatch().end() + offset, keyword,
+					                                              s.substring(matches.getFullMatch().start(),
+					                                                          matches.getFullMatch().end() + offset));
 					codeRegions.add(foundRegion);
 				}
 			} else {
@@ -209,8 +208,9 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 				final MultiMatch list = regex.findAll(s);
 				
 				for (final Match matches : list) {
-					final CodeRegion foundRegion = new CodeRegion(matches.get(0).start(), matches.get(0).end(),
-					                                              keyword, matches.get(0).getMatch());
+					final CodeRegion foundRegion = new CodeRegion(matches.getFullMatch().start(),
+					                                              matches.getFullMatch().end(), keyword,
+					                                              matches.getFullMatch().getMatch());
 					codeRegions.add(foundRegion);
 				}
 			}

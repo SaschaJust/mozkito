@@ -22,6 +22,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.conditions.ClassCondition;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -259,7 +260,9 @@ public class TimestampEngine extends MappingEngine {
 		final DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
 		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
+		ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
 		final Report report = ((MappableReport) element2).getReport();
+		Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
 		                                            element1Timestamp.plus(getInterval().getEndMillis()));

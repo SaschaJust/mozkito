@@ -156,6 +156,7 @@ public class ReportRegexSelector extends MappingSelector {
 	 * @param pattern
 	 *            the pattern to set
 	 */
+	@SuppressWarnings ("unused")
 	private void setPattern(final String pattern) {
 		this.pattern = pattern;
 	}

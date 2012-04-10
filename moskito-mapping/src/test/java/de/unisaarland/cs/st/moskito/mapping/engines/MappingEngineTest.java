@@ -228,7 +228,7 @@ public class MappingEngineTest {
 	/**
 	 * Test supported.
 	 */
-	@SuppressWarnings ({ "deprecation", "serial", "hiding" })
+	@SuppressWarnings ({ "deprecation", "serial" })
 	@Test
 	public void testSupported() {
 		int failed = 0;

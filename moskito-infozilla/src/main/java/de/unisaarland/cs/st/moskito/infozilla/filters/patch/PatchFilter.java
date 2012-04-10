@@ -23,5 +23,5 @@ import de.unisaarland.cs.st.moskito.infozilla.filters.InfozillaFilter;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class PatchFilter extends InfozillaFilter {
-	
+	// stub
 }

@@ -10,9 +10,6 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
 package de.unisaarland.cs.st.moskito.infozilla.filters;
 
 import java.util.List;
@@ -22,15 +19,16 @@ import de.unisaarland.cs.st.moskito.infozilla.model.EnhancedReport;
 
 /**
  * The Class InfozillaFilterChain.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class InfozillaFilterChain {
 	
 	/**
 	 * Adds the filter.
-	 *
-	 * @param filter the filter
+	 * 
+	 * @param filter
+	 *            the filter
 	 */
 	public void addFilter(final InfozillaFilter filter) {
 		// TODO Auto-generated method stub
@@ -39,7 +37,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the enumerations.
-	 *
+	 * 
 	 * @return the enumerations
 	 */
 	public List<?> getEnumerations() {
@@ -48,7 +46,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the input text.
-	 *
+	 * 
 	 * @return the inputText
 	 */
 	public String getInputText() {
@@ -57,7 +55,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the output text.
-	 *
+	 * 
 	 * @return the outputText
 	 */
 	public String getOutputText() {
@@ -66,7 +64,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the patches.
-	 *
+	 * 
 	 * @return the patches
 	 */
 	public List<?> getPatches() {
@@ -75,7 +73,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the regions.
-	 *
+	 * 
 	 * @return the regions
 	 */
 	public List<?> getRegions() {
@@ -84,7 +82,7 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Gets the traces.
-	 *
+	 * 
 	 * @return the traces
 	 */
 	public List<?> getTraces() {
@@ -93,8 +91,9 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Parses the.
-	 *
-	 * @param report the report
+	 * 
+	 * @param report
+	 *            the report
 	 * @return the enhanced report
 	 */
 	public EnhancedReport parse(final Report report) {
@@ -103,9 +102,11 @@ public class InfozillaFilterChain {
 	
 	/**
 	 * Sets the input text.
-	 *
-	 * @param inputText the inputText to set
+	 * 
+	 * @param inputText
+	 *            the inputText to set
 	 */
 	public void setInputText(final String inputText) {
+		// stub
 	}
 }

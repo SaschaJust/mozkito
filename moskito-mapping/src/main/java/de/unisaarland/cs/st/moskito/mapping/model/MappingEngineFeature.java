@@ -119,12 +119,12 @@ public class MappingEngineFeature implements Annotated {
 		} catch (final ClassNotFoundException e) {
 			
 			if (Logger.logError()) {
-				Logger.error("Cannot find MappingEngine: " + getFqClassName(), e);
+				Logger.error(e, "Cannot find MappingEngine '%s'.", getFqClassName());
 			}
 			throw new ClassLoadingError(e, getFqClassName());
 		} catch (final ClassCastException e) {
 			if (Logger.logError()) {
-				Logger.error("Found corresponding class, but not of type MappingEngine: " + getFqClassName(), e);
+				Logger.error(e, "Found corresponding class, but not of type MappingEngine '%s'.", getFqClassName());
 			}
 			return null;
 		}

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ ********************************************************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import static net.ownhero.dev.ioda.StringUtils.truncate;
@@ -193,16 +193,16 @@ public abstract class MappingEngine extends Node {
 	
 	/** The Constant defaultNegative. */
 	private static final String DEFAULT_NEGATIVE = "-1";                                       //$NON-NLS-1$
-	                                                                                           
+	                                                                                            
 	/** The Constant defaultPositive. */
 	private static final String DEFAULT_POSITIVE = "1";                                        //$NON-NLS-1$
-	                                                                                           
+	                                                                                            
 	/** The Constant unknown. */
-	private static final String UNKNOWN         = Messages.getString("MappingEngine.unknown"); //$NON-NLS-1$
-	                                                                                           
+	private static final String UNKNOWN          = Messages.getString("MappingEngine.unknown"); //$NON-NLS-1$
+	                                                                                            
 	/** The Constant unused. */
-	private static final String UNUSED          = Messages.getString("MappingEngine.unused"); //$NON-NLS-1$
-	                                                                                           
+	private static final String UNUSED           = Messages.getString("MappingEngine.unused"); //$NON-NLS-1$
+	                                                                                            
 	/**
 	 * Gets the default negative.
 	 * 
@@ -313,9 +313,9 @@ public abstract class MappingEngine extends Node {
 	 * @throws ArgumentRegistrationException
 	 *             the argument registration exception
 	 */
-	protected final ArgumentSet<?, ?> getAnchor(@SuppressWarnings ("hiding") @NotNull final ISettings settings) throws SettingsParseError,
-	                                                                                                           ArgumentSetRegistrationException,
-	                                                                                                           ArgumentRegistrationException {
+	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
+	                                                                              ArgumentSetRegistrationException,
+	                                                                              ArgumentRegistrationException {
 		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingEngine.Options.tag);
 		if (anchor == null) {
 			if (this.options == null) {
@@ -334,7 +334,7 @@ public abstract class MappingEngine extends Node {
 	 *            the settings
 	 * @return the options
 	 */
-	protected final SetArgument.Options getOptions(@SuppressWarnings ("hiding") @NotNull final ISettings settings) {
+	protected final SetArgument.Options getOptions(@NotNull final ISettings settings) {
 		if (this.options == null) {
 			this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
 		}

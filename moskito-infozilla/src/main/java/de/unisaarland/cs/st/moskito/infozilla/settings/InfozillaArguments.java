@@ -38,6 +38,7 @@ public class InfozillaArguments extends
         ArgumentSetOptions<InfozillaFilterChain, ArgumentSet<InfozillaFilterChain, InfozillaArguments>> {
 	
 	/** The filters. */
+	@SuppressWarnings ("unused")
 	private final Set<InfozillaFilter> filters = new HashSet<InfozillaFilter>();
 	
 	/**
@@ -53,8 +54,6 @@ public class InfozillaArguments extends
 		// PRECONDITIONS
 		
 		try {
-			//
-			// try {
 			// final Package package1 = InfozillaFilter.class.getPackage();
 			// final Collection<Class<? extends InfozillaFilter>> classesExtendingClass =
 			// ClassFinder.getClassesExtendingClass(package1,
@@ -64,22 +63,22 @@ public class InfozillaArguments extends
 			// | Modifier.PRIVATE);
 			// final Collection<InfozillaFilter> collection = ArgumentSet.provideDynamicArguments(this,
 			// InfozillaFilter.class,
-			// "XYZ", requirement,
+			// "XYZ", Requirement.required,
 			// null, "infozilla",
 			// "filter", true);
 			// new SetArgument(this, "mapping.filters", "A list of mapping filters that shall be used.",
 			// buildFilterList(classesExtendingClass), Requirement.optional);
-			//
-			// final String filters = System.getProperty("mapping.filters");
-			// final Set<String> filterNames = new HashSet<String>();
-			//
-			// if (filters != null) {
-			// for (final String filterName : filters.split(",")) {
-			// filterNames.add(InfozillaFilter.class.getPackage().getName() + "." + filterName);
-			// }
-			//
-			// }
-			//
+			
+			final String filters = System.getProperty("mapping.filters");
+			final Set<String> filterNames = new HashSet<String>();
+			
+			if (filters != null) {
+				for (final String filterName : filters.split(",")) {
+					filterNames.add(InfozillaFilter.class.getPackage().getName() + "." + filterName);
+				}
+				
+			}
+			
 			// for (final InfozillaFilter filter : collection) {
 			// if (filterNames.isEmpty() || filterNames.contains(filter.getClass().getSimpleName())) {
 			// if (Logger.logInfo()) {
@@ -98,7 +97,7 @@ public class InfozillaArguments extends
 			// Logger.error(e);
 			// }
 			// throw new RuntimeException();
-			// }
+			
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -111,6 +110,7 @@ public class InfozillaArguments extends
 	 *            the filters
 	 * @return the string
 	 */
+	@SuppressWarnings ("unused")
 	private String buildFilterList(final Collection<Class<? extends InfozillaFilter>> filters) {
 		final StringBuilder builder = new StringBuilder();
 		for (final Class<? extends InfozillaFilter> klass : filters) {
