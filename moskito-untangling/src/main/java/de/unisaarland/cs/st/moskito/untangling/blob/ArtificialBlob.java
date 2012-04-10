@@ -94,7 +94,7 @@ public class ArtificialBlob {
 	 */
 	@NoneNull
 	public boolean add(final AtomicTransaction transaction) {
-		return blobTransactions.add(transaction);
+		return this.blobTransactions.add(transaction);
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class ArtificialBlob {
 	public List<JavaChangeOperation> getAllChangeOperations() {
 		List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
-		for (AtomicTransaction t : blobTransactions) {
+		for (AtomicTransaction t : this.blobTransactions) {
 			result.addAll(t.getOperations());
 		}
 		return result;
@@ -139,7 +139,7 @@ public class ArtificialBlob {
 	 */
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
-		for (AtomicTransaction t : blobTransactions) {
+		for (AtomicTransaction t : this.blobTransactions) {
 			result.add(new ArrayList<JavaChangeOperation>(t.getOperations()));
 		}
 		return result;
@@ -165,7 +165,7 @@ public class ArtificialBlob {
 	 * @return the latest transaction
 	 */
 	public RCSTransaction getLatestTransaction() {
-		return blobTransactions.last().getTransaction();
+		return this.blobTransactions.last().getTransaction();
 	}
 	
 	/**
@@ -175,7 +175,7 @@ public class ArtificialBlob {
 	 */
 	public Set<RCSTransaction> getTransactions() {
 		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
-		for (AtomicTransaction t : blobTransactions) {
+		for (AtomicTransaction t : this.blobTransactions) {
 			result.add(t.getTransaction());
 		}
 		return result;
@@ -187,6 +187,6 @@ public class ArtificialBlob {
 	 * @return the number of transaction
 	 */
 	public int size() {
-		return blobTransactions.size();
+		return this.blobTransactions.size();
 	}
 }

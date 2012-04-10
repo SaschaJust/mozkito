@@ -66,7 +66,7 @@ public class ArtificialBlobGeneratorTest {
 		 */
 		@SuppressWarnings ("unused")
 		public String getId() {
-			return id;
+			return this.id;
 		}
 		
 		/**
@@ -75,7 +75,7 @@ public class ArtificialBlobGeneratorTest {
 		 * @return the path
 		 */
 		public String getPath() {
-			return path;
+			return this.path;
 		}
 		
 		/* (non-Javadoc)
@@ -83,7 +83,7 @@ public class ArtificialBlobGeneratorTest {
 		 */
 		@Override
 		public String toString() {
-			return id;
+			return this.id;
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class ArtificialBlobGeneratorTest {
 		@Override
 		public boolean canBeCombined(final TestObject t1,
 		                             final TestObject t2) {
-			return BlobTransactionCombineOperator.canCombinePaths(t1.getPath(), t2.getPath(), pd);
+			return BlobTransactionCombineOperator.canCombinePaths(t1.getPath(), t2.getPath(), this.pd);
 		}
 		
 	}

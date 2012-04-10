@@ -45,7 +45,7 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	 */
 	public TestImpactVoter(final File testCoverageIn) throws IOException, ClassNotFoundException {
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream(testCoverageIn));
-		matrix = (ImpactMatrix) in.readObject();
+		this.matrix = (ImpactMatrix) in.readObject();
 	}
 	
 	/* (non-Javadoc)
@@ -66,10 +66,10 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		String name0 = op0.getChangedElementLocation().getElement().getFullQualifiedName();
 		String name1 = op1.getChangedElementLocation().getElement().getFullQualifiedName();
 		
-		double occ0 = matrix.getOccurence(name0, name1);
-		double occ1 = matrix.getOccurence(name1, name0);
-		double sum0 = matrix.getSumChanged(name0);
-		double sum1 = matrix.getSumChanged(name1);
+		double occ0 = this.matrix.getOccurence(name0, name1);
+		double occ1 = this.matrix.getOccurence(name1, name0);
+		double sum0 = this.matrix.getSumChanged(name0);
+		double sum1 = this.matrix.getSumChanged(name1);
 		
 		if ((occ0 == 0d) || (occ1 == 0d) || (sum0 == 0d) || (sum1 == 0d)) {
 			return MultilevelClustering.IGNORE_SCORE;

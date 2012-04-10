@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core;
@@ -22,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -36,7 +32,7 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 /**
  * The Class GenealogyMetricThread.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, GenealogyMetricValue> {
@@ -52,10 +48,13 @@ public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, Geneal
 	
 	/**
 	 * Instantiates a new genealogy metric thread.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param metric the metric
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param metric
+	 *            the metric
 	 */
 	public GenealogyMetricThread(final Group threadGroup, final Settings settings, final GenealogyCoreMetric metric) {
 		super(threadGroup, settings, false);
@@ -101,19 +100,5 @@ public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, Geneal
 				
 			}
 		};
-		
-		new PostExecutionHook<GenealogyCoreNode, GenealogyMetricValue>(this) {
-			
-			@Override
-			public void postExecution() {
-				
-			}
-		};
-	}
-	
-	/**
-	 * Post process.
-	 */
-	public void postProcess() {
 	}
 }

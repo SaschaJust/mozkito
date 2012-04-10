@@ -111,7 +111,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 */
 	@Override
 	public double aggregate(final List<Double> values) {
-		Condition.check(trained, "You must train a model before using it,");
+		Condition.check(this.trained, "You must train a model before using it,");
 		
 		svm_node x[] = new svm_node[values.size()];
 		for (int i = 0; i < values.size(); ++i) {
@@ -120,7 +120,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 			x[i].value = values.get(i);
 		}
 		
-		return svm.svm_predict(model, x);
+		return svm.svm_predict(this.model, x);
 	}
 	
 	/* (non-Javadoc)
@@ -141,13 +141,13 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 */
 	public boolean train(final Collection<AtomicTransaction> transactionSet) {
 		
-		if (trained) {
+		if (this.trained) {
 			return true;
 		}
 		
 		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION, untangling);
+		Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION, this.untangling);
 		
 		List<List<Double>> positiveSamples = samples.get(SampleType.POSITIVE);
 		List<List<Double>> negativeSamples = samples.get(SampleType.NEGATIVE);
@@ -194,10 +194,10 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		param.weight_label = new int[0];
 		param.weight = new double[0];
 		
-		model = svm.svm_train(prob, param);
+		this.model = svm.svm_train(prob, param);
 		
-		trained = true;
-		return trained;
+		this.trained = true;
+		return this.trained;
 		
 	}
 	

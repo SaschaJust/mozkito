@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -42,7 +39,7 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
  * The Class CallGraphHandler.
  * 
  * Works only for JavaMethodDefinitions so far.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
@@ -58,51 +55,55 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/**
 	 * Instantiates a new call graph handler.
-	 *
-	 * @param eclipseDir the eclipse dir
-	 * @param eclipseArguments the eclipse arguments
-	 * @param transaction the transaction
-	 * @param cacheDir the cache dir
+	 * 
+	 * @param eclipseDir
+	 *            the eclipse dir
+	 * @param eclipseArguments
+	 *            the eclipse arguments
+	 * @param transaction
+	 *            the transaction
+	 * @param cacheDir
+	 *            the cache dir
 	 */
 	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
 	        final File cacheDir) {
 		
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
-			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
 			        + ".cg");
 			if (serialFile.exists()) {
-				callGraph = CallGraph.unserialize(serialFile);
-				usedGraphFile = serialFile;
+				this.callGraph = CallGraph.unserialize(serialFile);
+				this.usedGraphFile = serialFile;
 			}
 		}
-		if (callGraph == null) {
-			List<String> arguments = new LinkedList<String>();
-			for (String arg : eclipseArguments) {
+		if (this.callGraph == null) {
+			final List<String> arguments = new LinkedList<String>();
+			for (final String arg : eclipseArguments) {
 				arguments.add(arg);
 			}
 			
-			File callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			final File callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
 			arguments.add("-Doutput=file://" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph
-			HashMap<String, String> environment = new HashMap<String, String>();
+			final HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
-			Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
-			                                                                        + FileUtils.fileSeparator
-			                                                                        + "eclipse",
-			                                                                arguments.toArray(new String[arguments.size()]),
-			                                                                eclipseDir,
-			                                                                null, environment);
+			final Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
+			                                                                              + FileUtils.fileSeparator
+			                                                                              + "eclipse",
+			                                                                      arguments.toArray(new String[arguments.size()]),
+			                                                                      eclipseDir,
+			                                                                      null, environment);
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					sb.append("Could not generate call graph for transaction ");
 					sb.append(transaction);
 					sb.append(". Reason:");
 					sb.append(FileUtils.lineSeparator);
 					if (response.getSecond() != null) {
-						for (String s : response.getSecond()) {
+						for (final String s : response.getSecond()) {
 							sb.append(s);
 							sb.append(FileUtils.lineSeparator);
 						}
@@ -110,8 +111,8 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 					Logger.error(sb.toString());
 				}
 			} else {
-				callGraph = CallGraph.unserialize(callGraphFile);
-				usedGraphFile = callGraphFile;
+				this.callGraph = CallGraph.unserialize(callGraphFile);
+				this.usedGraphFile = callGraphFile;
 			}
 		}
 	}
@@ -125,9 +126,10 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 */
 	private double distance(final List<CallGraphEdge> path) {
 		Double result = null;
-		for (CallGraphEdge e : path) {
+		for (final CallGraphEdge e : path) {
 			double d = e.getWeight();
-			CallGraphEdge reverseEdge = callGraph.findEdge(callGraph.getDest(e), callGraph.getSource(e));
+			final CallGraphEdge reverseEdge = this.callGraph.findEdge(this.callGraph.getDest(e),
+			                                                          this.callGraph.getSource(e));
 			
 			if (reverseEdge != null) {
 				double occ = 1d / d;
@@ -163,20 +165,20 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			return 0;
 		}
 		
-		if ((!callGraph.containsVertex(v1)) || (!callGraph.containsVertex(v2))) {
+		if ((!this.callGraph.containsVertex(v1)) || (!this.callGraph.containsVertex(v2))) {
 			return Double.MAX_VALUE;
 		}
 		
-		DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
-		                                                                                                                   callGraph,
-		                                                                                                                   dijkstraTransformer);
+		final DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
+		                                                                                                                         this.callGraph,
+		                                                                                                                         dijkstraTransformer);
 		
-		List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
+		final List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
 		double d1 = Double.MAX_VALUE;
 		if (sp1 != null) {
 			d1 = this.distance(sp1);
 		}
-		List<CallGraphEdge> sp2 = dijkstra.getPath(v2, v1);
+		final List<CallGraphEdge> sp2 = dijkstra.getPath(v2, v1);
 		double d2 = Double.MAX_VALUE;
 		if (sp2 != null) {
 			d2 = this.distance(sp2);
@@ -202,30 +204,30 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
-		if (callGraph == null) {
+		if (this.callGraph == null) {
 			if (Logger.logError()) {
 				Logger.error("Callgraph ot found! Returning zero as score.");
 			}
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
-		JavaElement e1 = op1.getChangedElementLocation().getElement();
-		JavaElement e2 = op2.getChangedElementLocation().getElement();
+		final JavaElement e1 = op1.getChangedElementLocation().getElement();
+		final JavaElement e2 = op2.getChangedElementLocation().getElement();
 		
 		if ((e1 instanceof JavaMethodDefinition) && (e2 instanceof JavaMethodDefinition)) {
-			MethodVertex v1 = VertexFactory.createMethodVertex(e1.getFullQualifiedName(), "");
-			MethodVertex v2 = VertexFactory.createMethodVertex(e2.getFullQualifiedName(), "");
+			final MethodVertex v1 = VertexFactory.createMethodVertex(e1.getFullQualifiedName(), "");
+			final MethodVertex v2 = VertexFactory.createMethodVertex(e2.getFullQualifiedName(), "");
 			
-			if (!(callGraph.containsVertex(v1)) && (!callGraph.containsVertex(v2))) {
+			if (!(this.callGraph.containsVertex(v1)) && (!this.callGraph.containsVertex(v2))) {
 				if (Logger.logWarn()) {
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					sb.append("Could not found any vertex in the call graph. This should never happen:\n");
 					sb.append("Vertex1: ");
 					sb.append(v1.getFullQualifiedMethodName());
 					sb.append("\nVertex2: ");
 					sb.append(v2.getFullQualifiedMethodName());
 					sb.append("\ngraph file: ");
-					sb.append(usedGraphFile.getAbsolutePath());
+					sb.append(this.usedGraphFile.getAbsolutePath());
 					Logger.warn(sb.toString());
 				}
 			}
@@ -234,15 +236,12 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			if (distance == Double.MAX_VALUE) {
 				// no path found.
 				return 0;
-			} else {
-				distance = Math.min(2d, distance);
-				double result = 1d - (distance / 2d);
-				Condition.check(result <= 1, "The returned distance must be a value between 0 and 1, but was: "
-				        + distance);
-				Condition.check(result >= 0, "The returned distance must be a value between 0 and 1, but was: "
-				        + distance);
-				return result;
 			}
+			distance = Math.min(2d, distance);
+			final double result = 1d - (distance / 2d);
+			Condition.check(result <= 1, "The returned distance must be a value between 0 and 1, but was: " + distance);
+			Condition.check(result >= 0, "The returned distance must be a value between 0 and 1, but was: " + distance);
+			return result;
 		}
 		return MultilevelClustering.IGNORE_SCORE;
 	}

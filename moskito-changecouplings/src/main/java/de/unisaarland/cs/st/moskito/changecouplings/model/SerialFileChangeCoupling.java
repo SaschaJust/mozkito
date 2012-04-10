@@ -64,7 +64,7 @@ public class SerialFileChangeCoupling implements Serializable {
 	 * @return the confidence
 	 */
 	public Double getConfidence() {
-		return confidence;
+		return this.confidence;
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class SerialFileChangeCoupling implements Serializable {
 	 * @return the implication
 	 */
 	public String getImplication() {
-		return implication;
+		return this.implication;
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class SerialFileChangeCoupling implements Serializable {
 	 * @return the premise
 	 */
 	public ArrayList<String> getPremise() {
-		return premise;
+		return this.premise;
 	}
 	
 	/**
@@ -91,6 +91,6 @@ public class SerialFileChangeCoupling implements Serializable {
 	 * @return the support
 	 */
 	public Integer getSupport() {
-		return support;
+		return this.support;
 	}
 }

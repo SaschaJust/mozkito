@@ -116,6 +116,6 @@ public class CTLFalse extends CTLFormula {
 	
 	@Override
 	public void putAttomicFormulas(final Collection<CTLAtomicFormula> atomicFormulas) {
-		
+		return;
 	}
 }

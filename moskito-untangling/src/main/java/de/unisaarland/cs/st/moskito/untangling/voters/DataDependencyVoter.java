@@ -34,6 +34,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
@@ -186,6 +187,8 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				}
 				this.cache.put(file.getAbsolutePath(), null);
 			}
+			Condition.notNull(reader,
+			                  "The file reader importing the data dependency eclipse output file must not be null.");
 			
 			final Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
 			String line = "";

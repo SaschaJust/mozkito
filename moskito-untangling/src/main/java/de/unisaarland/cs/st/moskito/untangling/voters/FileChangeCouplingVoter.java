@@ -88,7 +88,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				// load serial file
 				try {
 					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
+					this.couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
@@ -103,7 +103,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					}
 				}
 			}
-			if (couplings == null) {
+			if (this.couplings == null) {
 				// run query and save tmp file
 				LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
 				                                                                                                      3,
@@ -111,11 +111,11 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				                                                                                                      persistenceUtil);
 				this.couplings = new LinkedList<SerialFileChangeCoupling>();
 				for (FileChangeCoupling c : fileChangeCouplings) {
-					couplings.add(c.serialize(transaction));
+					this.couplings.add(c.serialize(transaction));
 				}
 				try {
 					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
-					out.writeObject(couplings);
+					out.writeObject(this.couplings);
 					out.close();
 				} catch (FileNotFoundException e) {
 					if (Logger.logError()) {
@@ -159,22 +159,22 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(path1 != null, "The changed elements must not be null!");
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
-		if (couplings == null) {
-			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
+		if (this.couplings == null) {
+			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction,
 			                                                                                                      3,
 			                                                                                                      0.1,
-			                                                                                                      persistenceUtil);
+			                                                                                                      this.persistenceUtil);
 			this.couplings = new LinkedList<SerialFileChangeCoupling>();
 			for (FileChangeCoupling c : fileChangeCouplings) {
-				couplings.add(c.serialize(transaction));
+				this.couplings.add(c.serialize(this.transaction));
 			}
 		}
 		
-		if (!couplings.isEmpty()) {
+		if (!this.couplings.isEmpty()) {
 			
 			List<SerialFileChangeCoupling> currentCouplings = new LinkedList<SerialFileChangeCoupling>();
 			
-			for (SerialFileChangeCoupling c : couplings) {
+			for (SerialFileChangeCoupling c : this.couplings) {
 				boolean found = false;
 				for (String fPath : c.getPremise()) {
 					if (fPath.equals(path1) || fPath.equals(path2)) {
@@ -198,9 +198,9 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				}
 				
 			});
-			SerialFileChangeCoupling coupling = couplings.get(0);
+			SerialFileChangeCoupling coupling = this.couplings.get(0);
 			if ((coupling.getSupport() >= this.minSupport) && (coupling.getConfidence() >= this.minConfidence)) {
-				score = couplings.get(0).getConfidence();
+				score = this.couplings.get(0).getConfidence();
 			}
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);

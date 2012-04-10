@@ -112,7 +112,7 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 			String path = rev.getChangedFile().getPath(t1.getTransaction());
 			for (RCSRevision rev2 : t2.getTransaction().getRevisions()) {
 				String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
-				if (canCombinePaths(path, path2, maxPackageDistance)) {
+				if (canCombinePaths(path, path2, this.maxPackageDistance)) {
 					return true;
 				}
 			}
