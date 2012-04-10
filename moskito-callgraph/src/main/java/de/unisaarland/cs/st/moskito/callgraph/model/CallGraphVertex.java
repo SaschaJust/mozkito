@@ -62,11 +62,11 @@ public abstract class CallGraphVertex implements Serializable {
 			return false;
 		}
 		CallGraphVertex other = (CallGraphVertex) obj;
-		if (id == null) {
+		if (this.id == null) {
 			if (other.id != null) {
 				return false;
 			}
-		} else if (!id.equals(other.id)) {
+		} else if (!this.id.equals(other.id)) {
 			return false;
 		}
 		return true;
@@ -78,7 +78,7 @@ public abstract class CallGraphVertex implements Serializable {
 	 * @return the filename
 	 */
 	public String getFilename() {
-		return filename;
+		return this.filename;
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public abstract class CallGraphVertex implements Serializable {
 	 * @return the id
 	 */
 	protected String getId() {
-		return id;
+		return this.id;
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public abstract class CallGraphVertex implements Serializable {
 	 * @return the parent
 	 */
 	public ClassVertex getParent() {
-		return parent;
+		return this.parent;
 	}
 	
 	/* (non-Javadoc)
@@ -106,9 +106,9 @@ public abstract class CallGraphVertex implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null)
+		result = prime * result + ((this.id == null)
 		                                       ? 0
-		                                       : id.hashCode());
+		                                       : this.id.hashCode());
 		return result;
 	}
 	
@@ -117,6 +117,6 @@ public abstract class CallGraphVertex implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "CallGraphVertex [id=" + id + "]";
+		return "CallGraphVertex [id=" + this.id + "]";
 	}
 }

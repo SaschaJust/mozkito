@@ -260,7 +260,7 @@ public class TestCallGraphs {
 		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		this.cg.serialize(file);
 		CallGraph scg = CallGraph.unserialize(file);
-		assertEquals(cg, scg);
+		assertEquals(this.cg, scg);
 		file.delete();
 	}
 	

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.callgraph.model;
 
@@ -50,8 +47,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	
 	/**
 	 * Unserialize.
-	 *
-	 * @param file the file
+	 * 
+	 * @param file
+	 *            the file
 	 * @return the call graph
 	 */
 	public static CallGraph unserialize(final File file) {
@@ -94,8 +92,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	
 	/**
 	 * Instantiates a new call graph.
-	 *
-	 * @param other the other
+	 * 
+	 * @param other
+	 *            the other
 	 */
 	public CallGraph(final CallGraph other) {
 		this.methodCallGraph = other.methodCallGraph;
@@ -144,9 +143,8 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	                       final EdgeType edgeType) {
 		if (!edgeType.equals(EdgeType.DIRECTED)) {
 			return false;
-		} else {
-			return this.addEdge(edge, endpoints);
 		}
+		return this.addEdge(edge, endpoints);
 	}
 	
 	/**
@@ -163,9 +161,8 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		final CallGraphEdge edge = this.methodCallGraph.findEdge(from, to);
 		if (edge != null) {
 			return this.addEdge(edge, new Pair<MethodVertex>(from, to));
-		} else {
-			return this.addEdge(new CallGraphEdge(), new Pair<MethodVertex>(from, to));
 		}
+		return this.addEdge(new CallGraphEdge(), new Pair<MethodVertex>(from, to));
 	}
 	
 	/*
@@ -202,7 +199,8 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.containsVertex(vertex);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -413,7 +411,8 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		return this.methodCallGraph.getVertices();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -495,15 +494,15 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 		final CallGraphEdge e = findEdge(from, to);
 		if (e != null) {
 			return this.removeEdge(e);
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	/**
 	 * Removes the recursive.
-	 *
-	 * @param vertex the vertex
+	 * 
+	 * @param vertex
+	 *            the vertex
 	 */
 	public void removeRecursive(final ClassVertex vertex) {
 		Collection<CallGraphEdge> outEdges = this.classCallGraph.getOutEdges(vertex);
@@ -557,8 +556,9 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	
 	/**
 	 * Serialize.
-	 *
-	 * @param file the file
+	 * 
+	 * @param file
+	 *            the file
 	 */
 	public void serialize(final File file) {
 		try {

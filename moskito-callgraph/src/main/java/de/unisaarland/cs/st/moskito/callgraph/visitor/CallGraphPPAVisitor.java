@@ -376,6 +376,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	 * @param methodContextLocation
 	 *            the method context location
 	 */
+	@SuppressWarnings ("deprecation")
 	private void handleSuperConstructorInvocation(final int line,
 	                                              final SuperConstructorInvocation sci,
 	                                              final JavaElementLocation classContextLocation,
@@ -406,23 +407,21 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 					Logger.error(ss.toString());
 				}
 				return;
-			} else {
-				
-				final JavaMethodDefinition methodContext = (JavaMethodDefinition) methodContextLocation.getElement();
-				
-				final MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(),
-				                                                           this.filename);
-				final MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent()
-				                                                                                                                   .getFullQualifiedName(),
-				                                                                                                       "<init>",
-				                                                                                                       new ArrayList<String>()),
-				                                                         this.filename);
-				addEdge(from, to);
-				if (Logger.logDebug()) {
-					Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
-				}
-				return;
 			}
+			final JavaMethodDefinition methodContext = (JavaMethodDefinition) methodContextLocation.getElement();
+			
+			final MethodVertex from = VertexFactory.createMethodVertex(methodContext.getFullQualifiedName(),
+			                                                           this.filename);
+			final MethodVertex to = VertexFactory.createMethodVertex(JavaMethodDefinition.composeFullQualifiedName(classContext.getParent()
+			                                                                                                                   .getFullQualifiedName(),
+			                                                                                                       "<init>",
+			                                                                                                       new ArrayList<String>()),
+			                                                         this.filename);
+			addEdge(from, to);
+			if (Logger.logDebug()) {
+				Logger.debug(from.getFullQualifiedMethodName() + " calls " + to.getFullQualifiedMethodName());
+			}
+			return;
 		}
 		
 		String calledObjectName = mBinding.getDeclaringClass().getQualifiedName();
@@ -576,9 +575,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		} else {
 			// add edge in call graph
 			if (Logger.logError()) {
-				Logger.error("Found method call outside method declaration in class `"
-				                     + classContext.getFullQualifiedName() + "` in line " + line,
-				             new RuntimeException());
+				Logger.error("Found method call outside method declaration in class `%s` in line d",
+				             classContext.getFullQualifiedName(), line);
 			}
 		}
 	}
