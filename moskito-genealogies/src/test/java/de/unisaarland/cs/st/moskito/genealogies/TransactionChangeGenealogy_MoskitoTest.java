@@ -41,7 +41,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
-public class TransactionChangeGenealogyTest extends MoskitoTest {
+public class TransactionChangeGenealogy_MoskitoTest extends MoskitoTest {
 	
 	@Test
 	@DatabaseSettings (unit = "ppa", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)

@@ -44,7 +44,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
+public class ChangeCouplingRuleFactory_MoskitoTest extends MoskitoTest {
 	
 	/** The persistence util. */
 	private static PersistenceUtil persistenceUtil = null;
@@ -57,7 +57,7 @@ public class ChangeCouplingRuleFactoryTest extends MoskitoTest {
 		try {
 			
 			persistenceUtil = getPersistenceUtil();
-			final URL sqlURL = ChangeCouplingRuleFactoryTest.class.getResource(FileUtils.fileSeparator
+			final URL sqlURL = ChangeCouplingRuleFactory_MoskitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
 			final File sqlFile = new File(sqlURL.toURI());
