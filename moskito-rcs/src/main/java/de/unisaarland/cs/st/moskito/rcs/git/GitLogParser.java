@@ -24,6 +24,7 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
+import net.ownhero.dev.regex.util.Patterns;
 
 import org.joda.time.DateTime;
 
@@ -43,7 +44,7 @@ class GitLogParser {
 	                                                         "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
-	protected static Regex emailBaseRegex        = new Regex("({email}" + Regex.emailPattern + ")");
+	protected static Regex emailBaseRegex        = new Regex("({email}" + Patterns.EMAIL_ADDRESS + ")");
 	
 	protected static Regex usernameBaseRegex     = new Regex("(^|[\\s<]+)({username}[a-z0-9]{4,})[\\s>]");
 	
