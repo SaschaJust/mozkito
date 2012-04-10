@@ -52,6 +52,10 @@ import de.unisaarland.cs.st.moskito.testing.annotation.processors.MoskitoSetting
 @RunWith (MoskitoSuite.class)
 public abstract class MoskitoTest {
 	
+	static {
+		KanuniAgent.initialize();
+	}
+	
 	private static PersistenceUtil         persistenceUtil    = null;
 	
 	private static List<Method>            beforeMethods      = new LinkedList<Method>();
@@ -159,8 +163,6 @@ public abstract class MoskitoTest {
 		} catch (final FileNotFoundException e) {
 			testLog("Can't find redirection file for STDERR.", e);
 		}
-		
-		KanuniAgent.initialize();
 		
 		Class<?> c = null;
 		Method m = null;
