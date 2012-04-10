@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 /**
  * The Class MercurialRepositoryTest.
  */
-public class MercurialRepositoryTest extends MoskitoTest {
+public class MercurialRepository_MozkitoTest extends MoskitoTest {
 	
 	/**
 	 * Test fixed date time zone.

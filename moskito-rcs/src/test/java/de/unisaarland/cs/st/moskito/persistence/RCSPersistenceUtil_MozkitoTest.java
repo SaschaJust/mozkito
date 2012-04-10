@@ -22,7 +22,7 @@ import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 /**
  * The Class RCSPersistenceUtilTest.
  */
-public class RCSPersistenceUtilTest extends MoskitoTest {
+public class RCSPersistenceUtil_MozkitoTest extends MoskitoTest {
 	
 	/** The t_280b1b. */
 	private RCSTransaction t_280b1b;

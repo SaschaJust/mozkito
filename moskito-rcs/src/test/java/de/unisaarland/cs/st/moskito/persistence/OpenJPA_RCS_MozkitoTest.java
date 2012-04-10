@@ -34,7 +34,7 @@ import de.unisaarland.cs.st.moskito.testing.MoskitoTest;
 import de.unisaarland.cs.st.moskito.testing.annotation.DatabaseSettings;
 
 @DatabaseSettings (unit = "rcs")
-public class OpenJPA_RCS_NetTest extends MoskitoTest {
+public class OpenJPA_RCS_MozkitoTest extends MoskitoTest {
 	
 	private BranchFactory branchFactory;
 	
