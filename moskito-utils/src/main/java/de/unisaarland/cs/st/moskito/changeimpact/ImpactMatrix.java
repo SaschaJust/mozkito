@@ -47,65 +47,65 @@ public class ImpactMatrix implements Serializable {
 	                final String impactedSource,
 	                final String transactionId,
 	                final long numDiff) {
-		if (!impactMatrix.containsKey(changedSource)) {
-			impactMatrix.put(changedSource, new HashMap<String, Set<String>>());
+		if (!this.impactMatrix.containsKey(changedSource)) {
+			this.impactMatrix.put(changedSource, new HashMap<String, Set<String>>());
 		}
-		Map<String, Set<String>> innerMap = impactMatrix.get(changedSource);
+		final Map<String, Set<String>> innerMap = this.impactMatrix.get(changedSource);
 		if (!innerMap.containsKey(impactedSource)) {
 			innerMap.put(impactedSource, new HashSet<String>());
 		}
-		Set<String> set = innerMap.get(impactedSource);
+		final Set<String> set = innerMap.get(impactedSource);
 		set.add(transactionId);
 		
-		if (!sumSourceChanged.containsKey(changedSource)) {
-			sumSourceChanged.put(changedSource, new HashSet<String>());
+		if (!this.sumSourceChanged.containsKey(changedSource)) {
+			this.sumSourceChanged.put(changedSource, new HashSet<String>());
 		}
-		sumSourceChanged.get(changedSource).add(transactionId);
+		this.sumSourceChanged.get(changedSource).add(transactionId);
 		
-		if (!sumSourceImpacted.containsKey(impactedSource)) {
-			sumSourceImpacted.put(impactedSource, new HashSet<String>());
+		if (!this.sumSourceImpacted.containsKey(impactedSource)) {
+			this.sumSourceImpacted.put(impactedSource, new HashSet<String>());
 		}
-		sumSourceImpacted.get(impactedSource).add(transactionId);
+		this.sumSourceImpacted.get(impactedSource).add(transactionId);
 		
-		if (!impactWeightedChurn.containsKey(changedSource)) {
-			impactWeightedChurn.put(changedSource, 0l);
+		if (!this.impactWeightedChurn.containsKey(changedSource)) {
+			this.impactWeightedChurn.put(changedSource, 0l);
 		}
-		impactWeightedChurn.put(changedSource, impactWeightedChurn.get(changedSource) + numDiff);
+		this.impactWeightedChurn.put(changedSource, this.impactWeightedChurn.get(changedSource) + numDiff);
 	}
 	
 	public int getOccurence(final String changed,
 	                        final String impacted) {
-		if (!impactMatrix.containsKey(changed)) {
+		if (!this.impactMatrix.containsKey(changed)) {
 			return 0;
 		}
-		if (!impactMatrix.get(changed).containsKey(impacted)) {
+		if (!this.impactMatrix.get(changed).containsKey(impacted)) {
 			return 0;
 		}
-		return impactMatrix.get(changed).get(impacted).size();
+		return this.impactMatrix.get(changed).get(impacted).size();
 	}
 	
 	public int getSumChanged(final String changed) {
-		if (!sumSourceChanged.containsKey(changed)) {
+		if (!this.sumSourceChanged.containsKey(changed)) {
 			return 0;
 		}
-		return sumSourceChanged.get(changed).size();
+		return this.sumSourceChanged.get(changed).size();
 	}
 	
 	public int getSumimpacted(final String impacted) {
-		if (!sumSourceImpacted.containsKey(impacted)) {
+		if (!this.sumSourceImpacted.containsKey(impacted)) {
 			return 0;
 		}
-		return sumSourceImpacted.get(impacted).size();
+		return this.sumSourceImpacted.get(impacted).size();
 	}
 	
 	public String toCSV() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		
-		List<String> allImpacted = new ArrayList<String>(sumSourceImpacted.keySet().size());
-		allImpacted.addAll(sumSourceImpacted.keySet());
+		final List<String> allImpacted = new ArrayList<String>(this.sumSourceImpacted.keySet().size());
+		allImpacted.addAll(this.sumSourceImpacted.keySet());
 		
 		// write header row
-		for (String impacted : allImpacted) {
+		for (final String impacted : allImpacted) {
 			sb.append(",");
 			sb.append(impacted);
 		}
@@ -113,10 +113,10 @@ public class ImpactMatrix implements Serializable {
 		sb.append(FileUtils.lineSeparator);
 		
 		// write body
-		for (String changed : impactMatrix.keySet()) {
+		for (final String changed : this.impactMatrix.keySet()) {
 			sb.append(changed);
-			Map<String, Set<String>> innerMap = impactMatrix.get(changed);
-			for (String impacted : allImpacted) {
+			final Map<String, Set<String>> innerMap = this.impactMatrix.get(changed);
+			for (final String impacted : allImpacted) {
 				sb.append(",");
 				if (innerMap.containsKey(impacted)) {
 					sb.append(innerMap.get(impacted).size());
@@ -125,16 +125,16 @@ public class ImpactMatrix implements Serializable {
 				}
 			}
 			sb.append(",");
-			sb.append(sumSourceChanged.get(changed).size());
+			sb.append(this.sumSourceChanged.get(changed).size());
 			sb.append(",");
-			if (bugs.containsKey(changed)) {
-				sb.append(bugs.get(changed));
+			if (this.bugs.containsKey(changed)) {
+				sb.append(this.bugs.get(changed));
 			} else {
 				sb.append(0);
 			}
 			sb.append(",");
-			if (impactWeightedChurn.containsKey(changed)) {
-				sb.append(impactWeightedChurn.get(changed));
+			if (this.impactWeightedChurn.containsKey(changed)) {
+				sb.append(this.impactWeightedChurn.get(changed));
 			} else {
 				sb.append(0);
 			}
@@ -142,9 +142,9 @@ public class ImpactMatrix implements Serializable {
 		}
 		
 		// write sum impact row
-		for (String impacted : allImpacted) {
+		for (final String impacted : allImpacted) {
 			sb.append(",");
-			sb.append(sumSourceImpacted.get(impacted).size());
+			sb.append(this.sumSourceImpacted.get(impacted).size());
 		}
 		sb.append(",");
 		sb.append(",");

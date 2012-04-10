@@ -121,9 +121,8 @@ public class MultilevelClusteringTest {
 			}
 			if (d == 0) {
 				return 2;
-			} else {
-				return 1d / d;
 			}
+			return 1d / d;
 		}
 		
 		@Override
@@ -132,11 +131,9 @@ public class MultilevelClusteringTest {
 			
 			if (t1.equals(t2)) {
 				return 2d;
-			} else {
-				final double d = getLevenshteinDistance(t1, t2);
-				return 1d / d;
 			}
-			
+			final double d = getLevenshteinDistance(t1, t2);
+			return 1d / d;
 		}
 	}
 	

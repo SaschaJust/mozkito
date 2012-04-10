@@ -101,7 +101,7 @@ public class MultilevelClustering<T> {
 	        final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors, final ScoreAggregation<T> aggregator,
 	        final MultilevelClusteringCollapseVisitor<T> collapseVisitor) {
 		@SuppressWarnings ("unchecked")
-		T[] array = (T[]) nodes.toArray();
+		final T[] array = (T[]) nodes.toArray();
 		this.collapseVisitor = collapseVisitor;
 		this.aggregator = aggregator;
 		this.scoreVisitors = scoreVisitors;
@@ -129,7 +129,7 @@ public class MultilevelClustering<T> {
 	}
 	
 	public double getLowestScore() {
-		return lastSelectedScore;
+		return this.lastSelectedScore;
 	}
 	
 	/**
@@ -142,27 +142,27 @@ public class MultilevelClustering<T> {
 	 */
 	public Set<Set<T>> getPartitions(final int numPartitions) {
 		
-		Set<Cluster<T>> existingClusters = new HashSet<Cluster<T>>();
-		PriorityQueue<Cluster<T>> scores = new PriorityQueue<Cluster<T>>();
+		final Set<Cluster<T>> existingClusters = new HashSet<Cluster<T>>();
+		final PriorityQueue<Cluster<T>> scores = new PriorityQueue<Cluster<T>>();
 		
-		for (T t1 : this.matrix.keySet()) {
-			Cluster<T> p1 = new VirtualCluster<T>(t1);
+		for (final T t1 : this.matrix.keySet()) {
+			final Cluster<T> p1 = new VirtualCluster<T>(t1);
 			existingClusters.add(p1);
-			for (T t2 : this.matrix.get(t1).keySet()) {
-				Cluster<T> p2 = new VirtualCluster<T>(t2);
+			for (final T t2 : this.matrix.get(t1).keySet()) {
+				final Cluster<T> p2 = new VirtualCluster<T>(t2);
 				if (!existingClusters.contains(p2)) {
 					existingClusters.add(p2);
 				}
 				
-				Cluster<T> tmpCluster = new Cluster<T>(p1, p2, this.matrix.get(t1).get(t2));
+				final Cluster<T> tmpCluster = new Cluster<T>(p1, p2, this.matrix.get(t1).get(t2));
 				scores.offer(tmpCluster);
 			}
 		}
 		
 		while (existingClusters.size() > numPartitions) {
-			Cluster<T> highestScore = scores.poll();
-			lastSelectedScore = highestScore.getScore();
-			Tuple<Cluster<T>, Cluster<T>> children = highestScore.getChildren();
+			final Cluster<T> highestScore = scores.poll();
+			this.lastSelectedScore = highestScore.getScore();
+			final Tuple<Cluster<T>, Cluster<T>> children = highestScore.getChildren();
 			if ((!existingClusters.contains(children.getFirst())) || (!existingClusters.contains(children.getSecond()))) {
 				continue;
 			}
@@ -172,10 +172,10 @@ public class MultilevelClustering<T> {
 			existingClusters.remove(children.getSecond());
 			
 			// compute all new scores
-			for (Cluster<T> cluster : existingClusters) {
+			for (final Cluster<T> cluster : existingClusters) {
 				
-				double score = this.collapseVisitor.getScore(highestScore, cluster, matrix);
-				Cluster<T> tmpCluster = new Cluster<T>(highestScore, cluster, score);
+				final double score = this.collapseVisitor.getScore(highestScore, cluster, this.matrix);
+				final Cluster<T> tmpCluster = new Cluster<T>(highestScore, cluster, score);
 				scores.offer(tmpCluster);
 			}
 			
@@ -187,8 +187,8 @@ public class MultilevelClustering<T> {
 			existingClusters.add(highestScore);
 		}
 		
-		Set<Set<T>> result = new HashSet<Set<T>>();
-		for (Cluster<T> cluster : existingClusters) {
+		final Set<Set<T>> result = new HashSet<Set<T>>();
+		for (final Cluster<T> cluster : existingClusters) {
 			result.add(cluster.getAllElements());
 		}
 		return result;
@@ -205,11 +205,11 @@ public class MultilevelClustering<T> {
 	 */
 	public double getScore(final T t1,
 	                       final T t2) {
-		List<Double> scores = new ArrayList<Double>(scoreVisitors.size());
-		for (MultilevelClusteringScoreVisitor<T> visitor : scoreVisitors) {
+		final List<Double> scores = new ArrayList<Double>(this.scoreVisitors.size());
+		for (final MultilevelClusteringScoreVisitor<T> visitor : this.scoreVisitors) {
 			scores.add(visitor.getScore(t1, t2));
 		}
-		return aggregator.aggregate(scores);
+		return this.aggregator.aggregate(scores);
 	}
 	
 	/**
@@ -219,10 +219,10 @@ public class MultilevelClustering<T> {
 	 *            the nodes
 	 */
 	public void init(final T[] nodes) {
-		int size = nodes.length;
+		final int size = nodes.length;
 		for (int i = 0; i < size; ++i) {
 			this.matrix.put(nodes[i], new HashMap<T, Double>());
-			Map<T, Double> values = this.matrix.get(nodes[i]);
+			final Map<T, Double> values = this.matrix.get(nodes[i]);
 			for (int j = i + 1; j < size; ++j) {
 				values.put(nodes[j], getScore(nodes[i], nodes[j]));
 			}

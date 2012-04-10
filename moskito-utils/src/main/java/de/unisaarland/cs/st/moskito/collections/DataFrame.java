@@ -24,19 +24,19 @@ import net.ownhero.dev.kisa.Logger;
 
 public class DataFrame<T> {
 	
-	private List<String>     colnames = new LinkedList<String>();
+	private final List<String>     colnames = new LinkedList<String>();
 	
-	private Map<String, T[]> rows     = new HashMap<String, T[]>();
+	private final Map<String, T[]> rows     = new HashMap<String, T[]>();
 	
-	public DataFrame(Collection<String> colnames) {
+	public DataFrame(final Collection<String> colnames) {
 		colnames.addAll(colnames);
 	}
 	
-	public boolean addRow(String rowname,
-	                      T[] values) {
-		if (values.length != colnames.size()) {
+	public boolean addRow(final String rowname,
+	                      final T[] values) {
+		if (values.length != this.colnames.size()) {
 			if (Logger.logError()) {
-				Logger.error("Cannot add row into DataFrame! Number of expected values is " + colnames.size()
+				Logger.error("Cannot add row into DataFrame! Number of expected values is " + this.colnames.size()
 				        + " but was " + values.length);
 			}
 			return false;
@@ -52,8 +52,8 @@ public class DataFrame<T> {
 		return true;
 	}
 	
-	public boolean containsRow(String rowname) {
-		return rows.containsKey(rowname);
+	public boolean containsRow(final String rowname) {
+		return this.rows.containsKey(rowname);
 	}
 	
 	public Collection<String> getColnames() {
@@ -66,17 +66,17 @@ public class DataFrame<T> {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("rownames");
-		for (String colname : colnames) {
+		for (final String colname : this.colnames) {
 			sb.append(",");
 			sb.append(colname);
 		}
 		sb.append(FileUtils.lineSeparator);
 		
-		for (String rowname : getRownames()) {
+		for (final String rowname : getRownames()) {
 			sb.append(rowname);
-			T[] row = rows.get(rowname);
+			final T[] row = this.rows.get(rowname);
 			for (int i = 0; i < row.length; ++i) {
 				sb.append(",");
 				sb.append(row[i]);
