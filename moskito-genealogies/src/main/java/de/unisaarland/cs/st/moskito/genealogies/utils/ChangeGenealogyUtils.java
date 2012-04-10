@@ -35,7 +35,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
 import de.unisaarland.cs.st.moskito.exceptions.UnregisteredRepositoryTypeException;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
