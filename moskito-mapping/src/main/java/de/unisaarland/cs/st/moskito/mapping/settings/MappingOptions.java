@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.settings;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -172,8 +173,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return new HashMap<String, IOptions<?, ?>>();
 		} finally {
 			// POSTCONDITIONS
 		}

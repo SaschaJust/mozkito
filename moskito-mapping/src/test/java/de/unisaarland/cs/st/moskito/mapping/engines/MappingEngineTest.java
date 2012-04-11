@@ -33,7 +33,6 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
@@ -192,7 +191,7 @@ public class MappingEngineTest {
 	/**
 	 * Test backref engine.
 	 */
-	@Test (expected = UnrecoverableError.class)
+	@Test
 	public void testBackrefEngine() {
 		for (final MappingEngine mEngine : this.engines) {
 			if (mEngine.getHandle().equals(BackrefEngine.class.getSimpleName())) {
