@@ -20,12 +20,14 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
+import net.ownhero.dev.hiari.settings.URIArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
@@ -45,6 +47,8 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	
 	/** The bugzilla version arg. */
 	private StringArgument.Options bugzillaVersionArg;
+	
+	private Options                trackerURIOptions;
 	
 	/**
 	 * Instantiates a new bugzilla options.
@@ -87,6 +91,18 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		}
 	}
 	
+	public net.ownhero.dev.hiari.settings.URIArgument.Options getTrackerURIOptions() {
+		// PRECONDITIONS
+		
+		try {
+			return this.trackerURIOptions;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.trackerURIOptions, "Field '%s' in '%s'.", "trackerURIArg",
+			                  getClass().getSimpleName());
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
@@ -98,7 +114,7 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		
 		try {
 			
-			final URIArgument trackerURIArgument = getSettings().getArgument(this.trackerOptions.getTrackerURI());
+			final URIArgument trackerURIArgument = getSettings().getArgument(getTrackerURIOptions());
 			
 			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
 			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
@@ -148,6 +164,11 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
 			req(this.trackerOptions, map);
+			
+			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
+			                                                 Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
+			                                                 null, Requirement.required);
+			req(this.trackerURIOptions, map);
 			
 			this.overviewURIArg = new URIArgument.Options(
 			                                              set,

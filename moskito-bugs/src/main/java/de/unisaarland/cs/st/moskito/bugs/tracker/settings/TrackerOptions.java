@@ -24,7 +24,6 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
@@ -40,9 +39,6 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
-	
-	/** The tracker uri arg. */
-	private URIArgument.Options               trackerURIArg;
 	
 	/** The tracker type arg. */
 	private EnumArgument.Options<TrackerType> trackerTypeArg;
@@ -110,15 +106,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	}
 	
 	/**
-	 * Gets the tracker uri.
-	 * 
-	 * @return the trackerFetchURI
-	 */
-	public final URIArgument.Options getTrackerURI() {
-		return this.trackerURIArg;
-	}
-	
-	/**
 	 * Gets the tracker user.
 	 * 
 	 * @return the trackerUser
@@ -154,8 +141,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 					final ArgumentSet<Tracker, GoogleOptions> googleArgumentSet = ArgumentSetFactory.create(this.googleOptions);
 					return googleArgumentSet.getValue();
 				default:
-					throw new UnrecoverableError(
-					                             String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
+					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
 					                                           trackerTypeArgument.getValue()));
 			}
 		} catch (final SettingsParseError e) {
@@ -195,11 +181,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-			
-			this.trackerURIArg = new URIArgument.Options(set, "uri", //$NON-NLS-1$
-			                                             Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
-			                                             null, Requirement.required);
-			req(this.trackerURIArg, map);
 			
 			this.trackerTypeArg = new EnumArgument.Options<TrackerType>(
 			                                                            set,

@@ -27,6 +27,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraTracker;
@@ -39,10 +40,12 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.jira.JiraTracker;
 public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, JiraOptions>> {
 	
 	/** The tracker options. */
-	private final TrackerOptions trackerOptions;
+	private final TrackerOptions                               trackerOptions;
 	
 	/** The project key arg. */
-	private Options              projectKeyArg;
+	private Options                                            projectKeyOptions;
+	
+	private net.ownhero.dev.hiari.settings.URIArgument.Options trackerURIOptions;
 	
 	/**
 	 * Instantiates a new jira options.
@@ -67,7 +70,18 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 	 * @return the project key
 	 */
 	public StringArgument.Options getProjectKey() {
-		return this.projectKeyArg;
+		return this.projectKeyOptions;
+	}
+	
+	public net.ownhero.dev.hiari.settings.URIArgument.Options getTrackerURIOptions() {
+		// PRECONDITIONS
+		
+		try {
+			return this.trackerURIOptions;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.trackerURIOptions, "Field '%s' in '%s'.", "trackerURIArg", getClass().getSimpleName());
+		}
 	}
 	
 	/*
@@ -81,7 +95,7 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 		
 		try {
 			
-			final URIArgument trackerURIArgument = getSettings().getArgument(this.trackerOptions.getTrackerURI());
+			final URIArgument trackerURIArgument = getSettings().getArgument(getTrackerURIOptions());
 			
 			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
 			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
@@ -130,13 +144,18 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 			
 			req(this.trackerOptions, map);
 			
-			this.projectKeyArg = new StringArgument.Options(
+			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
+			                                             Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
+			                                             null, Requirement.required);
+			req(this.trackerURIOptions, map);
+			
+			this.projectKeyOptions = new StringArgument.Options(
 			                                                set,
 			                                                "projectKey",
 			                                                "Project key that identifies the project's reports (e.g. 'XSTR' for XStream).",
 			                                                null, Requirement.required);
 			
-			req(this.projectKeyArg, map);
+			req(this.projectKeyOptions, map);
 			return map;
 		} finally {
 			// POSTCONDITIONS
