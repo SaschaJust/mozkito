@@ -319,7 +319,7 @@ public class Settings implements ISettings {
 			                                                                  "Setting file that contains the JavaVM arguments for the current toolchain.",
 			                                                                  null, Requirement.optional));
 			// check to load settings from URI
-			if (System.getProperty(settingsTag) != null) {
+			if ((System.getProperty(settingsTag) != null) && (this.nohelp)) {
 				try {
 					final InputStream stream = this.settingsArg.getValue().toURL().openStream();
 					fileProps.load(stream);
@@ -331,11 +331,9 @@ public class Settings implements ISettings {
 				}
 			}
 			
-			if (fileProps != null) {
-				getProperties().putAll(fileProps);
-				// overwrite values given on the commandline
-				getProperties().putAll(commandlineProps);
-			}
+			getProperties().putAll(fileProps);
+			// overwrite values given on the commandline
+			getProperties().putAll(commandlineProps);
 			
 			this.bugReportArgument = ArgumentFactory.create(new StringArgument.Options(
 			                                                                           getRoot(),
@@ -431,7 +429,7 @@ public class Settings implements ISettings {
 	 * @see net.ownhero.dev.hiari.settings.ISettings#getArgument(net.ownhero.dev.hiari.settings.IArgumentOptions)
 	 */
 	@Override
-	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(final IArgumentOptions<T, Y> option) {
+	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(@NotNull final IArgumentOptions<T, Y> option) {
 		// PRECONDITIONS
 		
 		try {

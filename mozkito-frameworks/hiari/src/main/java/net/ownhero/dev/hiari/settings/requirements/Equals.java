@@ -184,13 +184,16 @@ public class Equals extends Requirement {
 	public boolean required() {
 		final String property = this.argument.getSettings().getProperty(this.argument.getTag());
 		
+		if (property == null) {
+			return false;
+		}
+		
 		if (this.depender != null) {
 			final String compareTo = this.argument.getSettings().getProperty(this.depender.getTag());
 			return (compareTo != null) && property.equals(compareTo);
-		} else {
-			Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			return property.equals(this.value);
 		}
+		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		return property.equals(this.value);
 	}
 	
 	/*
