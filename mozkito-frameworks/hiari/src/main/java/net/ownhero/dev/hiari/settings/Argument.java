@@ -415,7 +415,8 @@ public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? 
 		// PRECONDITIONS
 		
 		try {
-			return getRequirements().required() && !(getRequirements() instanceof Optional);
+			return ((getParent() == null) || getParent().required()) && getRequirements().required()
+			        && !(getRequirements() instanceof Optional);
 		} finally {
 			// POSTCONDITIONS
 		}

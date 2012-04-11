@@ -21,6 +21,7 @@ import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -708,7 +709,8 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 	 */
 	@Override
 	public boolean required() {
-		return getRequirements().required();
+		return ((getParent() == null) || getParent().required()) && getRequirements().required()
+		        && !(getRequirements() instanceof Optional);
 	}
 	
 	/**

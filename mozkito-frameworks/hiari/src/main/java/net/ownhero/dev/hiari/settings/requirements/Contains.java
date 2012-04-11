@@ -166,6 +166,10 @@ public class Contains extends Requirement {
 			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
 		}
 		
+		if (property == null) {
+			return false;
+		}
+		
 		Condition.notNull(property, "Local variable '%s' in '%s:%s'.", "property", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
 		Condition.notNull(delimiter, "Local variable '%s' in '%s:%s'.", "delimiter", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
 		
