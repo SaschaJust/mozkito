@@ -19,13 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -126,30 +124,19 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
-					final ArgumentSet<Tracker, BugzillaOptions> bugzillaArgumentSet = ArgumentSetFactory.create(this.bugzillaOptions);
-					return bugzillaArgumentSet.getValue();
+					return getSettings().getArgumentSet(this.bugzillaOptions).getValue();
 				case JIRA:
-					final ArgumentSet<Tracker, JiraOptions> jiraArgumentSet = ArgumentSetFactory.create(this.jiraOptions);
-					return jiraArgumentSet.getValue();
+					return getSettings().getArgumentSet(this.jiraOptions).getValue();
 				case MANTIS:
-					final ArgumentSet<Tracker, MantisOptions> mantisArgumentSet = ArgumentSetFactory.create(this.mantisOptions);
-					return mantisArgumentSet.getValue();
+					return getSettings().getArgumentSet(this.mantisOptions).getValue();
 				case SOURCEFORGE:
-					final ArgumentSet<Tracker, SourceforgeOptions> sourceforgeArgumentSet = ArgumentSetFactory.create(this.sourceforgeOptions);
-					return sourceforgeArgumentSet.getValue();
+					return getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
 				case GOOGLE:
-					final ArgumentSet<Tracker, GoogleOptions> googleArgumentSet = ArgumentSetFactory.create(this.googleOptions);
-					return googleArgumentSet.getValue();
+					return getSettings().getArgumentSet(this.googleOptions).getValue();
 				default:
 					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
 					                                           trackerTypeArgument.getValue()));
 			}
-		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
-		} catch (final ArgumentSetRegistrationException e) {
-			throw new UnrecoverableError(e);
-		} catch (final ArgumentRegistrationException e) {
-			throw new UnrecoverableError(e);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -166,7 +153,9 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	@NoneNull
 	private final void req(final IOptions<?, ?> option,
 	                       final Map<String, IOptions<?, ?>> map) {
-		map.put(option.getName(), option);
+		if (option.required()) {
+			map.put(option.getName(), option);
+		}
 	}
 	
 	/*
@@ -203,6 +192,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			
 			req(this.trackerPasswordArg, map);
 			
+			// tracker alternatives
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                    TrackerType.BUGZILLA));
 			req(this.bugzillaOptions, map);
