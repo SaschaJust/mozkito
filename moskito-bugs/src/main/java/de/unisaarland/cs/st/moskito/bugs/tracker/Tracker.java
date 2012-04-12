@@ -98,7 +98,11 @@ public abstract class Tracker {
 	 */
 	public final synchronized ReportLink getNextReportLink() {
 		if (!this.reportLinks.isEmpty()) {
-			return this.reportLinks.poll();
+			final ReportLink next = this.reportLinks.poll();
+			if (Logger.logTrace()) {
+				Logger.trace("Providing next ReportLink %s", next);
+			}
+			return next;
 		}
 		return null;
 	}

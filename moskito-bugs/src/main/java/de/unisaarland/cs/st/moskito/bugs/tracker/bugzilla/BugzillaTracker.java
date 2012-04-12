@@ -19,6 +19,7 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
@@ -113,7 +114,11 @@ public class BugzillaTracker extends Tracker {
 				}
 				return new ArrayList<ReportLink>(0);
 			}
-			return overviewParser.getReportLinks();
+			final Set<ReportLink> links = overviewParser.getReportLinks();
+			if (Logger.logTrace()) {
+				Logger.trace("Fetched %d report links.", links.size());
+			}
+			return links;
 		} finally {
 			// POSTCONDITIONS
 		}
