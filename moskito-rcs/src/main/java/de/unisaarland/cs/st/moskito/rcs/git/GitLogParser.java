@@ -45,7 +45,8 @@ class GitLogParser {
 	
 	protected static Regex emailBaseRegex        = new Regex("({email}" + Patterns.EMAIL_ADDRESS + ")");
 	
-	protected static Regex usernameBaseRegex     = new Regex("\\s*<({username}[a-z0-9]{4,})>");
+	// protected static Regex usernameBaseRegex = new Regex("\\s*<({username}[a-z0-9]{4,})>");
+	protected static Regex usernameBaseRegex     = new Regex("\\s*<({username}[a-z0-9]+)>");
 	
 	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
 	
