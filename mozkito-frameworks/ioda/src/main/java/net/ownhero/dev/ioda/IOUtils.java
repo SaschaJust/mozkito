@@ -31,6 +31,8 @@ import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -290,9 +292,10 @@ public class IOUtils {
 		} else if (uri.getScheme().equals("https")) {
 			return fetchHttps(uri, null, null, proxyConfig);
 		} else {
-			throw new UnsupportedProtocolException(
-			                                       String.format("Fetching URIs via proxy is only supported for HTTP and HTTPS; got: %s",
-			                                                     uri.getScheme()));
+			if (Logger.logWarn()) {
+				Logger.warn("Proxy for protocol %s is not yet supported. Fetching ignoring proxy.", uri.getScheme());
+			}
+			return fetch(uri);
 		}
 	}
 	
@@ -472,6 +475,13 @@ public class IOUtils {
 		}
 	}
 	
+	public static RawContent fetchHttp(@NotNull final URI uri,
+	                                   final String username,
+	                                   final String password,
+	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
+		return fetchHttp(uri, username, password, proxyConfig, "http");
+	}
+	
 	/**
 	 * Fetch http proxy.
 	 * 
@@ -490,10 +500,20 @@ public class IOUtils {
 	public static RawContent fetchHttp(@NotNull final URI uri,
 	                                   final String username,
 	                                   final String password,
-	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
+	                                   @NotNull final ProxyConfig proxyConfig,
+	                                   @NotNull final String schema) throws FetchException {
+		
+		Condition.allNullOrNone(username, password,
+		                        "Useranme and password must be both null or none. Got username='%s', password='%s'.",
+		                        username, password);
+		
+		if (Logger.logTrace()) {
+			Logger.trace("fetching HTTP content using http proxy config '%s'", proxyConfig);
+		}
+		
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
-			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), "http");
+			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), schema);
 			
 			if (proxyConfig.getUsername() != null) {
 				httpClient.getCredentialsProvider()
@@ -505,8 +525,10 @@ public class IOUtils {
 			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
 			
 			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-			                             new UsernamePasswordCredentials(username, password));
+			if ((username != null) && (password != null)) {
+				credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
+				                             new UsernamePasswordCredentials(username, password));
+			}
 			httpClient.setCredentialsProvider(credsProvider);
 			
 			return fetchHttp(uri, username, password, httpClient);
@@ -567,7 +589,7 @@ public class IOUtils {
 	                                    final String username,
 	                                    final String password,
 	                                    @NotNull final ProxyConfig proxyConfig) throws FetchException {
-		return fetchHttp(uri, username, password, proxyConfig);
+		return fetchHttp(uri, username, password, proxyConfig, "https");
 	}
 	
 	/**
