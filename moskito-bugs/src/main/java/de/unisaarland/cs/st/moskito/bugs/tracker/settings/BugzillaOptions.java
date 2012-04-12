@@ -94,7 +94,7 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		}
 	}
 	
-	public net.ownhero.dev.hiari.settings.URIArgument.Options getTrackerURIOptions() {
+	public URIArgument.Options getTrackerURIOptions() {
 		// PRECONDITIONS
 		
 		try {
