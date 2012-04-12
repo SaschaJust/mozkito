@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
@@ -445,16 +446,17 @@ public class Settings implements ISettings {
 					Logger.trace("Parent set of '%s' is '%s'.", option.getTag(), set);
 				}
 				
-				argument = set.getArgument(option);
-				
-				if (argument == null) {
+				if (set == null) {
 					if (Logger.logError()) {
 						Logger.error("Known argument sets: ");
-						for (final ArgumentSet<?, ?> argSet : this.argumentSets.values()) {
+						for (final ArgumentSet<?, ?> argSet : new TreeSet<ArgumentSet<?, ?>>(this.argumentSets.values())) {
 							Logger.error("- %s", argSet);
 						}
 					}
+					throw new UnrecoverableError(String.format("Parent of '%s' unknown.", option.getTag()));
 				}
+				
+				argument = set.getArgument(option);
 				
 				return argument;
 			}
