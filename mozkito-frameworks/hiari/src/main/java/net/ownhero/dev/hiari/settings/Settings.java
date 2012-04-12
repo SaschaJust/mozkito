@@ -431,16 +431,36 @@ public class Settings implements ISettings {
 	@Override
 	public <T, X extends ArgumentOptions<T, Y>, Y extends Argument<T, X>> Y getArgument(@NotNull final IArgumentOptions<T, Y> option) {
 		// PRECONDITIONS
+		Y argument = null;
 		
 		try {
 			if (Logger.logTrace()) {
-				Logger.trace(String.format("Requesting Argument (tag: '%s').", option.getTag()));
+				Logger.trace("Requesting Argument (tag: '%s').", option.getTag());
 			}
+			
 			synchronized (this.argumentSets) {
-				return this.argumentSets.get(option.getTag()).getArgument(option);
+				final ArgumentSet<?, ?> set = this.argumentSets.get(option.getTag());
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Parent set of '%s' is '%s'.", option.getTag(), set);
+				}
+				
+				argument = set.getArgument(option);
+				
+				if (argument == null) {
+					if (Logger.logError()) {
+						Logger.error("Known argument sets: ");
+						for (final ArgumentSet<?, ?> argSet : this.argumentSets.values()) {
+							Logger.error("- %s", argSet);
+						}
+					}
+				}
+				
+				return argument;
 			}
 		} finally {
 			// POSTCONDITIONS
+			Condition.notNull(argument, "Local variable '%s' in '%s:%s'.", "argument", getHandle(), "getArgument"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

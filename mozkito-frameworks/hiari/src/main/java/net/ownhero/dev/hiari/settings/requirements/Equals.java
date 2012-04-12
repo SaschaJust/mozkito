@@ -16,6 +16,7 @@ import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Equals.
@@ -183,7 +184,9 @@ public class Equals extends Requirement {
 	@Override
 	public boolean required() {
 		final String property = this.argument.getSettings().getProperty(this.argument.getTag());
-		System.err.println("Checking property: " + property);
+		if (Logger.logTrace()) {
+			Logger.trace("Checking property: " + property);
+		}
 		if (property == null) {
 			return false;
 		}
@@ -193,10 +196,12 @@ public class Equals extends Requirement {
 			return (compareTo != null) && property.equals(compareTo);
 		}
 		
-		System.err.println("Comparing " + property + " vs " + this.value + " resulting in "
-		        + property.equals(this.value));
+		if (Logger.logTrace()) {
+			Logger.trace("Comparing " + property + " vs " + this.value + " resulting in "
+			        + property.equals(this.value.toString()));
+		}
 		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		return property.equals(this.value);
+		return property.equals(this.value.toString());
 	}
 	
 	/*
