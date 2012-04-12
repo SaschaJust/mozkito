@@ -24,6 +24,7 @@ import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jsoup.Jsoup;
@@ -65,6 +66,19 @@ public class BugzillaOverviewParser implements OverviewParser {
 		this.overviewURI = overviewURI;
 		this.trackerURI = trackerURI.toASCIIString();
 		this.proxyConfig = proxyConfig;
+	}
+	
+	/**
+	 * @return
+	 */
+	private Object getHandle() {
+		// PRECONDITIONS
+		
+		try {
+			return getClass().getSimpleName();
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -117,6 +131,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 			
 			RawContent content;
 			if (this.overviewURI == null) {
+				Condition.notNull(this.overviewURI, "Field '%s' in '%s'.", "overviewURI", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 			try {
@@ -135,6 +150,10 @@ public class BugzillaOverviewParser implements OverviewParser {
 					Logger.error(e1);
 				}
 				return false;
+			}
+			
+			if (Logger.logTrace()) {
+				Logger.trace("Parsing overview URI using JSoup.");
 			}
 			
 			final Document document = Jsoup.parse(content.getContent());
@@ -173,7 +192,11 @@ public class BugzillaOverviewParser implements OverviewParser {
 						if (td.attr("class").contains("bz_id_column")) {
 							try {
 								final String id = td.text().trim();
-								this.bugURIs.add(getLinkFromId(id));
+								final ReportLink linkFromId = getLinkFromId(id);
+								if (Logger.logTrace()) {
+									Logger.trace("Adding %s to the list of parsed issue IDs.", linkFromId);
+								}
+								this.bugURIs.add(linkFromId);
 							} catch (final NumberFormatException e) {
 								if (Logger.logError()) {
 									Logger.error("Could not interprete bug id " + td.text().trim()
