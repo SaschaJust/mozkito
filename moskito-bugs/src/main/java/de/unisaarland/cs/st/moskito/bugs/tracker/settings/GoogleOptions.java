@@ -12,6 +12,7 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,13 +36,13 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.google.GoogleTracker;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, GoogleOptions>> {
-	
-	/** The tracker options. */
-	private final TrackerOptions trackerOptions;
+public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, GoogleOptions>> implements
+        ITrackerOptions {
 	
 	/** The project name arg. */
-	private Options              projectNameArg;
+	private Options       projectNameArg;
+	private String        projectName;
+	private GoogleTracker tracker;
 	
 	/**
 	 * Instantiates a new google options.
@@ -55,9 +56,6 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	public GoogleOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
 		super(trackerOptions.getArgumentSet(), "google", "Necessary arguments to connect and parse google reports.",
 		      requirement);
-		
-		this.trackerOptions = trackerOptions;
-		
 	}
 	
 	/**
@@ -80,19 +78,10 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		
 		try {
 			
-			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
-			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
+			this.projectName = getSettings().getArgument(getProjectName()).getValue();
 			
-			final StringArgument projectNameArgument = getSettings().getArgument(getProjectName());
-			
-			final ArgumentSet<ProxyConfig, ProxyOptions> proxyConfigArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
-			
-			final GoogleTracker tracker = new GoogleTracker();
-			tracker.setup(trackerUserArgument.getValue(), trackerPasswordArgument.getValue(),
-			              projectNameArgument.getValue(), proxyConfigArgument.getValue());
-			return tracker;
-		} catch (final InvalidParameterException e) {
-			throw new UnrecoverableError(e);
+			this.tracker = new GoogleTracker();
+			return this.tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -125,16 +114,34 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			req(this.trackerOptions, map);
-			
 			this.projectNameArg = new StringArgument.Options(
 			                                                 set,
 			                                                 "projectName",
 			                                                 "Project name that identifies the project's tracker on Google project hosting (e.g. 'google-web-toolkit' for http://code.google.com/p/google-web-toolkit/issues/list).",
 			                                                 null, Requirement.required);
-			
 			req(this.projectNameArg, map);
 			return map;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
+	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 */
+	@Override
+	public void setup(final URI trackerUri,
+	                  final String trackerUser,
+	                  final String trackerPassword,
+	                  final ProxyConfig proxyConfig) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker.setup(trackerUser, trackerPassword, this.projectName, proxyConfig);
+		} catch (final InvalidParameterException e) {
+			throw new UnrecoverableError(e);
 		} finally {
 			// POSTCONDITIONS
 		}

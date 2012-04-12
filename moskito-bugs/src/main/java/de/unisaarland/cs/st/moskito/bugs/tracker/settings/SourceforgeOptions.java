@@ -12,6 +12,7 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,16 +21,12 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.URIArgument;
-import net.ownhero.dev.hiari.settings.URIArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
@@ -40,10 +37,8 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge.SourceforgeTracker;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> {
-	
-	/** The tracker options. */
-	private final TrackerOptions       trackerOptions;
+public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> implements
+        ITrackerOptions {
 	
 	/** The at id arg. */
 	private LongArgument.Options       atIdArg;
@@ -54,7 +49,13 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	/** The bug type arg. */
 	private EnumArgument.Options<Type> bugTypeArg;
 	
-	private Options                    trackerURIOptions;
+	private LongArgument               groupIdArgument;
+	
+	private LongArgument               atIdArgument;
+	
+	private EnumArgument<Type>         bugTypeArgument;
+	
+	private SourceforgeTracker         tracker;
 	
 	/**
 	 * Instantiates a new sourceforge options.
@@ -68,9 +69,6 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	public SourceforgeOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
 		super(trackerOptions.getArgumentSet(), "sourceforge",
 		      "Necessary arguments to connect and parse sourceforge reports.", requirement);
-		
-		this.trackerOptions = trackerOptions;
-		
 	}
 	
 	/**
@@ -118,18 +116,6 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		}
 	}
 	
-	public net.ownhero.dev.hiari.settings.URIArgument.Options getTrackerURIOptions() {
-		// PRECONDITIONS
-		
-		try {
-			return this.trackerURIOptions;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.trackerURIOptions, "Field '%s' in '%s'.", "trackerURIArg",
-			                  getClass().getSimpleName());
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init(java.util.Map)
@@ -141,25 +127,11 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 		
 		try {
 			
-			final URIArgument trackerURIArgument = getSettings().getArgument(getTrackerURIOptions());
-			
-			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
-			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
-			
-			final LongArgument groupIdArgument = getSettings().getArgument(getGroupIdArg());
-			final LongArgument atIdArgument = getSettings().getArgument(getAtIdArg());
-			
-			final EnumArgument<Type> bugTypeArgument = getSettings().getArgument(getBugTypeArg());
-			
-			final ArgumentSet<ProxyConfig, ProxyOptions> proxyArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
-			
-			final SourceforgeTracker tracker = new SourceforgeTracker();
-			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), groupIdArgument.getValue(), atIdArgument.getValue(),
-			              bugTypeArgument.getValue(), proxyArgument.getValue());
-			return tracker;
-		} catch (final InvalidParameterException e) {
-			throw new UnrecoverableError(e);
+			this.groupIdArgument = getSettings().getArgument(getGroupIdArg());
+			this.atIdArgument = getSettings().getArgument(getAtIdArg());
+			this.bugTypeArgument = getSettings().getArgument(getBugTypeArg());
+			this.tracker = new SourceforgeTracker();
+			return this.tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -193,8 +165,6 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			req(this.trackerOptions, map);
-			
 			this.atIdArg = new LongArgument.Options(set, "atId", "Sourceforge project tracker's  atID.", null,
 			                                        Requirement.required);
 			this.groupIdArg = new LongArgument.Options(set, "groupId", "Sourceforge project's groupID.", null,
@@ -209,13 +179,30 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 			req(getGroupIdArg(), map);
 			req(getAtIdArg(), map);
 			req(getBugTypeArg(), map);
-			
-			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
-			                                                 Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
-			                                                 null, Requirement.required);
-			req(this.trackerURIOptions, map);
-			
 			return map;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
+	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 */
+	@Override
+	public void setup(final URI trackerUri,
+	                  final String trackerUser,
+	                  final String trackerPassword,
+	                  final ProxyConfig proxyConfig) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.groupIdArgument.getValue(),
+			                   this.atIdArgument.getValue(), this.bugTypeArgument.getValue(), proxyConfig);
+		} catch (final InvalidParameterException e) {
+			throw new UnrecoverableError(e);
+			
 		} finally {
 			// POSTCONDITIONS
 		}

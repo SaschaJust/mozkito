@@ -12,6 +12,7 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,10 +38,8 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla.BugzillaTracker;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> {
-	
-	/** The tracker options. */
-	private final TrackerOptions   trackerOptions;
+public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, BugzillaOptions>> implements
+        ITrackerOptions {
 	
 	/** The overview uri arg. */
 	private URIArgument.Options    overviewURIArg;
@@ -49,6 +48,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	private StringArgument.Options bugzillaVersionArg;
 	
 	private Options                trackerURIOptions;
+	
+	private BugzillaTracker        tracker;
+	
+	private URIArgument            overviewArgument;
+	
+	private StringArgument         bugzillaVersionArgument;
 	
 	/**
 	 * Instantiates a new bugzilla options.
@@ -62,8 +67,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	public BugzillaOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
 		super(trackerOptions.getArgumentSet(), "bugzilla",
 		      "Necessary arguments to connect and parse bugzilla reports.", requirement);
-		
-		this.trackerOptions = trackerOptions;
 		
 	}
 	
@@ -114,23 +117,10 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		
 		try {
 			
-			final URIArgument trackerURIArgument = getSettings().getArgument(getTrackerURIOptions());
-			
-			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
-			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
-			
-			final URIArgument overviewArgument = getSettings().getArgument(getOverviewURI());
-			final StringArgument bugzillaVersionArgument = getSettings().getArgument(getBugzillaVersion());
-			
-			final ArgumentSet<ProxyConfig, ProxyOptions> proxyConfigArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
-			
-			final BugzillaTracker tracker = new BugzillaTracker();
-			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), overviewArgument.getValue(),
-			              bugzillaVersionArgument.getValue(), proxyConfigArgument.getValue());
-			return tracker;
-		} catch (final InvalidParameterException e) {
-			throw new UnrecoverableError(e);
+			this.overviewArgument = getSettings().getArgument(getOverviewURI());
+			this.bugzillaVersionArgument = getSettings().getArgument(getBugzillaVersion());
+			this.tracker = new BugzillaTracker();
+			return this.tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -163,13 +153,6 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			req(this.trackerOptions, map);
-			
-			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
-			                                                 Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
-			                                                 null, Requirement.required);
-			req(this.trackerURIOptions, map);
-			
 			this.overviewURIArg = new URIArgument.Options(
 			                                              set,
 			                                              "overviewURI",
@@ -182,6 +165,29 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 			req(this.overviewURIArg, map);
 			req(this.bugzillaVersionArg, map);
 			return map;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
+	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 */
+	@Override
+	public void setup(final URI trackerUri,
+	                  final String trackerUser,
+	                  final String trackerPassword,
+	                  final ProxyConfig proxyConfig) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.overviewArgument.getValue(),
+			                   this.bugzillaVersionArgument.getValue(), proxyConfig);
+			
+		} catch (final InvalidParameterException e) {
+			throw new UnrecoverableError(e);
 		} finally {
 			// POSTCONDITIONS
 		}

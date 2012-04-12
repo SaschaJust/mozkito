@@ -12,22 +12,19 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.URIArgument;
-import net.ownhero.dev.hiari.settings.URIArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
@@ -37,11 +34,10 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> {
+public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> implements
+        ITrackerOptions {
 	
-	/** The tracker options. */
-	private final TrackerOptions trackerOptions;
-	private Options              trackerURIOptions;
+	private MantisTracker tracker;
 	
 	/**
 	 * Instantiates a new mantis options.
@@ -55,21 +51,6 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	public MantisOptions(final TrackerOptions trackerOptions, final Requirement requirement) {
 		super(trackerOptions.getArgumentSet(), "mantis", "Necessary arguments to connect and parse mantis reports.",
 		      requirement);
-		
-		this.trackerOptions = trackerOptions;
-		
-	}
-	
-	public net.ownhero.dev.hiari.settings.URIArgument.Options getTrackerURIOptions() {
-		// PRECONDITIONS
-		
-		try {
-			return this.trackerURIOptions;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.trackerURIOptions, "Field '%s' in '%s'.", "trackerURIArg",
-			                  getClass().getSimpleName());
-		}
 	}
 	
 	/*
@@ -82,36 +63,11 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		// PRECONDITIONS
 		
 		try {
-			
-			final URIArgument trackerURIArgument = getSettings().getArgument(getTrackerURIOptions());
-			
-			final StringArgument trackerUserArgument = getSettings().getArgument(this.trackerOptions.getTrackerUser());
-			final StringArgument trackerPasswordArgument = getSettings().getArgument(this.trackerOptions.getTrackerPassword());
-			
-			final ArgumentSet<ProxyConfig, ProxyOptions> proxyArgument = getSettings().getArgumentSet(this.trackerOptions.getProxyOptions());
-			
-			final MantisTracker tracker = new MantisTracker();
-			tracker.setup(trackerURIArgument.getValue(), trackerUserArgument.getValue(),
-			              trackerPasswordArgument.getValue(), proxyArgument.getValue());
-			return tracker;
-		} catch (final InvalidParameterException e) {
-			throw new UnrecoverableError(e);
+			this.tracker = new MantisTracker();
+			return this.tracker;
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * Req.
-	 * 
-	 * @param option
-	 *            the option
-	 * @param map
-	 *            the map
-	 */
-	private final void req(final IOptions<?, ?> option,
-	                       final Map<String, IOptions<?, ?>> map) {
-		map.put(option.getName(), option);
 	}
 	
 	/*
@@ -127,15 +83,29 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		try {
 			
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-			
-			req(this.trackerOptions, map);
-			
-			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
-			                                                 Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
-			                                                 null, Requirement.required);
-			req(this.trackerURIOptions, map);
-			
 			return map;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
+	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 */
+	@Override
+	public void setup(final URI trackerUri,
+	                  final String trackerUser,
+	                  final String trackerPassword,
+	                  final ProxyConfig proxyConfig) {
+		// PRECONDITIONS
+		
+		try {
+			this.tracker.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+		} catch (final InvalidParameterException e) {
+			throw new UnrecoverableError(e);
+			
 		} finally {
 			// POSTCONDITIONS
 		}

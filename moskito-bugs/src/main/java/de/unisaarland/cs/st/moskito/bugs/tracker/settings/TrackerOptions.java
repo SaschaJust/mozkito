@@ -15,6 +15,7 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +24,15 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.URIArgument;
+import net.ownhero.dev.hiari.settings.URIArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.TrackerType;
 
@@ -63,6 +68,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	private SourceforgeOptions                sourceforgeOptions;
 	
 	private ProxyOptions                      proxyOptions;
+	
+	private Options                           trackerURIOptions;
 	
 	/**
 	 * Instantiates a new tracker options.
@@ -118,27 +125,43 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 */
 	@Override
 	public Tracker init() {
-		
+		Tracker tracker = null;
 		try {
 			final EnumArgument<TrackerType> trackerTypeArgument = getSettings().getArgument(getTrackerType());
 			
+			final URI trackerUri = getSettings().getArgument(this.trackerURIOptions).getValue();
+			final String trackerUser = getSettings().getArgument(this.trackerUserArg).getValue();
+			final String trackerPassword = getSettings().getArgument(this.trackerPasswordArg).getValue();
+			final ProxyConfig proxyConfig = getSettings().getArgumentSet(this.proxyOptions).getValue();
+			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
-					return getSettings().getArgumentSet(this.bugzillaOptions).getValue();
+					tracker = getSettings().getArgumentSet(this.bugzillaOptions).getValue();
+					this.bugzillaOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					break;
 				case JIRA:
-					return getSettings().getArgumentSet(this.jiraOptions).getValue();
+					tracker = getSettings().getArgumentSet(this.jiraOptions).getValue();
+					this.jiraOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					break;
 				case MANTIS:
-					return getSettings().getArgumentSet(this.mantisOptions).getValue();
+					tracker = getSettings().getArgumentSet(this.mantisOptions).getValue();
+					this.mantisOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					break;
 				case SOURCEFORGE:
-					return getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
+					tracker = getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
+					this.sourceforgeOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					break;
 				case GOOGLE:
-					return getSettings().getArgumentSet(this.googleOptions).getValue();
+					tracker = getSettings().getArgumentSet(this.googleOptions).getValue();
+					this.googleOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					break;
 				default:
 					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
 					                                           trackerTypeArgument.getValue()));
 			}
+			return tracker;
 		} finally {
-			// POSTCONDITIONS
+			Condition.notNull(tracker, "Tracker must be initilaized.");
 		}
 	}
 	
@@ -171,6 +194,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
+			this.trackerURIOptions = new URIArgument.Options(set, "uri", //$NON-NLS-1$
+			                                                 Messages.getString("TrackerOptions.uri_description"), //$NON-NLS-1$
+			                                                 null, Requirement.required);
+			req(this.trackerURIOptions, map);
+			
 			this.trackerTypeArg = new EnumArgument.Options<TrackerType>(
 			                                                            set,
 			                                                            "type", //$NON-NLS-1$
@@ -183,35 +211,43 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                 set,
 			                                                 "user", Messages.getString("TrackerOptions.user_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
 			                                                 Requirement.optional);
-			
 			req(this.trackerUserArg, map);
 			this.trackerPasswordArg = new StringArgument.Options(
 			                                                     set,
 			                                                     "password", Messages.getString("TrackerOptions.password_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
 			                                                     Requirement.iff(this.trackerUserArg), true);
-			
 			req(this.trackerPasswordArg, map);
+			
+			this.proxyOptions = new ProxyOptions(set, Requirement.optional);
+			req(this.proxyOptions, map);
 			
 			// tracker alternatives
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                    TrackerType.BUGZILLA));
-			req(this.bugzillaOptions, map);
+			if (this.bugzillaOptions.required()) {
+				req(this.bugzillaOptions, map);
+			}
 			
 			this.googleOptions = new GoogleOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.GOOGLE));
-			req(this.googleOptions, map);
+			if (this.googleOptions.required()) {
+				req(this.googleOptions, map);
+			}
 			
 			this.jiraOptions = new JiraOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.JIRA));
-			req(this.jiraOptions, map);
+			if (this.jiraOptions.required()) {
+				req(this.jiraOptions, map);
+			}
 			
 			this.mantisOptions = new MantisOptions(this, Requirement.equals(this.trackerTypeArg, TrackerType.MANTIS));
-			req(this.jiraOptions, map);
+			if (this.mantisOptions.required()) {
+				req(this.mantisOptions, map);
+			}
 			
 			this.sourceforgeOptions = new SourceforgeOptions(this, Requirement.equals(this.trackerTypeArg,
 			                                                                          TrackerType.SOURCEFORGE));
-			req(this.jiraOptions, map);
-			
-			this.proxyOptions = new ProxyOptions(set, Requirement.optional);
-			req(this.proxyOptions, map);
+			if (this.sourceforgeOptions.required()) {
+				req(this.sourceforgeOptions, map);
+			}
 			
 			return map;
 		} finally {
