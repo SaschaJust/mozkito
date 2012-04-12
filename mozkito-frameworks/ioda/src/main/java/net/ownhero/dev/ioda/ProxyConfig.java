@@ -129,4 +129,10 @@ public class ProxyConfig {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "ProxyConfig [host=" + this.host + ", port=" + this.port + ", username=" + this.username + ", password="
+		        + this.password + "]";
+	}
+	
 }

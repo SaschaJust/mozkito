@@ -499,6 +499,10 @@ public class IOUtils {
 		                        "Useranme and password must be both null or none. Got username='%s', password='%s'.",
 		                        username, password);
 		
+		if (Logger.logTrace()) {
+			Logger.trace("fetching HTTP content using http proxy config '%s'", proxyConfig);
+		}
+		
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
 			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), "http");
