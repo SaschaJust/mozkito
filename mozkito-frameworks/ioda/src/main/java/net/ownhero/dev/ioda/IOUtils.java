@@ -31,6 +31,7 @@ import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.http.Header;
@@ -494,7 +495,9 @@ public class IOUtils {
 	                                   final String password,
 	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
 		
-		assert (((username != null) && (password != null)) || ((username == null) && (password == null)));
+		Condition.allNullOrNone(username, password,
+		                        "Useranme and password must be both null or none. Got username='%s', password='%s'.",
+		                        username, password);
 		
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
