@@ -69,9 +69,9 @@ public class LoggerOptions extends ArgumentSetOptions<Boolean, ArgumentSet<Boole
 			                                           "determines the log level for the oevrall log file",
 			                                           LogLevel.INFO, Requirement.optional));
 			map.put("file",
-			        new OutputFileArgument.Options(set, "file",
-			                                       "specifies the path to a file the file log shall be written to.",
-			                                       new File(".log"), Requirement.optional, true));
+			        new LogFileArgument.Options(set, "file",
+			                                    "specifies the path to a file the file log shall be written to.",
+			                                    new File(".log"), Requirement.optional));
 			map.put("class.<class_name>",
 			        new StringArgument.Options(
 			                                   set,
