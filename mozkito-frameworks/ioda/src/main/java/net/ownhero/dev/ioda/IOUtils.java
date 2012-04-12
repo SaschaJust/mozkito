@@ -475,6 +475,13 @@ public class IOUtils {
 		}
 	}
 	
+	public static RawContent fetchHttp(@NotNull final URI uri,
+	                                   final String username,
+	                                   final String password,
+	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
+		return fetchHttp(uri, username, password, proxyConfig, "http");
+	}
+	
 	/**
 	 * Fetch http proxy.
 	 * 
@@ -493,7 +500,8 @@ public class IOUtils {
 	public static RawContent fetchHttp(@NotNull final URI uri,
 	                                   final String username,
 	                                   final String password,
-	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
+	                                   @NotNull final ProxyConfig proxyConfig,
+	                                   @NotNull final String schema) throws FetchException {
 		
 		Condition.allNullOrNone(username, password,
 		                        "Useranme and password must be both null or none. Got username='%s', password='%s'.",
@@ -505,7 +513,7 @@ public class IOUtils {
 		
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
-			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), "http");
+			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), schema);
 			
 			if (proxyConfig.getUsername() != null) {
 				httpClient.getCredentialsProvider()
@@ -581,7 +589,7 @@ public class IOUtils {
 	                                    final String username,
 	                                    final String password,
 	                                    @NotNull final ProxyConfig proxyConfig) throws FetchException {
-		return fetchHttp(uri, username, password, proxyConfig);
+		return fetchHttp(uri, username, password, proxyConfig, "https");
 	}
 	
 	/**
