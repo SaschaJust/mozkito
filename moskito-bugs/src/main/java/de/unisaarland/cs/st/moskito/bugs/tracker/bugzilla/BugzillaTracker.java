@@ -17,7 +17,6 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.bugzilla;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -109,10 +108,7 @@ public class BugzillaTracker extends Tracker {
 			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI,
 			                                                                         getProxyConfig());
 			if (!overviewParser.parseOverview()) {
-				if (Logger.logError()) {
-					Logger.error("Could not parse overview URI. See earlier errors.");
-				}
-				return new ArrayList<ReportLink>(0);
+				throw new UnrecoverableError("Could not parse overview URI.");
 			}
 			final Set<ReportLink> links = overviewParser.getReportLinks();
 			if (Logger.logTrace()) {
@@ -146,6 +142,9 @@ public class BugzillaTracker extends Tracker {
 	                  final URI overviewURI,
 	                  final String bugzillaVersion,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+		if (Logger.logTrace()) {
+			Logger.trace("Setup");
+		}
 		this.overviewURI = overviewURI;
 		this.bugzillaVersion = bugzillaVersion;
 		super.setup(fetchURI, username, password, proxyConfig);
