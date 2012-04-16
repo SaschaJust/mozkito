@@ -18,9 +18,15 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.security.MessageDigest;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -44,7 +50,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
@@ -512,7 +522,42 @@ public class IOUtils {
 		}
 		
 		try {
-			final DefaultHttpClient httpClient = new DefaultHttpClient();
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			
+			if (schema.trim().equals("https")) {
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Disabling HTTPS certificate checking due to proxy settings.");
+				}
+				final SSLContext ctx = SSLContext.getInstance("TLS");
+				final X509TrustManager tm = new X509TrustManager() {
+					
+					@Override
+					public void checkClientTrusted(final X509Certificate[] xcs,
+					                               final String string) throws CertificateException {
+						return;
+					}
+					
+					@Override
+					public void checkServerTrusted(final X509Certificate[] xcs,
+					                               final String string) throws CertificateException {
+						return;
+					}
+					
+					@Override
+					public X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				};
+				ctx.init(null, new TrustManager[] { tm }, null);
+				final SSLSocketFactory ssf = new SSLSocketFactory(ctx);
+				ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+				final ClientConnectionManager ccm = httpClient.getConnectionManager();
+				final SchemeRegistry sr = ccm.getSchemeRegistry();
+				sr.register(new Scheme("https", ssf, 443));
+				httpClient = new DefaultHttpClient(ccm, httpClient.getParams());
+			}
+			
 			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), schema);
 			
 			if (proxyConfig.getUsername() != null) {
