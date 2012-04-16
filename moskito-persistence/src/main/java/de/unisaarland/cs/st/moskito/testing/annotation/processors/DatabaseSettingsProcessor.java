@@ -17,6 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.exceptions.TestSettingsError;
 import de.unisaarland.cs.st.moskito.persistence.ConnectOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceManager;
@@ -68,6 +69,11 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 			tag = tag.replaceAll("\\W", "_");
 			final String dbName = databaseName + '_' + tag;
 			
+			if (Logger.logInfo()) {
+				Logger.info("Setting up database test environment: 'name:%s', 'driver:%s', 'host:%s', 'options:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
+				            dbName, databaseDriver, databaseHost, databaseOptions, databaseType, databaseUnit);
+			}
+			
 			try {
 				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
 				                                databaseDriver);
@@ -81,13 +87,26 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 				throw new TestSettingsError("Could not create database " + dbName, e);
 			}
 			
-			util = PersistenceManager.createUtil(databaseHost, dbName, databaseUsername, databasePassword,
-			                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
-			                                     settings.util());
+			try {
+				util = PersistenceManager.createUtil(databaseHost, dbName, databaseUsername, databasePassword,
+				                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
+				                                     settings.util());
+			} catch (final Throwable t) {
+				throw new TestSettingsError("Could not initialize database connection.", t);
+			}
 		} else {
-			util = PersistenceManager.createUtil(databaseHost, databaseName, databaseUsername, databasePassword,
-			                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
-			                                     settings.util());
+			if (Logger.logInfo()) {
+				Logger.info("Setting up database test environment: 'name:%s', 'driver:%s', 'host:%s', 'options:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
+				            databaseName, databaseDriver, databaseHost, databaseOptions, databaseType, databaseUnit);
+			}
+			
+			try {
+				util = PersistenceManager.createUtil(databaseHost, databaseName, databaseUsername, databasePassword,
+				                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
+				                                     settings.util());
+			} catch (final Throwable t) {
+				throw new TestSettingsError("Could not initialize database connection.", t);
+			}
 		}
 		
 		MoskitoTest.setPersistenceUtil(util);
@@ -102,6 +121,22 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 	public void tearDown(final Class<?> aClass,
 	                     final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
+		final String databaseDriver = System.getProperty("database.driver") != null
+		                                                                           ? System.getProperty("database.driver")
+		                                                                           : settings.driver();
+		final String databaseHost = System.getProperty("database.host") != null
+		                                                                       ? System.getProperty("database.host")
+		                                                                       : settings.hostname();
+		final String databasePassword = System.getProperty("database.password") != null
+		                                                                               ? System.getProperty("database.password")
+		                                                                               : settings.password();
+		final String databaseType = System.getProperty("database.type") != null
+		                                                                       ? System.getProperty("database.type")
+		                                                                       : settings.type();
+		final String databaseUsername = System.getProperty("database.user") != null
+		                                                                           ? System.getProperty("database.user")
+		                                                                           : settings.username();
+		
 		MoskitoTest.getPersistenceUtil().shutdown();
 		
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
@@ -109,10 +144,10 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 			tag = tag.replaceAll("\\W", "_");
 			final String dbName = settings.database() + '_' + tag;
 			try {
-				PersistenceManager.dropDatabase(settings.hostname(), dbName, settings.username(), settings.password(),
-				                                settings.type(), settings.driver());
+				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
+				                                databaseDriver);
 			} catch (final SQLException e) {
-				throw new TestSettingsError("Could not create database " + settings.database(), e);
+				throw new TestSettingsError("Could not drop database " + dbName, e);
 			}
 		}
 	}

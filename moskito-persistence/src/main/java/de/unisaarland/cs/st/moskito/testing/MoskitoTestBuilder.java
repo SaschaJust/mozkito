@@ -18,6 +18,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -66,6 +68,7 @@ public final class MoskitoTestBuilder extends Thread {
 		this.javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 		this.classPath = System.getProperty("java.class.path") + File.pathSeparator + "src" + File.separator + "main"
 		        + File.separator + "java ";
+		
 		this.testClassName = testRun.getDescription().getTestClass().getCanonicalName();
 		this.testMethodName = testRun.getDescription().getMethodName();
 		this.exampleCommandLine = this.javaBin + " -cp " + this.classPath + " " + MoskitoTest.class.getCanonicalName()
@@ -105,9 +108,19 @@ public final class MoskitoTestBuilder extends Thread {
 			e.printStackTrace();
 		}
 		
-		final ProcessBuilder builder = new ProcessBuilder(this.javaBin, "-cp", this.classPath,
-		                                                  MoskitoTest.class.getCanonicalName(), this.testClassName,
-		                                                  this.testMethodName, stdOutPath, stdErrPath);
+		final List<String> commandList = new LinkedList<>();
+		commandList.add(this.javaBin);
+		for (final Object property : System.getProperties().keySet()) {
+			commandList.add(String.format("-D%s=%s", property, System.getProperty((String) property)));
+		}
+		commandList.add("-cp");
+		commandList.add(this.classPath);
+		commandList.add(MoskitoTest.class.getCanonicalName());
+		commandList.add(this.testClassName);
+		commandList.add(this.testMethodName);
+		commandList.add(stdOutPath);
+		commandList.add(stdErrPath);
+		final ProcessBuilder builder = new ProcessBuilder(commandList);
 		
 		if (System.getProperty("test.debug") != null) {
 			System.err.println("Launching test: " + this.testClassName + "#" + this.testMethodName);

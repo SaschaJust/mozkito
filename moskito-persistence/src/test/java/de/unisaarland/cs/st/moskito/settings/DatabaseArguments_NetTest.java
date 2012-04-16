@@ -24,6 +24,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -31,6 +32,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 public class DatabaseArguments_NetTest {
 	
 	@Test
+	@Ignore
 	public void test() throws SettingsParseError {
 		
 		System.setProperty("database.name", "moskito_junit");
