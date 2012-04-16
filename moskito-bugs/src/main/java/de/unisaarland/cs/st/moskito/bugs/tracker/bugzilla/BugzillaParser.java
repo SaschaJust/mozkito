@@ -254,7 +254,7 @@ public abstract class BugzillaParser implements Parser {
 	 *            the xml
 	 * @return true, if successful
 	 */
-	protected boolean checkXML(final XmlReport xml) {
+	protected boolean checkXML(@NotNull final XmlReport xml) {
 		
 		try {
 			final BugzillaDocument bugzillaDocument = BugzillaDocument.Factory.parse(xml.getContent());
@@ -402,9 +402,15 @@ public abstract class BugzillaParser implements Parser {
 				return false;
 			}
 			this.xmlReport = createDocument(rawContent);
+			if (this.xmlReport == null) {
+				if (Logger.logError()) {
+					Logger.error("Could not parse report %s. createDocument() returned NULL. See earlier errors.",
+					             uri.toASCIIString());
+				}
+			}
 			if (!checkXML(this.xmlReport)) {
 				if (Logger.logError()) {
-					Logger.error("Failed to parse report " + uri.toASCIIString() + ": XML check failed.");
+					Logger.error("Failed to parse report %s: XML check failed.", uri.toASCIIString());
 				}
 				return false;
 			}
