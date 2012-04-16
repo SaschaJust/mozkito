@@ -314,6 +314,12 @@ public class IOUtils {
 	private static void configureAuthentification(@NotNull final DefaultHttpClient hc,
 	                                              final String username,
 	                                              final String password) {
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring authentification for http fetch using usernamee=`%s` and password=`******`.",
+			             username);
+		}
+		
 		final CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		if ((username != null) && (password != null)) {
 			credsProvider.setCredentials(new AuthScope(AuthScope.ANY), new UsernamePasswordCredentials(username,
@@ -324,6 +330,11 @@ public class IOUtils {
 	
 	private static void configureProxy(@NotNull final DefaultHttpClient hc,
 	                                   @NotNull final ProxyConfig proxyConfig) {
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring proxy %s for http fetch.", proxyConfig);
+		}
+		
 		final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort());
 		
 		if (proxyConfig.getUsername() != null) {
@@ -336,6 +347,9 @@ public class IOUtils {
 	}
 	
 	private static void configureSSLHandling(@NotNull final HttpClient hc) {
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring SSL handling for http fetch.");
+		}
 		final Scheme http = new Scheme("http", 80, PlainSocketFactory.getSocketFactory());
 		final SSLSocketFactory sf = buildSSLSocketFactory();
 		final Scheme https = new Scheme("https", 443, sf);
