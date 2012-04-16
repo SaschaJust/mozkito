@@ -298,7 +298,9 @@ public abstract class Tracker {
 		Condition.check((username == null) == (password == null),
 		                "Either username and password are set or none at all. username = `%s`, password = `%s`", //$NON-NLS-1$
 		                username, password);
-		
+		if (Logger.logTrace()) {
+			Logger.trace("Setup");
+		}
 		this.trackerURI = fetchURI;
 		setUsername(username);
 		setPassword(password);
