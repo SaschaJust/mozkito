@@ -132,6 +132,7 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 	private final List<Method>                                               bootMethods      = new LinkedList<Method>();
 	private final List<Method>                                               shutdownMethods  = new LinkedList<Method>();
 	private final Map<Annotation, Class<? extends MoskitoSettingsProcessor>> suiteAnnotations = new HashMap<Annotation, Class<? extends MoskitoSettingsProcessor>>();
+	private Integer                                                          parallel;
 	
 	/**
 	 * @param aClass
@@ -141,6 +142,15 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		super(aClass);
 		this.fTestClass = new TestClass(aClass);
 		this.description = Description.createSuiteDescription(this.fTestClass.getJavaClass());
+		final String property = System.getProperty("test.parallel");
+		if (property != null) {
+			if (System.getProperty("test.debug") != null) {
+				System.err.println("Using at most " + property + " parallel test executions.");
+			}
+			this.parallel = Integer.parseInt(property);
+		} else {
+			this.parallel = null;
+		}
 		
 		final Method[] classMethods = aClass.getDeclaredMethods();
 		for (final Method classMethod : classMethods) {
@@ -253,6 +263,24 @@ public class MoskitoSuite extends BlockJUnit4ClassRunner {
 		
 		for (int i = 0; i < this.fTestMethods.size(); i++) {
 			final MoskitoTestBuilder builder = new MoskitoTestBuilder(this.fTestMethods.get(i), runNotifier);
+			
+			while ((this.parallel != null) && (builders.size() >= this.parallel)) {
+				boolean found = false;
+				for (final MoskitoTestBuilder b : builders) {
+					if (!builder.isAlive()) {
+						found = true;
+						builders.remove(b);
+					}
+				}
+				
+				if (!found) {
+					try {
+						Thread.sleep(1000);
+					} catch (final InterruptedException ignore) {
+						// ignore
+					}
+				}
+			}
 			builders.add(builder);
 			builder.start();
 		}
