@@ -57,7 +57,7 @@ public class DatabaseSettingsProcessor implements MoskitoSettingsProcessor {
 		                                                                       : settings.type();
 		final String databaseUnit = System.getProperty("database.unit") != null
 		                                                                       ? System.getProperty("database.unit")
-		                                                                       : settings.type();
+		                                                                       : settings.unit();
 		final String databaseUsername = System.getProperty("database.user") != null
 		                                                                           ? System.getProperty("database.user")
 		                                                                           : settings.username();
