@@ -16,11 +16,24 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -31,7 +44,6 @@ import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.http.Header;
@@ -45,6 +57,11 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
@@ -55,6 +72,51 @@ import org.joda.time.DateTime;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class IOUtils {
+	
+	public static class MySSLSocketFactory extends SSLSocketFactory {
+		
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		
+		public MySSLSocketFactory(final KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException,
+		        KeyStoreException, UnrecoverableKeyException {
+			super(truststore);
+			
+			final TrustManager tm = new X509TrustManager() {
+				
+				@Override
+				public void checkClientTrusted(final X509Certificate[] chain,
+				                               final String authType) throws CertificateException {
+					return;
+				}
+				
+				@Override
+				public void checkServerTrusted(final X509Certificate[] chain,
+				                               final String authType) throws CertificateException {
+					return;
+				}
+				
+				@Override
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+			};
+			
+			this.sslContext.init(null, new TrustManager[] { tm }, null);
+		}
+		
+		@Override
+		public Socket createSocket() throws IOException {
+			return this.sslContext.getSocketFactory().createSocket();
+		}
+		
+		@Override
+		public Socket createSocket(final Socket socket,
+		                           final String host,
+		                           final int port,
+		                           final boolean autoClose) throws IOException, UnknownHostException {
+			return this.sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+		}
+	}
 	
 	/**
 	 * Binaryfetch.
@@ -223,6 +285,77 @@ public class IOUtils {
 	                                       final String username,
 	                                       final String password) throws ClientProtocolException, IOException {
 		return binaryfetchHttp(uri, username, password);
+	}
+	
+	private static SSLSocketFactory buildSSLSocketFactory() {
+		final TrustStrategy ts = new TrustStrategy() {
+			
+			@Override
+			public boolean isTrusted(final X509Certificate[] x509Certificates,
+			                         final String s) throws CertificateException {
+				return true; // heck yea!
+			}
+		};
+		
+		SSLSocketFactory sf = null;
+		
+		try {
+			/* build socket factory with hostname verification turned off. */
+			sf = new SSLSocketFactory(ts, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		} catch (final NoSuchAlgorithmException | KeyManagementException | KeyStoreException
+		        | UnrecoverableKeyException e) {
+			if (Logger.logError()) {
+				Logger.error(e, "Failed to initialize SSL handling.");
+			}
+		}
+		return sf;
+	}
+	
+	private static void configureAuthentification(@NotNull final DefaultHttpClient hc,
+	                                              final String username,
+	                                              final String password) {
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring authentification for http fetch using usernamee=`%s` and password=`******`.",
+			             username);
+		}
+		
+		final CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		if ((username != null) && (password != null)) {
+			credsProvider.setCredentials(new AuthScope(AuthScope.ANY), new UsernamePasswordCredentials(username,
+			                                                                                           password));
+		}
+		hc.setCredentialsProvider(credsProvider);
+	}
+	
+	private static void configureProxy(@NotNull final DefaultHttpClient hc,
+	                                   @NotNull final ProxyConfig proxyConfig) {
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring proxy %s for http fetch.", proxyConfig);
+		}
+		
+		final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort());
+		
+		if (proxyConfig.getUsername() != null) {
+			hc.getCredentialsProvider().setCredentials(new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
+			                                           new UsernamePasswordCredentials(proxyConfig.getUsername(),
+			                                                                           proxyConfig.getPassword()));
+		}
+		
+		hc.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+	}
+	
+	private static void configureSSLHandling(@NotNull final HttpClient hc) {
+		if (Logger.logDebug()) {
+			Logger.debug("Configuring SSL handling for http fetch.");
+		}
+		final Scheme http = new Scheme("http", 80, PlainSocketFactory.getSocketFactory());
+		final SSLSocketFactory sf = buildSSLSocketFactory();
+		final Scheme https = new Scheme("https", 443, sf);
+		final SchemeRegistry sr = hc.getConnectionManager().getSchemeRegistry();
+		sr.register(http);
+		sr.register(https);
 	}
 	
 	/**
@@ -408,36 +541,6 @@ public class IOUtils {
 	 *            the username
 	 * @param password
 	 *            the password
-	 * @return the raw content
-	 * @throws FetchException
-	 *             the fetch exception
-	 */
-	public static RawContent fetchHttp(final URI uri,
-	                                   final String username,
-	                                   final String password) throws FetchException {
-		try {
-			final DefaultHttpClient httpClient = new DefaultHttpClient();
-			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-			                             new UsernamePasswordCredentials(username, password));
-			httpClient.setCredentialsProvider(credsProvider);
-			
-			return fetchHttp(uri, username, password, httpClient);
-		} catch (final Exception e) {
-			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
-			        + "` failed.", e);
-		}
-	}
-	
-	/**
-	 * Fetch http.
-	 * 
-	 * @param uri
-	 *            the uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
 	 * @param httpClient
 	 *            the http client
 	 * @return the raw content
@@ -445,8 +548,6 @@ public class IOUtils {
 	 *             the fetch exception
 	 */
 	public static RawContent fetchHttp(@NotNull final URI uri,
-	                                   final String username,
-	                                   final String password,
 	                                   @NotNull final HttpClient httpClient) throws FetchException {
 		MessageDigest md;
 		try {
@@ -475,15 +576,8 @@ public class IOUtils {
 		}
 	}
 	
-	public static RawContent fetchHttp(@NotNull final URI uri,
-	                                   final String username,
-	                                   final String password,
-	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
-		return fetchHttp(uri, username, password, proxyConfig, "http");
-	}
-	
 	/**
-	 * Fetch http proxy.
+	 * Fetch http.
 	 * 
 	 * @param uri
 	 *            the uri
@@ -491,51 +585,32 @@ public class IOUtils {
 	 *            the username
 	 * @param password
 	 *            the password
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @return the raw content
 	 * @throws FetchException
 	 *             the fetch exception
 	 */
-	public static RawContent fetchHttp(@NotNull final URI uri,
+	public static RawContent fetchHttp(final URI uri,
 	                                   final String username,
-	                                   final String password,
-	                                   @NotNull final ProxyConfig proxyConfig,
-	                                   @NotNull final String schema) throws FetchException {
-		
-		Condition.allNullOrNone(username, password,
-		                        "Useranme and password must be both null or none. Got username='%s', password='%s'.",
-		                        username, password);
-		
-		if (Logger.logTrace()) {
-			Logger.trace("fetching HTTP content using http proxy config '%s'", proxyConfig);
-		}
-		
+	                                   final String password) throws FetchException {
 		try {
 			final DefaultHttpClient httpClient = new DefaultHttpClient();
-			final HttpHost proxyHost = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort(), schema);
-			
-			if (proxyConfig.getUsername() != null) {
-				httpClient.getCredentialsProvider()
-				          .setCredentials(new AuthScope(proxyConfig.getHost(), proxyConfig.getPort()),
-				                          new UsernamePasswordCredentials(proxyConfig.getUsername(),
-				                                                          proxyConfig.getPassword()));
-			}
-			
-			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
-			
-			final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			if ((username != null) && (password != null)) {
-				credsProvider.setCredentials(new AuthScope(uri.getHost(), AuthScope.ANY_PORT),
-				                             new UsernamePasswordCredentials(username, password));
-			}
-			httpClient.setCredentialsProvider(credsProvider);
-			
-			return fetchHttp(uri, username, password, httpClient);
+			configureAuthentification(httpClient, username, password);
+			return fetchHttp(uri, httpClient);
 		} catch (final Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
 			        + "` failed.", e);
 		}
+	}
+	
+	public static RawContent fetchHttp(@NotNull final URI uri,
+	                                   final String username,
+	                                   final String password,
+	                                   @NotNull final ProxyConfig proxyConfig) throws FetchException {
+		
+		final DefaultHttpClient hc = new DefaultHttpClient();
+		configureProxy(hc, proxyConfig);
+		configureAuthentification(hc, username, password);
+		return fetchHttp(uri, hc);
 	}
 	
 	/**
@@ -589,7 +664,11 @@ public class IOUtils {
 	                                    final String username,
 	                                    final String password,
 	                                    @NotNull final ProxyConfig proxyConfig) throws FetchException {
-		return fetchHttp(uri, username, password, proxyConfig, "https");
+		final DefaultHttpClient hc = new DefaultHttpClient();
+		configureProxy(hc, proxyConfig);
+		configureAuthentification(hc, username, password);
+		configureSSLHandling(hc);
+		return fetchHttp(uri, hc);
 	}
 	
 	/**
