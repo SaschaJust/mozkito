@@ -754,6 +754,7 @@ public class IOUtils {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private static byte[] readbinaryData(final HttpEntity entity) throws IllegalStateException, IOException {
+		// XXX BUG FIXME rewrite from scratch
 		final InputStream stream = entity.getContent();
 		
 		final byte[] buffer = new byte[1024];
