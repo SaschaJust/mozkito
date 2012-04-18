@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings;
 
@@ -51,11 +48,15 @@ public class ChangeCouplingRuleFactory {
 	
 	/**
 	 * Gets the change coupling rules.
-	 *
-	 * @param transaction the transaction
-	 * @param minSupport the min support
-	 * @param minConfidence the min confidence
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the change coupling rules (sorted descending by confidence and support)
 	 */
 	@SuppressWarnings ("unchecked")
@@ -75,10 +76,10 @@ public class ChangeCouplingRuleFactory {
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
-		tablename = "reposuite_cc_" + tablename;
+		tablename = "mozkito_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		persistenceUtil.executeNativeQuery("select reposuite_file_changecouplings('" + transaction.getId() + "','"
+		persistenceUtil.executeNativeQuery("select mozkito_file_changecouplings('" + transaction.getId() + "','"
 		        + tablename + "')");
 		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
@@ -135,11 +136,11 @@ public class ChangeCouplingRuleFactory {
 		}
 		
 		String tablename = new BigInteger(130, new SecureRandom()).toString(32).toString();
-		tablename = "reposuite_method_cc_" + tablename;
+		tablename = "mozkito_method_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
 		final StringBuilder query = new StringBuilder();
-		query.append("select reposuite_method_changecouplings('");
+		query.append("select mozktio_method_changecouplings('");
 		query.append(transaction.getId());
 		query.append("','");
 		query.append(tablename);
@@ -179,8 +180,9 @@ public class ChangeCouplingRuleFactory {
 	
 	/**
 	 * Update procedures.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	private static void updateProcedures(final PersistenceUtil persistenceUtil) {
 		if (!updatedQueries) {
