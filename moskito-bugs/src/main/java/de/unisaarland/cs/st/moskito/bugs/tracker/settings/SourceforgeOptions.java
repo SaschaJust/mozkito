@@ -49,12 +49,16 @@ public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<
 	/** The bug type arg. */
 	private EnumArgument.Options<Type> bugTypeArg;
 	
+	/** The group id argument. */
 	private LongArgument               groupIdArgument;
 	
+	/** The at id argument. */
 	private LongArgument               atIdArgument;
 	
+	/** The bug type argument. */
 	private EnumArgument<Type>         bugTypeArgument;
 	
+	/** The tracker. */
 	private SourceforgeTracker         tracker;
 	
 	/**

@@ -117,17 +117,13 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param fetchURI
-	 *            the fetch uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param projectKey
-	 *            the project key
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param projectKey the project key
+	 * @param proxyConfig the proxy config
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,

@@ -58,16 +58,17 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new mantis overview parser.
-	 * 
-	 * @param trackerUri
-	 *            the tracker uri
+	 *
+	 * @param tracker the tracker
 	 */
 	public MantisOverviewParser(final MantisTracker tracker) {
 		this.tracker = tracker;
 	}
 	
 	/**
-	 * @param asciiString
+	 * Instantiates a new mantis overview parser.
+	 *
+	 * @param uri the uri
 	 */
 	protected MantisOverviewParser(final URI uri) {
 		// PRECONDITIONS

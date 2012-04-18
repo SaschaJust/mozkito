@@ -41,7 +41,11 @@ public class JiraOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker
 	
 	/** The project key arg. */
 	private Options     projectKeyOptions;
+	
+	/** The project name. */
 	private String      projectName;
+	
+	/** The tracker. */
 	private JiraTracker tracker;
 	
 	/**

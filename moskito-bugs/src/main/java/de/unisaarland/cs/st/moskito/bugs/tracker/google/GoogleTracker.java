@@ -52,6 +52,11 @@ public class GoogleTracker extends Tracker {
 	/** The service. */
 	private ProjectHostingService service;
 	
+	/**
+	 * Gets the issues feed uri.
+	 *
+	 * @return the issues feed uri
+	 */
 	public String getIssuesFeedUri() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getUri().toString());
@@ -142,11 +147,10 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param projectName
-	 *            the project name
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param projectName the project name
+	 * @param proxyConfig the proxy config
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	public void setup(final String projectName,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
@@ -164,17 +168,12 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param fetchURI
-	 *            the fetch uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param projectName
-	 *            the project name
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @param projectName the project name
+	 * @param proxyConfig the proxy config
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	public void setup(final String username,
 	                  final String password,
@@ -207,17 +206,9 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param fetchURI
-	 *            the fetch uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param projectName
-	 *            the project name
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param projectName the project name
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	protected void testSetup(final String projectName) throws InvalidParameterException {
 		this.projectName = projectName;

@@ -195,6 +195,7 @@ public class GoogleParser implements Parser {
 	/** The comments. */
 	private SortedSet<Comment>              comments = null;
 	
+	/** The resolution timestamp. */
 	private DateTime                        resolutionTimestamp;
 	
 	/**

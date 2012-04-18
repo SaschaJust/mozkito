@@ -67,8 +67,10 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The sourceforge options. */
 	private SourceforgeOptions                sourceforgeOptions;
 	
+	/** The proxy options. */
 	private ProxyOptions                      proxyOptions;
 	
+	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
 	
 	/**
@@ -88,6 +90,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 		argumentSet.getSettings();
 	}
 	
+	/**
+	 * Gets the proxy options.
+	 *
+	 * @return the proxy options
+	 */
 	public final ProxyOptions getProxyOptions() {
 		return this.proxyOptions;
 	}

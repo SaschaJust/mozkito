@@ -34,13 +34,16 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.HistoryElement;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 
 /**
+ * The Class BugzillaHistoryParser_4_0_4_Test.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class BugzillaHistoryParser_4_0_4_Test {
 	
 	/** The uri642368history. */
 	private URI uri642368history;
+	
+	/** The uri114562history. */
 	private URI uri114562history;
 	
 	/**

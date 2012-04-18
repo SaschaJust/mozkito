@@ -130,6 +130,11 @@ public class SourceforgeTracker extends Tracker {
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
 	
+	/**
+	 * Sets the uri.
+	 *
+	 * @param uri the new uri
+	 */
 	protected void setUri(final URI uri) {
 		this.trackerURI = uri;
 	}

@@ -41,7 +41,11 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/** The project name arg. */
 	private Options       projectNameArg;
+	
+	/** The project name. */
 	private String        projectName;
+	
+	/** The tracker. */
 	private GoogleTracker tracker;
 	
 	/**

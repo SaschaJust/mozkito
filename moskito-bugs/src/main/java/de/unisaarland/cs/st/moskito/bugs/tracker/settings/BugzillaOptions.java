@@ -47,12 +47,16 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	/** The bugzilla version arg. */
 	private StringArgument.Options bugzillaVersionArg;
 	
+	/** The tracker uri options. */
 	private Options                trackerURIOptions;
 	
+	/** The tracker. */
 	private BugzillaTracker        tracker;
 	
+	/** The overview argument. */
 	private URIArgument            overviewArgument;
 	
+	/** The bugzilla version argument. */
 	private StringArgument         bugzillaVersionArgument;
 	
 	/**
@@ -94,6 +98,11 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 		}
 	}
 	
+	/**
+	 * Gets the tracker uri options.
+	 *
+	 * @return the tracker uri options
+	 */
 	public URIArgument.Options getTrackerURIOptions() {
 		// PRECONDITIONS
 		

@@ -37,6 +37,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
 public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> implements
         ITrackerOptions {
 	
+	/** The tracker. */
 	private MantisTracker tracker;
 	
 	/**

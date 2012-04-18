@@ -20,13 +20,16 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
+ * The Class Main2.
+ *
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
- * 
  */
 public class Main2 {
 	
 	/**
-	 * @param args
+	 * The main method.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(final String[] args) {
 		// Create a new instance of the Firefox driver

@@ -62,15 +62,14 @@ public class SourceforgeOverviewParser implements OverviewParser {
 	
 	/** The base report uri. */
 	private String                baseReportURI;
+	
+	/** The tracker. */
 	private SourceforgeTracker    tracker;
 	
 	/**
 	 * Instantiates a new sourceforge overview parser.
-	 * 
-	 * @param atId
-	 *            the at id
-	 * @param groupId
-	 *            the group id
+	 *
+	 * @param tracker the tracker
 	 */
 	public SourceforgeOverviewParser(final SourceforgeTracker tracker) {
 		// PRECONDITIONS

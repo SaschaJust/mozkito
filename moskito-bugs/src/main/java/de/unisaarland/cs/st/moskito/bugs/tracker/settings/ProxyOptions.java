@@ -34,18 +34,23 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
  */
 public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<ProxyConfig, ProxyOptions>> {
 	
+	/** The host options. */
 	private Options                                             hostOptions;
+	
+	/** The port options. */
 	private net.ownhero.dev.hiari.settings.LongArgument.Options portOptions;
+	
+	/** The username options. */
 	private Options                                             usernameOptions;
+	
+	/** The password options. */
 	private Options                                             passwordOptions;
 	
 	/**
 	 * Instantiates a new mantis options.
-	 * 
-	 * @param trackerOptions
-	 *            the tracker options
-	 * @param requirement
-	 *            the requirement
+	 *
+	 * @param argumentSet the argument set
+	 * @param requirement the requirement
 	 */
 	@NoneNull
 	public ProxyOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement) {

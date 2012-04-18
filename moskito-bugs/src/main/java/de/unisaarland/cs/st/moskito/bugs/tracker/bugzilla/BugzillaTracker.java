@@ -122,19 +122,14 @@ public class BugzillaTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param fetchURI
-	 *            the fetch uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param overviewURI
-	 *            the overview uri
-	 * @param bugzillaVersion
-	 *            the bugzilla version
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param overviewURI the overview uri
+	 * @param bugzillaVersion the bugzilla version
+	 * @param proxyConfig the proxy config
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
@@ -150,6 +145,11 @@ public class BugzillaTracker extends Tracker {
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
 	
+	/**
+	 * Sets the uri.
+	 *
+	 * @param uri the new uri
+	 */
 	protected void setUri(final URI uri) {
 		this.trackerURI = uri;
 	}
