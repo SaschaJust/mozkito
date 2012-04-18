@@ -40,7 +40,6 @@ import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
-import net.ownhero.dev.ioda.exceptions.UnsupportedSchemaException;
 import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
