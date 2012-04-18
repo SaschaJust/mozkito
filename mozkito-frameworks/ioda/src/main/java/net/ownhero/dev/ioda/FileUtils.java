@@ -175,7 +175,10 @@ public class FileUtils {
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
-				// TODO error
+				if (Logger.logError()) {
+					Logger.error("Compressed file does not contain a file extension like `.zip`.");
+				}
+				return false;
 			}
 			
 			final File outputFile = new File(path);
@@ -775,7 +778,10 @@ public class FileUtils {
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
-				// TODO error
+				if (Logger.logError()) {
+					Logger.error("Compressed file does not contain a file extension like `.zip`.");
+				}
+				return false;
 			}
 			
 			final File outputFile = new File(path);
@@ -877,7 +883,10 @@ public class FileUtils {
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
-				// TODO error
+				if (Logger.logError()) {
+					Logger.error("Compressed file does not contain a file extension like `.zip`.");
+				}
+				return false;
 			}
 			
 			final File outputFile = new File(path);

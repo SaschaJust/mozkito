@@ -4,7 +4,6 @@
 package net.ownhero.dev.ioda;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -42,6 +40,7 @@ import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.ioda.exceptions.LoadingException;
 import net.ownhero.dev.ioda.exceptions.StoringException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedSchemaException;
 import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -185,17 +184,17 @@ public class IOUtils {
 	 * @return the byte[]
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws UnsupportedSchemaException
 	 */
 	private static byte[] binaryfetchFile(final URI uri) throws IOException {
-		// TODO implement for directory
-		FileInputStream inputStream = null;
-		
-		inputStream = new FileInputStream(uri.getPath());
-		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		copyInputStream(inputStream, outputStream);
-		inputStream.close();
-		outputStream.close();
-		return outputStream.toByteArray();
+		if (uri.getScheme().equals("file")) {
+			FileInputStream inputStream = null;
+			inputStream = new FileInputStream(uri.getPath());
+			return org.apache.commons.io.IOUtils.toByteArray(inputStream);
+		}
+		throw new IOException(
+		                      String.format("URI schema `%s` is yet not supported in %s.binaryfetchFile(final URI uri)",
+		                                    uri.getScheme(), IOUtils.class.getSimpleName()));
 	}
 	
 	/**
@@ -835,28 +834,7 @@ public class IOUtils {
 	private static byte[] readbinaryData(final HttpEntity entity) throws IllegalStateException, IOException {
 		// XXX BUG FIXME rewrite from scratch
 		final InputStream stream = entity.getContent();
-		
-		final byte[] buffer = new byte[1024];
-		int length = 0;
-		final LinkedList<byte[]> list = new LinkedList<byte[]>();
-		int i;
-		
-		while ((i = stream.read(buffer)) != 0) {
-			length += i;
-			list.add(buffer);
-		}
-		
-		final byte[] data = new byte[length];
-		i = 0;
-		for (final byte[] chunk : list) {
-			for (final byte b : chunk) {
-				data[i] = b;
-				++i;
-			}
-		}
-		
-		stream.close();
-		return data;
+		return org.apache.commons.io.IOUtils.toByteArray(stream);
 	}
 	
 	/**
