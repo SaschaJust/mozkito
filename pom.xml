@@ -464,6 +464,9 @@
 						<version>2.12</version>
 						<configuration>
 							<argLine>-Ddatabase.host=localhost -Dlog.console.level=DEBUG -Dtest.debug=TRUE -Dtest.parallel=1</argLine>
+							<excludes>
+								<exclude>**/**/IGNORE_OWNHERO_*Test.java</exclude>
+							</excludes>
 						</configuration>
 					</plugin>
 					<plugin>

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION reposuite_method_changecouplings(tid character varying(40), tablename varchar, method_names text[]) RETURNS integer AS $$
+CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(40), tablename varchar, method_names text[]) RETURNS integer AS $$
 	
 	def cc_subsets(s):
 	  subsets = []
