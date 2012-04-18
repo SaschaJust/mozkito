@@ -64,7 +64,7 @@ public class PersonBucket {
 		// We actually should never have empty buckets
 		if (!this.persons.isEmpty()) {
 			if (Logger.logDebug()) {
-				Logger.debug(String.format(Messages.getString("PersonBucket.consolidating")), hashCode()); //$NON-NLS-1$
+				Logger.debug(Messages.getString("PersonBucket.consolidating"), hashCode()); //$NON-NLS-1$
 			}
 			
 			// Since we checked the entries to be not empty, we can safely
@@ -76,8 +76,8 @@ public class PersonBucket {
 				// entry.
 				if (!manager.isProcessed(entry.getFirst().getGeneratedId())) {
 					if (Logger.logDebug()) {
-						Logger.debug(String.format(Messages.getString("PersonBucket.deleting"), entry.getFirst(), //$NON-NLS-1$
-						                           mainEntry.getFirst()));
+						Logger.debug(Messages.getString("PersonBucket.deleting"), entry.getFirst(), //$NON-NLS-1$
+						             mainEntry.getFirst());
 					}
 					
 					// Merge the data of person in the entry into the person in
@@ -99,8 +99,8 @@ public class PersonBucket {
 					manager.delete(entry.getFirst());
 				} else {
 					if (Logger.logWarn()) {
-						Logger.warn(String.format(Messages.getString("PersonBucket.skipping"), //$NON-NLS-1$
-						                          entry.getFirst()));
+						Logger.warn(Messages.getString("PersonBucket.skipping"), //$NON-NLS-1$
+						            entry.getFirst());
 					}
 				}
 			}
@@ -109,7 +109,7 @@ public class PersonBucket {
 			this.persons.add(mainEntry);
 			
 			if (Logger.logDebug()) {
-				Logger.debug(String.format(Messages.getString("PersonBucket.keeping"), mainEntry)); //$NON-NLS-1$
+				Logger.debug(Messages.getString("PersonBucket.keeping"), mainEntry); //$NON-NLS-1$
 			}
 		}
 	}
