@@ -13,6 +13,8 @@
 
 package de.unisaarland.cs.st.moskito.callgraph.eclipse;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 

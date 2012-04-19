@@ -19,9 +19,10 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.InputFileArgument;
+import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.arguments.InputFileArgument;
-import net.ownhero.dev.hiari.settings.arguments.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -48,19 +49,23 @@ public class Application implements IApplication {
 	public Object start(final IApplicationContext context) throws Exception {
 		Settings settings = new Settings();
 		
-		InputFileArgument inArg = new InputFileArgument(settings.getRootArgumentSet(), "in", "The file to be analyzed (full qualified path",
+		
+		
+		InputFileArgument.Options inArg = new InputFileArgument.Options(settings.getRoot(), "in", "The file to be analyzed (full qualified path",
 		                                                null, Requirement.required);
-		OutputFileArgument outArg = new OutputFileArgument(settings.getRootArgumentSet(), "out", "The file to write the output to", null,
+		OutputFileArgument.Options outArg = new OutputFileArgument.Options(settings.getRoot(), "out", "The file to write the output to", null,
 		                                                   Requirement.required,true);
 		
-		settings.parse();
+		InputFileArgument inputFileArgument = ArgumentFactory.create(inArg);
+		OutputFileArgument outputFileArgument = ArgumentFactory.create(outArg);
 		
-		CompilationUnit cu = PPAUtils.getCU(inArg.getValue(), new PPAOptions());
+		
+		CompilationUnit cu = PPAUtils.getCU(inputFileArgument.getValue(), new PPAOptions());
 		DataDependencyVisitor visitor = new DataDependencyVisitor(cu);
 		cu.accept(visitor);
 		Map<Integer, Set<Integer>> dependencies = visitor.getVariableAccessesPerLine();
 		
-		Writer writer = new BufferedWriter(new FileWriter(outArg.getValue()));
+		Writer writer = new BufferedWriter(new FileWriter(outputFileArgument.getValue()));
 		
 		for (Integer vId : dependencies.keySet()) {
 			writer.append(StringUtils.join(dependencies.get(vId), ","));
