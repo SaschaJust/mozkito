@@ -180,6 +180,9 @@ public class Repository_MozkitoTest extends MoskitoTest {
 	public void testCheckout() {
 		for (final Repository repository : repositories) {
 			final File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
+			
+			assert (checkoutPath != null);
+			
 			final File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
 			final File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
 			final File file_1 = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "file_1");
