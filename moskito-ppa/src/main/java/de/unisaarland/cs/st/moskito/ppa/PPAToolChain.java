@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -124,11 +125,11 @@ public class PPAToolChain extends Chain<Settings> {
 			                                                                             new ArrayList<String>(0),
 			                                                                             Requirement.optional));
 		} catch (final ArgumentRegistrationException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
+			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
-			throw new UnrecoverableError(e);
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final SettingsParseError e) {
+			throw new Shutdown(e.getMessage(), e);
 		}
 	}
 	
