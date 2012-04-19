@@ -114,13 +114,13 @@ public class PPAToolChain extends Chain<Settings> {
 			
 			this.asXML = ArgumentFactory.create(new OutputFileArgument.Options(
 			                                                                   settings.getRoot(),
-			                                                                   "output.xml",
+			                                                                   "outputXml",
 			                                                                   "Instead of writing the source code change operations to the DB, output them as XML into this file.",
 			                                                                   null, Requirement.optional, true));
 			
 			this.packageFilterArgument = ArgumentFactory.create(new ListArgument.Options(
 			                                                                             settings.getRoot(),
-			                                                                             "ppa.package.filter",
+			                                                                             "packageFilter",
 			                                                                             "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
 			                                                                             new ArrayList<String>(0),
 			                                                                             Requirement.optional));
