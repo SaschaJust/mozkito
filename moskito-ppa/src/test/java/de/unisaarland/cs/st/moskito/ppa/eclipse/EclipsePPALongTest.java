@@ -30,6 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.a7soft.examxml.ExamXML;
@@ -177,6 +178,7 @@ public class EclipsePPALongTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testEclipseApp1() {
 		final String VMARGS = BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
@@ -200,6 +202,7 @@ public class EclipsePPALongTest {
 	// }
 	
 	@Test
+	@Ignore
 	public void testEclipseApp3() {
 		final String VMARGS = BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
@@ -210,6 +213,7 @@ public class EclipsePPALongTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testEclipseApp4() {
 		final String VMARGS = BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
