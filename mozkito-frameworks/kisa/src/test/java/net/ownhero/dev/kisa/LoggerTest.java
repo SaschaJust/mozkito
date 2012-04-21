@@ -220,7 +220,8 @@ public class LoggerTest {
 	@Test
 	public void testLevelOrder() {
 		assertEquals(1, LogLevel.TRACE.compareTo(LogLevel.DEBUG));
-		assertEquals(1, LogLevel.DEBUG.compareTo(LogLevel.INFO));
+		assertEquals(1, LogLevel.DEBUG.compareTo(LogLevel.VERBOSE));
+		assertEquals(1, LogLevel.VERBOSE.compareTo(LogLevel.INFO));
 		assertEquals(1, LogLevel.INFO.compareTo(LogLevel.WARN));
 		assertEquals(1, LogLevel.WARN.compareTo(LogLevel.ERROR));
 		assertEquals(1, LogLevel.ERROR.compareTo(LogLevel.OFF));

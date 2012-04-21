@@ -18,7 +18,7 @@ package net.ownhero.dev.kisa;
  * 
  */
 public enum LogLevel {
-	OFF, ERROR, WARN, INFO, DEBUG, TRACE;
+	OFF, ERROR, WARN, INFO, VERBOSE, DEBUG, TRACE;
 	
 	/**
 	 * @return the simple class name

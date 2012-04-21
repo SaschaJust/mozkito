@@ -514,21 +514,29 @@ public class Logger {
 	
 	/** The default layout. */
 	private static Layout                        defaultLayout       = new EnhancedPatternLayout(
-	                                                                                             "%d (%8r) [%t] %-5p %m%n"); //$NON-NLS-1$
-	                                                                                                                         
+	                                                                                             "%d (%8r) [%t] %-5p %m%n");   //$NON-NLS-1$
+	                                                                                                                            
 	/** The error layout. */
 	private static Layout                        errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
 	                                                                         + TerminalColor.RED.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                         + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
-	                                                                                                                         
+	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
+	                                                                                                                            
+	private static Layout                        showLayout          = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                         + TerminalColor.CYAN.getTag() + "ALWAYS " //$NON-NLS-1$
+	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
+	                                                                                                                            
 	/** The warning layout. */
 	private static Layout                        warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
 	                                                                         + TerminalColor.YELLOW.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                         + TerminalColor.NONE.getTag() + " %m%n");      //$NON-NLS-1$
-	                                                                                                                         
+	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
+	                                                                                                                            
 	/** The console appenders. */
 	private static List<WriterAppender>          consoleAppenders    = new LinkedList<WriterAppender>();
 	
+	/** The show no colors layout. */
+	private static Layout                        showNoColorsLayout  = new EnhancedPatternLayout(
+	                                                                                             "%d (%8r) [%t] ALWAYS  %m%n"); //$NON-NLS-1$
+	                                                                                                                            
 	static {
 		readConfiguration();
 	}
@@ -549,6 +557,133 @@ public class Logger {
 	public static final PrintStream              error               = new LogStream(LogLevel.ERROR);
 	
 	private static final org.apache.log4j.Logger logger              = org.apache.log4j.Logger.getLogger(Logger.class);
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with important log level.
+	 * 
+	 * @param offset
+	 *            determines the offset in the stacktrace
+	 * @param throwable
+	 *            exception to be logged along the important message supplied
+	 * @param message
+	 *            the string to be logged or format string if arguments are not null
+	 * @param arguments
+	 *            array of 1 or 2 objects to be logged with the corresponding format string
+	 */
+	private static void always(@GreaterInt (ref = 2) final int offset,
+	                           final Throwable throwable,
+	                           final String message,
+	                           final Object... arguments) {
+		Condition.check(logError(), "Calling the important method requires important logging to be enabled.");
+		org.apache.log4j.Logger log = logger;
+		String prefix = "";
+		
+		if (debugEnabled) {
+			final Tuple<org.apache.log4j.Logger, String> ret = tags(offset);
+			
+			Condition.notNull(ret.getFirst(), "Requested logger must never be null.");
+			Condition.notNull(ret.getSecond(), "Determined logging source must never be null.");
+			prefix = String.format("[%s] ", ret.getSecond());
+			log = ret.getFirst();
+		}
+		
+		String formattedMessage = null;
+		
+		if (throwable != null) {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			} else {
+				formattedMessage = String.format("%s[[Message: %s]]", prefix,
+				                                 throwable.getMessage() != null
+				                                                               ? throwable.getMessage()
+				                                                               : "(null)");
+			}
+			log.fatal(formattedMessage, throwable);
+		} else {
+			if (arguments.length > 0) {
+				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+			} else if (message != null) {
+				formattedMessage = String.format("%s%s", prefix, message);
+			} else {
+				formattedMessage = String.format("%sERROR", prefix);
+			}
+			log.fatal(formattedMessage);
+		}
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message with important log level.
+	 * 
+	 * @param message
+	 *            the string to be logged
+	 */
+	public static void always(final String message) {
+		always(3, null, message);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the argument using the format string with important log level.
+	 * 
+	 * @param formatString
+	 *            the format string
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void always(final String formatString,
+	                          final Object... arguments) {
+		always(3, null, formatString, arguments);
+	}
+	
+	/**
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 */
+	public static void always(final Throwable throwable) {
+		always(3, throwable, null);
+	}
+	
+	/**
+	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
+	 * information to log the message and the exception string with important log level.
+	 * 
+	 * @param throwable
+	 *            , String message the exception that shall be logged
+	 * @param message
+	 *            the format string to be used
+	 */
+	public static void always(final Throwable throwable,
+	                          final String message) {
+		always(3, throwable, message);
+	}
+	
+	/**
+	 * Error.
+	 * 
+	 * @param throwable
+	 *            the throwable
+	 * @param message
+	 *            the message
+	 * @param arguments
+	 *            the arguments
+	 */
+	public static void always(final Throwable throwable,
+	                          final String message,
+	                          final Object... arguments) {
+		always(3, throwable, message, arguments);
+	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
@@ -999,6 +1134,15 @@ public class Logger {
 	}
 	
 	/**
+	 * Log verbose.
+	 * 
+	 * @return true, if successful
+	 */
+	public static boolean logAlways() {
+		return logLevel.compareTo(LogLevel.OFF) > 0;
+	}
+	
+	/**
 	 * Log debug.
 	 * 
 	 * @return true, if successful
@@ -1032,6 +1176,15 @@ public class Logger {
 	 */
 	public static boolean logTrace() {
 		return logLevel.compareTo(LogLevel.TRACE) >= 0;
+	}
+	
+	/**
+	 * Log verbose.
+	 * 
+	 * @return true, if successful
+	 */
+	public static boolean logVerbose() {
+		return logLevel.compareTo(LogLevel.VERBOSE) >= 0;
 	}
 	
 	/**
@@ -1378,11 +1531,22 @@ public class Logger {
 			}
 			
 			// if we got log level ERROR, add stylized ERROR log appender
+			final WriterAppender consoleShowAppender = new WriterAppender(showLayout, System.err);
+			final LevelRangeFilter showFilter = new LevelRangeFilter();
+			showFilter.setLevelMin(Level.FATAL);
+			showFilter.setLevelMax(Level.FATAL);
+			consoleShowAppender.addFilter(showFilter);
+			consoleShowAppender.setLayout(showLayout);
+			consoleShowAppender.activateOptions();
+			org.apache.log4j.Logger.getRootLogger().addAppender(consoleShowAppender);
+			consoleAppenders.add(consoleShowAppender);
+			
+			// if we got log level ERROR, add stylized ERROR log appender
 			if (consoleLevel.compareTo(LogLevel.ERROR) >= 0) {
 				final WriterAppender consoleErrorAppender = new WriterAppender(errorLayout, System.err);
 				final LevelRangeFilter errorFilter = new LevelRangeFilter();
 				errorFilter.setLevelMin(Level.ERROR);
-				errorFilter.setLevelMax(Level.FATAL);
+				errorFilter.setLevelMax(Level.ERROR);
 				consoleErrorAppender.addFilter(errorFilter);
 				consoleErrorAppender.setLayout(errorLayout);
 				consoleErrorAppender.activateOptions();
@@ -1403,10 +1567,21 @@ public class Logger {
 			}
 		} else {
 			normalFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
+			normalFilter.setLevelMax(Level.ERROR);
 			consoleDefaultAppender.addFilter(normalFilter);
 			consoleDefaultAppender.activateOptions();
 			org.apache.log4j.Logger.getRootLogger().addAppender(consoleDefaultAppender);
 			consoleAppenders.add(consoleDefaultAppender);
+			
+			final WriterAppender consoleShowAppender = new WriterAppender(showLayout, System.err);
+			final LevelRangeFilter showFilter = new LevelRangeFilter();
+			showFilter.setLevelMin(Level.FATAL);
+			showFilter.setLevelMax(Level.FATAL);
+			consoleShowAppender.addFilter(showFilter);
+			consoleShowAppender.setLayout(showNoColorsLayout);
+			consoleShowAppender.activateOptions();
+			org.apache.log4j.Logger.getRootLogger().addAppender(consoleShowAppender);
+			consoleAppenders.add(consoleShowAppender);
 		}
 		
 		// consoleLevelRangeFilter.setLevelMin(Level.toLevel(consoleLevel.toString()));
