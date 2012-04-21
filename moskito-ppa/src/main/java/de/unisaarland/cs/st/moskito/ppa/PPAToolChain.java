@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -113,22 +114,22 @@ public class PPAToolChain extends Chain<Settings> {
 			
 			this.asXML = ArgumentFactory.create(new OutputFileArgument.Options(
 			                                                                   settings.getRoot(),
-			                                                                   "output.xml",
+			                                                                   "outputXml",
 			                                                                   "Instead of writing the source code change operations to the DB, output them as XML into this file.",
 			                                                                   null, Requirement.optional, true));
 			
 			this.packageFilterArgument = ArgumentFactory.create(new ListArgument.Options(
 			                                                                             settings.getRoot(),
-			                                                                             "ppa.package.filter",
+			                                                                             "packageFilter",
 			                                                                             "Generate only those change operations that change definitions and classes for these packages. (entries are separated using ',')",
 			                                                                             new ArrayList<String>(0),
 			                                                                             Requirement.optional));
 		} catch (final ArgumentRegistrationException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
+			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
-			throw new UnrecoverableError(e);
+			throw new Shutdown(e.getMessage(), e);
+		} catch (final SettingsParseError e) {
+			throw new Shutdown(e.getMessage(), e);
 		}
 	}
 	
