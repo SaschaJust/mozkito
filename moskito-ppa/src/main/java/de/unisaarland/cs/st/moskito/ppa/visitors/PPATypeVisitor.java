@@ -400,8 +400,8 @@ public class PPATypeVisitor extends ASTVisitor {
 						if (annotation.getTypeName().getFullyQualifiedName().toLowerCase().equals("override")) {
 							if (Logger.logTrace()) {
 								Logger.trace("Found @override method declaration ");
-								override = true;
 							}
+							override = true;
 						}
 					}
 				}
