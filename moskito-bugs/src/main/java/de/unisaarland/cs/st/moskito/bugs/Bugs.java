@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -39,7 +36,7 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 /**
  * The Class Bugs.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class Bugs extends Chain<Settings> {
@@ -55,8 +52,9 @@ public class Bugs extends Chain<Settings> {
 	
 	/**
 	 * Instantiates a new bugs.
-	 *
-	 * @param settings the settings
+	 * 
+	 * @param settings
+	 *            the settings
 	 */
 	public Bugs(final Settings settings) {
 		super(settings);
@@ -105,13 +103,13 @@ public class Bugs extends Chain<Settings> {
 	public void setup() {
 		final Tracker tracker = this.trackerArguments.getValue();
 		
-		new TrackerReader(this.threadPool.getThreadGroup(), getSettings(), tracker);
+		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+		
+		new TrackerReader(this.threadPool.getThreadGroup(), getSettings(), tracker, persistenceUtil);
 		// new TrackerRAWChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		// new TrackerXMLTransformer(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		// new TrackerXMLChecker(this.threadPool.getThreadGroup(), getSettings(), tracker);
 		new TrackerParser(this.threadPool.getThreadGroup(), getSettings(), tracker);
-		
-		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
 		if (persistenceUtil != null) {
 			new TrackerPersister(this.threadPool.getThreadGroup(), getSettings(), tracker, persistenceUtil);
 		} else {
