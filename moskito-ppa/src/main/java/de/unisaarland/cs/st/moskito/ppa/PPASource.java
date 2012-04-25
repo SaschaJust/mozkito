@@ -113,14 +113,18 @@ public class PPASource extends Source<RCSTransaction> {
 							                                                                  .eq("revision", revision);
 							if (!persistenceUtil.load(skipCriteria).isEmpty()) {
 								skip = true;
+								if (Logger.logDebug()) {
+									Logger.debug("Skipping RCSTransaction %s. This transaction was analyzed and persisted already.",
+									             transaction.getId());
+								}
 								break;
 							}
 						}
 						if (skip) {
 							skipOutputData();
+						} else {
+							providePartialOutputData(transaction);
 						}
-						
-						providePartialOutputData(transaction);
 						if ((!PPASource.this.tIterator.hasNext()) && (!PPASource.this.branchIterator.hasNext())) {
 							setCompleted();
 						}
