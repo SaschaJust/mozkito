@@ -35,7 +35,7 @@ import org.junit.Test;
 
 import com.a7soft.examxml.ExamXML;
 
-public class EclipsePPALongTest {
+public class IGNORE_OWNHERO_EclipsePPALongTest {
 	
 	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Dlog.console.level=DEBUG -Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=moskito_ppa_junit -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
 	
@@ -69,16 +69,16 @@ public class EclipsePPALongTest {
 		}
 		
 		try {
-			repoZip = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			repoZip = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
 			                                                                + "reposuite_28_01_2011.git.zip").toURI());
-			compXML = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp.xml").toURI());
-			compXML2 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_2.xml")
+			compXML = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp.xml").toURI());
+			compXML2 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_2.xml")
 			                                            .toURI());
-			compXML2_altern = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			compXML2_altern = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
 			                                                                        + "ppa_comp_2_altern.xml").toURI());
-			compXML3 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_3.xml")
+			compXML3 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_3.xml")
 			                                            .toURI());
-			compXML4 = new File(EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_4.xml")
+			compXML4 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator + "ppa_comp_4.xml")
 			                                            .toURI());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
