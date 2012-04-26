@@ -20,6 +20,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.RCSPersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
 import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
@@ -67,7 +68,7 @@ public class PPASource extends Source<RCSTransaction> {
 			@Override
 			public void process() {
 				
-				if (PPASource.this.branchIterator == null) {
+				if (PPASource.this.transactionLimit != null) {
 					// test cases
 					if (PPASource.this.tIterator == null) {
 						// initialize
@@ -90,11 +91,12 @@ public class PPASource extends Source<RCSTransaction> {
 						// load new transactions
 						if (PPASource.this.branchIterator.hasNext()) {
 							final RCSBranch next = PPASource.this.branchIterator.next();
-							PPASource.this.tIterator = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
-							                                                              TransactionSetOrder.ASC)
-							                                             .iterator();
+							final TransactionSet set = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
+							                                                              TransactionSetOrder.ASC);
+							PPASource.this.tIterator = set.iterator();
 							if (Logger.logInfo()) {
-								Logger.info("Processing RCSBRanch " + next.toString());
+								Logger.info("Processing RCSBRanch %s with %s transactions.", next.toString(),
+								            String.valueOf(set.size()));
 							}
 						} else {
 							provideOutputData(null, true);
