@@ -37,7 +37,7 @@ public class Xor extends Requirement {
 	 * @param requirement1
 	 * @param requirement2
 	 */
-	public Xor(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
+	Xor(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
 		try {
 			this.requirement1 = requirement1;
 			this.requirement2 = requirement2;
