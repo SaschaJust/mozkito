@@ -103,9 +103,8 @@ public final class Any extends Requirement {
 					addAll(getExpressions());
 				}
 			};
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*

@@ -384,14 +384,12 @@ public class Settings implements ISettings {
 				if (!this.argumentSets.containsKey(name)) {
 					this.argumentSets.put(name, argument);
 					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 			
-		} else {
-			return false;
 		}
+		return false;
 	}
 	
 	/*
@@ -544,12 +542,11 @@ public class Settings implements ISettings {
 				Logger.trace("Help mode is inactive. Displaying graph structure deduced from active settings.");
 			}
 			return getRoot().getHelpString();
-		} else {
-			if (Logger.logTrace()) {
-				Logger.trace("Help mode is active. Displaying information based on IOptions seen so far (stored in the Help entity in Settings).");
-			}
-			return this.help.toString();
 		}
+		if (Logger.logTrace()) {
+			Logger.trace("Help mode is active. Displaying information based on IOptions seen so far (stored in the Help entity in Settings).");
+		}
+		return this.help.toString();
 	}
 	
 	/*

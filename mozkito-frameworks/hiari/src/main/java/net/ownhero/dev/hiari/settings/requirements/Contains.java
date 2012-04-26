@@ -179,10 +179,9 @@ public class Contains extends Requirement {
 		
 		if (this.depender != null) {
 			return ArrayUtils.contains(split, this.depender.getName());
-		} else {
-			Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			return ArrayUtils.contains(split, this.value);
 		}
+		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		return ArrayUtils.contains(split, this.value);
 	}
 	
 	/*

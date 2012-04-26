@@ -191,13 +191,12 @@ public class ClassLoadingError extends UnrecoverableError {
 						contained = true;
 						
 						break;
-					} else {
-						final String[] split = getClassName().split("\\.");
-						if (fqClassName.endsWith("." + (split.length > 1
-						                                                ? split[split.length - 1]
-						                                                : split[0]))) {
-							sameName.add(fqClassName);
-						}
+					}
+					final String[] split = getClassName().split("\\.");
+					if (fqClassName.endsWith("." + (split.length > 1
+					                                                ? split[split.length - 1]
+					                                                : split[0]))) {
+						sameName.add(fqClassName);
 					}
 				}
 				

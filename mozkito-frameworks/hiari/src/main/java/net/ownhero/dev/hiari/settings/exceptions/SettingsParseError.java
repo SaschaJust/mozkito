@@ -73,9 +73,8 @@ public class SettingsParseError extends Exception {
 			}
 			
 			return builder.toString();
-		} else {
-			return super.getMessage();
 		}
+		return super.getMessage();
 	}
 	
 }

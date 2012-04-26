@@ -87,9 +87,8 @@ public class Xor extends Requirement {
 				}
 			};
 			
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**

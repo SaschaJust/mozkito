@@ -211,19 +211,18 @@ public abstract class ArgumentOptions<T, X extends Argument<T, ? extends Argumen
 			                                                                                           ? " (required!)"
 			                                                                                           : "",
 			                     getAdditionalHelpString(), getDefaultValue(), getRequirements(), getHandle());
-		} else {
-			return String.format(builder.toString(),
-			                     required()
-			                               ? (getDefaultValue() != null)
-			                                                            ? Logger.TerminalColor.YELLOW.getTag()
-			                                                            : Logger.TerminalColor.RED.getTag()
-			                               : "", getTag(), required()
-			                                                         ? Logger.TerminalColor.NONE.getTag()
-			                                                         : "", getDescription(), required()
-			                                                                                           ? " (required!)"
-			                                                                                           : "",
-			                     getDefaultValue(), getRequirements(), getHandle());
 		}
+		return String.format(builder.toString(),
+		                     required()
+		                               ? (getDefaultValue() != null)
+		                                                            ? Logger.TerminalColor.YELLOW.getTag()
+		                                                            : Logger.TerminalColor.RED.getTag()
+		                               : "", getTag(), required()
+		                                                         ? Logger.TerminalColor.NONE.getTag()
+		                                                         : "", getDescription(), required()
+		                                                                                           ? " (required!)"
+		                                                                                           : "",
+		                     getDefaultValue(), getRequirements(), getHandle());
 	}
 	
 	/*

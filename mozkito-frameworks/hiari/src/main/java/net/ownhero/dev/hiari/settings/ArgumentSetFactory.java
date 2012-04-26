@@ -73,10 +73,9 @@ public class ArgumentSetFactory {
 						Logger.trace("Contructor " + c + " is valid.");
 					}
 					break;
-				} else {
-					if (Logger.logTrace()) {
-						Logger.trace("Contructor " + c + " is invalid.");
-					}
+				}
+				if (Logger.logTrace()) {
+					Logger.trace("Contructor " + c + " is invalid.");
 				}
 			}
 			
@@ -187,13 +186,12 @@ public class ArgumentSetFactory {
 				}
 				
 				return argument;
-			} else {
-				if (Logger.logTrace()) {
-					Logger.trace("Help mode enabled. Skipping initialization of the ArgumentSet and returning null.");
-				}
-				
-				return null;
 			}
+			if (Logger.logTrace()) {
+				Logger.trace("Help mode enabled. Skipping initialization of the ArgumentSet and returning null.");
+			}
+			
+			return null;
 		} catch (final IllegalArgumentException e) {
 			throw new ArgumentSetRegistrationException(
 			                                           String.format("Instantiating the argument of type %s failed with arguments (%s). Error: %s",
@@ -268,9 +266,8 @@ public class ArgumentSetFactory {
 			
 			if (componentClass != null) {
 				return Array.newInstance(componentClass, 0).getClass();
-			} else {
-				return null;
 			}
+			return null;
 		} else {
 			return null;
 		}

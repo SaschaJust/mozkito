@@ -83,11 +83,10 @@ public class Not extends Requirement {
 					                 add(Not.this);
 				                 }
 			                 };
-		} else {
-			return required()
-			                 ? null
-			                 : failureCause;
 		}
+		return required()
+		                 ? null
+		                 : failureCause;
 		
 	}
 	

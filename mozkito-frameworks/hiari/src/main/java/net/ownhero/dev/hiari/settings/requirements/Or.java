@@ -86,9 +86,8 @@ public class Or extends Requirement {
 				}
 			};
 			
-		} else {
-			return null;
 		}
+		return null;
 		
 	}
 	

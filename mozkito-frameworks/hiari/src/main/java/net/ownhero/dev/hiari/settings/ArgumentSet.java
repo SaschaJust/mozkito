@@ -351,12 +351,11 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 				Logger.trace(String.format("Found Argument (tag: '%s').", option.getTag()));
 			}
 			return set;
-		} else {
-			if (Logger.logTrace()) {
-				Logger.trace(String.format("Could not find Argument (tag: '%s').", option.getTag()));
-			}
-			return null;
 		}
+		if (Logger.logTrace()) {
+			Logger.trace(String.format("Could not find Argument (tag: '%s').", option.getTag()));
+		}
+		return null;
 	}
 	
 	/**
@@ -395,12 +394,11 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 				Logger.trace(String.format("Found ArgumentSet (tag: '%s').", option.getTag()));
 			}
 			return set;
-		} else {
-			if (Logger.logTrace()) {
-				Logger.trace(String.format("Could not find ArgumentSet (tag: '%s').", option.getTag()));
-			}
-			return null;
 		}
+		if (Logger.logTrace()) {
+			Logger.trace(String.format("Could not find ArgumentSet (tag: '%s').", option.getTag()));
+		}
+		return null;
 		
 	}
 	
@@ -687,10 +685,9 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 						                             "Could not resolved dependencies. Arguments have unresolved dependencies: ",
 						                             list2.iterator().next());
 						
-					} else {
-						if (Logger.logWarn()) {
-							Logger.warn("Skipping: " + argument);
-						}
+					}
+					if (Logger.logWarn()) {
+						Logger.warn("Skipping: " + argument);
 					}
 				}
 				break;

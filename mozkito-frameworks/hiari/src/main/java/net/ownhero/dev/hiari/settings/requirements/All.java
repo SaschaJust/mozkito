@@ -98,9 +98,8 @@ public final class All extends Requirement {
 			
 			return list;
 			
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*

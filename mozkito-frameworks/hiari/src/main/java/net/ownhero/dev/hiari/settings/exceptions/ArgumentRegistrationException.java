@@ -38,7 +38,9 @@ public class ArgumentRegistrationException extends Exception {
 	 */
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options) {
-		super(message + ": " + argument.getTag());
+		super(message + ": " + (argument != null
+		                                        ? argument.getTag()
+		                                        : "null"));
 		
 		this.message = message + ": " + (argument != null
 		                                                 ? argument.getTag()
@@ -63,7 +65,9 @@ public class ArgumentRegistrationException extends Exception {
 	 */
 	public ArgumentRegistrationException(@NotNull final String message, final IArgument<?, ?> argument,
 	        final IArgumentOptions<?, ?> options, @NotNull final Throwable cause) {
-		super(message + ": " + argument.getTag(), cause);
+		super(message + ": " + (argument != null
+		                                        ? argument.getTag()
+		                                        : ""), cause);
 		this.message = message + ": " + (argument != null
 		                                                 ? argument.getTag()
 		                                                 : options != null

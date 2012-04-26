@@ -88,9 +88,9 @@ public class ArgumentFactory {
 							throw new ArgumentRegistrationException(
 							                                        "Can't setup argument because denyDefaultValues is set and no explicit value set.",
 							                                        argument, options);
-						} else {
-							// take the default value
 						}
+						// take the default value
+						
 					} else {
 						if (argument.required()) {
 							throw new ArgumentRegistrationException("Required but not set.", argument, options);
@@ -162,9 +162,8 @@ public class ArgumentFactory {
 				                                                      clazz.getSimpleName(), options, e.getMessage()),
 				                                        null, options, e);
 			}
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/**
@@ -212,9 +211,8 @@ public class ArgumentFactory {
 			
 			if (componentClass != null) {
 				return Array.newInstance(componentClass, 0).getClass();
-			} else {
-				return null;
 			}
+			return null;
 		} else {
 			return null;
 		}
