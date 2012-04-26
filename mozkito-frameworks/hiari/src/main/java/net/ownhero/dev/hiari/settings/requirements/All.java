@@ -42,7 +42,7 @@ public final class All extends Requirement {
 	 * @param requirements
 	 *            a collection of inner expressions
 	 */
-	public All(@NotNull @NotEmpty final Collection<Requirement> requirements) {
+	All(@NotNull @NotEmpty final Collection<Requirement> requirements) {
 		try {
 			this.requirements.addAll(this.requirements);
 		} finally {
@@ -55,7 +55,7 @@ public final class All extends Requirement {
 	 * @param requirements
 	 *            a collection of inner expressions
 	 */
-	public All(@NotNull @NotEmpty final Requirement... expressions) {
+	All(@NotNull @NotEmpty final Requirement... expressions) {
 		try {
 			CollectionUtils.addAll(this.requirements, expressions);
 		} finally {

@@ -18,14 +18,19 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ListArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.SetArgument;
+import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 /**
@@ -38,6 +43,64 @@ public abstract class Requirement {
 	
 	/** The Constant optional. */
 	public static final Requirement optional = new Optional();
+	
+	/**
+	 * All.
+	 * 
+	 * @param requirements
+	 *            the requirements
+	 * @return the requirement
+	 */
+	public static Requirement all(@NotNull @NotEmpty final Collection<Requirement> requirements) {
+		return new All(requirements);
+	}
+	
+	/**
+	 * All.
+	 * 
+	 * @param expressions
+	 *            the expressions
+	 * @return the requirement
+	 */
+	public static Requirement all(@NotNull @NotEmpty final Requirement... expressions) {
+		return new All(expressions);
+	}
+	
+	/**
+	 * And.
+	 * 
+	 * @param requirement1
+	 *            the requirement1
+	 * @param requirement2
+	 *            the requirement2
+	 * @return the requirement
+	 */
+	public static Requirement and(@NotNull final Requirement requirement1,
+	                              @NotNull final Requirement requirement2) {
+		return new And(requirement1, requirement2);
+	}
+	
+	/**
+	 * Any.
+	 * 
+	 * @param requirements
+	 *            the requirements
+	 * @return the requirement
+	 */
+	public static Requirement any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
+		return new Any(requirements);
+	}
+	
+	/**
+	 * Any.
+	 * 
+	 * @param expressions
+	 *            the expressions
+	 * @return the requirement
+	 */
+	public static Requirement any(@NotNull @NotEmpty final Requirement... expressions) {
+		return new Any(expressions);
+	}
 	
 	/**
 	 * Contains.
@@ -79,6 +142,7 @@ public abstract class Requirement {
 	public static Requirement contains(@NotNull final SetArgument.Options option,
 	                                   @NotNull final IArgument<?, ?> depender) {
 		return new Contains(option, depender);
+		
 	}
 	
 	/**
@@ -104,8 +168,78 @@ public abstract class Requirement {
 	 *            the value
 	 * @return the requirement
 	 */
+	public static Requirement equals(@NotNull final BooleanArgument.Options argument,
+	                                 @NotNull final boolean value) {
+		return new Equals(argument, value);
+	}
+	
+	/**
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
+	public static Requirement equals(@NotNull final DoubleArgument.Options argument,
+	                                 @NotNull final double value) {
+		return new Equals(argument, value);
+	}
+	
+	/**
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
 	public static Requirement equals(@NotNull final EnumArgument.Options<?> argument,
 	                                 @NotNull final Enum<?> value) {
+		return new Equals(argument, value);
+	}
+	
+	/**
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
+	public static Requirement equals(@NotNull final LongArgument.Options argument,
+	                                 @NotNull final long value) {
+		return new Equals(argument, value);
+	}
+	
+	/**
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param depender
+	 *            the depender
+	 * @return the requirement
+	 */
+	public static Requirement equals(@NotNull final StringArgument.Options argument,
+	                                 @NotNull final IOptions<?, ?> depender) {
+		return new Equals(argument, depender);
+	}
+	
+	/**
+	 * Equals.
+	 * 
+	 * @param argument
+	 *            the argument
+	 * @param value
+	 *            the value
+	 * @return the requirement
+	 */
+	public static Requirement equals(@NotNull final StringArgument.Options argument,
+	                                 @NotNull final String value) {
 		return new Equals(argument, value);
 	}
 	
@@ -129,6 +263,20 @@ public abstract class Requirement {
 	 */
 	public static Requirement not(final Requirement requirement) {
 		return new Not(requirement);
+	}
+	
+	/**
+	 * Or.
+	 * 
+	 * @param requirement1
+	 *            the requirement1
+	 * @param requirement2
+	 *            the requirement2
+	 * @return the requirement
+	 */
+	public static Requirement or(@NotNull final Requirement requirement1,
+	                             @NotNull final Requirement requirement2) {
+		return new Or(requirement1, requirement2);
 	}
 	
 	/**
@@ -168,6 +316,20 @@ public abstract class Requirement {
 	 */
 	public static Requirement unset(@NotNull final IOptions<?, ?> option) {
 		return Requirement.not(Requirement.iff(option));
+	}
+	
+	/**
+	 * Xor.
+	 * 
+	 * @param requirement1
+	 *            the requirement1
+	 * @param requirement2
+	 *            the requirement2
+	 * @return the requirement
+	 */
+	public static Requirement xor(@NotNull final Requirement requirement1,
+	                              @NotNull final Requirement requirement2) {
+		return new Xor(requirement1, requirement2);
 	}
 	
 	/**

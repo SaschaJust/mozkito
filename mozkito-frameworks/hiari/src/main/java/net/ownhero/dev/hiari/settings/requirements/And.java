@@ -37,7 +37,7 @@ public final class And extends Requirement {
 	 * @param requirement1
 	 * @param requirement2
 	 */
-	public And(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
+	And(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
 		try {
 			this.requirement1 = requirement1;
 			this.requirement2 = requirement2;

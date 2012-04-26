@@ -28,7 +28,7 @@ public class If extends Requirement {
 	 * @param option
 	 *            the argument
 	 */
-	public If(@NotNull final IOptions<?, ?> option) {
+	If(@NotNull final IOptions<?, ?> option) {
 		try {
 			this.option = option;
 		} finally {

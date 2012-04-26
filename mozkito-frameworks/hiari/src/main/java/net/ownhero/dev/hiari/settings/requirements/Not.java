@@ -34,7 +34,7 @@ public class Not extends Requirement {
 	 * @param requirement
 	 *            the inner expression used in the evaluation
 	 */
-	public Not(final Requirement requirement) {
+	Not(final Requirement requirement) {
 		try {
 			this.requirement = requirement;
 		} finally {

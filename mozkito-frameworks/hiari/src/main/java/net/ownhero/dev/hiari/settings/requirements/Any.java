@@ -41,7 +41,7 @@ public final class Any extends Requirement {
 	 * @param requirements
 	 *            a collection of inner expressions
 	 */
-	public Any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
+	Any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
 		try {
 			this.requirements.addAll(requirements);
 		} finally {
@@ -54,7 +54,7 @@ public final class Any extends Requirement {
 	 * @param expressions
 	 *            sa collection of inner expressions
 	 */
-	public Any(@NotNull @NotEmpty final Requirement... expressions) {
+	Any(@NotNull @NotEmpty final Requirement... expressions) {
 		try {
 			CollectionUtils.addAll(this.requirements, expressions);
 		} finally {

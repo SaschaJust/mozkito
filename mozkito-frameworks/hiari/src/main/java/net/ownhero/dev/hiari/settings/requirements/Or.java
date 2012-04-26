@@ -37,7 +37,7 @@ public class Or extends Requirement {
 	 * @param requirement1
 	 * @param requirement2
 	 */
-	public Or(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
+	Or(@NotNull final Requirement requirement1, @NotNull final Requirement requirement2) {
 		try {
 			this.requirement1 = requirement1;
 			this.requirement2 = requirement2;
