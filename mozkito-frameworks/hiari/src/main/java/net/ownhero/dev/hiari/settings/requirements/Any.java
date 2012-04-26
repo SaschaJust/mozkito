@@ -43,7 +43,7 @@ public final class Any extends Requirement {
 	 */
 	public Any(@NotNull @NotEmpty final Collection<Requirement> requirements) {
 		try {
-			this.requirements.addAll(this.requirements);
+			this.requirements.addAll(requirements);
 		} finally {
 			Condition.notNull(this.requirements, "Requirement values may never be null.");
 			CollectionCondition.notEmpty(this.requirements, "Requirement values may never be empty.");
