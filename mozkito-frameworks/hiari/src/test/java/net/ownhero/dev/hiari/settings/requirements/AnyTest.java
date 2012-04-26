@@ -16,7 +16,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Properties;
 
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -37,59 +36,38 @@ import org.junit.Test;
  */
 public class AnyTest {
 	
-	private static Properties properties;
-	
 	@BeforeClass
 	public static void beforeClass() {
-		properties = System.getProperties();
+		assert (System.getProperty("AllTest") == null);
+		assert (System.getProperty("AllTest2") == null);
+		assert (System.getProperty("AllTest3") == null);
+		assert (System.getProperty("AllTest4") == null);
 	}
 	
 	@After
 	public void after() {
-		System.setProperties(AnyTest.properties);
+		System.clearProperty("AllTest");
+		System.clearProperty("AllTest2");
+		System.clearProperty("AllTest3");
+		System.clearProperty("AllTest4");
 	}
 	
 	@Before
 	public void before() {
-		System.setProperties(AnyTest.properties);
+		System.clearProperty("AllTest");
+		System.clearProperty("AllTest2");
+		System.clearProperty("AllTest3");
+		System.clearProperty("AllTest4");
 	}
 	
 	@Test
-	public void test() {
+	public void second_test() {
 		try {
-			System.setProperty("AllTest4", "hubba");
+			assert (System.getProperty("AllTest") == null);
+			assert (System.getProperty("AllTest2") == null);
+			assert (System.getProperty("AllTest3") == null);
+			assert (System.getProperty("AllTest4") == null);
 			
-			final Settings settings = new Settings();
-			final Options stringOptions = new StringArgument.Options(settings.getRoot(), "AllTest", "", null,
-			                                                         Requirement.optional);
-			final Options string2Options = new StringArgument.Options(settings.getRoot(), "AllTest2", "", null,
-			                                                          Requirement.optional);
-			final Options string3Options = new StringArgument.Options(settings.getRoot(), "AllTest3", "", null,
-			                                                          Requirement.optional);
-			
-			final Collection<Requirement> allOptions = new LinkedList<Requirement>();
-			allOptions.add(new If(stringOptions));
-			allOptions.add(new Not(new If(string2Options)));
-			allOptions.add(new If(string3Options));
-			
-			final Options options = new StringArgument.Options(settings.getRoot(), "AllTest4", "", null,
-			                                                   new Any(allOptions));
-			
-			ArgumentFactory.create(stringOptions);
-			ArgumentFactory.create(string2Options);
-			ArgumentFactory.create(string3Options);
-			ArgumentFactory.create(options);
-		} catch (SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
-			e.printStackTrace();
-			fail();
-		} finally {
-			//
-		}
-	}
-	
-	@Test
-	public void test2() {
-		try {
 			final Settings settings = new Settings();
 			final Options stringOptions = new StringArgument.Options(settings.getRoot(), "AllTest", "", null,
 			                                                         Requirement.optional);
@@ -116,6 +94,44 @@ public class AnyTest {
 				//
 			}
 			
+		} catch (SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			//
+		}
+	}
+	
+	@Test
+	public void test() {
+		try {
+			assert (System.getProperty("AllTest") == null);
+			assert (System.getProperty("AllTest2") == null);
+			assert (System.getProperty("AllTest3") == null);
+			assert (System.getProperty("AllTest4") == null);
+			
+			System.setProperty("AllTest4", "hubba");
+			
+			final Settings settings = new Settings();
+			final Options stringOptions = new StringArgument.Options(settings.getRoot(), "AllTest", "", null,
+			                                                         Requirement.optional);
+			final Options string2Options = new StringArgument.Options(settings.getRoot(), "AllTest2", "", null,
+			                                                          Requirement.optional);
+			final Options string3Options = new StringArgument.Options(settings.getRoot(), "AllTest3", "", null,
+			                                                          Requirement.optional);
+			
+			final Collection<Requirement> allOptions = new LinkedList<Requirement>();
+			allOptions.add(new If(stringOptions));
+			allOptions.add(new Not(new If(string2Options)));
+			allOptions.add(new If(string3Options));
+			
+			final Options options = new StringArgument.Options(settings.getRoot(), "AllTest4", "", null,
+			                                                   new Any(allOptions));
+			
+			ArgumentFactory.create(stringOptions);
+			ArgumentFactory.create(string2Options);
+			ArgumentFactory.create(string3Options);
+			ArgumentFactory.create(options);
 		} catch (SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
 			e.printStackTrace();
 			fail();

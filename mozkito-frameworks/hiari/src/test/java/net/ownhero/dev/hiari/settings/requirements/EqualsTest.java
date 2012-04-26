@@ -12,12 +12,10 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
-import java.util.Collection;
-import java.util.LinkedList;
-
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.StringArgument.Options;
@@ -34,7 +32,12 @@ import org.junit.Test;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
  */
-public class AndTest {
+public class EqualsTest {
+	
+	private static enum TestEnum {
+		ONE, TWO;
+		
+	}
 	
 	@BeforeClass
 	public static void beforeClass() {
@@ -60,40 +63,30 @@ public class AndTest {
 		System.clearProperty("AllTest4");
 	}
 	
-	public void second_test() {
+	@Test
+	public void failtest() {
 		try {
+			
 			assert (System.getProperty("AllTest") == null);
-			assert (System.getProperty("AllTest2") == null);
-			assert (System.getProperty("AllTest3") == null);
 			assert (System.getProperty("AllTest4") == null);
-			
-			System.setProperty("AllTest", "hubba");
-			System.setProperty("AllTest3", "hubba");
-			
+			System.setProperty("AllTest", "two");
 			final Settings settings = new Settings();
-			final Options stringOptions = new StringArgument.Options(settings.getRoot(), "AllTest", "", null,
-			                                                         Requirement.optional);
-			final Options string2Options = new StringArgument.Options(settings.getRoot(), "AllTest2", "", null,
-			                                                          Requirement.optional);
-			final Options string3Options = new StringArgument.Options(settings.getRoot(), "AllTest3", "", null,
-			                                                          Requirement.optional);
-			
-			final Collection<Requirement> allOptions = new LinkedList<Requirement>();
-			allOptions.add(new If(stringOptions));
-			allOptions.add(new Not(new If(string2Options)));
-			allOptions.add(new If(string3Options));
+			final net.ownhero.dev.hiari.settings.EnumArgument.Options<TestEnum> enumOptions = new EnumArgument.Options<TestEnum>(
+			                                                                                                                     settings.getRoot(),
+			                                                                                                                     "AllTest",
+			                                                                                                                     "",
+			                                                                                                                     TestEnum.ONE,
+			                                                                                                                     Requirement.optional);
 			
 			final Options options = new StringArgument.Options(settings.getRoot(), "AllTest4", "", null,
-			                                                   new And(new And(new If(stringOptions),
-			                                                                   new Not(new If(string2Options))),
-			                                                           new If(string3Options)));
+			                                                   new Equals(enumOptions, TestEnum.TWO));
 			
-			ArgumentFactory.create(stringOptions);
-			ArgumentFactory.create(string2Options);
-			ArgumentFactory.create(string3Options);
+			final EnumArgument<TestEnum> arg = ArgumentFactory.create(enumOptions);
+			assertEquals(TestEnum.TWO, arg.getValue());
 			
 			try {
 				ArgumentFactory.create(options);
+				System.err.println(options.toString());
 				fail();
 			} catch (final ArgumentRegistrationException e) {
 				//
@@ -105,41 +98,26 @@ public class AndTest {
 		} finally {
 			//
 		}
-	}
+	};
 	
 	@Test
-	public void test() {
+	public void passtest() {
 		try {
+			
 			assert (System.getProperty("AllTest") == null);
-			assert (System.getProperty("AllTest2") == null);
-			assert (System.getProperty("AllTest3") == null);
 			assert (System.getProperty("AllTest4") == null);
-			
-			System.setProperty("AllTest", "hubba");
-			System.setProperty("AllTest3", "hubba");
-			System.setProperty("AllTest4", "hubba");
-			
 			final Settings settings = new Settings();
-			final Options stringOptions = new StringArgument.Options(settings.getRoot(), "AllTest", "", null,
-			                                                         Requirement.optional);
-			final Options string2Options = new StringArgument.Options(settings.getRoot(), "AllTest2", "", null,
-			                                                          Requirement.optional);
-			final Options string3Options = new StringArgument.Options(settings.getRoot(), "AllTest3", "", null,
-			                                                          Requirement.optional);
-			
-			final Collection<Requirement> allOptions = new LinkedList<Requirement>();
-			allOptions.add(new If(stringOptions));
-			allOptions.add(new Not(new If(string2Options)));
-			allOptions.add(new If(string3Options));
+			final net.ownhero.dev.hiari.settings.EnumArgument.Options<TestEnum> enumOptions = new EnumArgument.Options<TestEnum>(
+			                                                                                                                     settings.getRoot(),
+			                                                                                                                     "AllTest",
+			                                                                                                                     "",
+			                                                                                                                     TestEnum.ONE,
+			                                                                                                                     Requirement.optional);
 			
 			final Options options = new StringArgument.Options(settings.getRoot(), "AllTest4", "", null,
-			                                                   new And(new And(new If(stringOptions),
-			                                                                   new Not(new If(string2Options))),
-			                                                           new If(string3Options)));
+			                                                   new Equals(enumOptions, TestEnum.TWO));
 			
-			ArgumentFactory.create(stringOptions);
-			ArgumentFactory.create(string2Options);
-			ArgumentFactory.create(string3Options);
+			ArgumentFactory.create(enumOptions);
 			ArgumentFactory.create(options);
 			
 		} catch (SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
@@ -149,4 +127,5 @@ public class AndTest {
 			//
 		}
 	}
+	
 }

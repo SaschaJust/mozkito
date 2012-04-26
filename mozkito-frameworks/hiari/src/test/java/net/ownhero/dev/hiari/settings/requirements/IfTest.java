@@ -10,26 +10,55 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package net.ownhero.dev.hiari.settings;
+package net.ownhero.dev.hiari.settings.requirements;
 
 import static org.junit.Assert.fail;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * The Class RequirementTest.
- * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * 
  */
-public class RequirementTest {
+public class IfTest {
+	
+	@BeforeClass
+	public static void beforeClass() {
+		assert (System.getProperty("AllTest") == null);
+		assert (System.getProperty("AllTest2") == null);
+		assert (System.getProperty("AllTest3") == null);
+		assert (System.getProperty("AllTest4") == null);
+	}
+	
+	@After
+	public void after() {
+		System.clearProperty("AllTest");
+		System.clearProperty("AllTest2");
+		System.clearProperty("AllTest3");
+		System.clearProperty("AllTest4");
+	}
+	
+	@Before
+	public void before() {
+		System.clearProperty("AllTest");
+		System.clearProperty("AllTest2");
+		System.clearProperty("AllTest3");
+		System.clearProperty("AllTest4");
+	}
 	
 	@Test
 	public void optionalIffFailTest() {
+		
 		try {
 			
 			System.setProperty("optionalIffFailTest", "hubba");
@@ -154,4 +183,5 @@ public class RequirementTest {
 			//
 		}
 	}
+	
 }
