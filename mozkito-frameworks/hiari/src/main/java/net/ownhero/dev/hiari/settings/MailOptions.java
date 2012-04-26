@@ -21,7 +21,6 @@ import java.util.Properties;
 import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.If;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -246,7 +245,7 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 			req(this.passwordOption, map);
 			
 			this.usernameOption = new StringArgument.Options(set, "username", "The smtp login username", null,
-			                                                 new If(map.get("password")));
+			                                                 Requirement.iff(map.get("password")));
 			req(this.usernameOption, map);
 			
 			try {
