@@ -37,6 +37,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgs;
 	private CoreChangeGenealogy                                      genealogy;
 	private final BooleanArgument                                    infoArgument;
+	private BooleanArgument                                          noTestArgument;
 	
 	public GenealogyToolChain(final Settings settings) {
 		super(settings);
@@ -49,6 +50,12 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                                       "infoOnly",
 			                                                                       "Only prints standard genealogy infos",
 			                                                                       false, Requirement.required));
+			
+			this.noTestArgument = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                         settings.getRoot(),
+			                                                                         "ignoreTests",
+			                                                                         "Set to FALSE if you want to include test cases into the genealogy graph.",
+			                                                                         true, Requirement.required));
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
@@ -86,7 +93,8 @@ public class GenealogyToolChain extends Chain<Settings> {
 			
 			final BranchFactory branchFactory = new BranchFactory(this.genealogy.getPersistenceUtil());
 			
-			new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory);
+			new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory,
+			                          this.noTestArgument.getValue());
 			new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 			new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 		}
