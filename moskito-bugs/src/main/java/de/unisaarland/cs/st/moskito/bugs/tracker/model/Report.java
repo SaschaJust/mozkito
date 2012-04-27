@@ -159,7 +159,8 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 */
-	private Report() {
+	@Deprecated
+	public Report() {
 		super();
 	}
 	
