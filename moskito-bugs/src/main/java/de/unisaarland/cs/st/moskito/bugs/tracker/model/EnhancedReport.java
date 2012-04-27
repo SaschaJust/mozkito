@@ -25,7 +25,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -51,7 +50,6 @@ import de.unisaarland.cs.st.moskito.persistence.model.PersonContainer;
  */
 @Entity
 @Table (name = "enhancedreport")
-@IdClass (Report.class)
 public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	
 	/** The Constant serialVersionUID. */
@@ -65,8 +63,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	
 	/** The predicted type. */
 	private Type              predictedType;
-	
-	private String            reportId;
 	
 	/**
 	 * Instantiates a new enhanced report.
@@ -131,7 +127,17 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	
 	@Override
 	public boolean equals(final Object obj) {
-		return getReport().equals(obj);
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EnhancedReport other = (EnhancedReport) obj;
+		return getReport().equals(other.getReport());
 	}
 	
 	@Transient
@@ -259,6 +265,7 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	 * @return the report
 	 */
 	@OneToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@Id
 	public Report getReport() {
 		// PRECONDITIONS
 		
@@ -268,11 +275,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			// POSTCONDITIONS
 			Condition.notNull(this.report, "Field '%s' in '%s'.", "report", getClass().getSimpleName());
 		}
-	}
-	
-	@Id
-	public String getReportId() {
-		return this.reportId;
 	}
 	
 	@Transient
@@ -475,10 +477,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			CompareCondition.equals(this.report, report,
 			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
-	}
-	
-	public void setReportId(final String id) {
-		this.reportId = id;
 	}
 	
 	@Transient
