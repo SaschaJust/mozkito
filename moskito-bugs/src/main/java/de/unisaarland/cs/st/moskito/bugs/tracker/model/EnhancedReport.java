@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -64,6 +65,8 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	
 	/** The predicted type. */
 	private Type              predictedType;
+	
+	private String            reportId;
 	
 	/**
 	 * Instantiates a new enhanced report.
@@ -267,6 +270,11 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 		}
 	}
 	
+	@Id
+	public String getReportId() {
+		return this.reportId;
+	}
+	
 	@Transient
 	public Resolution getResolution() {
 		return getReport().getResolution();
@@ -467,6 +475,10 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			CompareCondition.equals(this.report, report,
 			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
+	}
+	
+	public void setReportId(final String id) {
+		this.reportId = id;
 	}
 	
 	@Transient
