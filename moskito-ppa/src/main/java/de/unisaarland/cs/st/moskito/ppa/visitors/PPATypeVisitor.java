@@ -397,11 +397,11 @@ public class PPATypeVisitor extends ASTVisitor {
 					startLineShifted = true;
 					if ((modifier.getNodeType() == ASTNode.MARKER_ANNOTATION)) {
 						final MarkerAnnotation annotation = (MarkerAnnotation) modifier;
-						if (annotation.getTypeName().getFullyQualifiedName().toLowerCase().equals("java.lang.override")) {
+						if (annotation.getTypeName().getFullyQualifiedName().toLowerCase().equals("override")) {
 							if (Logger.logTrace()) {
-								Logger.trace("Found method declaration ");
-								override = true;
+								Logger.trace("Found @override method declaration ");
 							}
+							override = true;
 						}
 					}
 				}

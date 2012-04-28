@@ -1,21 +1,19 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -39,7 +37,8 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 	
 	private Iterator<RCSTransaction> iterator;
 	
-	public ChangeOperationReader(final Group threadGroup, final Settings settings, final BranchFactory branchFactory) {
+	public ChangeOperationReader(final Group threadGroup, final Settings settings, final BranchFactory branchFactory,
+	        final boolean ignoreTests) {
 		super(threadGroup, settings, false);
 		
 		new PreExecutionHook<OperationCollection, OperationCollection>(this) {
@@ -67,8 +66,14 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 			public void process() {
 				if (ChangeOperationReader.this.iterator.hasNext()) {
 					final RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
-					final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(branchFactory.getPersistenceUtil(),
-					                                                                                               transaction);
+					
+					final Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
+					
+					if (ignoreTests) {
+						PPAPersistenceUtil.getChangeOperationNoTest(branchFactory.getPersistenceUtil(), transaction);
+					} else {
+						PPAPersistenceUtil.getChangeOperation(branchFactory.getPersistenceUtil(), transaction);
+					}
 					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing " + transaction);

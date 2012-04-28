@@ -159,7 +159,8 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 */
-	private Report() {
+	@Deprecated
+	public Report() {
 		super();
 	}
 	
@@ -297,6 +298,28 @@ public class Report implements Annotated, Comparable<Report> {
 			return this.id.compareTo(o.id);
 		}
 		return comp;
+	}
+	
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Report other = (Report) obj;
+		if (getId() == null) {
+			if (getId() != null) {
+				return false;
+			}
+		} else if (!getId().equals(other.getId())) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -692,6 +715,16 @@ public class Report implements Annotated, Comparable<Report> {
 	@Basic
 	public String getVersion() {
 		return this.version;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.id == null)
+		                                              ? 0
+		                                              : this.id.hashCode());
+		return result;
 	}
 	
 	/**

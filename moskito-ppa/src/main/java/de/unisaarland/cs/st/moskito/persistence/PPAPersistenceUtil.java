@@ -28,6 +28,7 @@ import javax.persistence.criteria.Root;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
@@ -58,8 +59,8 @@ public class PPAPersistenceUtil {
 	 *            the transaction
 	 * @return the change operation
 	 */
-	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
-	                                                                 final RCSTransaction transaction) {
+	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                 @NotNull final RCSTransaction transaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
@@ -83,8 +84,8 @@ public class PPAPersistenceUtil {
 	 *            the transaction id
 	 * @return the change operation
 	 */
-	public static Collection<JavaChangeOperation> getChangeOperation(final PersistenceUtil persistenceUtil,
-	                                                                 final String transactionId) {
+	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                 @NotNull final String transactionId) {
 		final List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
 		final RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
@@ -95,8 +96,48 @@ public class PPAPersistenceUtil {
 		return result;
 	}
 	
-	public static DateTime getFirstTimestampChangingElement(final PersistenceUtil persistenceUtil,
-	                                                        final JavaElement element) {
+	/**
+	 * Gets ChangeOperations for a RCSTransaction but ignore test cases. Test cases are all files that contain the
+	 * string `test` in it's lower case path name. This might not be 100% accurate but is a good approximation.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param transaction
+	 *            the transaction
+	 * @return the change operation no test
+	 */
+	public static Collection<JavaChangeOperation> getChangeOperationNoTest(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                       @NotNull final RCSTransaction transaction) {
+		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Loading change operations (without tests) for transaction " + transaction.getId()
+			        + " from database.");
+		}
+		
+		for (final RCSRevision revision : transaction.getRevisions()) {
+			final String changedPath = revision.getChangedFile().getPath(transaction);
+			if (changedPath.toLowerCase().contains("test")) {
+				continue;
+			}
+			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+			criteria.eq("revision", revision);
+			result.addAll(persistenceUtil.load(criteria));
+		}
+		return result;
+	}
+	
+	/**
+	 * Gets the first timestamp changing element.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param element
+	 *            the element
+	 * @return the first timestamp changing element
+	 */
+	public static DateTime getFirstTimestampChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                        @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final StringBuilder query = new StringBuilder();
 		query.append("select timestamp from firstelementchanges WHERE element_generatedid = ");
@@ -120,8 +161,8 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static RCSTransaction getFirstTransactionsChangingElement(final PersistenceUtil persistenceUtil,
-	                                                                 final JavaElement element) {
+	public static RCSTransaction getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                 @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from firstElementChange(");
@@ -151,8 +192,8 @@ public class PPAPersistenceUtil {
 	 *            the e
 	 * @return the java element
 	 */
-	public static JavaElement getJavaElement(final PersistenceUtil persistenceUtil,
-	                                         final JavaElement e) {
+	public static JavaElement getJavaElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                         @NotNull final JavaElement e) {
 		final Criteria<? extends JavaElement> criteria = persistenceUtil.createCriteria(e.getClass());
 		final CriteriaBuilder cb = criteria.getBuilder();
 		final Root<? extends JavaElement> root = criteria.getRoot();
@@ -184,8 +225,8 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<RCSTransaction> getTransactionsChangingElement(final PersistenceUtil persistenceUtil,
-	                                                                  final JavaElement element) {
+	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                  @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
 		final StringBuilder query = new StringBuilder();
@@ -218,10 +259,10 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<RCSTransaction> getTransactionsChangingElement(final PersistenceUtil persistenceUtil,
-	                                                                  final JavaElement element,
-	                                                                  final DateTime before,
-	                                                                  final DateTime after) {
+	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	                                                                  @NotNull final JavaElement element,
+	                                                                  @NotNull final DateTime before,
+	                                                                  @NotNull final DateTime after) {
 		updateProcedures(persistenceUtil);
 		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -252,7 +293,7 @@ public class PPAPersistenceUtil {
 	 * @param persistenceUtil
 	 *            the persistence util
 	 */
-	private static void updateProcedures(final PersistenceUtil persistenceUtil) {
+	private static void updateProcedures(@NotNull final PersistenceUtil persistenceUtil) {
 		if (!updatedQueries) {
 			try {
 				BufferedReader reader = new BufferedReader(
