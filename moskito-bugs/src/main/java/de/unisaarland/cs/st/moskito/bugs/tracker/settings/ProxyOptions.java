@@ -211,7 +211,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			                                                  set,
 			                                                  "username", //$NON-NLS-1$
 			                                                  Messages.getString("ProxyOptions.proxyUser_description"), null, //$NON-NLS-1$
-			                                                  Requirement.iff(this.passwordOptions));
+			                                                  Requirement.optional);
 			
 			req(this.usernameOptions, map);
 			this.passwordOptions = new StringArgument.Options(
