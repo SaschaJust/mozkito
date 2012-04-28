@@ -341,6 +341,7 @@ public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? 
 	@Override
 	public String getTag() {
 		// PRECONDITIONS
+		Condition.notNull(this.options, "Field '%s' in '%s'.", "options", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			return this.options.getTag();

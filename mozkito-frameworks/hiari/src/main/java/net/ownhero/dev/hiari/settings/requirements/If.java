@@ -8,7 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -36,15 +38,6 @@ public class If extends Requirement {
 		}
 	}
 	
-	/**
-	 * Gets the argument.
-	 * 
-	 * @return the argument
-	 */
-	public final IOptions<?, ?> getArgumentSet() {
-		return this.option;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
@@ -59,6 +52,22 @@ public class If extends Requirement {
 			return dependencies;
 		} finally {
 			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
+	}
+	
+	/**
+	 * Gets the argument.
+	 * 
+	 * @return the argument
+	 */
+	public final IOptions<?, ?> getOption() {
+		// PRECONDITIONS
+		
+		try {
+			return this.option;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -86,7 +95,12 @@ public class If extends Requirement {
 	 */
 	@Override
 	public boolean required() {
-		return this.option.getArgumentSet().getSettings().getProperty(this.option.getTag()) != null;
+		Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.option.getTag(), "Field '%s' in '%s'.", "option.getTag()", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		final ArgumentSet<?, ?> set = this.option.getArgumentSet();
+		final ISettings settings = set.getSettings();
+		return settings.getProperty(this.option.getTag()) != null;
 	}
 	
 	/*
