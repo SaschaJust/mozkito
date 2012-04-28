@@ -113,7 +113,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					// create temporary file to copy JAR to.
 					final File jarFile = FileUtils.createRandomFile("jsucks5-", ".jar", FileShutdownAction.DELETE);
 					
-					try (InputStream inputStream = ProxyOptions.class.getResourceAsStream("jsucks5.jar");
+					try (InputStream inputStream = ProxyOptions.class.getResourceAsStream("/jsucks5.jar");
 					        OutputStream outputStream = new FileOutputStream(jarFile)) {
 						// copy JAR to temp file
 						IOUtils.copyInputStream(inputStream, outputStream);
@@ -127,7 +127,15 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 						commandList.add(cacheDirArgument.getValue().getAbsolutePath());
 						
 						final ProcessBuilder builder = new ProcessBuilder(commandList);
-						builder.start();
+						final Process process = builder.start();
+						
+						Runtime.getRuntime().addShutdownHook(new Thread() {
+							
+							@Override
+							public void run() {
+								process.destroy();
+							};
+						});
 						// wait for proxy to settle
 						try {
 							Thread.sleep(1000);
