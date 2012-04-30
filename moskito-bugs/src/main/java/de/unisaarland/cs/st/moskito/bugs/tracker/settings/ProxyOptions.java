@@ -41,6 +41,8 @@ import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The Class MantisOptions.
  * 
@@ -120,6 +122,10 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					commandList.add(jarFile.getAbsolutePath());
 					commandList.add("" + portArgument.getValue());
 					commandList.add(cacheDirArgument.getValue().getAbsolutePath());
+					
+					if (Logger.logDebug()) {
+						Logger.debug(StringUtils.join(commandList, " "));
+					}
 					
 					final ProcessBuilder builder = new ProcessBuilder(commandList);
 					final Process process = builder.start();
