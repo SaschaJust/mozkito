@@ -14,6 +14,7 @@ package net.ownhero.dev.ioda;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 /**
@@ -27,14 +28,12 @@ public class ProxyConfig {
 	private String username;
 	private String password;
 	
-	@NoneNull
-	public ProxyConfig(final String proxyHost, @NotNegative final int proxyPort) {
+	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort) {
 		setHost(proxyHost);
 		setPort(proxyPort);
 	}
 	
-	@NoneNull
-	public ProxyConfig(final String proxyHost, @NotNegative final int proxyPort, final String username,
+	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final String username,
 	        final String password) {
 		setHost(proxyHost);
 		setPort(proxyPort);
@@ -89,8 +88,6 @@ public class ProxyConfig {
 			this.host = host;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.host, host,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	
