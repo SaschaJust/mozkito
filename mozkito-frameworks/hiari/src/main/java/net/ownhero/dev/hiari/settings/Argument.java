@@ -15,7 +15,6 @@ package net.ownhero.dev.hiari.settings;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -415,8 +414,7 @@ public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? 
 		// PRECONDITIONS
 		
 		try {
-			return ((getParent() == null) || getParent().required()) && getRequirements().check()
-			        && !(getRequirements() instanceof Optional);
+			return this.options.required();
 		} finally {
 			// POSTCONDITIONS
 		}

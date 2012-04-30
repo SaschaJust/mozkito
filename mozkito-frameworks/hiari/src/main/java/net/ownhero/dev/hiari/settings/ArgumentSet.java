@@ -707,8 +707,24 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 	 */
 	@Override
 	public boolean required() {
-		return ((getParent() == null) || getParent().required()) && getRequirements().check()
-		        && !(getRequirements() instanceof Optional);
+		final ArgumentSet<?, ?> parent = getParent();
+		boolean required = false;
+		
+		// parent required status
+		if (parent != null) {
+			required = parent.required();
+		} else {
+			required = true;
+		}
+		
+		// local required status
+		final boolean check = this.requirements.check();
+		
+		required &= check;
+		
+		required &= !(this.requirements instanceof Optional);
+		
+		return required;
 	}
 	
 	/**

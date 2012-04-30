@@ -301,7 +301,24 @@ public abstract class ArgumentSetOptions<T, X extends ArgumentSet<T, ? extends A
 		// PRECONDITIONS
 		
 		try {
-			return getRequirements().check() && !(getRequirements() instanceof Optional);
+			final ArgumentSet<?, ?> parent = getParent();
+			boolean required = false;
+			
+			// parent required status
+			if (parent != null) {
+				required = parent.required();
+			} else {
+				required = true;
+			}
+			
+			// local required status
+			final boolean check = this.requirements.check();
+			
+			required &= check;
+			
+			required &= !(this.requirements instanceof Optional);
+			
+			return required;
 		} finally {
 			// POSTCONDITIONS
 		}

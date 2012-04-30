@@ -139,7 +139,7 @@ public class OutputFileArgumentTest {
 			final OutputFileArgument arg = ArgumentFactory.create(options);
 			
 			assertEquals("testNotRequiredNotExistsNoOverwriteREQUIRED", arg.getName());
-			assertFalse(arg.required());
+			assertTrue(arg.required());
 			
 			final File value = arg.getValue();
 			assert (value != null);
