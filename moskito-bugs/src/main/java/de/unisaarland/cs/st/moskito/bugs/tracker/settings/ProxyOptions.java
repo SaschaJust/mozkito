@@ -26,7 +26,6 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.DirectoryArgument.Options;
 import net.ownhero.dev.hiari.settings.HostArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.PortArgument;
@@ -50,22 +49,25 @@ import net.ownhero.dev.kisa.Logger;
 public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<ProxyConfig, ProxyOptions>> {
 	
 	/** The host options. */
-	private HostArgument.Options    hostOptions;
+	private HostArgument.Options      hostOptions;
 	
 	/** The port options. */
-	private PortArgument.Options    portOptions;
+	private PortArgument.Options      portOptions;
 	
 	/** The username options. */
-	private StringArgument.Options  usernameOptions;
+	private StringArgument.Options    usernameOptions;
 	
 	/** The password options. */
-	private StringArgument.Options  passwordOptions;
+	private StringArgument.Options    passwordOptions;
 	
-	private BooleanArgument.Options useProxyOptions;
+	/** The use proxy options. */
+	private BooleanArgument.Options   useProxyOptions;
 	
-	private BooleanArgument.Options internalOptions;
+	/** The internal options. */
+	private BooleanArgument.Options   internalOptions;
 	
-	private Options                 cacheDirOptions;
+	/** The cache dir options. */
+	private DirectoryArgument.Options cacheDirOptions;
 	
 	/**
 	 * Instantiates a new mantis options.
@@ -189,8 +191,8 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 		
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-			this.useProxyOptions = new BooleanArgument.Options(set, "useProxy", "Activates proxy features.", true,
-			                                                   Requirement.optional);
+			this.useProxyOptions = new BooleanArgument.Options(set, "useProxy", "Activates proxy features.", null,
+			                                                   Requirement.required);
 			req(this.useProxyOptions, map);
 			
 			this.internalOptions = new BooleanArgument.Options(set, "internal", "Use internal proxy (recommended).",
@@ -204,9 +206,14 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			                                                                                     false)));
 			req(this.hostOptions, map);
 			
-			this.cacheDirOptions = new DirectoryArgument.Options(set, "cacheDir",
-			                                                     "Cache directory for the internal proxy.", null,
-			                                                     Requirement.equals(this.internalOptions, true), true);
+			this.cacheDirOptions = new DirectoryArgument.Options(
+			                                                     set,
+			                                                     "cacheDir",
+			                                                     "Cache directory for the internal proxy.",
+			                                                     null,
+			                                                     Requirement.and(Requirement.iff(this.useProxyOptions),
+			                                                                     Requirement.equals(this.internalOptions,
+			                                                                                        true)), true);
 			req(this.cacheDirOptions, map);
 			
 			this.portOptions = new PortArgument.Options(
