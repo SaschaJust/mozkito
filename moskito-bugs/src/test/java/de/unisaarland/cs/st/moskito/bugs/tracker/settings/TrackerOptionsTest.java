@@ -12,7 +12,16 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
+
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +39,7 @@ public class TrackerOptionsTest {
 	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "tracker.password", "tracker.proxy.cacheDir",
 	        "tracker.proxy.host", "tracker.proxy.internal", "tracker.proxy.password", "tracker.proxy.port",
-	        "tracker.proxy.useProxy", "tracker.proxy.username", "tracker.type", "tracker.uri", "tracker.user" });
+	        "tracker.useProxy", "tracker.proxy.username", "tracker.type", "tracker.uri", "tracker.user" });
 	
 	@BeforeClass
 	public static void beforeClass() {
@@ -59,8 +68,22 @@ public class TrackerOptionsTest {
 	
 	@Test
 	public void test() {
-		System.setProperty("tracker.proxy.useProxy", "true");
-		System.setProperty("tracker.proxy.internal", "true");
+		try {
+			System.setProperty("tracker.useProxy", "true");
+			final Settings settings = new Settings();
+			ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(), Requirement.required));
+		} catch (final SettingsParseError e) {
+			e.printStackTrace();
+			fail();
+		} catch (final ArgumentSetRegistrationException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final ArgumentRegistrationException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			//
+		}
 	}
 	
 }

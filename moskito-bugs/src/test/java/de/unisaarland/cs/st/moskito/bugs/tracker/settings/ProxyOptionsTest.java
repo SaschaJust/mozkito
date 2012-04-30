@@ -49,7 +49,7 @@ public class ProxyOptionsTest {
 	
 	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "proxy.cacheDir", "proxy.host", "proxy.internal",
-	        "proxy.password", "proxy.port", "proxy.useProxy", "tracker.proxy.username", "useProxy" });
+	        "proxy.password", "proxy.port", "useProxy", "tracker.proxy.username", "useProxy" });
 	
 	private static File         cacheDir;
 	
@@ -153,8 +153,8 @@ public class ProxyOptionsTest {
 	public void test() {
 		try {
 			System.setProperty("proxy.useProxy", "true");
-			System.setProperty("proxy.internal", "true");
-			System.setProperty("proxy.cacheDir", cacheDir.getAbsolutePath());
+			// System.setProperty("proxy.internal", "true");
+			// System.setProperty("proxy.cacheDir", cacheDir.getAbsolutePath());
 			final Settings settings = new Settings();
 			ArgumentSetFactory.create(new ProxyOptions(settings.getRoot(), Requirement.required));
 		} catch (final SettingsParseError e) {
