@@ -152,14 +152,12 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					
 					return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
 					                       usernameArgument.getValue(), passwordArgument.getValue());
-				} else {
-					// TODO: check if there is a server listening on host:port
-					return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
-					                       usernameArgument.getValue(), passwordArgument.getValue());
 				}
-			} else {
-				return null;
+				// TODO: check if there is a server listening on host:port
+				return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
+				                       usernameArgument.getValue(), passwordArgument.getValue());
 			}
+			return null;
 			
 		} finally {
 			// POSTCONDITIONS
