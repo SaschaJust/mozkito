@@ -122,6 +122,41 @@ public class OutputFileArgumentTest {
 	}
 	
 	@Test
+	public void testNotRequiredNotExistsNoOverwriteREQUIRED() {
+		try {
+			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			final long lastModified = file.lastModified();
+			System.setProperty("testNotRequiredNotExistsNoOverwriteREQUIRED", file.getAbsolutePath());
+			if (file.exists()) {
+				file.delete();
+			}
+			Thread.sleep(1000);
+			final Settings settings = new Settings();
+			System.err.println(file.exists());
+			final Options options = new OutputFileArgument.Options(settings.getRoot(),
+			                                                       "testNotRequiredNotExistsNoOverwriteREQUIRED",
+			                                                       "test argument", null, Requirement.required, false);
+			final OutputFileArgument arg = ArgumentFactory.create(options);
+			
+			assertEquals("testNotRequiredNotExistsNoOverwriteREQUIRED", arg.getName());
+			assertFalse(arg.required());
+			
+			final File value = arg.getValue();
+			assert (value != null);
+			
+			assertEquals(file.getAbsolutePath(), value.getAbsolutePath());
+			assertTrue(value.lastModified() > lastModified);
+			value.delete();
+		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException
+		        | InterruptedException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			//
+		}
+	}
+	
+	@Test
 	public void testNotRequiredNotExistsOverwrite() {
 		try {
 			final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
