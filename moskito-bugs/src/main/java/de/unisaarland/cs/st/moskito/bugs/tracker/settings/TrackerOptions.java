@@ -231,7 +231,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                   Requirement.required);
 			req(this.useProxyOptions, map);
 			
-			this.proxyOptions = new ProxyOptions(set, Requirement.equals(this.useProxyOptions, false));
+			this.proxyOptions = new ProxyOptions(set, Requirement.equals(this.useProxyOptions, true));
 			req(this.proxyOptions, map);
 			
 			// tracker alternatives

@@ -66,19 +66,18 @@ public class TrackerOptionsTest {
 		}
 	}
 	
-	@Test
-	public void test() {
+	@Test (expected = ArgumentRegistrationException.class)
+	public void test() throws ArgumentRegistrationException {
 		try {
 			System.setProperty("tracker.useProxy", "true");
 			final Settings settings = new Settings();
 			ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(), Requirement.required));
+			System.err.println(settings);
+			fail();
 		} catch (final SettingsParseError e) {
 			e.printStackTrace();
 			fail();
 		} catch (final ArgumentSetRegistrationException e) {
-			e.printStackTrace();
-			fail();
-		} catch (final ArgumentRegistrationException e) {
 			e.printStackTrace();
 			fail();
 		} finally {
