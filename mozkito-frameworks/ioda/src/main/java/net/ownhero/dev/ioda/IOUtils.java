@@ -329,6 +329,13 @@ public class IOUtils {
 	private static void configureProxy(@NotNull final DefaultHttpClient hc,
 	                                   @NotNull final ProxyConfig proxyConfig) {
 		
+		if (proxyConfig.useSocks()) {
+			if (Logger.logDebug()) {
+				Logger.debug("Proxy configured to use sockets. Skipping configuration.");
+			}
+			return;
+		}
+		
 		if (Logger.logDebug()) {
 			Logger.debug("Configuring proxy %s for http fetch.", proxyConfig);
 		}

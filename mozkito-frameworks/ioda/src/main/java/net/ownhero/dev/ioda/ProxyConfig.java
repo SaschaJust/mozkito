@@ -22,18 +22,19 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
  */
 public class ProxyConfig {
 	
-	private String host;
-	private int    port;
-	private String username;
-	private String password;
+	private String  host;
+	private int     port;
+	private String  username;
+	private String  password;
+	private boolean useSocks;
 	
-	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort) {
+	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final boolean useSocks) {
 		setHost(proxyHost);
 		setPort(proxyPort);
 	}
 	
 	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final String username,
-	        final String password) {
+	        final String password, final boolean useSocks) {
 		setHost(proxyHost);
 		setPort(proxyPort);
 		setUsername(username);
@@ -121,7 +122,11 @@ public class ProxyConfig {
 	@Override
 	public String toString() {
 		return "ProxyConfig [host=" + this.host + ", port=" + this.port + ", username=" + this.username + ", password="
-		        + this.password + "]";
+		        + this.password + " useSocks=" + this.useSocks + "]";
+	}
+	
+	public boolean useSocks() {
+		return this.useSocks;
 	}
 	
 }
