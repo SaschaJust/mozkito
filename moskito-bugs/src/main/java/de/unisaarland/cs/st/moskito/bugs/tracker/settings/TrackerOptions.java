@@ -21,6 +21,7 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
@@ -73,6 +74,9 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
 	
+	/** The use proxy options. */
+	private BooleanArgument.Options           useProxyOptions;
+	
 	/**
 	 * Instantiates a new tracker options.
 	 * 
@@ -92,7 +96,7 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/**
 	 * Gets the proxy options.
-	 *
+	 * 
 	 * @return the proxy options
 	 */
 	public final ProxyOptions getProxyOptions() {
@@ -223,7 +227,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                     Requirement.iff(this.trackerUserArg), true);
 			req(this.trackerPasswordArg, map);
 			
-			this.proxyOptions = new ProxyOptions(set, Requirement.optional);
+			this.useProxyOptions = new BooleanArgument.Options(set, "useProxy", "Activates proxy features.", null,
+			                                                   Requirement.required);
+			req(this.useProxyOptions, map);
+			
+			this.proxyOptions = new ProxyOptions(set, Requirement.equals(this.useProxyOptions, false));
 			req(this.proxyOptions, map);
 			
 			// tracker alternatives
