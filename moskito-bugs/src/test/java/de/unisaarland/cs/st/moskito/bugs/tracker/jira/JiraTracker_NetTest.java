@@ -60,7 +60,7 @@ public class JiraTracker_NetTest {
 		this.tracker = new JiraTracker();
 		try {
 			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", new ProxyConfig("localhost",
-			                                                                                           3128));
+			                                                                                           3128, false));
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

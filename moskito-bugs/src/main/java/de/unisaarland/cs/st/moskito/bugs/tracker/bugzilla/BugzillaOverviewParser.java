@@ -56,10 +56,13 @@ public class BugzillaOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new bugzilla overview parser.
-	 *
-	 * @param trackerURI the tracker uri
-	 * @param overviewURI the overview uri
-	 * @param proxyConfig the proxy config
+	 * 
+	 * @param trackerURI
+	 *            the tracker uri
+	 * @param overviewURI
+	 *            the overview uri
+	 * @param proxyConfig
+	 *            the proxy config
 	 */
 	public BugzillaOverviewParser(@NotNull final URI trackerURI, @NotNull final URI overviewURI,
 	        final ProxyConfig proxyConfig) {
@@ -70,7 +73,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	private Object getHandle() {

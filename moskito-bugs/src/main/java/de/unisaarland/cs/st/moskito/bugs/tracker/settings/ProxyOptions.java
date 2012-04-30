@@ -144,11 +144,22 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 				}
 				
 				return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
-				                       usernameArgument.getValue(), passwordArgument.getValue());
+				                       usernameArgument.getValue(), passwordArgument.getValue(),
+				                       internalArgument.getValue());
 			}
 			// TODO: check if there is a server listening on host:port
-			return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
-			                       usernameArgument.getValue(), passwordArgument.getValue());
+			
+			final ProxyConfig proxyConfig = new ProxyConfig(hostArgument.getValue(),
+			                                                portArgument.getValue().intValue(),
+			                                                usernameArgument.getValue(), passwordArgument.getValue(),
+			                                                internalArgument.getValue());
+			
+			System.getProperties().put("http.proxyHost", proxyConfig.getHost());
+			System.getProperties().put("http.proxyPort", proxyConfig.getPort());
+			System.getProperties().put("http.proxyUser", proxyConfig.getUsername());
+			System.getProperties().put("http.proxyPassword", proxyConfig.getPassword());
+			
+			return proxyConfig;
 			
 		} finally {
 			// POSTCONDITIONS
