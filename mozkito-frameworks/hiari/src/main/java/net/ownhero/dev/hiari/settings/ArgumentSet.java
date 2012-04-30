@@ -671,7 +671,9 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 			for (final IArgument<?, ?> argument : list) {
 				argument.parse();
 				
-				if (argument.getRequirements().getRequiredDependencies() != null) {
+				Condition.notNull(argument.getRequirements().getFailedChecks(),
+				                  "Field argument.getRequirements().getFailedChecks() must not be null. Please return empty list.");
+				if (!argument.getRequirements().getFailedChecks().isEmpty()) {
 					list2.add(argument);
 				}
 			}
@@ -706,7 +708,7 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 	 */
 	@Override
 	public boolean required() {
-		return ((getParent() == null) || getParent().required()) && getRequirements().required()
+		return ((getParent() == null) || getParent().required()) && getRequirements().check()
 		        && !(getRequirements() instanceof Optional);
 	}
 	

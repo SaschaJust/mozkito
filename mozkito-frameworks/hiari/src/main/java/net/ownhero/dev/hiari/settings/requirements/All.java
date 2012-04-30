@@ -12,6 +12,7 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -66,6 +67,20 @@ public final class All extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
+	 */
+	@Override
+	public boolean check() {
+		for (final Requirement requirement : this.requirements) {
+			if (!requirement.check()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -86,11 +101,11 @@ public final class All extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement# getMissingRequirements()
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		if (!required()) {
+	public List<Requirement> getFailedChecks() {
+		if (!check()) {
 			final List<Requirement> list = new LinkedList<Requirement>();
 			for (final Requirement requirement : this.requirements) {
-				final List<Requirement> failureCause = requirement.getRequiredDependencies();
+				final List<Requirement> failureCause = requirement.getFailedChecks();
 				if (failureCause != null) {
 					list.addAll(failureCause);
 				}
@@ -99,21 +114,7 @@ public final class All extends Requirement {
 			return list;
 			
 		}
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
-	 */
-	@Override
-	public boolean required() {
-		for (final Requirement requirement : this.requirements) {
-			if (!requirement.required()) {
-				return false;
-			}
-		}
-		return true;
+		return new ArrayList<Requirement>(0);
 	}
 	
 	/*

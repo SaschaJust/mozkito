@@ -12,6 +12,7 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -65,6 +66,22 @@ public final class Any extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check( java.lang.Class, java.lang.Class,
+	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
+	 */
+	@Override
+	public boolean check() {
+		for (final Requirement requirement : this.requirements) {
+			if (requirement.check()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -93,8 +110,8 @@ public final class Any extends Requirement {
 	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		if (!required()) {
+	public List<Requirement> getFailedChecks() {
+		if (!check()) {
 			return new LinkedList<Requirement>() {
 				
 				private static final long serialVersionUID = 1L;
@@ -104,23 +121,7 @@ public final class Any extends Requirement {
 				}
 			};
 		}
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.requirements.Expression#check( java.lang.Class, java.lang.Class,
-	 * de.unisaarland.cs.st.moskito.mapping.requirements.Index)
-	 */
-	@Override
-	public boolean required() {
-		for (final Requirement requirement : this.requirements) {
-			if (requirement.required()) {
-				return true;
-			}
-		}
-		
-		return false;
+		return new ArrayList<Requirement>(0);
 	}
 	
 	/*

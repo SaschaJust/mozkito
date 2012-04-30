@@ -63,7 +63,7 @@ public class SettingsParseError extends Exception {
 			final StringBuilder builder = new StringBuilder();
 			builder.append(super.getMessage());
 			builder.append(FileUtils.lineSeparator).append(this.argument.getName());
-			final List<Requirement> requirements = this.argument.getRequirements().getRequiredDependencies();
+			final List<Requirement> requirements = this.argument.getRequirements().getFailedChecks();
 			builder.append(FileUtils.lineSeparator).append("Total dependencies: ")
 			       .append(this.argument.getRequirements());
 			

@@ -12,6 +12,7 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,15 @@ public class Xor extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean check() {
+		return getRequirement1().check() ^ getRequirement2().check();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -71,10 +81,10 @@ public class Xor extends Requirement {
 	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		final List<Requirement> failureCause1 = this.requirement1.getRequiredDependencies();
-		final List<Requirement> failureCause2 = this.requirement1.getRequiredDependencies();
-		final boolean check = required();
+	public List<Requirement> getFailedChecks() {
+		final List<Requirement> failureCause1 = this.requirement1.getFailedChecks();
+		final List<Requirement> failureCause2 = this.requirement1.getFailedChecks();
+		final boolean check = check();
 		
 		if (!check) {
 			return new LinkedList<Requirement>() {
@@ -88,7 +98,7 @@ public class Xor extends Requirement {
 			};
 			
 		}
-		return null;
+		return new ArrayList<Requirement>(0);
 	}
 	
 	/**
@@ -103,15 +113,6 @@ public class Xor extends Requirement {
 	 */
 	public Requirement getRequirement2() {
 		return this.requirement2;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return getRequirement1().required() ^ getRequirement2().required();
 	}
 	
 	/*

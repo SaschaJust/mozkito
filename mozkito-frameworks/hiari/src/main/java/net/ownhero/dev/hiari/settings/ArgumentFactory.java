@@ -30,6 +30,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
@@ -98,9 +99,11 @@ public class ArgumentFactory {
 					}
 				}
 				
-				final List<Requirement> requiredDependencies = argument.getRequirements().getRequiredDependencies();
+				final List<Requirement> requiredDependencies = argument.getRequirements().getFailedChecks();
 				
-				if (argument.required() && (requiredDependencies != null)) {
+				Condition.notNull(requiredDependencies,
+				                  "Field requiredDependencies must not be null! Return empty list please.");
+				if (argument.required() && (!requiredDependencies.isEmpty())) {
 					throw new ArgumentRegistrationException("Required dependencies were not fullfilled. Lagging: "
 					        + JavaUtils.collectionToString(requiredDependencies), argument, options);
 				}

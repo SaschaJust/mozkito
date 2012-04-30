@@ -12,6 +12,7 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,15 @@ public class Not extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean check() {
+		return !this.requirement.check();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -69,34 +79,25 @@ public class Not extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		final List<Requirement> failureCause = this.requirement.getRequiredDependencies();
+	public List<Requirement> getFailedChecks() {
+		final List<Requirement> failureCause = this.requirement.getFailedChecks();
 		
-		if (failureCause == null) {
-			return required()
-			                 ? null
-			                 : new LinkedList<Requirement>() {
-				                 
-				                 private static final long serialVersionUID = 1L;
-				                 
-				                 {
-					                 add(Not.this);
-				                 }
-			                 };
+		if (failureCause.isEmpty()) {
+			return check()
+			              ? new ArrayList<Requirement>(0)
+			              : new LinkedList<Requirement>() {
+				              
+				              private static final long serialVersionUID = 1L;
+				              
+				              {
+					              add(Not.this);
+				              }
+			              };
 		}
-		return required()
-		                 ? null
-		                 : failureCause;
+		return check()
+		              ? new ArrayList<Requirement>(0)
+		              : failureCause;
 		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return !this.requirement.required();
 	}
 	
 	/*

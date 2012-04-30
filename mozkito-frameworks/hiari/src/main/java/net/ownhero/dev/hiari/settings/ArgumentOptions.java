@@ -331,7 +331,7 @@ public abstract class ArgumentOptions<T, X extends Argument<T, ? extends Argumen
 	 */
 	@Override
 	public final boolean required() {
-		return getRequirements().required() && !(getRequirements() instanceof Optional);
+		return getRequirements().check() && !(getRequirements() instanceof Optional);
 	}
 	
 	/*

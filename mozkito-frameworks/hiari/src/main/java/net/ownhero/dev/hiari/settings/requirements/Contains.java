@@ -113,6 +113,63 @@ public class Contains extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@SuppressWarnings ("rawtypes")
+	@Override
+	public boolean check() {
+		String[] split = null;
+		String delimiter = null;
+		String property = null;
+		
+		if (this.listOption != null) {
+			delimiter = this.listOption.getDelimiter();
+			property = this.listOption.getSettings().getProperty(this.listOption.getTag());
+			if (property == null) {
+				final Object defaultValue = ((ArgumentOptions) this.listOption).getDefaultValue();
+				property = defaultValue != null
+				                               ? defaultValue.toString()
+				                               : null;
+			}
+		} else {
+			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			delimiter = this.setOption.getDelimiter();
+			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
+			
+			if (property == null) {
+				final Object defaultValue = ((ArgumentOptions) this.setOption).getDefaultValue();
+				property = defaultValue != null
+				                               ? defaultValue.toString()
+				                               : null;
+			}
+		}
+		
+		if (property == null) {
+			return false;
+		}
+		
+		Condition.notNull(property, "Local variable '%s' in '%s:%s'.", "property", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(delimiter, "Local variable '%s' in '%s:%s'.", "delimiter", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		split = property.split(delimiter);
+		
+		Condition.notNull(split, "Local variable '%s' in '%s:%s'.", "split", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		if (this.depender != null) {
+			return ArrayUtils.contains(split, this.depender.getName());
+		}
+		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		for (final String splitValue : split) {
+			if (splitValue.equalsIgnoreCase(this.value)) {
+				return true;
+			}
+		}
+		return false;
+		// return ArrayUtils.contains(split, this.value);
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -134,72 +191,17 @@ public class Contains extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		return required()
-		                 ? null
-		                 : new LinkedList<Requirement>() {
-			                 
-			                 private static final long serialVersionUID = 1L;
-			                 
-			                 {
-				                 add(Contains.this);
-			                 }
-		                 };
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@SuppressWarnings ("rawtypes")
-	@Override
-	public boolean required() {
-		String[] split = null;
-		String delimiter = null;
-		String property = null;
-		
-		if (this.listOption != null) {
-			delimiter = this.listOption.getDelimiter();
-			property = this.listOption.getSettings().getProperty(this.listOption.getTag());
-			if (property == null) {
-				if (this.listOption instanceof ArgumentOptions) {
-					final Object defaultValue = ((ArgumentOptions) this.listOption).getDefaultValue();
-					property = defaultValue != null
-					                               ? defaultValue.toString()
-					                               : null;
-				}
-			}
-		} else {
-			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			delimiter = this.setOption.getDelimiter();
-			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
-			
-			if (property == null) {
-				if (this.setOption instanceof ArgumentOptions) {
-					final Object defaultValue = ((ArgumentOptions) this.setOption).getDefaultValue();
-					property = defaultValue != null
-					                               ? defaultValue.toString()
-					                               : null;
-				}
-			}
-		}
-		
-		if (property == null) {
-			return false;
-		}
-		
-		Condition.notNull(property, "Local variable '%s' in '%s:%s'.", "property", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
-		Condition.notNull(delimiter, "Local variable '%s' in '%s:%s'.", "delimiter", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		split = property.split(delimiter);
-		
-		Condition.notNull(split, "Local variable '%s' in '%s:%s'.", "split", getHandle(), "required"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if (this.depender != null) {
-			return ArrayUtils.contains(split, this.depender.getName());
-		}
-		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		return ArrayUtils.contains(split, this.value);
+	public List<Requirement> getFailedChecks() {
+		return check()
+		              ? null
+		              : new LinkedList<Requirement>() {
+			              
+			              private static final long serialVersionUID = 1L;
+			              
+			              {
+				              add(Contains.this);
+			              }
+		              };
 	}
 	
 	/*

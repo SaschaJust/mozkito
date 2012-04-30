@@ -3,6 +3,7 @@
  */
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,15 @@ public class Required extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@Override
+	public boolean check() {
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -44,17 +54,8 @@ public class Required extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		return true;
+	public List<Requirement> getFailedChecks() {
+		return new ArrayList<Requirement>(0);
 	}
 	
 	/*

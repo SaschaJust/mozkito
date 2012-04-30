@@ -3,6 +3,7 @@
  */
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -146,45 +147,11 @@ public class Equals extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
-	 */
-	@Override
-	public Set<IOptions<?, ?>> getDependencies() {
-		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
-		try {
-			dependencies.add(this.argument);
-			
-			return dependencies;
-		} finally {
-			Condition.notNull(dependencies, "Dependency values may never be null.");
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
-	 */
-	@Override
-	public List<Requirement> getRequiredDependencies() {
-		return required()
-		                 ? null
-		                 : new LinkedList<Requirement>() {
-			                 
-			                 private static final long serialVersionUID = 1L;
-			                 
-			                 {
-				                 add(Equals.this);
-			                 }
-		                 };
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public boolean required() {
+	public boolean check() {
 		String property = this.argument.getSettings().getProperty(this.argument.getTag());
 		if (property == null) {
 			if (this.argument instanceof ArgumentOptions) {
@@ -220,7 +187,41 @@ public class Equals extends Requirement {
 			        + property.equals(this.value.toString()));
 		}
 		Condition.notNull(this.value, "Field '%s' in '%s'.", "value", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		return property.equals(this.value.toString());
+		return property.equalsIgnoreCase(this.value.toString());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
+	 */
+	@Override
+	public Set<IOptions<?, ?>> getDependencies() {
+		final Set<IOptions<?, ?>> dependencies = new HashSet<IOptions<?, ?>>();
+		try {
+			dependencies.add(this.argument);
+			
+			return dependencies;
+		} finally {
+			Condition.notNull(dependencies, "Dependency values may never be null.");
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
+	 */
+	@Override
+	public List<Requirement> getFailedChecks() {
+		return check()
+		              ? new ArrayList<Requirement>(0)
+		              : new LinkedList<Requirement>() {
+			              
+			              private static final long serialVersionUID = 1L;
+			              
+			              {
+				              add(Equals.this);
+			              }
+		              };
 	}
 	
 	/*

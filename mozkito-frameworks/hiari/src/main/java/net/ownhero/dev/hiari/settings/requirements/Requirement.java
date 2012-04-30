@@ -333,6 +333,13 @@ public abstract class Requirement {
 	}
 	
 	/**
+	 * Required.
+	 * 
+	 * @return true, if successful
+	 */
+	public abstract boolean check();
+	
+	/**
 	 * Gets the dependencies.
 	 * 
 	 * @return the dependencies
@@ -353,12 +360,5 @@ public abstract class Requirement {
 	 * 
 	 * @return the required dependencies
 	 */
-	public abstract List<Requirement> getRequiredDependencies();
-	
-	/**
-	 * Required.
-	 * 
-	 * @return true, if successful
-	 */
-	public abstract boolean required();
+	public abstract List<Requirement> getFailedChecks();
 }

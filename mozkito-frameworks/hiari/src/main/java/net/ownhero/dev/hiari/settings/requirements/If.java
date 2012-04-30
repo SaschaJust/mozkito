@@ -3,11 +3,13 @@
  */
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentOptions;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
@@ -36,6 +38,25 @@ public class If extends Requirement {
 		} finally {
 			Condition.notNull(this.option, "The referring argument in %s may never be null.", getHandle());
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
+	 */
+	@SuppressWarnings ("rawtypes")
+	@Override
+	public boolean check() {
+		Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.option.getTag(), "Field '%s' in '%s'.", "option.getTag()", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		final ArgumentSet<?, ?> set = this.option.getArgumentSet();
+		final ISettings settings = set.getSettings();
+		Object defaultValue = null;
+		if (this.option instanceof ArgumentOptions) {
+			defaultValue = ((ArgumentOptions) this.option).getDefaultValue();
+		}
+		return (settings.getProperty(this.option.getTag()) != null) || (defaultValue != null);
 	}
 	
 	/*
@@ -76,31 +97,17 @@ public class If extends Requirement {
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		return required()
-		                 ? null
-		                 : new LinkedList<Requirement>() {
-			                 
-			                 private static final long serialVersionUID = 1L;
-			                 
-			                 {
-				                 add(If.this);
-			                 }
-		                 };
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
-	 */
-	@Override
-	public boolean required() {
-		Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		Condition.notNull(this.option.getTag(), "Field '%s' in '%s'.", "option.getTag()", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		final ArgumentSet<?, ?> set = this.option.getArgumentSet();
-		final ISettings settings = set.getSettings();
-		return settings.getProperty(this.option.getTag()) != null;
+	public List<Requirement> getFailedChecks() {
+		return check()
+		              ? new ArrayList<Requirement>(0)
+		              : new LinkedList<Requirement>() {
+			              
+			              private static final long serialVersionUID = 1L;
+			              
+			              {
+				              add(If.this);
+			              }
+		              };
 	}
 	
 	/*

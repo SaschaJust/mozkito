@@ -12,6 +12,7 @@
  ******************************************************************************/
 package net.ownhero.dev.hiari.settings.requirements;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,15 @@ public final class And extends Requirement {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
+	 */
+	@Override
+	public boolean check() {
+		return getRequirement1().check() && getRequirement2().check();
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getDependencies()
 	 */
 	@Override
@@ -70,15 +80,15 @@ public final class And extends Requirement {
 	 * java.lang.Class, de.unisaarland.cs.st.moskito.mapping.requirements.Index)
 	 */
 	@Override
-	public List<Requirement> getRequiredDependencies() {
-		List<Requirement> failureCause = this.requirement1.getRequiredDependencies();
-		final boolean check = required();
+	public List<Requirement> getFailedChecks() {
+		List<Requirement> failureCause = this.requirement1.getFailedChecks();
+		final boolean check = check();
 		if (!check) {
 			if (failureCause == null) {
-				failureCause = this.requirement2.getRequiredDependencies();
+				failureCause = this.requirement2.getFailedChecks();
 				if (failureCause == null) {
 					return check
-					            ? null
+					            ? new ArrayList<Requirement>(0)
 					            : new LinkedList<Requirement>() {
 						            
 						            private static final long serialVersionUID = 1L;
@@ -90,7 +100,7 @@ public final class And extends Requirement {
 				}
 			}
 		} else {
-			return null;
+			return new ArrayList<Requirement>(0);
 		}
 		
 		return failureCause;
@@ -108,15 +118,6 @@ public final class And extends Requirement {
 	 */
 	public Requirement getRequirement2() {
 		return this.requirement2;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.dependencies.Requirement#check()
-	 */
-	@Override
-	public boolean required() {
-		return getRequirement1().required() && getRequirement2().required();
 	}
 	
 	/*
