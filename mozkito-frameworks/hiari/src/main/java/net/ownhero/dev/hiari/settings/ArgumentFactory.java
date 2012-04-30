@@ -112,7 +112,7 @@ public class ArgumentFactory {
 					throw new ArgumentRegistrationException("Initializing the argument failed.", argument, options);
 				}
 				
-				argument.getParent().parse();
+				// argument.getParent().parse();
 				
 				return argument;
 			} catch (final IllegalArgumentException e) {

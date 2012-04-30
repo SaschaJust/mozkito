@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
@@ -656,51 +655,51 @@ public class ArgumentSet<TYPE, ARGSETOPTIONS extends ArgumentSetOptions<TYPE, ? 
 		return this.getCachedValue();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
-	 */
-	@SuppressWarnings ("rawtypes")
-	@Override
-	public void parse() throws SettingsParseError {
-		LinkedList<IArgument> list = new LinkedList<IArgument>(this.arguments.values());
-		list.addAll(this.argumentSets.values());
-		LinkedList<IArgument> list2 = new LinkedList<IArgument>();
-		
-		while (!list.isEmpty()) {
-			for (final IArgument<?, ?> argument : list) {
-				argument.parse();
-				
-				Condition.notNull(argument.getRequirements().getFailedChecks(),
-				                  "Field argument.getRequirements().getFailedChecks() must not be null. Please return empty list.");
-				if (!argument.getRequirements().getFailedChecks().isEmpty()) {
-					list2.add(argument);
-				}
-			}
-			
-			if (list2.isEmpty()) {
-				break;
-			} else if (list.size() == list2.size()) {
-				for (final IArgument<?, ?> argument : list) {
-					if (argument.required()) {
-						throw new SettingsParseError(
-						                             "Could not resolved dependencies. Arguments have unresolved dependencies: ",
-						                             list2.iterator().next());
-						
-					}
-					if (Logger.logWarn()) {
-						Logger.warn("Skipping: " + argument);
-					}
-				}
-				break;
-			} else {
-				list = list2;
-				list2 = new LinkedList<IArgument>();
-			}
-		}
-		
-		this.initialized = true;
-	}
+	// /*
+	// * (non-Javadoc)
+	// * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
+	// */
+	// @SuppressWarnings ("rawtypes")
+	// @Override
+	// public void parse() throws SettingsParseError {
+	// LinkedList<IArgument> list = new LinkedList<IArgument>(this.arguments.values());
+	// list.addAll(this.argumentSets.values());
+	// LinkedList<IArgument> list2 = new LinkedList<IArgument>();
+	//
+	// while (!list.isEmpty()) {
+	// for (final IArgument<?, ?> argument : list) {
+	// argument.parse();
+	//
+	// Condition.notNull(argument.getRequirements().getFailedChecks(),
+	// "Field argument.getRequirements().getFailedChecks() must not be null. Please return empty list.");
+	// if (!argument.getRequirements().getFailedChecks().isEmpty()) {
+	// list2.add(argument);
+	// }
+	// }
+	//
+	// if (list2.isEmpty()) {
+	// break;
+	// } else if (list.size() == list2.size()) {
+	// for (final IArgument<?, ?> argument : list) {
+	// if (argument.required()) {
+	// throw new SettingsParseError(
+	// "Could not resolved dependencies. Arguments have unresolved dependencies: ",
+	// list2.iterator().next());
+	//
+	// }
+	// if (Logger.logWarn()) {
+	// Logger.warn("Skipping: " + argument);
+	// }
+	// }
+	// break;
+	// } else {
+	// list = list2;
+	// list2 = new LinkedList<IArgument>();
+	// }
+	// }
+	//
+	// this.initialized = true;
+	// }
 	
 	/*
 	 * (non-Javadoc)

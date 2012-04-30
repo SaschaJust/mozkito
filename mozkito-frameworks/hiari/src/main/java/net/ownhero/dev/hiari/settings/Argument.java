@@ -15,7 +15,6 @@ package net.ownhero.dev.hiari.settings;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
@@ -389,23 +388,23 @@ public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? 
 		return this.options.isMasked();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
-	 */
-	@Override
-	public final void parse() throws SettingsParseError {
-		final String value = getSettings().getProperty(getName());
-		
-		if (value != null) {
-			setStringValue(value);
-		}
-		
-		if (!init()) {
-			throw new SettingsParseError(String.format("Could not initialize '%s' instance '%s'.", getHandle(),
-			                                           getName()), this);
-		}
-	}
+	// /*
+	// * (non-Javadoc)
+	// * @see net.ownhero.dev.andama.settings.AndamaArgumentInterface#parse()
+	// */
+	// @Override
+	// public final void parse() throws SettingsParseError {
+	// final String value = getSettings().getProperty(getName());
+	//
+	// if (value != null) {
+	// setStringValue(value);
+	// }
+	//
+	// if (!init()) {
+	// throw new SettingsParseError(String.format("Could not initialize '%s' instance '%s'.", getHandle(),
+	// getName()), this);
+	// }
+	// }
 	
 	/*
 	 * (non-Javadoc)

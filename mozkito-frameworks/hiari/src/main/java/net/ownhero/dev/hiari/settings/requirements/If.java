@@ -56,6 +56,7 @@ public class If extends Requirement {
 		if (this.option instanceof ArgumentOptions) {
 			defaultValue = ((ArgumentOptions) this.option).getDefaultValue();
 		}
+		
 		return (settings.getProperty(this.option.getTag()) != null) || (defaultValue != null);
 	}
 	
@@ -76,22 +77,6 @@ public class If extends Requirement {
 		}
 	}
 	
-	/**
-	 * Gets the argument.
-	 * 
-	 * @return the argument
-	 */
-	public final IOptions<?, ?> getOption() {
-		// PRECONDITIONS
-		
-		try {
-			return this.option;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#getFailureCause()
@@ -108,6 +93,22 @@ public class If extends Requirement {
 				              add(If.this);
 			              }
 		              };
+	}
+	
+	/**
+	 * Gets the argument.
+	 * 
+	 * @return the argument
+	 */
+	public final IOptions<?, ?> getOption() {
+		// PRECONDITIONS
+		
+		try {
+			return this.option;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.option, "Field '%s' in '%s'.", "option", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/*

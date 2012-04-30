@@ -2,7 +2,6 @@ package net.ownhero.dev.hiari.settings;
 
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
 
@@ -110,13 +109,13 @@ public interface IArgument<T, X extends IOptions<T, ?>> extends Comparable<IArgu
 	 */
 	T getValue();
 	
-	/**
-	 * Parses the.
-	 * 
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 */
-	void parse() throws SettingsParseError;
+	// /**
+	// * Parses the.
+	// *
+	// * @throws SettingsParseError
+	// * the settings parse error
+	// */
+	// void parse() throws SettingsParseError;
 	
 	/**
 	 * Required.
