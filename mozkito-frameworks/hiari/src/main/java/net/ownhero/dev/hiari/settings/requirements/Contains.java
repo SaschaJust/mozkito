@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentOptions;
 import net.ownhero.dev.hiari.settings.IArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ListArgument;
@@ -150,6 +151,7 @@ public class Contains extends Requirement {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public boolean required() {
 		String[] split = null;
@@ -159,11 +161,27 @@ public class Contains extends Requirement {
 		if (this.listOption != null) {
 			delimiter = this.listOption.getDelimiter();
 			property = this.listOption.getSettings().getProperty(this.listOption.getTag());
-			
+			if (property == null) {
+				if (this.listOption instanceof ArgumentOptions) {
+					final Object defaultValue = ((ArgumentOptions) this.listOption).getDefaultValue();
+					property = defaultValue != null
+					                               ? defaultValue.toString()
+					                               : null;
+				}
+			}
 		} else {
 			Condition.notNull(this.setOption, "Field '%s' in '%s'.", "setOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			delimiter = this.setOption.getDelimiter();
 			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
+			
+			if (property == null) {
+				if (this.setOption instanceof ArgumentOptions) {
+					final Object defaultValue = ((ArgumentOptions) this.setOption).getDefaultValue();
+					property = defaultValue != null
+					                               ? defaultValue.toString()
+					                               : null;
+				}
+			}
 		}
 		
 		if (property == null) {

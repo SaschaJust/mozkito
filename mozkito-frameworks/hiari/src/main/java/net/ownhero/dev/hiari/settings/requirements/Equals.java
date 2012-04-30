@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.DoubleArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
@@ -181,9 +182,19 @@ public class Equals extends Requirement {
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.settings.dependencies.Expression#check()
 	 */
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public boolean required() {
-		final String property = this.argument.getSettings().getProperty(this.argument.getTag());
+		String property = this.argument.getSettings().getProperty(this.argument.getTag());
+		if (property == null) {
+			if (this.argument instanceof ArgumentOptions) {
+				final Object defaultValue = ((ArgumentOptions) this.argument).getDefaultValue();
+				property = defaultValue != null
+				                               ? defaultValue.toString()
+				                               : null;
+			}
+		}
+		
 		if (Logger.logTrace()) {
 			Logger.trace("Checking property: " + property);
 		}
@@ -192,7 +203,15 @@ public class Equals extends Requirement {
 		}
 		
 		if (this.depender != null) {
-			final String compareTo = this.argument.getSettings().getProperty(this.depender.getTag());
+			String compareTo = this.argument.getSettings().getProperty(this.depender.getTag());
+			if (compareTo == null) {
+				if (this.depender instanceof ArgumentOptions) {
+					final Object defaultValue = ((ArgumentOptions) this.depender).getDefaultValue();
+					compareTo = defaultValue != null
+					                                ? defaultValue.toString()
+					                                : null;
+				}
+			}
 			return (compareTo != null) && property.equals(compareTo);
 		}
 		
