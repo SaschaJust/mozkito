@@ -74,7 +74,7 @@ public class HostArgument extends Argument<String, HostArgument.Options> {
 				try {
 					final String host = "http://" + getStringValue();
 					final UrlValidator validator = new UrlValidator();
-					final boolean valid = validator.isValid(host);
+					final boolean valid = validator.isValid(host) || getStringValue().toLowerCase().equals("localhost");
 					
 					if (valid) {
 						setCachedValue(getStringValue());

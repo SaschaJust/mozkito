@@ -113,7 +113,9 @@ public final class PortArgument extends Argument<Integer, PortArgument.Options> 
 								setCachedValue(port);
 								ret = true;
 							} catch (final IOException e) {
-								// port taken
+								if (Logger.logError()) {
+									Logger.error(e);
+								}
 							}
 						} else {
 							setCachedValue(port);
