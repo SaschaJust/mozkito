@@ -12,7 +12,6 @@
  ******************************************************************************/
 package net.ownhero.dev.ioda;
 
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -81,7 +80,6 @@ public class ProxyConfig {
 		}
 	}
 	
-	@NoneNull
 	public void setHost(final String host) {
 		// PRECONDITIONS
 		try {
