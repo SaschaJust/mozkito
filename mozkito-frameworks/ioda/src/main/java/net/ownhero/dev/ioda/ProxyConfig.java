@@ -101,8 +101,6 @@ public class ProxyConfig {
 			this.password = password;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.password, password,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	
@@ -124,8 +122,6 @@ public class ProxyConfig {
 			this.username = username;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.username, username,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	
