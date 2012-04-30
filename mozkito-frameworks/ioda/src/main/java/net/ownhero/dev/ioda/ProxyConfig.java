@@ -94,7 +94,6 @@ public class ProxyConfig {
 		}
 	}
 	
-	@NoneNull
 	public void setPassword(final String password) {
 		// PRECONDITIONS
 		try {
@@ -115,7 +114,6 @@ public class ProxyConfig {
 		}
 	}
 	
-	@NoneNull
 	public void setUsername(final String username) {
 		// PRECONDITIONS
 		try {
