@@ -198,6 +198,8 @@ public class GoogleParser implements Parser {
 	/** The resolution timestamp. */
 	private DateTime                        resolutionTimestamp;
 	
+	private byte[]                          md5;
+	
 	/**
 	 * Instantiates a new google parser.
 	 * 
@@ -716,6 +718,16 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 */
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
@@ -741,7 +753,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubject()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
 	@Override
@@ -755,11 +767,6 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
-	 */
-	
 	@Override
 	public Resolution getResolution() {
 		// PRECONDITIONS
@@ -771,6 +778,11 @@ public class GoogleParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -790,7 +802,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -807,7 +819,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	
 	@Override
@@ -823,7 +835,8 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -836,12 +849,6 @@ public class GoogleParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
 	
 	@Override
 	public Set<String> getSiblings() {
@@ -867,6 +874,13 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getStatus()
 	 */
 	@Override
@@ -880,13 +894,6 @@ public class GoogleParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public String getSubject() {
@@ -1022,7 +1029,7 @@ public class GoogleParser implements Parser {
 				
 				this.issuesEntry = entries.get(0);
 				this.fetchTime = new DateTime();
-				
+				this.md5 = String.valueOf(this.issuesEntry.hashCode()).getBytes();
 				if (this.issuesEntry == null) {
 					if (Logger.logWarn()) {
 						Logger.warn("Skipping report #" + bugId + ". Feed returned no entries!");;
@@ -1056,5 +1063,4 @@ public class GoogleParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
 }

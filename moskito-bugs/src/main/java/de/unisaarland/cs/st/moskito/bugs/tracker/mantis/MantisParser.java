@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,6 +31,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -254,6 +256,8 @@ public class MantisParser implements Parser {
 	
 	/** The fetch time. */
 	private DateTime                        fetchTime;
+	
+	private byte[]                          md5;
 	
 	/**
 	 * Adds the change field.
@@ -936,6 +940,16 @@ public class MantisParser implements Parser {
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSubmitter()
 	 */
 	
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 */
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolutionTimestamp()
@@ -954,7 +968,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
 	 */
 	
 	@Override
@@ -976,11 +990,6 @@ public class MantisParser implements Parser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getType()
-	 */
-	
 	@Override
 	public Resolution getResolution() {
 		// PRECONDITIONS
@@ -992,6 +1001,11 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -1011,7 +1025,8 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -1029,7 +1044,8 @@ public class MantisParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	@Override
@@ -1047,13 +1063,6 @@ public class MantisParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public Severity getSeverity() {
@@ -1283,6 +1292,14 @@ public class MantisParser implements Parser {
 					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
 				}
 				return false;
+			}
+			
+			try {
+				this.md5 = HashUtils.getMD5(rawContent.getContent());
+			} catch (final NoSuchAlgorithmException e) {
+				if (Logger.logError()) {
+					Logger.error(e);
+				}
 			}
 			
 			this.report = createDocument(rawContent);

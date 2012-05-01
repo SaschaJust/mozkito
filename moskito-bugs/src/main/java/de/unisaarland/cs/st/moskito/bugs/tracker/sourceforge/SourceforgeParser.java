@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.bugs.tracker.sourceforge;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -280,6 +282,8 @@ public class SourceforgeParser implements Parser {
 	
 	/** The bug type. */
 	private final Type                                bugType;
+	
+	private byte[]                                    md5;
 	
 	/**
 	 * Instantiates a new sourceforge parser.
@@ -710,6 +714,11 @@ public class SourceforgeParser implements Parser {
 		}
 	}
 	
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getResolver()
@@ -1006,6 +1015,15 @@ public class SourceforgeParser implements Parser {
 			}
 			
 			this.fetchTime = new DateTime();
+			
+			try {
+				this.md5 = HashUtils.getMD5(rawContent.getContent());
+			} catch (final NoSuchAlgorithmException e) {
+				if (Logger.logError()) {
+					Logger.error(e);
+				}
+			}
+			
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Elements errorElements = document.getElementsByClass("error");
 			if (!errorElements.isEmpty()) {

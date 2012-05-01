@@ -195,6 +195,8 @@ public class JiraParser implements Parser {
 	/** The resolver. */
 	private Person                    resolver;
 	
+	private byte[]                    md5;
+	
 	/**
 	 * Instantiates a new jira parser.
 	 * 
@@ -475,6 +477,11 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSeverity()
@@ -565,6 +572,12 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getSummary()
 	 */
 	@Override
@@ -577,12 +590,6 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
-	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -605,6 +612,13 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
+	 */
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getVersion()
 	 */
 	@Override
@@ -621,13 +635,6 @@ public class JiraParser implements Parser {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	@Override
 	public Status getStatus() {
@@ -770,6 +777,7 @@ public class JiraParser implements Parser {
 			final IssueRestClient issueClient = this.restClient.getIssueClient();
 			System.err.println(reportLink.getBugId());
 			this.issue = issueClient.getIssue(reportLink.getBugId(), new NullProgressMonitor());
+			this.md5 = String.valueOf(this.issue.hashCode()).getBytes();
 			if (this.issue == null) {
 				return false;
 			}
