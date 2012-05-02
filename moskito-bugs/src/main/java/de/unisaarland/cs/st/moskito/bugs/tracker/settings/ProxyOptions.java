@@ -12,10 +12,12 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -129,6 +131,23 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					
 					final ProcessBuilder builder = new ProcessBuilder(commandList);
 					final Process process = builder.start();
+					
+					new Thread("Proxy-Errors") {
+						
+						private final InputStream inputStream = process.getErrorStream();
+						
+						@Override
+						public void run() {
+							try (BufferedReader reader = new BufferedReader(new InputStreamReader(this.inputStream))) {
+								String line;
+								while ((line = reader.readLine()) != null) {
+									if (Logger.logError()) {
+										Logger.error(line);
+									}
+								}
+							}
+						};
+					};
 					
 					Runtime.getRuntime().addShutdownHook(new Thread() {
 						
