@@ -134,16 +134,20 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					
 					new Thread("Proxy-Errors") {
 						
-						private final InputStream inputStream = process.getErrorStream();
+						private final InputStream threadInputStream = process.getErrorStream();
 						
 						@Override
 						public void run() {
-							try (BufferedReader reader = new BufferedReader(new InputStreamReader(this.inputStream))) {
+							try (BufferedReader reader = new BufferedReader(new InputStreamReader(this.threadInputStream))) {
 								String line;
 								while ((line = reader.readLine()) != null) {
 									if (Logger.logError()) {
 										Logger.error(line);
 									}
+								}
+							} catch (final IOException e) {
+								if (Logger.logError()) {
+									Logger.error(e);
 								}
 							}
 						};
@@ -179,10 +183,10 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			                                                usernameArgument.getValue(), passwordArgument.getValue(),
 			                                                internalArgument.getValue());
 			
-			System.getProperties().put("http.proxyHost", proxyConfig.getHost());
-			System.getProperties().put("http.proxyPort", proxyConfig.getPort());
-			System.getProperties().put("http.proxyUser", proxyConfig.getUsername());
-			System.getProperties().put("http.proxyPassword", proxyConfig.getPassword());
+			System.getProperties().put("socksProxyHost", proxyConfig.getHost());
+			System.getProperties().put("socksProxyPort", proxyConfig.getPort());
+			// System.getProperties().put("http.proxyUser", proxyConfig.getUsername());
+			// System.getProperties().put("http.proxyPassword", proxyConfig.getPassword());
 			
 			return proxyConfig;
 			
