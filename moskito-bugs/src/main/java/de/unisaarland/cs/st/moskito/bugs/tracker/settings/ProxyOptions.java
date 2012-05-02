@@ -138,7 +138,9 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 						
 						@Override
 						public void run() {
-							try (BufferedReader reader = new BufferedReader(new InputStreamReader(this.threadInputStream))) {
+							try (BufferedReader reader = new BufferedReader(
+							                                                new InputStreamReader(
+							                                                                      this.threadInputStream))) {
 								String line;
 								while ((line = reader.readLine()) != null) {
 									if (Logger.logError()) {
@@ -183,7 +185,15 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			                                                usernameArgument.getValue(), passwordArgument.getValue(),
 			                                                internalArgument.getValue());
 			
-			System.getProperties().put("socksProxyHost", proxyConfig.getHost());
+			if (Logger.logTrace()) {
+				Logger.trace("Setting socksProxyHost=%s", proxyConfig.getHost());
+				Logger.trace("Setting socksProxyPort=%s", proxyConfig.getPort());
+			}
+			if (proxyConfig.getHost() != null) {
+				System.getProperties().put("socksProxyHost", proxyConfig.getHost());
+			} else {
+				System.getProperties().put("socksProxyHost", "localhost");
+			}
 			System.getProperties().put("socksProxyPort", proxyConfig.getPort());
 			// System.getProperties().put("http.proxyUser", proxyConfig.getUsername());
 			// System.getProperties().put("http.proxyPassword", proxyConfig.getPassword());
