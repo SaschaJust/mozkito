@@ -174,31 +174,30 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					throw new UnrecoverableError(e);
 				}
 				
-				return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
-				                       usernameArgument.getValue(), passwordArgument.getValue(),
-				                       internalArgument.getValue());
+				final ProxyConfig proxyConfig = new ProxyConfig(hostArgument.getValue(), portArgument.getValue()
+				                                                                                     .intValue(),
+				                                                usernameArgument.getValue(),
+				                                                passwordArgument.getValue(),
+				                                                internalArgument.getValue());
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Setting socksProxyHost=%s", proxyConfig.getHost());
+					Logger.trace("Setting socksProxyPort=%s", proxyConfig.getPort());
+				}
+				if (proxyConfig.getHost() != null) {
+					System.getProperties().put("socksProxyHost", proxyConfig.getHost());
+				} else {
+					System.getProperties().put("socksProxyHost", "localhost");
+				}
+				System.getProperties().put("socksProxyPort", proxyConfig.getPort());
+				
+				return proxyConfig;
 			}
 			// TODO: check if there is a server listening on host:port
 			
-			final ProxyConfig proxyConfig = new ProxyConfig(hostArgument.getValue(),
-			                                                portArgument.getValue().intValue(),
-			                                                usernameArgument.getValue(), passwordArgument.getValue(),
-			                                                internalArgument.getValue());
-			
-			if (Logger.logTrace()) {
-				Logger.trace("Setting socksProxyHost=%s", proxyConfig.getHost());
-				Logger.trace("Setting socksProxyPort=%s", proxyConfig.getPort());
-			}
-			if (proxyConfig.getHost() != null) {
-				System.getProperties().put("socksProxyHost", proxyConfig.getHost());
-			} else {
-				System.getProperties().put("socksProxyHost", "localhost");
-			}
-			System.getProperties().put("socksProxyPort", proxyConfig.getPort());
-			// System.getProperties().put("http.proxyUser", proxyConfig.getUsername());
-			// System.getProperties().put("http.proxyPassword", proxyConfig.getPassword());
-			
-			return proxyConfig;
+			return new ProxyConfig(hostArgument.getValue(), portArgument.getValue().intValue(),
+			                       usernameArgument.getValue(), passwordArgument.getValue(),
+			                       internalArgument.getValue());
 			
 		} finally {
 			// POSTCONDITIONS
