@@ -31,6 +31,7 @@ public class ProxyConfig {
 	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final boolean useSocks) {
 		setHost(proxyHost);
 		setPort(proxyPort);
+		setUseSocks(useSocks);
 	}
 	
 	public ProxyConfig(final String proxyHost, @NotNull @NotNegative final int proxyPort, final String username,
@@ -39,6 +40,7 @@ public class ProxyConfig {
 		setPort(proxyPort);
 		setUsername(username);
 		setPassword(password);
+		setUseSocks(useSocks);
 	}
 	
 	public String getHost() {
@@ -117,6 +119,10 @@ public class ProxyConfig {
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	public void setUseSocks(final boolean b) {
+		this.useSocks = b;
 	}
 	
 	@Override
