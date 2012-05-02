@@ -237,7 +237,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
 			this.internalOptions = new BooleanArgument.Options(set, "internal", "Use internal proxy (recommended).",
-			                                                   null, Requirement.required);
+			                                                   true, Requirement.required);
 			req(this.internalOptions, map);
 			
 			this.hostOptions = new HostArgument.Options(set, "host", //$NON-NLS-1$

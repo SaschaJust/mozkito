@@ -143,7 +143,11 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			final URI trackerUri = getSettings().getArgument(this.trackerURIOptions).getValue();
 			final String trackerUser = getSettings().getArgument(getTrackerUser()).getValue();
 			final String trackerPassword = getSettings().getArgument(getTrackerPassword()).getValue();
-			final ProxyConfig proxyConfig = getSettings().getArgumentSet(this.proxyOptions).getValue();
+			final Boolean useProxy = getSettings().getArgument(this.useProxyOptions).getDefaultValue();
+			ProxyConfig proxyConfig = null;
+			if (useProxy) {
+				proxyConfig = getSettings().getArgumentSet(this.proxyOptions).getValue();
+			}
 			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
