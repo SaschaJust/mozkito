@@ -7,17 +7,20 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ProcessHook.
- *
- * @param <K> the key type
- * @param <V> the value type
+ * 
+ * @param <K>
+ *            the key type
+ * @param <V>
+ *            the value type
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	
 	/**
 	 * Instantiates a new process hook.
-	 *
-	 * @param thread the thread
+	 * 
+	 * @param thread
+	 *            the thread
 	 */
 	public ProcessHook(final Node<K, V> thread) {
 		super(thread);
@@ -34,14 +37,25 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
+	 * Guard source termination.
+	 */
+	private final void guardSourceTermination() {
+		// skipping output data should not terminate sources
+		if (Source.class.isAssignableFrom(getThread().getClass())) {
+			unsetCompleted();
+		}
+	}
+	
+	/**
 	 * Process.
 	 */
 	public abstract void process();
 	
 	/**
 	 * Provide output data.
-	 *
-	 * @param data the data
+	 * 
+	 * @param data
+	 *            the data
 	 */
 	public final void provideOutputData(final V data) {
 		if (Source.class.isAssignableFrom(getThread().getClass())) {
@@ -53,19 +67,12 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * Provide partial output data.
-	 *
-	 * @param data the data
-	 */
-	public final void providePartialOutputData(final V data) {
-		provideOutputData(data, false);
-	}
-	
-	/**
 	 * Provide output data.
-	 *
-	 * @param data the data
-	 * @param fetchNext the fetch next
+	 * 
+	 * @param data
+	 *            the data
+	 * @param fetchNext
+	 *            the fetch next
 	 */
 	public final void provideOutputData(final V data,
 	                                    final boolean fetchNext) {
@@ -79,20 +86,33 @@ public abstract class ProcessHook<K, V> extends Hook<K, V> {
 	}
 	
 	/**
-	 * Skip output data.
+	 * Provide partial output data.
+	 * 
+	 * @param data
+	 *            the data
 	 */
-	public final void skipOutputData() {
-		getThread().setSkipData(true);
+	public final void providePartialOutputData(final V data) {
+		provideOutputData(data, false);
 	}
 	
 	/**
 	 * Skip output data.
-	 *
-	 * @param data the data
+	 */
+	public final void skipOutputData() {
+		getThread().setSkipData(true);
+		guardSourceTermination();
+	}
+	
+	/**
+	 * Skip output data.
+	 * 
+	 * @param data
+	 *            the data
 	 */
 	public final void skipOutputData(final V data) {
 		getThread().setOutputData(data);
 		getThread().setSkipData(true);
+		guardSourceTermination();
 	}
 	
 }
