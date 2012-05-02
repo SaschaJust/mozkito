@@ -180,15 +180,21 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 				                                                passwordArgument.getValue(),
 				                                                internalArgument.getValue());
 				
-				if (Logger.logTrace()) {
-					Logger.trace("Setting socksProxyHost=%s", proxyConfig.getHost());
-					Logger.trace("Setting socksProxyPort=%s", proxyConfig.getPort());
-				}
 				if (proxyConfig.getHost() != null) {
 					System.getProperties().put("socksProxyHost", proxyConfig.getHost());
+					if (Logger.logTrace()) {
+						Logger.trace("Setting socksProxyHost=%s", proxyConfig.getHost());
+					}
 				} else {
 					System.getProperties().put("socksProxyHost", "localhost");
+					if (Logger.logTrace()) {
+						Logger.trace("Setting socksProxyHost=localhost");
+					}
 				}
+				if (Logger.logTrace()) {
+					Logger.trace("Setting socksProxyPort=%s", proxyConfig.getPort());
+				}
+				
 				System.getProperties().put("socksProxyPort", proxyConfig.getPort());
 				
 				return proxyConfig;
@@ -239,9 +245,17 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			                                            null, Requirement.equals(this.internalOptions, false));
 			req(this.hostOptions, map);
 			
-			this.cacheDirOptions = new DirectoryArgument.Options(set, "cacheDir",
-			                                                     "Cache directory for the internal proxy.", null,
-			                                                     Requirement.equals(this.internalOptions, true), true);
+			this.cacheDirOptions = new DirectoryArgument.Options(
+			                                                     set,
+			                                                     "cacheDir",
+			                                                     "Cache directory for the internal proxy.",
+			                                                     null,
+			                                                     Requirement.and(required()
+			                                                                               ? Requirement.required
+			                                                                               : Requirement.optional,
+			                                                                     Requirement.equals(this.internalOptions,
+			                                                                                        true)), true);
+			
 			req(this.cacheDirOptions, map);
 			
 			this.portOptions = new PortArgument.Options(
