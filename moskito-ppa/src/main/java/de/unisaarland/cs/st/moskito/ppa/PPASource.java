@@ -79,10 +79,15 @@ public class PPASource extends Source<RCSTransaction> {
 					if (PPASource.this.tIterator.hasNext()) {
 						providePartialOutputData(PPASource.this.tIterator.next());
 						if (!PPASource.this.tIterator.hasNext()) {
+							if (Logger.logTrace()) {
+								Logger.trace("Setting completed.");
+							}
 							setCompleted();
 						}
 					} else {
-						provideOutputData(null, true);
+						if (Logger.logTrace()) {
+							Logger.trace("Setting completed.");
+						}
 						setCompleted();
 					}
 				} else {
@@ -99,7 +104,9 @@ public class PPASource extends Source<RCSTransaction> {
 								            String.valueOf(set.size()));
 							}
 						} else {
-							provideOutputData(null, true);
+							if (Logger.logTrace()) {
+								Logger.trace("Setting completed.");
+							}
 							setCompleted();
 						}
 					}
@@ -123,17 +130,33 @@ public class PPASource extends Source<RCSTransaction> {
 							}
 						}
 						if (skip) {
+							if (Logger.logTrace()) {
+								Logger.trace("Skipping output data.");
+							}
 							skipOutputData();
 						} else {
+							if (Logger.logTrace()) {
+								Logger.trace("Providing partial output data.");
+							}
 							providePartialOutputData(transaction);
 						}
 						if ((!PPASource.this.tIterator.hasNext()) && (!PPASource.this.branchIterator.hasNext())) {
+							if (Logger.logTrace()) {
+								Logger.trace("Setting completed.");
+							}
+							
 							setCompleted();
 						}
 					} else {
 						if (!PPASource.this.branchIterator.hasNext()) {
+							if (Logger.logTrace()) {
+								Logger.trace("Setting completed.");
+							}
 							setCompleted();
 						} else {
+							if (Logger.logTrace()) {
+								Logger.trace("Skipping output data.");
+							}
 							skipOutputData();
 						}
 					}

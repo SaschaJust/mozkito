@@ -236,6 +236,7 @@ public abstract class Tracker {
 		report.setResolutionTimestamp(parser.getResolutionTimestamp());
 		report.setCreationTimestamp(parser.getCreationTimestamp());
 		report.setDescription(parser.getDescription());
+		report.setHash(parser.getMd5());
 		report.setLastFetch(parser.getFetchTime());
 		report.setLastUpdateTimestamp(parser.getLastUpdateTimestamp());
 		report.setPriority(parser.getPriority());

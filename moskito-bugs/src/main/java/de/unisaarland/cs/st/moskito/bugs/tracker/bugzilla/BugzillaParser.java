@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -204,6 +205,8 @@ public abstract class BugzillaParser implements Parser {
 	/** The xml bug. */
 	private Bug               xmlBug;
 	
+	private byte[]            md5;
+	
 	/**
 	 * Instantiates a new bugzilla parser.
 	 * 
@@ -329,6 +332,11 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	protected abstract BugzillaHistoryParser getHistoryParser();
 	
+	@Override
+	public final byte[] getMd5() {
+		return this.md5;
+	}
+	
 	/**
 	 * Gets the supoorted versions.
 	 * 
@@ -401,6 +409,7 @@ public abstract class BugzillaParser implements Parser {
 				}
 				return false;
 			}
+			this.md5 = HashUtils.getMD5(rawContent.getContent());
 			this.xmlReport = createDocument(rawContent);
 			if (this.xmlReport == null) {
 				if (Logger.logError()) {
