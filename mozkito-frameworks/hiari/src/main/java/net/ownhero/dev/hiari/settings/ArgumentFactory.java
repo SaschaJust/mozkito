@@ -27,6 +27,7 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Optional;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -93,7 +94,7 @@ public class ArgumentFactory {
 						// take the default value
 						
 					} else {
-						if (argument.required()) {
+						if (argument.getRequirements().check() && !(argument.getRequirements() instanceof Optional)) {
 							throw new ArgumentRegistrationException("Required but not set.", argument, options);
 						}
 					}
