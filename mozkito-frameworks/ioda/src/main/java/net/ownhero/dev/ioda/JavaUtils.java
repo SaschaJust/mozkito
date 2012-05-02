@@ -225,6 +225,25 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	public static final String toHexString(final byte b) {
+		return "0x" + (b < 16
+		                     ? '0'
+		                     : "") + Integer.toHexString(b);
+	}
+	
+	public static String toHexString(final byte[] array) {
+		final StringBuilder builder = new StringBuilder();
+		
+		for (final byte b : array) {
+			if (builder.length() > 0) {
+				builder.append(' ');
+			}
+			builder.append(toHexString(b));
+		}
+		
+		return builder.toString();
+	}
+	
 	/**
 	 * @return the simple class name
 	 */
