@@ -31,6 +31,7 @@ import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.SearchResult;
+import com.atlassian.jira.rest.client.domain.ServerInfo;
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
 import com.sun.jersey.client.apache.config.ApacheHttpClientConfig;
 import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
@@ -107,6 +108,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			if (Logger.logTrace()) {
 				Logger.trace("Building REST search query using project=%s.", this.projectKey);
 			}
+			
 			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.projectKey,
 			                                                                           this.pm);
 			int issueCounter = 0;
@@ -197,6 +199,14 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		}
 		this.restClient = factory.create(fetchURI, authenticationHandler);
 		this.pm = new NullProgressMonitor();
+		if (Logger.logTrace()) {
+			final ServerInfo serverInfo = this.restClient.getMetadataClient().getServerInfo(this.pm);
+			Logger.trace("JIRA REST API server scmInfo=%s.", serverInfo.getScmInfo());
+			Logger.trace("JIRA REST API server baseURI=%s.", serverInfo.getBaseUri().toASCIIString());
+			Logger.trace("JIRA REST API server buildNumber=%s.", serverInfo.getBuildNumber());
+			Logger.trace("JIRA REST API server version=%s.", serverInfo.getVersion());
+		}
+		
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
 }
