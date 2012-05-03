@@ -97,13 +97,26 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
-		
+		if (Logger.logTrace()) {
+			Logger.trace("Parsing overview.");
+		}
 		try {
+			if (Logger.logTrace()) {
+				Logger.trace("Building REST search query using project=%s.", this.projectKey);
+			}
 			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.projectKey,
 			                                                                           this.pm);
+			int issueCounter = 0;
 			for (final BasicIssue issue : searchJql.getIssues()) {
 				this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
+				++issueCounter;
 			}
+			
+			if (Logger.logDebug()) {
+				Logger.debug("Found %s basic issue entries for project '%s'.", String.valueOf(issueCounter),
+				             this.projectKey);
+			}
+			
 			return true;
 		} catch (final RestClientException e) {
 			if (Logger.logError()) {
@@ -117,13 +130,19 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param projectKey the project key
-	 * @param proxyConfig the proxy config
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param projectKey
+	 *            the project key
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
@@ -131,12 +150,21 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	                  final String projectKey,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		
+		if (Logger.logTrace()) {
+			Logger.trace("Setting up JiraTracker ...");
+		}
+		
 		this.projectKey = projectKey;
 		final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
 		
 		final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
 		
 		if (proxyConfig != null) {
+			
+			if (Logger.logTrace()) {
+				Logger.trace("Configuring proxy.");
+			}
+			
 			// support PROXYs: Atlassian has to enable support first final or we have final to extend the
 			// JIRA version
 			cc.getProperties().put(ApacheHttpClientConfig.PROPERTY_PROXY_URI,
@@ -154,9 +182,16 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		
 		AuthenticationHandler authenticationHandler = new AnonymousAuthenticationHandler();
 		if (username != null) {
+			if (Logger.logTrace()) {
+				Logger.trace("Configuring authentification handler.");
+			}
 			authenticationHandler = new BasicHttpAuthenticationHandler(username, password);
 		}
 		authenticationHandler.configure(cc);
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Creating REST client.");
+		}
 		this.restClient = factory.create(fetchURI, authenticationHandler);
 		this.pm = new NullProgressMonitor();
 		super.setup(fetchURI, username, password, proxyConfig);
