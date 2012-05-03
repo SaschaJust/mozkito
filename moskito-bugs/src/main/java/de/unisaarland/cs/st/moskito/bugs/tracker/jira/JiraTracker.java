@@ -84,6 +84,9 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
+			if (!parseOverview()) {
+				return new HashSet<ReportLink>();
+			}
 			return this.overviewURIs;
 		} finally {
 			// POSTCONDITIONS
