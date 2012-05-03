@@ -156,7 +156,8 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		
 		if (Logger.logTrace()) {
-			Logger.trace("Setting up JiraTracker ...");
+			Logger.trace("Setting up JiraTracker with fetchURI=%s, username=%s, password=%s, projectKey=%s,proxyConfig=%s",
+			             fetchURI.toASCIIString(), username, password, projectKey, proxyConfig.toString());
 		}
 		
 		this.projectKey = projectKey;
