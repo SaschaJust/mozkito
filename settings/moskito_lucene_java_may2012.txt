@@ -1,0 +1,14 @@
+database.name=moskito_lucene_java_februar2012
+database.user=miner
+database.password=miner
+log.level=info
+#repository.uri=/data/kim/miner_repos/rhino/rhino_27.02.2012.git
+#repository.type=GIT
+headless
+
+tracker.type=JIRA
+tracker.useProxy=true
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/rhino/bugzilla_cache/
+tracker.uri=https://issues.apache.org/jira/
+
+jira.projectKey=LUCENE
