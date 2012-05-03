@@ -19,9 +19,8 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
-
-import net.ownhero.dev.ioda.ProxyConfig;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,8 +58,7 @@ public class JiraTracker_NetTest {
 	public void setUp() throws Exception {
 		this.tracker = new JiraTracker();
 		try {
-			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", new ProxyConfig("localhost",
-			                                                                                           3128, false));
+			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", null);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -68,7 +66,6 @@ public class JiraTracker_NetTest {
 			e.printStackTrace();
 			fail();
 		}
-		
 	}
 	
 	/**
@@ -177,5 +174,24 @@ public class JiraTracker_NetTest {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
+	}
+	
+	@Test
+	public void testOverview() {
+		
+		this.tracker = new JiraTracker();
+		try {
+			this.tracker.setup(new URI("https://issues.apache.org/jira/"), null, null, "LUCENE", null);
+			System.err.println(this.tracker.getUri().toASCIIString());
+		} catch (final InvalidParameterException e) {
+			e.printStackTrace();
+			fail();
+		} catch (final URISyntaxException e) {
+			e.printStackTrace();
+			fail();
+		}
+		
+		final Set<ReportLink> reportLinks = this.tracker.getReportLinks();
+		System.err.println(reportLinks.size());
 	}
 }
