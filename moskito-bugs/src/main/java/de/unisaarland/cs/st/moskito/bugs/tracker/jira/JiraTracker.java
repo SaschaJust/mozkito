@@ -109,6 +109,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				Logger.trace("Building REST search query using project=%s.", this.projectKey);
 			}
 			
+			// FIXME fetch more than 50 reports!
 			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.projectKey,
 			                                                                           this.pm);
 			int issueCounter = 0;
@@ -157,7 +158,12 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Setting up JiraTracker with fetchURI=%s, username=%s, password=%s, projectKey=%s,proxyConfig=%s",
-			             fetchURI.toASCIIString(), username, password, projectKey, proxyConfig.toString());
+			             fetchURI == null
+			                             ? "null"
+			                             : fetchURI.toASCIIString(), username, password, projectKey,
+			             proxyConfig == null
+			                                ? "null"
+			                                : proxyConfig.toString());
 		}
 		
 		this.projectKey = projectKey;
