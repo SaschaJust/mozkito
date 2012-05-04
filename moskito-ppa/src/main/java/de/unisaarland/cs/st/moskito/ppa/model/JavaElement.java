@@ -31,7 +31,7 @@ import javax.persistence.UniqueConstraint;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -50,7 +50,7 @@ public abstract class JavaElement implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960043672858454394L;
 	
-	public static String extractMethodName(String fullQualifiedName) {
+	public static String extractMethodName(final String fullQualifiedName) {
 		Condition.check(fullQualifiedName.contains("."), "Full qualified method name must contain a '.' character");
 		Condition.check(fullQualifiedName.contains("("), "Full qualified method name must contain a '(' character");
 		Condition.check(fullQualifiedName.indexOf(".") < fullQualifiedName.indexOf("("),
@@ -81,9 +81,9 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@NoneNull
 	public JavaElement(final String fullQualifiedName, final String elementType) {
-		this.setFullQualifiedName(fullQualifiedName);
-		this.setElementType(this.getClass().getCanonicalName());
-		this.setElementType(elementType);
+		setFullQualifiedName(fullQualifiedName);
+		setElementType(this.getClass().getCanonicalName());
+		setElementType(elementType);
 	}
 	
 	/*
@@ -101,19 +101,19 @@ public abstract class JavaElement implements Annotated {
 		if (!(obj instanceof JavaElement)) {
 			return false;
 		}
-		JavaElement other = (JavaElement) obj;
-		if (this.getElementType() == null) {
+		final JavaElement other = (JavaElement) obj;
+		if (getElementType() == null) {
 			if (other.getElementType() != null) {
 				return false;
 			}
-		} else if (!this.getElementType().equals(other.getElementType())) {
+		} else if (!getElementType().equals(other.getElementType())) {
 			return false;
 		}
-		if (this.getFullQualifiedName() == null) {
+		if (getFullQualifiedName() == null) {
 			if (other.getFullQualifiedName() != null) {
 				return false;
 			}
-		} else if (!this.getFullQualifiedName().equals(other.getFullQualifiedName())) {
+		} else if (!getFullQualifiedName().equals(other.getFullQualifiedName())) {
 			return false;
 		}
 		return true;
@@ -150,9 +150,9 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getPackageName() {
-		int index = this.getFullQualifiedName().lastIndexOf(".");
+		final int index = getFullQualifiedName().lastIndexOf(".");
 		if (index > 0) {
-			return this.getFullQualifiedName().substring(index);
+			return getFullQualifiedName().substring(index);
 		}
 		return "";
 	}
@@ -164,7 +164,7 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Transient
 	public String getShortName() {
-		String[] nameParts = this.getFullQualifiedName().split("\\.");
+		final String[] nameParts = getFullQualifiedName().split("\\.");
 		return nameParts[nameParts.length - 1];
 	}
 	
@@ -183,12 +183,12 @@ public abstract class JavaElement implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.getElementType() == null)
-		                                                            ? 0
-		                                                            : this.getElementType().hashCode());
-		result = (prime * result) + ((this.getFullQualifiedName() == null)
-		                                                                  ? 0
-		                                                                  : this.getFullQualifiedName().hashCode());
+		result = (prime * result) + ((getElementType() == null)
+		                                                       ? 0
+		                                                       : getElementType().hashCode());
+		result = (prime * result) + ((getFullQualifiedName() == null)
+		                                                             ? 0
+		                                                             : getFullQualifiedName().hashCode());
 		return result;
 	}
 	
@@ -221,6 +221,6 @@ public abstract class JavaElement implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "JavaElement [fullQualifiedName=" + this.getFullQualifiedName() + "]";
+		return "JavaElement [fullQualifiedName=" + getFullQualifiedName() + "]";
 	}
 }

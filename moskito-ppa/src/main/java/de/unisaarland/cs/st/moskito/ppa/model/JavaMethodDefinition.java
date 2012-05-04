@@ -27,7 +27,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -83,11 +83,11 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 * @return the java method definition is successful, <code>null</code> otherwise.
 	 */
 	@NoneNull
-	public static JavaMethodDefinition fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaMethodDefinition fromXMLRepresentation(final Element element) {
 		StringCondition.equals(element.getName(), JAVA_METHOD_DEFINITION,
 		                       Messages.JavaMethodDefinition_unrecognized_root_element, element.getName());
 		
-		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		Condition.notNull(nameElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
 		final String name = nameElement.getText();
@@ -103,7 +103,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		CompareCondition.greater(dotIndex, 0, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		CompareCondition.less(dotIndex, index, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
-		final org.jdom.Element overrideElement = element.getChild(ANNOTATED_OVERRIDE);
+		final Element overrideElement = element.getChild(ANNOTATED_OVERRIDE);
 		Condition.notNull(overrideElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
 		final boolean override = Boolean.valueOf(overrideElement.getText());

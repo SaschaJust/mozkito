@@ -14,7 +14,7 @@ package de.unisaarland.cs.st.moskito.ppa.model;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.Test;
 
 public class JavaClassDefinitionTest {
