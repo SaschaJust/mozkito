@@ -18,6 +18,7 @@ import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
@@ -43,10 +44,11 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
 public class JiraHistoryParser {
 	
 	/** The skip regex. */
-	private static Regex                    skipRegex = new Regex("The issue you are trying to view does not exist");
+	private static Regex                    skipRegex              = new Regex(
+	                                                                           "The issue you are trying to view does not exist");
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history   = new TreeSet<HistoryElement>();
+	private final SortedSet<HistoryElement> history                = new TreeSet<HistoryElement>();
 	
 	/** The report id. */
 	private final String                    reportId;
@@ -55,7 +57,9 @@ public class JiraHistoryParser {
 	private final URI                       uri;
 	
 	/** The resolver. */
-	private Person                          resolver  = null;
+	private Person                          resolver               = null;
+	
+	public static String                    historyDateTimePattern = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
 	
 	/**
 	 * Instantiates a new jira history parser.
@@ -160,8 +164,7 @@ public class JiraHistoryParser {
 					final Elements dateElems = header.getElementsByTag("time");
 					if (!dateElems.isEmpty()) {
 						when = DateTimeUtils.parseDate(dateElems.get(0).attr("datetime"),
-						                               new Regex(
-						                                         "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))({Z}[+-]\\d{4})?"));
+						                               new Regex(historyDateTimePattern));
 					}
 					if ((who != null) && (when != null)) {
 						final HistoryElement historyElement = new HistoryElement(this.reportId, who, when);
@@ -197,7 +200,21 @@ public class JiraHistoryParser {
 								historyElement.addChangedValue("severity", JiraParser.resolveSeverity(oldValue),
 								                               JiraParser.resolveSeverity(newValue));
 							} else if (fieldString.startsWith("affects version")) {
-								historyElement.addChangedValue("version", oldValue, newValue);
+								if (!historyElement.contains("version")) {
+									historyElement.addChangedValue("version", oldValue, newValue);
+								} else {
+									@SuppressWarnings ("unchecked")
+									final Tuple<String, String> tuple = (Tuple<String, String>) historyElement.get("version");
+									if (((tuple.getFirst() == null) || (tuple.getFirst().equals("")))
+									        && (oldValue != null) && (!oldValue.equals(""))) {
+										tuple.setFirst(oldValue);
+									}
+									if (((tuple.getSecond() == null) || (tuple.getSecond().equals("")))
+									        && (newValue != null) && (!newValue.equals(""))) {
+										tuple.setSecond(newValue);
+									}
+									historyElement.addChangedValue("version", tuple.getFirst(), tuple.getSecond());
+								}
 							} else if (fieldString.startsWith("component")) {
 								historyElement.addChangedValue("component", oldValue, newValue);
 							} else if (fieldString.equals("labels")) {
