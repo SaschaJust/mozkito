@@ -50,7 +50,7 @@ public class JiraParserLUCENE2222_NetTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "Lucene-2222.xml")
+			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                                  .toURI();
 			parser = new JiraParser();
 			assert (parser.setURI(new ReportLink(uri, "LUCENE-2222")));
