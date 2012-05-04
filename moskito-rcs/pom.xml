@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j</artifactId>
-			<version>1.7.M02</version>
+			<version>1.8.M01</version>
 		</dependency>
 	</dependencies>
 	<build>

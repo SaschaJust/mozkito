@@ -165,7 +165,9 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			                                ? "null"
 			                                : proxyConfig.toString());
 		}
-		
+	
+System.getProperties().list(System.err);
+
 		this.projectKey = projectKey;
 		final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
 		

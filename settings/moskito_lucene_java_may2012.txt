@@ -10,5 +10,6 @@ tracker.type=JIRA
 tracker.useProxy=true
 tracker.proxy.cacheDir=/scratch/kim/miner_repos/rhino/bugzilla_cache/
 tracker.uri=https://issues.apache.org/jira/
+#rest/api/2.0.alpha1/
 
 jira.projectKey=LUCENE
