@@ -27,7 +27,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.ppa.visitors.PPATypeVisitor;
@@ -54,7 +54,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 *            the element
 	 * @return the java class definition is successful, <code>null</code> otherwise.
 	 */
-	public static JavaTypeDefinition fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaTypeDefinition fromXMLRepresentation(final Element element) {
 		
 		if (!element.getName().equals(JAVA_CLASS_DEFINITION)) {
 			if (Logger.logWarn()) {
@@ -63,7 +63,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");

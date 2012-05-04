@@ -34,12 +34,13 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -53,14 +54,38 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
+	public static List<JavaChangeOperation> readOperations(final Element element,
+	                                                       final PersistenceUtil persistenceUtil) {
+		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
+			if (Logger.logError()) {
+				Logger.error("RootElement for JavaChangeOperations must have be <" + ROOT_ELEMENT_NAME + "> but was <"
+				        + element.getName() + ">");
+			}
+			return result;
+		}
+		
+		final List<Element> children = element.getChildren();
+		
+		for (final Element child : children) {
+			final JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child, persistenceUtil);
+			if (operation != null) {
+				result.add(operation);
+			}
+		}
+		return result;
+	}
+	
 	public static List<JavaChangeOperation> readOperations(final File file,
 	                                                       final PersistenceUtil persistenceUtil) {
 		try {
 			final BufferedReader reader = new BufferedReader(new FileReader(file));
-			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			final SAXBuilder saxBuilder = new SAXBuilder(
+			                                             new XMLReaderSAX2Factory(false,
+			                                                                      "org.apache.xerces.parsers.SAXParser"));
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			final org.jdom.Document document = saxBuilder.build(reader);
+			final Document document = saxBuilder.build(reader);
 			reader.close();
 			return readOperations(document.getRootElement(), persistenceUtil);
 		} catch (final JDOMException e) {
@@ -73,29 +98,6 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 			}
 		}
 		return new ArrayList<JavaChangeOperation>(0);
-	}
-	
-	public static List<JavaChangeOperation> readOperations(final org.jdom.Element element,
-	                                                       final PersistenceUtil persistenceUtil) {
-		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
-		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
-			if (Logger.logError()) {
-				Logger.error("RootElement for JavaChangeOperations must have be <" + ROOT_ELEMENT_NAME + "> but was <"
-				        + element.getName() + ">");
-			}
-			return result;
-		}
-		
-		@SuppressWarnings ("unchecked")
-		final List<org.jdom.Element> children = element.getChildren();
-		
-		for (final org.jdom.Element child : children) {
-			final JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child, persistenceUtil);
-			if (operation != null) {
-				result.add(operation);
-			}
-		}
-		return result;
 	}
 	
 	/**
@@ -114,7 +116,7 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	        throws ParserConfigurationException {
 		super(threadGroup, settings, false);
 		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
-		final Document document = new org.jdom.Document(operationsElement);
+		final Document document = new Document(operationsElement);
 		final Map<String, Element> transactionElements = new HashMap<String, Element>();
 		
 		new PostExecutionHook<JavaChangeOperation, JavaChangeOperation>(this) {

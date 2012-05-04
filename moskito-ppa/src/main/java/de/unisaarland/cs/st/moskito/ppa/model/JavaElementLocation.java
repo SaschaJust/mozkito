@@ -33,8 +33,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -83,7 +83,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 *            the element
 	 * @return the java element location if successful. Returns <code>null</code> otherwise.
 	 */
-	public static JavaElementLocation fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaElementLocation fromXMLRepresentation(final Element element) {
 		
 		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
 			if (Logger.logWarn()) {
@@ -178,7 +178,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final org.jdom.Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		final Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
 		if (pathElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.path from XML. Returning null.");
@@ -189,7 +189,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		
 		JavaElement javaElement = null;
 		
-		org.jdom.Element elementChild = element.getChild(JavaTypeDefinition.JAVA_CLASS_DEFINITION);
+		Element elementChild = element.getChild(JavaTypeDefinition.JAVA_CLASS_DEFINITION);
 		if (elementChild != null) {
 			javaElement = JavaTypeDefinition.fromXMLRepresentation(elementChild);
 		} else {
