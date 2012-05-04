@@ -142,7 +142,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				for (final String id : bugIDs) {
 					final StringBuilder linkBuilder = new StringBuilder();
 					linkBuilder.append(getUri());
-					linkBuilder.append("/jira/si/jira.issueviews:issue-xml/");
+					linkBuilder.append("/si/jira.issueviews:issue-xml/");
 					linkBuilder.append(id);
 					linkBuilder.append("/");
 					linkBuilder.append(id);
