@@ -129,8 +129,8 @@ public class PPACUThread implements Runnable {
 			}
 			
 		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e, "Error while getting CU from PPA");
+			if (Logger.logDebug()) {
+				Logger.debug(e, "Error while getting CU from PPA");
 			}
 		}
 	}
