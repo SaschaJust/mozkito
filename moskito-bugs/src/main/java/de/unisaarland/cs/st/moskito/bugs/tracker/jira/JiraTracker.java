@@ -106,8 +106,8 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
-		if (Logger.logTrace()) {
-			Logger.trace("Parsing overview.");
+		if (Logger.logInfo()) {
+			Logger.info("Parsing overview. This might take a while ...");
 		}
 		try {
 			
@@ -194,7 +194,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			                                ? "null"
 			                                : proxyConfig.toString());
 		}
-	
+		
 		this.projectKey = projectKey;
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
