@@ -933,7 +933,7 @@ public class JiraParser implements Parser {
 			final URI uri = reportLink.getUri();
 			this.issueId = reportLink.getBugId();
 			RawContent rawContent = null;
-			if (this.proxyConfig != null) {
+			if (this.proxyConfig == null) {
 				rawContent = IOUtils.fetch(uri);
 			} else {
 				rawContent = IOUtils.fetch(uri, this.proxyConfig);
