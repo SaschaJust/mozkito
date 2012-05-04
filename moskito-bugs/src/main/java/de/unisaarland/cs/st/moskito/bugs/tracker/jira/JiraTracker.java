@@ -152,7 +152,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 				moreToCome = bugIDs.size() == limit;
 				offset += limit;
 			} while (moreToCome);
-			return false;
+			return true;
 		} catch (final URISyntaxException | UnsupportedProtocolException | FetchException | IOException | SAXException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
