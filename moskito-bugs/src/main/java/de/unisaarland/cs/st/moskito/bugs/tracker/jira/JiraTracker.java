@@ -195,8 +195,6 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			                                : proxyConfig.toString());
 		}
 	
-System.getProperties().list(System.err);
-
 		this.projectKey = projectKey;
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
