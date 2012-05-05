@@ -141,6 +141,12 @@ public class JiraHistoryParser {
 					if (child == null) {
 						continue;
 					}
+					if (child.children().size() < 2) {
+						if (Logger.logError()) {
+							Logger.error("Could not find the body section of the issue-data-block. Skipping ...");
+						}
+						continue;
+					}
 					final Element header = child.child(0);
 					final Element body = child.child(1);
 					
