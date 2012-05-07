@@ -10,7 +10,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.EnhancedReport.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Apr 27 13:28:52 CEST 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Mon May 07 15:41:49 CEST 2012")
 public class EnhancedReport_ {
     public static volatile SingularAttribute<EnhancedReport,Type> classifiedType;
     public static volatile SingularAttribute<EnhancedReport,Type> predictedType;

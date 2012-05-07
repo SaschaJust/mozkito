@@ -18,7 +18,7 @@ import javax.persistence.metamodel.SingularAttribute;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.Report.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Apr 27 13:28:52 CEST 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Mon May 07 15:41:49 CEST 2012")
 public class Report_ {
     public static volatile ListAttribute<Report,AttachmentEntry> attachmentEntries;
     public static volatile SingularAttribute<Report,String> category;
@@ -26,7 +26,7 @@ public class Report_ {
     public static volatile SingularAttribute<Report,String> component;
     public static volatile SingularAttribute<Report,Date> creationJavaTimestamp;
     public static volatile SingularAttribute<Report,String> description;
-    public static volatile SingularAttribute<Report,byte[]> hash;
+    public static volatile ListAttribute<Report,Byte> hash;
     public static volatile SingularAttribute<Report,History> history;
     public static volatile SingularAttribute<Report,String> id;
     public static volatile SetAttribute<Report,String> keywords;
