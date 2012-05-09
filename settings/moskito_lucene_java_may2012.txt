@@ -2,8 +2,8 @@ database.name=moskito_lucene_java_februar2012
 database.user=miner
 database.password=miner
 log.level=info
-#repository.uri=/data/kim/miner_repos/rhino/rhino_27.02.2012.git
-#repository.type=GIT
+repository.uri=/data/kim/miner_repos/apache/lucene_08_05_2012.git
+repository.type=GIT
 headless
 
 tracker.type=JIRA
