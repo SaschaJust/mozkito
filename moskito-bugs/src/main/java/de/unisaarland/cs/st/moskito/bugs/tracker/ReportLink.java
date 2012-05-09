@@ -72,7 +72,7 @@ public class ReportLink {
 		sb.append(this.uri != null
 		                          ? this.uri.toASCIIString()
 		                          : "null");
-		sb.append(", budId=");
+		sb.append(", bugId=");
 		sb.append(this.bugId);
 		sb.append("]");
 		return sb.toString();
