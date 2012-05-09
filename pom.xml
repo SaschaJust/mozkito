@@ -52,6 +52,7 @@
 		<module>moskito-persistence</module>
 		<module>moskito-rcs</module>
 		<module>moskito-bugs</module>
+		<module>moskito-bugs-importclassification</module>
 		<module>moskito-persons</module>
 		<module>moskito-mapping</module>
 		<module>moskito-infozilla</module>
