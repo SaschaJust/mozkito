@@ -105,7 +105,7 @@ public class Repository_MozkitoTest extends MoskitoTest {
 			final File urlFile = new File(repoMap.get(type));
 			
 			try {
-				repository.setup(urlFile.toURI(), new BranchFactory(null), null);
+				repository.setup(urlFile.toURI(), new BranchFactory(null), null, "master");
 			} catch (final Exception e) {
 				System.err.println(e.getMessage());
 				fail(e.getMessage());

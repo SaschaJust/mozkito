@@ -734,8 +734,9 @@ public class MercurialRepository extends Repository {
 	@Override
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) {
-		setup(address, null, branchFactory, tmpDir);
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) {
+		setup(address, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
 	/**
@@ -753,8 +754,10 @@ public class MercurialRepository extends Repository {
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
-	                   final File tmpDir) {
+	                   final File tmpDir,
+	                   @NotNull final String mainBranchName) {
 		
+		setMainBranchName(mainBranchName);
 		setUri(address);
 		
 		File localCloneDir = null;
@@ -792,8 +795,9 @@ public class MercurialRepository extends Repository {
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) {
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) {
 		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
-		      tmpDir);
+		      tmpDir, mainBranchName);
 	}
 }
