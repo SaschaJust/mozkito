@@ -795,11 +795,12 @@ public class GitRepository extends Repository {
 		this.transactionIDs = response.getSecond();
 		Collections.reverse(this.transactionIDs);
 		
-		Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
-		                "First revision ID and transaction ID list missmatch!");
-		Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
-		                "End revision ID and transaction ID list missmatch!");
-		
+		if (!this.transactionIDs.isEmpty()) {
+			Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+			                "First revision ID and transaction ID list missmatch!");
+			Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+			                "End revision ID and transaction ID list missmatch!");
+		}
 	}
 	
 	/*
