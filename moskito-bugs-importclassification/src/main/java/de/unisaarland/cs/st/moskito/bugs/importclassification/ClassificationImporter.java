@@ -80,8 +80,12 @@ public class ClassificationImporter {
 				}
 				final String bugId = lineParts[0];
 				Type bugType = null;
+				String bugTyepString = lineParts[1].trim().toUpperCase();
+				if (bugTyepString.equals("DESIGN")) {
+					bugTyepString = "DESIGN_DEFECT";
+				}
 				try {
-					bugType = Type.valueOf(lineParts[1].trim().toUpperCase());
+					bugType = Type.valueOf(bugTyepString);
 				} catch (final IllegalArgumentException e) {
 					throw new UnrecoverableError(
 					                             String.format("The csv file to import `%s` contains an invalid formatted line. Line %s contains the unknown report type %s.",
