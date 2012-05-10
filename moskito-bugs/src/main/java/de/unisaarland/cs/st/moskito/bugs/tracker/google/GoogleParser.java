@@ -223,7 +223,10 @@ public class GoogleParser implements Parser {
 		
 		try {
 			final Owner owner = this.issuesEntry.getOwner();
-			return new Person(owner.getUsername().getValue(), null, null);
+			if (owner != null) {
+				return new Person(owner.getUsername().getValue(), null, null);
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
