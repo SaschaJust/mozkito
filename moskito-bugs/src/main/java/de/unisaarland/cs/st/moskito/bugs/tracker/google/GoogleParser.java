@@ -775,8 +775,11 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
-			return resolveResolution(status);
+			if ((this.issuesEntry.getStatus() != null) && (this.issuesEntry.getStatus().getValue() != null)) {
+				final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
+				return resolveResolution(status);
+			}
+			return Resolution.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
