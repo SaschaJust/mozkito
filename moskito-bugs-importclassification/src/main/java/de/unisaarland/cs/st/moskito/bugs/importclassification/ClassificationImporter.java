@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -58,7 +59,7 @@ public class ClassificationImporter {
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
 			                                                            "bugs");
 			
-			persistenceUtil = settings.getArgumentSet(databaseOptions).getValue();
+			persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
 			final File csvFile = ArgumentFactory.create(cvsFileOptions).getValue();
 			final Boolean overwrite = ArgumentFactory.create(overwriteOptions).getValue();
 			
