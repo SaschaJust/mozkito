@@ -41,7 +41,7 @@ import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 public class ClassificationImporter {
 	
 	@SuppressWarnings ("deprecation")
-	public ClassificationImporter() {
+	public static void run() {
 		PersistenceUtil persistenceUtil = null;
 		try {
 			final Settings settings = new Settings();

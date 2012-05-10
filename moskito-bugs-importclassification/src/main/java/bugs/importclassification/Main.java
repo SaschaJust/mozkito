@@ -12,6 +12,8 @@
  ******************************************************************************/
 package bugs.importclassification;
 
+import de.unisaarland.cs.st.moskito.bugs.importclassification.ClassificationImporter;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
@@ -19,7 +21,7 @@ package bugs.importclassification;
 public class Main {
 	
 	public static void main(final String[] args) {
-		// TODO implement
+		ClassificationImporter.run();
 	}
 	
 }
