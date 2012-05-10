@@ -2,7 +2,7 @@ database.name=moskito_httpclient_may2012
 database.user=miner
 database.password=miner
 log.level=info
-repository.uri=/data/kim/miner_repos/apache/httpclient_08_05_2012.git
+repository.uri=/data/kim/miner_repos/apache/httpclient/httpclient_08_05_2012.git
 repository.type=GIT
 repository.mainBranch=trunk
 headless

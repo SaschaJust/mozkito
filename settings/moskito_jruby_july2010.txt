@@ -4,10 +4,12 @@ database.password=miner
 log.level=info
 repository.uri=/data/kim/miner_repos/jruby/git_repo_03_07_2010/
 repository.type=GIT
-tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
+
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/jruby/jira_cache/
+tracker.uri=http://jira.codehaus.org/
 tracker.type=JIRA
-tracker.stop=5811
-tracker.pattern=JRUBY-<BUGID>/JRUBY-<BUGID>.xml
+jira.projectKey=JRUBY
+
 headless
 #mapping.config.regexFile=file:///scratch/just/moskito/settings/moskito_xstream_may2011.regex
 #mapping.score.AuthorEquality=1

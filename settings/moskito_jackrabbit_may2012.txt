@@ -2,8 +2,9 @@ database.name=moskito_jackrabbit_may2012
 database.user=miner
 database.password=miner
 log.level=info
-repository.uri=/data/kim/miner_repos/apache/jackrabbit_08_05_2012.git
-#repository.type=GIT
+repository.uri=/data/kim/miner_repos/apache/jackrabbit/jackrabbit_08_05_2012.git
+repository.type=GIT
+repository.mainBranch=trunk
 headless
 
 tracker.type=JIRA
