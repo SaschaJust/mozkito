@@ -83,7 +83,7 @@ public class RepositoryToolchain extends Chain<Settings> {
 		} catch (final ArgumentSetRegistrationException e) {
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
-			throw new Shutdown(e.getMessage(), e);
+			throw new Shutdown();
 		}
 	}
 	

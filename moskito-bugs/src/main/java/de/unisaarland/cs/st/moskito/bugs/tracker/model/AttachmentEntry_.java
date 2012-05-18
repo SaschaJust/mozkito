@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 @javax.persistence.metamodel.StaticMetamodel
 (value=de.unisaarland.cs.st.moskito.bugs.tracker.model.AttachmentEntry.class)
 @javax.annotation.Generated
-(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Fri Apr 27 13:28:52 CEST 2012")
+(value="org.apache.openjpa.persistence.meta.AnnotationProcessor6",date="Mon May 07 15:41:49 CEST 2012")
 public class AttachmentEntry_ {
     public static volatile SingularAttribute<AttachmentEntry,DateTime> deltaTS;
     public static volatile SingularAttribute<AttachmentEntry,String> description;

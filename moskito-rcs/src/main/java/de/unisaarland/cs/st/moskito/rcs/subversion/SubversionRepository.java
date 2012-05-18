@@ -587,11 +587,12 @@ public class SubversionRepository extends Repository {
 	@Override
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) throws MalformedURLException,
-	                                    InvalidProtocolType,
-	                                    InvalidRepositoryURI,
-	                                    UnsupportedProtocolType {
-		setup(address, null, null, branchFactory, tmpDir);
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType {
+		setup(address, null, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
 	/*
@@ -603,10 +604,12 @@ public class SubversionRepository extends Repository {
 	                  final String username,
 	                  final String password,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) throws MalformedURLException,
-	                                    InvalidProtocolType,
-	                                    InvalidRepositoryURI,
-	                                    UnsupportedProtocolType {
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType {
+		setMainBranchName(mainBranchName);
 		setUri(address);
 		this.username = username;
 		this.password = password;

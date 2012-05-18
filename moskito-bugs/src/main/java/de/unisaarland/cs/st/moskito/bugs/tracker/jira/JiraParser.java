@@ -12,40 +12,51 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
-import java.net.MalformedURLException;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import net.ownhero.dev.ioda.DateTimeUtils;
+import net.ownhero.dev.ioda.HashUtils;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.MimeUtils;
+import net.ownhero.dev.ioda.ProxyConfig;
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
 
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
-
-import com.atlassian.jira.rest.client.IssueRestClient;
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.NullProgressMonitor;
-import com.atlassian.jira.rest.client.RestClientException;
-import com.atlassian.jira.rest.client.domain.Attachment;
-import com.atlassian.jira.rest.client.domain.BasicComponent;
-import com.atlassian.jira.rest.client.domain.BasicIssueType;
-import com.atlassian.jira.rest.client.domain.BasicResolution;
-import com.atlassian.jira.rest.client.domain.BasicStatus;
-import com.atlassian.jira.rest.client.domain.BasicUser;
-import com.atlassian.jira.rest.client.domain.Field;
-import com.atlassian.jira.rest.client.domain.Issue;
-import com.atlassian.jira.rest.client.domain.IssueLink;
-import com.atlassian.jira.rest.client.domain.Version;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
+import de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Priority;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Resolution;
 import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Severity;
@@ -79,19 +90,19 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			if (resolutionString.equals("unresolved")) {
+			if (resolutionString.toLowerCase().equals("unresolved")) {
 				return Resolution.UNRESOLVED;
-			} else if (resolutionString.equals("fixed")) {
+			} else if (resolutionString.toLowerCase().equals("fixed")) {
 				return Resolution.RESOLVED;
-			} else if (resolutionString.equals("won't fix")) {
+			} else if (resolutionString.toLowerCase().equals("won't fix")) {
 				return Resolution.WONT_FIX;
-			} else if (resolutionString.equals("duplicate")) {
+			} else if (resolutionString.toLowerCase().equals("duplicate")) {
 				return Resolution.DUPLICATE;
-			} else if (resolutionString.equals("incomplete")) {
+			} else if (resolutionString.toLowerCase().equals("incomplete")) {
 				return Resolution.UNRESOLVED;
-			} else if (resolutionString.equals("cannot reproduce")) {
+			} else if (resolutionString.toLowerCase().equals("cannot reproduce")) {
 				return Resolution.WORKS_FOR_ME;
-			} else if (resolutionString.equals("not a bug")) {
+			} else if (resolutionString.toLowerCase().equals("not a bug")) {
 				return Resolution.INVALID;
 			} else {
 				return Resolution.UNKNOWN;
@@ -109,17 +120,17 @@ public class JiraParser implements Parser {
 	 * @return the severity
 	 */
 	public static Severity resolveSeverity(final String severity) {
-		if (severity.equals("blocker")) {
+		if (severity.toLowerCase().equals("blocker")) {
 			return Severity.BLOCKER;
-		} else if (severity.equals("critical")) {
+		} else if (severity.toLowerCase().equals("critical")) {
 			return Severity.CRITICAL;
-		} else if (severity.equals("major")) {
+		} else if (severity.toLowerCase().equals("major")) {
 			return Severity.MAJOR;
-		} else if (severity.equals("minor")) {
+		} else if (severity.toLowerCase().equals("minor")) {
 			return Severity.MINOR;
-		} else if (severity.equals("trivial")) {
+		} else if (severity.toLowerCase().equals("trivial")) {
 			return Severity.TRIVIAL;
-		} else if (severity.equals("")) {
+		} else if (severity.toLowerCase().equals("")) {
 			return null;
 		} else {
 			return Severity.UNKNOWN;
@@ -134,19 +145,19 @@ public class JiraParser implements Parser {
 	 * @return the status
 	 */
 	public static Status resolveStatus(final String statusStr) {
-		if (statusStr.equals("open")) {
+		if (statusStr.toLowerCase().equals("open")) {
 			return Status.NEW;
-		} else if (statusStr.equals("in progress")) {
+		} else if (statusStr.toLowerCase().equals("in progress")) {
 			return Status.IN_PROGRESS;
-		} else if (statusStr.equals("reopened")) {
+		} else if (statusStr.toLowerCase().equals("reopened")) {
 			return Status.REOPENED;
-		} else if (statusStr.equals("resolved")) {
-			return Status.VERIFIED;
-		} else if (statusStr.equals("closed")) {
+		} else if (statusStr.toLowerCase().equals("resolved")) {
 			return Status.CLOSED;
-		} else if (statusStr.equals("patch reviewed")) {
+		} else if (statusStr.toLowerCase().equals("closed")) {
+			return Status.CLOSED;
+		} else if (statusStr.toLowerCase().equals("patch reviewed")) {
 			return Status.VERIFIED;
-		} else if (statusStr.equals("ready to review")) {
+		} else if (statusStr.toLowerCase().equals("ready to review")) {
 			return Status.REVIEWPENDING;
 		} else {
 			return Status.UNKNOWN;
@@ -161,74 +172,80 @@ public class JiraParser implements Parser {
 	 * @return the type
 	 */
 	public static Type resolveType(final String typeStr) {
-		if (typeStr.equals("bug")) {
+		if (typeStr.toLowerCase().equals("bug")) {
 			return Type.BUG;
-		} else if (typeStr.equals("new feature")) {
+		} else if (typeStr.toLowerCase().equals("new feature")) {
 			return Type.RFE;
-		} else if (typeStr.equals("task")) {
+		} else if (typeStr.toLowerCase().equals("task")) {
 			return Type.TASK;
-		} else if (typeStr.equals("improvement")) {
+		} else if (typeStr.toLowerCase().equals("improvement")) {
 			return Type.IMPROVEMENT;
-		} else if (typeStr.equals("test")) {
+		} else if (typeStr.toLowerCase().equals("test")) {
 			return Type.TEST;
-		} else if (typeStr.equals("")) {
+		} else if (typeStr.toLowerCase().equals("")) {
 			return Type.OTHER;
 		}
 		return null;
 	}
 	
-	/** The rest client. */
-	private JiraRestClient            restClient;
-	
-	/** The issue. */
-	private Issue                     issue;
-	
 	/** The fetch time. */
-	private DateTime                  fetchTime;
+	private DateTime                        fetchTime;
 	
 	/** The tracker. */
-	private Tracker                   tracker;
+	@SuppressWarnings ("unused")
+	private Tracker                         tracker;
 	
 	/** The history. */
-	private SortedSet<HistoryElement> history = null;
+	private final SortedSet<HistoryElement> history         = null;
 	
 	/** The resolver. */
-	private Person                    resolver;
+	private Person                          resolver;
 	
-	private byte[]                    md5;
+	private byte[]                          md5;
 	
-	/**
-	 * Instantiates a new jira parser.
-	 * 
-	 * @param restClient
-	 *            the rest client
-	 */
-	public JiraParser(final JiraRestClient restClient) {
-		// PRECONDITIONS
-		
-		try {
-			this.restClient = restClient;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	private ProxyConfig                     proxyConfig     = null;
+	
+	private XmlReport                       report;
+	
+	private Document                        document;
+	
+	private String                          baseUri;
+	
+	private String                          issueId;
+	
+	public static final String              dateTimePattern = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
 	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getComponent()
 	 */
 	
-	@Override
-	public Person getAssignedTo() {
+	/**
+	 * @param rawContent
+	 * @return
+	 */
+	private boolean checkRAW(final RawContent rawReport) {
 		// PRECONDITIONS
 		
 		try {
-			//
-			final BasicUser assignee = this.issue.getAssignee();
-			if (assignee != null) {
-				return new Person(assignee.getDisplayName(), assignee.getName(), null);
+			if (rawReport.getContent().contains("The issue you are trying to view does not exist.")) {
+				if (Logger.logInfo()) {
+					Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+					        + ". checkRaw() failed: issue seems not to exist.");
+				}
+				return false;
 			}
-			return null;
+			final Regex regex = new Regex("Access Denied.");
+			final MultiMatch findAll = regex.findAll(rawReport.getContent());
+			if (findAll != null) {
+				if (Logger.logInfo()) {
+					Logger.info("Ignoring report " + rawReport.getUri().toASCIIString()
+					        + ". checkRaw() failed: issue requires special permission.");
+				}
+				return false;
+			}
+			
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -238,6 +255,61 @@ public class JiraParser implements Parser {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.bugs.tracker.Parser#getCreationTimestamp()
 	 */
+	
+	/**
+	 * @param rawContent
+	 * @return
+	 */
+	private XmlReport createDocument(final RawContent rawReport) {
+		// PRECONDITIONS
+		
+		try {
+			final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
+			
+			try {
+				final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+				final org.jdom.Document document = saxBuilder.build(reader);
+				reader.close();
+				
+				return new XmlReport(rawReport, document);
+			} catch (final TransformerFactoryConfigurationError e) {
+				if (Logger.logError()) {
+					Logger.error(e, "Cannot create XML document!");
+				}
+			} catch (final IOException e) {
+				if (Logger.logError()) {
+					Logger.error(e, "Cannot create XML document!");
+				}
+			} catch (final JDOMException e) {
+				if (Logger.logError()) {
+					Logger.error(e, "Cannot create XML document!");
+				}
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	@Override
+	public Person getAssignedTo() {
+		// PRECONDITIONS
+		
+		try {
+			final NodeList nodeList = this.document.getElementsByTagName("assignee");
+			if (nodeList.getLength() > 0) {
+				final Node assignee = nodeList.item(0);
+				final String username = assignee.getAttributes().getNamedItem("username").getTextContent();
+				if (username.equals("-1")) {
+					return null;
+				}
+				return new Person(username, assignee.getTextContent(), null);
+			}
+			return null;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -250,32 +322,65 @@ public class JiraParser implements Parser {
 		final List<AttachmentEntry> result = new LinkedList<AttachmentEntry>();
 		
 		try {
-			for (final Attachment attachment : this.issue.getAttachments()) {
-				final URI link = attachment.getSelf();
-				final String[] linkParts = link.toASCIIString().split("/");
-				int idIndex = 0;
-				for (idIndex = 0; idIndex < linkParts.length; ++idIndex) {
-					if (linkParts[idIndex].equals("attachment")) {
-						break;
+			
+			final NodeList attachments = this.document.getElementsByTagName("attachment");
+			for (int i = 0; i < attachments.getLength(); ++i) {
+				final Node attachmentNode = attachments.item(i);
+				final NamedNodeMap attributes = attachmentNode.getAttributes();
+				final Node idNode = attributes.getNamedItem("id");
+				final Node nameNode = attributes.getNamedItem("name");
+				final Node sizeNode = attributes.getNamedItem("size");
+				final Node authorNode = attributes.getNamedItem("author");
+				final Node createdNode = attributes.getNamedItem("created");
+				
+				if (idNode == null) {
+					continue;
+				}
+				final AttachmentEntry attachmentEntry = new AttachmentEntry(idNode.getTextContent());
+				if (authorNode != null) {
+					attachmentEntry.setAuthor(new Person(authorNode.getTextContent(), null, null));
+				}
+				final StringBuilder linkBuilder = new StringBuilder();
+				if (nameNode != null) {
+					attachmentEntry.setFilename(nameNode.getTextContent());
+					linkBuilder.append(this.baseUri);
+					if (!this.baseUri.endsWith("/")) {
+						linkBuilder.append("/");
+					}
+					linkBuilder.append("secure/attachment/");
+					linkBuilder.append(idNode.getTextContent());
+					linkBuilder.append("/");
+					linkBuilder.append(nameNode.getTextContent());
+				}
+				if (sizeNode != null) {
+					attachmentEntry.setSize(Long.valueOf(sizeNode.getTextContent()));
+				}
+				if (createdNode != null) {
+					attachmentEntry.setTimestamp(DateTimeUtils.parseDate(createdNode.getTextContent(),
+					                                                     new Regex(JiraParser.dateTimePattern)));
+				}
+				final String link = linkBuilder.toString();
+				attachmentEntry.setLink(link);
+				
+				if (!link.equals("")) {
+					try {
+						attachmentEntry.setMime(MimeUtils.determineMIME(new URI(link)));
+					} catch (MIMETypeDeterminationException | IOException | UnsupportedProtocolException
+					        | FetchException | URISyntaxException e) {
+						if (Logger.logError()) {
+							Logger.error(e);
+						}
 					}
 				}
 				
-				final AttachmentEntry aEntry = new AttachmentEntry(linkParts[++idIndex]);
-				final BasicUser author = attachment.getAuthor();
-				aEntry.setAuthor(new Person(null, author.getDisplayName(), author.getName()));
-				aEntry.setFilename(attachment.getFilename());
-				aEntry.setTimestamp(attachment.getCreationDate());
-				try {
-					aEntry.setLink(attachment.getContentUri().toURL());
-				} catch (final MalformedURLException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-				}
-				aEntry.setMime(attachment.getMimeType());
-				aEntry.setSize(attachment.getSize());
-				result.add(aEntry);
+				result.add(attachmentEntry);
+				
+				// <attachment id="12430620" name="LUCENE-2222.patch" size="7674" author="mikemccand"
+				// created="Mon, 18 Jan 2010 11:20:11 +0000" />
+				
+				// https://issues.apache.org/jira/secure/attachment/12430620/LUCENE-2222.patch
 			}
+			
 			return result;
 		} finally {
 			// POSTCONDITIONS
@@ -307,11 +412,40 @@ public class JiraParser implements Parser {
 		
 		final SortedSet<Comment> result = new TreeSet<Comment>();
 		try {
-			int counter = 0;
-			for (final com.atlassian.jira.rest.client.domain.Comment comment : this.issue.getComments()) {
-				final BasicUser jiraAuthor = comment.getAuthor();
-				final Person author = new Person(jiraAuthor.getName(), jiraAuthor.getDisplayName(), null);
-				result.add(new Comment(counter++, author, comment.getCreationDate(), comment.getBody()));
+			final NodeList nodes = this.document.getElementsByTagName("comment");
+			for (int i = 0; i < nodes.getLength(); ++i) {
+				final Node commentNode = nodes.item(i);
+				// <comment id="12801635" author="renaud.delbru" created="Mon, 18 Jan 2010 00:45:29 +0000" >
+				final NamedNodeMap attributes = commentNode.getAttributes();
+				final Node idNode = attributes.getNamedItem("id");
+				final Node authorNode = attributes.getNamedItem("author");
+				final Node createdNode = attributes.getNamedItem("created");
+				
+				if (idNode == null) {
+					if (Logger.logWarn()) {
+						Logger.warn("Found comment without ID. Ignoring comment entry.");
+					}
+					continue;
+				}
+				Person author = null;
+				if (authorNode != null) {
+					final String authorString = authorNode.getTextContent();
+					final Regex emailRegex = new Regex(net.ownhero.dev.regex.util.Patterns.EMAIL_ADDRESS);
+					if (emailRegex.matches(authorString)) {
+						author = new Person(null, null, authorString);
+					} else {
+						author = new Person(authorString, null, null);
+					}
+				}
+				DateTime timestamp = null;
+				if (createdNode != null) {
+					timestamp = DateTimeUtils.parseDate(createdNode.getTextContent(),
+					                                    new Regex(JiraParser.dateTimePattern));
+				}
+				
+				final Comment comment = new Comment(Integer.valueOf(idNode.getTextContent()).intValue(), author,
+				                                    timestamp, commentNode.getTextContent());
+				result.add(comment);
 			}
 			return result;
 		} finally {
@@ -328,16 +462,9 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final StringBuilder components = new StringBuilder();
-			final Iterator<BasicComponent> componentIter = this.issue.getComponents().iterator();
-			while (componentIter.hasNext()) {
-				components.append(componentIter.next().getName());
-				if (componentIter.hasNext()) {
-					components.append(",");
-				}
-			}
-			if (components.length() > 0) {
-				return components.toString();
+			final NodeList nodeList = this.document.getElementsByTagName("component");
+			if (nodeList.getLength() > 0) {
+				return nodeList.item(0).getTextContent();
 			}
 			return null;
 		} finally {
@@ -354,7 +481,11 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getCreationDate();
+			final NodeList nodeList = this.document.getElementsByTagName("created");
+			if (nodeList.getLength() > 0) {
+				return DateTimeUtils.parseDate(nodeList.item(0).getTextContent(), new Regex(dateTimePattern));
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -369,7 +500,11 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getDescription();
+			final NodeList nodeList = this.document.getElementsByTagName("description");
+			if (nodeList.getLength() > 1) {
+				return nodeList.item(1).getTextContent();
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -399,17 +534,21 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
+			// https://issues.apache.org/jira/browse/LUCENE-2222?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs
 			if (this.history == null) {
-				final StringBuilder historyUrlBuilder = new StringBuilder();
-				historyUrlBuilder.append(this.tracker.getUri());
-				historyUrlBuilder.append("/browse/");
-				historyUrlBuilder.append(getId());
-				historyUrlBuilder.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
-				final JiraHistoryParser jiraHistoryParser = new JiraHistoryParser(getId(),
-				                                                                  new URI(historyUrlBuilder.toString()));
-				jiraHistoryParser.parse();
-				this.history = jiraHistoryParser.getHistory();
-				this.resolver = jiraHistoryParser.getResolver();
+				final StringBuilder sb = new StringBuilder();
+				sb.append("https://issues.apache.org/jira/browse/");
+				sb.append(getId());
+				sb.append("?page=com.atlassian.jira.plugin.system.issuetabpanels:changehistory-tabpanel#issue-tabs");
+				if (Logger.logDebug()) {
+					Logger.debug("Fetching issue report history from %s", sb.toString());
+				}
+				final JiraHistoryParser historyParser = new JiraHistoryParser(getId(), new URI(sb.toString()));
+				if (historyParser.parse()) {
+					this.resolver = historyParser.getResolver();
+					return historyParser.getHistory();
+				}
+				return new TreeSet<HistoryElement>();
 			}
 			return this.history;
 		} catch (final URISyntaxException e) {
@@ -431,7 +570,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getKey();
+			return this.issueId;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -447,15 +586,12 @@ public class JiraParser implements Parser {
 		
 		try {
 			final Set<String> result = new HashSet<String>();
-			final Field field = this.issue.getField("labels");
-			if (field.getValue() != null) {
-				final String fields = field.getValue().toString();
-				final String[] split = fields.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "")
-				                             .split(",");
-				for (final String s : split) {
-					result.add(s);
-				}
+			
+			final NodeList labels = this.document.getElementsByTagName("label");
+			for (int i = 0; i < labels.getLength(); ++i) {
+				result.add(labels.item(i).getTextContent());
 			}
+			
 			return result;
 		} finally {
 			// POSTCONDITIONS
@@ -471,7 +607,15 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getUpdateDate();
+			final NodeList nodeList = this.document.getElementsByTagName("updated");
+			if (nodeList.getLength() > 0) {
+				final String dateString = nodeList.item(0).getTextContent();
+				if (dateString.equals("")) {
+					return null;
+				}
+				return DateTimeUtils.parseDate(dateString, new Regex(dateTimePattern));
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -521,16 +665,21 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final BasicResolution basicResolution = this.issue.getResolution();
-			if ((basicResolution != null) && (!basicResolution.getName().isEmpty())) {
-				final String resolutionString = basicResolution.getName().toLowerCase();
-				return resolveResolution(resolutionString);
+			final NodeList resolutions = this.document.getElementsByTagName("resolution");
+			if (resolutions.getLength() > 0) {
+				return resolveResolution(resolutions.item(0).getTextContent());
 			}
-			return null;
+			return Resolution.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -541,12 +690,13 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Field field = this.issue.getField("resolved");
-			if (field != null) {
-				final String dateStr = field.getValue().toString();
-				if (!dateStr.isEmpty()) {
-					return DateTimeUtils.parseDate(dateStr);
+			final NodeList nodeList = this.document.getElementsByTagName("resolved");
+			if (nodeList.getLength() > 0) {
+				final String dateString = nodeList.item(0).getTextContent();
+				if (dateString.equals("")) {
+					return null;
 				}
+				return DateTimeUtils.parseDate(dateString, new Regex(dateTimePattern));
 			}
 			return null;
 		} finally {
@@ -573,7 +723,8 @@ public class JiraParser implements Parser {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setTracker(de.unisaarland.cs.st.moskito.bugs.tracker.Tracker)
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
+	 * )
 	 */
 	
 	/*
@@ -600,22 +751,15 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			if ((this.issue.getPriority() != null) && (!this.issue.getPriority().getName().isEmpty())) {
-				final String priority = this.issue.getPriority().getName().toLowerCase();
-				return resolveSeverity(priority);
+			final NodeList nodes = this.document.getElementsByTagName("priority");
+			if (nodes.getLength() > 0) {
+				return resolveSeverity(nodes.item(0).getTextContent());
 			}
-			return null;
+			return Severity.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setXMLReport(de.unisaarland.cs.st.moskito.bugs.tracker.XmlReport
-	 * )
-	 */
 	
 	/*
 	 * (non-Javadoc)
@@ -626,11 +770,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final Set<String> result = new HashSet<String>();
-			for (final IssueLink link : this.issue.getIssueLinks()) {
-				result.add(link.getTargetIssueKey());
-			}
-			return result;
+			return new HashSet<String>();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -641,12 +781,11 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final BasicStatus basicStatus = this.issue.getStatus();
-			if ((basicStatus != null) && (!basicStatus.getName().isEmpty())) {
-				final String statusStr = basicStatus.getName().toLowerCase();
-				return resolveStatus(statusStr);
+			final NodeList nodes = this.document.getElementsByTagName("status");
+			if (nodes.getLength() > 0) {
+				return resolveStatus(nodes.item(0).getTextContent());
 			}
-			return null;
+			return Status.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -661,7 +800,11 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getSummary();
+			final NodeList nodeList = this.document.getElementsByTagName("title");
+			if (nodeList.getLength() > 1) {
+				return nodeList.item(1).getTextContent();
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -676,9 +819,17 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final BasicUser reporter = this.issue.getReporter();
-			if (reporter != null) {
-				return new Person(reporter.getName(), reporter.getDisplayName(), null);
+			final NodeList nodeList = this.document.getElementsByTagName("reporter");
+			if (nodeList.getLength() > 0) {
+				final Node node = nodeList.item(0);
+				final String name = node.getTextContent();
+				final NamedNodeMap attributes = node.getAttributes();
+				final Node usernameNode = attributes.getNamedItem("username");
+				String username = null;
+				if (usernameNode != null) {
+					username = usernameNode.getTextContent();
+				}
+				return new Person(username, name, null);
 			}
 			return null;
 		} finally {
@@ -695,7 +846,7 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			return this.issue.getDescription();
+			return getSubject();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -710,12 +861,11 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final BasicIssueType issueType = this.issue.getIssueType();
-			if (issueType != null) {
-				final String typeStr = issueType.getName().toLowerCase();
-				return resolveType(typeStr);
+			final NodeList nodeList = this.document.getElementsByTagName("type");
+			if (nodeList.getLength() > 0) {
+				return resolveType(nodeList.item(0).getTextContent());
 			}
-			return null;
+			return Type.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -730,16 +880,9 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final StringBuilder result = new StringBuilder();
-			final Iterator<Version> iterator = this.issue.getAffectedVersions().iterator();
-			while (iterator.hasNext()) {
-				result.append(iterator.next().getName());
-				if (iterator.hasNext()) {
-					result.append(",");
-				}
-			}
-			if (result.length() > 0) {
-				return result.toString();
+			final NodeList nodeList = this.document.getElementsByTagName("version");
+			if (nodeList.getLength() > 1) {
+				return nodeList.item(1).getTextContent();
 			}
 			return null;
 		} finally {
@@ -747,6 +890,24 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/**
+	 * @param proxyConfig
+	 */
+	public void setProxyConfig(final ProxyConfig proxyConfig) {
+		// PRECONDITIONS
+		
+		try {
+			this.proxyConfig = proxyConfig;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
+	 */
 	/*
 	 * (non-Javadoc)
 	 * @see
@@ -763,28 +924,52 @@ public class JiraParser implements Parser {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.bugs.tracker.Parser#setURI(de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink)
-	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS
 		
 		try {
 			
-			final IssueRestClient issueClient = this.restClient.getIssueClient();
-			System.err.println(reportLink.getBugId());
-			this.issue = issueClient.getIssue(reportLink.getBugId(), new NullProgressMonitor());
-			this.md5 = String.valueOf(this.issue.hashCode()).getBytes();
-			if (this.issue == null) {
+			final URI uri = reportLink.getUri();
+			this.issueId = reportLink.getBugId();
+			RawContent rawContent = null;
+			if (this.proxyConfig == null) {
+				rawContent = IOUtils.fetch(uri);
+			} else {
+				rawContent = IOUtils.fetch(uri, this.proxyConfig);
+			}
+			
+			if (rawContent.getContent().trim().equals("")) {
 				return false;
 			}
+			
 			this.fetchTime = new DateTime();
+			if (!checkRAW(rawContent)) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not parse report " + uri + ". RAW check failed!");
+				}
+				return false;
+			}
+			
+			try {
+				this.md5 = HashUtils.getMD5(rawContent.getContent());
+			} catch (final NoSuchAlgorithmException e) {
+				if (Logger.logError()) {
+					Logger.error(e);
+				}
+			}
+			
+			this.report = createDocument(rawContent);
+			
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			final DocumentBuilder docBuilder = factory.newDocumentBuilder();
+			this.document = docBuilder.parse(new ByteArrayInputStream(this.report.getContent().getBytes()));
+			this.baseUri = this.document.getElementsByTagName("link").item(0).getTextContent();
+			
 			return true;
 			
-		} catch (final RestClientException e) {
+		} catch (UnsupportedProtocolException | FetchException | ParserConfigurationException | SAXException
+		        | IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}

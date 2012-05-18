@@ -54,7 +54,7 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Gets the issues feed uri.
-	 *
+	 * 
 	 * @return the issues feed uri
 	 */
 	public String getIssuesFeedUri() {
@@ -147,10 +147,13 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param projectName the project name
-	 * @param proxyConfig the proxy config
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param projectName
+	 *            the project name
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(final String projectName,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
@@ -168,12 +171,17 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param username the username
-	 * @param password the password
-	 * @param projectName the project name
-	 * @param proxyConfig the proxy config
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param projectName
+	 *            the project name
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(final String username,
 	                  final String password,
@@ -182,8 +190,10 @@ public class GoogleTracker extends Tracker {
 		this.projectName = projectName;
 		
 		// This should suffice as stated on gdata documents: http://code.google.com/apis/gdata/articles/proxy_setup.html
-		System.setProperty("http.proxyHost", proxyConfig.getHost());
-		System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
+		if (proxyConfig != null) {
+			System.setProperty("http.proxyHost", proxyConfig.getHost());
+			System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
+		}
 		
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
@@ -206,9 +216,11 @@ public class GoogleTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param projectName the project name
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param projectName
+	 *            the project name
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	protected void testSetup(final String projectName) throws InvalidParameterException {
 		this.projectName = projectName;

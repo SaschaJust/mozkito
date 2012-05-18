@@ -4,10 +4,11 @@ database.password=miner
 log.level=info
 repository.uri=/data/kim/miner_repos/xstream/git_repo_09_03_2011/
 repository.type=GIT
-tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
+
+tracker.uri=http://jira.codehaus.org
 tracker.type=JIRA
-tracker.stop=652
-tracker.pattern=XSTR-<BUGID>/XSTR-<BUGID>.xml
+jira.projectKey=XSTR
+
 headless
 mapping.config.regexFile=file:///scratch/just/reposuite/settings/reposuite_xstream_may2011.regex
 mapping.score.AuthorEquality=1

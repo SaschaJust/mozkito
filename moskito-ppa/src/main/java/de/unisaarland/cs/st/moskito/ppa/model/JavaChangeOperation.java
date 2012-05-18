@@ -27,8 +27,8 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -56,7 +56,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the element
 	 * @return the java change operation if successfull. Otherwise returns <node>null</code>
 	 */
-	public static JavaChangeOperation fromXMLRepresentation(final org.jdom.Element element,
+	public static JavaChangeOperation fromXMLRepresentation(final Element element,
 	                                                        final PersistenceUtil persistenceUtil) {
 		
 		ChangeType changeType = null;
@@ -76,7 +76,7 @@ public class JavaChangeOperation implements Annotated {
 		final Attribute revAttribute = element.getAttribute(TRANSACTION_TAG_NAME);
 		final String transaction_id = revAttribute.getValue();
 		
-		final org.jdom.Element javaElementChild = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
+		final Element javaElementChild = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
 		
 		location = JavaElementLocation.fromXMLRepresentation(javaElementChild);
 		

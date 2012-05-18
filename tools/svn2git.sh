@@ -1,6 +1,6 @@
 #!/bin/bash
 # TODO check dependencies of git-svn-migrate
-
+set -x
 function check_git_svn() {
 	git help svn >/dev/null 2>&1
 	ret=$?
@@ -32,7 +32,7 @@ function check_targetdir() {
 	
 	if [ -x "${TARGET_DIR}" ]; then
 		if [ -d "${TARGET_DIR}" ]; then
-			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXX")
+			TESTFILE=$(mktemp -q "${TARGET_DIR}/filewrite.XXXXXXXXXX")
 			ret=$?
 			rm -f "${TESTFILE}"
 			return $ret
@@ -88,10 +88,10 @@ fi
 
 OLDPWD="$PWD"
 
-REPOURI=$(mktemp -t "svn2git_uri")
+REPOURI=$(mktemp -t "svn2git_uri.XXXXXXXXXX")
 echo "file://${SOURCE_REPO}" > "${REPOURI}"
 
-AUTHORFILE=$(mktemp -t "svn2git_authors")
+AUTHORFILE=$(mktemp -t "svn2git_authors.XXXXXXXXXX")
 bash "${GITSVNMIGRATE_DIR}/fetch-svn-authors.sh" --url-file="${REPOURI}" > "${AUTHORFILE}"
 
 if [ $? -ne 0 ]; then
@@ -99,7 +99,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-TEMPDIR=$(mktemp -d -t svn2git_target)
+TEMPDIR=$(mktemp -d -t svn2git_target.XXXXXXXXXX)
 
 bash "${GITSVNMIGRATE_DIR}/git-svn-migrate.sh" --url-file="${REPOURI}" --authors-file="${AUTHORFILE}" --destination "${TEMPDIR}"
 

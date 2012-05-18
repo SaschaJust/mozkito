@@ -23,6 +23,7 @@ import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -68,6 +69,8 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	/** The database options. */
 	private final DatabaseOptions                databaseOptions;
 	
+	private Options                              mainBranchArg;
+	
 	/**
 	 * Is an argument set that contains all arguments necessary for the repositories.
 	 * 
@@ -95,6 +98,10 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			this.branchFactory = new BranchFactory(this.persistenceUtil);
 		}
 		return this.branchFactory;
+	}
+	
+	public StringArgument.Options getMainBranchArg() {
+		return this.mainBranchArg;
 	}
 	
 	/**
@@ -163,6 +170,8 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			final StringArgument passwordArgument = getSettings().getArgument(getPassArg());
 			final EnumArgument<RepositoryType> typeArgument = getSettings().getArgument(getRepoTypeArg());
 			final DirectoryArgument tmpDirArgument = getSettings().getArgument(getTmpDirArg());
+			final StringArgument mainBranchArgument = getSettings().getArgument(getMainBranchArg());
+			
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
 			
 			final URI repositoryURI = dirArgument.getValue();
@@ -191,9 +200,11 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 				}
 				
 				if ((username == null) && (password == null)) {
-					repository.setup(repositoryURI, getBranchFactory(), tmpDirArgument.getValue());
+					repository.setup(repositoryURI, getBranchFactory(), tmpDirArgument.getValue(),
+					                 mainBranchArgument.getValue());
 				} else {
-					repository.setup(repositoryURI, username, password, getBranchFactory(), tmpDirArgument.getValue());
+					repository.setup(repositoryURI, username, password, getBranchFactory(), tmpDirArgument.getValue(),
+					                 mainBranchArgument.getValue());
 				}
 				
 				this.settings.addInformation(repository.getHandle(), repository.gatherToolInformation());
@@ -238,6 +249,13 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			                                               "Directory to be used to clone instances of repository.",
 			                                               null, Requirement.optional, false);
 			map.put(this.tmpDirArg.getName(), this.tmpDirArg);
+			
+			this.mainBranchArg = new StringArgument.Options(
+			                                                set,
+			                                                "mainBranch",
+			                                                "The name of the main branch. Usually `master` or `trunk`.",
+			                                                "master", Requirement.required);
+			map.put(this.mainBranchArg.getName(), this.mainBranchArg);
 			
 			map.put(this.databaseOptions.getName(), this.databaseOptions);
 			

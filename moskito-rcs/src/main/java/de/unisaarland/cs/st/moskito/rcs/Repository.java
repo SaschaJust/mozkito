@@ -60,13 +60,24 @@ import difflib.Delta;
  */
 public abstract class Repository {
 	
+	/** The uri. */
 	private URI            uri;
+	
+	/** The start revision. */
 	private String         startRevision;
 	
+	/** The end revision. */
 	private String         endRevision;
 	
+	/** The start transaction. */
 	private RCSTransaction startTransaction = null;
 	
+	/** The main branch name. */
+	private String         mainBranchName;
+	
+	/**
+	 * Instantiates a new repository.
+	 */
 	public Repository() {
 	}
 	
@@ -99,7 +110,10 @@ public abstract class Repository {
 	/**
 	 * Checks the repository for corruption.
 	 * 
+	 * @param logEntries
+	 *            the log entries
 	 * @param withInterface
+	 *            the with interface
 	 */
 	public void consistencyCheck(@NotNull final List<LogEntry> logEntries,
 	                             final boolean withInterface) {
@@ -139,8 +153,11 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Creates the file count per transaction.
+	 * 
 	 * @param entries
-	 * @return
+	 *            the entries
+	 * @return the j free chart
 	 */
 	private JFreeChart createFileCountPerTransaction(final List<LogEntry> entries) {
 		final List<Double> revisions = new ArrayList<Double>(entries.size());
@@ -177,8 +194,11 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Creates the time per transaction.
+	 * 
 	 * @param entries
-	 * @return
+	 *            the entries
+	 * @return the j free chart
 	 */
 	private JFreeChart createTimePerTransaction(final List<LogEntry> entries) {
 		final DefaultXYDataset dataset = new DefaultXYDataset();
@@ -206,9 +226,13 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Creates the transactions per author.
+	 * 
 	 * @param entries
+	 *            the entries
 	 * @param threshold
-	 * @return
+	 *            the threshold
+	 * @return the j free chart
 	 */
 	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries,
 	                                               final double threshold) {
@@ -258,6 +282,8 @@ public abstract class Repository {
 	                                       String revisedRevision);
 	
 	/**
+	 * Gather tool information.
+	 * 
 	 * @return a string containing information about the instrumented library/tool (e.g. version, ...)
 	 */
 	public abstract String gatherToolInformation();
@@ -308,6 +334,11 @@ public abstract class Repository {
 		return this.getClass().getSimpleName();
 	}
 	
+	/**
+	 * Gets the hEAD.
+	 * 
+	 * @return the hEAD
+	 */
 	public String getHEAD() {
 		return "HEAD";
 	}
@@ -320,19 +351,31 @@ public abstract class Repository {
 	public abstract String getHEADRevisionId();
 	
 	/**
+	 * Gets the main branch name.
+	 * 
+	 * @return the main branch name
+	 */
+	public String getMainBranchName() {
+		return this.mainBranchName;
+	}
+	
+	/**
 	 * Returns the relative transaction id to the given one. Result is bounded by startRevision and endRevision.
 	 * 
 	 * @param transactionId
+	 *            the transaction id
 	 * @param index
-	 * @return
+	 *            the index
+	 * @return the relative transaction id
 	 */
 	public abstract String getRelativeTransactionId(String transactionId,
 	                                                long index);
 	
 	/**
-	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * Gets the repository type.
+	 * 
 	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
-	 *         {@link Repository} for details.
+	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de> {@link Repository} for details.
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass()
@@ -342,11 +385,25 @@ public abstract class Repository {
 		                                                     - Repository.class.getSimpleName().length()).toUpperCase());
 	}
 	
+	/**
+	 * Gets the rev dependency graph.
+	 * 
+	 * @return the rev dependency graph
+	 */
 	public abstract IRevDependencyGraph getRevDependencyGraph();
 	
+	/**
+	 * Gets the rev dependency graph.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return the rev dependency graph
+	 */
 	public abstract IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
 	
 	/**
+	 * Gets the start revision.
+	 * 
 	 * @return the startRevision
 	 */
 	public String getStartRevision() {
@@ -354,6 +411,8 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Gets the start transaction.
+	 * 
 	 * @return the startTransaction
 	 */
 	public RCSTransaction getStartTransaction() {
@@ -361,6 +420,8 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Gets the transaction count.
+	 * 
 	 * @return the total number of revisions in the repository, -1 if error occured
 	 */
 	public abstract long getTransactionCount();
@@ -374,6 +435,15 @@ public abstract class Repository {
 	 *         returns 021e7e97724b for 3.
 	 */
 	public abstract String getTransactionId(long index);
+	
+	/**
+	 * Gets the uri.
+	 * 
+	 * @return the uri
+	 */
+	public URI getUri() {
+		return this.uri;
+	}
 	
 	// /**
 	// * This method extracts the fragment of the URI, saves the given uri
@@ -415,17 +485,10 @@ public abstract class Repository {
 	// }
 	
 	/**
-	 * @return
-	 */
-	public URI getUri() {
-		return this.uri;
-	}
-	
-	/**
 	 * Returns the path of the directory that contains the local copy/clone/checkout of the repository (the working
-	 * copy)
+	 * copy).
 	 * 
-	 * @return
+	 * @return the woking copy location
 	 */
 	public abstract File getWokingCopyLocation();
 	
@@ -459,6 +522,8 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Sets the end revision.
+	 * 
 	 * @param endRevision
 	 *            the endRevision to set
 	 */
@@ -467,6 +532,18 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Sets the main branch name.
+	 * 
+	 * @param mainBranchName
+	 *            the new main branch name
+	 */
+	public void setMainBranchName(final String mainBranchName) {
+		this.mainBranchName = mainBranchName;
+	}
+	
+	/**
+	 * Sets the start revision.
+	 * 
 	 * @param startRevision
 	 *            the startRevision to set
 	 */
@@ -475,6 +552,8 @@ public abstract class Repository {
 	}
 	
 	/**
+	 * Sets the start transaction.
+	 * 
 	 * @param startTransaction
 	 *            the startTransaction to set
 	 */
@@ -487,14 +566,12 @@ public abstract class Repository {
 	 * 
 	 * @param address
 	 *            the address the repository can be found
-	 * @param startRevision
-	 *            first revision to take into account (may be null)
-	 * @param endRevision
-	 *            last revision to take into account (may be null)
 	 * @param branchFactory
 	 *            the branch factory
 	 * @param tmpDir
 	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -506,20 +583,17 @@ public abstract class Repository {
 	 */
 	public abstract void setup(URI address,
 	                           BranchFactory branchFactory,
-	                           File tmpDir) throws MalformedURLException,
-	                                       InvalidProtocolType,
-	                                       InvalidRepositoryURI,
-	                                       UnsupportedProtocolType;
+	                           File tmpDir,
+	                           String mainBranchName) throws MalformedURLException,
+	                                                 InvalidProtocolType,
+	                                                 InvalidRepositoryURI,
+	                                                 UnsupportedProtocolType;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
 	 * 
 	 * @param address
 	 *            the address
-	 * @param startRevision
-	 *            first revision to take into account (may be null)
-	 * @param endRevision
-	 *            last revision to take into account (may be null)
 	 * @param username
 	 *            the username
 	 * @param password
@@ -528,6 +602,8 @@ public abstract class Repository {
 	 *            the branch factory
 	 * @param tmpDir
 	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 * @throws InvalidProtocolType
@@ -541,13 +617,17 @@ public abstract class Repository {
 	                           String username,
 	                           String password,
 	                           BranchFactory branchFactory,
-	                           File tmpDir) throws MalformedURLException,
-	                                       InvalidProtocolType,
-	                                       InvalidRepositoryURI,
-	                                       UnsupportedProtocolType;
+	                           File tmpDir,
+	                           String mainBranchName) throws MalformedURLException,
+	                                                 InvalidProtocolType,
+	                                                 InvalidRepositoryURI,
+	                                                 UnsupportedProtocolType;
 	
 	/**
+	 * Sets the uri.
+	 * 
 	 * @param uri
+	 *            the new uri
 	 */
 	public void setUri(final URI uri) {
 		this.uri = uri;

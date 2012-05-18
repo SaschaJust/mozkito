@@ -5,10 +5,12 @@ database.host=grid1.st.cs.uni-saarland.de
 log.level=info
 repository.uri=/data/kim/miner_repos/jaxen/git_repo_07.06.2010/
 repository.type=GIT
-tracker.fetchURI=http://jira.codehaus.org/si/jira.issueviews:issue-xml/
+
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/jaxen/jira_cache/
+tracker.uri=http://jira.codehaus.org
 tracker.type=JIRA
-tracker.stop=212
-tracker.pattern=JAXEN-<BUGID>/JAXEN-<BUGID>.xml
+jira.projectKey=JAXEN
+
 headless
 callgraph.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-callgraph/
 datadependency.eclipse = /data/kim/moskito/eclipse-apps/linux/eclipse-reposuite-datadependency/

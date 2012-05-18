@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.Test;
 
 public class JavaMethodCallTest {

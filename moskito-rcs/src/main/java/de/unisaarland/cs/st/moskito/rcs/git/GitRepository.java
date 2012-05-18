@@ -67,22 +67,40 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
+	/** The current revision. */
 	private String                           currentRevision = null;
+	
+	/** The charset. */
 	protected static Charset                 charset         = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
 		}
 	}
+	
+	/** The Constant dtf. */
 	protected static final DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	
+	/** The Constant regex. */
 	protected static final Regex             regex           = new Regex(
 	                                                                     ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	
+	/** The Constant formerPathRegex. */
 	protected static final Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	
+	/** The clone dir. */
 	private File                             cloneDir;
+	
+	/** The transaction i ds. */
 	private List<String>                     transactionIDs  = new LinkedList<String>();
 	
+	/** The log cache. */
 	private final HashMap<String, LogEntry>  logCache        = new HashMap<String, LogEntry>();
+	
+	/** The branch factory. */
 	private BranchFactory                    branchFactory;
+	
+	/** The rev dep graph. */
 	private GitRevDependencyGraph            revDepGraph;
 	
 	/**
@@ -170,9 +188,13 @@ public class GitRepository extends Repository {
 	}
 	
 	/**
+	 * Clone.
+	 * 
 	 * @param inputStream
+	 *            the input stream
 	 * @param destDir
-	 * @return
+	 *            the dest dir
+	 * @return true, if successful
 	 */
 	private boolean clone(final InputStream inputStream,
 	                      final String destDir) {
@@ -288,6 +310,11 @@ public class GitRepository extends Repository {
 		return builder.toString();
 	}
 	
+	/**
+	 * Gets the branch factory.
+	 * 
+	 * @return the branch factory
+	 */
 	public BranchFactory getBranchFactory() {
 		// PRECONDITIONS
 		
@@ -392,6 +419,10 @@ public class GitRepository extends Repository {
 		return getStartRevision();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getFormerPathName(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public String getFormerPathName(final String revision,
 	                                final String pathName) {
@@ -426,16 +457,22 @@ public class GitRepository extends Repository {
 	@Override
 	public String getHEADRevisionId() {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		        "master", "--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
+		        getMainBranchName(), "--branches", "--remotes" }, this.cloneDir, null, new HashMap<String, String>());
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		if (response.getSecond().isEmpty()) {
-			throw new UnrecoverableError("Command `git rev-parse master` did not produc any output!");
+			throw new UnrecoverableError(String.format("Command `git rev-parse %s` did not produc any output!",
+			                                           getMainBranchName()));
 		}
 		return response.getSecond().get(0).trim();
 	}
 	
+	/**
+	 * Gets the ls remote.
+	 * 
+	 * @return the ls remote
+	 */
 	public List<String> getLsRemote() {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "ls-remote", "." },
 		                                                                      this.cloneDir, null,
@@ -447,6 +484,11 @@ public class GitRepository extends Repository {
 		return response.getSecond();
 	}
 	
+	/**
+	 * Gets the merges.
+	 * 
+	 * @return the merges
+	 */
 	public List<String> getMerges() {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
 		                                                                              "--branches", "--remotes",
@@ -460,6 +502,10 @@ public class GitRepository extends Repository {
 		return response.getSecond();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRelativeTransactionId(java.lang.String, long)
+	 */
 	@Override
 	public String getRelativeTransactionId(final String transactionId,
 	                                       final long index) {
@@ -503,6 +549,10 @@ public class GitRepository extends Repository {
 		 */
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRevDependencyGraph()
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
@@ -518,6 +568,11 @@ public class GitRepository extends Repository {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getRevDependencyGraph(de.unisaarland.cs.st.moskito.persistence.
+	 * PersistenceUtil)
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
@@ -533,6 +588,11 @@ public class GitRepository extends Repository {
 		}
 	}
 	
+	/**
+	 * Gets the rev list parents.
+	 * 
+	 * @return the rev list parents
+	 */
 	public List<String> getRevListParents() {
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
 		                                                                              "--encoding=UTF-8", "--parents",
@@ -547,6 +607,10 @@ public class GitRepository extends Repository {
 		return response.getSecond();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getTransactionCount()
+	 */
 	@Override
 	public long getTransactionCount() {
 		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:''" };
@@ -557,6 +621,10 @@ public class GitRepository extends Repository {
 		return response.getSecond().size();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getTransactionId(long)
+	 */
 	@Override
 	public String getTransactionId(@Positive ("Cannot get transaction id for revision number smaller than zero.") final long index) {
 		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:'%H'", "--reverse" };
@@ -569,6 +637,10 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * In case of git this method returns a file pointing to a bare repository mirror!
+	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getWokingCopyLocation()
+	 */
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.rcs.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -651,10 +723,11 @@ public class GitRepository extends Repository {
 	@Override
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) {
+	                  final File tmpDir,
+	                  final String mainBranchName) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
-		setup(address, null, branchFactory, tmpDir);
+		setup(address, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
 	/**
@@ -662,19 +735,22 @@ public class GitRepository extends Repository {
 	 * 
 	 * @param address
 	 *            the address
-	 * @param startRevision
-	 *            the start revision
-	 * @param endRevision
-	 *            the end revision
 	 * @param inputStream
 	 *            the input stream
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
-	                   final File tmpDir) {
+	                   final File tmpDir,
+	                   @NotNull final String mainBranchName) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
-		
+		setMainBranchName(mainBranchName);
 		setUri(address);
 		this.branchFactory = branchFactory;
 		
@@ -719,11 +795,12 @@ public class GitRepository extends Repository {
 		this.transactionIDs = response.getSecond();
 		Collections.reverse(this.transactionIDs);
 		
-		Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
-		                "First revision ID and transaction ID list missmatch!");
-		Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
-		                "End revision ID and transaction ID list missmatch!");
-		
+		if (!this.transactionIDs.isEmpty()) {
+			Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+			                "First revision ID and transaction ID list missmatch!");
+			Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+			                "End revision ID and transaction ID list missmatch!");
+		}
 	}
 	
 	/*
@@ -735,11 +812,12 @@ public class GitRepository extends Repository {
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) {
+	                  final File tmpDir,
+	                  final String mainBranchName) {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");
 		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
-		      tmpDir);
+		      tmpDir, mainBranchName);
 	}
 }

@@ -223,7 +223,10 @@ public class GoogleParser implements Parser {
 		
 		try {
 			final Owner owner = this.issuesEntry.getOwner();
-			return new Person(owner.getUsername().getValue(), null, null);
+			if (owner != null) {
+				return new Person(owner.getUsername().getValue(), null, null);
+			}
+			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -772,8 +775,11 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
-			return resolveResolution(status);
+			if ((this.issuesEntry.getStatus() != null) && (this.issuesEntry.getStatus().getValue() != null)) {
+				final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
+				return resolveResolution(status);
+			}
+			return Resolution.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -888,8 +894,11 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
-			return resolveStatus(status);
+			if ((this.issuesEntry.getStatus() != null) && (this.issuesEntry.getStatus().getValue() != null)) {
+				final String status = this.issuesEntry.getStatus().getValue().toLowerCase();
+				return resolveStatus(status);
+			}
+			return Status.UNKNOWN;
 		} finally {
 			// POSTCONDITIONS
 		}

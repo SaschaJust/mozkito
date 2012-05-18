@@ -24,7 +24,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
@@ -90,7 +90,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 *            the element
 	 * @return the java method call is successful, <code>null</code> otherwise.
 	 */
-	public static JavaMethodCall fromXMLRepresentation(final org.jdom.Element element) {
+	public static JavaMethodCall fromXMLRepresentation(final Element element) {
 		if (!element.getName().equals(JAVA_METHOD_CALL)) {
 			if (Logger.logWarn()) {
 				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
@@ -98,7 +98,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 			return null;
 		}
 		
-		final org.jdom.Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");

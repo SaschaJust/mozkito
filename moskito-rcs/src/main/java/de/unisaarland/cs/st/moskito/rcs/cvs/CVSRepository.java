@@ -191,10 +191,11 @@ public class CVSRepository extends Repository {
 	@Override
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) throws MalformedURLException,
-	                                    InvalidProtocolType,
-	                                    InvalidRepositoryURI,
-	                                    UnsupportedProtocolType {
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}
@@ -207,10 +208,11 @@ public class CVSRepository extends Repository {
 	                  @NotNull final String username,
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
-	                  final File tmpDir) throws MalformedURLException,
-	                                    InvalidProtocolType,
-	                                    InvalidRepositoryURI,
-	                                    UnsupportedProtocolType {
+	                  final File tmpDir,
+	                  @NotNull final String mainBranchName) throws MalformedURLException,
+	                                                       InvalidProtocolType,
+	                                                       InvalidRepositoryURI,
+	                                                       UnsupportedProtocolType {
 		if (Logger.logError()) {
 			Logger.error("CVS support hasn't been implemented yet. " + Settings.getReportThis());
 		}

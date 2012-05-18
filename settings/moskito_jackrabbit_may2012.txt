@@ -1,0 +1,14 @@
+database.name=moskito_jackrabbit_may2012
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/apache/jackrabbit/jackrabbit_08_05_2012.git
+repository.type=GIT
+repository.mainBranch=trunk
+headless
+
+tracker.type=JIRA
+tracker.useProxy=true
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/apache/jackrabbit/jira_cache/
+tracker.uri=https://issues.apache.org/jira/
+jira.projectKey=JCR

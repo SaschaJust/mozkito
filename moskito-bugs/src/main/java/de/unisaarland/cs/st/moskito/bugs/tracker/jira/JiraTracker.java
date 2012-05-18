@@ -15,25 +15,26 @@
  */
 package de.unisaarland.cs.st.moskito.bugs.tracker.jira;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.ProxyConfig;
+import net.ownhero.dev.ioda.container.RawContent;
+import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
-import com.atlassian.jira.rest.client.AuthenticationHandler;
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.NullProgressMonitor;
-import com.atlassian.jira.rest.client.RestClientException;
-import com.atlassian.jira.rest.client.auth.AnonymousAuthenticationHandler;
-import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
-import com.atlassian.jira.rest.client.domain.BasicIssue;
-import com.atlassian.jira.rest.client.domain.SearchResult;
-import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory;
-import com.sun.jersey.client.apache.config.ApacheHttpClientConfig;
-import com.sun.jersey.client.apache.config.DefaultApacheHttpClientConfig;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.OverviewParser;
@@ -51,14 +52,15 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	/** The overview ur is. */
 	private final Set<ReportLink> overviewURIs = new HashSet<ReportLink>();
 	
-	/** The pm. */
-	private NullProgressMonitor   pm;
-	
-	/** The rest client. */
-	private JiraRestClient        restClient;
-	
 	/** The project key. */
 	private String                projectKey;
+	
+	private RawContent fetch(final URI uri) throws UnsupportedProtocolException, FetchException {
+		if (getProxyConfig() == null) {
+			return IOUtils.fetch(uri);
+		}
+		return IOUtils.fetch(uri, getProxyConfig());
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -69,7 +71,11 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			return new JiraParser(this.restClient);
+			final JiraParser parser = new JiraParser();
+			if (getProxyConfig() != null) {
+				parser.setProxyConfig(getProxyConfig());
+			}
+			return parser;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -84,6 +90,9 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
+			if (!parseOverview()) {
+				return new HashSet<ReportLink>();
+			}
 			return this.overviewURIs;
 		} finally {
 			// POSTCONDITIONS
@@ -97,15 +106,54 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	@Override
 	public boolean parseOverview() {
 		// PRECONDITIONS
-		
+		if (Logger.logInfo()) {
+			Logger.info("Parsing overview. This might take a while ...");
+		}
 		try {
-			final SearchResult searchJql = this.restClient.getSearchClient().searchJql("project=" + this.projectKey,
-			                                                                           this.pm);
-			for (final BasicIssue issue : searchJql.getIssues()) {
-				this.overviewURIs.add(new ReportLink(issue.getSelf(), issue.getKey()));
-			}
+			
+			int offset = 0;
+			final int limit = 1000;
+			
+			boolean moreToCome = true;
+			
+			do {
+				final StringBuilder sb = new StringBuilder();
+				sb.append(getUri().toASCIIString());
+				sb.append("/sr/jira.issueviews:searchrequest-rss/temp/SearchRequest.xml?jqlQuery=project+%3D+");
+				sb.append(this.projectKey);
+				sb.append("&tempMax=");
+				sb.append(limit);
+				sb.append("&pager/start=");
+				sb.append(offset);
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Parsing overview URI %s", sb.toString());
+				}
+				
+				final URI overviewUri = new URI(sb.toString());
+				final RawContent overviewContent = fetch(overviewUri);
+				
+				final XMLReader parser = XMLReaderFactory.createXMLReader();
+				final JiraIDExtractor handler = new JiraIDExtractor();
+				parser.setContentHandler(handler);
+				final InputSource inputSource = new InputSource(new StringReader(overviewContent.getContent()));
+				parser.parse(inputSource);
+				final List<String> bugIDs = handler.getIds();
+				for (final String id : bugIDs) {
+					final StringBuilder linkBuilder = new StringBuilder();
+					linkBuilder.append(getUri());
+					linkBuilder.append("/si/jira.issueviews:issue-xml/");
+					linkBuilder.append(id);
+					linkBuilder.append("/");
+					linkBuilder.append(id);
+					linkBuilder.append(".xml");
+					this.overviewURIs.add(new ReportLink(new URI(linkBuilder.toString()), id));
+				}
+				moreToCome = bugIDs.size() == limit;
+				offset += limit;
+			} while (moreToCome);
 			return true;
-		} catch (final RestClientException e) {
+		} catch (final URISyntaxException | UnsupportedProtocolException | FetchException | IOException | SAXException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
@@ -117,13 +165,19 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param projectKey the project key
-	 * @param proxyConfig the proxy config
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param projectKey
+	 *            the project key
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
@@ -131,34 +185,17 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	                  final String projectKey,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
 		
+		if (Logger.logTrace()) {
+			Logger.trace("Setting up JiraTracker with fetchURI=%s, username=%s, password=%s, projectKey=%s, proxyConfig=%s",
+			             fetchURI == null
+			                             ? "null"
+			                             : fetchURI.toASCIIString(), username, password, projectKey,
+			             proxyConfig == null
+			                                ? "null"
+			                                : proxyConfig.toString());
+		}
+		
 		this.projectKey = projectKey;
-		final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
-		
-		final DefaultApacheHttpClientConfig cc = new DefaultApacheHttpClientConfig();
-		
-		if (proxyConfig != null) {
-			// support PROXYs: Atlassian has to enable support first final or we have final to extend the
-			// JIRA version
-			cc.getProperties().put(ApacheHttpClientConfig.PROPERTY_PROXY_URI,
-			                       String.format("%s:%s", proxyConfig.getHost(), proxyConfig.getPort()));
-			if (proxyConfig.getUsername() != null) {
-				cc.getState().setProxyCredentials("Squid", proxyConfig.getHost(), proxyConfig.getPort(),
-				                                  proxyConfig.getUsername(), proxyConfig.getPassword());
-			}
-			System.setProperty("http.proxyHost", proxyConfig.getHost());
-			System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
-			if (Logger.logWarn()) {
-				Logger.warn("JIRA REST API does not support proxy usage yet. It's a missing feature from Atlassian. Configured proxy use but will most likely be ignored.");
-			}
-		}
-		
-		AuthenticationHandler authenticationHandler = new AnonymousAuthenticationHandler();
-		if (username != null) {
-			authenticationHandler = new BasicHttpAuthenticationHandler(username, password);
-		}
-		authenticationHandler.configure(cc);
-		this.restClient = factory.create(fetchURI, authenticationHandler);
-		this.pm = new NullProgressMonitor();
 		super.setup(fetchURI, username, password, proxyConfig);
 	}
 }
