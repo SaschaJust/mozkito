@@ -15,6 +15,8 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 import static net.ownhero.dev.ioda.StringUtils.truncate;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,13 +25,12 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -71,13 +72,16 @@ public abstract class MappingEngine extends Node {
 	/**
 	 * The Class Options.
 	 */
-	static class Options extends ArgumentSetOptions<Set<MappingEngine>, ArgumentSet<Set<MappingEngine>, Options>> {
+	public static class Options extends
+	        ArgumentSetOptions<Set<MappingEngine>, ArgumentSet<Set<MappingEngine>, Options>> {
 		
 		/** The Constant tag. */
-		static final String         tag = "engines"; //$NON-NLS-1$
-		                                             
+		static final String                                                                               tag           = "engines";      //$NON-NLS-1$
+		                                                                                                                                   
 		/** The engines option. */
-		private SetArgument.Options enginesOption;
+		private SetArgument.Options                                                                       enabledEnginesOption;
+		
+		private final Map<Class<? extends MappingEngine>, ArgumentSetOptions<? extends MappingEngine, ?>> engineOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -95,6 +99,7 @@ public abstract class MappingEngine extends Node {
 		 * (non-Javadoc)
 		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 		 */
+		@SuppressWarnings ({ "rawtypes", "unchecked" })
 		@Override
 		public Set<MappingEngine> init() {
 			// PRECONDITIONS
@@ -102,33 +107,37 @@ public abstract class MappingEngine extends Node {
 			
 			try {
 				
-				final SetArgument argument = getSettings().getArgument(this.enginesOption);
+				final SetArgument argument = getSettings().getArgument(this.enabledEnginesOption);
+				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
-					@SuppressWarnings ("unchecked")
-					final Class<? extends MappingEngine> clazz = (Class<? extends MappingEngine>) Class.forName(name);
-					final MappingEngine instance = clazz.newInstance();
-					instance.init();
-					set.add(instance);
+					Class<? extends MappingEngine> clazz;
+					try {
+						clazz = (Class<? extends MappingEngine>) Class.forName(MappingEngine.class.getPackage()
+						                                                                          .getName()
+						        + '.'
+						        + name);
+					} catch (final ClassNotFoundException e) {
+						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						
+					}
+					
+					final ArgumentSetOptions<? extends MappingEngine, ?> options = this.engineOptions.get(clazz);
+					if (options == null) {
+						if (Logger.logWarn()) {
+							Logger.warn("Engine '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
+							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
+							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
+						}
+						
+					} else {
+						final ArgumentSet<? extends MappingEngine, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						set.add(argumentSet.getValue());
+					}
 				}
 				
 				return set;
-			} catch (final ClassNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			} catch (final InstantiationException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			} catch (final IllegalAccessException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -157,31 +166,43 @@ public abstract class MappingEngine extends Node {
 					                                                                                                           | Modifier.PRIVATE
 					                                                                                                           | Modifier.PROTECTED);
 					for (final Class<? extends MappingEngine> c : collection) {
+						if (c.getSuperclass() == MappingEngine.class) {
+							final Class<?>[] declaredClasses = c.getDeclaredClasses();
+							for (final Class<?> dC : declaredClasses) {
+								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
+									// found options
+									@SuppressWarnings ("unchecked")
+									final Constructor<ArgumentSetOptions<? extends MappingEngine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingEngine, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                        Requirement.class);
+									final ArgumentSetOptions<? extends MappingEngine, ?> instance = constructor.newInstance(set,
+									                                                                                        Requirement.required);
+									this.engineOptions.put(c, instance);
+									map.put(instance.getName(), instance);
+								}
+							}
+						} else {
+							if (Logger.logInfo()) {
+								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
+								            c.getSimpleName(), MappingEngine.class.getSimpleName(), c.getSuperclass()
+								                                                                     .getSimpleName());
+							}
+						}
+						
 						defaultSet.add(c.getSimpleName());
+						
 					}
-				} catch (final ClassNotFoundException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
-				} catch (final WrongClassSearchMethodException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
-				} catch (final IOException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
+				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
+				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				        | NoSuchMethodException | SecurityException | InstantiationException e) {
+					throw new UnrecoverableError(e);
 				}
 				
-				this.enginesOption = new SetArgument.Options(
-				                                             set,
-				                                             "enabled", Messages.getString("MappingEngine.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-				                                             defaultSet, Requirement.required);
+				this.enabledEnginesOption = new SetArgument.Options(
+				                                                    set,
+				                                                    "enabled", Messages.getString("MappingEngine.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+				                                                    defaultSet, Requirement.required);
 				
-				map.put(this.enginesOption.getName(), this.enginesOption);
+				map.put(this.enabledEnginesOption.getName(), this.enabledEnginesOption);
 				
 				return map;
 			} finally {
@@ -222,6 +243,18 @@ public abstract class MappingEngine extends Node {
 	}
 	
 	/**
+	 * Gets the options.
+	 * 
+	 * @param settings
+	 *            the settings
+	 * @return the options
+	 */
+	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
+		
+		return new MappingEngine.Options(set, Requirement.required);
+	}
+	
+	/**
 	 * Gets the unknown.
 	 * 
 	 * @return the unknown
@@ -239,11 +272,7 @@ public abstract class MappingEngine extends Node {
 		return UNUSED;
 	}
 	
-	/** The settings. */
 	private ISettings settings;
-	
-	/** The options. */
-	private Options   options;
 	
 	/**
 	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
@@ -298,48 +327,6 @@ public abstract class MappingEngine extends Node {
 		                                             : truncate(toFieldContent != null
 		                                                                              ? toFieldContent.toString()
 		                                                                              : UNKNOWN)), getClass());
-	}
-	
-	/**
-	 * Gets the anchor.
-	 * 
-	 * @param settings
-	 *            the settings
-	 * @return the anchor
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 * @throws ArgumentSetRegistrationException
-	 *             the argument set registration exception
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
-	 */
-	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
-	                                                                              ArgumentSetRegistrationException,
-	                                                                              ArgumentRegistrationException {
-		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingEngine.Options.tag);
-		if (anchor == null) {
-			if (this.options == null) {
-				this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
-			}
-			anchor = ArgumentSetFactory.create(this.options);
-		}
-		
-		return anchor;
-	}
-	
-	/**
-	 * Gets the options.
-	 * 
-	 * @param settings
-	 *            the settings
-	 * @return the options
-	 */
-	protected final SetArgument.Options getOptions(@NotNull final ISettings settings) {
-		if (this.options == null) {
-			this.options = new MappingEngine.Options(settings.getRoot(), Requirement.required);
-		}
-		
-		return this.options.enginesOption;
 	}
 	
 	/**

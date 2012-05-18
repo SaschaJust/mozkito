@@ -14,22 +14,32 @@ package de.unisaarland.cs.st.moskito.mapping.engines;
 
 import static net.ownhero.dev.ioda.StringUtils.truncate;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.NoSuchConstructorError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -47,6 +57,115 @@ import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class SearchEngine extends MappingEngine {
+	
+	public static final class Options extends ArgumentSetOptions<SearchEngine, ArgumentSet<SearchEngine, Options>> {
+		
+		private final Map<Class<? extends MappingEngine>, ArgumentSetOptions<? extends MappingEngine, ?>> engineOptions = new HashMap<>();
+		private StringArgument.Options                                                                    languageOption;
+		private net.ownhero.dev.hiari.settings.LongArgument.Options                                       minTokensOption;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, "searchEngine", "...", requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public SearchEngine init() {
+			// PRECONDITIONS
+			
+			try {
+				if (Logger.logWarn()) {
+					Logger.warn(this.engineOptions.toString());
+					Logger.warn(this.languageOption.toString());
+					Logger.warn(this.minTokensOption.toString());
+				}
+				return null;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
+		                                                                            SettingsParseError {
+			// PRECONDITIONS
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+				
+				final HashSet<String> defaultSet = new HashSet<String>();
+				
+				try {
+					final Collection<Class<? extends SearchEngine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                                  SearchEngine.class,
+					                                                                                                  Modifier.ABSTRACT
+					                                                                                                          | Modifier.INTERFACE
+					                                                                                                          | Modifier.PRIVATE
+					                                                                                                          | Modifier.PROTECTED);
+					
+					for (final Class<? extends SearchEngine> c : collection) {
+						if (c.getSuperclass() == getClass()) {
+							final Class<?>[] declaredClasses = c.getDeclaredClasses();
+							for (final Class<?> dC : declaredClasses) {
+								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
+									// found options
+									@SuppressWarnings ("unchecked")
+									final Constructor<ArgumentSetOptions<? extends SearchEngine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends SearchEngine, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                      Requirement.class);
+									final ArgumentSetOptions<? extends SearchEngine, ?> instance = constructor.newInstance(set,
+									                                                                                       Requirement.required);
+									this.engineOptions.put(c, instance);
+									map.put(instance.getName(), instance);
+								}
+							}
+						} else {
+							if (Logger.logInfo()) {
+								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
+								            c.getSimpleName(), MappingEngine.class.getSimpleName(), c.getSuperclass()
+								                                                                     .getSimpleName());
+							}
+						}
+						defaultSet.add(c.getSimpleName());
+						
+					}
+					
+					this.languageOption = new StringArgument.Options(
+					                                                 set,
+					                                                 "language", Messages.getString("SearchEngine.languageDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+					                                                 "en:English", Requirement.required);
+					
+					this.minTokensOption = new LongArgument.Options(
+					                                                set,
+					                                                "minTokens", //$NON-NLS-1$
+					                                                Messages.getString("SearchEngine.minTokensDescription"), 3l, //$NON-NLS-1$
+					                                                Requirement.required);
+				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
+				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				        | NoSuchMethodException | SecurityException | InstantiationException e) {
+					throw new UnrecoverableError(e);
+				}
+				
+				return map;
+				
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
 	
 	/** The storage. */
 	private LuceneStorage          storage;
@@ -216,67 +335,6 @@ public abstract class SearchEngine extends MappingEngine {
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(this.storage, "Field '%s' in '%s'.", "storage", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		Condition.notNull(this.minTokensOption, "Field '%s' in '%s'.", "minTokensOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		Condition.notNull(this.languageOption, "Field '%s' in '%s'.", "languageOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			setMinTokensArgument(getSettings().getArgument(getMinTokensOption()));
-			Condition.notNull(this.minTokensArgument, "Field '%s' in '%s'.", "minTokensArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			setMinTokens(getMinTokensArgument().getValue());
-			
-			setLanguageArgument(getSettings().getArgument(getLanguageOption()));
-			Condition.notNull(this.languageArgument, "Field '%s' in '%s'.", "languageArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			setLanguage(getLanguageArgument().getValue());
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.language, "Field '%s' in '%s'.", "language", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.minTokens, "Field '%s' in '%s'.", "minTokens", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		setSettings(root.getSettings());
-		Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// request the mapping.engines anchor
-		final ArgumentSet<?, ?> anchor = super.getAnchor(getSettings());
-		
-		try {
-			
-			setMinTokensOption(new LongArgument.Options(anchor, "minTokens", //$NON-NLS-1$
-			                                            Messages.getString("SearchEngine.minTokensDescription"), 3l, //$NON-NLS-1$
-			                                            Requirement.contains(getOptions(getSettings()),
-			                                                                 getClass().getSimpleName())));
-			setLanguageOption(new StringArgument.Options(
-			                                             anchor,
-			                                             "language", Messages.getString("SearchEngine.languageDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-			                                             "en:English", Requirement.contains(getOptions(getSettings()), getClass().getSimpleName()))); //$NON-NLS-1$
-			
-			return anchor;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.minTokensOption, "Field '%s' in '%s'.", "minTokensOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.languageOption, "Field '%s' in '%s'.", "languageOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(anchor, "Field '%s' in '%s'.", "anchor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

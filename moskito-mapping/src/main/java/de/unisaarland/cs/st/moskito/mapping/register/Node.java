@@ -18,13 +18,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.SettingsProvider;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 
 /**
  * The Class Node.
  */
-public abstract class Node implements SettingsProvider {
+public abstract class Node {
 	
 	/** The storages. */
 	private final Map<Class<? extends MappingStorage>, MappingStorage> storages = new HashMap<Class<? extends MappingStorage>, MappingStorage>();

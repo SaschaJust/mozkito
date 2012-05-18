@@ -12,18 +12,20 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.TupleArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.ClassCondition;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
@@ -53,6 +55,117 @@ import de.unisaarland.cs.st.moskito.persistence.model.EnumTuple;
  */
 public class TimestampEngine extends MappingEngine {
 	
+	/**
+	 * The Class Options.
+	 */
+	public static final class Options extends
+	        ArgumentSetOptions<TimestampEngine, ArgumentSet<TimestampEngine, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.TupleArgument.Options intervalOption;
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, "authorEquality", "...", requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public TimestampEngine init() {
+			// PRECONDITIONS
+			
+			try {
+				final TupleArgument intervalArgument = getSettings().getArgument(this.intervalOption);
+				final Tuple<String, String> tuple = intervalArgument.getValue();
+				
+				int start = 0;
+				int end = 0;
+				
+				start = parseIntervalString(tuple.getFirst());
+				end = parseIntervalString(tuple.getSecond());
+				
+				// inplace swap
+				if (start > end) {
+					start ^= end ^= start ^= end;
+				}
+				
+				if (Logger.logInfo()) {
+					Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
+				
+				return new TimestampEngine(new Interval(start * 1000, end * 1000));
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/**
+		 * Parses the interval string.
+		 * 
+		 * @param string
+		 *            the string
+		 * @return the int
+		 */
+		private int parseIntervalString(final String string) {
+			int value = 0;
+			final Regex regex = new Regex(
+			                              "\\s*[+-]?({days}[0-9]+)d\\s*({hours}[0-9]+)h\\s*({minutes}[0-9]+)m\\s*({seconds}[0-9]+)s", //$NON-NLS-1$
+			                              Pattern.CASE_INSENSITIVE);
+			final Match find = regex.find(string);
+			
+			if (find == null) {
+				throw new Shutdown(
+				                   Messages.getString("TimestampEngine.invalidInterval") + string + " " + Messages.getString("TimestampEngine.usingRegex") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				                           + regex.getPattern());
+			} else {
+				value += Integer.parseInt(regex.getGroup("days")) * 24 * 60 * 60; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("hours")) * 60 * 60; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("minutes")) * 60; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("seconds")); //$NON-NLS-1$
+			}
+			
+			if (string.startsWith("-")) { //$NON-NLS-1$
+				value *= -1;
+			}
+			
+			return value;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<>();
+				this.intervalOption = new TupleArgument.Options(
+				                                                argumentSet,
+				                                                "interval", //$NON-NLS-1$
+				                                                Messages.getString("TimestampEngine.intervalDescription"), //$NON-NLS-1$
+				                                                getDefaultinterval(), Requirement.required);
+				map.put(this.intervalOption.getName(), this.intervalOption);
+				return map;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
 	/** The Constant description. */
 	private static final String                description     = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
 	                                                                                                                
@@ -77,14 +190,21 @@ public class TimestampEngine extends MappingEngine {
 		}
 	}
 	
-	/** The interval option. */
-	private TupleArgument.Options intervalOption;
-	
-	/** The interval argument. */
-	private TupleArgument         intervalArgument;
-	
 	/** The interval. */
-	private Interval              interval;
+	private Interval interval;
+	
+	/**
+	 * @param interval
+	 */
+	public TimestampEngine(final Interval interval) {
+		// PRECONDITIONS
+		
+		try {
+			this.interval = interval;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -108,139 +228,6 @@ public class TimestampEngine extends MappingEngine {
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(this.interval, "Field '%s' in '%s'.", "interval", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets the interval argument.
-	 * 
-	 * @return the intervalArgument
-	 */
-	private final TupleArgument getIntervalArgument() {
-		// PRECONDITIONS
-		
-		try {
-			return this.intervalArgument;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.intervalArgument, "Field '%s' in '%s'.", "intervalArgument", //$NON-NLS-1$ //$NON-NLS-2$
-			                  getClass().getSimpleName());
-		}
-	}
-	
-	/**
-	 * Gets the interval option.
-	 * 
-	 * @return the intervalOption
-	 */
-	private final TupleArgument.Options getIntervalOption() {
-		// PRECONDITIONS
-		
-		try {
-			return this.intervalOption;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.intervalOption, "Field '%s' in '%s'.", "intervalOption", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		Condition.notNull(this.intervalOption, "Field '%s' in '%s'.", "intervalOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			setIntervalArgument(getSettings().getArgument(getIntervalOption()));
-			Condition.notNull(this.intervalArgument, "Field '%s' in '%s'.", "intervalArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			final Tuple<String, String> tuple = getIntervalArgument().getValue();
-			
-			int start = 0;
-			int end = 0;
-			
-			start = parseIntervalString(tuple.getFirst());
-			end = parseIntervalString(tuple.getSecond());
-			
-			// inplace swap
-			if (start > end) {
-				start ^= end ^= start ^= end;
-			}
-			
-			if (Logger.logInfo()) {
-				Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
-			
-			setInterval((new Interval(start * 1000, end * 1000)));
-			
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Parses the interval string.
-	 * 
-	 * @param string
-	 *            the string
-	 * @return the int
-	 */
-	private int parseIntervalString(final String string) {
-		int value = 0;
-		final Regex regex = new Regex(
-		                              "\\s*[+-]?({days}[0-9]+)d\\s*({hours}[0-9]+)h\\s*({minutes}[0-9]+)m\\s*({seconds}[0-9]+)s", //$NON-NLS-1$
-		                              Pattern.CASE_INSENSITIVE);
-		final Match find = regex.find(string);
-		
-		if (find == null) {
-			throw new Shutdown(
-			                   Messages.getString("TimestampEngine.invalidInterval") + string + " " + Messages.getString("TimestampEngine.usingRegex") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			                           + regex.getPattern());
-		} else {
-			value += Integer.parseInt(regex.getGroup("days")) * 24 * 60 * 60; //$NON-NLS-1$
-			value += Integer.parseInt(regex.getGroup("hours")) * 60 * 60; //$NON-NLS-1$
-			value += Integer.parseInt(regex.getGroup("minutes")) * 60; //$NON-NLS-1$
-			value += Integer.parseInt(regex.getGroup("seconds")); //$NON-NLS-1$
-		}
-		
-		if (string.startsWith("-")) { //$NON-NLS-1$
-			value *= -1;
-		}
-		
-		return value;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		setSettings(root.getSettings());
-		Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// request the mapping.engines anchor
-		final ArgumentSet<?, ?> anchor = super.getAnchor(getSettings());
-		
-		try {
-			
-			setIntervalOption(new TupleArgument.Options(anchor, "interval", //$NON-NLS-1$
-			                                            Messages.getString("TimestampEngine.intervalDescription"), //$NON-NLS-1$
-			                                            getDefaultinterval(),
-			                                            Requirement.contains(getOptions(getSettings()),
-			                                                                 getClass().getSimpleName())));
-			
-			return anchor;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.intervalOption, "Field '%s' in '%s'.", "intervalOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(anchor, "Field '%s' in '%s'.", "anchor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -290,67 +277,6 @@ public class TimestampEngine extends MappingEngine {
 		addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
 		           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
 		           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
-	}
-	
-	/**
-	 * Sets the interval.
-	 * 
-	 * @param interval
-	 *            the interval to set
-	 */
-	private final void setInterval(final Interval interval) {
-		// PRECONDITIONS
-		Condition.notNull(interval, "Argument '%s' in '%s'.", "interval", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.interval = interval;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.interval, interval,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	/**
-	 * Sets the interval argument.
-	 * 
-	 * @param intervalArgument
-	 *            the intervalArgument to set
-	 */
-	private final void setIntervalArgument(final TupleArgument intervalArgument) {
-		// PRECONDITIONS
-		Condition.notNull(intervalArgument, "Argument '%s' in '%s'.", "intervalArgument", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.intervalArgument = intervalArgument;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.intervalArgument, intervalArgument,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Sets the interval option.
-	 * 
-	 * @param intervalOption
-	 *            the intervalOption to set
-	 */
-	private final void setIntervalOption(final TupleArgument.Options intervalOption) {
-		// PRECONDITIONS
-		Condition.notNull(intervalOption, "Argument '%s' in '%s'.", "intervalOption", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.intervalOption = intervalOption;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.intervalOption, intervalOption,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
 	}
 	
 	/*

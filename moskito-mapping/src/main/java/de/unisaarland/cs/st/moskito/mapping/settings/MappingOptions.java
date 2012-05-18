@@ -24,6 +24,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
+import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine.Options;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
@@ -58,6 +59,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	
 	/** The trainers. */
 	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
+	private Options                    engineOptions;
 	
 	/**
 	 * @param argumentSet
@@ -136,7 +138,9 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	public MappingFinder init() {
 		final MappingFinder finder = new MappingFinder();
 		
-		for (final MappingEngine engine : this.engines) {
+		final ArgumentSet<Set<MappingEngine>, Options> engineArgument = getSettings().getArgumentSet(this.engineOptions);
+		
+		for (final MappingEngine engine : engineArgument.getValue()) {
 			finder.addEngine(engine);
 		}
 		
@@ -173,7 +177,11 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		// PRECONDITIONS
 		
 		try {
-			return new HashMap<String, IOptions<?, ?>>();
+			final HashMap<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+			this.engineOptions = MappingEngine.getOptions(set);
+			map.put(this.engineOptions.getName(), this.engineOptions);
+			
+			return map;
 		} finally {
 			// POSTCONDITIONS
 		}

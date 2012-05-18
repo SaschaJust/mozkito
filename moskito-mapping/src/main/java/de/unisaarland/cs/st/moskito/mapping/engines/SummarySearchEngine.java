@@ -12,10 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.apache.lucene.document.Document;
@@ -54,39 +50,6 @@ public class SummarySearchEngine extends SearchEngine {
 	@Override
 	public String getDescription() {
 		return description;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			super.init();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.unisaarland.cs.st.moskito.mapping.engines.SearchEngine#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			return super.provide(root);
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/*
