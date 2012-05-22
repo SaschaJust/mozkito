@@ -13,6 +13,8 @@
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ISettings;
 import net.ownhero.dev.hiari.settings.SetArgument;
@@ -39,6 +42,7 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.engines.Messages;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -58,13 +62,16 @@ public abstract class MappingSelector extends Node {
 	static class Options extends ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
 		
 		/** The Constant TAG. */
-		static final String         TAG         = "selectors";                                      //$NON-NLS-1$
-		                                                                                             
+		static final String                                                                                   TAG           = "selectors";                                      //$NON-NLS-1$
+		                                                                                                                                                                         
 		/** The Constant DESCRIPTION. */
-		static final String         DESCRIPTION = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
-		                                                                                             
-		/** The selectors option. */
-		private SetArgument.Options selectorsOption;
+		static final String                                                                                   DESCRIPTION   = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
+		                                                                                                                                                                         
+		/** The enabled selectors option. */
+		private SetArgument.Options                                                                           enabledSelectorsOption;
+		
+		/** The engine options. */
+		private final Map<Class<? extends MappingSelector>, ArgumentSetOptions<? extends MappingSelector, ?>> engineOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -82,41 +89,45 @@ public abstract class MappingSelector extends Node {
 		 * (non-Javadoc)
 		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 		 */
+		@SuppressWarnings ({ "rawtypes", "unchecked" })
 		@Override
 		public Set<MappingSelector> init() {
-			// PRECONDITIONS
 			// PRECONDITIONS
 			final Set<MappingSelector> set = new HashSet<MappingSelector>();
 			
 			try {
 				
-				final SetArgument argument = getSettings().getArgument(this.selectorsOption);
+				final SetArgument argument = getSettings().getArgument(this.enabledSelectorsOption);
+				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
-					@SuppressWarnings ("unchecked")
-					final Class<? extends MappingSelector> clazz = (Class<? extends MappingSelector>) Class.forName(name);
-					final MappingSelector instance = clazz.newInstance();
-					instance.init();
-					set.add(instance);
+					Class<? extends MappingSelector> clazz;
+					try {
+						clazz = (Class<? extends MappingSelector>) Class.forName(MappingSelector.class.getPackage()
+						                                                                              .getName()
+						        + '.'
+						        + name);
+					} catch (final ClassNotFoundException e) {
+						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						
+					}
+					
+					final ArgumentSetOptions<? extends MappingSelector, ?> options = this.engineOptions.get(clazz);
+					if (options == null) {
+						if (Logger.logWarn()) {
+							Logger.warn("Selector '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
+							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
+							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
+						}
+						
+					} else {
+						final ArgumentSet<? extends MappingSelector, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						set.add(argumentSet.getValue());
+					}
 				}
 				
 				return set;
-			} catch (final ClassNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			} catch (final InstantiationException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			} catch (final IllegalAccessException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -145,31 +156,43 @@ public abstract class MappingSelector extends Node {
 					                                                                                                             | Modifier.PRIVATE
 					                                                                                                             | Modifier.PROTECTED);
 					for (final Class<? extends MappingSelector> c : collection) {
+						if (c.getSuperclass() == MappingSelector.class) {
+							final Class<?>[] declaredClasses = c.getDeclaredClasses();
+							for (final Class<?> dC : declaredClasses) {
+								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
+									// found options
+									@SuppressWarnings ("unchecked")
+									final Constructor<ArgumentSetOptions<? extends MappingSelector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingSelector, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                            Requirement.class);
+									final ArgumentSetOptions<? extends MappingSelector, ?> instance = constructor.newInstance(set,
+									                                                                                          Requirement.required);
+									this.engineOptions.put(c, instance);
+									map.put(instance.getName(), instance);
+								}
+							}
+						} else {
+							if (Logger.logInfo()) {
+								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
+								            c.getSimpleName(), MappingSelector.class.getSimpleName(), c.getSuperclass()
+								                                                                       .getSimpleName());
+							}
+						}
+						
 						defaultSet.add(c.getSimpleName());
+						
 					}
-				} catch (final ClassNotFoundException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
-				} catch (final WrongClassSearchMethodException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
-				} catch (final IOException e) {
-					if (Logger.logError()) {
-						Logger.error(e);
-					}
-					
+				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
+				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				        | NoSuchMethodException | SecurityException | InstantiationException e) {
+					throw new UnrecoverableError(e);
 				}
 				
-				this.selectorsOption = new SetArgument.Options(
-				                                               set,
-				                                               "enabled", Messages.getString("MappingSelector.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$ 
-				                                               defaultSet, Requirement.required);
+				this.enabledSelectorsOption = new SetArgument.Options(
+				                                                      set,
+				                                                      "enabled", Messages.getString("MappingSelector.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+				                                                      defaultSet, Requirement.required);
 				
-				map.put(this.selectorsOption.getName(), this.selectorsOption);
+				map.put(this.enabledSelectorsOption.getName(), this.enabledSelectorsOption);
 				
 				return map;
 			} finally {
@@ -177,6 +200,18 @@ public abstract class MappingSelector extends Node {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Gets the options.
+	 * 
+	 * @param set
+	 *            the set
+	 * @return the options
+	 */
+	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
+		
+		return new MappingSelector.Options(set, Requirement.required);
 	}
 	
 	/** The settings. */
