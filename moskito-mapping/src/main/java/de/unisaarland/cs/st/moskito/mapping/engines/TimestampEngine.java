@@ -72,7 +72,7 @@ public class TimestampEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, TimestampEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*

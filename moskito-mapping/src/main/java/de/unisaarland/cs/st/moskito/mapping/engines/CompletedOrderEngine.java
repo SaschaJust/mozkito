@@ -60,7 +60,7 @@ public class CompletedOrderEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*

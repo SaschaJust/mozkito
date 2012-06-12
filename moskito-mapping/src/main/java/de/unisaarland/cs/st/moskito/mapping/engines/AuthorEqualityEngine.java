@@ -58,7 +58,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, AuthorEqualityEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -135,7 +135,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	private AuthorEqualityEngine(final double confidence) {
+	public AuthorEqualityEngine(final double confidence) {
 		// PRECONDITIONS
 		
 		try {

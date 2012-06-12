@@ -23,6 +23,9 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kisa.Highlighter;
+import net.ownhero.dev.kisa.LogLevel;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine.Options;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
@@ -38,6 +41,18 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
+	
+	static {
+		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
+			
+			@Override
+			public boolean matches(final String message,
+			                       final LogLevel level,
+			                       final String prefix) {
+				return message.matches("Adding new mapping engines dependency.*");
+			}
+		});
+	}
 	
 	private static final String        DESCRIPTION = "TODO";
 	public static final String         NAME        = "mapping";

@@ -55,7 +55,7 @@ public class BackrefEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "backref", "...", requirements);
+			super(argumentSet, BackrefEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -132,7 +132,7 @@ public class BackrefEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	private BackrefEngine(final Double confidence) {
+	public BackrefEngine(final Double confidence) {
 		// PRECONDITIONS
 		
 		try {

@@ -12,16 +12,18 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
@@ -46,21 +48,85 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  */
 public class TransactionRegexSelector extends MappingSelector {
 	
+	public static final class Options extends
+	        ArgumentSetOptions<TransactionRegexSelector, ArgumentSet<TransactionRegexSelector, Options>> {
+		
+		private static final String    TAG         = "reportRegex";
+		private static final String    DESCRIPTION = "...";
+		private StringArgument.Options patternOption;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public TransactionRegexSelector init() {
+			// PRECONDITIONS
+			
+			try {
+				final StringArgument patternArgument = getSettings().getArgument(this.patternOption);
+				return new TransactionRegexSelector(patternArgument.getValue());
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<>();
+				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
+				                                                "Pattern of report ids to scan for.",
+				                                                "(\\p{XDigit}{7,})", Requirement.required);
+				map.put(this.patternOption.getName(), this.patternOption);
+				return map;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
 	/** The pattern. */
-	private String                 pattern;
-	
-	/** The pattern argument. */
-	private StringArgument         patternArgument;
-	
-	/** The pattern option. */
-	private StringArgument.Options patternOption;
+	private String              pattern;
 	
 	/** The Constant DESCRIPTION. */
-	private static final String    DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
+	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
 	
 	/** The Constant DEFAULT_PATTERN. */
-	private static final String    DEFAULT_PATTERN = "(\\d{2,})";                                                                                                        //$NON-NLS-1$
-	                                                                                                                                                                      
+	private static final String DEFAULT_PATTERN = "(\\d{2,})";                                                                                                        //$NON-NLS-1$
+	                                                                                                                                                                   
+	/**
+	 * @param pattern
+	 */
+	public TransactionRegexSelector(final String pattern) {
+		// PRECONDITIONS
+		
+		try {
+			this.pattern = pattern;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the default pattern.
 	 * 
@@ -101,59 +167,6 @@ public class TransactionRegexSelector extends MappingSelector {
 	 */
 	public String getPattern() {
 		return this.pattern;
-	}
-	
-	/**
-	 * Gets the pattern argument.
-	 * 
-	 * @return the patternArgument
-	 */
-	private final StringArgument getPatternArgument() {
-		// PRECONDITIONS
-		
-		try {
-			return this.patternArgument;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.patternArgument, "Field '%s' in '%s'.", "patternArgument", //$NON-NLS-1$ //$NON-NLS-2$
-			                  getClass().getSimpleName());
-		}
-	}
-	
-	/**
-	 * Gets the pattern option.
-	 * 
-	 * @return the patternOption
-	 */
-	private final StringArgument.Options getPatternOption() {
-		// PRECONDITIONS
-		
-		try {
-			return this.patternOption;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.patternOption, "Field '%s' in '%s'.", "patternOption", getClass().getSimpleName()); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		Condition.notNull(this.patternOption, "Field '%s' in '%s'.", "patternOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			setPatternArgument(getSettings().getArgument(getPatternOption()));
-			Condition.notNull(this.patternArgument, "Field '%s' in '%s'.", "patternArgument", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			setPattern(getPatternArgument().getValue());
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.pattern, "Field '%s' in '%s'.", "pattern", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 	}
 	
 	/*
@@ -200,81 +213,6 @@ public class TransactionRegexSelector extends MappingSelector {
 		}));
 		
 		return list;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		setSettings(root.getSettings());
-		Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// request the mapping.engines anchor
-		final ArgumentSet<?, ?> anchor = super.getAnchor(getSettings());
-		
-		try {
-			setPatternOption(new StringArgument.Options(root, "pattern", "Pattern of transaction ids to scan for.", //$NON-NLS-1$
-			                                            getDefaultPattern(), Requirement.required));
-			return anchor;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(getSettings(), "Field '%s' in '%s'.", "settings", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(this.patternOption, "Field '%s' in '%s'.", "patternOption", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			Condition.notNull(anchor, "Return value '%s' in '%s'.", "anchor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Sets the pattern.
-	 * 
-	 * @param pattern
-	 *            the pattern to set
-	 */
-	private void setPattern(final String pattern) {
-		this.pattern = pattern;
-	}
-	
-	/**
-	 * Sets the pattern argument.
-	 * 
-	 * @param patternArgument
-	 *            the patternArgument to set
-	 */
-	private final void setPatternArgument(final StringArgument patternArgument) {
-		// PRECONDITIONS
-		Condition.notNull(patternArgument, "Argument '%s' in '%s'.", "patternArgument", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.patternArgument = patternArgument;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.patternArgument, patternArgument,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
-	}
-	
-	/**
-	 * Sets the pattern option.
-	 * 
-	 * @param patternOption
-	 *            the patternOption to set
-	 */
-	private final void setPatternOption(final StringArgument.Options patternOption) {
-		// PRECONDITIONS
-		Condition.notNull(patternOption, "Argument '%s' in '%s'.", "patternOsption", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.patternOption = patternOption;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.patternOption, patternOption,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
 	}
 	
 	/*

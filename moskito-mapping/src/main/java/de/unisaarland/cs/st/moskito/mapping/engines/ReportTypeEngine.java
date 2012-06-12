@@ -61,7 +61,7 @@ public class ReportTypeEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "reportType", "...", requirements);
+			super(argumentSet, ReportTypeEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*

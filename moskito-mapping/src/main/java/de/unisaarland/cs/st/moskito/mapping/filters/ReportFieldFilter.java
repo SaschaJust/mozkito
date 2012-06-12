@@ -12,13 +12,25 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.filters;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.EnhancedReport;
+import de.unisaarland.cs.st.moskito.bugs.tracker.settings.Messages;
+import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 
 /**
  * The Class ReportFieldFilter.
@@ -27,6 +39,84 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
  */
 public class ReportFieldFilter extends MappingFilter {
 	
+	public static final class Options extends
+	        ArgumentSetOptions<ReportFieldFilter, ArgumentSet<ReportFieldFilter, Options>> {
+		
+		private static final String        TAG         = "reportField";
+		private static final String        DESCRIPTION = "...";
+		private EnumArgument.Options<Type> typeOption;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ReportFieldFilter init() {
+			// PRECONDITIONS
+			
+			try {
+				final EnumArgument<Type> typeArgument = getSettings().getArgument(this.typeOption);
+				return new ReportFieldFilter(typeArgument.getValue());
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<>();
+				
+				this.typeOption = new EnumArgument.Options<Type>(
+				                                                 argumentSet,
+				                                                 "type",
+				                                                 Messages.getString("ReportFieldFilter.typeDescription"),
+				                                                 getDefaultType(), Requirement.required);
+				map.put(this.typeOption.getName(), this.typeOption);
+				return map;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	private static final String DESCRIPTION = "Requires certain field values on reports to be mapped";
+	
+	/**
+	 * @return
+	 */
+	public static final Type getDefaultType() {
+		return Type.BUG;
+	}
+	
+	private final Type type;
+	
+	/**
+	 * @param type
+	 */
+	public ReportFieldFilter(final Type type) {
+		this.type = type;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
@@ -34,8 +124,10 @@ public class ReportFieldFilter extends MappingFilter {
 	 */
 	@Override
 	public Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                           final Set<? extends MappingFilter> triggeringFilters) {
-		// TODO Auto-generated method stub
+	                                           final Set<MappingFilter> triggeringFilters) {
+		if (mapping.getElement1().get(FieldKey.TYPE).equals(this.type)) {
+			triggeringFilters.add(this);
+		}
 		return triggeringFilters;
 	}
 	
@@ -45,40 +137,16 @@ public class ReportFieldFilter extends MappingFilter {
 	 */
 	@Override
 	public String getDescription() {
-		return "Requires certain field values on reports to be mapped";
+		return DESCRIPTION;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#supported()
 	 */
 	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public Expression supported() {
+		return new Atom(Index.FROM, EnhancedReport.class);
 	}
 	
 }

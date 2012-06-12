@@ -14,10 +14,6 @@ package de.unisaarland.cs.st.moskito.mapping.splitters;
 
 import java.util.List;
 
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
@@ -40,21 +36,6 @@ public class Class2BugsSplitter extends MappingSplitter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see
 	 * de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter#process(de.unisaarland.cs.st.moskito.persistence
 	 * .PersistenceUtil)
@@ -63,24 +44,6 @@ public class Class2BugsSplitter extends MappingSplitter {
 	public List<Annotated> process(final PersistenceUtil util) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 }

@@ -160,7 +160,7 @@ public class MappingFinder {
 	 * @return the filtered mapping
 	 */
 	public FilteredMapping filter(final IMapping mapping) {
-		final Set<? extends MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
+		final Set<MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
 		
 		for (final MappingFilter filter : this.filters.values()) {
 			filter.filter(mapping, triggeringFilters);

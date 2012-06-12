@@ -59,7 +59,7 @@ public class CreationOrderEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, CreationOrderEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*

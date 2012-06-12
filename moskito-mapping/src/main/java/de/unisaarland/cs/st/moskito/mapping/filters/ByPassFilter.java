@@ -12,13 +12,19 @@
  *****************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.filters;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
+import de.unisaarland.cs.st.moskito.mapping.requirements.ByPass;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
 /**
  * The Class ByPassFilter.
@@ -27,6 +33,57 @@ import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
  */
 public class ByPassFilter extends MappingFilter {
 	
+	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
+		
+		private static final String TAG         = "byPass";
+		private static final String DESCRIPTION = "...";
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ByPassFilter init() {
+			// PRECONDITIONS
+			
+			try {
+				return new ByPassFilter();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<String, IOptions<?, ?>>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	public static final String DESCRIPTION = "Does not filter at all (by-passing).";
+	
 	/*
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
@@ -34,7 +91,7 @@ public class ByPassFilter extends MappingFilter {
 	 */
 	@Override
 	public Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                           final Set<? extends MappingFilter> triggeringFilters) {
+	                                           final Set<MappingFilter> triggeringFilters) {
 		return triggeringFilters;
 	}
 	
@@ -44,41 +101,21 @@ public class ByPassFilter extends MappingFilter {
 	 */
 	@Override
 	public String getDescription() {
-		return "Does not filter at all (by-passing).";
-		
+		return DESCRIPTION;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#supported()
 	 */
 	@Override
-	public void init() {
+	public Expression supported() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			return new ByPass();
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 }

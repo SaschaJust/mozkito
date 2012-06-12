@@ -39,6 +39,7 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.Messages;
 import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
 /**
  * The Class MappingFilter.
@@ -232,5 +233,8 @@ public abstract class MappingFilter extends Node {
 	 */
 	@NoneNull
 	public abstract Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                                    Set<? extends MappingFilter> triggeringFilters);
+	                                                    Set<MappingFilter> triggeringFilters);
+	
+	public abstract Expression supported();
+	
 }

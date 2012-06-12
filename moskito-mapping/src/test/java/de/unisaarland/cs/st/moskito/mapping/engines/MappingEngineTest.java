@@ -38,6 +38,7 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -195,7 +196,7 @@ public class MappingEngineTest {
 	public void testBackrefEngine() {
 		for (final MappingEngine mEngine : this.engines) {
 			if (mEngine.getHandle().equals(BackrefEngine.class.getSimpleName())) {
-				final BackrefEngine engine = new BackrefEngine();
+				final BackrefEngine engine = new BackrefEngine(1.0d);
 				System.err.println(this.settings.toString());
 				
 				engine.score(mappableReport, mappableTransaction, score);
@@ -246,13 +247,13 @@ public class MappingEngineTest {
 			fail(e.getMessage());
 		}
 		
-		final MappableEntity transaction = new MappableTransaction();
-		final MappableEntity report = new MappableReport();
+		new MappableTransaction();
+		new MappableReport();
 		
 		final Map<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>> map = new HashMap<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>>() {
 			
 			{
-				put(new AuthorEqualityEngine(), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
+				put(new AuthorEqualityEngine(1d), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
 					
 					{
 						for (final MappableEntity fromEntity : mappableEntities) {
@@ -266,12 +267,15 @@ public class MappingEngineTest {
 						
 					}
 				});
-				put(new TimestampEngine(), new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
-					
-					{
-						add(new Tuple<MappableEntity, MappableEntity>(transaction, report));
-					}
-				});
+				put(new TimestampEngine(new Interval(transaction.getTimestamp().getMillis() - (1000 * 3600),
+				                                     transaction.getTimestamp().getMillis() + (1000 * 3600))),
+				    new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
+					    
+					    {
+						    add(new Tuple<MappableEntity, MappableEntity>(new MappableTransaction(transaction),
+						                                                  new MappableReport(report)));
+					    }
+				    });
 				
 			}
 		};

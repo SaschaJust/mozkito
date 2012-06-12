@@ -154,7 +154,7 @@ public class RegexEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, RegexEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
