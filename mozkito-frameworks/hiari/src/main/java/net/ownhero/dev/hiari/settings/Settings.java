@@ -377,12 +377,12 @@ public class Settings implements ISettings {
 	 *            the argument
 	 * @return true, if successful
 	 */
-	boolean addArgumentMapping(final String name,
+	boolean addArgumentMapping(final String tag,
 	                           final ArgumentSet<?, ?> argument) {
-		if (!this.argumentSets.containsKey(name)) {
+		if (!this.argumentSets.containsKey(tag)) {
 			synchronized (this.argumentSets) {
-				if (!this.argumentSets.containsKey(name)) {
-					this.argumentSets.put(name, argument);
+				if (!this.argumentSets.containsKey(tag)) {
+					this.argumentSets.put(tag, argument);
 					return true;
 				}
 				return false;
@@ -636,9 +636,9 @@ public class Settings implements ISettings {
 	 * @see net.ownhero.dev.andama.settings.ISettings#hasSetting(java.lang.String)
 	 */
 	@Override
-	public final boolean hasSetting(final String name) {
+	public final boolean hasSetting(final String tag) {
 		synchronized (this.argumentSets) {
-			return this.argumentSets.containsKey(name);
+			return this.argumentSets.containsKey(tag);
 		}
 	}
 	

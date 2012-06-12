@@ -118,7 +118,7 @@ public class ArgumentSetFactory {
 					Logger.trace(String.format("Checking '%s'.", iOptions));
 				}
 				
-				if (options.getArgumentSet().getSettings().hasSetting(key)) {
+				if (options.getArgumentSet().getSettings().hasSetting(requirementsOptions.get(key).getTag())) {
 					if (Logger.logTrace()) {
 						Logger.trace(String.format("Required IArgument with tag '%s' already present. Skipping initialization.",
 						                           iOptions.getTag()));

@@ -17,6 +17,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * The Class Contains.
@@ -126,9 +127,9 @@ public class Contains extends Requirement {
 			delimiter = this.listOption.getDelimiter();
 			property = this.listOption.getSettings().getProperty(this.listOption.getTag());
 			if (property == null) {
-				final Object defaultValue = ((ArgumentOptions) this.listOption).getDefaultValue();
+				final List defaultValue = (List) ((ArgumentOptions) this.listOption).getDefaultValue();
 				property = defaultValue != null
-				                               ? defaultValue.toString()
+				                               ? StringUtils.join(defaultValue, delimiter)
 				                               : null;
 			}
 		} else {
@@ -137,9 +138,9 @@ public class Contains extends Requirement {
 			property = this.setOption.getSettings().getProperty(this.setOption.getTag());
 			
 			if (property == null) {
-				final Object defaultValue = ((ArgumentOptions) this.setOption).getDefaultValue();
+				final Set defaultValue = (Set) ((ArgumentOptions) this.setOption).getDefaultValue();
 				property = defaultValue != null
-				                               ? defaultValue.toString()
+				                               ? StringUtils.join(defaultValue, delimiter)
 				                               : null;
 			}
 		}
@@ -210,9 +211,9 @@ public class Contains extends Requirement {
 	 */
 	@Override
 	public String toString() {
-		return ("(∈ " + this.listOption) != null
-		                                        ? this.listOption.getName()
-		                                        : this.setOption.getName() + ".value() )";
+		return "(∈ " + (this.listOption != null
+		                                       ? this.listOption.getName()
+		                                       : this.setOption.getName()) + ".value() )";
 	};
 	
 }
