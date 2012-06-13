@@ -113,15 +113,18 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	@Override
 	public String next() {
 		
-		if ((this.delegate != null) && this.delegate.hasNext()) {
-			final String delegateNext = this.delegate.next();
-			
-			if (skip(delegateNext)) {
+		if ((this.delegate != null)) {
+			if (!this.delegate.hasNext()) {
 				this.delegate = null;
 			} else {
-				return delegateNext;
+				final String delegateNext = this.delegate.next();
+				
+				if (skip(delegateNext)) {
+					this.delegate = null;
+				} else {
+					return delegateNext;
+				}
 			}
-			
 		}
 		
 		final String branchParent = this.revGraph.getBranchParent(this.current);
