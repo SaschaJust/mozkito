@@ -94,10 +94,10 @@ public class MappingChain extends Chain<Settings> {
 			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 			new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
 			new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
 			// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
 			// getSettings(), finder);
-			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
 			// new ScoringFilterMux(this.threadPool.getThreadGroup(),
 			// getSettings());
 			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
