@@ -44,9 +44,11 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	
 	/**
 	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
-	 *
-	 * @param root the root
-	 * @param revGraph the rev graph
+	 * 
+	 * @param root
+	 *            the root
+	 * @param revGraph
+	 *            the rev graph
 	 */
 	@NoneNull
 	public GitTransactionIterator(final String root, final IRevDependencyGraph revGraph) {
@@ -58,10 +60,13 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	
 	/**
 	 * Instantiates a new git transaction iterator.
-	 *
-	 * @param root the root
-	 * @param revGraph the rev graph
-	 * @param beforeDelegates the before delegates
+	 * 
+	 * @param root
+	 *            the root
+	 * @param revGraph
+	 *            the rev graph
+	 * @param beforeDelegates
+	 *            the before delegates
 	 */
 	public GitTransactionIterator(final String root, final IRevDependencyGraph revGraph,
 	        final Set<String> beforeDelegates) {
@@ -108,7 +113,7 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	@Override
 	public String next() {
 		
-		if (this.delegate != null) {
+		if ((this.delegate != null) && this.delegate.hasNext()) {
 			final String delegateNext = this.delegate.next();
 			
 			if (skip(delegateNext)) {
@@ -116,6 +121,7 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 			} else {
 				return delegateNext;
 			}
+			
 		}
 		
 		final String branchParent = this.revGraph.getBranchParent(this.current);
@@ -147,8 +153,9 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	
 	/**
 	 * Skip.
-	 *
-	 * @param hash the hash
+	 * 
+	 * @param hash
+	 *            the hash
 	 * @return true, if successful
 	 */
 	private boolean skip(final String hash) {
