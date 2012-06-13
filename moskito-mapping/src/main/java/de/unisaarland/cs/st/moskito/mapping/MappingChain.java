@@ -29,7 +29,6 @@ import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
-import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import dev.ownhero.net.andama.eventhandlers.irc.IRCThread;
@@ -107,9 +106,9 @@ public class MappingChain extends Chain<Settings> {
 				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
 			}
 			
-			for (final MappingStrategy strategy : finder.getStrategies().values()) {
-				new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
-			}
+			// for (final MappingStrategy strategy : finder.getStrategies().values()) {
+			// new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
+			// }
 			// new ScoringPersister(this.threadPool.getThreadGroup(),
 			// getSettings(), persistenceUtil);
 			// ScoringSplitter splitter = new
