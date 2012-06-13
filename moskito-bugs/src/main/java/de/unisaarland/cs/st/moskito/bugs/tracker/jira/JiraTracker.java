@@ -119,7 +119,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 			do {
 				final StringBuilder sb = new StringBuilder();
 				sb.append(getUri().toASCIIString());
-				sb.append("/sr/jira.issueviews:searchrequest-rss/temp/SearchRequest.xml?jqlQuery=project+%3D+");
+				sb.append("/sr/jira.issueviews:searchrequest-rss/temp/SearchRequest.xml?jqlQuery=project=");
 				sb.append(this.projectKey);
 				sb.append("&tempMax=");
 				sb.append(limit);
