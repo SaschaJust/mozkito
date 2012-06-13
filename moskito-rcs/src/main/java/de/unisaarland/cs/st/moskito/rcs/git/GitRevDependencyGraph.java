@@ -477,6 +477,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		// PRECONDITIONS
 		
 		try {
+			if (Logger.logDebug()) {
+				Logger.debug("Querying for node %s in neo4j graph.", node);
+			}
 			final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, node);
 			if (!indexHits.hasNext()) {
 				indexHits.close();
