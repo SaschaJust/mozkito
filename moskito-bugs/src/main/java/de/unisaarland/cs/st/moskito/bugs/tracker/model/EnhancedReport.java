@@ -168,7 +168,8 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			return this.classifiedType;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.classifiedType, "Field '%s' in '%s'.", "classifiedType", getClass().getSimpleName());
+			// Condition.notNull(this.classifiedType, "Field '%s' in '%s'.", "classifiedType",
+			// getClass().getSimpleName());
 		}
 	}
 	
@@ -245,7 +246,8 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			return this.predictedType;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.predictedType, "Field '%s' in '%s'.", "predictedType", getClass().getSimpleName());
+			// Condition.notNull(this.predictedType, "Field '%s' in '%s'.", "predictedType",
+			// getClass().getSimpleName());
 		}
 	}
 	
@@ -273,7 +275,7 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 			return this.report;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.report, "Field '%s' in '%s'.", "report", getClass().getSimpleName());
+			// Condition.notNull(this.report, "Field '%s' in '%s'.", "report", getClass().getSimpleName());
 		}
 	}
 	
