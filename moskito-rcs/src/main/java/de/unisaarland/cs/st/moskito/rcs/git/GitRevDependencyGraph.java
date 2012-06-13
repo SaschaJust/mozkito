@@ -184,6 +184,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		// PRECONDITIONS
 		
 		try {
+			if (Logger.logDebug()) {
+				Logger.debug("Adding node %s to neo4j graph.", v);
+			}
 			if (hasVertex(v)) {
 				if (Logger.logWarn()) {
 					Logger.warn("Revision with id `" + v + "` already exists");
