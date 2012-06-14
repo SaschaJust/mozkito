@@ -20,12 +20,15 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.TupleArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Highlighter;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine.Options;
 import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
@@ -34,6 +37,7 @@ import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class MappingArguments.
@@ -74,7 +78,9 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	
 	/** The trainers. */
 	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
-	private Options                    engineOptions;
+	private MappingEngine.Options      engineOptions;
+	private TupleArgument.Options      sourceOptions;
+	private MappingSelector.Options    selectorOptions;
 	
 	/**
 	 * @param argumentSet
@@ -193,8 +199,22 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		
 		try {
 			final HashMap<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+			
+			this.sourceOptions = new TupleArgument.Options(
+			                                               set,
+			                                               "sourceTypes",
+			                                               "Determines what kind of stuff you want to map. E.g. =RCSTransaction,Report",
+			                                               new Tuple<String, String>(
+			                                                                         RCSTransaction.class.getSimpleName(),
+			                                                                         Report.class.getSimpleName()),
+			                                               Requirement.required);
+			map.put(this.sourceOptions.getName(), this.sourceOptions);
+			
 			this.engineOptions = MappingEngine.getOptions(set);
 			map.put(this.engineOptions.getName(), this.engineOptions);
+			
+			this.selectorOptions = MappingSelector.getOptions(set);
+			map.put(this.selectorOptions.getName(), this.selectorOptions);
 			
 			return map;
 		} finally {

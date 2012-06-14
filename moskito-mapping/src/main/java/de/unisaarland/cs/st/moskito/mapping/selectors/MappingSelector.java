@@ -42,7 +42,6 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
-import de.unisaarland.cs.st.moskito.mapping.engines.Messages;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -59,19 +58,20 @@ public abstract class MappingSelector extends Node {
 	/**
 	 * The Class Options.
 	 */
-	static class Options extends ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
+	public static class Options extends
+	        ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
 		
 		/** The Constant TAG. */
-		static final String                                                                                   TAG           = "selectors";                                      //$NON-NLS-1$
-		                                                                                                                                                                         
+		static final String                                                                                   TAG             = "selectors";                                      //$NON-NLS-1$
+		                                                                                                                                                                           
 		/** The Constant DESCRIPTION. */
-		static final String                                                                                   DESCRIPTION   = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
-		                                                                                                                                                                         
+		static final String                                                                                   DESCRIPTION     = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
+		                                                                                                                                                                           
 		/** The enabled selectors option. */
 		private SetArgument.Options                                                                           enabledSelectorsOption;
 		
-		/** The engine options. */
-		private final Map<Class<? extends MappingSelector>, ArgumentSetOptions<? extends MappingSelector, ?>> engineOptions = new HashMap<>();
+		/** The selector options. */
+		private final Map<Class<? extends MappingSelector>, ArgumentSetOptions<? extends MappingSelector, ?>> selectorOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -109,11 +109,11 @@ public abstract class MappingSelector extends Node {
 						        + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError("Could not load selector '%s'. Does probably not exist. Aborting.");
 						
 					}
 					
-					final ArgumentSetOptions<? extends MappingSelector, ?> options = this.engineOptions.get(clazz);
+					final ArgumentSetOptions<? extends MappingSelector, ?> options = this.selectorOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn("Selector '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
@@ -149,48 +149,79 @@ public abstract class MappingSelector extends Node {
 				final HashSet<String> defaultSet = new HashSet<String>();
 				
 				try {
+					// first off, find all implemented selectors
 					final Collection<Class<? extends MappingSelector>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
 					                                                                                                     MappingSelector.class,
 					                                                                                                     Modifier.ABSTRACT
 					                                                                                                             | Modifier.INTERFACE
 					                                                                                                             | Modifier.PRIVATE
 					                                                                                                             | Modifier.PROTECTED);
-					for (final Class<? extends MappingSelector> c : collection) {
-						if (c.getSuperclass() == MappingSelector.class) {
-							final Class<?>[] declaredClasses = c.getDeclaredClasses();
-							for (final Class<?> dC : declaredClasses) {
-								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
+					
+					// first compute the default value for the selector enabler option, i.e., all implemented selectors
+					for (final Class<? extends MappingSelector> selectorClass : collection) {
+						defaultSet.add(selectorClass.getSimpleName());
+					}
+					
+					// now create the enabler for the selectors
+					this.enabledSelectorsOption = new SetArgument.Options(
+					                                                      set,
+					                                                      "enabled", Messages.getString("MappingSelector.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+					                                                      defaultSet, Requirement.required);
+					
+					// iterate over the selector classes to process dependencies
+					for (final Class<? extends MappingSelector> selectorClass : collection) {
+						// loading of selectors is in the responsibility of the direct parent class, thus we only
+						// process
+						// mapping classes of direct extensions of MappingSelector
+						if (selectorClass.getSuperclass() == MappingSelector.class) {
+							// MappingSelectors have to encapsulate their initializer/options. fetch them first.
+							final Class<?>[] declaredClasses = selectorClass.getDeclaredClasses();
+							
+							for (final Class<?> selectorOptionClass : declaredClasses) {
+								// check if we found the options to initialize the selector under suspect
+								if (ArgumentSetOptions.class.isAssignableFrom(selectorOptionClass)) {
 									// found options
+									
+									// fetch constructor of the options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingSelector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingSelector, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                            Requirement.class);
-									final ArgumentSetOptions<? extends MappingSelector, ?> instance = constructor.newInstance(set,
-									                                                                                          Requirement.required);
-									this.engineOptions.put(c, instance);
-									map.put(instance.getName(), instance);
+									final Constructor<ArgumentSetOptions<? extends MappingSelector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingSelector, ?>>) selectorOptionClass.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                                             Requirement.class);
+									
+									// instantiate the options and set to required if enabledSelectorsOptions contains
+									// the
+									// simple classname of the selector under suspect, i.e., c.getSimpleName()
+									final ArgumentSetOptions<? extends MappingSelector, ?> selectorOption = constructor.newInstance(set,
+									                                                                                                Requirement.contains(this.enabledSelectorsOption,
+									                                                                                                                     selectorClass.getSimpleName()));
+									System.out.println(selectorOption
+									        + " is "
+									        + (Requirement.contains(this.enabledSelectorsOption,
+									                                selectorClass.getSimpleName()).check()
+									                                                                      ? "required"
+									                                                                      : "unrequired"));
+									
+									if (Logger.logDebug()) {
+										Logger.debug("Adding new mapping selectors dependency '%s' with list activator '%s'",
+										             selectorOption.getTag(), this.enabledSelectorsOption.getTag());
+									}
+									
+									this.selectorOptions.put(selectorClass, selectorOption);
+									map.put(selectorOption.getName(), selectorOption);
 								}
 							}
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), MappingSelector.class.getSimpleName(), c.getSuperclass()
-								                                                                       .getSimpleName());
+								            selectorClass.getSimpleName(), MappingSelector.class.getSimpleName(),
+								            selectorClass.getSuperclass().getSimpleName());
 							}
 						}
-						
-						defaultSet.add(c.getSimpleName());
-						
 					}
 				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
 				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				        | NoSuchMethodException | SecurityException | InstantiationException e) {
 					throw new UnrecoverableError(e);
 				}
-				
-				this.enabledSelectorsOption = new SetArgument.Options(
-				                                                      set,
-				                                                      "enabled", Messages.getString("MappingSelector.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-				                                                      defaultSet, Requirement.required);
 				
 				map.put(this.enabledSelectorsOption.getName(), this.enabledSelectorsOption);
 				

@@ -226,6 +226,10 @@ public class MappingFinder {
 			                                                            ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
 			for (final MappingSelector selector : activeSelectors) {
+				if (Logger.logDebug()) {
+					Logger.debug("Using selector '%s' on '%s' with target type '%s'.", selector.getHandle(),
+					             source.getHandle(), targetClass);
+				}
 				candidates.addAll(selector.parse(source, targetClass, util));
 			}
 		} catch (final Exception e) {
