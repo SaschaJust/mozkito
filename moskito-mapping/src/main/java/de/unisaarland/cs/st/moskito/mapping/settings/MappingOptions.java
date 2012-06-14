@@ -173,7 +173,8 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			finder.addFilter(filter);
 		}
 		
-		for (final MappingSelector selector : this.selectors) {
+		final ArgumentSet<Set<MappingSelector>, MappingSelector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
+		for (final MappingSelector selector : selectorArgument.getValue()) {
 			finder.addSelector(selector);
 		}
 		
