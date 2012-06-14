@@ -187,10 +187,25 @@ public class MappingFinder {
 	                                                   final Class<V> toClazz) {
 		final List<MappingSelector> list = new LinkedList<MappingSelector>();
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Looking up selector for '%s'<->'%s'.", fromClazz.getSimpleName(), toClazz.getSimpleName());
+		}
 		for (final Class<? extends MappingSelector> klass : this.selectors.keySet()) {
 			try {
+				if (Logger.logDebug()) {
+					Logger.debug("Checking for compatibility: '%s'", klass.getSimpleName());
+				}
 				if (klass.newInstance().supports(fromClazz, toClazz)) {
+					if (Logger.logDebug()) {
+						Logger.debug("Adding selector '%s for '%s'<->'%s'.", klass.getSimpleName(),
+						             fromClazz.getSimpleName(), toClazz.getSimpleName());
+					}
 					list.add(this.selectors.get(klass));
+				} else {
+					if (Logger.logDebug()) {
+						Logger.debug("Selector '%s' does not support '%s'<->'%s'.", klass.getSimpleName(),
+						             fromClazz.getSimpleName(), toClazz.getSimpleName());
+					}
 				}
 			} catch (final Exception e) {
 				if (Logger.logWarn()) {
