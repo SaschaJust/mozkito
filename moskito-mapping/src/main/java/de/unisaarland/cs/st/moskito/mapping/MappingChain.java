@@ -103,6 +103,9 @@ public class MappingChain extends Chain<Settings> {
 			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
 			// getSettings());
 			for (final MappingEngine engine : finder.getEngines().values()) {
+				if (Logger.logInfo()) {
+					Logger.info("Creating node for engine '%s'.", engine);
+				}
 				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
 			}
 			
