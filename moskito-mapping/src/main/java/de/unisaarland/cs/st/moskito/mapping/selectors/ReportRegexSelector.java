@@ -90,8 +90,8 @@ public class ReportRegexSelector extends MappingSelector {
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
 				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
-				                                                "Pattern of report ids to scan for.",
-				                                                "(\\p{XDigit}{7,})", Requirement.required);
+				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
+				                                                Requirement.required);
 				map.put(this.patternOption.getName(), this.patternOption);
 				return map;
 			} finally {
@@ -102,10 +102,15 @@ public class ReportRegexSelector extends MappingSelector {
 	}
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
-	
+	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
+	private static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";
 	/** The pattern. */
 	private final String        pattern;
+	
+	@Deprecated
+	public ReportRegexSelector() {
+		this.pattern = DEFAULT_PATTERN;
+	}
 	
 	/**
 	 * @param value

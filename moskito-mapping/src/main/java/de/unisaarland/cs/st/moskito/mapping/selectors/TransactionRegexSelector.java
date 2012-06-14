@@ -106,14 +106,28 @@ public class TransactionRegexSelector extends MappingSelector {
 	}
 	
 	/** The pattern. */
-	private String              pattern;
+	private final String        pattern;
 	
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
 	
 	/** The Constant DEFAULT_PATTERN. */
-	private static final String DEFAULT_PATTERN = "(\\d{2,})";                                                                                                        //$NON-NLS-1$
-	                                                                                                                                                                   
+	private static final String DEFAULT_PATTERN = "(\\d{2,})";
+	
+	@Deprecated
+	/**
+	 * 
+	 */
+	public TransactionRegexSelector() {
+		// PRECONDITIONS
+		
+		try {
+			this.pattern = DEFAULT_PATTERN;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * @param pattern
 	 */
