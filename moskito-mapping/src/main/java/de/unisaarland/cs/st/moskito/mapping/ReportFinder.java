@@ -12,6 +12,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -50,10 +51,18 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					final MappableTransaction mapTransaction = new MappableTransaction(getInputData());
+					final RCSTransaction inputData = getInputData();
+					final MappableTransaction mapTransaction = new MappableTransaction(inputData);
+					
 					final Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction,
 					                                                                  MappableReport.class,
 					                                                                  persistenceUtil);
+					
+					if (Logger.logInfo()) {
+						Logger.info("Processing '%s'->%s with '%s' candidates.", mapTransaction.getHandle(),
+						            mapTransaction.toString(), reportCandidates.size());
+					}
+					
 					for (final MappableReport mapReport : reportCandidates) {
 						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapTransaction,
 						                                                                       mapReport)));
@@ -72,6 +81,8 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 					} else {
 						provideOutputData(candidates.poll(), false);
 					}
+				} else {
+					skipOutputData();
 				}
 			}
 		};

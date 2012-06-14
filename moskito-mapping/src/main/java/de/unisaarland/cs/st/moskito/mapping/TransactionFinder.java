@@ -12,6 +12,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
@@ -54,6 +55,12 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					final Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
 					                                                                            MappableTransaction.class,
 					                                                                            util);
+					
+					if (Logger.logInfo()) {
+						Logger.info("Processing '%s'->%s with '%s' candidates.", mapReport.getHandle(),
+						            mapReport.toString(), transactionCandidates.size());
+					}
+					
 					for (final MappableTransaction mapTransaction : transactionCandidates) {
 						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapReport,
 						                                                                       mapTransaction)));
@@ -72,6 +79,8 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					} else {
 						provideOutputData(candidates.poll(), false);
 					}
+				} else {
+					skipOutputData();
 				}
 			}
 		};
