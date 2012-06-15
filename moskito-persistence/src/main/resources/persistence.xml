@@ -135,6 +135,7 @@
 			<property name="openjpa.ConnectionRetainMode" value="always"/>
 			<!--<property name="openjpa.Log" value="SQL=TRACE"/> -->
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
+			<property name="openjpa.QuotedNumbersInQueries" value="true"/>
 		</properties>
 	</persistence-unit>
 	<persistence-unit name="ppa" transaction-type="RESOURCE_LOCAL">
