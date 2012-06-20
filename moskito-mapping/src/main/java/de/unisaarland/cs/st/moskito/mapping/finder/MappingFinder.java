@@ -80,6 +80,10 @@ public class MappingFinder {
 	 *            the engine
 	 */
 	public void addEngine(final MappingEngine engine) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available engines.", engine.getHandle());
+		}
+		
 		this.engines.put(engine.getClass().getCanonicalName(), engine);
 		
 		provideStorages(engine);
@@ -92,6 +96,10 @@ public class MappingFinder {
 	 *            the filter
 	 */
 	public void addFilter(final MappingFilter filter) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available filters.", filter.getHandle());
+		}
+		
 		this.filters.put(filter.getClass(), filter);
 		
 		provideStorages(filter);
@@ -104,6 +112,10 @@ public class MappingFinder {
 	 *            the selector
 	 */
 	public void addSelector(final MappingSelector selector) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available selectors.", selector.getHandle());
+		}
+		
 		this.selectors.put(selector.getClass(), selector);
 		provideStorages(selector);
 	}
@@ -115,6 +127,10 @@ public class MappingFinder {
 	 *            the splitter
 	 */
 	public void addSplitter(final MappingSplitter splitter) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available splitters.", splitter.getHandle());
+		}
+		
 		this.splitters.put(splitter.getClass(), splitter);
 		provideStorages(splitter);
 	}
@@ -126,6 +142,10 @@ public class MappingFinder {
 	 *            the storage
 	 */
 	public void addStorage(final MappingStorage storage) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available storages.", storage.getHandle());
+		}
+		
 		this.storages.put(storage.getClass(), storage);
 		provideStorages(storage);
 	}
@@ -137,6 +157,10 @@ public class MappingFinder {
 	 *            the strategy
 	 */
 	public void addStrategy(final MappingStrategy strategy) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available strategies.", strategy.getHandle());
+		}
+		
 		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
 		provideStorages(strategy);
 	}
@@ -148,6 +172,10 @@ public class MappingFinder {
 	 *            the trainer
 	 */
 	public void addTrainer(final MappingTrainer trainer) {
+		if (Logger.logInfo()) {
+			Logger.info("Adding '%s' to available trainers.", trainer.getHandle());
+		}
+		
 		this.trainers.put(trainer.getClass(), trainer);
 		provideStorages(trainer);
 	}

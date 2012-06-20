@@ -53,7 +53,7 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 				if (candidates.isEmpty()) {
 					final RCSTransaction inputData = getInputData();
 					final MappableTransaction mapTransaction = new MappableTransaction(inputData);
-					
+					// TODO store selectors and reuse them
 					final Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction,
 					                                                                  MappableReport.class,
 					                                                                  persistenceUtil);
