@@ -24,6 +24,8 @@ import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
@@ -50,9 +52,10 @@ public class ReportRegexSelector extends MappingSelector {
 	public static final class Options extends
 	        ArgumentSetOptions<ReportRegexSelector, ArgumentSet<ReportRegexSelector, Options>> {
 		
-		private static final String    TAG         = "reportRegex";
-		private static final String    DESCRIPTION = "...";
-		private StringArgument.Options patternOption;
+		private static final String                                   TAG         = "reportRegex";
+		private static final String                                   DESCRIPTION = "...";
+		private StringArgument.Options                                patternOption;
+		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
 		
 		/**
 		 * @param argumentSet
@@ -74,7 +77,14 @@ public class ReportRegexSelector extends MappingSelector {
 			
 			try {
 				final StringArgument patternArgument = getSettings().getArgument(this.patternOption);
-				return new ReportRegexSelector(patternArgument.getValue());
+				final ReportRegexSelector selector = new ReportRegexSelector(patternArgument.getValue());
+				final StringArgument tagArgument = getSettings().getArgument(this.tagOption);
+				
+				final String tag = tagArgument.getValue();
+				if (tag != null) {
+					selector.setTagFormat(tag);
+				}
+				return selector;
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -96,6 +106,14 @@ public class ReportRegexSelector extends MappingSelector {
 				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
 				                                                Requirement.required);
 				map.put(this.patternOption.getName(), this.patternOption);
+				
+				this.tagOption = new StringArgument.Options(
+				                                            argumentSet,
+				                                            "tag",
+				                                            "Format string like 'XSTR-%s' that determines how the match from the regex should be used when querying the database.",
+				                                            null, Requirement.optional);
+				map.put(this.tagOption.getName(), this.tagOption);
+				
 				return map;
 			} finally {
 				// POSTCONDITIONS
@@ -109,6 +127,8 @@ public class ReportRegexSelector extends MappingSelector {
 	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";
 	/** The pattern. */
 	private final String        pattern;
+	
+	private String              tagFormat       = null;
 	
 	@Deprecated
 	public ReportRegexSelector() {
@@ -156,7 +176,7 @@ public class ReportRegexSelector extends MappingSelector {
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
-		final List<Long> ids = new LinkedList<Long>();
+		final List<String> ids = new LinkedList<>();
 		final Regex regex = new Regex(this.pattern);
 		
 		final Criteria<Report> criteria = util.createCriteria(Report.class);
@@ -175,7 +195,9 @@ public class ReportRegexSelector extends MappingSelector {
 					Logger.debug("While parsings " + element.get(FieldKey.ID).toString()
 					        + " i stumbled upon this match: " + match.getGroup(1).getMatch());
 				}
-				ids.add(Long.parseLong(match.getGroup(1).getMatch()));
+				ids.add(this.tagFormat != null
+				                              ? String.format(this.tagFormat, match.getGroup(1).getMatch())
+				                              : match.getGroup(1).getMatch());
 			}
 		}
 		criteria.in("id", ids);
@@ -190,6 +212,23 @@ public class ReportRegexSelector extends MappingSelector {
 		}));
 		
 		return list;
+	}
+	
+	/**
+	 * @param tagFormat
+	 *            the tagFormat to set
+	 */
+	final void setTagFormat(final String tagFormat) {
+		// PRECONDITIONS
+		Condition.notNull(tagFormat, "Argument '%s' in '%s'.", "tagFormat", getClass().getSimpleName());
+		
+		try {
+			this.tagFormat = tagFormat;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.tagFormat, tagFormat,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/*
