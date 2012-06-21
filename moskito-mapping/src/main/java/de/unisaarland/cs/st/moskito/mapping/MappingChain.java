@@ -13,7 +13,6 @@
 package de.unisaarland.cs.st.moskito.mapping;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.messages.StartupEvent;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -31,7 +30,6 @@ import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import dev.ownhero.net.andama.eventhandlers.irc.IRCThread;
 
 /**
  * The Class MappingChain.
@@ -131,9 +129,9 @@ public class MappingChain extends Chain<Settings> {
 			// return;
 		}
 		
-		final IRCThread t = new IRCThread("mapping");
-		t.start();
-		
-		getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
+		// final IRCThread t = new IRCThread("mapping");
+		// t.start();
+		//
+		// getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
 	}
 }

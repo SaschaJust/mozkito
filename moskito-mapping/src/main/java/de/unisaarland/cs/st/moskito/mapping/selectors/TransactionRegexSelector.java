@@ -51,7 +51,7 @@ public class TransactionRegexSelector extends MappingSelector {
 	public static final class Options extends
 	        ArgumentSetOptions<TransactionRegexSelector, ArgumentSet<TransactionRegexSelector, Options>> {
 		
-		private static final String    TAG         = "reportRegex";
+		private static final String    TAG         = "transactionRegex";
 		private static final String    DESCRIPTION = "...";
 		private StringArgument.Options patternOption;
 		
