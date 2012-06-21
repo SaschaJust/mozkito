@@ -98,10 +98,13 @@ public abstract class MappingSelector extends Node {
 			try {
 				
 				final SetArgument argument = getSettings().getArgument(this.enabledSelectorsOption);
-				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
+					if (Logger.logDebug()) {
+						Logger.debug("Processing selector enabler '%s'.", name);
+					}
+					
 					Class<? extends MappingSelector> clazz;
 					try {
 						clazz = (Class<? extends MappingSelector>) Class.forName(MappingSelector.class.getPackage()
@@ -197,12 +200,6 @@ public abstract class MappingSelector extends Node {
 									final ArgumentSetOptions<? extends MappingSelector, ?> selectorOption = constructor.newInstance(set,
 									                                                                                                Requirement.contains(this.enabledSelectorsOption,
 									                                                                                                                     selectorClass.getSimpleName()));
-									System.out.println(selectorOption
-									        + " is "
-									        + (Requirement.contains(this.enabledSelectorsOption,
-									                                selectorClass.getSimpleName()).check()
-									                                                                      ? "required"
-									                                                                      : "unrequired"));
 									
 									if (Logger.logDebug()) {
 										Logger.debug("Adding new mapping selectors dependency '%s' with list activator '%s'",
