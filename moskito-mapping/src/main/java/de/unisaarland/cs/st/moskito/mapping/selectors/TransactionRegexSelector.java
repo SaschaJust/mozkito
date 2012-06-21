@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,20 +24,16 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
-
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -94,8 +91,8 @@ public class TransactionRegexSelector extends MappingSelector {
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
 				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
-				                                                "Pattern of report ids to scan for.",
-				                                                "(\\p{XDigit}{7,})", Requirement.required);
+				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
+				                                                Requirement.required);
 				map.put(this.patternOption.getName(), this.patternOption);
 				return map;
 			} finally {
@@ -109,10 +106,10 @@ public class TransactionRegexSelector extends MappingSelector {
 	private final String        pattern;
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
+	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
 	
 	/** The Constant DEFAULT_PATTERN. */
-	private static final String DEFAULT_PATTERN = "(\\d{2,})";
+	private static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";
 	
 	@Deprecated
 	/**
@@ -187,44 +184,44 @@ public class TransactionRegexSelector extends MappingSelector {
 	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse (java.lang.Object)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
-		final List<Long> ids = new LinkedList<Long>();
+		final List<String> ids = new LinkedList<String>();
 		final Regex regex = new Regex(this.pattern);
 		
-		final Criteria<Report> criteria = util.createCriteria(Report.class);
-		
-		final MultiMatch multiMatch = regex.findAll(element.get(FieldKey.BODY).toString());
-		if (Logger.logDebug()) {
-			Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
-			        + (multiMatch != null
-			                             ? multiMatch.size()
-			                             : 0) + " matches for regex '" + this.pattern + "'.");
-		}
-		
-		if (multiMatch != null) {
-			for (final Match match : multiMatch) {
-				if (Logger.logDebug()) {
-					Logger.debug("While parsing transaction " + element.get(FieldKey.ID).toString()
-					        + " i stumbled upon this match: " + match.getGroup(1).getMatch());
-				}
-				ids.add(Long.parseLong(match.getGroup(1).getMatch()));
-			}
-		}
-		criteria.in("id", ids);
-		final List<Report> loadedList = util.load(criteria);
-		
-		list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
+		try {
 			
-			@Override
-			public MappableReport transform(final Object input) {
-				return new MappableReport((Report) input);
+			final Criteria<?> criteria = util.createCriteria(targetType.newInstance().getBaseType());
+			
+			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
+				final Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
+				final MultiMatch multiMatch = regex.findAll(comment.getMessage());
+				
+				if (multiMatch != null) {
+					for (final Match match : multiMatch) {
+						
+						ids.add(match.getGroup(1).getMatch());
+					}
+				}
 			}
-		}));
+			
+			criteria.in("id", ids);
+			final List<?> load = util.load(criteria);
+			
+			for (final Object instance : load) {
+				try {
+					final Constructor<T> constructor = targetType.getConstructor(instance.getClass());
+					list.add(constructor.newInstance(instance));
+				} catch (final Exception e) {
+					throw new UnrecoverableError(e);
+				}
+			}
+		} catch (final Exception e) {
+			throw new UnrecoverableError(e);
+		}
 		
 		return list;
 	}
