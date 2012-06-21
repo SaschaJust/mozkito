@@ -74,7 +74,11 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 			@Override
 			public void process() {
 				if (!candidates.isEmpty()) {
-					providePartialOutputData(candidates.poll());
+					final Candidate candidate = candidates.poll();
+					if (Logger.logDebug()) {
+						Logger.debug("Providing candidate '%s'.", candidate);
+					}
+					providePartialOutputData(candidate);
 					if (candidates.isEmpty()) {
 						setCompleted();
 					}

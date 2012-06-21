@@ -76,7 +76,11 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			@Override
 			public void process() {
 				if (!candidates.isEmpty()) {
-					providePartialOutputData(candidates.poll());
+					final Candidate candidate = candidates.poll();
+					if (Logger.logDebug()) {
+						Logger.debug("Providing candidate '%s'.", candidate);
+					}
+					providePartialOutputData(candidate);
 					if (candidates.isEmpty()) {
 						setCompleted();
 					}
