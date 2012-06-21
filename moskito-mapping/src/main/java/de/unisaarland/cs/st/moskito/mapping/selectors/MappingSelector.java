@@ -123,7 +123,11 @@ public abstract class MappingSelector extends Node {
 						
 					} else {
 						final ArgumentSet<? extends MappingSelector, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
-						set.add(argumentSet.getValue());
+						final MappingSelector selector = argumentSet.getValue();
+						if (Logger.logDebug()) {
+							Logger.debug("Adding configured selector '%s'.", selector);
+						}
+						set.add(selector);
 					}
 				}
 				
