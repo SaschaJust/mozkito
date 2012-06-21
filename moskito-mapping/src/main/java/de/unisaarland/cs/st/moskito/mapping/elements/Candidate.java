@@ -42,6 +42,39 @@ public class Candidate {
 		this.to = candidatePair.getSecond();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Candidate other = (Candidate) obj;
+		if (this.from == null) {
+			if (other.from != null) {
+				return false;
+			}
+		} else if (!this.from.equals(other.from)) {
+			return false;
+		}
+		if (this.to == null) {
+			if (other.to != null) {
+				return false;
+			}
+		} else if (!this.to.equals(other.to)) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Gets the from.
 	 * 
@@ -58,6 +91,23 @@ public class Candidate {
 	 */
 	public final MappableEntity getTo() {
 		return this.to;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.from == null)
+		                                                ? 0
+		                                                : this.from.hashCode());
+		result = (prime * result) + ((this.to == null)
+		                                              ? 0
+		                                              : this.to.hashCode());
+		return result;
 	}
 	
 	/*

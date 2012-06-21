@@ -3,7 +3,7 @@
  */
 package de.unisaarland.cs.st.moskito.mapping;
 
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.ownhero.dev.andama.threads.Group;
@@ -44,7 +44,7 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
-		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		final Set<Candidate> candidates = new HashSet<>();
 		
 		new PreProcessHook<Report, Candidate>(this) {
 			
@@ -74,7 +74,9 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 			@Override
 			public void process() {
 				if (!candidates.isEmpty()) {
-					final Candidate candidate = candidates.poll();
+					final Candidate candidate = candidates.iterator().next();
+					candidates.remove(candidate);
+					
 					if (Logger.logDebug()) {
 						Logger.debug("Providing candidate '%s'.", candidate);
 					}
@@ -83,6 +85,10 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 						setCompleted();
 					}
 				} else {
+					if (Logger.logDebug()) {
+						Logger.debug("Skipping candidate analysis of '%s' due to the lag of pre-selected candidates.",
+						             getInputData());
+					}
 					skipData();
 				}
 			}

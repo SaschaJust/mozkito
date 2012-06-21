@@ -62,6 +62,31 @@ public abstract class MappableEntity implements Annotated {
 	/** The test. */
 	private int               test;
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MappableEntity other = (MappableEntity) obj;
+		if (!getId().equals(other.getId())) {
+			return false;
+		}
+		if (getBaseType() != other.getBaseType()) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Gets the.
 	 * 
@@ -217,6 +242,19 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	@Transient
 	public abstract String getText();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + (getId().hashCode() ^ (getId().hashCode() >>> 32));
+		result = (prime * result) + getBaseType().hashCode();
+		return result;
+	}
 	
 	/**
 	 * Sets the generated id.
