@@ -53,8 +53,8 @@ public class MappingEngineProcessor extends Filter<Mapping> {
 				final IMapping candidate = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Processing mapping for " + candidate.getElement1() + " to " + candidate.getElement2()
-					        + ".");
+					Logger.debug("[%s] Processing mapping for '%s' -> '%s'.", engine.getHandle(),
+					             candidate.getElement1(), candidate.getElement2());
 				}
 				
 				final Mapping score = finder.score(engine, candidate.getElement1(), candidate.getElement2());

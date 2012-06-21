@@ -197,7 +197,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@Override
 	public String getId() {
-		return getReport().getId() + "";
+		return getReport().getId().replaceAll("[^0-9]", "");
 	}
 	
 	/**
