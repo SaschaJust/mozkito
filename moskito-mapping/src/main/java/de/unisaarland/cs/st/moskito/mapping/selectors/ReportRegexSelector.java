@@ -199,7 +199,7 @@ public class ReportRegexSelector extends MappingSelector {
 	@Override
 	public boolean supports(final Class<?> from,
 	                        final Class<?> to) {
-		return from.equals(Report.class) && to.equals(RCSTransaction.class);
+		return from.equals(RCSTransaction.class) && to.equals(Report.class);
 	}
 	
 }
