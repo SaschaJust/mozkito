@@ -247,36 +247,43 @@ public class TimestampEngine extends MappingEngine {
 		final DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
 		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
-		ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
-		final Report report = ((MappableReport) element2).getReport();
-		Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
-		                                            element1Timestamp.plus(getInterval().getEndMillis()));
-		
-		if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
-			final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
-			for (final HistoryElement element : history.getElements()) {
-				final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
-				                                                                           .toLowerCase());
-				@SuppressWarnings ("unchecked")
-				final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
-				if (val.equals(Resolution.RESOLVED)) {
-					if (localInterval.contains(element.getTimestamp())) {
-						value = 1;
-						
-					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
-						value = Math.max(value,
-						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+		if ((element1Timestamp != null) && (element2CreationTimestamp != null) && (element2ResolutionTimestamp != null)) {
+			
+			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
+			final Report report = ((MappableReport) element2).getReport();
+			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
+			                                            element1Timestamp.plus(getInterval().getEndMillis()));
+			
+			if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
+				final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
+				for (final HistoryElement element : history.getElements()) {
+					final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
+					                                                                           .toLowerCase());
+					@SuppressWarnings ("unchecked")
+					final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
+					if (val.equals(Resolution.RESOLVED)) {
+						if (localInterval.contains(element.getTimestamp())) {
+							value = 1;
+							
+						} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
+							value = Math.max(value,
+							                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+						}
 					}
 				}
+				
 			}
 			
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
+			           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
+			           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
+		} else {
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), MappingEngine.getUnknown(),
+			           MappingEngine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), MappingEngine.getUnknown(),
+			           MappingEngine.getUnknown());
 		}
-		
-		addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
-		           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
-		           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 	}
 	
 	/*
