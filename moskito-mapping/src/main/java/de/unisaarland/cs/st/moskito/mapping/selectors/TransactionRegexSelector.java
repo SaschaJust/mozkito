@@ -233,6 +233,6 @@ public class TransactionRegexSelector extends MappingSelector {
 	@Override
 	public boolean supports(final Class<?> from,
 	                        final Class<?> to) {
-		return to.equals(Report.class) && from.equals(RCSTransaction.class);
+		return from.equals(Report.class) && to.equals(RCSTransaction.class);
 	}
 }
