@@ -293,7 +293,7 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		for (final Matcher matcher : this.matchers) {
-			final Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
+			final Regex regex = matcher.getRegex(element2.getId());
 			
 			if (value < matcher.getScore()) {
 				

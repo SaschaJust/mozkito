@@ -197,6 +197,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@Override
 	public String getId() {
+		// TODO: access mapping.selectors.reportRegex.tag to strip everything but the id number
 		return getReport().getId().replaceAll("[^0-9]", "");
 	}
 	
