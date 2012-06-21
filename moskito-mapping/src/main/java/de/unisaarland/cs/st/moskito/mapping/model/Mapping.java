@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -206,7 +207,7 @@ public class Mapping implements Annotated, IMapping {
 	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement1()
 	 */
 	@Override
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public MappableEntity getElement1() {
 		return this.element1;
 	}
@@ -216,7 +217,7 @@ public class Mapping implements Annotated, IMapping {
 	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement2()
 	 */
 	@Override
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public MappableEntity getElement2() {
 		return this.element2;
 	}
