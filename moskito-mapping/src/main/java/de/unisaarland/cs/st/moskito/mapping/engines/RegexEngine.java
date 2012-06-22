@@ -301,7 +301,7 @@ public class RegexEngine extends MappingEngine {
 					Logger.debug("Using regex '" + regex.getPattern() + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
-					value += matcher.getScore();
+					value = matcher.getScore();
 					relevantString = regex.getGroup("match"); //$NON-NLS-1$
 					if (Logger.logDebug()) {
 						Logger.debug("Found match: %s", relevantString);
