@@ -179,7 +179,7 @@ public class BackrefEngine extends MappingEngine {
 	                        final MappableEntity element2,
 	                        final Mapping score) {
 		final String fullText = element2.getText();
-		final String id = element1.get(FieldKey.ID).toString();
+		final String id = element1.getId();
 		
 		double localConfidence = 0d;
 		if (fullText.contains(id.toString())) {
