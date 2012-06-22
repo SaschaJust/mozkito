@@ -231,8 +231,8 @@ public class ReportTypeEngine extends MappingEngine {
 			}
 		} else if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) == getType()) {
-				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				           element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
+				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element2.get(FieldKey.TYPE).toString(),
+				           element2.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
 			}
 		} else {
 			addFeature(score, -getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
