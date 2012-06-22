@@ -26,6 +26,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -33,6 +34,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class CreationOrderEngine.
@@ -198,8 +200,7 @@ public class CreationOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(Index.ONE, FieldKey.CREATION_TIMESTAMP), new Atom(Index.OTHER,
-		                                                                          FieldKey.CREATION_TIMESTAMP));
+		return new And(new Atom(Index.FROM, Report.class), new Atom(Index.TO, RCSTransaction.class));
 	}
 	
 }
