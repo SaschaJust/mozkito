@@ -247,6 +247,11 @@ public class TimestampEngine extends MappingEngine {
 		final DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
 		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Creation FROM:%s, Creation TO:%s, Resolution TO:%s", element1Timestamp,
+			             element2CreationTimestamp, element2ResolutionTimestamp);
+		}
+		
 		if ((element1Timestamp != null) && (element2CreationTimestamp != null) && (element2ResolutionTimestamp != null)) {
 			
 			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
@@ -257,7 +262,12 @@ public class TimestampEngine extends MappingEngine {
 			                                            element1Timestamp.plus(getInterval().getEndMillis()));
 			
 			if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
+				// report got created before transaction
+				if (Logger.logDebug()) {
+					Logger.debug("report got created before transaction");
+				}
 				final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
+				
 				for (final HistoryElement element : history.getElements()) {
 					final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
 					                                                                           .toLowerCase());
@@ -274,12 +284,23 @@ public class TimestampEngine extends MappingEngine {
 					}
 				}
 				
+			} else {
+				if (Logger.logDebug()) {
+					Logger.debug("Report got created after transction");
+				}
+				value = -1;
 			}
 			
+			if (Logger.logDebug()) {
+				Logger.debug("Scoring with confidence: %s", value);
+			}
 			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
 			           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
 			           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 		} else {
+			if (Logger.logDebug()) {
+				Logger.debug("Scoring with confidence: %s", value);
+			}
 			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), MappingEngine.getUnknown(),
 			           MappingEngine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), MappingEngine.getUnknown(),
 			           MappingEngine.getUnknown());

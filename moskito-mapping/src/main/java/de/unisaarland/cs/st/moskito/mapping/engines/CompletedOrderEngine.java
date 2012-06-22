@@ -23,6 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -185,7 +186,10 @@ public class CompletedOrderEngine extends MappingEngine {
 		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
-		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
+		        && transaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
+			if (Logger.logDebug()) {
+				Logger.debug("Transaction was committed before report got marked as resolved.");
+			}
 			localConfidence = getConfidence();
 		}
 		
