@@ -268,29 +268,44 @@ public class TimestampEngine extends MappingEngine {
 				}
 				final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
 				
-				for (final HistoryElement element : history.getElements()) {
-					if (Logger.logDebug()) {
-						Logger.debug("Checking history element: %s", element);
-					}
-					final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
-					                                                                           .toLowerCase());
-					@SuppressWarnings ("unchecked")
-					final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
-					if (val.equals(Resolution.RESOLVED)) {
+				if (!history.isEmpty()) {
+					for (final HistoryElement element : history.getElements()) {
 						if (Logger.logDebug()) {
-							Logger.debug("This element set solved flag.");
+							Logger.debug("Checking history element: %s", element);
 						}
-						if (localInterval.contains(element.getTimestamp())) {
-							value = 1;
+						final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
+						                                                                           .toLowerCase());
+						@SuppressWarnings ("unchecked")
+						final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
+						if (val.equals(Resolution.RESOLVED)) {
 							if (Logger.logDebug()) {
-								Logger.debug("Resolution is within specified interval, value: %s", value);
+								Logger.debug("This element set solved flag.");
 							}
-						} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
-							value = Math.max(value,
-							                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
-							if (Logger.logDebug()) {
-								Logger.debug("Resolution is later than specified, value: %s", value);
+							if (localInterval.contains(element.getTimestamp())) {
+								value = 1;
+								if (Logger.logDebug()) {
+									Logger.debug("Resolution is within specified interval, value: %s", value);
+								}
+							} else if (element.getTimestamp().isAfter(element1Timestamp)) {
+								value = Math.max(value,
+								                 1.0d / (1.0d + ((element.getTimestamp().getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+								if (Logger.logDebug()) {
+									Logger.debug("Resolution is later than specified, value: %s", value);
+								}
 							}
+						}
+					}
+				} else {
+					if (localInterval.contains(element2ResolutionTimestamp)) {
+						value = 1;
+						if (Logger.logDebug()) {
+							Logger.debug("Resolution is within specified interval, value: %s", value);
+						}
+					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
+						value = Math.max(value,
+						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+						if (Logger.logDebug()) {
+							Logger.debug("Resolution is later than specified, value: %s", value);
 						}
 					}
 				}
