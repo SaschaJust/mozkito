@@ -447,9 +447,7 @@ public class MappingFinder {
 	 * @return the computed scoring for transaction/report relation
 	 */
 	public Mapping score(final MappingEngine engine,
-	                     final MappableEntity element1,
-	                     final MappableEntity element2) {
-		final Mapping score = new Mapping(element1, element2);
+	                     final Mapping score) {
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Scoring with engine: " + engine.getHandle());
@@ -460,6 +458,9 @@ public class MappingFinder {
 			throw new UnrecoverableError("Engine: " + engine.getHandle()
 			        + " returns NULL when asked for supported fields.");
 		}
+		
+		final MappableEntity element1 = score.getElement1();
+		final MappableEntity element2 = score.getElement2();
 		
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		

@@ -225,20 +225,18 @@ public class ReportTypeEngine extends MappingEngine {
 	                  final MappableEntity element2,
 	                  final Mapping score) {
 		if (element1 instanceof MappableReport) {
-			if (element1.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				                 element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown(),
-				                 this.getClass());
+			if (element1.get(FieldKey.TYPE) == getType()) {
+				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
+				           element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
 			}
 		} else if (element2 instanceof MappableReport) {
-			if (element2.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), getUnused(), getUnknown(), getUnknown(), FieldKey.TYPE.name(),
-				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
-				                 this.getClass());
+			if (element2.get(FieldKey.TYPE) == getType()) {
+				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
+				           element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
 			}
 		} else {
-			score.addFeature(-getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
-			                 getUnknown(), this.getClass());
+			addFeature(score, -getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
+			           getUnknown());
 		}
 		
 	}
