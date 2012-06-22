@@ -156,7 +156,7 @@ public class ReportTypeEngine extends MappingEngine {
 	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
 	                                                           
 	/** The constant defaultConfidence. */
-	private static final Double DEAFULT_CONFIDENCE = -1d;
+	private static final Double DEAFULT_CONFIDENCE = 1d;
 	
 	/** The default type. */
 	private static final Type   DEFAULT_TYPE       = Type.BUG;
@@ -230,17 +230,15 @@ public class ReportTypeEngine extends MappingEngine {
 				                 element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown(),
 				                 this.getClass());
 			}
-		} else
-		
-		if (element2 instanceof MappableReport) {
+		} else if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) != getType()) {
 				score.addFeature(getConfidence(), getUnused(), getUnknown(), getUnknown(), FieldKey.TYPE.name(),
 				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
 				                 this.getClass());
 			}
 		} else {
-			score.addFeature(0, getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(), getUnknown(),
-			                 this.getClass());
+			score.addFeature(-getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
+			                 getUnknown(), this.getClass());
 		}
 		
 	}
