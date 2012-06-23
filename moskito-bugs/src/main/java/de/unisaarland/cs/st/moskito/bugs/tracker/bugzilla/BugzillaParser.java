@@ -55,6 +55,9 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Status;
  */
 public abstract class BugzillaParser implements Parser {
 	
+	/** The history parser. */
+	protected BugzillaHistoryParser                  historyParser  = null;
+	
 	/** The Constant parserVersions. */
 	private static final Map<String, BugzillaParser> parserVersions = new HashMap<String, BugzillaParser>();
 	
@@ -387,7 +390,7 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	@Override
 	public final boolean setURI(final ReportLink reportLink) {
-		
+		this.historyParser = null;
 		try {
 			final URI uri = reportLink.getUri();
 			if (uri == null) {

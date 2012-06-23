@@ -255,18 +255,23 @@ public class Person implements Annotated {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
-	@Override
+        @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + getEmailAddresses().hashCode();
-		result = (prime * result) + getFullnames().hashCode();
-		result = (prime * result) + getUsernames().hashCode();
-		
+		result = (prime * result) + ((this.emailAddresses == null)
+		                                                          ? 0
+		                                                          : this.emailAddresses.hashCode());
+		result = (prime * result) + ((this.fullnames == null)
+		                                                     ? 0
+		                                                     : this.fullnames.hashCode());
+		result = (prime * result) + ((this.usernames == null)
+		                                                     ? 0
+		                                                     : this.usernames.hashCode());
 		return result;
-	}
+	}	
 	
-	/**
+        /**
 	 * @param person
 	 * @return
 	 */
