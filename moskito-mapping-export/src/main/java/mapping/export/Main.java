@@ -84,6 +84,9 @@ public class Main {
 					if (!header) {
 						final RCSFile file = persistenceUtil.loadById(Long.valueOf(line[0]), RCSFile.class);
 						line[0] = file.getLatestPath();
+						if (!line[0].endsWith(".java")) {
+							continue;
+						}
 					} else {
 						header = false;
 					}
