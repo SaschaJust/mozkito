@@ -329,7 +329,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public Person getAssignedTo() {
-		return getPersonContainer().get("assignedTo");
+		return getPersonContainer() != null ? getPersonContainer().get("assignedTo") : null;
 	}
 	
 	/**
@@ -613,7 +613,7 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getResolver() {
-		return getPersonContainer().get("resolver");
+		return getPersonContainer() != null ? getPersonContainer().get("resolver") : null;
 	}
 	
 	/**
@@ -682,7 +682,7 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Transient
 	public Person getSubmitter() {
-		return getPersonContainer().get("submitter");
+		return getPersonContainer() != null ? getPersonContainer().get("submitter") : null;
 	}
 	
 	/**
