@@ -82,7 +82,7 @@ public class Main {
 				boolean header = true;
 				while ((line = reader.readNext()) != null) {
 					if (!header) {
-						final RCSFile file = persistenceUtil.loadById(Integer.valueOf(line[0]), RCSFile.class);
+						final RCSFile file = persistenceUtil.loadById(Long.valueOf(line[0]), RCSFile.class);
 						line[0] = file.getLatestPath();
 					} else {
 						header = false;
