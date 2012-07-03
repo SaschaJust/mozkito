@@ -145,8 +145,8 @@ public class PPATypeVisitor extends ASTVisitor {
 		}
 		if (this.packageFilter.length > 0) {
 			boolean filterPass = false;
-			for (int i = 0; i < this.packageFilter.length; ++i) {
-				if (localCalledObject.startsWith(this.packageFilter[i])) {
+			for (final String element : this.packageFilter) {
+				if (localCalledObject.startsWith(element)) {
 					filterPass = true;
 				}
 			}
@@ -448,7 +448,7 @@ public class PPATypeVisitor extends ASTVisitor {
 				
 				if (!this.methodStack.isEmpty()) {
 					if (Logger.logError()) {
-						Logger.warn("Adding method definition %s to method stack while stack is not empty. This is not impossible but happens rarely. Filename: $s",
+						Logger.warn("Adding method definition %s to method stack while stack is not empty. This is not impossible but happens rarely. Filename: %s",
 						            md.getName(), getRelativeFilePath());
 					}
 				}
