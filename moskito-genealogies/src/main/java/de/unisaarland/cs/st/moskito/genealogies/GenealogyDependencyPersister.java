@@ -116,28 +116,29 @@ public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProces
 									++GenealogyDependencyPersister.this.depCounter;
 								}
 								
-								// check if the corresponding method definition was added too.
-								if (!GenealogyDependencyPersister.this.registry.existsDefinition(element, false)) {
-									final JavaChangeOperation previousDefinitionDeletion = GenealogyDependencyPersister.this.registry.findPreviousDefinitionDeletion(element);
-									if (previousDefinitionDeletion != null) {
-										if (operation.isBefore(previousDefinitionDeletion)) {
-											if (Logger.logError()) {
-												Logger.error("Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
-												        + operation
-												        + ", previous definition="
-												        + previousDefinitionDeletion);
-											}
-											break;
-										}
-										GenealogyDependencyPersister.this.genealogy.addEdge(operation,
-										                                                    previousDefinitionDeletion,
-										                                                    GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-										++GenealogyDependencyPersister.this.depCounter;
-									}
-								}
+								// check if the corresponding method definition was deleted too.
+								// if (!GenealogyDependencyPersister.this.registry.existsDefinition(element, false)) {
+								// final JavaChangeOperation previousDefinitionDeletion =
+								// GenealogyDependencyPersister.this.registry.findPreviousDefinitionDeletion(element);
+								// if (previousDefinitionDeletion != null) {
+								// if (operation.isBefore(previousDefinitionDeletion)) {
+								// if (Logger.logError()) {
+								// Logger.error("Fatal error occured. Found previous method definition deletion that was deleted after the current operation: current operation="
+								// + operation
+								// + ", previous definition="
+								// + previousDefinitionDeletion);
+								// }
+								// break;
+								// }
+								// GenealogyDependencyPersister.this.genealogy.addEdge(operation,
+								// previousDefinitionDeletion,
+								// GenealogyEdgeType.DeletedCallOnDeletedDefinition);
+								// ++GenealogyDependencyPersister.this.depCounter;
+								// }
+								// }
 							}
 							break;
-						// case Modified:
+						case Modified:
 						case Added:
 							if (element instanceof JavaMethodDefinition) {
 								GenealogyDependencyPersister.this.registry.addMethodDefiniton(operation);
@@ -168,7 +169,7 @@ public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProces
 									} else {
 										GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 										                                                    previousDefinition,
-										                                                    GenealogyEdgeType.DefinitionOnDefinition);
+										                                                    GenealogyEdgeType.ModifiedDefinitionOnDefinition);
 										++GenealogyDependencyPersister.this.depCounter;
 									}
 								}
