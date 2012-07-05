@@ -1,0 +1,9 @@
+1.0 "({match}bug:?\\s*#?##ID##)" CASE_INSENSITIVE
+1.0 "({match}bugs?:?\\s*(#?\\p{Digit}+,)*#?##ID##)" CASE_INSENSITIVE
+1.0 "({match}https?://bugzilla.mozilla.org/show_bug.cgi\\?id=##ID##)" CASE_INSENSITIVE
+1.0 "({match}#\\s?##ID##)" CASE_INSENSITIV
+1.0 "({match}BZ\\s?:?\\s*##ID##)" CASE_INSENSITIV
+1.0 "({match}fix\\s?:?\\s*##ID##)" CASE_INSENSITIV
+1.0 "({match}fixing\\s?:?\\s*##ID##)" CASE_INSENSITIV
+-100.0 "({match}test cases for") CASE_INSENSITIV
+-100.0 "({match} revert fix for") CASE_INSENSITIV

@@ -208,12 +208,32 @@ public class Person implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Person)) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final Person other = (Person) obj;
-		
-		return hashCode() == other.hashCode();
+		if (this.emailAddresses == null) {
+			if (other.emailAddresses != null) {
+				return false;
+			}
+		} else if (!this.emailAddresses.equals(other.emailAddresses)) {
+			return false;
+		}
+		if (this.fullnames == null) {
+			if (other.fullnames != null) {
+				return false;
+			}
+		} else if (!this.fullnames.equals(other.fullnames)) {
+			return false;
+		}
+		if (this.usernames == null) {
+			if (other.usernames != null) {
+				return false;
+			}
+		} else if (!this.usernames.equals(other.usernames)) {
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -259,14 +279,19 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + getEmailAddresses().hashCode();
-		result = (prime * result) + getFullnames().hashCode();
-		result = (prime * result) + getUsernames().hashCode();
-		
+		result = (prime * result) + ((this.emailAddresses == null)
+		                                                          ? 0
+		                                                          : this.emailAddresses.hashCode());
+		result = (prime * result) + ((this.fullnames == null)
+		                                                     ? 0
+		                                                     : this.fullnames.hashCode());
+		result = (prime * result) + ((this.usernames == null)
+		                                                     ? 0
+		                                                     : this.usernames.hashCode());
 		return result;
-	}
+	}	
 	
-	/**
+        /**
 	 * @param person
 	 * @return
 	 */

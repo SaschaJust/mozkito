@@ -1,0 +1,15 @@
+database.name=moskito_tomcat_may2012
+database.user=miner
+database.password=miner
+
+repository.uri=/data/kim/miner_repos/apache/tomcat/tomcat_09_05_2012.git
+repository.type=GIT
+repository.mainBranch=trunk
+log.level=info
+headless
+
+tracker.type=BUGZILLA
+bugzilla.overviewURI=https://issues.apache.org/bugzilla/buglist.cgi?product=Tomcat%205&limit=0
+tracker.useProxy=true
+tracker.proxy.cacheDir=/scratch/kim/miner_repos/apache/tomcat/bugzilla_cache/
+tracker.uri=https://issues.apache.org/bugzilla/

@@ -1,0 +1,13 @@
+database.name=moskito_04_test
+database.user=miner
+database.password=miner
+log.level=info
+repository.uri=/data/kim/miner_repos/rhino/rhino_27.02.2012.git
+repository.type=GIT
+headless
+
+tracker.type=BUGZILLA
+bugzilla.overviewURI=https://bugzilla.mozilla.org/buglist.cgi?product=Rhino
+#tracker.useProxy=true
+#tracker.proxy.cacheDir=/scratch/kim/miner_repos/rhino/bugzilla_cache/
+tracker.uri=https://bugzilla.mozilla.org
