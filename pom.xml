@@ -63,6 +63,7 @@
 		<module>moskito-changecouplings</module>
 		<module>moskito-ppa</module>
 		<module>moskito-callgraph</module>
+		<module>moskito-atomicchanges</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
