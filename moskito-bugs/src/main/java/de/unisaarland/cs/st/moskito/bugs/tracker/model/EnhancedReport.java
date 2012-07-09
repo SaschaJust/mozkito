@@ -30,7 +30,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
 
@@ -371,8 +370,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	@Deprecated
 	public void setClassifiedType(final Type classifiedType) {
 		// PRECONDITIONS
-		Condition.notNull(classifiedType, "Argument '%s' in '%s'.", "classifiedType", getClass().getSimpleName());
-		
 		try {
 			this.classifiedType = classifiedType;
 		} finally {
@@ -441,8 +438,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	 */
 	public void setPredictedType(final Type predictedType) {
 		// PRECONDITIONS
-		Condition.notNull(predictedType, "Argument '%s' in '%s'.", "predictedType", getClass().getSimpleName());
-		
 		try {
 			this.predictedType = predictedType;
 		} finally {
@@ -470,8 +465,6 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	 */
 	public void setReport(final Report report) {
 		// PRECONDITIONS
-		Condition.notNull(report, "Argument '%s' in '%s'.", "report", getClass().getSimpleName());
-		
 		try {
 			this.report = report;
 		} finally {
