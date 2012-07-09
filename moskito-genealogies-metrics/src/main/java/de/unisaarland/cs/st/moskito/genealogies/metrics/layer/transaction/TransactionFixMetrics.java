@@ -71,9 +71,7 @@ public class TransactionFixMetrics extends GenealogyTransactionMetric {
 		final String fixClassFilePath = System.getProperty("fix.classify.file", null);
 		if (fixClassFilePath != null) {
 			final File fixClassifyFile = new File(fixClassFilePath);
-			BufferedReader reader;
-			try {
-				reader = new BufferedReader(new InputStreamReader(new FileInputStream(fixClassifyFile)));
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fixClassifyFile)));) {
 				String line = "";
 				while ((line = reader.readLine()) != null) {
 					final String[] lineParts = line.split(",");
