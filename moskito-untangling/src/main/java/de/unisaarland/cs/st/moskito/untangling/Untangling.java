@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling;
 
@@ -82,20 +79,20 @@ public class Untangling {
 	
 	/**
 	 * The Enum ScoreCombinationMode.
-	 *
+	 * 
 	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
 	 */
 	public enum ScoreCombinationMode {
 		
 		/** The SUM. */
 		SUM, /** The VARSUM. */
- VARSUM, /** The LINEA r_ regression. */
- LINEAR_REGRESSION, /** The SVM. */
- SVM;
+		VARSUM, /** The LINEA r_ regression. */
+		LINEAR_REGRESSION, /** The SVM. */
+		SVM;
 		
 		/**
 		 * String values.
-		 *
+		 * 
 		 * @return the string[]
 		 */
 		public static String[] stringValues() {
@@ -109,21 +106,21 @@ public class Untangling {
 	
 	/**
 	 * The Enum UntanglingCollapse.
-	 *
+	 * 
 	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
 	 */
 	public enum UntanglingCollapse {
 		
 		/** The AVG. */
-		AVG, 
- /** The MAX. */
- MAX, 
- /** The RATIO. */
- RATIO;
+		AVG,
+		/** The MAX. */
+		MAX,
+		/** The RATIO. */
+		RATIO;
 		
 		/**
 		 * String values.
-		 *
+		 * 
 		 * @return the string[]
 		 */
 		public static String[] stringValues() {
@@ -164,8 +161,9 @@ public class Untangling {
 	
 	/**
 	 * Instantiates a new untangling.
-	 *
-	 * @param settings the settings
+	 * 
+	 * @param settings
+	 *            the settings
 	 */
 	public Untangling(final Settings settings) {
 		
@@ -238,8 +236,9 @@ public class Untangling {
 	
 	/**
 	 * Generate score visitors.
-	 *
-	 * @param transaction the transaction
+	 * 
+	 * @param transaction
+	 *            the transaction
 	 * @return the list
 	 */
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction transaction) {
@@ -317,7 +316,7 @@ public class Untangling {
 	
 	/**
 	 * Gets the score visitor names.
-	 *
+	 * 
 	 * @return the score visitor names
 	 */
 	public List<String> getScoreVisitorNames() {
@@ -418,145 +417,144 @@ public class Untangling {
 		}
 		
 		final File outFile = this.untanglingControl.getOutputFile();
-		BufferedWriter outWriter;
-		try {
-			outWriter = new BufferedWriter(new FileWriter(outFile));
+		try (FileWriter fileWriter = new FileWriter(outFile); BufferedWriter outWriter = new BufferedWriter(fileWriter);) {
+			
 			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore");
 			outWriter.append(FileUtils.lineSeparator);
-		} catch (final IOException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
-		}
-		
-		if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
-			final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
-			for (int i = 0; i < this.untanglingControl.getN(); ++i) {
-				final int r = random.nextInt(artificialBlobs.size());
-				selectedArtificialBlobs.add(artificialBlobs.remove(r));
-			}
-			artificialBlobs = selectedArtificialBlobs;
-			blobSetSize = artificialBlobs.size();
-		}
-		
-		final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
-		
-		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
-		switch (this.untanglingControl.getCollapseMode()) {
-			case AVG:
-				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
-				break;
-			case RATIO:
-				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
-				break;
-			default:
-				collapseVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
-				break;
-		}
-		
-		// create the corresponding score aggregation model
-		switch (this.untanglingControl.getScoreMode()) {
-			case SUM:
-				this.aggregator = new SumAggregation<JavaChangeOperation>();
-				break;
-			case VARSUM:
-				this.aggregator = new VarSumAggregation<JavaChangeOperation>();
-				break;
-			case LINEAR_REGRESSION:
-				final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
-				// train score aggregation model
-				final Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
-				for (final ArtificialBlob blob : artificialBlobs) {
-					trainTransactions.addAll(blob.getAtomicTransactions());
+			
+			if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
+				final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
+				for (int i = 0; i < this.untanglingControl.getN(); ++i) {
+					final int r = random.nextInt(artificialBlobs.size());
+					selectedArtificialBlobs.add(artificialBlobs.remove(r));
 				}
-				linarRegressionAggregator.train(trainTransactions);
-				this.aggregator = linarRegressionAggregator;
-				break;
-			case SVM:
-				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
-				// train score aggregation model
-				final Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
-				for (final ArtificialBlob blob : artificialBlobs) {
-					svmTrainTransactions.addAll(blob.getAtomicTransactions());
+				artificialBlobs = selectedArtificialBlobs;
+				blobSetSize = artificialBlobs.size();
+			}
+			
+			final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
+			
+			MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
+			switch (this.untanglingControl.getCollapseMode()) {
+				case AVG:
+					collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+					break;
+				case RATIO:
+					collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+					break;
+				default:
+					collapseVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+					break;
+			}
+			
+			// create the corresponding score aggregation model
+			switch (this.untanglingControl.getScoreMode()) {
+				case SUM:
+					this.aggregator = new SumAggregation<JavaChangeOperation>();
+					break;
+				case VARSUM:
+					this.aggregator = new VarSumAggregation<JavaChangeOperation>();
+					break;
+				case LINEAR_REGRESSION:
+					final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
+					// train score aggregation model
+					final Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
+					for (final ArtificialBlob blob : artificialBlobs) {
+						trainTransactions.addAll(blob.getAtomicTransactions());
+					}
+					linarRegressionAggregator.train(trainTransactions);
+					this.aggregator = linarRegressionAggregator;
+					break;
+				case SVM:
+					final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
+					// train score aggregation model
+					final Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
+					for (final ArtificialBlob blob : artificialBlobs) {
+						svmTrainTransactions.addAll(blob.getAtomicTransactions());
+					}
+					svmAggregator.train(svmTrainTransactions);
+					this.aggregator = svmAggregator;
+					break;
+				default:
+					throw new UnrecoverableError("Unknown score aggregation mode found: "
+					        + this.untanglingControl.getScoreMode());
+			}
+			
+			// for each artificial blob
+			final DescriptiveStatistics stat = new DescriptiveStatistics();
+			final DescriptiveStatistics relativeStat = new DescriptiveStatistics();
+			int counter = 0;
+			for (final ArtificialBlob blob : artificialBlobs) {
+				
+				if (Logger.logInfo()) {
+					Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
 				}
-				svmAggregator.train(svmTrainTransactions);
-				this.aggregator = svmAggregator;
-				break;
-			default:
-				throw new UnrecoverableError("Unknown score aggregation mode found: "
-				        + this.untanglingControl.getScoreMode());
-		}
-		
-		// for each artificial blob
-		final DescriptiveStatistics stat = new DescriptiveStatistics();
-		final DescriptiveStatistics relativeStat = new DescriptiveStatistics();
-		int counter = 0;
-		for (final ArtificialBlob blob : artificialBlobs) {
-			
-			if (Logger.logInfo()) {
-				Logger.info("Processing artificial blob: " + (++counter) + "/" + blobSetSize);
-			}
-			
-			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(blob.getLatestTransaction());
-			
-			// run the partitioning algorithm
-			if (!this.untanglingControl.isDryRun()) {
 				
-				final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
-				                                                                                                           blob.getAllChangeOperations(),
-				                                                                                                           scoreVisitors,
-				                                                                                                           this.aggregator,
-				                                                                                                           collapseVisitor);
+				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(blob.getLatestTransaction());
 				
-				final Set<Set<JavaChangeOperation>> partitions = clustering.getPartitions(blob.size());
-				
-				// compare the true and the computed partitions and score the
-				// similarity score in a descriptive statistic
-				final int diff = comparePartitions(blob, partitions);
-				stat.addValue(diff);
-				final double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
-				relativeStat.addValue(relDiff);
-				try {
-					outWriter.append(String.valueOf(diff));
-					outWriter.append(",");
-					outWriter.append(String.valueOf(blob.getAllChangeOperations().size()));
-					outWriter.append(",");
-					outWriter.append(String.valueOf(relDiff));
-					outWriter.append(",");
-					outWriter.append(String.valueOf(clustering.getLowestScore()));
-					outWriter.append(FileUtils.lineSeparator);
-				} catch (final IOException e) {
-					throw new UnrecoverableError(e.getMessage(), e);
+				// run the partitioning algorithm
+				if (!this.untanglingControl.isDryRun()) {
+					
+					final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
+					                                                                                                           blob.getAllChangeOperations(),
+					                                                                                                           scoreVisitors,
+					                                                                                                           this.aggregator,
+					                                                                                                           collapseVisitor);
+					
+					final Set<Set<JavaChangeOperation>> partitions = clustering.getPartitions(blob.size());
+					
+					// compare the true and the computed partitions and score the
+					// similarity score in a descriptive statistic
+					final int diff = comparePartitions(blob, partitions);
+					stat.addValue(diff);
+					final double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
+					relativeStat.addValue(relDiff);
+					try {
+						outWriter.append(String.valueOf(diff));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(blob.getAllChangeOperations().size()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(relDiff));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(clustering.getLowestScore()));
+						outWriter.append(FileUtils.lineSeparator);
+					} catch (final IOException e) {
+						throw new UnrecoverableError(e.getMessage(), e);
+					}
 				}
+				usedTransactions.addAll(blob.getTransactions());
+				
 			}
-			usedTransactions.addAll(blob.getTransactions());
 			
-		}
-		
-		// report the descriptive statistics about the partition scores.
-		try {
-			outWriter.append("Avg. MissRate:," + stat.getMean());
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append("Med. MissRate:," + stat.getPercentile(50));
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append("Avg. relative MissRate:," + relativeStat.getMean());
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append("Med. relative MissRate:," + relativeStat.getPercentile(50));
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append("Used transactions:");
-			for (final RCSTransaction t : usedTransactions) {
-				outWriter.append(t.getId());
-				outWriter.append(",");
+			// report the descriptive statistics about the partition scores.
+			try {
+				outWriter.append("Avg. MissRate:," + stat.getMean());
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Med. MissRate:," + stat.getPercentile(50));
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Avg. relative MissRate:," + relativeStat.getMean());
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Med. relative MissRate:," + relativeStat.getPercentile(50));
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Used transactions:");
+				for (final RCSTransaction t : usedTransactions) {
+					outWriter.append(t.getId());
+					outWriter.append(",");
+				}
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Used random seed: ");
+				outWriter.append(String.valueOf(this.seed));
+				outWriter.append("Aggregation-Model info:");
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append(this.aggregator.getInfo());
+				outWriter.append(FileUtils.lineSeparator);
+				
+				outWriter.close();
+			} catch (final IOException e) {
+				throw new UnrecoverableError(e.getMessage(), e);
 			}
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append("Used random seed: ");
-			outWriter.append(String.valueOf(this.seed));
-			outWriter.append("Aggregation-Model info:");
-			outWriter.append(FileUtils.lineSeparator);
-			outWriter.append(this.aggregator.getInfo());
-			outWriter.append(FileUtils.lineSeparator);
-			
-			outWriter.close();
-		} catch (final IOException e) {
-			throw new UnrecoverableError(e.getMessage(), e);
+		} catch (final IOException e1) {
+			throw new UnrecoverableError(e1);
 		}
 	}
 }

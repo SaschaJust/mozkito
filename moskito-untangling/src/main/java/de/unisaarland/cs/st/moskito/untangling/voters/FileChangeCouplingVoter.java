@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
@@ -64,12 +61,17 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	
 	/**
 	 * Instantiates a new change coupling voter.
-	 *
-	 * @param transaction the transaction
-	 * @param minSupport the min support
-	 * @param minConfidence the min confidence
-	 * @param persistenceUtil the persistence util
-	 * @param cacheDir the cache dir
+	 * 
+	 * @param transaction
+	 *            the transaction
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param cacheDir
+	 *            the cache dir
 	 */
 	
 	@SuppressWarnings ("unchecked")
@@ -82,22 +84,23 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
 			        + "_file.cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
-					ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
 					this.couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
-				} catch (FileNotFoundException e) {
+					in.close();
+				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (ClassNotFoundException e) {
+				} catch (final ClassNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
@@ -105,23 +108,23 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			}
 			if (this.couplings == null) {
 				// run query and save tmp file
-				LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
-				                                                                                                      3,
-				                                                                                                      0.1,
-				                                                                                                      persistenceUtil);
+				final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
+				                                                                                                            3,
+				                                                                                                            0.1,
+				                                                                                                            persistenceUtil);
 				this.couplings = new LinkedList<SerialFileChangeCoupling>();
-				for (FileChangeCoupling c : fileChangeCouplings) {
+				for (final FileChangeCoupling c : fileChangeCouplings) {
 					this.couplings.add(c.serialize(transaction));
 				}
 				try {
-					ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
+					final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
 					out.writeObject(this.couplings);
 					out.close();
-				} catch (FileNotFoundException e) {
+				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}
@@ -153,37 +156,37 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
 		Condition.check(t2.getChangedElementLocation() != null, "The changed element location must not be null!");
 		
-		String path1 = t1.getChangedElementLocation().getFilePath();
-		String path2 = t2.getChangedElementLocation().getFilePath();
+		final String path1 = t1.getChangedElementLocation().getFilePath();
+		final String path2 = t2.getChangedElementLocation().getFilePath();
 		
 		Condition.check(path1 != null, "The changed elements must not be null!");
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
 		if (this.couplings == null) {
-			LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction,
-			                                                                                                      3,
-			                                                                                                      0.1,
-			                                                                                                      this.persistenceUtil);
+			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction,
+			                                                                                                            3,
+			                                                                                                            0.1,
+			                                                                                                            this.persistenceUtil);
 			this.couplings = new LinkedList<SerialFileChangeCoupling>();
-			for (FileChangeCoupling c : fileChangeCouplings) {
+			for (final FileChangeCoupling c : fileChangeCouplings) {
 				this.couplings.add(c.serialize(this.transaction));
 			}
 		}
 		
 		if (!this.couplings.isEmpty()) {
 			
-			List<SerialFileChangeCoupling> currentCouplings = new LinkedList<SerialFileChangeCoupling>();
+			final List<SerialFileChangeCoupling> currentCouplings = new LinkedList<SerialFileChangeCoupling>();
 			
-			for (SerialFileChangeCoupling c : this.couplings) {
+			for (final SerialFileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (String fPath : c.getPremise()) {
+				for (final String fPath : c.getPremise()) {
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;
 						break;
 					}
 				}
 				
-				String iPath = c.getImplication();
+				final String iPath = c.getImplication();
 				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
 					currentCouplings.add(c);
 				}
@@ -198,7 +201,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				}
 				
 			});
-			SerialFileChangeCoupling coupling = this.couplings.get(0);
+			final SerialFileChangeCoupling coupling = this.couplings.get(0);
 			if ((coupling.getSupport() >= this.minSupport) && (coupling.getConfidence() >= this.minConfidence)) {
 				score = this.couplings.get(0).getConfidence();
 			}

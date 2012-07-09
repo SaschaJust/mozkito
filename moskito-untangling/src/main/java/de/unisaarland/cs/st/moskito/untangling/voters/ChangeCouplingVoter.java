@@ -95,6 +95,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				try {
 					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
 					this.couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
+					in.close();
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);

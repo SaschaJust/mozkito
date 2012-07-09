@@ -82,6 +82,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 				try {
 					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
 					final Object[] objects = (Object[]) in.readObject();
+					in.close();
 					this.model = (LinearRegression) objects[0];
 					this.trainingInstances = (Instances) objects[1];
 					this.trained = true;
