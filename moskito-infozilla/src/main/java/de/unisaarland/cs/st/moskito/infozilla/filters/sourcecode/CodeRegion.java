@@ -55,27 +55,12 @@ public class CodeRegion implements Comparable<CodeRegion> {
 	public String keyword;
 	
 	/**
-	 * Standard Constructor.
-	 *
-	 * @param start start position of code region
-	 * @param end end position of code region
-	 * @param keyword type of code region
-	 * @param text textual representation
-	 */
-	public CodeRegion(int start, int end, String keyword, String text) {
-		super();
-		this.start = start;
-		this.end = end;
-		this.keyword = keyword;
-		this.text = text;
-	}
-	
-	/**
 	 * Copy Constructor.
-	 *
-	 * @param that another <code>CodeRegion</code> object to copy from.
+	 * 
+	 * @param that
+	 *            another <code>CodeRegion</code> object to copy from.
 	 */
-	public CodeRegion(CodeRegion that) {
+	public CodeRegion(final CodeRegion that) {
 		super();
 		this.start = Integer.valueOf(that.start);
 		this.end = Integer.valueOf(that.end);
@@ -83,12 +68,38 @@ public class CodeRegion implements Comparable<CodeRegion> {
 		this.text = new String(that.text);
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Standard Constructor.
+	 * 
+	 * @param start
+	 *            start position of code region
+	 * @param end
+	 *            end position of code region
+	 * @param keyword
+	 *            type of code region
+	 * @param text
+	 *            textual representation
+	 */
+	public CodeRegion(final int start, final int end, final String keyword, final String text) {
+		super();
+		this.start = start;
+		this.end = end;
+		this.keyword = keyword;
+		this.text = text;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(CodeRegion that) {
-		if (this.start < that.start) return -1;
-		if (this.start > that.start) return +1;
+	@Override
+	public int compareTo(final CodeRegion that) {
+		if (this.start < that.start) {
+			return -1;
+		}
+		if (this.start > that.start) {
+			return +1;
+		}
 		return 0;
 	}
 }

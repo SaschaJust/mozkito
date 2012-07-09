@@ -24,7 +24,7 @@ import de.unisaarland.cs.st.moskito.infozilla.model.attachment.Attachment;
 
 /**
  * The Class Archive.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public abstract class Archive implements Attachable {
@@ -37,8 +37,9 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Instantiates a new archive.
-	 *
-	 * @param attachment the attachment
+	 * 
+	 * @param attachment
+	 *            the attachment
 	 */
 	public Archive(final Attachment attachment) {
 		setAttachment(attachment);
@@ -46,15 +47,16 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Extract.
-	 *
+	 * 
 	 * @return the file
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public abstract File extract() throws IOException;
 	
 	/**
 	 * Gets the attachables.
-	 *
+	 * 
 	 * @return the attachables
 	 */
 	public List<Attachable> getAttachables() {
@@ -63,16 +65,17 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Gets the attachment.
-	 *
+	 * 
 	 * @return the attachment
 	 */
+	@Override
 	public Attachment getAttachment() {
 		return this.attachment;
 	}
 	
 	/**
 	 * Gets the date.
-	 *
+	 * 
 	 * @return the date
 	 */
 	public byte[] getDate() {
@@ -81,8 +84,9 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Sets the attachables.
-	 *
-	 * @param attachables the attachables to set
+	 * 
+	 * @param attachables
+	 *            the attachables to set
 	 */
 	public void setAttachables(final List<Attachable> attachables) {
 		this.attachables = attachables;
@@ -90,8 +94,9 @@ public abstract class Archive implements Attachable {
 	
 	/**
 	 * Sets the attachment.
-	 *
-	 * @param attachment the attachment to set
+	 * 
+	 * @param attachment
+	 *            the attachment to set
 	 */
 	public void setAttachment(final Attachment attachment) {
 		this.attachment = attachment;

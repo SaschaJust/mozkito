@@ -68,11 +68,10 @@ public class EnumerationFilter extends InfozillaFilter {
 		for (int i = endline; i < lines.length; i++) {
 			if (lines[i].length() == 0) {
 				break;
-			} else {
-				enumLines.add(lines[i]);
-				filterLine(i, text);
-				lastline = i;
 			}
+			enumLines.add(lines[i]);
+			filterLine(i, text);
+			lastline = i;
 		}
 		
 		// Calculate start position

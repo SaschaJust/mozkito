@@ -23,7 +23,7 @@ import net.ownhero.dev.regex.Regex;
 
 /**
  * The Class UnifiedDiff.
- *
+ * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class UnifiedDiff extends Patch {
@@ -60,8 +60,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Instantiates a new unified diff.
-	 *
-	 * @param s the s
+	 * 
+	 * @param s
+	 *            the s
 	 */
 	public UnifiedDiff(final int s) {
 		this.hunks = new ArrayList<PatchHunk>();
@@ -70,9 +71,11 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Instantiates a new unified diff.
-	 *
-	 * @param s the s
-	 * @param e the e
+	 * 
+	 * @param s
+	 *            the s
+	 * @param e
+	 *            the e
 	 */
 	public UnifiedDiff(final int s, final int e) {
 		this.hunks = new ArrayList<PatchHunk>();
@@ -82,23 +85,26 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Adds the hunk.
-	 *
-	 * @param hunk the hunk
+	 * 
+	 * @param hunk
+	 *            the hunk
 	 */
 	public void addHunk(final PatchHunk hunk) {
 		this.hunks.add(hunk);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getEndPosition()
 	 */
+	@Override
 	public int getEndPosition() {
 		return this.endPosition;
 	}
 	
 	/**
 	 * Gets the header.
-	 *
+	 * 
 	 * @return the header
 	 */
 	public String getHeader() {
@@ -107,7 +113,7 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Gets the hunks.
-	 *
+	 * 
 	 * @return the hunks
 	 */
 	public List<PatchHunk> getHunks() {
@@ -116,20 +122,19 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Gets the index.
-	 *
+	 * 
 	 * @return the index
 	 */
 	public String getIndex() {
 		if (this.index.length() > 7) {
 			return (this.index.substring(7, this.index.length()));
-		} else {
-			return this.index;
 		}
+		return this.index;
 	}
 	
 	/**
 	 * Gets the modified file.
-	 *
+	 * 
 	 * @return the modified file
 	 */
 	public String getModifiedFile() {
@@ -138,30 +143,33 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Gets the original file.
-	 *
+	 * 
 	 * @return the original file
 	 */
 	public String getOriginalFile() {
 		return PlusMinusLineToFilename(this.originalFile);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.infozilla.model.Inlineable#getStartPosition()
 	 */
+	@Override
 	public int getStartPosition() {
 		return this.startPosition;
 	}
 	
 	/**
 	 * Plus minus line to filename.
-	 *
-	 * @param input the input
+	 * 
+	 * @param input
+	 *            the input
 	 * @return the string
 	 */
 	public String PlusMinusLineToFilename(final String input) {
 		String temp = input;
-		String pmreg = "([-]{3}|[+]{3})([ \\r\\n\\t]({filename}.*?)[ \\t])";
-		Regex regex = new Regex(pmreg, Pattern.MULTILINE);
+		final String pmreg = "([-]{3}|[+]{3})([ \\r\\n\\t]({filename}.*?)[ \\t])";
+		final Regex regex = new Regex(pmreg, Pattern.MULTILINE);
 		
 		if ((regex.find(input)) != null) {
 			temp = regex.getGroup("filename").trim();
@@ -172,8 +180,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the end position.
-	 *
-	 * @param endPosition the new end position
+	 * 
+	 * @param endPosition
+	 *            the new end position
 	 */
 	public void setEndPosition(final int endPosition) {
 		this.endPosition = endPosition;
@@ -181,8 +190,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the header.
-	 *
-	 * @param header the new header
+	 * 
+	 * @param header
+	 *            the new header
 	 */
 	public void setHeader(final String header) {
 		this.header = header;
@@ -190,8 +200,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the index.
-	 *
-	 * @param index the new index
+	 * 
+	 * @param index
+	 *            the new index
 	 */
 	public void setIndex(final String index) {
 		this.index = index;
@@ -199,8 +210,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the modified file.
-	 *
-	 * @param modifiedFile the new modified file
+	 * 
+	 * @param modifiedFile
+	 *            the new modified file
 	 */
 	public void setModifiedFile(final String modifiedFile) {
 		this.modifiedFile = modifiedFile;
@@ -208,8 +220,9 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the original file.
-	 *
-	 * @param originalFile the new original file
+	 * 
+	 * @param originalFile
+	 *            the new original file
 	 */
 	public void setOriginalFile(final String originalFile) {
 		this.originalFile = originalFile;
@@ -217,20 +230,22 @@ public class UnifiedDiff extends Patch {
 	
 	/**
 	 * Sets the start position.
-	 *
-	 * @param startPosition the new start position
+	 * 
+	 * @param startPosition
+	 *            the new start position
 	 */
 	public void setStartPosition(final int startPosition) {
 		this.startPosition = startPosition;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		String s = "";
-		String lineSep = System.getProperty("line.separator");
+		final String lineSep = System.getProperty("line.separator");
 		s = s + this.index + lineSep;
 		s = s + "ORIGINAL=" + getOriginalFile() + lineSep;
 		s = s + "MODIFIED=" + getModifiedFile() + lineSep;

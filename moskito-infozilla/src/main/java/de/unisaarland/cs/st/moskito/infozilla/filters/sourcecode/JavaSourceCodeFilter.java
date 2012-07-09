@@ -167,9 +167,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			if (c == closing) {
 				if (level == 0) {
 					return position;
-				} else {
-					level = level - 1;
 				}
+				level = level - 1;
 			}
 		}
 		return 0;
@@ -219,9 +218,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		
 		if (minimalSet) {
 			return makeMinimalSet(codeRegions);
-		} else {
-			return codeRegions;
 		}
+		return codeRegions;
 	}
 	
 	/*
@@ -308,26 +306,27 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	 *             if there did something go wrong with I/O
 	 */
 	private void readCodePatterns(final String filename) throws Exception {
-		final BufferedReader fileInput = new BufferedReader(new FileReader(filename));
-		// Read patterns from the file
-		String inputLine = null;
-		while ((inputLine = fileInput.readLine()) != null) {
-			// Input comes in the format: "keyword","PATTERN","OPTIONS"
-			// A line can be commented out by using //
-			if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
-				// we use ostermillers CSV Parser for sake of ease
-				final String[][] parsedLine = CSVParser.parse(inputLine);
-				final String keyword = parsedLine[0][0];
-				final String pattern = parsedLine[0][1];
-				// Check if we have some options
-				if (parsedLine[0].length == 3) {
-					final String options = parsedLine[0][2];
-					this.codePatternOptions.put(keyword, options);
-				} else {
-					this.codePatternOptions.put(keyword, "");
+		try (final BufferedReader fileInput = new BufferedReader(new FileReader(filename));) {
+			// Read patterns from the file
+			String inputLine = null;
+			while ((inputLine = fileInput.readLine()) != null) {
+				// Input comes in the format: "keyword","PATTERN","OPTIONS"
+				// A line can be commented out by using //
+				if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
+					// we use ostermillers CSV Parser for sake of ease
+					final String[][] parsedLine = CSVParser.parse(inputLine);
+					final String keyword = parsedLine[0][0];
+					final String pattern = parsedLine[0][1];
+					// Check if we have some options
+					if (parsedLine[0].length == 3) {
+						final String options = parsedLine[0][2];
+						this.codePatternOptions.put(keyword, options);
+					} else {
+						this.codePatternOptions.put(keyword, "");
+					}
+					final Pattern somePattern = Pattern.compile(pattern);
+					this.codePatterns.put(keyword, somePattern);
 				}
-				final Pattern somePattern = Pattern.compile(pattern);
-				this.codePatterns.put(keyword, somePattern);
 			}
 		}
 	}

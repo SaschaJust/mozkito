@@ -18,31 +18,32 @@ package de.unisaarland.cs.st.moskito.infozilla.model.patch;
 public class PatchHunk {
 	
 	/** The text. */
-	private String text;
+	private final String text;
 	
 	/**
 	 * Instantiates a new patch hunk.
 	 */
 	public PatchHunk() {
-		text = "";
+		this.text = "";
 	}
 	
 	/**
 	 * Instantiates a new patch hunk.
-	 *
-	 * @param text the text
+	 * 
+	 * @param text
+	 *            the text
 	 */
-	public PatchHunk(String text) {
+	public PatchHunk(final String text) {
 		this.text = text;
 	}
 	
 	/**
 	 * Gets the text.
-	 *
+	 * 
 	 * @return the text
 	 */
 	public String getText() {
-		return text;
+		return this.text;
 	}
 	
 }

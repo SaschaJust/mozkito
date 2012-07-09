@@ -25,16 +25,6 @@ public class TalkbackTrace {
 	
 	/**
 	 * Instantiates a new talkback trace.
-	 *
-	 * @param entries the entries
-	 */
-	public TalkbackTrace(List<TalkbackEntry> entries) {
-		super();
-		this.entries = entries;
-	}
-	
-	/**
-	 * Instantiates a new talkback trace.
 	 */
 	public TalkbackTrace() {
 		super();
@@ -42,35 +32,48 @@ public class TalkbackTrace {
 	}
 	
 	/**
+	 * Instantiates a new talkback trace.
+	 * 
+	 * @param entries
+	 *            the entries
+	 */
+	public TalkbackTrace(final List<TalkbackEntry> entries) {
+		super();
+		this.entries = entries;
+	}
+	
+	/**
 	 * Gets the entries.
-	 *
+	 * 
 	 * @return the entries
 	 */
 	public List<TalkbackEntry> getEntries() {
-		return entries;
+		return this.entries;
 	}
 	
 	/**
 	 * Sets the entries.
-	 *
-	 * @param entries the new entries
+	 * 
+	 * @param entries
+	 *            the new entries
 	 */
-	public void setEntries(List<TalkbackEntry> entries) {
+	public void setEntries(final List<TalkbackEntry> entries) {
 		this.entries = entries;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		if (entries != null) {
-			StringBuilder sb = new StringBuilder();
-			for (TalkbackEntry entry : entries) {
+		if (this.entries != null) {
+			final StringBuilder sb = new StringBuilder();
+			for (final TalkbackEntry entry : this.entries) {
 				sb.append(entry.toString() + System.getProperty("line.separator"));
 			}
 			return (sb.toString());
-		} else {
-			return (this.getClass().getName() + " " + this.hashCode());
 		}
+		return (this.getClass().getName() + " " + hashCode());
 	}
 }

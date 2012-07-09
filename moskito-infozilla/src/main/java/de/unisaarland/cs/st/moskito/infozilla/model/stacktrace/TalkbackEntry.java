@@ -47,12 +47,15 @@ public class TalkbackEntry {
 	
 	/**
 	 * Instantiates a new talkback entry.
-	 *
-	 * @param name the name
-	 * @param location the location
-	 * @param type the type
+	 * 
+	 * @param name
+	 *            the name
+	 * @param location
+	 *            the location
+	 * @param type
+	 *            the type
 	 */
-	public TalkbackEntry(String name, String location, int type) {
+	public TalkbackEntry(final String name, final String location, final int type) {
 		super();
 		this.name = name;
 		this.location = location;
@@ -60,63 +63,68 @@ public class TalkbackEntry {
 	}
 	
 	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	public String getName() {
-		return name.trim();
-	}
-	
-	/**
-	 * Sets the name.
-	 *
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
 	 * Gets the location.
-	 *
+	 * 
 	 * @return the location
 	 */
 	public String getLocation() {
-		return location.trim();
+		return this.location.trim();
 	}
 	
 	/**
-	 * Sets the location.
-	 *
-	 * @param location the new location
+	 * Gets the name.
+	 * 
+	 * @return the name
 	 */
-	public void setLocation(String location) {
-		this.location = location;
+	public String getName() {
+		return this.name.trim();
 	}
 	
 	/**
 	 * Gets the type.
-	 *
+	 * 
 	 * @return the type
 	 */
 	public int getType() {
-		return type;
+		return this.type;
+	}
+	
+	/**
+	 * Sets the location.
+	 * 
+	 * @param location
+	 *            the new location
+	 */
+	public void setLocation(final String location) {
+		this.location = location;
+	}
+	
+	/**
+	 * Sets the name.
+	 * 
+	 * @param name
+	 *            the new name
+	 */
+	public void setName(final String name) {
+		this.name = name;
 	}
 	
 	/**
 	 * Sets the type.
-	 *
-	 * @param type the new type
+	 * 
+	 * @param type
+	 *            the new type
 	 */
-	public void setType(int type) {
+	public void setType(final int type) {
 		this.type = type;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return (name.trim() + " (" + location.trim() + ")");
+		return (this.name.trim() + " (" + this.location.trim() + ")");
 	}
 }
