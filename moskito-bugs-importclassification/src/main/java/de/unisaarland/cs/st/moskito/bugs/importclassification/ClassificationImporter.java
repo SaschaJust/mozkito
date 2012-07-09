@@ -63,62 +63,65 @@ public class ClassificationImporter {
 			final File csvFile = ArgumentFactory.create(cvsFileOptions).getValue();
 			final Boolean overwrite = ArgumentFactory.create(overwriteOptions).getValue();
 			
-			final BufferedReader csvReader = new BufferedReader(new FileReader(csvFile));
-			String line = null;
-			int lineCounter = 0;
-			
-			persistenceUtil.beginTransaction();
-			
-			while ((line = csvReader.readLine()) != null) {
-				++lineCounter;
-				final String[] lineParts = line.split(",");
-				if (lineParts.length < 2) {
-					throw new UnrecoverableError(
-					                             String.format("The csv file to import `%s` contains an invalid formatted line. In line %s the number of colums is %s. At least two columns were expected.",
-					                                           csvFile.getAbsolutePath(), String.valueOf(lineCounter),
-					                                           String.valueOf(lineParts.length)));
-				}
-				final String bugId = lineParts[0];
-				Type bugType = null;
-				String bugTyepString = lineParts[1].trim().toUpperCase();
-				if (bugTyepString.equals("DESIGN")) {
-					bugTyepString = "DESIGN_DEFECT";
-				}
-				try {
-					bugType = Type.valueOf(bugTyepString);
-				} catch (final IllegalArgumentException e) {
-					throw new UnrecoverableError(
-					                             String.format("The csv file to import `%s` contains an invalid formatted line. Line %s contains the unknown report type %s.",
-					                                           csvFile.getAbsolutePath(), String.valueOf(lineCounter),
-					                                           lineParts[1].toUpperCase()));
-				}
-				final Report report = persistenceUtil.loadById(bugId, Report.class);
-				if (report == null) {
-					if (Logger.logError()) {
-						Logger.error("Could not find Report with id %s referenced from line %s in file %s.", bugId,
-						             String.valueOf(lineCounter), csvFile.getAbsolutePath());
-						continue;
+			try (final BufferedReader csvReader = new BufferedReader(new FileReader(csvFile));) {
+				String line = null;
+				int lineCounter = 0;
+				
+				persistenceUtil.beginTransaction();
+				
+				while ((line = csvReader.readLine()) != null) {
+					++lineCounter;
+					final String[] lineParts = line.split(",");
+					if (lineParts.length < 2) {
+						throw new UnrecoverableError(
+						                             String.format("The csv file to import `%s` contains an invalid formatted line. In line %s the number of colums is %s. At least two columns were expected.",
+						                                           csvFile.getAbsolutePath(),
+						                                           String.valueOf(lineCounter),
+						                                           String.valueOf(lineParts.length)));
 					}
-				}
-				EnhancedReport eReport = persistenceUtil.loadById(report, EnhancedReport.class);
-				if (eReport != null) {
-					if (eReport.getClassifiedType().equals(bugType)) {
-						if (Logger.logDebug()) {
-							Logger.debug("Skipping Report %s because it was classified before with the same type.");
+					final String bugId = lineParts[0];
+					Type bugType = null;
+					String bugTyepString = lineParts[1].trim().toUpperCase();
+					if (bugTyepString.equals("DESIGN")) {
+						bugTyepString = "DESIGN_DEFECT";
+					}
+					try {
+						bugType = Type.valueOf(bugTyepString);
+					} catch (final IllegalArgumentException e) {
+						throw new UnrecoverableError(
+						                             String.format("The csv file to import `%s` contains an invalid formatted line. Line %s contains the unknown report type %s.",
+						                                           csvFile.getAbsolutePath(),
+						                                           String.valueOf(lineCounter),
+						                                           lineParts[1].toUpperCase()));
+					}
+					final Report report = persistenceUtil.loadById(bugId, Report.class);
+					if (report == null) {
+						if (Logger.logError()) {
+							Logger.error("Could not find Report with id %s referenced from line %s in file %s.", bugId,
+							             String.valueOf(lineCounter), csvFile.getAbsolutePath());
+							continue;
 						}
-						continue;
 					}
-					if (overwrite) {
+					EnhancedReport eReport = persistenceUtil.loadById(report, EnhancedReport.class);
+					if (eReport != null) {
+						if (eReport.getClassifiedType().equals(bugType)) {
+							if (Logger.logDebug()) {
+								Logger.debug("Skipping Report %s because it was classified before with the same type.");
+							}
+							continue;
+						}
+						if (overwrite) {
+							eReport.setClassifiedType(bugType);
+						}
+					} else {
+						eReport = new EnhancedReport(report);
 						eReport.setClassifiedType(bugType);
 					}
-				} else {
-					eReport = new EnhancedReport(report);
-					eReport.setClassifiedType(bugType);
+					persistenceUtil.saveOrUpdate(eReport);
 				}
-				persistenceUtil.saveOrUpdate(eReport);
-			}
-			if (persistenceUtil.activeTransaction()) {
-				persistenceUtil.commitTransaction();
+				if (persistenceUtil.activeTransaction()) {
+					persistenceUtil.commitTransaction();
+				}
 			}
 		} catch (ArgumentRegistrationException | ArgumentSetRegistrationException | IOException e) {
 			if (Logger.logError()) {

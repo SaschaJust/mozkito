@@ -378,7 +378,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @return the creation java timestamp
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
 	private Date getCreationJavaTimestamp() {
@@ -508,7 +507,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @return the last fetch java
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastFetch")
 	private Date getLastFetchJava() {
@@ -522,7 +520,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @return the last update java timestamp
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastUpdateTimestamp")
 	private Date getLastUpdateJavaTimestamp() {
@@ -586,7 +583,6 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @return the resolution java timestamp
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "resolutionTimestamp")
 	private Date getResolutionJavaTimestamp() {

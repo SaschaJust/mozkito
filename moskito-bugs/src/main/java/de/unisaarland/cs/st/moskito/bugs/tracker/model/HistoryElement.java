@@ -531,7 +531,6 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 	 * 
 	 * @return the java timestamp
 	 */
-	@SuppressWarnings ("unused")
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "timestamp")
 	private Date getJavaTimestamp() {
