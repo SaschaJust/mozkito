@@ -27,22 +27,21 @@ import difflib.Patch;
 public class DiffUtils {
 	
 	private static List<String> fileToLines(final String filename) {
-		List<String> lines = new LinkedList<String>();
+		final List<String> lines = new LinkedList<String>();
 		String line = "";
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(filename));
+		try (BufferedReader in = new BufferedReader(new FileReader(filename));) {
 			while ((line = in.readLine()) != null) {
 				lines.add(line);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return lines;
 	}
 	
 	public static HashSet<Integer> getLineNumbers(final Chunk chunk) {
-		HashSet<Integer> result = new HashSet<Integer>();
-		int startPos = chunk.getPosition();
+		final HashSet<Integer> result = new HashSet<Integer>();
+		final int startPos = chunk.getPosition();
 		for (int i = 0; i < chunk.getSize(); ++i) {
 			result.add(startPos + i + 1);
 		}
@@ -50,13 +49,13 @@ public class DiffUtils {
 	}
 	
 	public static void main(final String[] args) {
-		List<String> original = fileToLines("/Users/kim/Downloads/1.txt");
-		List<String> revised = fileToLines("/Users/kim/Downloads/2.txt");
+		final List<String> original = fileToLines("/Users/kim/Downloads/1.txt");
+		final List<String> revised = fileToLines("/Users/kim/Downloads/2.txt");
 		
 		// Compute diff. Get the Patch object. Patch is the container for computed deltas.
-		Patch patch = difflib.DiffUtils.diff(original, revised);
+		final Patch patch = difflib.DiffUtils.diff(original, revised);
 		
-		for (Delta delta : patch.getDeltas()) {
+		for (final Delta delta : patch.getDeltas()) {
 			System.out.println(delta);
 			System.out.println(delta instanceof DeleteDelta);
 			System.out.println(delta.getRevised().getSize());
