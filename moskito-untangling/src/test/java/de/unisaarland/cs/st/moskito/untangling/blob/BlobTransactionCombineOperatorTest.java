@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.untangling.blob.BlobTransactionCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.PackageDistanceCombineOperator;
 
 /**
  * The Class BlobTransactionCombineOperatorTest.
@@ -37,7 +37,7 @@ public class BlobTransactionCombineOperatorTest {
 		String pathA = "a/b/c/d/";
 		String pathB = "a/b/";
 		int packageDistance = 2;
-		assertTrue(BlobTransactionCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
+		assertTrue(PackageDistanceCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class BlobTransactionCombineOperatorTest {
 		String pathA = "a/b/c/d/";
 		String pathB = "a/b/";
 		int packageDistance = 1;
-		assertFalse(BlobTransactionCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
+		assertFalse(PackageDistanceCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class BlobTransactionCombineOperatorTest {
 		String pathB = "a/b/c/d/";
 		String pathA = "a/b/";
 		int packageDistance = 2;
-		assertTrue(BlobTransactionCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
+		assertTrue(PackageDistanceCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class BlobTransactionCombineOperatorTest {
 		String pathB = "a/b/c/d/";
 		String pathA = "a/b/";
 		int packageDistance = 1;
-		assertFalse(BlobTransactionCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
+		assertFalse(PackageDistanceCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
 	}
 	
 	/**
@@ -81,6 +81,6 @@ public class BlobTransactionCombineOperatorTest {
 		String pathB = "a/x/c/d/";
 		String pathA = "a/y/c/d/";
 		int packageDistance = 2;
-		assertFalse(BlobTransactionCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
+		assertFalse(PackageDistanceCombineOperator.canCombinePaths(pathA, pathB, packageDistance));
 	}
 }

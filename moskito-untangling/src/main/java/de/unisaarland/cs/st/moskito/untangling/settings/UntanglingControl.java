@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
@@ -21,90 +18,94 @@ import java.util.List;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
+import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
 
 /**
  * The Class UntanglingControl.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class UntanglingControl {
 	
 	/** The call graph enabled. */
-	private Boolean              callGraphEnabled;
+	private Boolean                         callGraphEnabled;
 	
 	/** The change couplings enabled. */
-	private Boolean              changeCouplingsEnabled;
+	private Boolean                         changeCouplingsEnabled;
 	
 	/** The data dependencies enabled. */
-	private Boolean              dataDependenciesEnabled;
+	private Boolean                         dataDependenciesEnabled;
 	
 	/** The test impact enabled. */
-	private Boolean              testImpactEnabled;
+	private Boolean                         testImpactEnabled;
 	
 	/** The atomic changes. */
-	private List<String>         atomicChanges;
+	private List<String>                    atomicChanges;
 	
 	/** The call graph cahce dir. */
-	private File                 callGraphCahceDir;
+	private File                            callGraphCahceDir;
 	
 	/** The call graph eclipse dir. */
-	private File                 callGraphEclipseDir;
+	private File                            callGraphEclipseDir;
 	
 	/** The change coupling min confidence. */
-	private Double               changeCouplingMinConfidence;
+	private Double                          changeCouplingMinConfidence;
 	
 	/** The change coupling min support. */
-	private Long                 changeCouplingMinSupport;
+	private Long                            changeCouplingMinSupport;
 	
 	/** The change couplings cache dir. */
-	private File                 changeCouplingsCacheDir;
+	private File                            changeCouplingsCacheDir;
 	
 	/** The collapse mode. */
-	private UntanglingCollapse   collapseMode;
+	private UntanglingCollapse              collapseMode;
 	
 	/** The data dependency cache dir. */
-	private File                 dataDependencyCacheDir;
+	private File                            dataDependencyCacheDir;
 	
 	/** The data dependency eclipse dir. */
-	private File                 dataDependencyEclipseDir;
+	private File                            dataDependencyEclipseDir;
 	
 	/** The dry run. */
-	private Boolean              dryRun;
+	private Boolean                         dryRun;
 	
 	/** The max blob size. */
-	private Long                 maxBlobSize;
+	private Long                            maxBlobSize;
 	
 	/** The min blob size. */
-	private Long                 minBlobSize;
+	private Long                            minBlobSize;
 	
 	/** The n. */
-	private Long                 n;
+	private Long                            n;
 	
 	/** The output file. */
-	private File                 outputFile;
+	private File                            outputFile;
 	
 	/** The package distance. */
-	private Long                 packageDistance;
+	private Long                            packageDistance;
 	
 	/** The repository. */
-	private Repository           repository;
+	private Repository                      repository;
 	
 	/** The score mode. */
-	private ScoreCombinationMode scoreMode;
+	private ScoreCombinationMode            scoreMode;
 	
 	/** The seed. */
-	private Long                 seed;
+	private Long                            seed;
 	
 	/** The test impact file. */
-	private File                 testImpactFile;
+	private File                            testImpactFile;
 	
 	/** The blob window size. */
-	private Long                 blobWindowSize;
+	private Long                            blobWindowSize;
+	
+	private ArtificialBlobGeneratorStrategy generatorStrategy;
 	
 	/**
 	 * Enable call graph.
-	 *
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 */
 	public void enableCallGraph(final Boolean value) {
 		// PRECONDITIONS
@@ -118,8 +119,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Enable change couplings.
-	 *
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 */
 	public void enableChangeCouplings(final Boolean value) {
 		// PRECONDITIONS
@@ -133,8 +135,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Enable data dependencies.
-	 *
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 */
 	public void enableDataDependencies(final Boolean value) {
 		// PRECONDITIONS
@@ -148,8 +151,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Enable test impact.
-	 *
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 */
 	public void enableTestImpact(final Boolean value) {
 		// PRECONDITIONS
@@ -163,7 +167,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the atomic changes.
-	 *
+	 * 
 	 * @return the atomic changes
 	 */
 	public List<String> getAtomicChanges() {
@@ -178,7 +182,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the blob window size.
-	 *
+	 * 
 	 * @return the blob window size
 	 */
 	public Long getBlobWindowSize() {
@@ -193,7 +197,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the call graph cache dir.
-	 *
+	 * 
 	 * @return the call graph cache dir
 	 */
 	public File getCallGraphCacheDir() {
@@ -208,7 +212,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the call graph eclipse dir.
-	 *
+	 * 
 	 * @return the call graph eclipse dir
 	 */
 	public File getCallGraphEclipseDir() {
@@ -223,7 +227,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the change coupling min confidence.
-	 *
+	 * 
 	 * @return the change coupling min confidence
 	 */
 	public Double getChangeCouplingMinConfidence() {
@@ -238,7 +242,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the change coupling min support.
-	 *
+	 * 
 	 * @return the change coupling min support
 	 */
 	public Long getChangeCouplingMinSupport() {
@@ -253,7 +257,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the change couplings cache dir.
-	 *
+	 * 
 	 * @return the change couplings cache dir
 	 */
 	public File getChangeCouplingsCacheDir() {
@@ -268,7 +272,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the collapse mode.
-	 *
+	 * 
 	 * @return the collapse mode
 	 */
 	public UntanglingCollapse getCollapseMode() {
@@ -283,7 +287,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the data dependency cache dir.
-	 *
+	 * 
 	 * @return the data dependency cache dir
 	 */
 	public File getDataDependencyCacheDir() {
@@ -298,7 +302,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the data dependency eclipse dir.
-	 *
+	 * 
 	 * @return the data dependency eclipse dir
 	 */
 	public File getDataDependencyEclipseDir() {
@@ -311,24 +315,13 @@ public class UntanglingControl {
 		}
 	}
 	
-	/**
-	 * Checks if is dry run.
-	 *
-	 * @return the boolean
-	 */
-	public Boolean isDryRun() {
-		// PRECONDITIONS
-		
-		try {
-			return this.dryRun;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public ArtificialBlobGeneratorStrategy getGeneratorStrategy() {
+		return this.generatorStrategy;
 	}
 	
 	/**
 	 * Gets the max blob size.
-	 *
+	 * 
 	 * @return the max blob size
 	 */
 	public Long getMaxBlobSize() {
@@ -343,7 +336,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the min blob size.
-	 *
+	 * 
 	 * @return the min blob size
 	 */
 	public Long getMinBlobSize() {
@@ -358,7 +351,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the n.
-	 *
+	 * 
 	 * @return the n
 	 */
 	public Long getN() {
@@ -373,7 +366,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the output file.
-	 *
+	 * 
 	 * @return the output file
 	 */
 	public File getOutputFile() {
@@ -388,7 +381,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the package distance.
-	 *
+	 * 
 	 * @return the package distance
 	 */
 	public Long getPackageDistance() {
@@ -403,7 +396,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the repository.
-	 *
+	 * 
 	 * @return the repository
 	 */
 	public Repository getRepository() {
@@ -418,7 +411,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the score mode.
-	 *
+	 * 
 	 * @return the score mode
 	 */
 	public ScoreCombinationMode getScoreMode() {
@@ -433,7 +426,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the seed.
-	 *
+	 * 
 	 * @return the seed
 	 */
 	public Long getSeed() {
@@ -448,7 +441,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the test impact file.
-	 *
+	 * 
 	 * @return the test impact file
 	 */
 	public File getTestImpactFile() {
@@ -463,7 +456,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Checks if is call graph enabled.
-	 *
+	 * 
 	 * @return the boolean
 	 */
 	public Boolean isCallGraphEnabled() {
@@ -478,7 +471,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Checks if is change couplings enabled.
-	 *
+	 * 
 	 * @return the boolean
 	 */
 	public Boolean isChangeCouplingsEnabled() {
@@ -493,7 +486,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Checks if is data dependencies enabled.
-	 *
+	 * 
 	 * @return the boolean
 	 */
 	public Boolean isDataDependenciesEnabled() {
@@ -507,8 +500,23 @@ public class UntanglingControl {
 	}
 	
 	/**
+	 * Checks if is dry run.
+	 * 
+	 * @return the boolean
+	 */
+	public Boolean isDryRun() {
+		// PRECONDITIONS
+		
+		try {
+			return this.dryRun;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
 	 * Checks if is test impact enabled.
-	 *
+	 * 
 	 * @return the boolean
 	 */
 	public Boolean isTestImpactEnabled() {
@@ -523,8 +531,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the atomic changes.
-	 *
-	 * @param value the new atomic changes
+	 * 
+	 * @param value
+	 *            the new atomic changes
 	 */
 	public void setAtomicChanges(final List<String> value) {
 		// PRECONDITIONS
@@ -538,8 +547,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the blob window size.
-	 *
-	 * @param value the new blob window size
+	 * 
+	 * @param value
+	 *            the new blob window size
 	 */
 	public void setBlobWindowSize(final Long value) {
 		// PRECONDITIONS
@@ -553,8 +563,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the call graph cache dir.
-	 *
-	 * @param value the new call graph cache dir
+	 * 
+	 * @param value
+	 *            the new call graph cache dir
 	 */
 	public void setCallGraphCacheDir(final File value) {
 		// PRECONDITIONS
@@ -568,8 +579,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the call graph eclipse dir.
-	 *
-	 * @param value the new call graph eclipse dir
+	 * 
+	 * @param value
+	 *            the new call graph eclipse dir
 	 */
 	public void setCallGraphEclipseDir(final File value) {
 		// PRECONDITIONS
@@ -583,8 +595,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the change coupling min confidence.
-	 *
-	 * @param value the new change coupling min confidence
+	 * 
+	 * @param value
+	 *            the new change coupling min confidence
 	 */
 	public void setChangeCouplingMinConfidence(final Double value) {
 		// PRECONDITIONS
@@ -598,8 +611,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the change coupling min support.
-	 *
-	 * @param value the new change coupling min support
+	 * 
+	 * @param value
+	 *            the new change coupling min support
 	 */
 	public void setChangeCouplingMinSupport(final Long value) {
 		// PRECONDITIONS
@@ -613,8 +627,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the change couplings cache dir.
-	 *
-	 * @param value the new change couplings cache dir
+	 * 
+	 * @param value
+	 *            the new change couplings cache dir
 	 */
 	public void setChangeCouplingsCacheDir(final File value) {
 		// PRECONDITIONS
@@ -628,8 +643,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the collapse mode.
-	 *
-	 * @param value the new collapse mode
+	 * 
+	 * @param value
+	 *            the new collapse mode
 	 */
 	public void setCollapseMode(final UntanglingCollapse value) {
 		// PRECONDITIONS
@@ -643,8 +659,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the data dependency cache dir.
-	 *
-	 * @param value the new data dependency cache dir
+	 * 
+	 * @param value
+	 *            the new data dependency cache dir
 	 */
 	public void setDataDependencyCacheDir(final File value) {
 		// PRECONDITIONS
@@ -658,8 +675,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the data dependency eclipse dir.
-	 *
-	 * @param value the new data dependency eclipse dir
+	 * 
+	 * @param value
+	 *            the new data dependency eclipse dir
 	 */
 	public void setDataDependencyEclipseDir(final File value) {
 		// PRECONDITIONS
@@ -673,8 +691,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the dry run.
-	 *
-	 * @param value the new dry run
+	 * 
+	 * @param value
+	 *            the new dry run
 	 */
 	public void setDryRun(final Boolean value) {
 		// PRECONDITIONS
@@ -687,9 +706,23 @@ public class UntanglingControl {
 	}
 	
 	/**
+	 * @param value
+	 */
+	public void setGeneratorStrategy(final ArtificialBlobGeneratorStrategy value) {
+		// PRECONDITIONS
+		
+		try {
+			this.generatorStrategy = value;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
 	 * Sets the max blob size.
-	 *
-	 * @param value the new max blob size
+	 * 
+	 * @param value
+	 *            the new max blob size
 	 */
 	public void setMaxBlobSize(final Long value) {
 		// PRECONDITIONS
@@ -703,8 +736,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the min blob size.
-	 *
-	 * @param value the new min blob size
+	 * 
+	 * @param value
+	 *            the new min blob size
 	 */
 	public void setMinBlobSize(final Long value) {
 		// PRECONDITIONS
@@ -718,8 +752,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the n.
-	 *
-	 * @param value the new n
+	 * 
+	 * @param value
+	 *            the new n
 	 */
 	public void setN(final Long value) {
 		// PRECONDITIONS
@@ -733,8 +768,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the output file.
-	 *
-	 * @param value the new output file
+	 * 
+	 * @param value
+	 *            the new output file
 	 */
 	public void setOutputFile(final File value) {
 		// PRECONDITIONS
@@ -748,8 +784,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the package distance.
-	 *
-	 * @param value the new package distance
+	 * 
+	 * @param value
+	 *            the new package distance
 	 */
 	public void setPackageDistance(final Long value) {
 		// PRECONDITIONS
@@ -763,8 +800,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the repository.
-	 *
-	 * @param value the new repository
+	 * 
+	 * @param value
+	 *            the new repository
 	 */
 	public void setRepository(final Repository value) {
 		// PRECONDITIONS
@@ -778,8 +816,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the score mode.
-	 *
-	 * @param value the new score mode
+	 * 
+	 * @param value
+	 *            the new score mode
 	 */
 	public void setScoreMode(final ScoreCombinationMode value) {
 		// PRECONDITIONS
@@ -793,8 +832,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the seed.
-	 *
-	 * @param value the new seed
+	 * 
+	 * @param value
+	 *            the new seed
 	 */
 	public void setSeed(final Long value) {
 		// PRECONDITIONS
@@ -808,8 +848,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the test impact file.
-	 *
-	 * @param value the new test impact file
+	 * 
+	 * @param value
+	 *            the new test impact file
 	 */
 	public void setTestImpactFile(final File value) {
 		// PRECONDITIONS

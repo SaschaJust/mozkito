@@ -38,7 +38,7 @@ import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
 import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
-import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
  * The Class UntanglingScoreAggregation.
@@ -68,12 +68,12 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 	 * @param untangling the untangling
 	 * @return the samples
 	 */
-	public Map<SampleType, List<List<Double>>> getSamples(final Collection<AtomicTransaction> transactionSet,
+	public Map<SampleType, List<List<Double>>> getSamples(final Collection<ChangeSet> transactionSet,
 	                                                      final double trainFraction,
 	                                                      final Untangling untangling) {
 		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		final List<AtomicTransaction> transactions = new ArrayList<AtomicTransaction>(transactionSet.size());
+		final List<ChangeSet> transactions = new ArrayList<ChangeSet>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		// get random 30% of the transactions
@@ -83,11 +83,11 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			Logger.info("Using " + numSamples + " samples as positive training set.");
 		}
 		
-		final Map<AtomicTransaction, Set<JavaChangeOperation>> selectedTransactions = new HashMap<AtomicTransaction, Set<JavaChangeOperation>>();
+		final Map<ChangeSet, Set<JavaChangeOperation>> selectedTransactions = new HashMap<ChangeSet, Set<JavaChangeOperation>>();
 		for (int i = 0; i < numSamples; ++i) {
 			final int r = Untangling.random.nextInt(transactions.size());
 			
-			final AtomicTransaction t = transactions.get(r);
+			final ChangeSet t = transactions.get(r);
 			final Set<JavaChangeOperation> changeOperations = t.getChangeOperation(JavaMethodDefinition.class);
 			
 			if (changeOperations.size() < 2) {
@@ -99,8 +99,8 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		final List<List<Double>> positiveValues = new LinkedList<List<Double>>();
 		
 		// generate the positive examples
-		for (final Entry<AtomicTransaction, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
-			final AtomicTransaction t = e.getKey();
+		for (final Entry<ChangeSet, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
+			final ChangeSet t = e.getKey();
 			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
 			                                                                                           .size()]);
 			for (int i = 0; i < operationArray.length; ++i) {
@@ -121,7 +121,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		
 		// generate the negative examples
 		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
-		final List<AtomicTransaction> selectedTransactionList = new LinkedList<AtomicTransaction>();
+		final List<ChangeSet> selectedTransactionList = new LinkedList<ChangeSet>();
 		selectedTransactionList.addAll(selectedTransactions.keySet());
 		final int k = positiveValues.size();
 		final long factorial = ((k - 1) * k) / 2;
@@ -134,8 +134,8 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 			
 			// get two random atomic transactions from the selected transaction
-			final AtomicTransaction t1 = selectedTransactionList.get(t1Index);
-			final AtomicTransaction t2 = selectedTransactionList.get(t2Index);
+			final ChangeSet t1 = selectedTransactionList.get(t1Index);
+			final ChangeSet t2 = selectedTransactionList.get(t2Index);
 			
 			if (t1Index < t2Index) {
 				seenCombinations.add(new Tuple<Integer, Integer>(t1Index, t2Index));

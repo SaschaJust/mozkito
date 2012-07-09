@@ -31,7 +31,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class AtomicTransaction implements Comparable<AtomicTransaction> {
+public class ChangeSet implements Comparable<ChangeSet> {
 	
 	/** The transaction. */
 	private final RCSTransaction                  transaction;
@@ -47,7 +47,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @param operations
 	 *            the operations
 	 */
-	public AtomicTransaction(final RCSTransaction transaction, final Collection<JavaChangeOperation> operations) {
+	public ChangeSet(final RCSTransaction transaction, final Collection<JavaChangeOperation> operations) {
 		this.transaction = transaction;
 		this.operations = operations;
 	}
@@ -57,7 +57,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(final AtomicTransaction other) {
+	public int compareTo(final ChangeSet other) {
 		
 		final Comparator<? super RCSTransaction> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
 		return comparator.compare(other.getTransaction(), this.transaction);
@@ -78,7 +78,7 @@ public class AtomicTransaction implements Comparable<AtomicTransaction> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final AtomicTransaction other = (AtomicTransaction) obj;
+		final ChangeSet other = (ChangeSet) obj;
 		if (this.transaction == null) {
 			if (other.transaction != null) {
 				return false;

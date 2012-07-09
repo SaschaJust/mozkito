@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
@@ -23,6 +20,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Days;
 
+import de.unisaarland.cs.st.moskito.collections.CombineOperator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 
 /**
@@ -30,7 +28,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class BlobTransactionCombineOperator implements CombineOperator<AtomicTransaction> {
+public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet> {
 	
 	/**
 	 * Can combine paths.
@@ -52,18 +50,18 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 		                                                   .split(FileUtils.fileSeparator));
 		
 		// ignore the last packageDistance parts.
-		int pathLengthDist = Math.abs(pathAParts.size() - pathBParts.size());
+		final int pathLengthDist = Math.abs(pathAParts.size() - pathBParts.size());
 		if (pathLengthDist != 0) {
 			// different long paths
 			if (pathAParts.size() > pathBParts.size()) {
 				pathAParts = pathAParts.subList(0, pathAParts.size() - packageDistance);
-				int bIndex = packageDistance - pathLengthDist;
+				final int bIndex = packageDistance - pathLengthDist;
 				if (bIndex > 0) {
 					pathBParts = pathBParts.subList(0, pathBParts.size() - bIndex);
 				}
 			} else {
 				pathBParts = pathBParts.subList(0, pathBParts.size() - packageDistance);
-				int aIndex = packageDistance - pathLengthDist;
+				final int aIndex = packageDistance - pathLengthDist;
 				if (aIndex > 0) {
 					pathAParts = pathAParts.subList(0, pathAParts.size() - aIndex);
 				}
@@ -76,18 +74,20 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	}
 	
 	/** The max package distance. */
-	private final int  maxPackageDistance;
+	private final Long maxPackageDistance;
 	
 	/** The time window size. */
 	private final Long timeWindowSize;
 	
 	/**
 	 * Instantiates a new blob transaction combine operator.
-	 *
-	 * @param maxPackageDistance the max package distance
-	 * @param timeWindowSize the time window size
+	 * 
+	 * @param maxPackageDistance
+	 *            the max package distance
+	 * @param timeWindowSize
+	 *            the time window size
 	 */
-	public BlobTransactionCombineOperator(final int maxPackageDistance, final Long timeWindowSize) {
+	public PackageDistanceCombineOperator(final Long maxPackageDistance, final Long timeWindowSize) {
 		this.maxPackageDistance = maxPackageDistance;
 		this.timeWindowSize = timeWindowSize;
 	}
@@ -98,21 +98,22 @@ public class BlobTransactionCombineOperator implements CombineOperator<AtomicTra
 	 * java.lang.Object)
 	 */
 	@Override
-	public boolean canBeCombined(final AtomicTransaction t1,
-	                             final AtomicTransaction t2) {
+	public boolean canBeCombined(final ChangeSet t1,
+	                             final ChangeSet t2) {
 		
 		if (this.timeWindowSize > -1) {
-			Days daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction().getTimestamp());
+			final Days daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction()
+			                                                                                .getTimestamp());
 			if (daysBetween.getDays() > this.timeWindowSize) {
 				return false;
 			}
 		}
 		
-		for (RCSRevision rev : t1.getTransaction().getRevisions()) {
-			String path = rev.getChangedFile().getPath(t1.getTransaction());
-			for (RCSRevision rev2 : t2.getTransaction().getRevisions()) {
-				String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
-				if (canCombinePaths(path, path2, this.maxPackageDistance)) {
+		for (final RCSRevision rev : t1.getTransaction().getRevisions()) {
+			final String path = rev.getChangedFile().getPath(t1.getTransaction());
+			for (final RCSRevision rev2 : t2.getTransaction().getRevisions()) {
+				final String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
+				if (canCombinePaths(path, path2, this.maxPackageDistance.intValue())) {
 					return true;
 				}
 			}

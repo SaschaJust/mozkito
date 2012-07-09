@@ -34,6 +34,8 @@ import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
+import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
+import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
 
 /**
  * The Class UntanglingOptions.
@@ -44,76 +46,78 @@ public class UntanglingOptions extends
         ArgumentSetOptions<UntanglingControl, ArgumentSet<UntanglingControl, UntanglingOptions>> {
 	
 	/** The repository options. */
-	private final RepositoryOptions                    repositoryOptions;
+	private final RepositoryOptions                                                       repositoryOptions;
 	
 	/** The callgraph eclipse options. */
-	private DirectoryArgument.Options                  callgraphEclipseOptions;
+	private DirectoryArgument.Options                                                     callgraphEclipseOptions;
 	
 	/** The atomic changes options. */
-	private ListArgument.Options                       atomicChangesOptions;
+	private ListArgument.Options                                                          atomicChangesOptions;
 	
 	/** The use call graph options. */
-	private BooleanArgument.Options                    useCallGraphOptions;
+	private BooleanArgument.Options                                                       useCallGraphOptions;
 	
 	/** The use change couplings options. */
-	private BooleanArgument.Options                    useChangeCouplingsOptions;
+	private BooleanArgument.Options                                                       useChangeCouplingsOptions;
 	
 	/** The use data dependencies options. */
-	private BooleanArgument.Options                    useDataDependenciesOptions;
+	private BooleanArgument.Options                                                       useDataDependenciesOptions;
 	
 	/** The use test impact options. */
-	private BooleanArgument.Options                    useTestImpactOptions;
+	private BooleanArgument.Options                                                       useTestImpactOptions;
 	
 	/** The test impact file options. */
-	private InputFileArgument.Options                  testImpactFileOptions;
+	private InputFileArgument.Options                                                     testImpactFileOptions;
 	
 	/** The datadependency eclipse options. */
-	private DirectoryArgument.Options                  datadependencyEclipseOptions;
+	private DirectoryArgument.Options                                                     datadependencyEclipseOptions;
 	
 	/** The change couplings min support. */
-	private LongArgument.Options                       changeCouplingsMinSupport;
+	private LongArgument.Options                                                          changeCouplingsMinSupport;
 	
 	/** The change couplings min confidence. */
-	private DoubleArgument.Options                     changeCouplingsMinConfidence;
+	private DoubleArgument.Options                                                        changeCouplingsMinConfidence;
 	
 	/** The package distance options. */
-	private LongArgument.Options                       packageDistanceOptions;
+	private LongArgument.Options                                                          packageDistanceOptions;
 	
 	/** The min blob size options. */
-	private LongArgument.Options                       minBlobSizeOptions;
+	private LongArgument.Options                                                          minBlobSizeOptions;
 	
 	/** The max blob size options. */
-	private LongArgument.Options                       maxBlobSizeOptions;
+	private LongArgument.Options                                                          maxBlobSizeOptions;
 	
 	/** The out options. */
-	private OutputFileArgument.Options                 outOptions;
+	private OutputFileArgument.Options                                                    outOptions;
 	
 	/** The call graph cache dir options. */
-	private DirectoryArgument.Options                  callGraphCacheDirOptions;
+	private DirectoryArgument.Options                                                     callGraphCacheDirOptions;
 	
 	/** The change couplings cache dir options. */
-	private DirectoryArgument.Options                  changeCouplingsCacheDirOptions;
+	private DirectoryArgument.Options                                                     changeCouplingsCacheDirOptions;
 	
 	/** The data dependency cache dir options. */
-	private DirectoryArgument.Options                  dataDependencyCacheDirOptions;
+	private DirectoryArgument.Options                                                     dataDependencyCacheDirOptions;
 	
 	/** The dry run options. */
-	private BooleanArgument.Options                    dryRunOptions;
+	private BooleanArgument.Options                                                       dryRunOptions;
 	
 	/** The n options. */
-	private LongArgument.Options                       nOptions;
+	private LongArgument.Options                                                          nOptions;
 	
 	/** The seed options. */
-	private LongArgument.Options                       seedOptions;
+	private LongArgument.Options                                                          seedOptions;
 	
 	/** The collapse mode options. */
-	private EnumArgument.Options<UntanglingCollapse>   collapseModeOptions;
+	private EnumArgument.Options<UntanglingCollapse>                                      collapseModeOptions;
 	
 	/** The blob window size options. */
-	private LongArgument.Options                       blobWindowSizeOptions;
+	private LongArgument.Options                                                          blobWindowSizeOptions;
 	
 	/** The score mode options. */
-	private EnumArgument.Options<ScoreCombinationMode> scoreModeOptions;
+	private EnumArgument.Options<ScoreCombinationMode>                                    scoreModeOptions;
+	
+	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy> generatorStrategyOptions;
 	
 	/**
 	 * Instantiates a new untangling options.
@@ -291,6 +295,7 @@ public class UntanglingOptions extends
 			final EnumArgument<UntanglingCollapse> collapseArgument = getSettings().getArgument(this.collapseModeOptions);
 			final LongArgument blobWindowSizeArgument = getSettings().getArgument(this.blobWindowSizeOptions);
 			final EnumArgument<ScoreCombinationMode> scoreModeArgument = getSettings().getArgument(this.scoreModeOptions);
+			final EnumArgument<ArtificialBlobGeneratorStrategy> generatorStrategy = getSettings().getArgument(this.generatorStrategyOptions);
 			
 			control.setRepository(repositoryArgument.getValue());
 			control.setCallGraphEclipseDir(callGraphEclipseArgument.getValue());
@@ -316,6 +321,7 @@ public class UntanglingOptions extends
 			control.setCollapseMode(collapseArgument.getValue());
 			control.setBlobWindowSize(blobWindowSizeArgument.getValue());
 			control.setScoreMode(scoreModeArgument.getValue());
+			control.setGeneratorStrategy(generatorStrategy.getValue());
 			
 			return control;
 		} finally {
@@ -411,6 +417,14 @@ public class UntanglingOptions extends
 			                                                                       ScoreCombinationMode.LINEAR_REGRESSION,
 			                                                                       Requirement.optional);
 			map.put(this.scoreModeOptions.getName(), this.scoreModeOptions);
+			
+			this.generatorStrategyOptions = new EnumArgument.Options<>(
+			                                                           set,
+			                                                           "generatorStrategy",
+			                                                           "Strategy to construct artifical blobs.",
+			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
+			                                                           Requirement.required);
+			map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
 			
 			return map;
 		} finally {

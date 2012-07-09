@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -60,7 +61,8 @@ import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
-import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
+import de.unisaarland.cs.st.moskito.untangling.blob.PackageDistanceCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
 import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
@@ -344,7 +346,7 @@ public class Untangling {
 	public void run() {
 		
 		// load the atomic transactions and their change operations
-		final List<AtomicTransaction> transactions = new LinkedList<AtomicTransaction>();
+		final List<ChangeSet> transactions = new LinkedList<ChangeSet>();
 		
 		if ((this.untanglingControl.getAtomicChanges() != null)
 		        && (!this.untanglingControl.getAtomicChanges().isEmpty())) {
@@ -358,7 +360,7 @@ public class Untangling {
 				
 				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
 				                                                                                  t);
-				transactions.add(new AtomicTransaction(t, ops));
+				transactions.add(new ChangeSet(t, ops));
 			}
 		} else {
 			final Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class)
@@ -381,7 +383,7 @@ public class Untangling {
 				}
 				ops.removeAll(toRemove);
 				if (!ops.isEmpty()) {
-					transactions.add(new AtomicTransaction(t, ops));
+					transactions.add(new ChangeSet(t, ops));
 				}
 			}
 		}
@@ -389,8 +391,10 @@ public class Untangling {
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
 		
+		ArtificialBlobGenerator blobGenerator = null;
+		
 		if (transactions.size() > 50) {
-			final Set<AtomicTransaction> randomTransactions = new HashSet<AtomicTransaction>();
+			final Set<ChangeSet> randomTransactions = new HashSet<ChangeSet>();
 			for (int i = 0; i < 50; ++i) {
 				random.nextInt(transactions.size());
 				randomTransactions.add(transactions.get(i));
@@ -400,12 +404,23 @@ public class Untangling {
 			transactions.addAll(randomTransactions);
 		}
 		
-		artificialBlobs.addAll(ArtificialBlobGenerator.generateAll(transactions,
-		                                                           this.untanglingControl.getPackageDistance()
-		                                                                                 .intValue(),
-		                                                           this.untanglingControl.getMinBlobSize().intValue(),
-		                                                           this.untanglingControl.getMaxBlobSize().intValue(),
-		                                                           this.untanglingControl.getBlobWindowSize()));
+		switch (this.untanglingControl.getGeneratorStrategy()) {
+			case CONSECUTIVE:
+				// TODO enable
+				throw new Shutdown("Artificial generation strategy not yet implemented! Abort.");
+			case COUPLINGS:
+				// TODO enable
+				throw new Shutdown("Artificial generation strategy not yet implemented! Abort.");
+			default:
+				blobGenerator = new ArtificialBlobGenerator(
+				                                            new PackageDistanceCombineOperator(
+				                                                                               this.untanglingControl.getPackageDistance(),
+				                                                                               this.untanglingControl.getBlobWindowSize()));
+		}
+		
+		artificialBlobs.addAll(blobGenerator.generateAll(transactions, this.untanglingControl.getMinBlobSize()
+		                                                                                     .intValue(),
+		                                                 this.untanglingControl.getMaxBlobSize().intValue()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
@@ -458,7 +473,7 @@ public class Untangling {
 				case LINEAR_REGRESSION:
 					final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
 					// train score aggregation model
-					final Set<AtomicTransaction> trainTransactions = new HashSet<AtomicTransaction>();
+					final Set<ChangeSet> trainTransactions = new HashSet<ChangeSet>();
 					for (final ArtificialBlob blob : artificialBlobs) {
 						trainTransactions.addAll(blob.getAtomicTransactions());
 					}
@@ -468,7 +483,7 @@ public class Untangling {
 				case SVM:
 					final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 					// train score aggregation model
-					final Set<AtomicTransaction> svmTrainTransactions = new HashSet<AtomicTransaction>();
+					final Set<ChangeSet> svmTrainTransactions = new HashSet<ChangeSet>();
 					for (final ArtificialBlob blob : artificialBlobs) {
 						svmTrainTransactions.addAll(blob.getAtomicTransactions());
 					}

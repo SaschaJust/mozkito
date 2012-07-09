@@ -40,7 +40,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
-import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
  * The Class LinearRegressionAggregation.
@@ -153,7 +153,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
-	public boolean train(final Collection<AtomicTransaction> transactionSet) {
+	public boolean train(final Collection<ChangeSet> transactionSet) {
 		
 		if (this.trained) {
 			return true;

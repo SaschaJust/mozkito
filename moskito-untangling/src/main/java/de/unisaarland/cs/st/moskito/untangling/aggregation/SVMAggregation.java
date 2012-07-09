@@ -31,7 +31,7 @@ import libsvm.svm_problem;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
-import de.unisaarland.cs.st.moskito.untangling.blob.AtomicTransaction;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
  * The Class SVMAggregation.
@@ -142,7 +142,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 *            the transaction set
 	 * @return true, if successful
 	 */
-	public boolean train(final Collection<AtomicTransaction> transactionSet) {
+	public boolean train(final Collection<ChangeSet> transactionSet) {
 		
 		if (this.trained) {
 			return true;
