@@ -162,8 +162,7 @@ public final class MoskitoTestBuilder extends Thread {
 			theError = sw.toString();
 		}
 		
-		try {
-			final BufferedReader reader = new BufferedReader(new FileReader(stdErrFile));
+		try (final BufferedReader reader = new BufferedReader(new FileReader(stdErrFile));) {
 			String line;
 			final StringBuilder sb = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
@@ -175,8 +174,7 @@ public final class MoskitoTestBuilder extends Thread {
 			// TODO: handle exception
 		}
 		
-		try {
-			final BufferedReader reader = new BufferedReader(new FileReader(stdOutFile));
+		try (final BufferedReader reader = new BufferedReader(new FileReader(stdOutFile));) {
 			String line;
 			final StringBuilder sb = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
