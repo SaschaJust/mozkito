@@ -22,8 +22,8 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.collections.CollectionUtils;
-import de.unisaarland.cs.st.moskito.collections.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.utils.CollectionUtils;
 
 /**
  * The Interface ArtificialBlobGenerator.

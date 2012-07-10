@@ -101,6 +101,8 @@ public class UntanglingControl {
 	
 	private ArtificialBlobGeneratorStrategy generatorStrategy;
 	
+	private Long                            consecutiveTimeWindow;
+	
 	/**
 	 * Enable call graph.
 	 * 
@@ -280,6 +282,21 @@ public class UntanglingControl {
 		
 		try {
 			return this.collapseMode;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Gets the consecutive time window.
+	 * 
+	 * @return the consecutive time window
+	 */
+	public int getConsecutiveTimeWindow() {
+		// PRECONDITIONS
+		
+		try {
+			return this.consecutiveTimeWindow.intValue();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -652,6 +669,19 @@ public class UntanglingControl {
 		
 		try {
 			this.collapseMode = value;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param value
+	 */
+	public void setConsecutiveTimeWindow(final Long value) {
+		// PRECONDITIONS
+		
+		try {
+			this.consecutiveTimeWindow = value;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *******************************************************************************/
-package de.unisaarland.cs.st.moskito.untangling.blob;
+package de.unisaarland.cs.st.moskito.untangling.blob.compare;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,8 +20,8 @@ import net.ownhero.dev.ioda.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Days;
 
-import de.unisaarland.cs.st.moskito.collections.CombineOperator;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
  * The Class BlobTransactionCombineOperator.

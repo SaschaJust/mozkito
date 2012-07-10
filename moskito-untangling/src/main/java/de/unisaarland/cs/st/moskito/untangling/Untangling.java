@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -62,7 +61,10 @@ import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
-import de.unisaarland.cs.st.moskito.untangling.blob.PackageDistanceCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.ChangeCouplingCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.ConsecutiveChangeCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.PackageDistanceCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
 import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
@@ -391,8 +393,6 @@ public class Untangling {
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
 		
-		ArtificialBlobGenerator blobGenerator = null;
-		
 		if (transactions.size() > 50) {
 			final Set<ChangeSet> randomTransactions = new HashSet<ChangeSet>();
 			for (int i = 0; i < 50; ++i) {
@@ -403,20 +403,26 @@ public class Untangling {
 			transactions.clear();
 			transactions.addAll(randomTransactions);
 		}
-		
+		CombineOperator<ChangeSet> combineOperator = null;
 		switch (this.untanglingControl.getGeneratorStrategy()) {
 			case CONSECUTIVE:
-				// TODO enable
-				throw new Shutdown("Artificial generation strategy not yet implemented! Abort.");
+				combineOperator = new ConsecutiveChangeCombineOperator(
+				                                                       this.untanglingControl.getConsecutiveTimeWindow());
+				break;
 			case COUPLINGS:
-				// TODO enable
-				throw new Shutdown("Artificial generation strategy not yet implemented! Abort.");
+				combineOperator = new ChangeCouplingCombineOperator(
+				                                                    this.untanglingControl.getChangeCouplingMinSupport()
+				                                                                          .intValue(),
+				                                                    this.untanglingControl.getChangeCouplingMinConfidence()
+				                                                                          .doubleValue(),
+				                                                    this.persistenceUtil);
+				break;
 			default:
-				blobGenerator = new ArtificialBlobGenerator(
-				                                            new PackageDistanceCombineOperator(
-				                                                                               this.untanglingControl.getPackageDistance(),
-				                                                                               this.untanglingControl.getBlobWindowSize()));
+				combineOperator = new PackageDistanceCombineOperator(this.untanglingControl.getPackageDistance(),
+				                                                     this.untanglingControl.getBlobWindowSize());
 		}
+		
+		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
 		
 		artificialBlobs.addAll(blobGenerator.generateAll(transactions, this.untanglingControl.getMinBlobSize()
 		                                                                                     .intValue(),

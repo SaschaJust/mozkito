@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *******************************************************************************/
-package de.unisaarland.cs.st.moskito.untangling.utils;
+package de.unisaarland.cs.st.moskito.untangling.blob.compare;
 
 /**
  * The Interface CombineOperator.

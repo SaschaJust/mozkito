@@ -26,6 +26,7 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.LongArgument.Options;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
@@ -118,6 +119,8 @@ public class UntanglingOptions extends
 	private EnumArgument.Options<ScoreCombinationMode>                                    scoreModeOptions;
 	
 	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy> generatorStrategyOptions;
+	
+	private Options                                                                       consecutiveOperatorTimeWindowOptions;
 	
 	/**
 	 * Instantiates a new untangling options.
@@ -296,6 +299,7 @@ public class UntanglingOptions extends
 			final LongArgument blobWindowSizeArgument = getSettings().getArgument(this.blobWindowSizeOptions);
 			final EnumArgument<ScoreCombinationMode> scoreModeArgument = getSettings().getArgument(this.scoreModeOptions);
 			final EnumArgument<ArtificialBlobGeneratorStrategy> generatorStrategy = getSettings().getArgument(this.generatorStrategyOptions);
+			final LongArgument consecutiveTimeWindow = getSettings().getArgument(this.consecutiveOperatorTimeWindowOptions);
 			
 			control.setRepository(repositoryArgument.getValue());
 			control.setCallGraphEclipseDir(callGraphEclipseArgument.getValue());
@@ -322,6 +326,7 @@ public class UntanglingOptions extends
 			control.setBlobWindowSize(blobWindowSizeArgument.getValue());
 			control.setScoreMode(scoreModeArgument.getValue());
 			control.setGeneratorStrategy(generatorStrategy.getValue());
+			control.setConsecutiveTimeWindow(consecutiveTimeWindow.getValue());
 			
 			return control;
 		} finally {
@@ -355,11 +360,21 @@ public class UntanglingOptions extends
 			                                                     new ArrayList<String>(0), Requirement.required);
 			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
 			
+			this.generatorStrategyOptions = new EnumArgument.Options<>(
+			                                                           set,
+			                                                           "generatorStrategy",
+			                                                           "Strategy to construct artifical blobs.",
+			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
+			                                                           Requirement.required);
+			map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
+			
 			this.packageDistanceOptions = new LongArgument.Options(
 			                                                       set,
 			                                                       "packageDistance",
 			                                                       "The maximal allowed distance between packages allowed when generating blobs.",
-			                                                       0l, Requirement.required);
+			                                                       0l,
+			                                                       Requirement.equals(this.generatorStrategyOptions,
+			                                                                          ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE));
 			map.put(this.packageDistanceOptions.getName(), this.packageDistanceOptions);
 			
 			this.minBlobSizeOptions = new LongArgument.Options(
@@ -403,11 +418,22 @@ public class UntanglingOptions extends
 			                                                                        Requirement.optional);
 			map.put(this.collapseModeOptions.getName(), this.collapseModeOptions);
 			
+			this.consecutiveOperatorTimeWindowOptions = new LongArgument.Options(
+			                                                                     set,
+			                                                                     "consecutiveOperatorTimeWindow",
+			                                                                     "The number of hours that may lay between two change sets combined by the ConsecutiveChangeCombineOperator.",
+			                                                                     0l,
+			                                                                     Requirement.equals(this.generatorStrategyOptions,
+			                                                                                        ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.CONSECUTIVE));
+			map.put(this.consecutiveOperatorTimeWindowOptions.getName(), this.consecutiveOperatorTimeWindowOptions);
+			
 			this.blobWindowSizeOptions = new LongArgument.Options(
 			                                                      set,
 			                                                      "blobWindow",
 			                                                      "Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)",
-			                                                      -1l, Requirement.optional);
+			                                                      -1l,
+			                                                      Requirement.equals(this.generatorStrategyOptions,
+			                                                                         ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE));
 			map.put(this.blobWindowSizeOptions.getName(), this.blobWindowSizeOptions);
 			
 			this.scoreModeOptions = new EnumArgument.Options<ScoreCombinationMode>(
@@ -417,14 +443,6 @@ public class UntanglingOptions extends
 			                                                                       ScoreCombinationMode.LINEAR_REGRESSION,
 			                                                                       Requirement.optional);
 			map.put(this.scoreModeOptions.getName(), this.scoreModeOptions);
-			
-			this.generatorStrategyOptions = new EnumArgument.Options<>(
-			                                                           set,
-			                                                           "generatorStrategy",
-			                                                           "Strategy to construct artifical blobs.",
-			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
-			                                                           Requirement.required);
-			map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
 			
 			return map;
 		} finally {

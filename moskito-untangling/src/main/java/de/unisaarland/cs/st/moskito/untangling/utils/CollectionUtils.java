@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
+
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
