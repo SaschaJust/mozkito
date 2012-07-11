@@ -161,8 +161,8 @@ public class UntanglingOptions extends
 			                                                             "callgraphEclipse",
 			                                                             "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
 			                                                             null,
-			                                                             Requirement.iff(this.useCallGraphOptions),
-			                                                             false);
+			                                                             Requirement.equals(this.useCallGraphOptions,
+			                                                                                true), false);
 			map.put(this.callgraphEclipseOptions.getName(), this.callgraphEclipseOptions);
 			
 			this.callGraphCacheDirOptions = new DirectoryArgument.Options(
@@ -170,8 +170,8 @@ public class UntanglingOptions extends
 			                                                              "callgraphCacheDir",
 			                                                              "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
 			                                                              null,
-			                                                              Requirement.iff(this.useCallGraphOptions),
-			                                                              false);
+			                                                              Requirement.equals(this.useCallGraphOptions,
+			                                                                                 true), false);
 			map.put(this.callGraphCacheDirOptions.getName(), this.callGraphCacheDirOptions);
 			return map;
 		} finally {
@@ -210,7 +210,8 @@ public class UntanglingOptions extends
 		                                                               "changecouplingsMinConfidence",
 		                                                               "Set minimum confidence for used change couplings to this value",
 		                                                               0.7d,
-		                                                               Requirement.iff(this.useChangeCouplingsOptions));
+		                                                               Requirement.equals(this.useChangeCouplingsOptions,
+		                                                                                  true));
 		map.put(this.changeCouplingsMinConfidence.getName(), this.changeCouplingsMinConfidence);
 		
 		this.changeCouplingsCacheDirOptions = new DirectoryArgument.Options(
@@ -218,8 +219,8 @@ public class UntanglingOptions extends
 		                                                                    "changecouplingsCacheDir",
 		                                                                    "Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
 		                                                                    null,
-		                                                                    Requirement.iff(this.useChangeCouplingsOptions),
-		                                                                    false);
+		                                                                    Requirement.equals(this.useChangeCouplingsOptions,
+		                                                                                       true), false);
 		map.put(this.changeCouplingsCacheDirOptions.getName(), this.changeCouplingsCacheDirOptions);
 		return map;
 	}
@@ -246,16 +247,16 @@ public class UntanglingOptions extends
 			                                                                  "datadependencyEclipse",
 			                                                                  "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
 			                                                                  null,
-			                                                                  Requirement.iff(this.useDataDependenciesOptions),
-			                                                                  false);
+			                                                                  Requirement.equals(this.useDataDependenciesOptions,
+			                                                                                     true), false);
 			map.put(this.datadependencyEclipseOptions.getName(), this.datadependencyEclipseOptions);
 			this.dataDependencyCacheDirOptions = new DirectoryArgument.Options(
 			                                                                   set,
 			                                                                   "datadependencyCacheDir",
 			                                                                   "Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
 			                                                                   null,
-			                                                                   Requirement.iff(this.useDataDependenciesOptions),
-			                                                                   false);
+			                                                                   Requirement.equals(this.useDataDependenciesOptions,
+			                                                                                      true), false);
 			map.put(this.dataDependencyCacheDirOptions.getName(), this.dataDependencyCacheDirOptions);
 			return map;
 		} finally {

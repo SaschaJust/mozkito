@@ -174,12 +174,12 @@ public class Untangling {
 	public Untangling(final Settings settings) {
 		
 		try {
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
+			
 			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
 			                                                                  this.repositoryOptions);
-			
 			final ArgumentSet<UntanglingControl, UntanglingOptions> untanglingControlArgumentSet = ArgumentSetFactory.create(untanglingOptions);
 			
 			if (settings.helpRequested()) {
@@ -200,7 +200,13 @@ public class Untangling {
 			this.repositoryUsername = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
 			this.repositoryPassword = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
 		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
-			throw new Shutdown(e);
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			if (Logger.logInfo()) {
+				Logger.info(settings.getHelpString());
+			}
+			throw new Shutdown();
 		}
 	}
 	
