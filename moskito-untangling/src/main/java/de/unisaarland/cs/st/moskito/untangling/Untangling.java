@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -152,16 +153,16 @@ public class Untangling {
 	private final PersistenceUtil                 persistenceUtil;
 	
 	/** The untangling control. */
-	private UntanglingControl                     untanglingControl;
+	private final UntanglingControl               untanglingControl;
 	
 	/** The repository options. */
-	private RepositoryOptions                     repositoryOptions;
+	private final RepositoryOptions               repositoryOptions;
 	
 	/** The repository username. */
-	private String                                repositoryUsername;
+	private final String                          repositoryUsername;
 	
 	/** The repository password. */
-	private String                                repositoryPassword;
+	private final String                          repositoryPassword;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -172,7 +173,6 @@ public class Untangling {
 	public Untangling(final Settings settings) {
 		
 		try {
-			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			
 			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
@@ -191,13 +191,8 @@ public class Untangling {
 			
 			this.repositoryUsername = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
 			this.repositoryPassword = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
-			
-		} catch (final ArgumentRegistrationException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
-		} catch (final ArgumentSetRegistrationException e) {
-			throw new UnrecoverableError(e);
+		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
+			throw new Shutdown(e);
 		}
 	}
 	
