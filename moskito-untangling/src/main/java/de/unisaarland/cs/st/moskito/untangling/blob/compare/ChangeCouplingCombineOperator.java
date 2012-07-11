@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.apache.commons.collections.CollectionUtils;
 
 import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
@@ -24,6 +26,7 @@ import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
@@ -60,17 +63,21 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			final RCSTransaction cl1T = cl1.getTransaction();
 			final RCSTransaction cl2T = cl2.getTransaction();
 			
+			if (Logger.logDebug()) {
+				Logger.debug("Trying to combine %s and %s ...", cl1T.getId(), cl2T.getId());
+			}
+			
 			final Set<String> cl1B = cl1T.getBranchNames();
 			final Set<String> cl2B = cl2T.getBranchNames();
 			
-			final Set<String> cl1FileNames = new HashSet<String>();
+			final Set<Long> cl1Files = new HashSet<>();
 			for (final JavaChangeOperation op1 : cl1.getOperations()) {
-				cl1FileNames.add(op1.getChangedPath());
+				cl1Files.add(op1.getRevision().getChangedFile().getGeneratedId());
 			}
 			
-			final Set<String> cl2FileNames = new HashSet<String>();
+			final Set<Long> cl2Files = new HashSet<>();
 			for (final JavaChangeOperation op2 : cl2.getOperations()) {
-				cl2FileNames.add(op2.getChangedPath());
+				cl2Files.add(op2.getRevision().getChangedFile().getGeneratedId());
 			}
 			
 			@SuppressWarnings ("unchecked")
@@ -94,14 +101,30 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			                                                                                                            this.minConfidence,
 			                                                                                                            this.persistenceUtil);
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
-				if ((coupling.getPremise().containsAll(cl1FileNames))
-				        && (cl2FileNames.contains(coupling.getImplication().getPath(cl2T)))) {
+				final Set<RCSFile> premise = coupling.getPremise();
+				final Set<Long> premiseIds = new HashSet<>(premise.size());
+				for (final RCSFile p : premise) {
+					premiseIds.add(p.getGeneratedId());
+				}
+				final RCSFile implication = coupling.getImplication();
+				final Long implicationId = implication.getGeneratedId();
+				if ((cl1Files.containsAll(premiseIds)) && (cl2Files.contains(implicationId))) {
+					if (Logger.logDebug()) {
+						Logger.debug("%s and %s cn be combined using file change coupling %s.", cl1T.getId(),
+						             cl2T.getId(), coupling.toString());
+					}
 					return true;
 				}
-				if ((coupling.getPremise().containsAll(cl2FileNames))
-				        && (cl1FileNames.contains(coupling.getImplication().getPath(cl1T)))) {
+				if ((cl1Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
+					if (Logger.logDebug()) {
+						Logger.debug("%s and %s cn be combined using file change coupling %s.", cl1T.getId(),
+						             cl2T.getId(), coupling.toString());
+					}
 					return true;
 				}
+			}
+			if (Logger.logDebug()) {
+				Logger.debug("%s and %s cannot be combined using file change couplings.", cl1T.getId(), cl2T.getId());
 			}
 			return false;
 		} finally {
