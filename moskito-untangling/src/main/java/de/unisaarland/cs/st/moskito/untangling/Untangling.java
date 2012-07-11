@@ -176,6 +176,7 @@ public class Untangling {
 		try {
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			this.persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
 			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
 			
 			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
@@ -195,7 +196,6 @@ public class Untangling {
 				this.seed = random.nextLong();
 			}
 			random.setSeed(this.seed);
-			this.persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
 			
 			this.repositoryUsername = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
 			this.repositoryPassword = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
