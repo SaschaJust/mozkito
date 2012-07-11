@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -179,7 +180,14 @@ public class Untangling {
 			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
 			                                                                  this.repositoryOptions);
 			
-			this.untanglingControl = ArgumentSetFactory.create(untanglingOptions).getValue();
+			final ArgumentSet<UntanglingControl, UntanglingOptions> untanglingControlArgumentSet = ArgumentSetFactory.create(untanglingOptions);
+			
+			if (settings.helpRequested()) {
+				System.err.println(settings.getHelpString());
+				throw new Shutdown();
+			}
+			
+			this.untanglingControl = untanglingControlArgumentSet.getValue();
 			
 			if (this.untanglingControl.getSeed() != null) {
 				this.seed = this.untanglingControl.getSeed();
