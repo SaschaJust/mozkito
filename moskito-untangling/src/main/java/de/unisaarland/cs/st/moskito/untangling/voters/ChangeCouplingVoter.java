@@ -21,11 +21,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -40,6 +51,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -47,6 +59,106 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+	
+	public static class Factory extends MultilevelClusteringScoreVisitorFactory<ChangeCouplingVoter> {
+		
+		private final int             minSupport;
+		private final double          minConfidence;
+		private final PersistenceUtil persistenceUtil;
+		private final File            cacheDir;
+		
+		protected Factory(final int minSupport, final double minConfidence,
+		        @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
+			this.minSupport = minSupport;
+			this.minConfidence = minConfidence;
+			this.persistenceUtil = persistenceUtil;
+			this.cacheDir = cacheDir;
+		}
+		
+		@Override
+		public ChangeCouplingVoter createVoter(final RCSTransaction transaction) {
+			return new ChangeCouplingVoter(transaction, this.minSupport, this.minConfidence, this.persistenceUtil,
+			                               this.cacheDir);
+		}
+		
+	}
+	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<ChangeCouplingVoter.Factory, ArgumentSet<ChangeCouplingVoter.Factory, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.LongArgument.Options      minSupportOptions;
+		private net.ownhero.dev.hiari.settings.DoubleArgument.Options    minConfidenceOptions;
+		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options cacheDirOptions;
+		private final DatabaseOptions                                    databaseOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+		        final DatabaseOptions databaseOptions) {
+			super(argumentSet, "changeCouplingVoter", "ChangeCouplingVoter options.", requirements);
+			this.databaseOptions = databaseOptions;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ChangeCouplingVoter.Factory init() {
+			// PRECONDITIONS
+			
+			final Long minSupport = getSettings().getArgument(this.minSupportOptions).getValue();
+			final Double minConfidence = getSettings().getArgument(this.minConfidenceOptions).getValue();
+			final File cacheDir = getSettings().getArgument(this.cacheDirOptions).getValue();
+			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			
+			return new ChangeCouplingVoter.Factory(minSupport.intValue(), minConfidence.doubleValue(), persistenceUtil,
+			                                       cacheDir);
+			
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			map.put(this.databaseOptions.getName(), this.databaseOptions);
+			this.minSupportOptions = new LongArgument.Options(
+			                                                  argumentSet,
+			                                                  "minSupport",
+			                                                  "Set the minimum support for used change couplings to this value",
+			                                                  3l, Requirement.required);
+			map.put(this.minSupportOptions.getName(), this.minSupportOptions);
+			
+			this.minConfidenceOptions = new DoubleArgument.Options(
+			                                                       argumentSet,
+			                                                       "minConfidence",
+			                                                       "Set minimum confidence for used change couplings to this value",
+			                                                       0.7d, Requirement.required);
+			map.put(this.minConfidenceOptions.getName(), this.minConfidenceOptions);
+			
+			this.cacheDirOptions = new DirectoryArgument.Options(
+			                                                     argumentSet,
+			                                                     "cacheDir",
+			                                                     "Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
+			                                                     null, Requirement.required, false);
+			map.put(this.cacheDirOptions.getName(), this.cacheDirOptions);
+			
+			return map;
+		}
+	}
 	
 	/** The couplings. */
 	private LinkedList<MethodChangeCoupling> couplings;

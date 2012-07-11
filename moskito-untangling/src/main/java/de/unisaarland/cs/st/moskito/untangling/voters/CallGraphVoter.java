@@ -16,7 +16,15 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -32,7 +40,9 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 
 /**
@@ -43,6 +53,97 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+	
+	public static class Factory extends MultilevelClusteringScoreVisitorFactory<CallGraphVoter> {
+		
+		private final File     eclipseDir;
+		private final File     cacheDir;
+		private final String[] eclipseArguments;
+		
+		protected Factory(final File eclipseDir, final String[] eclipseArguments, final File cacheDir) {
+			this.eclipseDir = eclipseDir;
+			this.cacheDir = cacheDir;
+			this.eclipseArguments = eclipseArguments;
+		}
+		
+		@Override
+		public CallGraphVoter createVoter(final RCSTransaction transaction) {
+			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, transaction, this.cacheDir);
+		}
+		
+	}
+	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<CallGraphVoter.Factory, ArgumentSet<CallGraphVoter.Factory, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callgraphEclipseOptions;
+		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callGraphCacheDirOptions;
+		private final RepositoryOptions                                  repositoryOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+		        final RepositoryOptions repositoryOptions) {
+			super(argumentSet, "callGraphVoter", "CallGraphVoter options.", requirements);
+			this.repositoryOptions = repositoryOptions;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public CallGraphVoter.Factory init() {
+			// PRECONDITIONS
+			final File callgraphEclipse = getSettings().getArgument(this.callgraphEclipseOptions).getValue();
+			final File callGraphCacheDir = getSettings().getArgument(this.callGraphCacheDirOptions).getValue();
+			final Repository repository = getSettings().getArgumentSet(this.repositoryOptions).getValue();
+			
+			final List<String> eclipseArgs = new LinkedList<String>();
+			eclipseArgs.add("-vmargs");
+			eclipseArgs.add(" -Dppa");
+			eclipseArgs.add(" -Drepository.uri=" + repository.getUri().toASCIIString());
+			
+			return new CallGraphVoter.Factory(callgraphEclipse, eclipseArgs.toArray(new String[eclipseArgs.size()]),
+			                                  callGraphCacheDir);
+			
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			map.put(this.repositoryOptions.getName(), this.repositoryOptions);
+			this.callgraphEclipseOptions = new DirectoryArgument.Options(
+			                                                             argumentSet,
+			                                                             "eclipseHome",
+			                                                             "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
+			                                                             null, Requirement.required, false);
+			map.put(this.callgraphEclipseOptions.getName(), this.callgraphEclipseOptions);
+			
+			this.callGraphCacheDirOptions = new DirectoryArgument.Options(
+			                                                              argumentSet,
+			                                                              "cacheDir",
+			                                                              "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
+			                                                              null, Requirement.required, false);
+			map.put(this.callGraphCacheDirOptions.getName(), this.callGraphCacheDirOptions);
+			
+			return map;
+		}
+	}
 	
 	/** The call graph. */
 	private CallGraph                    callGraph;
@@ -65,7 +166,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	public CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
+	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
 	        final File cacheDir) {
 		
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {

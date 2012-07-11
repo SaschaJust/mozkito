@@ -28,7 +28,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -41,6 +48,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElementLocation.LineCover;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 
 /**
  * The Class CallGraphHandler.
@@ -50,6 +58,91 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+	
+	public static class Factory extends MultilevelClusteringScoreVisitorFactory<DataDependencyVoter> {
+		
+		private final File       cacheDir;
+		private final File       eclipseDir;
+		private final Repository repository;
+		
+		protected Factory(@NotNull final File eclipseDir, @NotNull final Repository repository, final File cacheDir) {
+			this.eclipseDir = eclipseDir;
+			this.repository = repository;
+			this.cacheDir = cacheDir;
+		}
+		
+		@Override
+		public DataDependencyVoter createVoter(final RCSTransaction transaction) {
+			return new DataDependencyVoter(this.eclipseDir, this.repository, transaction, this.cacheDir);
+		}
+		
+	}
+	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<DataDependencyVoter.Factory, ArgumentSet<DataDependencyVoter.Factory, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options cacheDirOptions;
+		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options eclipseHomeOptions;
+		private final RepositoryOptions                                  repositoryOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+		        final RepositoryOptions repositoryOptions) {
+			super(argumentSet, "dataDepVoter", "DataDependencyVoter options.", requirements);
+			this.repositoryOptions = repositoryOptions;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public DataDependencyVoter.Factory init() {
+			// PRECONDITIONS
+			
+			final Repository repository = getSettings().getArgumentSet(this.repositoryOptions).getValue();
+			final File eclipseDir = getSettings().getArgument(this.eclipseHomeOptions).getValue();
+			final File cacheDir = getSettings().getArgument(this.cacheDirOptions).getValue();
+			
+			return new DataDependencyVoter.Factory(eclipseDir, repository, cacheDir);
+			
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			map.put(this.repositoryOptions.getName(), this.repositoryOptions);
+			this.eclipseHomeOptions = new DirectoryArgument.Options(
+			                                                        argumentSet,
+			                                                        "eclipseHome",
+			                                                        "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
+			                                                        null, Requirement.required, false);
+			map.put(this.eclipseHomeOptions.getName(), this.eclipseHomeOptions);
+			this.cacheDirOptions = new DirectoryArgument.Options(
+			                                                     argumentSet,
+			                                                     "cacheDir",
+			                                                     "Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
+			                                                     null, Requirement.required, false);
+			map.put(this.cacheDirOptions.getName(), this.cacheDirOptions);
+			
+			return map;
+		}
+	}
 	
 	/** The eclipse dir. */
 	private final File                     eclipseDir;

@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *******************************************************************************/
-package de.unisaarland.cs.st.moskito.untangling.blob.compare;
+package de.unisaarland.cs.st.moskito.untangling.blob.combine;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.PackageDistanceCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.PackageDistanceCombineOperator;
 
 /**
  * The Class BlobTransactionCombineOperatorTest.

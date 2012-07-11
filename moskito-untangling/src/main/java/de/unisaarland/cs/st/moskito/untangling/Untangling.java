@@ -52,28 +52,19 @@ import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
-import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.LinearRegressionAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.ChangeCouplingCombineOperator;
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.ConsecutiveChangeCombineOperator;
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.PackageDistanceCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
-import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
-import de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter;
-import de.unisaarland.cs.st.moskito.untangling.voters.FileChangeCouplingVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.FileDistanceVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.LineDistanceVoter;
-import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter;
+import de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
 
 /**
  * The Class Untangling.
@@ -138,31 +129,16 @@ public class Untangling {
 	}
 	
 	/** The random. */
-	public static Random                          random          = new Random();
+	public static Random                          random     = new Random();
 	
 	/** The seed. */
 	public long                                   seed;
 	
 	/** The aggregator. */
-	private ScoreAggregation<JavaChangeOperation> aggregator      = null;
-	
-	/** The test impact voter. */
-	private TestImpactVoter                       testImpactVoter = null;
-	
-	/** The persistence util. */
-	private final PersistenceUtil                 persistenceUtil;
+	private ScoreAggregation<JavaChangeOperation> aggregator = null;
 	
 	/** The untangling control. */
 	private final UntanglingControl               untanglingControl;
-	
-	/** The repository options. */
-	private final RepositoryOptions               repositoryOptions;
-	
-	/** The repository username. */
-	private final String                          repositoryUsername;
-	
-	/** The repository password. */
-	private final String                          repositoryPassword;
 	
 	/**
 	 * Instantiates a new untangling.
@@ -174,12 +150,7 @@ public class Untangling {
 		
 		try {
 			
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
-			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments = ArgumentSetFactory.create(databaseOptions);
-			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
-			
-			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
-			                                                                  this.repositoryOptions);
+			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required);
 			final ArgumentSet<UntanglingControl, UntanglingOptions> untanglingControlArgumentSet = ArgumentSetFactory.create(untanglingOptions);
 			
 			if (settings.helpRequested()) {
@@ -187,7 +158,6 @@ public class Untangling {
 				throw new Shutdown();
 			}
 			
-			this.persistenceUtil = databaseArguments.getValue();
 			this.untanglingControl = untanglingControlArgumentSet.getValue();
 			
 			if (this.untanglingControl.getSeed() != null) {
@@ -197,10 +167,6 @@ public class Untangling {
 			}
 			random.setSeed(this.seed);
 			
-			// FIXME: Der Just meint es geht net hat aber meine schöne Hintertür zugemacht. Also wenn es nicht geht,
-			// dann fixt der Just das.
-			this.repositoryUsername = settings.getProperty(this.repositoryOptions.getUserArg().getTag());
-			this.repositoryPassword = settings.getProperty(this.repositoryOptions.getPassArg().getTag());
 		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -258,75 +224,14 @@ public class Untangling {
 	 */
 	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction transaction) {
 		
-		if ((this.testImpactVoter == null) && (this.untanglingControl.isTestImpactEnabled())) {
-			final File testCoverageIn = this.untanglingControl.getTestImpactFile();
-			if (testCoverageIn == null) {
-				throw new UnrecoverableError("If you want to use a test coverage voter, please specify the argument: "
-				        + this.untanglingControl.getTestImpactFile());
-			}
-			try {
-				this.testImpactVoter = new TestImpactVoter(testCoverageIn);
-			} catch (final IOException e) {
-				if (Logger.logError()) {
-					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e);
-				}
-			} catch (final ClassNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error("Error while creating TestCoverageVoter. Skipping this voter. More details see below.");
-					Logger.error(e);
-				}
-			}
+		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<>();
+		
+		for (final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voterFactory : this.untanglingControl.getConfidenceVoters()) {
+			scoreVisitors.add(voterFactory.createVoter(transaction));
 		}
-		
-		final Repository repository = this.untanglingControl.getRepository();
-		
-		final List<String> eclipseArgs = new LinkedList<String>();
-		eclipseArgs.add("-vmargs");
-		eclipseArgs.add(" -Dppa");
-		eclipseArgs.add(" -Drepository.uri=" + repository.getUri().toASCIIString());
-		
-		if (this.repositoryPassword != null) {
-			eclipseArgs.add(" -Drepository.password=" + this.repositoryPassword);
-		}
-		eclipseArgs.add(" -Drepository.type=" + repository.getRepositoryType().toString());
-		if (this.repositoryUsername != null) {
-			eclipseArgs.add(" -Drepository.user=" + this.repositoryUsername);
-		}
-		
-		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<MultilevelClusteringScoreVisitor<JavaChangeOperation>>();
 		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());
-		// add call graph visitor
-		if (this.untanglingControl.isCallGraphEnabled()) {
-			scoreVisitors.add(new CallGraphVoter(this.untanglingControl.getCallGraphEclipseDir(),
-			                                     eclipseArgs.toArray(new String[eclipseArgs.size()]), transaction,
-			                                     this.untanglingControl.getCallGraphCacheDir()));
-		}
-		
-		// add change coupling visitor
-		if (this.untanglingControl.isChangeCouplingsEnabled()) {
-			scoreVisitors.add(new FileChangeCouplingVoter(transaction,
-			                                              this.untanglingControl.getChangeCouplingMinSupport()
-			                                                                    .intValue(),
-			                                              this.untanglingControl.getChangeCouplingMinConfidence()
-			                                                                    .doubleValue(), this.persistenceUtil,
-			                                              this.untanglingControl.getChangeCouplingsCacheDir()));
-		}
-		
-		// add data dependency visitor
-		if (this.untanglingControl.isDataDependenciesEnabled()) {
-			scoreVisitors.add(new DataDependencyVoter(this.untanglingControl.getDataDependencyEclipseDir(), repository,
-			                                          transaction, this.untanglingControl.getDataDependencyCacheDir()));
-		}
-		
-		// add test impact visitor
-		if (this.testImpactVoter != null) {
-			scoreVisitors.add(this.testImpactVoter);
-		}
-		
 		return scoreVisitors;
-		
 	}
 	
 	/**
@@ -338,17 +243,8 @@ public class Untangling {
 		final List<String> result = new LinkedList<String>();
 		result.add(LineDistanceVoter.class.getSimpleName());
 		result.add(FileDistanceVoter.class.getSimpleName());
-		if (this.untanglingControl.isCallGraphEnabled()) {
-			result.add(CallGraphVoter.class.getSimpleName());
-		}
-		if (this.untanglingControl.isChangeCouplingsEnabled()) {
-			result.add(FileChangeCouplingVoter.class.getSimpleName());
-		}
-		if (this.untanglingControl.isDataDependenciesEnabled()) {
-			result.add(DataDependencyVoter.class.getSimpleName());
-		}
-		if (this.untanglingControl.isTestImpactEnabled()) {
-			result.add(TestImpactVoter.class.getSimpleName());
+		for (final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voterFactory : this.untanglingControl.getConfidenceVoters()) {
+			result.add(voterFactory.getInnerClass().getSimpleName());
 		}
 		return result;
 	}
@@ -358,27 +254,27 @@ public class Untangling {
 	 */
 	public void run() {
 		
+		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
+		
 		// load the atomic transactions and their change operations
 		final List<ChangeSet> transactions = new LinkedList<ChangeSet>();
-		
-		if ((this.untanglingControl.getAtomicChanges() != null)
-		        && (!this.untanglingControl.getAtomicChanges().isEmpty())) {
-			for (final String transactionId : this.untanglingControl.getAtomicChanges()) {
-				final RCSTransaction t = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
+			for (final String transactionId : atomicTransactionIds) {
+				final RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				
 				// FIXME this is required due to some unknown problem which
 				// causes NullpointerExceptions because Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
 				
-				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-				                                                                                  t);
+				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				transactions.add(new ChangeSet(t, ops));
 			}
 		} else {
-			final Criteria<RCSTransaction> criteria = this.persistenceUtil.createCriteria(RCSTransaction.class)
-			                                                              .eq("atomic", true);
-			final List<RCSTransaction> atomicTransactions = this.persistenceUtil.load(criteria);
+			final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic",
+			                                                                                                  true);
+			final List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
 			for (final RCSTransaction t : atomicTransactions) {
 				
 				// FIXME this is required due to some unknown problem which
@@ -386,8 +282,7 @@ public class Untangling {
 				t.getAuthor();
 				t.toString();
 				
-				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-				                                                                                  t);
+				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
 				for (final JavaChangeOperation op : ops) {
 					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
@@ -414,30 +309,14 @@ public class Untangling {
 			transactions.clear();
 			transactions.addAll(randomTransactions);
 		}
-		CombineOperator<ChangeSet> combineOperator = null;
-		switch (this.untanglingControl.getGeneratorStrategy()) {
-			case CONSECUTIVE:
-				combineOperator = new ConsecutiveChangeCombineOperator(
-				                                                       this.untanglingControl.getConsecutiveTimeWindow());
-				break;
-			case COUPLINGS:
-				combineOperator = new ChangeCouplingCombineOperator(
-				                                                    this.untanglingControl.getChangeCouplingMinSupport()
-				                                                                          .intValue(),
-				                                                    this.untanglingControl.getChangeCouplingMinConfidence()
-				                                                                          .doubleValue(),
-				                                                    this.persistenceUtil);
-				break;
-			default:
-				combineOperator = new PackageDistanceCombineOperator(this.untanglingControl.getPackageDistance(),
-				                                                     this.untanglingControl.getBlobWindowSize());
-		}
+		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
 		
-		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
+		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(
+		                                                                          this.untanglingControl.getBlobWindowSize(),
+		                                                                          combineOperator);
 		
-		artificialBlobs.addAll(blobGenerator.generateAll(transactions, this.untanglingControl.getMinBlobSize()
-		                                                                                     .intValue(),
-		                                                 this.untanglingControl.getMaxBlobSize().intValue()));
+		artificialBlobs.addAll(blobGenerator.generateAll(transactions, this.untanglingControl.getMinBlobSize(),
+		                                                 this.untanglingControl.getMaxBlobSize()));
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {

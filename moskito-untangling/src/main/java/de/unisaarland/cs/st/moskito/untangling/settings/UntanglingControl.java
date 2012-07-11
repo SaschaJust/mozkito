@@ -13,12 +13,21 @@
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import de.unisaarland.cs.st.moskito.rcs.Repository;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
-import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
 
 /**
  * The Class UntanglingControl.
@@ -27,159 +36,65 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.Arti
  */
 public class UntanglingControl {
 	
-	/** The call graph enabled. */
-	private Boolean                         callGraphEnabled;
+	/** The change coupling combine operator. */
+	private CombineOperator<ChangeSet>                                                                                          combineOperator;
 	
-	/** The change couplings enabled. */
-	private Boolean                         changeCouplingsEnabled;
-	
-	/** The data dependencies enabled. */
-	private Boolean                         dataDependenciesEnabled;
-	
-	/** The test impact enabled. */
-	private Boolean                         testImpactEnabled;
-	
-	/** The atomic changes. */
-	private List<String>                    atomicChanges;
-	
-	/** The call graph cahce dir. */
-	private File                            callGraphCahceDir;
-	
-	/** The call graph eclipse dir. */
-	private File                            callGraphEclipseDir;
-	
-	/** The change coupling min confidence. */
-	private Double                          changeCouplingMinConfidence;
-	
-	/** The change coupling min support. */
-	private Long                            changeCouplingMinSupport;
-	
-	/** The change couplings cache dir. */
-	private File                            changeCouplingsCacheDir;
-	
-	/** The collapse mode. */
-	private UntanglingCollapse              collapseMode;
-	
-	/** The data dependency cache dir. */
-	private File                            dataDependencyCacheDir;
-	
-	/** The data dependency eclipse dir. */
-	private File                            dataDependencyEclipseDir;
-	
-	/** The dry run. */
-	private Boolean                         dryRun;
-	
-	/** The max blob size. */
-	private Long                            maxBlobSize;
-	
-	/** The min blob size. */
-	private Long                            minBlobSize;
-	
-	/** The n. */
-	private Long                            n;
-	
-	/** The output file. */
-	private File                            outputFile;
-	
-	/** The package distance. */
-	private Long                            packageDistance;
-	
-	/** The repository. */
-	private Repository                      repository;
-	
-	/** The score mode. */
-	private ScoreCombinationMode            scoreMode;
+	/** The confidence voters. */
+	private final Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> confidenceVoters = new HashSet<>();
 	
 	/** The seed. */
-	private Long                            seed;
+	private Long                                                                                                                seed;
 	
-	/** The test impact file. */
-	private File                            testImpactFile;
+	/** The atomic change sets. */
+	private List<String>                                                                                                        atomicTransactionIds;
+	
+	/** The persistence util. */
+	private PersistenceUtil                                                                                                     persistenceUtil;
 	
 	/** The blob window size. */
-	private Long                            blobWindowSize;
+	private Long                                                                                                                blobWindowSize;
 	
-	private ArtificialBlobGeneratorStrategy generatorStrategy;
+	/** The min blob size. */
+	private Long                                                                                                                minBlobSize;
 	
-	private Long                            consecutiveTimeWindow;
+	/** The max blob size. */
+	private Long                                                                                                                maxBlobSize;
+	
+	/** The output file. */
+	private File                                                                                                                outputFile;
+	
+	/** The n. */
+	private Long                                                                                                                n;
+	
+	/** The collapse mode. */
+	private UntanglingCollapse                                                                                                  collapseMode;
+	
+	/** The score mode. */
+	private ScoreCombinationMode                                                                                                scoreMode;
+	
+	/** The dry run. */
+	private Boolean                                                                                                             dryRun;
 	
 	/**
-	 * Enable call graph.
+	 * Adds the confidence voter.
 	 * 
-	 * @param value
-	 *            the value
+	 * @param voter
+	 *            the voter
+	 * @return true, if successful
 	 */
-	public void enableCallGraph(final Boolean value) {
-		// PRECONDITIONS
+	@NoneNull
+	protected boolean addConfidenceVoter(final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voter) {
 		
-		try {
-			this.callGraphEnabled = value;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.confidenceVoters.add(voter);
 	}
 	
 	/**
-	 * Enable change couplings.
+	 * Gets the atomic change sets.
 	 * 
-	 * @param value
-	 *            the value
+	 * @return the atomic change sets
 	 */
-	public void enableChangeCouplings(final Boolean value) {
-		// PRECONDITIONS
-		
-		try {
-			this.changeCouplingsEnabled = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Enable data dependencies.
-	 * 
-	 * @param value
-	 *            the value
-	 */
-	public void enableDataDependencies(final Boolean value) {
-		// PRECONDITIONS
-		
-		try {
-			this.dataDependenciesEnabled = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Enable test impact.
-	 * 
-	 * @param value
-	 *            the value
-	 */
-	public void enableTestImpact(final Boolean value) {
-		// PRECONDITIONS
-		
-		try {
-			this.testImpactEnabled = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the atomic changes.
-	 * 
-	 * @return the atomic changes
-	 */
-	public List<String> getAtomicChanges() {
-		// PRECONDITIONS
-		
-		try {
-			return this.atomicChanges;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public List<String> getAtomicTransactionIds() {
+		return this.atomicTransactionIds;
 	}
 	
 	/**
@@ -187,89 +102,8 @@ public class UntanglingControl {
 	 * 
 	 * @return the blob window size
 	 */
-	public Long getBlobWindowSize() {
-		// PRECONDITIONS
-		
-		try {
-			return this.blobWindowSize;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the call graph cache dir.
-	 * 
-	 * @return the call graph cache dir
-	 */
-	public File getCallGraphCacheDir() {
-		// PRECONDITIONS
-		
-		try {
-			return this.callGraphCahceDir;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the call graph eclipse dir.
-	 * 
-	 * @return the call graph eclipse dir
-	 */
-	public File getCallGraphEclipseDir() {
-		// PRECONDITIONS
-		
-		try {
-			return this.callGraphEclipseDir;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the change coupling min confidence.
-	 * 
-	 * @return the change coupling min confidence
-	 */
-	public Double getChangeCouplingMinConfidence() {
-		// PRECONDITIONS
-		
-		try {
-			return this.changeCouplingMinConfidence;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the change coupling min support.
-	 * 
-	 * @return the change coupling min support
-	 */
-	public Long getChangeCouplingMinSupport() {
-		// PRECONDITIONS
-		
-		try {
-			return this.changeCouplingMinSupport;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the change couplings cache dir.
-	 * 
-	 * @return the change couplings cache dir
-	 */
-	public File getChangeCouplingsCacheDir() {
-		// PRECONDITIONS
-		
-		try {
-			return this.changeCouplingsCacheDir;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public int getBlobWindowSize() {
+		return this.blobWindowSize.intValue();
 	}
 	
 	/**
@@ -278,62 +112,33 @@ public class UntanglingControl {
 	 * @return the collapse mode
 	 */
 	public UntanglingCollapse getCollapseMode() {
+		return this.collapseMode;
+	}
+	
+	/**
+	 * Gets the change coupling combine operator.
+	 * 
+	 * @return the change coupling combine operator
+	 */
+	public CombineOperator<ChangeSet> getCombineOperator() {
 		// PRECONDITIONS
 		
 		try {
-			return this.collapseMode;
+			return this.combineOperator;
 		} finally {
 			// POSTCONDITIONS
+			Condition.notNull(this.combineOperator, "Field '%s' in '%s'.", "changeCouplingCombineOperator",
+			                  getClass().getSimpleName());
 		}
 	}
 	
 	/**
-	 * Gets the consecutive time window.
+	 * Gets the confidence voters.
 	 * 
-	 * @return the consecutive time window
+	 * @return the confidence voters
 	 */
-	public int getConsecutiveTimeWindow() {
-		// PRECONDITIONS
-		
-		try {
-			return this.consecutiveTimeWindow.intValue();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the data dependency cache dir.
-	 * 
-	 * @return the data dependency cache dir
-	 */
-	public File getDataDependencyCacheDir() {
-		// PRECONDITIONS
-		
-		try {
-			return this.dataDependencyCacheDir;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the data dependency eclipse dir.
-	 * 
-	 * @return the data dependency eclipse dir
-	 */
-	public File getDataDependencyEclipseDir() {
-		// PRECONDITIONS
-		
-		try {
-			return this.dataDependencyEclipseDir;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	public ArtificialBlobGeneratorStrategy getGeneratorStrategy() {
-		return this.generatorStrategy;
+	public Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> getConfidenceVoters() {
+		return this.confidenceVoters;
 	}
 	
 	/**
@@ -341,14 +146,8 @@ public class UntanglingControl {
 	 * 
 	 * @return the max blob size
 	 */
-	public Long getMaxBlobSize() {
-		// PRECONDITIONS
-		
-		try {
-			return this.maxBlobSize;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public int getMaxBlobSize() {
+		return this.maxBlobSize.intValue();
 	}
 	
 	/**
@@ -356,14 +155,8 @@ public class UntanglingControl {
 	 * 
 	 * @return the min blob size
 	 */
-	public Long getMinBlobSize() {
-		// PRECONDITIONS
-		
-		try {
-			return this.minBlobSize;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public int getMinBlobSize() {
+		return this.minBlobSize.intValue();
 	}
 	
 	/**
@@ -371,14 +164,8 @@ public class UntanglingControl {
 	 * 
 	 * @return the n
 	 */
-	public Long getN() {
-		// PRECONDITIONS
-		
-		try {
-			return this.n;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public int getN() {
+		return this.n.intValue();
 	}
 	
 	/**
@@ -387,43 +174,16 @@ public class UntanglingControl {
 	 * @return the output file
 	 */
 	public File getOutputFile() {
-		// PRECONDITIONS
-		
-		try {
-			return this.outputFile;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.outputFile;
 	}
 	
 	/**
-	 * Gets the package distance.
+	 * Gets the persistence util.
 	 * 
-	 * @return the package distance
+	 * @return the persistence util
 	 */
-	public Long getPackageDistance() {
-		// PRECONDITIONS
-		
-		try {
-			return this.packageDistance;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the repository.
-	 * 
-	 * @return the repository
-	 */
-	public Repository getRepository() {
-		// PRECONDITIONS
-		
-		try {
-			return this.repository;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public PersistenceUtil getPersistenceUtil() {
+		return this.persistenceUtil;
 	}
 	
 	/**
@@ -432,13 +192,7 @@ public class UntanglingControl {
 	 * @return the score mode
 	 */
 	public ScoreCombinationMode getScoreMode() {
-		// PRECONDITIONS
-		
-		try {
-			return this.scoreMode;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.scoreMode;
 	}
 	
 	/**
@@ -447,116 +201,29 @@ public class UntanglingControl {
 	 * @return the seed
 	 */
 	public Long getSeed() {
-		// PRECONDITIONS
-		
-		try {
-			return this.seed;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Gets the test impact file.
-	 * 
-	 * @return the test impact file
-	 */
-	public File getTestImpactFile() {
-		// PRECONDITIONS
-		
-		try {
-			return this.testImpactFile;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Checks if is call graph enabled.
-	 * 
-	 * @return the boolean
-	 */
-	public Boolean isCallGraphEnabled() {
-		// PRECONDITIONS
-		
-		try {
-			return this.callGraphEnabled;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Checks if is change couplings enabled.
-	 * 
-	 * @return the boolean
-	 */
-	public Boolean isChangeCouplingsEnabled() {
-		// PRECONDITIONS
-		
-		try {
-			return this.changeCouplingsEnabled;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Checks if is data dependencies enabled.
-	 * 
-	 * @return the boolean
-	 */
-	public Boolean isDataDependenciesEnabled() {
-		// PRECONDITIONS
-		
-		try {
-			return this.dataDependenciesEnabled;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.seed;
 	}
 	
 	/**
 	 * Checks if is dry run.
 	 * 
-	 * @return the boolean
+	 * @return true, if is dry run
 	 */
-	public Boolean isDryRun() {
-		// PRECONDITIONS
-		
-		try {
-			return this.dryRun;
-		} finally {
-			// POSTCONDITIONS
-		}
+	public boolean isDryRun() {
+		return this.dryRun;
 	}
 	
 	/**
-	 * Checks if is test impact enabled.
+	 * Sets the atomic transaction ids.
 	 * 
-	 * @return the boolean
+	 * @param atomicTransactionIds
+	 *            the new atomic transaction ids
 	 */
-	public Boolean isTestImpactEnabled() {
+	protected void setAtomicTransactionIds(final List<String> atomicTransactionIds) {
 		// PRECONDITIONS
 		
 		try {
-			return this.testImpactEnabled;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the atomic changes.
-	 * 
-	 * @param value
-	 *            the new atomic changes
-	 */
-	public void setAtomicChanges(final List<String> value) {
-		// PRECONDITIONS
-		
-		try {
-			this.atomicChanges = value;
+			this.atomicTransactionIds = atomicTransactionIds;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -565,94 +232,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the blob window size.
 	 * 
-	 * @param value
+	 * @param blobWindowSize
 	 *            the new blob window size
 	 */
-	public void setBlobWindowSize(final Long value) {
+	protected void setBlobWindowSize(final Long blobWindowSize) {
 		// PRECONDITIONS
 		
 		try {
-			this.blobWindowSize = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the call graph cache dir.
-	 * 
-	 * @param value
-	 *            the new call graph cache dir
-	 */
-	public void setCallGraphCacheDir(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.callGraphCahceDir = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the call graph eclipse dir.
-	 * 
-	 * @param value
-	 *            the new call graph eclipse dir
-	 */
-	public void setCallGraphEclipseDir(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.callGraphEclipseDir = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the change coupling min confidence.
-	 * 
-	 * @param value
-	 *            the new change coupling min confidence
-	 */
-	public void setChangeCouplingMinConfidence(final Double value) {
-		// PRECONDITIONS
-		
-		try {
-			this.changeCouplingMinConfidence = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the change coupling min support.
-	 * 
-	 * @param value
-	 *            the new change coupling min support
-	 */
-	public void setChangeCouplingMinSupport(final Long value) {
-		// PRECONDITIONS
-		
-		try {
-			this.changeCouplingMinSupport = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the change couplings cache dir.
-	 * 
-	 * @param value
-	 *            the new change couplings cache dir
-	 */
-	public void setChangeCouplingsCacheDir(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.changeCouplingsCacheDir = value;
+			this.blobWindowSize = blobWindowSize;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -661,88 +248,50 @@ public class UntanglingControl {
 	/**
 	 * Sets the collapse mode.
 	 * 
-	 * @param value
+	 * @param collapseMode
 	 *            the new collapse mode
 	 */
-	public void setCollapseMode(final UntanglingCollapse value) {
+	protected void setCollapseMode(final UntanglingCollapse collapseMode) {
 		// PRECONDITIONS
 		
 		try {
-			this.collapseMode = value;
+			this.collapseMode = collapseMode;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	/**
-	 * @param value
-	 */
-	public void setConsecutiveTimeWindow(final Long value) {
-		// PRECONDITIONS
-		
-		try {
-			this.consecutiveTimeWindow = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the data dependency cache dir.
+	 * Sets the change coupling combine operator.
 	 * 
-	 * @param value
-	 *            the new data dependency cache dir
+	 * @param combineOperator
+	 *            the new combine operator
 	 */
-	public void setDataDependencyCacheDir(final File value) {
+	protected void setCombineOperator(final CombineOperator<ChangeSet> combineOperator) {
 		// PRECONDITIONS
+		Condition.notNull(combineOperator, "Argument '%s' in '%s'.", "changeCouplingCombineOperator",
+		                  getClass().getSimpleName());
 		
 		try {
-			this.dataDependencyCacheDir = value;
+			this.combineOperator = combineOperator;
 		} finally {
 			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the data dependency eclipse dir.
-	 * 
-	 * @param value
-	 *            the new data dependency eclipse dir
-	 */
-	public void setDataDependencyEclipseDir(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.dataDependencyEclipseDir = value;
-		} finally {
-			// POSTCONDITIONS
+			CompareCondition.equals(this.combineOperator, combineOperator,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	
 	/**
 	 * Sets the dry run.
 	 * 
-	 * @param value
+	 * @param dryRun
 	 *            the new dry run
 	 */
-	public void setDryRun(final Boolean value) {
+	protected void setDryRun(final Boolean dryRun) {
 		// PRECONDITIONS
 		
 		try {
-			this.dryRun = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * @param value
-	 */
-	public void setGeneratorStrategy(final ArtificialBlobGeneratorStrategy value) {
-		// PRECONDITIONS
-		
-		try {
-			this.generatorStrategy = value;
+			this.dryRun = dryRun;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -751,14 +300,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the max blob size.
 	 * 
-	 * @param value
+	 * @param maxBlobSize
 	 *            the new max blob size
 	 */
-	public void setMaxBlobSize(final Long value) {
+	protected void setMaxBlobSize(final Long maxBlobSize) {
 		// PRECONDITIONS
 		
 		try {
-			this.maxBlobSize = value;
+			this.maxBlobSize = maxBlobSize;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -767,14 +316,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the min blob size.
 	 * 
-	 * @param value
+	 * @param minBlobSize
 	 *            the new min blob size
 	 */
-	public void setMinBlobSize(final Long value) {
+	protected void setMinBlobSize(final Long minBlobSize) {
 		// PRECONDITIONS
 		
 		try {
-			this.minBlobSize = value;
+			this.minBlobSize = minBlobSize;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -783,14 +332,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the n.
 	 * 
-	 * @param value
+	 * @param n
 	 *            the new n
 	 */
-	public void setN(final Long value) {
+	protected void setN(final Long n) {
 		// PRECONDITIONS
 		
 		try {
-			this.n = value;
+			this.n = n;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -799,46 +348,30 @@ public class UntanglingControl {
 	/**
 	 * Sets the output file.
 	 * 
-	 * @param value
+	 * @param outFile
 	 *            the new output file
 	 */
-	public void setOutputFile(final File value) {
+	protected void setOutputFile(final File outFile) {
 		// PRECONDITIONS
 		
 		try {
-			this.outputFile = value;
+			this.outputFile = outFile;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
 	/**
-	 * Sets the package distance.
+	 * Sets the persistence util.
 	 * 
-	 * @param value
-	 *            the new package distance
+	 * @param persistenceUtil
+	 *            the new persistence util
 	 */
-	public void setPackageDistance(final Long value) {
+	protected void setPersistenceUtil(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
 		
 		try {
-			this.packageDistance = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the repository.
-	 * 
-	 * @param value
-	 *            the new repository
-	 */
-	public void setRepository(final Repository value) {
-		// PRECONDITIONS
-		
-		try {
-			this.repository = value;
+			this.persistenceUtil = persistenceUtil;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -847,14 +380,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the score mode.
 	 * 
-	 * @param value
+	 * @param scoreMode
 	 *            the new score mode
 	 */
-	public void setScoreMode(final ScoreCombinationMode value) {
+	protected void setScoreMode(final ScoreCombinationMode scoreMode) {
 		// PRECONDITIONS
 		
 		try {
-			this.scoreMode = value;
+			this.scoreMode = scoreMode;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -863,30 +396,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the seed.
 	 * 
-	 * @param value
+	 * @param seed
 	 *            the new seed
 	 */
-	public void setSeed(final Long value) {
+	protected void setSeed(final Long seed) {
 		// PRECONDITIONS
 		
 		try {
-			this.seed = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Sets the test impact file.
-	 * 
-	 * @param value
-	 *            the new test impact file
-	 */
-	public void setTestImpactFile(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.testImpactFile = value;
+			this.seed = seed;
 		} finally {
 			// POSTCONDITIONS
 		}

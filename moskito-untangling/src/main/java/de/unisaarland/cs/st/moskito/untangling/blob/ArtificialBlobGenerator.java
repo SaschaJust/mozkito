@@ -22,7 +22,8 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.BlobWindowSizeCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.utils.CollectionUtils;
 
 /**
@@ -36,10 +37,13 @@ public class ArtificialBlobGenerator {
 		PACKAGE, CONSECUTIVE, COUPLINGS;
 	}
 	
-	private final CombineOperator<ChangeSet> combineOperator;
+	private final Collection<CombineOperator<ChangeSet>> combineOperators;
 	
-	public ArtificialBlobGenerator(final CombineOperator<ChangeSet> combineOperator) {
-		this.combineOperator = combineOperator;
+	public ArtificialBlobGenerator(@NotNegative final int blobWindowSize,
+	        final CombineOperator<ChangeSet> combineOperator) {
+		this.combineOperators = new HashSet<>(2);
+		this.combineOperators.add(combineOperator);
+		this.combineOperators.add(new BlobWindowSizeCombineOperator(blobWindowSize));
 	}
 	
 	/**
@@ -66,7 +70,7 @@ public class ArtificialBlobGenerator {
 		}
 		
 		final Set<Set<ChangeSet>> allCombinations = CollectionUtils.getAllCombinations(transactions,
-		                                                                               this.combineOperator,
+		                                                                               this.combineOperators,
 		                                                                               maxBlobSize);
 		
 		if (Logger.logDebug()) {

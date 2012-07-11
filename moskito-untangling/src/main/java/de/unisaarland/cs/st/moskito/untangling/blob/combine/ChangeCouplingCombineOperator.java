@@ -10,13 +10,23 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.moskito.untangling.blob.compare;
+package de.unisaarland.cs.st.moskito.untangling.blob.combine;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -28,6 +38,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
@@ -37,11 +48,75 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
  */
 public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet> {
 	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<ChangeCouplingCombineOperator, ArgumentSet<ChangeCouplingCombineOperator, Options>> {
+		
+		private final DatabaseOptions                                 databaseOptions;
+		private net.ownhero.dev.hiari.settings.LongArgument.Options   minSupportOptions;
+		private net.ownhero.dev.hiari.settings.DoubleArgument.Options minConfidenceOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+		        final DatabaseOptions databaseOptions) {
+			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
+			this.databaseOptions = databaseOptions;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ChangeCouplingCombineOperator init() {
+			// PRECONDITIONS
+			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			final Double minConfidence = getSettings().getArgument(this.minConfidenceOptions).getValue();
+			final Long minSupport = getSettings().getArgument(this.minSupportOptions).getValue();
+			return new ChangeCouplingCombineOperator(minSupport.intValue(), minConfidence.doubleValue(),
+			                                         persistenceUtil);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			map.put(this.databaseOptions.getName(), this.databaseOptions);
+			
+			this.minSupportOptions = new LongArgument.Options(
+			                                                  argumentSet,
+			                                                  "minSupport",
+			                                                  "Minimum support for change couplings used to tangle change sets.",
+			                                                  3l, Requirement.required);
+			map.put(this.minSupportOptions.getName(), this.minSupportOptions);
+			this.minConfidenceOptions = new DoubleArgument.Options(
+			                                                       argumentSet,
+			                                                       "minConfidence",
+			                                                       "Minimum confidence for change couplings used to tangle change sets.",
+			                                                       0.5, Requirement.required);
+			map.put(this.minConfidenceOptions.getName(), this.minConfidenceOptions);
+			return map;
+		}
+	}
+	
 	private final PersistenceUtil persistenceUtil;
 	private final double          minConfidence;
 	private final int             minSupport;
 	
-	public ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
+	protected ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
 	        final PersistenceUtil persistenceUtil) {
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
@@ -115,7 +190,7 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 					}
 					return true;
 				}
-				if ((cl1Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
+				if ((cl2Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
 						Logger.debug("%s and %s cn be combined using file change coupling %s.", cl1T.getId(),
 						             cl2T.getId(), coupling.toString());

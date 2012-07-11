@@ -17,11 +17,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.InputFileArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import de.unisaarland.cs.st.moskito.changeimpact.ImpactMatrix;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 
 /**
  * The Class TestImpactVoter.
@@ -29,6 +41,72 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
+	
+	public static class Factory extends MultilevelClusteringScoreVisitorFactory<TestImpactVoter> {
+		
+		private final File testCoverageIn;
+		
+		protected Factory(final File testCoverageIn) {
+			this.testCoverageIn = testCoverageIn;
+		}
+		
+		@Override
+		public TestImpactVoter createVoter(final RCSTransaction transaction) {
+			return new TestImpactVoter(this.testCoverageIn);
+		}
+		
+	}
+	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<TestImpactVoter.Factory, ArgumentSet<TestImpactVoter.Factory, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.InputFileArgument.Options testImpactFileOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
+		        final RepositoryOptions repositoryOptions) {
+			super(argumentSet, "testImpactVoter", "TestImpactVoter options.", requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public TestImpactVoter.Factory init() {
+			// PRECONDITIONS
+			final File testCoverageIn = getSettings().getArgument(this.testImpactFileOptions).getValue();
+			return new TestImpactVoter.Factory(testCoverageIn);
+			
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			this.testImpactFileOptions = new InputFileArgument.Options(
+			                                                           argumentSet,
+			                                                           "testImpactIn",
+			                                                           "File containing a serial version of a ImpactMatrix",
+			                                                           null, Requirement.required);
+			map.put(this.testImpactFileOptions.getName(), this.testImpactFileOptions);
+			return map;
+		}
+	}
 	
 	/** The matrix. */
 	private ImpactMatrix matrix = null;
@@ -43,10 +121,12 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	 * @throws ClassNotFoundException
 	 *             the class not found exception
 	 */
-	public TestImpactVoter(final File testCoverageIn) throws IOException, ClassNotFoundException {
-		final ObjectInputStream in = new ObjectInputStream(new FileInputStream(testCoverageIn));
-		this.matrix = (ImpactMatrix) in.readObject();
-		in.close();
+	public TestImpactVoter(final File testCoverageIn) {
+		try (final ObjectInputStream in = new ObjectInputStream(new FileInputStream(testCoverageIn));) {
+			this.matrix = (ImpactMatrix) in.readObject();
+		} catch (final IOException | ClassNotFoundException e) {
+			throw new UnrecoverableError(e);
+		}
 	}
 	
 	/*

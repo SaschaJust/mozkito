@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.unisaarland.cs.st.moskito.untangling.blob.compare.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
@@ -35,15 +35,18 @@ public class CollectionUtils {
 	 *            the generic type
 	 * @param elements
 	 *            the elements
-	 * @param operator
-	 *            the operator
+	 * @param operators
+	 *            the operators used to check if two entities can be combines. All combineOperators must return true in
+	 *            order to combine entities.
 	 * @param maxBlobSize
 	 *            the max blob size
+	 * @param blobWindowSize
+	 *            the blob window size
 	 * @return the all combinations
 	 */
 	@SuppressWarnings ("unchecked")
 	public static <T> Set<Set<T>> getAllCombinations(final Collection<T> elements,
-	                                                 final CombineOperator<T> operator,
+	                                                 final Collection<CombineOperator<T>> operators,
 	                                                 final int maxBlobSize) {
 		final List<T> elementList = new ArrayList<T>(elements.size());
 		elementList.addAll(elements);
@@ -57,7 +60,14 @@ public class CollectionUtils {
 				}
 				final T t1 = elementList.get(i);
 				final T t2 = elementList.get(j);
-				if (operator.canBeCombined(t1, t2)) {
+				boolean canCombine = true;
+				for (final CombineOperator<T> operator : operators) {
+					canCombine &= operator.canBeCombined(t1, t2);
+					if (!canCombine) {
+						break;
+					}
+				}
+				if (canCombine) {
 					final Set<T> keySet = new HashSet<T>();
 					keySet.add(t1);
 					if (!combinations.containsKey(keySet)) {

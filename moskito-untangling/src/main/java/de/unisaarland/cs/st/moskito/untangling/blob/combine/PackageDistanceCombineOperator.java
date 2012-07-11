@@ -10,15 +10,23 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *******************************************************************************/
-package de.unisaarland.cs.st.moskito.untangling.blob.compare;
+package de.unisaarland.cs.st.moskito.untangling.blob.combine;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
@@ -29,6 +37,57 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet> {
+	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<PackageDistanceCombineOperator, ArgumentSet<PackageDistanceCombineOperator, Options>> {
+		
+		private net.ownhero.dev.hiari.settings.LongArgument.Options maxPackageDistanceOptions;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public PackageDistanceCombineOperator init() {
+			// PRECONDITIONS
+			final Long maxPackageDistance = getSettings().getArgument(this.maxPackageDistanceOptions).getValue();
+			return new PackageDistanceCombineOperator(maxPackageDistance);
+			
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			final Map<String, IOptions<?, ?>> map = new HashMap<>();
+			
+			this.maxPackageDistanceOptions = new LongArgument.Options(
+			                                                          argumentSet,
+			                                                          "maxPackageDistance",
+			                                                          "The maximal allowed distance between packages allowed when generating blobs using package distances.",
+			                                                          0l, Requirement.required);
+			map.put(this.maxPackageDistanceOptions.getName(), this.maxPackageDistanceOptions);
+			return map;
+		}
+	}
 	
 	/**
 	 * Can combine paths.
@@ -76,9 +135,6 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	/** The max package distance. */
 	private final Long maxPackageDistance;
 	
-	/** The time window size. */
-	private final Long timeWindowSize;
-	
 	/**
 	 * Instantiates a new blob transaction combine operator.
 	 * 
@@ -87,9 +143,8 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	 * @param timeWindowSize
 	 *            the time window size
 	 */
-	public PackageDistanceCombineOperator(final Long maxPackageDistance, final Long timeWindowSize) {
+	protected PackageDistanceCombineOperator(final Long maxPackageDistance) {
 		this.maxPackageDistance = maxPackageDistance;
-		this.timeWindowSize = timeWindowSize;
 	}
 	
 	/*
@@ -100,14 +155,6 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	@Override
 	public boolean canBeCombined(final ChangeSet t1,
 	                             final ChangeSet t2) {
-		
-		if (this.timeWindowSize > -1) {
-			final Days daysBetween = Days.daysBetween(t1.getTransaction().getTimestamp(), t2.getTransaction()
-			                                                                                .getTimestamp());
-			if (daysBetween.getDays() > this.timeWindowSize) {
-				return false;
-			}
-		}
 		
 		for (final RCSRevision rev : t1.getTransaction().getRevisions()) {
 			final String path = rev.getChangedFile().getPath(t1.getTransaction());

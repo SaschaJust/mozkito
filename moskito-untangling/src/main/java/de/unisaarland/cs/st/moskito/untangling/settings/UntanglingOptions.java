@@ -12,18 +12,17 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
-import net.ownhero.dev.hiari.settings.DirectoryArgument;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.LongArgument.Options;
@@ -31,12 +30,20 @@ import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.rcs.Repository;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.ChangeCouplingCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.blob.combine.PackageDistanceCombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
+import de.unisaarland.cs.st.moskito.untangling.voters.ChangeCouplingVoter;
+import de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter;
+import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter;
 
 /**
  * The Class UntanglingOptions.
@@ -47,80 +54,76 @@ public class UntanglingOptions extends
         ArgumentSetOptions<UntanglingControl, ArgumentSet<UntanglingControl, UntanglingOptions>> {
 	
 	/** The repository options. */
-	private final RepositoryOptions                                                       repositoryOptions;
-	
-	/** The callgraph eclipse options. */
-	private DirectoryArgument.Options                                                     callgraphEclipseOptions;
+	private RepositoryOptions                                                                             repositoryOptions;
 	
 	/** The atomic changes options. */
-	private ListArgument.Options                                                          atomicChangesOptions;
+	private ListArgument.Options                                                                          atomicChangesOptions;
 	
 	/** The use call graph options. */
-	private BooleanArgument.Options                                                       useCallGraphOptions;
+	private BooleanArgument.Options                                                                       useCallGraphOptions;
 	
 	/** The use change couplings options. */
-	private BooleanArgument.Options                                                       useChangeCouplingsOptions;
+	private BooleanArgument.Options                                                                       useChangeCouplingsOptions;
 	
 	/** The use data dependencies options. */
-	private BooleanArgument.Options                                                       useDataDependenciesOptions;
+	private BooleanArgument.Options                                                                       useDataDependenciesOptions;
 	
 	/** The use test impact options. */
-	private BooleanArgument.Options                                                       useTestImpactOptions;
-	
-	/** The test impact file options. */
-	private InputFileArgument.Options                                                     testImpactFileOptions;
-	
-	/** The datadependency eclipse options. */
-	private DirectoryArgument.Options                                                     datadependencyEclipseOptions;
-	
-	/** The change couplings min support. */
-	private LongArgument.Options                                                          changeCouplingsMinSupport;
-	
-	/** The change couplings min confidence. */
-	private DoubleArgument.Options                                                        changeCouplingsMinConfidence;
-	
-	/** The package distance options. */
-	private LongArgument.Options                                                          packageDistanceOptions;
+	private BooleanArgument.Options                                                                       useTestImpactOptions;
 	
 	/** The min blob size options. */
-	private LongArgument.Options                                                          minBlobSizeOptions;
+	private LongArgument.Options                                                                          minBlobSizeOptions;
 	
 	/** The max blob size options. */
-	private LongArgument.Options                                                          maxBlobSizeOptions;
+	private LongArgument.Options                                                                          maxBlobSizeOptions;
 	
 	/** The out options. */
-	private OutputFileArgument.Options                                                    outOptions;
-	
-	/** The call graph cache dir options. */
-	private DirectoryArgument.Options                                                     callGraphCacheDirOptions;
-	
-	/** The change couplings cache dir options. */
-	private DirectoryArgument.Options                                                     changeCouplingsCacheDirOptions;
-	
-	/** The data dependency cache dir options. */
-	private DirectoryArgument.Options                                                     dataDependencyCacheDirOptions;
+	private OutputFileArgument.Options                                                                    outOptions;
 	
 	/** The dry run options. */
-	private BooleanArgument.Options                                                       dryRunOptions;
+	private BooleanArgument.Options                                                                       dryRunOptions;
 	
 	/** The n options. */
-	private LongArgument.Options                                                          nOptions;
+	private LongArgument.Options                                                                          nOptions;
 	
 	/** The seed options. */
-	private LongArgument.Options                                                          seedOptions;
+	private LongArgument.Options                                                                          seedOptions;
 	
 	/** The collapse mode options. */
-	private EnumArgument.Options<UntanglingCollapse>                                      collapseModeOptions;
-	
-	/** The blob window size options. */
-	private LongArgument.Options                                                          blobWindowSizeOptions;
+	private EnumArgument.Options<UntanglingCollapse>                                                      collapseModeOptions;
 	
 	/** The score mode options. */
-	private EnumArgument.Options<ScoreCombinationMode>                                    scoreModeOptions;
+	private EnumArgument.Options<ScoreCombinationMode>                                                    scoreModeOptions;
 	
-	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy> generatorStrategyOptions;
+	/** The generator strategy options. */
+	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy>                 generatorStrategyOptions;
 	
-	private Options                                                                       consecutiveOperatorTimeWindowOptions;
+	/** The database options. */
+	private DatabaseOptions                                                                               databaseOptions;
+	
+	/** The change coupling combine options. */
+	private de.unisaarland.cs.st.moskito.untangling.blob.combine.ChangeCouplingCombineOperator.Options    changeCouplingCombineOptions;
+	
+	/** The consecutive combine options. */
+	private de.unisaarland.cs.st.moskito.untangling.blob.combine.ConsecutiveChangeCombineOperator.Options consecutiveCombineOptions;
+	
+	/** The blob window size options. */
+	private Options                                                                                       blobWindowSizeOptions;
+	
+	/** The package distance combine options. */
+	private de.unisaarland.cs.st.moskito.untangling.blob.combine.PackageDistanceCombineOperator.Options   packageDistanceCombineOptions;
+	
+	/** The call graph voter options. */
+	private de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Options                         callGraphVoterOptions;
+	
+	/** The change coupling voter options. */
+	private de.unisaarland.cs.st.moskito.untangling.voters.ChangeCouplingVoter.Options                    changeCouplingVoterOptions;
+	
+	/** The data dependency voter options. */
+	private de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter.Options                    dataDependencyVoterOptions;
+	
+	/** The test impact voter options. */
+	private de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter.Options                        testImpactVoterOptions;
 	
 	/**
 	 * Instantiates a new untangling options.
@@ -129,139 +132,9 @@ public class UntanglingOptions extends
 	 *            the argument set
 	 * @param requirements
 	 *            the requirements
-	 * @param repositoryOptions
-	 *            the repository options
 	 */
-	public UntanglingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
-	        final RepositoryOptions repositoryOptions) {
+	public UntanglingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 		super(argumentSet, "untangling", "Options to configure the untangling process details.", requirements);
-		this.repositoryOptions = repositoryOptions;
-		
-	}
-	
-	/**
-	 * Call graph requirements.
-	 * 
-	 * @param set
-	 *            the set
-	 * @return the map<? extends string,? extends i options<?,?>>
-	 */
-	private Map<? extends String, ? extends IOptions<?, ?>> callGraphRequirements(final ArgumentSet<?, ?> set) {
-		// PRECONDITIONS
-		
-		try {
-			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-			this.useCallGraphOptions = new BooleanArgument.Options(set, "voteCallgraph",
-			                                                       "Use call graph voter when untangling", true,
-			                                                       Requirement.required);
-			map.put(this.useCallGraphOptions.getName(), this.useCallGraphOptions);
-			
-			this.callgraphEclipseOptions = new DirectoryArgument.Options(
-			                                                             set,
-			                                                             "callgraphEclipse",
-			                                                             "Home directory of the reposuite callgraph applcation (must contain ./eclipse executable).",
-			                                                             null,
-			                                                             Requirement.equals(this.useCallGraphOptions,
-			                                                                                true), false);
-			map.put(this.callgraphEclipseOptions.getName(), this.callgraphEclipseOptions);
-			
-			this.callGraphCacheDirOptions = new DirectoryArgument.Options(
-			                                                              set,
-			                                                              "callgraphCacheDir",
-			                                                              "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
-			                                                              null,
-			                                                              Requirement.equals(this.useCallGraphOptions,
-			                                                                                 true), false);
-			map.put(this.callGraphCacheDirOptions.getName(), this.callGraphCacheDirOptions);
-			return map;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Change coupling requirements.
-	 * 
-	 * @param set
-	 *            the set
-	 * @return the map
-	 * @throws ArgumentRegistrationException
-	 *             the argument registration exception
-	 * @throws SettingsParseError
-	 *             the settings parse error
-	 */
-	private Map<String, IOptions<?, ?>> changeCouplingRequirements(final ArgumentSet<?, ?> set) throws ArgumentRegistrationException,
-	                                                                                           SettingsParseError {
-		final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-		this.useChangeCouplingsOptions = new BooleanArgument.Options(set, "voteChangecouplings",
-		                                                             "Use change coupling voter when untangling", true,
-		                                                             Requirement.required);
-		map.put(this.useChangeCouplingsOptions.getName(), this.useChangeCouplingsOptions);
-		
-		this.changeCouplingsMinSupport = new LongArgument.Options(
-		                                                          set,
-		                                                          "changecouplingsMinSupport",
-		                                                          "Set the minimum support for used change couplings to this value",
-		                                                          3l, Requirement.iff(this.useChangeCouplingsOptions));
-		map.put(this.changeCouplingsMinSupport.getName(), this.changeCouplingsMinSupport);
-		
-		this.changeCouplingsMinConfidence = new DoubleArgument.Options(
-		                                                               set,
-		                                                               "changecouplingsMinConfidence",
-		                                                               "Set minimum confidence for used change couplings to this value",
-		                                                               0.7d,
-		                                                               Requirement.equals(this.useChangeCouplingsOptions,
-		                                                                                  true));
-		map.put(this.changeCouplingsMinConfidence.getName(), this.changeCouplingsMinConfidence);
-		
-		this.changeCouplingsCacheDirOptions = new DirectoryArgument.Options(
-		                                                                    set,
-		                                                                    "changecouplingsCacheDir",
-		                                                                    "Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
-		                                                                    null,
-		                                                                    Requirement.equals(this.useChangeCouplingsOptions,
-		                                                                                       true), false);
-		map.put(this.changeCouplingsCacheDirOptions.getName(), this.changeCouplingsCacheDirOptions);
-		return map;
-	}
-	
-	/**
-	 * Data dependency requirements.
-	 * 
-	 * @param set
-	 *            the set
-	 * @return the map<? extends string,? extends i options<?,?>>
-	 */
-	private Map<? extends String, ? extends IOptions<?, ?>> dataDependencyRequirements(final ArgumentSet<?, ?> set) {
-		// PRECONDITIONS
-		
-		try {
-			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
-			this.useDataDependenciesOptions = new BooleanArgument.Options(set, "voteDatadependency",
-			                                                              "Use data dependency voter when untangling",
-			                                                              true, Requirement.required);
-			map.put(this.useDataDependenciesOptions.getName(), this.useDataDependenciesOptions);
-			
-			this.datadependencyEclipseOptions = new DirectoryArgument.Options(
-			                                                                  set,
-			                                                                  "datadependencyEclipse",
-			                                                                  "Home directory of the reposuite datadependency applcation (must contain ./eclipse executable).",
-			                                                                  null,
-			                                                                  Requirement.equals(this.useDataDependenciesOptions,
-			                                                                                     true), false);
-			map.put(this.datadependencyEclipseOptions.getName(), this.datadependencyEclipseOptions);
-			this.dataDependencyCacheDirOptions = new DirectoryArgument.Options(
-			                                                                   set,
-			                                                                   "datadependencyCacheDir",
-			                                                                   "Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
-			                                                                   null,
-			                                                                   Requirement.equals(this.useDataDependenciesOptions,
-			                                                                                      true), false);
-			map.put(this.dataDependencyCacheDirOptions.getName(), this.dataDependencyCacheDirOptions);
-			return map;
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/*
@@ -275,59 +148,77 @@ public class UntanglingOptions extends
 		try {
 			final UntanglingControl control = new UntanglingControl();
 			
-			final ArgumentSet<Repository, RepositoryOptions> repositoryArgument = getSettings().getArgumentSet(this.repositoryOptions);
-			final DirectoryArgument callGraphEclipseArgument = getSettings().getArgument(this.callgraphEclipseOptions);
-			final ListArgument atomicChangesArgument = getSettings().getArgument(this.atomicChangesOptions);
-			final BooleanArgument useCallGraphArgument = getSettings().getArgument(this.useCallGraphOptions);
-			final BooleanArgument useChangeCouplingsArgument = getSettings().getArgument(this.useChangeCouplingsOptions);
-			final BooleanArgument useDataDependenciesArgument = getSettings().getArgument(this.useDataDependenciesOptions);
-			final BooleanArgument useTestImpactArgument = getSettings().getArgument(this.useTestImpactOptions);
-			final InputFileArgument testImpactFileArgument = getSettings().getArgument(this.testImpactFileOptions);
-			final DirectoryArgument dataDependencyEclipseArgument = getSettings().getArgument(this.datadependencyEclipseOptions);
-			final LongArgument changeCouplingMinSupportArgument = getSettings().getArgument(this.changeCouplingsMinSupport);
-			final DoubleArgument changeCouplingMinConfidenceArgument = getSettings().getArgument(this.changeCouplingsMinConfidence);
-			final LongArgument packageDistanceArgument = getSettings().getArgument(this.packageDistanceOptions);
-			final LongArgument minBlobSizeArgument = getSettings().getArgument(this.minBlobSizeOptions);
-			final LongArgument maxBlobSizeArgument = getSettings().getArgument(this.maxBlobSizeOptions);
-			final OutputFileArgument outArgument = getSettings().getArgument(this.outOptions);
-			final DirectoryArgument callGraphCacheDirArgument = getSettings().getArgument(this.callGraphCacheDirOptions);
-			final DirectoryArgument changeCouplingsCacheDirArgument = getSettings().getArgument(this.changeCouplingsCacheDirOptions);
-			final DirectoryArgument dataDependencyCacheDirArgument = getSettings().getArgument(this.dataDependencyCacheDirOptions);
-			final BooleanArgument dryRunArgument = getSettings().getArgument(this.dryRunOptions);
-			final LongArgument nArgument = getSettings().getArgument(this.nOptions);
-			final LongArgument seedArgument = getSettings().getArgument(this.seedOptions);
-			final EnumArgument<UntanglingCollapse> collapseArgument = getSettings().getArgument(this.collapseModeOptions);
-			final LongArgument blobWindowSizeArgument = getSettings().getArgument(this.blobWindowSizeOptions);
-			final EnumArgument<ScoreCombinationMode> scoreModeArgument = getSettings().getArgument(this.scoreModeOptions);
-			final EnumArgument<ArtificialBlobGeneratorStrategy> generatorStrategy = getSettings().getArgument(this.generatorStrategyOptions);
-			final LongArgument consecutiveTimeWindow = getSettings().getArgument(this.consecutiveOperatorTimeWindowOptions);
+			final ArtificialBlobGeneratorStrategy strategy = getSettings().getArgument(this.generatorStrategyOptions)
+			                                                              .getValue();
+			switch (strategy) {
+				case CONSECUTIVE:
+					control.setCombineOperator(getSettings().getArgumentSet(this.consecutiveCombineOptions).getValue());
+					break;
+				case COUPLINGS:
+					control.setCombineOperator(getSettings().getArgumentSet(this.changeCouplingCombineOptions)
+					                                        .getValue());
+					break;
+				default:
+					control.setCombineOperator(getSettings().getArgumentSet(this.packageDistanceCombineOptions)
+					                                        .getValue());
+					break;
+			}
 			
-			control.setRepository(repositoryArgument.getValue());
-			control.setCallGraphEclipseDir(callGraphEclipseArgument.getValue());
-			control.setAtomicChanges(atomicChangesArgument.getValue());
-			control.enableCallGraph(useCallGraphArgument.getValue());
-			control.enableChangeCouplings(useChangeCouplingsArgument.getValue());
-			control.enableDataDependencies(useDataDependenciesArgument.getValue());
-			control.enableTestImpact(useTestImpactArgument.getValue());
-			control.setTestImpactFile(testImpactFileArgument.getValue());
-			control.setDataDependencyEclipseDir(dataDependencyEclipseArgument.getValue());
-			control.setChangeCouplingMinSupport(changeCouplingMinSupportArgument.getValue());
-			control.setChangeCouplingMinConfidence(changeCouplingMinConfidenceArgument.getValue());
-			control.setPackageDistance(packageDistanceArgument.getValue());
-			control.setMinBlobSize(minBlobSizeArgument.getValue());
-			control.setMaxBlobSize(maxBlobSizeArgument.getValue());
-			control.setOutputFile(outArgument.getValue());
-			control.setCallGraphCacheDir(callGraphCacheDirArgument.getValue());
-			control.setChangeCouplingsCacheDir(changeCouplingsCacheDirArgument.getValue());
-			control.setDataDependencyCacheDir(dataDependencyCacheDirArgument.getValue());
-			control.setDryRun(dryRunArgument.getValue());
-			control.setN(nArgument.getValue());
-			control.setSeed(seedArgument.getValue());
-			control.setCollapseMode(collapseArgument.getValue());
-			control.setBlobWindowSize(blobWindowSizeArgument.getValue());
-			control.setScoreMode(scoreModeArgument.getValue());
-			control.setGeneratorStrategy(generatorStrategy.getValue());
-			control.setConsecutiveTimeWindow(consecutiveTimeWindow.getValue());
+			final CallGraphVoter.Factory callGraphVoter = getSettings().getArgumentSet(this.callGraphVoterOptions)
+			                                                           .getValue();
+			if (callGraphVoter != null) {
+				control.addConfidenceVoter(callGraphVoter);
+			}
+			
+			final ChangeCouplingVoter.Factory changeCouplingVoter = getSettings().getArgumentSet(this.changeCouplingVoterOptions)
+			                                                                     .getValue();
+			if (changeCouplingVoter != null) {
+				control.addConfidenceVoter(changeCouplingVoter);
+			}
+			
+			final DataDependencyVoter.Factory dataDependencyVoter = getSettings().getArgumentSet(this.dataDependencyVoterOptions)
+			                                                                     .getValue();
+			if (dataDependencyVoter != null) {
+				control.addConfidenceVoter(dataDependencyVoter);
+			}
+			
+			final TestImpactVoter.Factory testImpactVoter = getSettings().getArgumentSet(this.testImpactVoterOptions)
+			                                                             .getValue();
+			if (testImpactVoter != null) {
+				control.addConfidenceVoter(testImpactVoter);
+			}
+			
+			final Long seed = getSettings().getArgument(this.seedOptions).getValue();
+			control.setSeed(seed);
+			
+			final List<String> atomicTransactionIds = getSettings().getArgument(this.atomicChangesOptions).getValue();
+			control.setAtomicTransactionIds(atomicTransactionIds);
+			
+			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			control.setPersistenceUtil(persistenceUtil);
+			
+			final Long blobWindowSize = getSettings().getArgument(this.blobWindowSizeOptions).getValue();
+			control.setBlobWindowSize(blobWindowSize);
+			
+			final Long minBlobSize = getSettings().getArgument(this.minBlobSizeOptions).getValue();
+			control.setMinBlobSize(minBlobSize);
+			final Long maxBlobSize = getSettings().getArgument(this.maxBlobSizeOptions).getValue();
+			control.setMaxBlobSize(maxBlobSize);
+			
+			final File outFile = getSettings().getArgument(this.outOptions).getValue();
+			control.setOutputFile(outFile);
+			
+			final Long n = getSettings().getArgument(this.nOptions).getValue();
+			control.setN(n);
+			
+			final UntanglingCollapse collapseMode = getSettings().getArgument(this.collapseModeOptions).getValue();
+			control.setCollapseMode(collapseMode);
+			
+			final ScoreCombinationMode scoreMode = getSettings().getArgument(this.scoreModeOptions).getValue();
+			control.setScoreMode(scoreMode);
+			
+			final Boolean dryRun = getSettings().getArgument(this.dryRunOptions).getValue();
+			control.setDryRun(dryRun);
 			
 			return control;
 		} finally {
@@ -347,36 +238,17 @@ public class UntanglingOptions extends
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
+			this.databaseOptions = new DatabaseOptions(set, Requirement.required, "ppa");
+			map.put(this.databaseOptions.getName(), this.databaseOptions);
+			this.repositoryOptions = new RepositoryOptions(set, Requirement.required, this.databaseOptions);
 			map.put(this.repositoryOptions.getName(), this.repositoryOptions);
 			
-			map.putAll(callGraphRequirements(set));
-			map.putAll(changeCouplingRequirements(set));
-			map.putAll(dataDependencyRequirements(set));
-			map.putAll(testImpactRequirements(set));
-			
-			this.atomicChangesOptions = new ListArgument.Options(
-			                                                     set,
-			                                                     "atomicTransactions",
-			                                                     "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
-			                                                     new ArrayList<String>(0), Requirement.optional);
-			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
-			
-			this.generatorStrategyOptions = new EnumArgument.Options<>(
-			                                                           set,
-			                                                           "generatorStrategy",
-			                                                           "Strategy to construct artifical blobs.",
-			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
-			                                                           Requirement.required);
-			map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
-			
-			this.packageDistanceOptions = new LongArgument.Options(
-			                                                       set,
-			                                                       "packageDistance",
-			                                                       "The maximal allowed distance between packages allowed when generating blobs.",
-			                                                       0l,
-			                                                       Requirement.equals(this.generatorStrategyOptions,
-			                                                                          ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE));
-			map.put(this.packageDistanceOptions.getName(), this.packageDistanceOptions);
+			this.blobWindowSizeOptions = new LongArgument.Options(
+			                                                      set,
+			                                                      "blobWindowSize",
+			                                                      "Max number of days changes sets might be appart to be condifered for tangling. (-1 = unlimited)",
+			                                                      14l, Requirement.required);
+			map.put(this.blobWindowSizeOptions.getName(), this.blobWindowSizeOptions);
 			
 			this.minBlobSizeOptions = new LongArgument.Options(
 			                                                   set,
@@ -419,24 +291,6 @@ public class UntanglingOptions extends
 			                                                                        Requirement.optional);
 			map.put(this.collapseModeOptions.getName(), this.collapseModeOptions);
 			
-			this.consecutiveOperatorTimeWindowOptions = new LongArgument.Options(
-			                                                                     set,
-			                                                                     "consecutiveOperatorTimeWindow",
-			                                                                     "The number of hours that may lay between two change sets combined by the ConsecutiveChangeCombineOperator.",
-			                                                                     0l,
-			                                                                     Requirement.equals(this.generatorStrategyOptions,
-			                                                                                        ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.CONSECUTIVE));
-			map.put(this.consecutiveOperatorTimeWindowOptions.getName(), this.consecutiveOperatorTimeWindowOptions);
-			
-			this.blobWindowSizeOptions = new LongArgument.Options(
-			                                                      set,
-			                                                      "blobWindow",
-			                                                      "Max number of days all transactions of an artificial blob can be apart. (-1 = unlimited)",
-			                                                      -1l,
-			                                                      Requirement.equals(this.generatorStrategyOptions,
-			                                                                         ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE));
-			map.put(this.blobWindowSizeOptions.getName(), this.blobWindowSizeOptions);
-			
 			this.scoreModeOptions = new EnumArgument.Options<ScoreCombinationMode>(
 			                                                                       set,
 			                                                                       "scoreMode",
@@ -445,41 +299,105 @@ public class UntanglingOptions extends
 			                                                                       Requirement.optional);
 			map.put(this.scoreModeOptions.getName(), this.scoreModeOptions);
 			
-			return map;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
-	 * Test impact requirements.
-	 * 
-	 * @param set
-	 *            the set
-	 * @return the map<? extends string,? extends i options<?,?>>
-	 */
-	private Map<? extends String, ? extends IOptions<?, ?>> testImpactRequirements(final ArgumentSet<?, ?> set) {
-		// PRECONDITIONS
-		
-		try {
-			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+			this.atomicChangesOptions = new ListArgument.Options(
+			                                                     set,
+			                                                     "atomicTransactions",
+			                                                     "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
+			                                                     new ArrayList<String>(0), Requirement.optional);
+			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
+			
+			// / ####
+			
+			this.generatorStrategyOptions = new EnumArgument.Options<>(
+			                                                           set,
+			                                                           "generatorStrategy",
+			                                                           "Strategy to construct artifical blobs.",
+			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
+			                                                           Requirement.required);
+			if (this.generatorStrategyOptions.required()) {
+				map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
+			}
+			
+			this.changeCouplingCombineOptions = new ChangeCouplingCombineOperator.Options(
+			                                                                              set,
+			                                                                              Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                 ArtificialBlobGeneratorStrategy.COUPLINGS),
+			                                                                              this.databaseOptions);
+			if (this.changeCouplingCombineOptions.required()) {
+				map.put(this.changeCouplingCombineOptions.getName(), this.changeCouplingCombineOptions);
+			}
+			
+			this.consecutiveCombineOptions = new ConsecutiveChangeCombineOperator.Options(
+			                                                                              set,
+			                                                                              Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                 ArtificialBlobGeneratorStrategy.CONSECUTIVE));
+			if (this.consecutiveCombineOptions.required()) {
+				map.put(this.consecutiveCombineOptions.getName(), this.consecutiveCombineOptions);
+			}
+			
+			this.packageDistanceCombineOptions = new PackageDistanceCombineOperator.Options(
+			                                                                                set,
+			                                                                                Requirement.equals(this.generatorStrategyOptions,
+			                                                                                                   ArtificialBlobGeneratorStrategy.PACKAGE));
+			if (this.packageDistanceCombineOptions.required()) {
+				map.put(this.packageDistanceCombineOptions.getName(), this.packageDistanceCombineOptions);
+			}
+			
+			this.useCallGraphOptions = new BooleanArgument.Options(set, "voteCallgraph",
+			                                                       "Use call graph voter when untangling", true,
+			                                                       Requirement.required);
+			map.put(this.useCallGraphOptions.getName(), this.useCallGraphOptions);
+			
+			this.callGraphVoterOptions = new CallGraphVoter.Options(set, Requirement.equals(this.useCallGraphOptions,
+			                                                                                true),
+			                                                        this.repositoryOptions);
+			if (this.callGraphVoterOptions.required()) {
+				map.put(this.callGraphVoterOptions.getName(), this.callGraphVoterOptions);
+			}
+			
+			this.useChangeCouplingsOptions = new BooleanArgument.Options(set, "voteChangecouplings",
+			                                                             "Use change coupling voter when untangling",
+			                                                             true, Requirement.required);
+			map.put(this.useChangeCouplingsOptions.getName(), this.useChangeCouplingsOptions);
+			
+			this.changeCouplingVoterOptions = new ChangeCouplingVoter.Options(
+			                                                                  set,
+			                                                                  Requirement.equals(this.useChangeCouplingsOptions,
+			                                                                                     true),
+			                                                                  this.databaseOptions);
+			if (this.changeCouplingVoterOptions.required()) {
+				map.put(this.changeCouplingVoterOptions.getName(), this.changeCouplingVoterOptions);
+			}
+			
+			this.useDataDependenciesOptions = new BooleanArgument.Options(set, "voteDatadependencies",
+			                                                              "Use data dependency voter when untangling",
+			                                                              true, Requirement.required);
+			map.put(this.useDataDependenciesOptions.getName(), this.useDataDependenciesOptions);
+			
+			this.dataDependencyVoterOptions = new DataDependencyVoter.Options(
+			                                                                  set,
+			                                                                  Requirement.equals(this.useDataDependenciesOptions,
+			                                                                                     true),
+			                                                                  this.repositoryOptions);
+			if (this.dataDependencyVoterOptions.required()) {
+				map.put(this.dataDependencyVoterOptions.getName(), this.dataDependencyVoterOptions);
+			}
+			
 			this.useTestImpactOptions = new BooleanArgument.Options(set, "voteTestimpact",
-			                                                        "Use test coverage information", true,
+			                                                        "Use test coverage information", false,
 			                                                        Requirement.required);
 			map.put(this.useTestImpactOptions.getName(), this.useTestImpactOptions);
 			
-			this.testImpactFileOptions = new InputFileArgument.Options(
-			                                                           set,
-			                                                           "testimpactIn",
-			                                                           "File containing a serial version of a ImpactMatrix",
-			                                                           null,
-			                                                           Requirement.equals(this.useTestImpactOptions,
-			                                                                              true));
-			map.put(this.testImpactFileOptions.getName(), this.testImpactFileOptions);
+			this.testImpactVoterOptions = new TestImpactVoter.Options(set,
+			                                                          Requirement.equals(this.useTestImpactOptions,
+			                                                                             true), this.repositoryOptions);
+			if (this.testImpactVoterOptions.required()) {
+				map.put(this.testImpactVoterOptions.getName(), this.testImpactVoterOptions);
+			}
+			
 			return map;
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
 }
