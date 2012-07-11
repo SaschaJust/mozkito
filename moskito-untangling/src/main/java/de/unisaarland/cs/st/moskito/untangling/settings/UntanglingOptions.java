@@ -357,7 +357,7 @@ public class UntanglingOptions extends
 			                                                     set,
 			                                                     "atomicTransactions",
 			                                                     "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
-			                                                     new ArrayList<String>(0), Requirement.required);
+			                                                     new ArrayList<String>(0), Requirement.optional);
 			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
 			
 			this.generatorStrategyOptions = new EnumArgument.Options<>(
