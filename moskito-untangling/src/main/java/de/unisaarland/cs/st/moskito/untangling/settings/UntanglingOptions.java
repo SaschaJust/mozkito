@@ -471,7 +471,9 @@ public class UntanglingOptions extends
 			                                                           set,
 			                                                           "testimpactIn",
 			                                                           "File containing a serial version of a ImpactMatrix",
-			                                                           null, Requirement.iff(this.useTestImpactOptions));
+			                                                           null,
+			                                                           Requirement.equals(this.useTestImpactOptions,
+			                                                                              true));
 			map.put(this.testImpactFileOptions.getName(), this.testImpactFileOptions);
 			return map;
 		} finally {
