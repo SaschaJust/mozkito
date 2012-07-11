@@ -175,7 +175,7 @@ public class Untangling {
 		try {
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
-			this.persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
+			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments = ArgumentSetFactory.create(databaseOptions);
 			this.repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required, databaseOptions);
 			
 			final UntanglingOptions untanglingOptions = new UntanglingOptions(settings.getRoot(), Requirement.required,
@@ -187,6 +187,7 @@ public class Untangling {
 				throw new Shutdown();
 			}
 			
+			this.persistenceUtil = databaseArguments.getValue();
 			this.untanglingControl = untanglingControlArgumentSet.getValue();
 			
 			if (this.untanglingControl.getSeed() != null) {
