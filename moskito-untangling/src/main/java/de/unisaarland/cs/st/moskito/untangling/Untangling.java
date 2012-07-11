@@ -24,7 +24,6 @@ import java.util.Random;
 import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -197,8 +196,10 @@ public class Untangling {
 			}
 			random.setSeed(this.seed);
 			
-			this.repositoryUsername = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
-			this.repositoryPassword = ArgumentFactory.create(this.repositoryOptions.getUserArg()).getValue();
+			// FIXME: Der Just meint es geht net hat aber meine schöne Hintertür zugemacht. Also wenn es nicht geht,
+			// dann fixt der Just das.
+			this.repositoryUsername = settings.getProperty(this.repositoryOptions.getUserArg().getTag());
+			this.repositoryPassword = settings.getProperty(this.repositoryOptions.getPassArg().getTag());
 		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
