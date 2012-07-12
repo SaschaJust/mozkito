@@ -44,6 +44,7 @@ import de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.ChangeCouplingVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter;
 import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter;
+import de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter.Factory;
 
 /**
  * The Class UntanglingOptions.
@@ -164,35 +165,49 @@ public class UntanglingOptions extends
 					break;
 			}
 			
-			final CallGraphVoter.Factory callGraphVoter = getSettings().getArgumentSet(this.callGraphVoterOptions)
-			                                                           .getValue();
-			if (callGraphVoter != null) {
-				control.addConfidenceVoter(callGraphVoter);
+			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Options> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
+			if (callGraphVoterArg != null) {
+				final CallGraphVoter.Factory callGraphVoter = callGraphVoterArg.getValue();
+				if (callGraphVoter != null) {
+					control.addConfidenceVoter(callGraphVoter);
+				}
 			}
 			
-			final ChangeCouplingVoter.Factory changeCouplingVoter = getSettings().getArgumentSet(this.changeCouplingVoterOptions)
-			                                                                     .getValue();
-			if (changeCouplingVoter != null) {
-				control.addConfidenceVoter(changeCouplingVoter);
+			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.ChangeCouplingVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.ChangeCouplingVoter.Options> changeCouplingVoterArg = getSettings().getArgumentSet(this.changeCouplingVoterOptions);
+			if (changeCouplingVoterArg != null) {
+				final ChangeCouplingVoter.Factory changeCouplingVoter = changeCouplingVoterArg.getValue();
+				if (changeCouplingVoter != null) {
+					control.addConfidenceVoter(changeCouplingVoter);
+				}
 			}
 			
-			final DataDependencyVoter.Factory dataDependencyVoter = getSettings().getArgumentSet(this.dataDependencyVoterOptions)
-			                                                                     .getValue();
-			if (dataDependencyVoter != null) {
-				control.addConfidenceVoter(dataDependencyVoter);
+			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.DataDependencyVoter.Options> dataDepVoterArg = getSettings().getArgumentSet(this.dataDependencyVoterOptions);
+			if (dataDepVoterArg != null) {
+				final DataDependencyVoter.Factory dataDependencyVoter = dataDepVoterArg.getValue();
+				if (dataDependencyVoter != null) {
+					control.addConfidenceVoter(dataDependencyVoter);
+				}
 			}
 			
-			final TestImpactVoter.Factory testImpactVoter = getSettings().getArgumentSet(this.testImpactVoterOptions)
-			                                                             .getValue();
-			if (testImpactVoter != null) {
-				control.addConfidenceVoter(testImpactVoter);
+			final ArgumentSet<Factory, de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter.Options> testImpactVoterArg = getSettings().getArgumentSet(this.testImpactVoterOptions);
+			if (testImpactVoterArg != null) {
+				final TestImpactVoter.Factory testImpactVoter = testImpactVoterArg.getValue();
+				if (testImpactVoter != null) {
+					control.addConfidenceVoter(testImpactVoter);
+				}
 			}
 			
-			final Long seed = getSettings().getArgument(this.seedOptions).getValue();
-			control.setSeed(seed);
+			final LongArgument seedArg = getSettings().getArgument(this.seedOptions);
+			if (seedArg != null) {
+				final Long seed = seedArg.getValue();
+				control.setSeed(seed);
+			}
 			
-			final List<String> atomicTransactionIds = getSettings().getArgument(this.atomicChangesOptions).getValue();
-			control.setAtomicTransactionIds(atomicTransactionIds);
+			final ListArgument atomicChangesArg = getSettings().getArgument(this.atomicChangesOptions);
+			if (atomicChangesArg != null) {
+				final List<String> atomicTransactionIds = atomicChangesArg.getValue();
+				control.setAtomicTransactionIds(atomicTransactionIds);
+			}
 			
 			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
 			control.setPersistenceUtil(persistenceUtil);
@@ -208,8 +223,11 @@ public class UntanglingOptions extends
 			final File outFile = getSettings().getArgument(this.outOptions).getValue();
 			control.setOutputFile(outFile);
 			
-			final Long n = getSettings().getArgument(this.nOptions).getValue();
-			control.setN(n);
+			final LongArgument nArg = getSettings().getArgument(this.nOptions);
+			if (nArg != null) {
+				final Long n = nArg.getValue();
+				control.setN(n);
+			}
 			
 			final UntanglingCollapse collapseMode = getSettings().getArgument(this.collapseModeOptions).getValue();
 			control.setCollapseMode(collapseMode);
