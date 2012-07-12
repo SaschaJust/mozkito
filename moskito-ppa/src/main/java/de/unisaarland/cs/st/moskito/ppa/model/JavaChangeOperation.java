@@ -226,7 +226,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the revision
 	 */
-	@ManyToOne (cascade = {}, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = {}, fetch = FetchType.EAGER)
 	public RCSRevision getRevision() {
 		return this.revision;
 	}

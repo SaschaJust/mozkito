@@ -152,7 +152,9 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			
 			final Set<Long> cl2Files = new HashSet<>();
 			for (final JavaChangeOperation op2 : cl2.getOperations()) {
-				cl2Files.add(op2.getRevision().getChangedFile().getGeneratedId());
+				final JavaChangeOperation tmpFetch = this.persistenceUtil.loadById(op2.getId(),
+				                                                                   JavaChangeOperation.class);
+				cl2Files.add(tmpFetch.getRevision().getChangedFile().getGeneratedId());
 			}
 			
 			@SuppressWarnings ("unchecked")
