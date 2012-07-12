@@ -267,6 +267,7 @@ public class Untangling {
 				// causes NullpointerExceptions because Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
+				t.getBranchNames();
 				
 				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				transactions.add(new ChangeSet(t, ops));
@@ -281,6 +282,7 @@ public class Untangling {
 				// causes NullpointerExceptions becaus Fetch.LAZY returns null.
 				t.getAuthor();
 				t.toString();
+				t.getBranchNames();
 				
 				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
 				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
