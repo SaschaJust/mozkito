@@ -160,6 +160,10 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			@SuppressWarnings ("unchecked")
 			final Collection<String> branchIntersection = CollectionUtils.intersection(cl1B, cl2B);
 			if (branchIntersection.isEmpty()) {
+				if (Logger.logDebug()) {
+					Logger.debug("%s and %s cannot be combined due to empty branch intersection.", cl1T.getId(),
+					             cl2T.getId());
+				}
 				return false;
 			}
 			RCSBranch commonBranch = null;
@@ -187,14 +191,14 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				final Long implicationId = implication.getGeneratedId();
 				if ((cl1Files.containsAll(premiseIds)) && (cl2Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
-						Logger.debug("%s and %s cn be combined using file change coupling %s.", cl1T.getId(),
+						Logger.debug("%s and %s can be combined using file change coupling %s.", cl1T.getId(),
 						             cl2T.getId(), coupling.toString());
 					}
 					return true;
 				}
 				if ((cl2Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
-						Logger.debug("%s and %s cn be combined using file change coupling %s.", cl1T.getId(),
+						Logger.debug("%s and %s can be combined using file change coupling %s.", cl1T.getId(),
 						             cl2T.getId(), coupling.toString());
 					}
 					return true;
