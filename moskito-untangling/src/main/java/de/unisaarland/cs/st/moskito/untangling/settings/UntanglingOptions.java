@@ -238,9 +238,10 @@ public class UntanglingOptions extends
 		try {
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
-			this.databaseOptions = new DatabaseOptions(set, Requirement.required, "ppa");
+			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "ppa");
 			map.put(this.databaseOptions.getName(), this.databaseOptions);
-			this.repositoryOptions = new RepositoryOptions(set, Requirement.required, this.databaseOptions);
+			this.repositoryOptions = new RepositoryOptions(getSettings().getRoot(), Requirement.required,
+			                                               this.databaseOptions);
 			map.put(this.repositoryOptions.getName(), this.repositoryOptions);
 			
 			this.blobWindowSizeOptions = new LongArgument.Options(
