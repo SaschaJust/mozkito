@@ -184,7 +184,7 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			                                                                                                            this.persistenceUtil);
 			if (Logger.logDebug()) {
 				Logger.debug("Founf %s change couplings for transaction %d having a minimal support of %s and a minimal confidence of %s",
-				             String.valueOf(fileChangeCouplings.size()), head, String.valueOf(this.minSupport),
+				             String.valueOf(fileChangeCouplings.size()), head.getId(), String.valueOf(this.minSupport),
 				             String.valueOf(this.minConfidence));
 			}
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
