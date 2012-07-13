@@ -30,6 +30,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
@@ -181,7 +182,13 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			                                                                                                            this.minSupport,
 			                                                                                                            this.minConfidence,
 			                                                                                                            this.persistenceUtil);
+			if (Logger.logDebug()) {
+				Logger.debug("Founf %s change couplings for transaction %d having a minimal support of %s and a minimal confidence of %s",
+				             String.valueOf(fileChangeCouplings.size()), head, String.valueOf(this.minSupport),
+				             String.valueOf(this.minConfidence));
+			}
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
+				
 				final Set<RCSFile> premise = coupling.getPremise();
 				final Set<Long> premiseIds = new HashSet<>(premise.size());
 				for (final RCSFile p : premise) {
@@ -189,12 +196,29 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				}
 				final RCSFile implication = coupling.getImplication();
 				final Long implicationId = implication.getGeneratedId();
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Found change coupling {%s} => %s.",
+					             StringUtils.join(premiseIds.toArray(new String[premiseIds.size()])),
+					             String.valueOf(implicationId));
+				}
+				
+				if (Logger.logTrace()) {
+					Logger.trace("Checking if {%s} contains all premises and if {%s} contains implication.",
+					             StringUtils.join(cl1Files.toArray(new String[cl1Files.size()])),
+					             StringUtils.join(cl2Files.toArray(new String[cl2Files.size()])));
+				}
 				if ((cl1Files.containsAll(premiseIds)) && (cl2Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
 						Logger.debug("%s and %s can be combined using file change coupling %s.", cl1T.getId(),
 						             cl2T.getId(), coupling.toString());
 					}
 					return true;
+				}
+				if (Logger.logTrace()) {
+					Logger.trace("Checking if {%s} contains all premises and if {%s} contains implication.",
+					             StringUtils.join(cl2Files.toArray(new String[cl2Files.size()])),
+					             StringUtils.join(cl1Files.toArray(new String[cl1Files.size()])));
 				}
 				if ((cl2Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
