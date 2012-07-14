@@ -12,6 +12,7 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,9 +42,9 @@ public class ArtificialBlobGenerator {
 	
 	public ArtificialBlobGenerator(@NotNegative final int blobWindowSize,
 	        final CombineOperator<ChangeSet> combineOperator) {
-		this.combineOperators = new HashSet<>(2);
-		this.combineOperators.add(combineOperator);
+		this.combineOperators = new ArrayList<>(2);
 		this.combineOperators.add(new BlobWindowSizeCombineOperator(blobWindowSize));
+		this.combineOperators.add(combineOperator);
 	}
 	
 	/**
