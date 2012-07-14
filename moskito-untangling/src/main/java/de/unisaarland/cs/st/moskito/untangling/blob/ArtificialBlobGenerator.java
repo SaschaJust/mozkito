@@ -69,13 +69,15 @@ public class ArtificialBlobGenerator {
 			}
 		}
 		
+		if (Logger.logInfo()) {
+			Logger.info("Generating all combinations between %s transactions.", String.valueOf(transactions.size()));
+		}
 		final Set<Set<ChangeSet>> allCombinations = CollectionUtils.getAllCombinations(transactions,
 		                                                                               this.combineOperators,
 		                                                                               maxBlobSize);
 		
-		if (Logger.logDebug()) {
-			Logger.debug("Found %s transaction combinations (may be decreased).",
-			             String.valueOf(allCombinations.size()));
+		if (Logger.logInfo()) {
+			Logger.info("Found %s transaction combinations (may be decreased).", String.valueOf(allCombinations.size()));
 		}
 		
 		// Filter out too small combinations

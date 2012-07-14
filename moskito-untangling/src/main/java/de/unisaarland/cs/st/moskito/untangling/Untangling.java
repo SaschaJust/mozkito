@@ -305,16 +305,16 @@ public class Untangling {
 		// build all artificial blobs. Combine all atomic transactions.
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
 		
-		// if (transactions.size() > 50) {
-		// final Set<ChangeSet> randomTransactions = new HashSet<ChangeSet>();
-		// for (int i = 0; i < 50; ++i) {
-		// random.nextInt(transactions.size());
-		// randomTransactions.add(transactions.get(i));
-		// transactions.remove(i);
-		// }
-		// transactions.clear();
-		// transactions.addAll(randomTransactions);
-		// }
+		if (transactions.size() > 50) {
+			final Set<ChangeSet> randomTransactions = new HashSet<ChangeSet>();
+			for (int i = 0; i < 50; ++i) {
+				random.nextInt(transactions.size());
+				randomTransactions.add(transactions.get(i));
+				transactions.remove(i);
+			}
+			transactions.clear();
+			transactions.addAll(randomTransactions);
+		}
 		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
 		
 		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(
