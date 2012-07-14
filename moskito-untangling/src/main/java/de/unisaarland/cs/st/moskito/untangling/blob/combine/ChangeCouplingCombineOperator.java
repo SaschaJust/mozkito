@@ -199,14 +199,14 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				
 				if (Logger.logTrace()) {
 					Logger.trace("Found change coupling {%s} => %s.",
-					             StringUtils.join(premiseIds.toArray(new String[premiseIds.size()])),
+					             StringUtils.join(premiseIds.toArray(new Long[premiseIds.size()])),
 					             String.valueOf(implicationId));
 				}
 				
 				if (Logger.logTrace()) {
 					Logger.trace("Checking if {%s} contains all premises and if {%s} contains implication.",
-					             StringUtils.join(cl1Files.toArray(new String[cl1Files.size()])),
-					             StringUtils.join(cl2Files.toArray(new String[cl2Files.size()])));
+					             StringUtils.join(cl1Files.toArray(new Long[cl1Files.size()])),
+					             StringUtils.join(cl2Files.toArray(new Long[cl2Files.size()])));
 				}
 				if ((cl1Files.containsAll(premiseIds)) && (cl2Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
@@ -217,8 +217,8 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				}
 				if (Logger.logTrace()) {
 					Logger.trace("Checking if {%s} contains all premises and if {%s} contains implication.",
-					             StringUtils.join(cl2Files.toArray(new String[cl2Files.size()])),
-					             StringUtils.join(cl1Files.toArray(new String[cl1Files.size()])));
+					             StringUtils.join(cl2Files.toArray(new Long[cl2Files.size()])),
+					             StringUtils.join(cl1Files.toArray(new Long[cl1Files.size()])));
 				}
 				if ((cl2Files.containsAll(premiseIds)) && (cl1Files.contains(implicationId))) {
 					if (Logger.logDebug()) {
