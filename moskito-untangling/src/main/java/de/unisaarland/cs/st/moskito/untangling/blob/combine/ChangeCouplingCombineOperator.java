@@ -36,7 +36,6 @@ import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
@@ -167,25 +166,18 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				}
 				return false;
 			}
-			RCSBranch commonBranch = null;
-			if (branchIntersection.contains("master")) {
-				commonBranch = this.persistenceUtil.loadById("master", RCSBranch.class);
-			} else if (branchIntersection.contains("master")) {
-				commonBranch = this.persistenceUtil.loadById("trunk", RCSBranch.class);
-			} else {
-				commonBranch = this.persistenceUtil.loadById(branchIntersection.iterator().next(), RCSBranch.class);
-			}
-			
-			final RCSTransaction head = commonBranch.getHead();
-			
-			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(head,
+			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(cl1T,
 			                                                                                                            this.minSupport,
 			                                                                                                            this.minConfidence,
 			                                                                                                            this.persistenceUtil);
+			fileChangeCouplings.addAll(ChangeCouplingRuleFactory.getFileChangeCouplings(cl2T, this.minSupport,
+			                                                                            this.minConfidence,
+			                                                                            this.persistenceUtil));
+			
 			if (Logger.logDebug()) {
-				Logger.debug("Founf %s change couplings for transaction %s having a minimal support of %s and a minimal confidence of %s",
-				             String.valueOf(fileChangeCouplings.size()), head.getId(), String.valueOf(this.minSupport),
-				             String.valueOf(this.minConfidence));
+				Logger.debug("Founf %s change couplings for transactions %s,%s having a minimal support of %s and a minimal confidence of %s",
+				             String.valueOf(fileChangeCouplings.size()), cl1T.getId(), cl2T.getId(),
+				             String.valueOf(this.minSupport), String.valueOf(this.minConfidence));
 			}
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
 				
