@@ -176,7 +176,7 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			final Collection<FileChangeCoupling> fileChangeCouplings = this.changeCouplingCache.get(cl1T.getId());
 			
 			if (!this.changeCouplingCache.containsKey(cl2T.getId())) {
-				this.changeCouplingCache.put(cl1T.getId(),
+				this.changeCouplingCache.put(cl2T.getId(),
 				                             ChangeCouplingRuleFactory.getFileChangeCouplings(cl2T, this.minSupport,
 				                                                                              this.minConfidence,
 				                                                                              this.persistenceUtil));
