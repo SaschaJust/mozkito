@@ -50,7 +50,6 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 				final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(branchFactory.getPersistenceUtil(),
 				                                                                             masterBranch,
 				                                                                             TransactionSetOrder.ASC);
-				
 				ChangeOperationReader.this.iterator = masterTransactions.iterator();
 				
 				if (Logger.logInfo()) {
@@ -81,7 +80,7 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 						Logger.debug("Providing " + transaction);
 					}
 					
-					provideOutputData(new OperationCollection(changeOperations));
+					providePartialOutputData(new OperationCollection(changeOperations));
 					if (!ChangeOperationReader.this.iterator.hasNext()) {
 						if (Logger.logDebug()) {
 							Logger.debug("SET COMPLETED!");
