@@ -266,6 +266,7 @@ public class Untangling {
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
+		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
 		File serialBlobFile = null;
 		
 		if (this.untanglingControl.getArtificialBlobCacheDir() != null) {
@@ -274,6 +275,8 @@ public class Untangling {
 			fileName.append(this.untanglingControl.getPersistenceUtil().getToolInformation().hashCode());
 			fileName.append("_");
 			fileName.append(this.untanglingControl.getBlobWindowSize());
+			fileName.append("_");
+			fileName.append(combineOperator.getClass().getSimpleName());
 			fileName.append("_artificialBlobs.ser");
 			serialBlobFile = new File(cacheRootDir.getAbsolutePath() + FileUtils.fileSeparator + fileName.toString());
 			if (serialBlobFile.exists()) {
@@ -352,8 +355,6 @@ public class Untangling {
 			}
 			
 			// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
-			
-			final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
 			
 			// build all artificial blobs. Combine all atomic transactions.
 			
