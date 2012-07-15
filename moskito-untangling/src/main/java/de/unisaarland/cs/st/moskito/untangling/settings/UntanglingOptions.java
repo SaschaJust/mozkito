@@ -21,6 +21,7 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ListArgument;
@@ -125,6 +126,8 @@ public class UntanglingOptions extends
 	
 	/** The test impact voter options. */
 	private de.unisaarland.cs.st.moskito.untangling.voters.TestImpactVoter.Options                        testImpactVoterOptions;
+	
+	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                                      artificialBlobCacheOptions;
 	
 	/**
 	 * Instantiates a new untangling options.
@@ -237,6 +240,11 @@ public class UntanglingOptions extends
 			
 			final Boolean dryRun = getSettings().getArgument(this.dryRunOptions).getValue();
 			control.setDryRun(dryRun);
+			
+			final File artificialBlobCache = getSettings().getArgument(this.artificialBlobCacheOptions).getValue();
+			if (artificialBlobCache != null) {
+				control.setArtificialBlobCacheDir(artificialBlobCache);
+			}
 			
 			return control;
 		} finally {
@@ -413,6 +421,13 @@ public class UntanglingOptions extends
 			if (this.testImpactVoterOptions.required()) {
 				map.put(this.testImpactVoterOptions.getName(), this.testImpactVoterOptions);
 			}
+			
+			this.artificialBlobCacheOptions = new DirectoryArgument.Options(
+			                                                                set,
+			                                                                "blobCacheDir",
+			                                                                "Directory that will be used to cache artificial blobs for reuse. Caching strategies is handled internally using database settings and other relevant settings.",
+			                                                                null, Requirement.optional, true);
+			map.put(this.artificialBlobCacheOptions.getName(), this.artificialBlobCacheOptions);
 			
 			return map;
 		} finally {

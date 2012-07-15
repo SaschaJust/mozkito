@@ -40,7 +40,7 @@ public class UntanglingControl {
 	private CombineOperator<ChangeSet>                                                                                          combineOperator;
 	
 	/** The confidence voters. */
-	private final Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> confidenceVoters = new HashSet<>();
+	private final Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> confidenceVoters       = new HashSet<>();
 	
 	/** The seed. */
 	private Long                                                                                                                seed;
@@ -75,6 +75,8 @@ public class UntanglingControl {
 	/** The dry run. */
 	private Boolean                                                                                                             dryRun;
 	
+	private File                                                                                                                artificialBlobCacheDir = null;
+	
 	/**
 	 * Adds the confidence voter.
 	 * 
@@ -86,6 +88,13 @@ public class UntanglingControl {
 	protected boolean addConfidenceVoter(final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voter) {
 		
 		return this.confidenceVoters.add(voter);
+	}
+	
+	/**
+	 * @return
+	 */
+	public File getArtificialBlobCacheDir() {
+		return this.artificialBlobCacheDir;
 	}
 	
 	/**
@@ -211,6 +220,19 @@ public class UntanglingControl {
 	 */
 	public boolean isDryRun() {
 		return this.dryRun;
+	}
+	
+	/**
+	 * @param artificialBlobCache
+	 */
+	public void setArtificialBlobCacheDir(final File artificialBlobCache) {
+		// PRECONDITIONS
+		
+		try {
+			this.artificialBlobCacheDir = artificialBlobCache;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**

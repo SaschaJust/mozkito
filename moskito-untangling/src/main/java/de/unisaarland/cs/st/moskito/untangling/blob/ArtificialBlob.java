@@ -58,14 +58,14 @@ public class ArtificialBlob {
 	/**
 	 * Instantiates a new artificial blob.
 	 * 
-	 * @param transaction
+	 * @param changeSet
 	 *            the transaction
 	 */
 	@NoneNull
-	public ArtificialBlob(final ChangeSet transaction) {
-		if (!add(transaction)) {
+	public ArtificialBlob(final ChangeSet changeSet) {
+		if (!add(changeSet)) {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding transaction " + transaction.getTransaction().getId() + " failed!");
+				Logger.debug("Adding transaction " + changeSet.getTransaction().getId() + " failed!");
 			}
 		}
 	}
@@ -73,14 +73,14 @@ public class ArtificialBlob {
 	/**
 	 * Instantiates a new artificial blob.
 	 * 
-	 * @param input
+	 * @param changeSets
 	 *            the input
 	 */
 	@NoneNull
-	public ArtificialBlob(final Set<ChangeSet> input) {
-		if (!addAll(input)) {
+	public ArtificialBlob(final Set<ChangeSet> changeSets) {
+		if (!addAll(changeSets)) {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding transactions failed!" + StringUtils.join(input, ","));
+				Logger.debug("Adding transactions failed!" + StringUtils.join(changeSets, ","));
 			}
 		}
 	}
@@ -88,24 +88,24 @@ public class ArtificialBlob {
 	/**
 	 * Adds the.
 	 * 
-	 * @param transaction
+	 * @param changeSet
 	 *            the transaction
 	 * @return true, if successful
 	 */
 	@NoneNull
-	public boolean add(final ChangeSet transaction) {
-		return this.blobTransactions.add(transaction);
+	public boolean add(final ChangeSet changeSet) {
+		return this.blobTransactions.add(changeSet);
 	}
 	
 	/**
 	 * Adds the all.
 	 * 
-	 * @param blobTransactions
+	 * @param changeSets
 	 *            the blob transactions
 	 * @return true, if successful
 	 */
-	private boolean addAll(final Collection<ChangeSet> blobTransactions) {
-		return this.blobTransactions.addAll(blobTransactions);
+	private boolean addAll(final Collection<ChangeSet> changeSets) {
+		return this.blobTransactions.addAll(changeSets);
 		
 	}
 	

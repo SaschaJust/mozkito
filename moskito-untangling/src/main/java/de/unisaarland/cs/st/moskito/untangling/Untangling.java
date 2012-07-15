@@ -14,8 +14,12 @@ package de.unisaarland.cs.st.moskito.untangling;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +67,7 @@ import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
+import de.unisaarland.cs.st.moskito.untangling.blob.SerializableArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
@@ -260,72 +265,122 @@ public class Untangling {
 		
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
-		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
+		File serialBlobFile = null;
 		
-		// this map will contain change set lists that correspond to the chaneg sets reachable from the corresponding
-		// key within the blobWindowsSize
-		final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
-		
-		Criteria<RCSTransaction> transactionCriteria = null;
-		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
-		} else {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
-		}
-		
-		// now load the criteria and ad fill the candidate map
-		
-		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
-		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
-		
-		final Set<ChangeSet> toCompare = new HashSet<>();
-		
-		for (final RCSTransaction t : atomicTransactions) {
-			
-			// FIXME this is required due to some unknown problem which
-			// causes NullpointerExceptions because Fetch.LAZY returns null.
-			t.getAuthor();
-			t.toString();
-			t.getBranchNames();
-			
-			final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-			final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
-			for (final JavaChangeOperation op : ops) {
-				if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-					toRemove.add(op);
-				}
-			}
-			ops.removeAll(toRemove);
-			if (!ops.isEmpty()) {
-				final ChangeSet changeSet = new ChangeSet(t, ops);
-				toCompare.add(changeSet);
-				combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
-				final Set<ChangeSet> toCompareRemove = new HashSet<>();
-				for (final ChangeSet candidate : toCompare) {
-					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
-					                 .getDays()) <= blobWindowSize) {
-						combinationCandidates.get(candidate).add(changeSet);
-					} else {
-						toCompareRemove.add(candidate);
+		if (this.untanglingControl.getArtificialBlobCacheDir() != null) {
+			final File cacheRootDir = this.untanglingControl.getArtificialBlobCacheDir();
+			final StringBuilder fileName = new StringBuilder();
+			fileName.append(this.untanglingControl.getPersistenceUtil().getToolInformation().hashCode());
+			fileName.append("_");
+			fileName.append(this.untanglingControl.getBlobWindowSize());
+			fileName.append("_artificialBlobs.ser");
+			serialBlobFile = new File(cacheRootDir.getAbsolutePath() + FileUtils.fileSeparator + fileName.toString());
+			if (serialBlobFile.exists()) {
+				try (FileInputStream fis = new FileInputStream(serialBlobFile);
+				        ObjectInputStream in = new ObjectInputStream(fis);) {
+					
+					@SuppressWarnings ("unchecked")
+					final List<SerializableArtificialBlob> serializedBlobs = (List<SerializableArtificialBlob>) in.readObject();
+					for (final SerializableArtificialBlob serialBlob : serializedBlobs) {
+						artificialBlobs.add(serialBlob.unserialize(persistenceUtil));
+					}
+					
+				} catch (final IOException | ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
 					}
 				}
-				toCompare.removeAll(toCompareRemove);
 			}
 		}
 		
-		// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
-		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
-		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
-		
-		// build all artificial blobs. Combine all atomic transactions.
-		
-		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
-		for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
-			final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
-			entrySet.addAll(entry.getValue());
-			entrySet.add(entry.getKey());
-			artificialBlobs.addAll(blobGenerator.generateAll(entrySet, this.untanglingControl.getMinBlobSize(),
-			                                                 this.untanglingControl.getMaxBlobSize()));
+		if (artificialBlobs.isEmpty()) {
+			
+			final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+			
+			// this map will contain change set lists that correspond to the chaneg sets reachable from the
+			// corresponding
+			// key within the blobWindowsSize
+			final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
+			
+			Criteria<RCSTransaction> transactionCriteria = null;
+			if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
+				transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id",
+				                                                                              atomicTransactionIds);
+			} else {
+				transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+			}
+			
+			// now load the criteria and ad fill the candidate map
+			
+			final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+			final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
+			
+			final Set<ChangeSet> toCompare = new HashSet<>();
+			
+			for (final RCSTransaction t : atomicTransactions) {
+				
+				// FIXME this is required due to some unknown problem which
+				// causes NullpointerExceptions because Fetch.LAZY returns null.
+				t.getAuthor();
+				t.toString();
+				t.getBranchNames();
+				
+				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
+				for (final JavaChangeOperation op : ops) {
+					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+						toRemove.add(op);
+					}
+				}
+				ops.removeAll(toRemove);
+				if (!ops.isEmpty()) {
+					final ChangeSet changeSet = new ChangeSet(t, ops);
+					toCompare.add(changeSet);
+					combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
+					final Set<ChangeSet> toCompareRemove = new HashSet<>();
+					for (final ChangeSet candidate : toCompare) {
+						if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
+						                 .getDays()) <= blobWindowSize) {
+							combinationCandidates.get(candidate).add(changeSet);
+						} else {
+							toCompareRemove.add(candidate);
+						}
+					}
+					toCompare.removeAll(toCompareRemove);
+				}
+			}
+			
+			// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
+			
+			final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
+			
+			// build all artificial blobs. Combine all atomic transactions.
+			
+			final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
+			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
+				final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
+				entrySet.addAll(entry.getValue());
+				entrySet.add(entry.getKey());
+				artificialBlobs.addAll(blobGenerator.generateAll(entrySet, this.untanglingControl.getMinBlobSize(),
+				                                                 this.untanglingControl.getMaxBlobSize()));
+			}
+			
+			// serialize
+			if (serialBlobFile != null) {
+				try (FileOutputStream fos = new FileOutputStream(serialBlobFile);
+				        ObjectOutputStream out = new ObjectOutputStream(fos);) {
+					final List<SerializableArtificialBlob> serialList = new LinkedList<>();
+					for (final ArtificialBlob blob : artificialBlobs) {
+						serialList.add(new SerializableArtificialBlob(blob));
+					}
+					out.writeObject(serialList);
+				} catch (final IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				}
+			}
 		}
 		
 		int blobSetSize = artificialBlobs.size();
