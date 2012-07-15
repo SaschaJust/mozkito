@@ -268,16 +268,14 @@ public class Untangling {
 		
 		Criteria<RCSTransaction> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds)
-			                                     .oderByDesc("timestamp");
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
 		} else {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true)
-			                                     .oderByDesc("timestamp");
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
 		}
 		
 		// now load the criteria and ad fill the candidate map
 		
-		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria);
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
 		
 		final Set<ChangeSet> toCompare = new HashSet<>();
