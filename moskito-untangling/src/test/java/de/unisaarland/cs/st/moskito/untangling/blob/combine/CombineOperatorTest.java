@@ -14,7 +14,6 @@ package de.unisaarland.cs.st.moskito.untangling.blob.combine;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -138,9 +137,9 @@ public class CombineOperatorTest {
 		        + FileUtils.fileSeparator + "i"));
 		elements.add(new TestObject("6", "a" + FileUtils.fileSeparator + "b" + FileUtils.fileSeparator + "j"
 		        + FileUtils.fileSeparator + "k"));
-		final ArrayList<CombineOperator<TestObject>> operatorList = new ArrayList<CombineOperator<TestObject>>(1);
-		operatorList.add(new TestObjectCombineOperator(2));
-		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements, operatorList, 3);
+		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements,
+		                                                                                new TestObjectCombineOperator(2),
+		                                                                                3);
 		assertEquals(17, allCombinations.size());
 		
 	}
@@ -165,9 +164,9 @@ public class CombineOperatorTest {
 		elements.add(new TestObject("6", "a" + FileUtils.fileSeparator + "b" + FileUtils.fileSeparator + "j"
 		        + FileUtils.fileSeparator + "k"));
 		
-		final ArrayList<CombineOperator<TestObject>> operatorList = new ArrayList<CombineOperator<TestObject>>(1);
-		operatorList.add(new TestObjectCombineOperator(2));
-		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements, operatorList, 2);
+		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements,
+		                                                                                new TestObjectCombineOperator(2),
+		                                                                                2);
 		assertEquals(13, allCombinations.size());
 		
 	}
@@ -185,9 +184,9 @@ public class CombineOperatorTest {
 		elements.add(new TestObject("4", "a" + FileUtils.fileSeparator + "e" + FileUtils.fileSeparator + "d"));
 		elements.add(new TestObject("5", "a" + FileUtils.fileSeparator + "e" + FileUtils.fileSeparator + "f"));
 		
-		final ArrayList<CombineOperator<TestObject>> operatorList = new ArrayList<CombineOperator<TestObject>>(1);
-		operatorList.add(new TestObjectCombineOperator(1));
-		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements, operatorList, 10);
+		final Set<Set<TestObject>> allCombinations = CollectionUtils.getAllCombinations(elements,
+		                                                                                new TestObjectCombineOperator(1),
+		                                                                                10);
 		assertEquals(10, allCombinations.size());
 		
 	}

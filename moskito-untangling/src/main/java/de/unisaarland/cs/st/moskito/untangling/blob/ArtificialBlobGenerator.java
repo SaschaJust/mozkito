@@ -12,7 +12,6 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.blob;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,7 +22,6 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.untangling.blob.combine.BlobWindowSizeCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.utils.CollectionUtils;
 
@@ -38,19 +36,16 @@ public class ArtificialBlobGenerator {
 		PACKAGE, CONSECUTIVE, COUPLINGS;
 	}
 	
-	private final Collection<CombineOperator<ChangeSet>> combineOperators;
+	private final CombineOperator<ChangeSet> combineOperator;
 	
-	public ArtificialBlobGenerator(@NotNegative final int blobWindowSize,
-	        final CombineOperator<ChangeSet> combineOperator) {
-		this.combineOperators = new ArrayList<>(2);
-		this.combineOperators.add(new BlobWindowSizeCombineOperator(blobWindowSize));
-		this.combineOperators.add(combineOperator);
+	public ArtificialBlobGenerator(final CombineOperator<ChangeSet> combineOperator) {
+		this.combineOperator = combineOperator;
 	}
 	
 	/**
 	 * Generate all blobs according to specification.
 	 * 
-	 * @param transactions
+	 * @param changeSets
 	 *            the transactions
 	 * @param minBlobSize
 	 *            the min blob size
@@ -58,7 +53,7 @@ public class ArtificialBlobGenerator {
 	 *            the max blob size
 	 * @return the sets the
 	 */
-	public Set<ArtificialBlob> generateAll(@NotNull final Collection<ChangeSet> transactions,
+	public Set<ArtificialBlob> generateAll(@NotNull final Collection<ChangeSet> changeSets,
 	                                       @GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
 	                                       @GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
 		
@@ -71,10 +66,10 @@ public class ArtificialBlobGenerator {
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Generating all combinations between %s transactions.", String.valueOf(transactions.size()));
+			Logger.info("Generating all combinations between %s transactions.", String.valueOf(changeSets.size()));
 		}
-		final Set<Set<ChangeSet>> allCombinations = CollectionUtils.getAllCombinations(transactions,
-		                                                                               this.combineOperators,
+		final Set<Set<ChangeSet>> allCombinations = CollectionUtils.getAllCombinations(changeSets,
+		                                                                               this.combineOperator,
 		                                                                               maxBlobSize);
 		
 		if (Logger.logInfo()) {

@@ -46,7 +46,7 @@ public class CollectionUtils {
 	 */
 	@SuppressWarnings ("unchecked")
 	public static <T> Set<Set<T>> getAllCombinations(final Collection<T> elements,
-	                                                 final Collection<CombineOperator<T>> operators,
+	                                                 final CombineOperator<T> operator,
 	                                                 final int maxBlobSize) {
 		final List<T> elementList = new ArrayList<T>(elements.size());
 		elementList.addAll(elements);
@@ -60,14 +60,7 @@ public class CollectionUtils {
 				}
 				final T t1 = elementList.get(i);
 				final T t2 = elementList.get(j);
-				boolean canCombine = true;
-				for (final CombineOperator<T> operator : operators) {
-					canCombine &= operator.canBeCombined(t1, t2);
-					if (!canCombine) {
-						break;
-					}
-				}
-				if (canCombine) {
+				if (operator.canBeCombined(t1, t2)) {
 					final Set<T> keySet = new HashSet<T>();
 					keySet.add(t1);
 					if (!combinations.containsKey(keySet)) {

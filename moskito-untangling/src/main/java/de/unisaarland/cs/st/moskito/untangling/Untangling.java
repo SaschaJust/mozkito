@@ -17,9 +17,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -38,6 +41,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.joda.time.Days;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
 import de.unisaarland.cs.st.moskito.clustering.AvgCollapseVisitor;
@@ -256,79 +260,82 @@ public class Untangling {
 		
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
-		// load the atomic transactions and their change operations
-		final List<ChangeSet> transactions = new LinkedList<ChangeSet>();
 		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		
+		// this map will contain change set lists that correspond to the chaneg sets reachable from the corresponding
+		// key within the blobWindowsSize
+		final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
+		
+		Criteria<RCSTransaction> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			for (final String transactionId : atomicTransactionIds) {
-				final RCSTransaction t = persistenceUtil.loadById(transactionId, RCSTransaction.class);
-				
-				// FIXME this is required due to some unknown problem which
-				// causes NullpointerExceptions because Fetch.LAZY returns null.
-				t.getAuthor();
-				t.toString();
-				t.getBranchNames();
-				
-				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				if (Logger.logDebug()) {
-					Logger.debug("Adding %s change operations for transaction %s.", String.valueOf(ops.size()),
-					             t.getId());
-				}
-				transactions.add(new ChangeSet(t, ops));
-			}
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds)
+			                                     .oderByDesc("timestamp");
 		} else {
-			final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic",
-			                                                                                                  true);
-			final List<RCSTransaction> atomicTransactions = persistenceUtil.load(criteria);
-			for (final RCSTransaction t : atomicTransactions) {
-				
-				// FIXME this is required due to some unknown problem which
-				// causes NullpointerExceptions becaus Fetch.LAZY returns null.
-				t.getAuthor();
-				t.toString();
-				t.getBranchNames();
-				
-				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
-				for (final JavaChangeOperation op : ops) {
-					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-						toRemove.add(op);
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true)
+			                                     .oderByDesc("timestamp");
+		}
+		
+		// now load the criteria and ad fill the candidate map
+		
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria);
+		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
+		
+		final Set<ChangeSet> toCompare = new HashSet<>();
+		
+		for (final RCSTransaction t : atomicTransactions) {
+			
+			// FIXME this is required due to some unknown problem which
+			// causes NullpointerExceptions because Fetch.LAZY returns null.
+			t.getAuthor();
+			t.toString();
+			t.getBranchNames();
+			
+			final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+			final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
+			for (final JavaChangeOperation op : ops) {
+				if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+					toRemove.add(op);
+				}
+			}
+			ops.removeAll(toRemove);
+			if (!ops.isEmpty()) {
+				final ChangeSet changeSet = new ChangeSet(t, ops);
+				toCompare.add(changeSet);
+				combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
+				final Set<ChangeSet> toCompareRemove = new HashSet<>();
+				for (final ChangeSet candidate : toCompare) {
+					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
+					                 .getDays()) <= blobWindowSize) {
+						combinationCandidates.get(candidate).add(changeSet);
+					} else {
+						toCompareRemove.add(candidate);
 					}
 				}
-				ops.removeAll(toRemove);
-				if (!ops.isEmpty()) {
-					transactions.add(new ChangeSet(t, ops));
-				}
+				toCompare.removeAll(toCompareRemove);
 			}
 		}
 		
-		// build all artificial blobs. Combine all atomic transactions.
+		// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
-		
-		if (transactions.size() > 50) {
-			final Set<ChangeSet> randomTransactions = new HashSet<ChangeSet>();
-			for (int i = 0; i < 50; ++i) {
-				random.nextInt(transactions.size());
-				randomTransactions.add(transactions.get(i));
-				transactions.remove(i);
-			}
-			transactions.clear();
-			transactions.addAll(randomTransactions);
-		}
 		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
 		
-		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(
-		                                                                          this.untanglingControl.getBlobWindowSize(),
-		                                                                          combineOperator);
+		// build all artificial blobs. Combine all atomic transactions.
 		
-		artificialBlobs.addAll(blobGenerator.generateAll(transactions, this.untanglingControl.getMinBlobSize(),
-		                                                 this.untanglingControl.getMaxBlobSize()));
+		final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
+		for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
+			final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
+			entrySet.addAll(entry.getValue());
+			entrySet.add(entry.getKey());
+			artificialBlobs.addAll(blobGenerator.generateAll(entrySet, this.untanglingControl.getMinBlobSize(),
+			                                                 this.untanglingControl.getMaxBlobSize()));
+		}
 		
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
-			Logger.info("Generated " + blobSetSize + " artificial blobs.");
+			Logger.info("Generated %s artificial blobs.", blobSetSize);
 		}
 		
+		// TODO this is a debugging fragment. Remove later.
 		if (System.getProperty("generateBlobsOnly") != null) {
 			return;
 		}
