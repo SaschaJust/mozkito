@@ -79,7 +79,7 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 						Logger.debug("Providing " + transaction);
 					}
 					
-					providePartialOutputData(new OperationCollection(changeOperations));
+					provideOutputData(new OperationCollection(changeOperations));
 					if (!ChangeOperationReader.this.iterator.hasNext()) {
 						setCompleted();
 					}
