@@ -158,6 +158,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 				}
 				
 				switch (edgeType) {
+					case ModifiedDefinitionOnDefinition:
 					case DefinitionOnDefinition:
 						if (targetChangeType.equals(ChangeType.Deleted)) {
 							if (Logger.logError()) {
