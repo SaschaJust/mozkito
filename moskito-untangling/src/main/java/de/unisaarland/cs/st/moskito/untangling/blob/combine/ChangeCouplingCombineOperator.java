@@ -111,10 +111,9 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 		}
 	}
 	
-	private final PersistenceUtil                                 persistenceUtil;
-	private final double                                          minConfidence;
-	private final int                                             minSupport;
-	private final HashMap<String, Collection<FileChangeCoupling>> changeCouplingCache = new HashMap<>();
+	private final PersistenceUtil persistenceUtil;
+	private final double          minConfidence;
+	private final int             minSupport;
 	
 	protected ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
 	        final PersistenceUtil persistenceUtil) {
@@ -166,25 +165,17 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 				}
 				return false;
 			}
-			if (!this.changeCouplingCache.containsKey(cl1T.getId())) {
-				this.changeCouplingCache.put(cl1T.getId(),
-				                             ChangeCouplingRuleFactory.getFileChangeCouplings(cl1T, this.minSupport,
-				                                                                              this.minConfidence,
-				                                                                              this.persistenceUtil));
-				
-			}
-			final Collection<FileChangeCoupling> fileChangeCouplings = this.changeCouplingCache.get(cl1T.getId());
+			final Collection<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(cl1T,
+			                                                                                                            this.minSupport,
+			                                                                                                            this.minConfidence,
+			                                                                                                            this.persistenceUtil);
 			
-			if (!this.changeCouplingCache.containsKey(cl2T.getId())) {
-				this.changeCouplingCache.put(cl2T.getId(),
-				                             ChangeCouplingRuleFactory.getFileChangeCouplings(cl2T, this.minSupport,
-				                                                                              this.minConfidence,
-				                                                                              this.persistenceUtil));
-			}
-			fileChangeCouplings.addAll(this.changeCouplingCache.get(cl2T.getId()));
+			fileChangeCouplings.addAll(ChangeCouplingRuleFactory.getFileChangeCouplings(cl2T, this.minSupport,
+			                                                                            this.minConfidence,
+			                                                                            this.persistenceUtil));
 			
 			if (Logger.logDebug()) {
-				Logger.debug("Founf %s change couplings for transactions %s,%s having a minimal support of %s and a minimal confidence of %s",
+				Logger.debug("Found %s change couplings for transactions %s,%s having a minimal support of %s and a minimal confidence of %s",
 				             String.valueOf(fileChangeCouplings.size()), cl1T.getId(), cl2T.getId(),
 				             String.valueOf(this.minSupport), String.valueOf(this.minConfidence));
 			}

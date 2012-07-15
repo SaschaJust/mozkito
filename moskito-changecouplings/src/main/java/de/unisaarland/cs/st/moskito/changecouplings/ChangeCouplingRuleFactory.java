@@ -79,10 +79,20 @@ public class ChangeCouplingRuleFactory {
 		tablename = "mozkito_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		persistenceUtil.executeNativeQuery("select mozkito_file_changecouplings('" + transaction.getId() + "','"
-		        + tablename + "')");
+		final String query = "select mozkito_file_changecouplings('" + transaction.getId() + "','" + tablename + "')";
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Selecting file change couplings: " + query);
+		}
+		
+		persistenceUtil.executeNativeQuery(query);
 		final List<Object[]> list = persistenceUtil.executeNativeSelectQuery("select premise, implication, support, confidence FROM "
 		        + tablename);
+		
+		if (Logger.logTrace()) {
+			Logger.trace("Found %s file change couplings for %s.", String.valueOf(list.size()), transaction.getId());
+		}
+		
 		if (list == null) {
 			return null;
 		}
@@ -100,8 +110,14 @@ public class ChangeCouplingRuleFactory {
 		}
 		
 		persistenceUtil.executeNativeQuery("DROP TABLE " + tablename);
-		
 		Collections.sort(result);
+		
+		if (Logger.logDebug()) {
+			Logger.debug("Found %s file change couplings for %s with minSupport=%s and minConfidence=%s.",
+			             String.valueOf(result.size()), transaction.getId(), String.valueOf(minSupport),
+			             String.valueOf(minConfidence));
+		}
+		
 		return result;
 	}
 	
