@@ -67,12 +67,14 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 				if (ChangeOperationReader.this.iterator.hasNext()) {
 					final RCSTransaction transaction = ChangeOperationReader.this.iterator.next();
 					
-					final Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
+					Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 					
 					if (ignoreTests) {
-						PPAPersistenceUtil.getChangeOperationNoTest(branchFactory.getPersistenceUtil(), transaction);
+						changeOperations = PPAPersistenceUtil.getChangeOperationNoTest(branchFactory.getPersistenceUtil(),
+						                                                               transaction);
 					} else {
-						PPAPersistenceUtil.getChangeOperation(branchFactory.getPersistenceUtil(), transaction);
+						changeOperations = PPAPersistenceUtil.getChangeOperation(branchFactory.getPersistenceUtil(),
+						                                                         transaction);
 					}
 					
 					if (Logger.logDebug()) {
@@ -81,6 +83,9 @@ public class ChangeOperationReader extends Source<OperationCollection> {
 					
 					provideOutputData(new OperationCollection(changeOperations));
 					if (!ChangeOperationReader.this.iterator.hasNext()) {
+						if (Logger.logDebug()) {
+							Logger.debug("SET COMPLETED!");
+						}
 						setCompleted();
 					}
 				}
