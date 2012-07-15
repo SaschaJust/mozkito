@@ -137,6 +137,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		switch (edgeType) {
 			case DefinitionOnDefinition:
 			case DefinitionOnDeletedDefinition:
+			case ModifiedDefinitionOnDefinition:
 				if (depChangeType.equals(ChangeType.Deleted)) {
 					if (Logger.logError()) {
 						Logger.error("Cannot add `DefinitionOn(Deleted)Definition` edge starting from delete operation. Edge not added.");
