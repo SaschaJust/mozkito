@@ -46,19 +46,23 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 public class RCSBranch implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long  serialVersionUID   = 5419737140470855522L;
+	private static final long serialVersionUID   = 5419737140470855522L;
 	
 	/** The name. */
-	private String             name;
+	private String            name;
 	
 	/** The head. */
-	private RCSTransaction     head               = null;
+	private RCSTransaction    head               = null;
 	
 	/** The merged in. */
-	private Set<String>        mergedIn           = new HashSet<String>();
+	private Set<String>       mergedIn           = new HashSet<String>();
 	
 	/** The Constant MASTER_BRANCH_NAME. */
-	public static final String MASTER_BRANCH_NAME = "master";
+	public static String      MASTER_BRANCH_NAME = "master";
+	
+	public static void setMasterBranchName(final String name) {
+		MASTER_BRANCH_NAME = name;
+	}
 	
 	/**
 	 * Instantiates a new rCS branch.

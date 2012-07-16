@@ -34,6 +34,7 @@ import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryFactory;
 import de.unisaarland.cs.st.moskito.rcs.RepositoryType;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
 
 /**
  * The Class RepositoryOptions.
@@ -173,6 +174,8 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			final StringArgument mainBranchArgument = getSettings().getArgument(getMainBranchArg());
 			
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			
+			RCSBranch.setMasterBranchName(mainBranchArgument.getValue());
 			
 			final URI repositoryURI = dirArgument.getValue();
 			String username = userArgument.getValue();
