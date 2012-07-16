@@ -396,11 +396,6 @@ public class Untangling {
 			}
 		}
 		
-		int blobSetSize = artificialBlobs.size();
-		if (Logger.logInfo()) {
-			Logger.info("Generated %s artificial blobs.", blobSetSize);
-		}
-		
 		if (this.untanglingControl.getMaxBlobSize() > 2) {
 			/*
 			 * now use the artificial blobs of size two to generate higher order blobs. For that purpose, use the
@@ -449,12 +444,11 @@ public class Untangling {
 			}
 		}
 		
+		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
-			Logger.info("Generated %s artificial blobs using blobWindowSize=%s, minBlobSize=%s, and maxBlobSizeWindow=%s",
-			            String.valueOf(artificialBlobs.size()),
-			            String.valueOf(this.untanglingControl.getBlobWindowSize()),
-			            String.valueOf(this.untanglingControl.getMinBlobSize()),
-			            String.valueOf(this.untanglingControl.getMaxBlobSize()));
+			Logger.info("Generated %d artificial blobs using blobWindowSize=%d, minBlobSize=%d, and maxBlobSizeWindow=%d",
+			            blobSetSize, this.untanglingControl.getBlobWindowSize(),
+			            this.untanglingControl.getMinBlobSize(), this.untanglingControl.getMaxBlobSize());
 		}
 		
 		// TODO this is a debugging fragment. Remove later.
