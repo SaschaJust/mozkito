@@ -279,10 +279,13 @@ public class Untangling {
 			fileName.append(combineOperator.getClass().getSimpleName());
 			fileName.append("_artificialBlobs.ser");
 			serialBlobFile = new File(cacheRootDir.getAbsolutePath() + FileUtils.fileSeparator + fileName.toString());
+			if (Logger.logInfo()) {
+				Logger.info("Searching for serialized artificial blobs in file %s.", serialBlobFile.getAbsolutePath());
+			}
 			if (serialBlobFile.exists()) {
-				if (Logger.logDebug()) {
-					Logger.debug("Found serialized artificial blobs in file %s. Using that file to restore pre-computed blobs.",
-					             serialBlobFile.getAbsolutePath());
+				if (Logger.logInfo()) {
+					Logger.info("Found serialized artificial blobs in file %s. Using that file to restore pre-computed blobs.",
+					            serialBlobFile.getAbsolutePath());
 				}
 				try (FileInputStream fis = new FileInputStream(serialBlobFile);
 				        ObjectInputStream in = new ObjectInputStream(fis);) {
