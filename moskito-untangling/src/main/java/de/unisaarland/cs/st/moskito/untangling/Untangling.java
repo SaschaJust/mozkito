@@ -280,6 +280,10 @@ public class Untangling {
 			fileName.append("_artificialBlobs.ser");
 			serialBlobFile = new File(cacheRootDir.getAbsolutePath() + FileUtils.fileSeparator + fileName.toString());
 			if (serialBlobFile.exists()) {
+				if (Logger.logDebug()) {
+					Logger.debug("Found serialized artificial blobs in file %s. Using that file to restore pre-computed blobs.",
+					             serialBlobFile.getAbsolutePath());
+				}
 				try (FileInputStream fis = new FileInputStream(serialBlobFile);
 				        ObjectInputStream in = new ObjectInputStream(fis);) {
 					
@@ -312,7 +316,10 @@ public class Untangling {
 		}
 		
 		// now load the criteria and ad fill the candidate map
-		
+		if (Logger.logInfo()) {
+			Logger.info("Computing transaction combination candidates using blobWindowSize=%s",
+			            String.valueOf(this.untanglingControl.getBlobWindowSize()));
+		}
 		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
 		
@@ -353,6 +360,10 @@ public class Untangling {
 		
 		if (artificialBlobs.isEmpty()) {
 			// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
+			
+			if (Logger.logInfo()) {
+				Logger.info("Computing artificial blobs of order two. If serialize was found, unserialization did not succeed.");
+			}
 			
 			// build all artificial blobs. Combine all atomic transactions.
 			final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
