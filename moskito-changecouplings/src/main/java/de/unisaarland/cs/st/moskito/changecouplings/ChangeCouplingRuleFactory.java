@@ -156,7 +156,7 @@ public class ChangeCouplingRuleFactory {
 		persistenceUtil.commitTransaction();
 		
 		final StringBuilder query = new StringBuilder();
-		query.append("select mozktio_method_changecouplings('");
+		query.append("select mozkito_method_changecouplings('");
 		query.append(transaction.getId());
 		query.append("','");
 		query.append(tablename);
