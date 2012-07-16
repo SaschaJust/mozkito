@@ -168,6 +168,10 @@ public class ChangeCouplingRuleFactory {
 		}
 		query.append("]::text[])");
 		
+		if (Logger.logTrace()) {
+			Logger.trace("Firing native query: %s.", query.toString());
+		}
+		
 		persistenceUtil.executeNativeQuery(query.toString());
 		
 		@SuppressWarnings ("unchecked")
