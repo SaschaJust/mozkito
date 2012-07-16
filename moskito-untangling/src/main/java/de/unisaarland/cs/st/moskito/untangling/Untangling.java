@@ -297,74 +297,72 @@ public class Untangling {
 			}
 		}
 		
+		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		
+		// this map will contain change set lists that correspond to the change sets reachable from the
+		// corresponding
+		// key within the blobWindowsSize
+		final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
+		
+		Criteria<RCSTransaction> transactionCriteria = null;
+		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
+		} else {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+		}
+		
+		// now load the criteria and ad fill the candidate map
+		
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
+		
+		final Set<ChangeSet> toCompare = new HashSet<>();
+		
+		for (final RCSTransaction t : atomicTransactions) {
+			
+			// FIXME this is required due to some unknown problem which
+			// causes NullpointerExceptions because Fetch.LAZY returns null.
+			t.getAuthor();
+			t.toString();
+			t.getBranchNames();
+			
+			final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
+			final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
+			for (final JavaChangeOperation op : ops) {
+				if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
+					toRemove.add(op);
+				}
+			}
+			ops.removeAll(toRemove);
+			if (!ops.isEmpty()) {
+				final ChangeSet changeSet = new ChangeSet(t, ops);
+				toCompare.add(changeSet);
+				combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
+				final Set<ChangeSet> toCompareRemove = new HashSet<>();
+				for (final ChangeSet candidate : toCompare) {
+					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
+					                 .getDays()) <= blobWindowSize) {
+						combinationCandidates.get(candidate).add(changeSet);
+					} else {
+						toCompareRemove.add(candidate);
+					}
+				}
+				toCompare.removeAll(toCompareRemove);
+			}
+		}
+		
 		if (artificialBlobs.isEmpty()) {
-			
-			final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
-			
-			// this map will contain change set lists that correspond to the chaneg sets reachable from the
-			// corresponding
-			// key within the blobWindowsSize
-			final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
-			
-			Criteria<RCSTransaction> transactionCriteria = null;
-			if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-				transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id",
-				                                                                              atomicTransactionIds);
-			} else {
-				transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
-			}
-			
-			// now load the criteria and ad fill the candidate map
-			
-			final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
-			final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
-			
-			final Set<ChangeSet> toCompare = new HashSet<>();
-			
-			for (final RCSTransaction t : atomicTransactions) {
-				
-				// FIXME this is required due to some unknown problem which
-				// causes NullpointerExceptions because Fetch.LAZY returns null.
-				t.getAuthor();
-				t.toString();
-				t.getBranchNames();
-				
-				final Collection<JavaChangeOperation> ops = PPAPersistenceUtil.getChangeOperation(persistenceUtil, t);
-				final Set<JavaChangeOperation> toRemove = new HashSet<JavaChangeOperation>();
-				for (final JavaChangeOperation op : ops) {
-					if (!(op.getChangedElementLocation().getElement() instanceof JavaMethodDefinition)) {
-						toRemove.add(op);
-					}
-				}
-				ops.removeAll(toRemove);
-				if (!ops.isEmpty()) {
-					final ChangeSet changeSet = new ChangeSet(t, ops);
-					toCompare.add(changeSet);
-					combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
-					final Set<ChangeSet> toCompareRemove = new HashSet<>();
-					for (final ChangeSet candidate : toCompare) {
-						if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
-						                 .getDays()) <= blobWindowSize) {
-							combinationCandidates.get(candidate).add(changeSet);
-						} else {
-							toCompareRemove.add(candidate);
-						}
-					}
-					toCompare.removeAll(toCompareRemove);
-				}
-			}
-			
 			// Now we have a map of change sets pointing to change sets that are within the same blobWindowSize
 			
 			// build all artificial blobs. Combine all atomic transactions.
-			
 			final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
+			
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
 				entrySet.addAll(entry.getValue());
 				entrySet.add(entry.getKey());
-				artificialBlobs.addAll(blobGenerator.generateAll(entrySet, this.untanglingControl.getMinBlobSize(),
-				                                                 this.untanglingControl.getMaxBlobSize()));
+				// use minimum and maximum blob size of 2 for pre-computation of order two blobs
+				artificialBlobs.addAll(blobGenerator.generateAll(entrySet, 2, 2));
 			}
 			
 			// serialize
@@ -387,6 +385,62 @@ public class Untangling {
 		int blobSetSize = artificialBlobs.size();
 		if (Logger.logInfo()) {
 			Logger.info("Generated %s artificial blobs.", blobSetSize);
+		}
+		
+		if (this.untanglingControl.getMaxBlobSize() > 2) {
+			/*
+			 * now use the artificial blobs of size two to generate higher order blobs. For that purpose, use the
+			 * combination HashSet and generate Collection<ChangeSet> using artificial blobs of order two. Then reuse
+			 * BlobGenerator to generate higher order blobs.
+			 */
+			final Map<ChangeSet, Set<ArtificialBlob>> blobsPerChangeSet = new HashMap<>();
+			for (final ArtificialBlob blob : artificialBlobs) {
+				for (final ChangeSet t : blob.getAtomicTransactions()) {
+					if (!blobsPerChangeSet.containsKey(t)) {
+						blobsPerChangeSet.put(t, new HashSet<ArtificialBlob>());
+					}
+					blobsPerChangeSet.get(t).add(blob);
+				}
+			}
+			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new LinkedList<>();
+			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
+				final Set<ChangeSet> blobSet = new HashSet<>();
+				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
+					blobSet.addAll(blob.getAtomicTransactions());
+				}
+				for (final ChangeSet s : entry.getValue()) {
+					for (final ArtificialBlob blob : blobsPerChangeSet.get(s)) {
+						blobSet.addAll(blob.getAtomicTransactions());
+					}
+				}
+				possibleArtificialBlobCombinations.add(blobSet);
+			}
+			if (this.untanglingControl.getMinBlobSize() > 2) {
+				artificialBlobs.clear();
+				final ArtificialBlobGenerator pseudoBlobGenerator = new ArtificialBlobGenerator(
+				                                                                                new CombineOperator<ChangeSet>() {
+					                                                                                
+					                                                                                @Override
+					                                                                                public boolean canBeCombined(final ChangeSet t1,
+					                                                                                                             final ChangeSet t2) {
+						                                                                                return true;
+					                                                                                }
+				                                                                                });
+				
+				for (final Set<ChangeSet> blobSet : possibleArtificialBlobCombinations) {
+					artificialBlobs.addAll(pseudoBlobGenerator.generateAll(blobSet,
+					                                                       this.untanglingControl.getMinBlobSize(),
+					                                                       this.untanglingControl.getMaxBlobSize()));
+				}
+			}
+		}
+		
+		if (Logger.logInfo()) {
+			Logger.info("Generated %s artificial blobs using blobWindowSize=%s, minBlobSize=%s, and maxBlobSizeWindow=%s",
+			            String.valueOf(artificialBlobs.size()),
+			            String.valueOf(this.untanglingControl.getBlobWindowSize()),
+			            String.valueOf(this.untanglingControl.getMinBlobSize()),
+			            String.valueOf(this.untanglingControl.getMaxBlobSize()));
 		}
 		
 		// TODO this is a debugging fragment. Remove later.
