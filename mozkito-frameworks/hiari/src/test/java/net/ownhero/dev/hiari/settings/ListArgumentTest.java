@@ -142,12 +142,12 @@ public class ListArgumentTest {
 	public void testValidOptionalEmpty() {
 		try {
 			final Settings settings = new Settings();
-			final Options options = new ListArgument.Options(settings.getRoot(), "testInValidPropertiesDelimiter",
+			final Options options = new ListArgument.Options(settings.getRoot(), "testValidOptionalEmpty",
 			                                                 "test description", new ArrayList<String>(0),
 			                                                 Requirement.required);
 			final ListArgument arg = ArgumentFactory.create(options);
 			
-			assertEquals("testInValidPropertiesDelimiter", arg.getName());
+			assertEquals("testValidOptionalEmpty", arg.getName());
 			assertTrue(arg.required());
 			assert (arg != null);
 			assertEquals(0, arg.getValue().size());
