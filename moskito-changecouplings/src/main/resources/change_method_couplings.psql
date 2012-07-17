@@ -78,6 +78,8 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	  confidence = cc_confidence(support,current_changefreq)
 	  insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES(ARRAY[$1], $2,$3,$4)",["text","text","integer","float"])
 	  plpy.execute(insertq,[q_row['premise'],q_row['implication'],support,confidence])
+	if len(premises) > 3:
+		return 1;
 	multies = cc_subsets(premises)
 	for m in multies:
 	  if (len(m) > 0) and (not m in seen):
