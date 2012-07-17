@@ -31,6 +31,9 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.unisaarland.cs.st.moskito.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.moskito.callgraph.model.CallGraphEdge;
 import de.unisaarland.cs.st.moskito.callgraph.model.MethodVertex;
@@ -190,6 +193,10 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			// generate call graph
 			final HashMap<String, String> environment = new HashMap<String, String>();
 			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
+			if (Logger.logDebug()) {
+				Logger.debug("Firing command: %s/eclipse %s ", eclipseDir.getAbsolutePath(),
+				             StringUtils.join(arguments.toArray(new String[arguments.size()]), " "));
+			}
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseDir.getAbsolutePath()
 			                                                                              + FileUtils.fileSeparator
 			                                                                              + "eclipse",
