@@ -79,7 +79,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	  insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES(ARRAY[$1], $2,$3,$4)",["text","text","integer","float"])
 	  plpy.execute(insertq,[q_row['premise'],q_row['implication'],support,confidence])
 	if len(premises) > 10:
-		return 1;
+	  return 1;
 	multies = cc_subsets(premises)
 	for m in multies:
 	  if (len(m) > 0) and (not m in seen):
@@ -97,6 +97,6 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	      insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES($1, $2,$3,$4)",["text[]","text","integer","float"])
 	      plpy.execute(insertq,[m,c,support,confidence])
 	    
-	 plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
+	plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
 	return 1
 $$ LANGUAGE plpython2u;
