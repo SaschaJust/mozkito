@@ -119,7 +119,7 @@ public class CallGraphToolChain {
 			                                                                            "packageFilter",
 			                                                                            "A white list of package names to be considered. Entities not mathings any of these packages will be ignores.",
 			                                                                            new HashSet<String>(),
-			                                                                            Requirement.optional));
+			                                                                            Requirement.required));
 			
 			this.cacheDirArgument = ArgumentFactory.create(new DirectoryArgument.Options(
 			                                                                             settings.getRoot(),
