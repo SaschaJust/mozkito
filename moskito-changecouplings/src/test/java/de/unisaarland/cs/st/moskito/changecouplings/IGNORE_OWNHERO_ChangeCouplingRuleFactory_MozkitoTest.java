@@ -57,13 +57,19 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Moskit
 		try {
 			
 			persistenceUtil = getPersistenceUtil();
-			final URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
+			URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
-			final File sqlFile = new File(sqlURL.toURI());
-			final String query = FileUtils.readFileToString(sqlFile);
+			File sqlFile = new File(sqlURL.toURI());
+			String query = FileUtils.readFileToString(sqlFile);
 			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
 			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
+			persistenceUtil.executeNativeQuery(query);
+			sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
+			        + "change_file_couplings.psql");
+			
+			sqlFile = new File(sqlURL.toURI());
+			query = FileUtils.readFileToString(sqlFile);
 			persistenceUtil.executeNativeQuery(query);
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
