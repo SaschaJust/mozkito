@@ -115,6 +115,14 @@ public class PPASource extends Source<RCSTransaction> {
 						
 						final RCSTransaction transaction = PPASource.this.tIterator.next();
 						
+						final int numRevision = transaction.getChangedFiles().size();
+						if (numRevision > 20) {
+							if (Logger.logWarn()) {
+								Logger.warn("Skipping transaction %s that touches more than %d > 20 files.",
+								            transaction.getId(), numRevision);
+							}
+						}
+						
 						// test if seen already
 						boolean skip = false;
 						for (final RCSRevision revision : transaction.getRevisions()) {
