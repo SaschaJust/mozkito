@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	def cc_support(s,ctime):
 	  args = list(s)
 	  counter = 1
-	  basequery = " SELECT tid FROM cc_method_tmp WHERE fullqualifiedname = $"
+	  basequery = " SELECT tid FROM "+tablename+"TMP WHERE fullqualifiedname = $"
 	  argtypes = []
 	  if len(s) < 1:
 	    return 0
@@ -44,14 +44,14 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	
 	plpy.notice(method_names)
 	
-	plpy.execute("DROP TABLE IF EXISTS cc_method_tmp")
-	plpy.execute("CREATE TABLE cc_method_tmp (tid character varying(40), fullqualifiedname text)")
-	plpy.execute("INSERT INTO cc_method_tmp (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
+	plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
+	plpy.execute("CREATE TABLE "+tablename+"TMP (tid character varying(40), fullqualifiedname text)")
+	plpy.execute("INSERT INTO "+tablename+"TMP (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
 	plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
 	plpy.execute("CREATE TABLE "+str(tablename)+" (premise text[], implication text, support integer, confidence float)")
 	
 	
-	query = "select t1.fullqualifiedname AS premise, t2.fullqualifiedname AS implication from cc_method_tmp t1 CROSS JOIN cc_method_tmp t2 WHERE t2.tid = $1 AND t1.tid = $1 AND t1.fullqualifiedname <> t2.fullqualifiedname "
+	query = "select t1.fullqualifiedname AS premise, t2.fullqualifiedname AS implication from "+tablename+"TMP t1 CROSS JOIN "+tablename+"TMP t2 WHERE t2.tid = $1 AND t1.tid = $1 AND t1.fullqualifiedname <> t2.fullqualifiedname "
 	if len(method_names) > 0:
 	  query = query + " AND t2.fullqualifiedname IN ('"+'\', \''.join(method_names)+"') "
 	query = query + "ORDER BY premise"
@@ -95,6 +95,6 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	      insertq = plpy.prepare("INSERT INTO "+tablename+" (premise,implication,support,confidence) VALUES($1, $2,$3,$4)",["text[]","text","integer","float"])
 	      plpy.execute(insertq,[m,c,support,confidence])
 	    
-	  
+	 plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
 	return 1
 $$ LANGUAGE plpython2u;

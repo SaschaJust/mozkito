@@ -137,11 +137,11 @@ public class ChangeCouplingRuleFactory {
 	 * @return the method change couplings
 	 */
 	@NoneNull
-	public static LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
-	                                                                        @Positive final int minSupport,
-	                                                                        @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
-	                                                                        final Set<String> relevantMethodNames,
-	                                                                        final PersistenceUtil persistenceUtil) {
+	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
+	                                                                                     @Positive final int minSupport,
+	                                                                                     @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
+	                                                                                     final Set<String> relevantMethodNames,
+	                                                                                     final PersistenceUtil persistenceUtil) {
 		updateProcedures(persistenceUtil);
 		
 		final LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
