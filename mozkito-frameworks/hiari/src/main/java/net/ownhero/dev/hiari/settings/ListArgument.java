@@ -130,8 +130,10 @@ public class ListArgument extends Argument<List<String>, ListArgument.Options> {
 		try {
 			this.delimiter = options.getDelimiter();
 			setStringValue(options.getDefaultValue() != null
-			                                                ? StringUtils.join(options.getDefaultValue(),
-			                                                                   this.delimiter)
+			                                                ? (!options.getDefaultValue().isEmpty())
+			                                                                                        ? StringUtils.join(options.getDefaultValue(),
+			                                                                                                           this.delimiter)
+			                                                                                        : "[]"
 			                                                : null);
 		} finally {
 			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
@@ -158,12 +160,15 @@ public class ListArgument extends Argument<List<String>, ListArgument.Options> {
 					if (Logger.logWarn()) {
 						Logger.warn("Optional argument is not set: %s", getTag());
 					}
-					setCachedValue(null);
+					setCachedValue(getDefaultValue());
 					ret = true;
 				}
 			} else {
 				final List<String> result = new LinkedList<String>();
-				
+				if (getStringValue().equals("[]")) {
+					setCachedValue(result);
+					return true;
+				}
 				for (final String s : getStringValue().split(this.delimiter)) {
 					result.add(s.trim());
 				}

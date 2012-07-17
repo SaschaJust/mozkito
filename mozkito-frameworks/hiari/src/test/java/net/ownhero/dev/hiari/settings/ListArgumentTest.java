@@ -139,6 +139,27 @@ public class ListArgumentTest {
 	}
 	
 	@Test
+	public void testValidOptionalEmpty() {
+		try {
+			final Settings settings = new Settings();
+			final Options options = new ListArgument.Options(settings.getRoot(), "testInValidPropertiesDelimiter",
+			                                                 "test description", new ArrayList<String>(0),
+			                                                 Requirement.required);
+			final ListArgument arg = ArgumentFactory.create(options);
+			
+			assertEquals("testInValidPropertiesDelimiter", arg.getName());
+			assertTrue(arg.required());
+			assert (arg != null);
+			assertEquals(0, arg.getValue().size());
+		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			//
+		}
+	}
+	
+	@Test
 	public void testValidProperties() {
 		try {
 			System.setProperty("testValidProperties", "one,two");

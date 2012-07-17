@@ -458,7 +458,13 @@ public abstract class Argument<TYPE, ARGOPTIONS extends ArgumentOptions<TYPE, ? 
 	public final String toString(final int keyWidth,
 	                             final int valueWidth) {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("%-").append(keyWidth).append("s = %-").append(valueWidth).append("s\t%s");
+		builder.append("%-").append(keyWidth);
+		if (valueWidth < 0) {
+			builder.append("s = %-");
+		} else {
+			builder.append("s = %");
+		}
+		builder.append(valueWidth).append("s\t%s");
 		
 		return String.format(builder.toString(), getTag(), getStringValue() == null
 		                                                                           ? "(unset)"
