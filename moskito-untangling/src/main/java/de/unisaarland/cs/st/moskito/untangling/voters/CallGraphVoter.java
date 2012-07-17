@@ -40,11 +40,13 @@ import de.unisaarland.cs.st.moskito.callgraph.model.MethodVertex;
 import de.unisaarland.cs.st.moskito.callgraph.model.VertexFactory;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.Repository;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 
@@ -109,10 +111,27 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			final File callGraphCacheDir = getSettings().getArgument(this.callGraphCacheDirOptions).getValue();
 			final Repository repository = getSettings().getArgumentSet(this.repositoryOptions).getValue();
 			
+			final DatabaseOptions databaseOptions = this.repositoryOptions.getDatabaseOptions();
+			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArgs = getSettings().getArgumentSet(databaseOptions);
+			
 			final List<String> eclipseArgs = new LinkedList<String>();
 			eclipseArgs.add("-vmargs");
 			eclipseArgs.add(" -Dppa");
 			eclipseArgs.add(" -Drepository.uri=" + repository.getUri().toASCIIString());
+			eclipseArgs.add(" -Ddabase.host=" + databaseArgs.getArgument(databaseOptions.getDatabaseHost()).getValue());
+			eclipseArgs.add(" -Ddabase.user=" + databaseArgs.getArgument(databaseOptions.getDatabaseUser()).getValue());
+			eclipseArgs.add(" -Ddatabase.driver="
+			        + databaseArgs.getArgument(databaseOptions.getDatabaseDriver()).getValue());
+			eclipseArgs.add(" -Ddatabase.middleware="
+			        + databaseArgs.getArgument(databaseOptions.getDatabaseMiddleware()).getValue());
+			eclipseArgs.add(" -Ddatabase.name="
+			        + databaseArgs.getArgument(databaseOptions.getDatabaseName()).getValue());
+			eclipseArgs.add(" -Ddatabase.password="
+			        + databaseArgs.getArgument(databaseOptions.getDatabasePassword()).getValue());
+			eclipseArgs.add(" -Ddatabase.type="
+			        + databaseArgs.getArgument(databaseOptions.getDatabaseType()).getValue().toString());
+			eclipseArgs.add(" -Ddatabase.unit="
+			        + databaseArgs.getArgument(databaseOptions.getDatabaseUnit()).getValue());
 			
 			return new CallGraphVoter.Factory(callgraphEclipse, eclipseArgs.toArray(new String[eclipseArgs.size()]),
 			                                  callGraphCacheDir);

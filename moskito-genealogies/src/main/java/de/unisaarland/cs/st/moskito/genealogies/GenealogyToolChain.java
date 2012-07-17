@@ -13,6 +13,7 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -23,7 +24,6 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
@@ -62,12 +62,11 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                               databaseOptions);
 			this.genealogyArgs = ArgumentSetFactory.create(genealogyOptions);
 			
-		} catch (final ArgumentRegistrationException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SettingsParseError e) {
-			throw new UnrecoverableError(e);
-		} catch (final ArgumentSetRegistrationException e) {
-			throw new UnrecoverableError(e);
+		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			throw new Shutdown();
 		} finally {
 			// POSTCONDITION
 		}

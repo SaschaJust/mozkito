@@ -101,6 +101,10 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 		return this.branchFactory;
 	}
 	
+	public DatabaseOptions getDatabaseOptions() {
+		return this.databaseOptions;
+	}
+	
 	public StringArgument.Options getMainBranchArg() {
 		return this.mainBranchArg;
 	}
