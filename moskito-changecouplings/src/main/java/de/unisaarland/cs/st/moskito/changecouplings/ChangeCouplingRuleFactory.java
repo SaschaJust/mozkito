@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.moskito.changecouplings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
+import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.changecouplings.model.FileChangeCoupling;
 import de.unisaarland.cs.st.moskito.changecouplings.model.MethodChangeCoupling;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -185,10 +187,14 @@ public class ChangeCouplingRuleFactory {
 			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
 				
-				// {org.joda.time.convert.ConverterManager.ConverterManager(),org.joda.time.convert.ReadableIntervalConverter.getDurationMillis(Object)}
-				
-				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
-				result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence, persistenceUtil));
+				try (StringReader sReader = new StringReader(row[0].toString());
+				        final CSVReader csvReader = new CSVReader(sReader, ',', '"');) {
+					final String[] premises = csvReader.readNext();
+					result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence,
+					                                    persistenceUtil));
+				} catch (final IOException e) {
+					//
+				}
 			}
 		}
 		
