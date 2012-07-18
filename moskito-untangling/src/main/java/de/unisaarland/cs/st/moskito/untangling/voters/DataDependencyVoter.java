@@ -243,8 +243,8 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			
 			final File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
-			final String[] arguments = new String[] { "-vmargs", "-Din=file://" + file.getAbsolutePath(),
-			        "-Dout=file://" + eclipseOutFile.getAbsolutePath() };
+			final String[] arguments = new String[] { "-vmargs", "-Din=" + file.getAbsolutePath(),
+			        "-Dout=" + eclipseOutFile.getAbsolutePath() };
 			
 			// run the data dependency eclipse app on that file
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute(this.eclipseDir.getAbsolutePath()

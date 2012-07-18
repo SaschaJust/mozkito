@@ -13,6 +13,7 @@
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -205,6 +206,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				arguments.add(arg);
 			}
 			
+			final File eclipseExecDir = FileUtils.createRandomDir("mozkito", "callgraph_exec", FileShutdownAction.KEEP);
 			final File callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
 			arguments.add("-DtransactionId=" + transaction.getId());
@@ -212,7 +214,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			
 			// generate call graph
 			final HashMap<String, String> environment = new HashMap<String, String>();
-			environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
+			// environment.put("PATH", eclipseDir.getAbsolutePath() + ":$PATH");
 			if (Logger.logDebug()) {
 				Logger.debug("Firing command: %s/eclipse %s ", eclipseDir.getAbsolutePath(),
 				             StringUtils.join(arguments.toArray(new String[arguments.size()]), " "));
@@ -223,6 +225,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			                                                                      arguments.toArray(new String[arguments.size()]),
 			                                                                      eclipseDir,
 			                                                                      null, environment);
+			try {
+				FileUtils.forceDelete(eclipseExecDir);
+			} catch (final IOException ignore) {
+				//
+			}
 			if (response.getFirst() != 0) {
 				if (Logger.logError()) {
 					final StringBuilder sb = new StringBuilder();
