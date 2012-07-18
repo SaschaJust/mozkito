@@ -187,7 +187,9 @@ public class ChangeCouplingRuleFactory {
 			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
 				
-				try (StringReader sReader = new StringReader(row[0].toString());
+				String premiseStr = row[0].toString();
+				premiseStr = premiseStr.substring(1, premiseStr.length() - 1);
+				try (StringReader sReader = new StringReader(premiseStr);
 				        final CSVReader csvReader = new CSVReader(sReader, ',', '"');) {
 					final String[] premises = csvReader.readNext();
 					result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence,

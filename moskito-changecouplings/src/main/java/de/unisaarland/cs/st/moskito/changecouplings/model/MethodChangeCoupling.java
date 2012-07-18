@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings.model;
 
@@ -29,7 +26,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
 /**
  * The Class MethodChangeCoupling.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
@@ -48,12 +45,17 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
 	/**
 	 * Instantiates a new method change coupling.
-	 *
-	 * @param premise the premise
-	 * @param implication the implication
-	 * @param support the support
-	 * @param confidence the confidence
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param premise
+	 *            the premise
+	 * @param implication
+	 *            the implication
+	 * @param support
+	 *            the support
+	 * @param confidence
+	 *            the confidence
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public MethodChangeCoupling(final String[] premise, final String implication, final Integer support,
 	        final Double confidence, final PersistenceUtil persistenceUtil) {
@@ -70,7 +72,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 			                                                               .eq("fullQualifiedName", p);
 			final List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 			if ((defs == null) || (defs.size() != 1)) {
-				throw new UnrecoverableError("Could not retrieve RCSFile with id " + p);
+				throw new UnrecoverableError("Could not retrieve JavaMethodDefinition with fullQualifiedName " + p);
 			}
 			this.premise.add(defs.get(0));
 		}
@@ -89,7 +91,8 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -117,7 +120,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
 	/**
 	 * Gets the confidence.
-	 *
+	 * 
 	 * @return the confidence
 	 */
 	public Double getConfidence() {
@@ -126,7 +129,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
 	/**
 	 * Gets the implication.
-	 *
+	 * 
 	 * @return the implication
 	 */
 	public JavaMethodDefinition getImplication() {
@@ -135,7 +138,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
 	/**
 	 * Gets the premise.
-	 *
+	 * 
 	 * @return the premise
 	 */
 	@Id
@@ -145,14 +148,15 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 	
 	/**
 	 * Gets the support.
-	 *
+	 * 
 	 * @return the support
 	 */
 	public Integer getSupport() {
 		return this.support;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
