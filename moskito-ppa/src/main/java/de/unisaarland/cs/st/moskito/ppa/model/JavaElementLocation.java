@@ -480,7 +480,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * 
 	 * @return the comment lines
 	 */
-	@ElementCollection
+	@ElementCollection (fetch = FetchType.EAGER)
 	public Set<Integer> getCommentLines() {
 		return this.commentLines;
 	}
