@@ -479,6 +479,9 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@ElementCollection
 	public Set<Integer> getCommentLines() {
+		if (Logger.logTrace()) {
+			Logger.trace("Requesting comment lines on JavaElementLocatio with id %d", getId());
+		}
 		return this.commentLines;
 	}
 	
