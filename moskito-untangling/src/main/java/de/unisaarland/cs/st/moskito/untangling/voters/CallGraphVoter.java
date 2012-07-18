@@ -189,23 +189,24 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 */
 	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
 	        final File cacheDir) {
-		
+		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-			        + ".cg");
-			if (serialFile.exists()) {
-				this.callGraph = CallGraph.unserialize(serialFile);
-				this.usedGraphFile = serialFile;
+			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId() + ".cg");
+			if (callGraphFile.exists()) {
+				this.callGraph = CallGraph.unserialize(callGraphFile);
+				this.usedGraphFile = callGraphFile;
 			}
 		}
 		if (this.callGraph == null) {
+			if (callGraphFile == null) {
+				callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			}
 			final List<String> arguments = new LinkedList<String>();
 			for (final String arg : eclipseArguments) {
 				arguments.add(arg);
 			}
 			
 			final File eclipseExecDir = FileUtils.createRandomDir("mozkito", "callgraph_exec", FileShutdownAction.KEEP);
-			final File callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 			
 			arguments.add("-DtransactionId=" + transaction.getId());
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
