@@ -223,8 +223,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			                                                                              + FileUtils.fileSeparator
 			                                                                              + "eclipse",
 			                                                                      arguments.toArray(new String[arguments.size()]),
-			                                                                      eclipseDir,
-			                                                                      null, environment);
+			                                                                      eclipseExecDir, null, environment);
 			try {
 				FileUtils.forceDelete(eclipseExecDir);
 			} catch (final IOException ignore) {
