@@ -117,22 +117,20 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			
 			final List<String> eclipseArgs = new LinkedList<String>();
 			eclipseArgs.add("-vmargs");
-			eclipseArgs.add(" -Dppa");
-			eclipseArgs.add(" -Drepository.uri=" + repository.getUri().toASCIIString());
-			eclipseArgs.add(" -Ddabase.host=" + databaseArgs.getArgument(databaseOptions.getDatabaseHost()).getValue());
-			eclipseArgs.add(" -Ddabase.user=" + databaseArgs.getArgument(databaseOptions.getDatabaseUser()).getValue());
-			eclipseArgs.add(" -Ddatabase.driver="
+			eclipseArgs.add("-Dppa");
+			eclipseArgs.add("-Drepository.uri=" + repository.getUri().toASCIIString());
+			eclipseArgs.add("-Ddabase.host=" + databaseArgs.getArgument(databaseOptions.getDatabaseHost()).getValue());
+			eclipseArgs.add("-Ddabase.user=" + databaseArgs.getArgument(databaseOptions.getDatabaseUser()).getValue());
+			eclipseArgs.add("-Ddatabase.driver="
 			        + databaseArgs.getArgument(databaseOptions.getDatabaseDriver()).getValue());
-			eclipseArgs.add(" -Ddatabase.middleware="
+			eclipseArgs.add("-Ddatabase.middleware="
 			        + databaseArgs.getArgument(databaseOptions.getDatabaseMiddleware()).getValue());
-			eclipseArgs.add(" -Ddatabase.name="
-			        + databaseArgs.getArgument(databaseOptions.getDatabaseName()).getValue());
-			eclipseArgs.add(" -Ddatabase.password="
+			eclipseArgs.add("-Ddatabase.name=" + databaseArgs.getArgument(databaseOptions.getDatabaseName()).getValue());
+			eclipseArgs.add("-Ddatabase.password="
 			        + databaseArgs.getArgument(databaseOptions.getDatabasePassword()).getValue());
-			eclipseArgs.add(" -Ddatabase.type="
+			eclipseArgs.add("-Ddatabase.type="
 			        + databaseArgs.getArgument(databaseOptions.getDatabaseType()).getValue().toString());
-			eclipseArgs.add(" -Ddatabase.unit="
-			        + databaseArgs.getArgument(databaseOptions.getDatabaseUnit()).getValue());
+			eclipseArgs.add("-Ddatabase.unit=" + databaseArgs.getArgument(databaseOptions.getDatabaseUnit()).getValue());
 			
 			return new CallGraphVoter.Factory(callgraphEclipse, eclipseArgs.toArray(new String[eclipseArgs.size()]),
 			                                  callGraphCacheDir);
