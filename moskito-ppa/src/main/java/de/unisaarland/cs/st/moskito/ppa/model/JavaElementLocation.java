@@ -407,6 +407,9 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the line cover
 	 */
 	public LineCover coversLine(@NotNegative final int line) {
+		if (Logger.logTrace()) {
+			Logger.trace("Get comment lines for JavaElementLocation with id %s.", String.valueOf(getId()));
+		}
 		if ((getStartLine() <= line) && (getEndLine() >= line) && (!getCommentLines().contains(line))) {
 			if (getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
@@ -479,9 +482,6 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	@ElementCollection
 	public Set<Integer> getCommentLines() {
-		if (Logger.logTrace()) {
-			Logger.trace("Requesting comment lines on JavaElementLocatio with id %d", getId());
-		}
 		return this.commentLines;
 	}
 	
