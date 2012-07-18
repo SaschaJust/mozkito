@@ -1,23 +1,19 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.changecouplings.model;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,11 +23,10 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class FileChangeCoupling.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
@@ -50,14 +45,19 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/**
 	 * Instantiates a new file change coupling.
-	 *
-	 * @param premise the premise
-	 * @param implication the implication
-	 * @param support the support
-	 * @param confidence the confidence
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param premise
+	 *            the premise
+	 * @param implication
+	 *            the implication
+	 * @param support
+	 *            the support
+	 * @param confidence
+	 *            the confidence
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
-	public FileChangeCoupling(final Integer[] premise, final Integer implication, final Integer support,
+	public FileChangeCoupling(final Long[] premise, final Long implication, final Integer support,
 	        final Double confidence, final PersistenceUtil persistenceUtil) {
 		this.premise = new HashSet<RCSFile>();
 		
@@ -66,7 +66,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 			persistenceUtil.beginTransaction();
 			commit = true;
 		}
-		for (final Integer fileId : premise) {
+		for (final Long fileId : premise) {
 			
 			final RCSFile rcsFile = persistenceUtil.loadById((long) fileId, RCSFile.class);
 			if (rcsFile == null) {
@@ -93,7 +93,8 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -121,7 +122,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/**
 	 * Gets the confidence.
-	 *
+	 * 
 	 * @return the confidence
 	 */
 	public Double getConfidence() {
@@ -130,7 +131,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/**
 	 * Gets the implication.
-	 *
+	 * 
 	 * @return the implication
 	 */
 	public RCSFile getImplication() {
@@ -139,7 +140,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/**
 	 * Gets the premise.
-	 *
+	 * 
 	 * @return the premise
 	 */
 	@Id
@@ -149,29 +150,15 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/**
 	 * Gets the support.
-	 *
+	 * 
 	 * @return the support
 	 */
 	public Integer getSupport() {
 		return this.support;
 	}
 	
-	/**
-	 * Serialize.
-	 *
-	 * @param transaction the transaction
-	 * @return the serial file change coupling
-	 */
-	public SerialFileChangeCoupling serialize(final RCSTransaction transaction) {
-		final List<String> premise = new LinkedList<String>();
-		for (final RCSFile file : getPremise()) {
-			premise.add(file.getPath(transaction));
-		}
-		return new SerialFileChangeCoupling(premise, getImplication().getPath(transaction), getSupport(),
-		                                    getConfidence());
-	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

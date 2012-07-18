@@ -35,6 +35,7 @@ import de.unisaarland.cs.st.moskito.changecouplings.model.SerialFileChangeCoupli
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
@@ -45,19 +46,19 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
 	/** The couplings. */
-	private LinkedList<SerialFileChangeCoupling> couplings;
+	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final RCSTransaction                 transaction;
+	private final RCSTransaction           transaction;
 	
 	/** The min support. */
-	private final int                            minSupport;
+	private final int                      minSupport;
 	
 	/** The min confidence. */
-	private final double                         minConfidence;
+	private final double                   minConfidence;
 	
 	/** The persistence util. */
-	private final PersistenceUtil                persistenceUtil;
+	private final PersistenceUtil          persistenceUtil;
 	
 	/**
 	 * Instantiates a new change coupling voter.
@@ -90,8 +91,12 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				// load serial file
 				try {
 					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					this.couplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
+					final LinkedList<SerialFileChangeCoupling> serialCouplings = (LinkedList<SerialFileChangeCoupling>) in.readObject();
 					in.close();
+					this.couplings = new LinkedList<FileChangeCoupling>();
+					for (final SerialFileChangeCoupling serialCoupling : serialCouplings) {
+						this.couplings.add(serialCoupling.unserialize(persistenceUtil));
+					}
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
@@ -112,13 +117,15 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				                                                                                                            3,
 				                                                                                                            0.1,
 				                                                                                                            persistenceUtil);
-				this.couplings = new LinkedList<SerialFileChangeCoupling>();
+				this.couplings = new LinkedList<FileChangeCoupling>();
+				this.couplings.addAll(fileChangeCouplings);
+				final LinkedList<SerialFileChangeCoupling> serialCouplings = new LinkedList<>();
 				for (final FileChangeCoupling c : fileChangeCouplings) {
-					this.couplings.add(c.serialize(transaction));
+					serialCouplings.add(new SerialFileChangeCoupling(c));
 				}
 				try {
 					final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
-					out.writeObject(this.couplings);
+					out.writeObject(serialCouplings);
 					out.close();
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
@@ -163,45 +170,40 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
 		if (this.couplings == null) {
-			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction,
-			                                                                                                            3,
-			                                                                                                            0.1,
-			                                                                                                            this.persistenceUtil);
-			this.couplings = new LinkedList<SerialFileChangeCoupling>();
-			for (final FileChangeCoupling c : fileChangeCouplings) {
-				this.couplings.add(c.serialize(this.transaction));
-			}
+			this.couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction, 3, 0.1,
+			                                                                  this.persistenceUtil);
 		}
 		
 		if (!this.couplings.isEmpty()) {
 			
-			final List<SerialFileChangeCoupling> currentCouplings = new LinkedList<SerialFileChangeCoupling>();
+			final List<FileChangeCoupling> currentCouplings = new LinkedList<>();
 			
-			for (final SerialFileChangeCoupling c : this.couplings) {
+			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (final String fPath : c.getPremise()) {
+				for (final RCSFile file : c.getPremise()) {
+					final String fPath = file.getPath(this.transaction);
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;
 						break;
 					}
 				}
 				
-				final String iPath = c.getImplication();
+				final String iPath = c.getImplication().getPath(this.transaction);
 				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
 					currentCouplings.add(c);
 				}
 			}
 			
-			Collections.sort(currentCouplings, new Comparator<SerialFileChangeCoupling>() {
+			Collections.sort(currentCouplings, new Comparator<FileChangeCoupling>() {
 				
 				@Override
-				public int compare(final SerialFileChangeCoupling c1,
-				                   final SerialFileChangeCoupling c2) {
+				public int compare(final FileChangeCoupling c1,
+				                   final FileChangeCoupling c2) {
 					return c1.getConfidence().compareTo(c2.getConfidence());
 				}
 				
 			});
-			final SerialFileChangeCoupling coupling = this.couplings.get(0);
+			final FileChangeCoupling coupling = this.couplings.get(0);
 			if ((coupling.getSupport() >= this.minSupport) && (coupling.getConfidence() >= this.minConfidence)) {
 				score = this.couplings.get(0).getConfidence();
 			}

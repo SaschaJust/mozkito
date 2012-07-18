@@ -145,7 +145,7 @@ public class ChangeCouplings {
 			
 			final LinkedList<SerialFileChangeCoupling> couplings = new LinkedList<SerialFileChangeCoupling>();
 			for (final FileChangeCoupling c : fileChangeCouplings) {
-				couplings.add(c.serialize(transaction));
+				couplings.add(new SerialFileChangeCoupling(c));
 			}
 			
 			if (Logger.logInfo()) {

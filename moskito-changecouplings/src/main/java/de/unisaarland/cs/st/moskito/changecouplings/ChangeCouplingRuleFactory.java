@@ -103,11 +103,12 @@ public class ChangeCouplingRuleFactory {
 			final double confidence = (Double) row[3];
 			if ((support >= minSupport) && (confidence >= minConfidence)) {
 				final String[] premises = row[0].toString().replaceAll("\\{", "").replaceAll("\\}", "").split(",");
-				final Integer[] premise = new Integer[premises.length];
+				final Long[] premise = new Long[premises.length];
 				for (int i = 0; i < premises.length; ++i) {
-					premise[i] = Integer.valueOf(premises[i]);
+					premise[i] = Long.valueOf(premises[i]);
 				}
-				result.add(new FileChangeCoupling(premise, (Integer) row[1], support, confidence, persistenceUtil));
+				result.add(new FileChangeCoupling(premise, Long.valueOf(row[1].toString()), support, confidence,
+				                                  persistenceUtil));
 			}
 		}
 		

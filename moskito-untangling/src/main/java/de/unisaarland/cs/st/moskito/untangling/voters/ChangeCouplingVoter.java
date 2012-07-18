@@ -44,6 +44,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.moskito.changecouplings.model.MethodChangeCoupling;
+import de.unisaarland.cs.st.moskito.changecouplings.model.SerialMethodChangeCoupling;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
@@ -206,7 +207,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				// load serial file
 				try {
 					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
-					this.couplings = (LinkedList<MethodChangeCoupling>) in.readObject();
+					final LinkedList<SerialMethodChangeCoupling> serialCouplings = (LinkedList<SerialMethodChangeCoupling>) in.readObject();
+					this.couplings = new LinkedList<>();
+					for (final SerialMethodChangeCoupling serialC : serialCouplings) {
+						this.couplings.add(serialC.unserialize(persistenceUtil));
+					}
 					in.close();
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
@@ -229,8 +234,12 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				                                                                    new HashSet<String>(),
 				                                                                    persistenceUtil);
 				try {
+					final LinkedList<SerialMethodChangeCoupling> serialCouplings = new LinkedList<>();
+					for (final MethodChangeCoupling c : this.couplings) {
+						serialCouplings.add(new SerialMethodChangeCoupling(c));
+					}
 					final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
-					out.writeObject(this.couplings);
+					out.writeObject(serialCouplings);
 					out.close();
 				} catch (final FileNotFoundException e) {
 					if (Logger.logError()) {
