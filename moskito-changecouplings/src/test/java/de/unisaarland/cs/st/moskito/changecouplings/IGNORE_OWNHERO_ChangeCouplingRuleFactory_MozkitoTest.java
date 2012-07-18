@@ -214,5 +214,4 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Moskit
 		assertEquals(.5, rule.getConfidence().doubleValue(), 0);
 		
 	}
-	
 }

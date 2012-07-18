@@ -14,6 +14,7 @@ package de.unisaarland.cs.st.moskito.ppa.model;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -62,6 +63,21 @@ public class OpenJPA_PPA_MozkitoTest extends MoskitoTest {
 		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
 		assertEquals(1, list.size());
 		getPersistenceUtil().commitTransaction();
+	}
+	
+	@Test
+	@DatabaseSettings (unit = "ppa")
+	public void testTMP() {
+		final JavaMethodDefinition def = new JavaMethodDefinition("parenName", "methodName", new ArrayList<String>(0),
+		                                                          false);
+		getPersistenceUtil().beginTransaction();
+		getPersistenceUtil().saveOrUpdate(def);
+		final long generatedId = def.getGeneratedId();
+		getPersistenceUtil().commitTransaction();
+		final JavaElement elem = getPersistenceUtil().loadById(generatedId, JavaElement.class);
+		assert (elem != null);
+		final JavaMethodDefinition dbdef = (JavaMethodDefinition) elem;
+		assertEquals(def.getFullQualifiedName(), dbdef.getFullQualifiedName());
 	}
 	
 }

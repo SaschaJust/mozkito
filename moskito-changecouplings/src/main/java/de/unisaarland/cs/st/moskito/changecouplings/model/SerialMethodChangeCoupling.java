@@ -18,6 +18,7 @@ import java.util.Set;
 
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 
 /**
@@ -48,7 +49,8 @@ public class SerialMethodChangeCoupling implements Serializable {
 	public MethodChangeCoupling unserialize(final PersistenceUtil persistenceUtil) {
 		final Set<JavaMethodDefinition> unserPremise = new HashSet<>();
 		for (final Long id : this.premise) {
-			final JavaMethodDefinition mDef = persistenceUtil.loadById(id, JavaMethodDefinition.class);
+			final JavaElement elem = persistenceUtil.loadById(id, JavaElement.class);
+			final JavaMethodDefinition mDef = (JavaMethodDefinition) elem;
 			if (mDef == null) {
 				if (Logger.logError()) {
 					Logger.error("Could not load JavaMethodDefinition with id %s,", id);
@@ -57,8 +59,8 @@ public class SerialMethodChangeCoupling implements Serializable {
 				unserPremise.add(mDef);
 			}
 		}
-		final JavaMethodDefinition unserImplication = persistenceUtil.loadById(this.implication,
-		                                                                       JavaMethodDefinition.class);
+		final JavaElement elem = persistenceUtil.loadById(this.implication, JavaElement.class);
+		final JavaMethodDefinition unserImplication = (JavaMethodDefinition) elem;
 		return new MethodChangeCoupling(unserPremise, unserImplication, this.support, this.confidence);
 	}
 	
