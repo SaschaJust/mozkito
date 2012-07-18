@@ -36,7 +36,7 @@ public class DataDependencyVisitor extends ASTVisitor {
 	@Override
 	public void endVisit(final SimpleName sn) {
 		IBinding binding = sn.resolveBinding();
-		if (binding.getKind() == IBinding.VARIABLE) {
+		if ((binding != null) && (binding.getKind() == IBinding.VARIABLE)) {
 			IVariableBinding vBinding = (IVariableBinding) binding;
 			if (!vBinding.isParameter()) {
 				// FIELDS and LOCAL VARIABLES

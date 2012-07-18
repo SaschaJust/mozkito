@@ -13,10 +13,12 @@
 
 package de.unisaarland.cs.st.moskito.callgraph.eclipse;
 
-import net.ownhero.dev.ioda.FileUtils;
+import java.net.URL;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.framework.adaptor.ClassLoaderDelegate;
+import org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader;
 
 /**
  * This class controls all aspects of the application's execution
@@ -29,20 +31,7 @@ public class Application implements IApplication {
 	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		final String baseDir = System.getProperty("user.home") + FileUtils.fileSeparator + ".m2"
-		        + FileUtils.fileSeparator + "moskito" + FileUtils.fileSeparator + "de" + FileUtils.fileSeparator
-		        + "unisaarland" + FileUtils.fileSeparator + "cs" + FileUtils.fileSeparator + "st"
-		        + FileUtils.fileSeparator + "moskito";
-		
-		final String utils = baseDir + "-utils" + FileUtils.fileSeparator + "0.4-SNAPSHOT" + FileUtils.fileSeparator
-		        + "moskito-utils-0.4-SNAPSHOT.jar";
-		final String core = baseDir + "-rcs" + FileUtils.fileSeparator + "0.4-SNAPSHOT" + FileUtils.fileSeparator
-		        + "moskito-rcs-0.4-SNAPSHOT.jar";
-		final String ppaStr = baseDir + "-callgraph" + FileUtils.fileSeparator + "0.4-SNAPSHOT"
-		        + FileUtils.fileSeparator + "moskito-callgraph-0.4-SNAPSHOT.jar";
-		
-		System.setProperty("reposuiteClassLookup", utils + ":" + core + ":" + ppaStr);
-		
+		System.out.println(System.getProperty("java.class.path"));
 		callgraph.Main.main(new String[0]);
 		return IApplication.EXIT_OK;
 	}

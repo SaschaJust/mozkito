@@ -4,7 +4,7 @@ database.password=miner
 log.level=info
 repository.uri=/data/kim/miner_repos/apache/httpclient/httpclient_08_05_2012.git
 repository.type=GIT
-repository.mainBranch=trunk
+repository.mainBranch=origin/trunk
 headless
 
 tracker.type=JIRA
@@ -12,3 +12,4 @@ tracker.useProxy=true
 tracker.proxy.cacheDir=/scratch/kim/miner_repos/apache/httpclient/jira_cache/
 tracker.uri=https://issues.apache.org/jira/
 jira.projectKey=HTTPCLIENT
+genealogy.graphdb=/data/kim/genealogies/httpclient/may2012/

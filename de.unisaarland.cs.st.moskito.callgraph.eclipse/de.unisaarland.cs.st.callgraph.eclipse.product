@@ -12,6 +12,16 @@
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
    <plugins>
       <plugin id="ca.mcgill.cs.swevo.ppa" fragment="true"/>
       <plugin id="ca.mcgill.cs.swevo.ppa.ui"/>
