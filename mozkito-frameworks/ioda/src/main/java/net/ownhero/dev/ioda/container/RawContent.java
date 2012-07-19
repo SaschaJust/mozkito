@@ -12,7 +12,6 @@ import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Size;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -134,11 +133,11 @@ public class RawContent implements Comparable<RawContent>, Storable {
 		builder.append(this.fetchTime);
 		builder.append(", format=");
 		builder.append(this.format);
-		builder.append(", content=");
-		builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10
-		                                                                                                     ? this.content.substring(0,
-		                                                                                                                              10)
-		                                                                                                     : this.content)));
+		// builder.append(", content=");
+		// builder.append(StringEscapeUtils.escapeJava(StringEscapeUtils.unescapeHtml(this.content.length() > 10
+		// ? this.content.substring(0,
+		// 10)
+		// : this.content)));
 		builder.append("]");
 		return builder.toString();
 	}
