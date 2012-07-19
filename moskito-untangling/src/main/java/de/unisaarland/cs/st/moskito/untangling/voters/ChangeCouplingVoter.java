@@ -82,6 +82,21 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			                               this.cacheDir);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory#getVoterName()
+		 */
+		@Override
+		public String getVoterName() {
+			// PRECONDITIONS
+			
+			try {
+				return ChangeCouplingVoter.class.getSimpleName();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
 	}
 	
 	/**

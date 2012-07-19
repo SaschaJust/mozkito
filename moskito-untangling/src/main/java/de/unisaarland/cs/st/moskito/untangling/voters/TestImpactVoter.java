@@ -55,6 +55,21 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 			return new TestImpactVoter(this.testCoverageIn);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory#getVoterName()
+		 */
+		@Override
+		public String getVoterName() {
+			// PRECONDITIONS
+			
+			try {
+				return TestImpactVoter.class.getSimpleName();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
 	}
 	
 	/**

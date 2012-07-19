@@ -76,6 +76,21 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			return new DataDependencyVoter(this.eclipseDir, this.repository, transaction, this.cacheDir);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory#getVoterName()
+		 */
+		@Override
+		public String getVoterName() {
+			// PRECONDITIONS
+			
+			try {
+				return DataDependencyVoter.class.getSimpleName();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
 	}
 	
 	/**

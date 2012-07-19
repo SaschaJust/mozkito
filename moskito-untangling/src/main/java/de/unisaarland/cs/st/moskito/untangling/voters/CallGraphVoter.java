@@ -77,6 +77,21 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, transaction, this.cacheDir);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreVisitorFactory#getVoterName()
+		 */
+		@Override
+		public String getVoterName() {
+			// PRECONDITIONS
+			
+			try {
+				return CallGraphVoter.class.getSimpleName();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
 	}
 	
 	/**

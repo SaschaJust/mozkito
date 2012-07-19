@@ -253,7 +253,7 @@ public class Untangling {
 		result.add(LineDistanceVoter.class.getSimpleName());
 		result.add(FileDistanceVoter.class.getSimpleName());
 		for (final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voterFactory : this.untanglingControl.getConfidenceVoters()) {
-			result.add(voterFactory.getInnerClass().getSimpleName());
+			result.add(voterFactory.getVoterName());
 		}
 		return result;
 	}

@@ -12,8 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.voters;
 
-import java.lang.reflect.ParameterizedType;
-
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -25,7 +23,5 @@ public abstract class MultilevelClusteringScoreVisitorFactory<T extends Multilev
 	
 	public abstract T createVoter(final RCSTransaction transaction);
 	
-	public Class<?> getInnerClass() {
-		return ((ParameterizedType) this).getRawType().getClass();
-	}
+	public abstract String getVoterName();
 }
