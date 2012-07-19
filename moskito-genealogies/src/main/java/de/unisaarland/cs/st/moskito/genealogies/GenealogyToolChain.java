@@ -26,9 +26,9 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.ChangeOperationReader.Options;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
-import de.unisaarland.cs.st.moskito.rcs.BranchFactory;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 public class GenealogyToolChain extends Chain<Settings> {
@@ -37,7 +37,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgs;
 	private CoreChangeGenealogy                                      genealogy;
 	private final BooleanArgument                                    infoArgument;
-	private BooleanArgument                                          noTestArgument;
+	private Options                                                  changeOpReaderOptions;
 	
 	public GenealogyToolChain(final Settings settings) {
 		super(settings);
@@ -51,16 +51,18 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                                       "Only prints standard genealogy infos",
 			                                                                       false, Requirement.required));
 			
-			this.noTestArgument = ArgumentFactory.create(new BooleanArgument.Options(
-			                                                                         settings.getRoot(),
-			                                                                         "ignoreTests",
-			                                                                         "Set to FALSE if you want to include test cases into the genealogy graph.",
-			                                                                         true, Requirement.required));
+			ArgumentFactory.create(new BooleanArgument.Options(
+			                                                   settings.getRoot(),
+			                                                   "ignoreTests",
+			                                                   "Set to FALSE if you want to include test cases into the genealogy graph.",
+			                                                   true, Requirement.required));
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);
 			this.genealogyArgs = ArgumentSetFactory.create(genealogyOptions);
+			this.changeOpReaderOptions = new ChangeOperationReader.Options(settings.getRoot(), Requirement.required,
+			                                                               databaseOptions);
 			
 		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
@@ -90,10 +92,9 @@ public class GenealogyToolChain extends Chain<Settings> {
 		} else {
 			this.genealogy = this.genealogyArgs.getValue();
 			
-			final BranchFactory branchFactory = new BranchFactory(this.genealogy.getPersistenceUtil());
-			
-			new ChangeOperationReader(this.threadPool.getThreadGroup(), getSettings(), branchFactory,
-			                          this.noTestArgument.getValue());
+			final ChangeOperationReader changeOpReader = getSettings().getArgumentSet(this.changeOpReaderOptions)
+			                                                          .getValue();
+			new GenealogySource(this.threadPool.getThreadGroup(), getSettings(), changeOpReader);
 			new GenealogyNodePersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 			new GenealogyDependencyPersister(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
 		}
