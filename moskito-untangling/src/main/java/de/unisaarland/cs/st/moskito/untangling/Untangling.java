@@ -196,8 +196,8 @@ public class Untangling {
 	 *            the partitions
 	 * @return the int
 	 */
-	private int comparePartitions(final ArtificialBlob blob,
-	                              final Set<Set<JavaChangeOperation>> partitions) {
+	private UntanglingComparisonResult comparePartitions(final ArtificialBlob blob,
+	                                                     final Set<Set<JavaChangeOperation>> partitions) {
 		
 		Condition.check(blob.getTransactions().size() == partitions.size(),
 		                "The size of partitions in artificial blob and the size of untangled partitions must be equal.");
@@ -208,20 +208,42 @@ public class Untangling {
 		                                                                                                               partitions);
 		
 		int minDiff = Integer.MAX_VALUE;
+		double minJaccard = Double.MAX_VALUE;
+		int numCorrectPartition = 0;
+		int numFalsePartition = 0;
 		
 		while (pGen.hasMore()) {
 			final List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
 			int diff = 0;
+			double jaccard = 0d;
+			int numCorrect = 0;
+			int numFalse = 0;
+			
 			for (int i = 0; i < nextPermutation.size(); ++i) {
 				final Set<JavaChangeOperation> untangledPart = nextPermutation.get(i);
 				final List<JavaChangeOperation> originalPart = originalPartitions.get(i);
 				diff += CollectionUtils.subtract(originalPart, untangledPart).size();
+				
+				final int intersect = CollectionUtils.intersection(originalPart, untangledPart).size();
+				final int union = CollectionUtils.union(originalPart, untangledPart).size();
+				jaccard += (Integer.valueOf(intersect).doubleValue() / Integer.valueOf(union).doubleValue());
+				numCorrect += intersect;
+				numFalse += CollectionUtils.subtract(untangledPart, originalPart).size();
 			}
+			
+			jaccard = jaccard / blob.size();
+			
 			if (diff < minDiff) {
 				minDiff = diff;
 			}
+			if (jaccard < minJaccard) {
+				minJaccard = jaccard;
+				numCorrectPartition = numCorrect;
+				numFalsePartition = numFalse;
+			}
 		}
-		return minDiff;
+		
+		return new UntanglingComparisonResult(minDiff, minJaccard, numCorrectPartition, numFalsePartition, blob.size());
 	}
 	
 	/**
@@ -459,7 +481,7 @@ public class Untangling {
 		final File outFile = this.untanglingControl.getOutputFile();
 		try (FileWriter fileWriter = new FileWriter(outFile); BufferedWriter outWriter = new BufferedWriter(fileWriter);) {
 			
-			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore");
+			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore,JaccardIndex,TP,FP, Precision");
 			outWriter.append(FileUtils.lineSeparator);
 			
 			if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
@@ -521,8 +543,12 @@ public class Untangling {
 			}
 			
 			// for each artificial blob
-			final DescriptiveStatistics stat = new DescriptiveStatistics();
-			final DescriptiveStatistics relativeStat = new DescriptiveStatistics();
+			final DescriptiveStatistics diffStat = new DescriptiveStatistics();
+			final DescriptiveStatistics relativeDiffStat = new DescriptiveStatistics();
+			
+			final DescriptiveStatistics jaccardIndexStat = new DescriptiveStatistics();
+			final DescriptiveStatistics precisionStat = new DescriptiveStatistics();
+			
 			int counter = 0;
 			for (final ArtificialBlob blob : artificialBlobs) {
 				
@@ -545,18 +571,27 @@ public class Untangling {
 					
 					// compare the true and the computed partitions and score the
 					// similarity score in a descriptive statistic
-					final int diff = comparePartitions(blob, partitions);
-					stat.addValue(diff);
-					final double relDiff = ((double) diff) / ((double) blob.getAllChangeOperations().size());
-					relativeStat.addValue(relDiff);
+					final UntanglingComparisonResult diffResult = comparePartitions(blob, partitions);
+					diffStat.addValue(diffResult.getDiff());
+					relativeDiffStat.addValue(diffResult.getRelativeDiff());
+					jaccardIndexStat.addValue(diffResult.getMinJaccarIndex());
+					precisionStat.addValue(diffResult.getPrecision());
 					try {
-						outWriter.append(String.valueOf(diff));
+						outWriter.append(String.valueOf(diffResult.getDiff()));
 						outWriter.append(",");
 						outWriter.append(String.valueOf(blob.getAllChangeOperations().size()));
 						outWriter.append(",");
-						outWriter.append(String.valueOf(relDiff));
+						outWriter.append(String.valueOf(diffResult.getRelativeDiff()));
 						outWriter.append(",");
 						outWriter.append(String.valueOf(clustering.getLowestScore()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(diffResult.getMinJaccarIndex()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(diffResult.getNumCorrectPartition()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(diffResult.getNumFalsePartition()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(diffResult.getPrecision()));
 						outWriter.append(FileUtils.lineSeparator);
 					} catch (final IOException e) {
 						throw new UnrecoverableError(e.getMessage(), e);
@@ -568,14 +603,25 @@ public class Untangling {
 			
 			// report the descriptive statistics about the partition scores.
 			try {
-				outWriter.append("Avg. MissRate:" + stat.getMean());
+				outWriter.append("Avg. MissRate:" + diffStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Med. MissRate:" + stat.getPercentile(50));
+				outWriter.append("Med. MissRate:" + diffStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Avg. relative MissRate:" + relativeStat.getMean());
+				outWriter.append("Avg. relative MissRate:" + relativeDiffStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Med. relative MissRate:" + relativeStat.getPercentile(50));
+				outWriter.append("Med. relative MissRate:" + relativeDiffStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
+				
+				outWriter.append("Avg. JaccardIndex:" + jaccardIndexStat.getPercentile(50));
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Mean. JaccardIndex:" + jaccardIndexStat.getMean());
+				outWriter.append(FileUtils.lineSeparator);
+				
+				outWriter.append("Avg. Precision:" + precisionStat.getPercentile(50));
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Mean. Precision:" + precisionStat.getMean());
+				outWriter.append(FileUtils.lineSeparator);
+				
 				outWriter.append("Used transactions:");
 				for (final RCSTransaction t : usedTransactions) {
 					outWriter.append(t.getId());
