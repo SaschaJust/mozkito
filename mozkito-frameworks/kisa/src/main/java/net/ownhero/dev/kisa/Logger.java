@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -500,63 +502,112 @@ public class Logger {
 		}
 	}
 	
+	public static final boolean                          hasColorSupport     = TerminalColor.isSupported();
+	
 	/** The registered appenders. */
-	private static Set<String>                   registeredAppenders = new HashSet<String>();
+	private static Set<String>                           registeredAppenders = new HashSet<String>();
 	
 	/** The log level. */
-	private static LogLevel                      logLevel            = LogLevel.WARN;
+	private static LogLevel                              logLevel            = LogLevel.WARN;
 	
 	/** The debug enabled. */
-	private static boolean                       debugEnabled        = false;
+	private static boolean                               debugEnabled        = false;
 	
 	/** The max level. */
-	private static LogLevel                      maxLevel            = null;
+	private static LogLevel                              maxLevel            = null;
 	
 	/** The default layout. */
-	private static Layout                        defaultLayout       = new EnhancedPatternLayout(
-	                                                                                             "%d (%8r) [%t] %-5p %m%n");   //$NON-NLS-1$
-	                                                                                                                            
+	private static Layout                                defaultLayout       = new EnhancedPatternLayout(
+	                                                                                                     "%d (%8r) [%t] %-5p %m%n");   //$NON-NLS-1$
+	                                                                                                                                    
 	/** The error layout. */
-	private static Layout                        errorLayout         = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
-	                                                                         + TerminalColor.RED.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
-	                                                                                                                            
-	private static Layout                        showLayout          = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
-	                                                                         + TerminalColor.CYAN.getTag() + "ALWAYS " //$NON-NLS-1$
-	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
-	                                                                                                                            
+	private static Layout                                errorLayout         = new EnhancedPatternLayout(
+	                                                                                                     "%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                                                             + TerminalColor.RED.getTag()
+	                                                                                                             + "%-5p" //$NON-NLS-1$
+	                                                                                                             + TerminalColor.NONE.getTag()
+	                                                                                                             + " %m%n");           //$NON-NLS-1$
+	                                                                                                                                    
+	private static Layout                                showLayout          = new EnhancedPatternLayout(
+	                                                                                                     "%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                                                             + TerminalColor.CYAN.getTag()
+	                                                                                                             + "ALWAYS " //$NON-NLS-1$
+	                                                                                                             + TerminalColor.NONE.getTag()
+	                                                                                                             + " %m%n");           //$NON-NLS-1$
+	                                                                                                                                    
 	/** The warning layout. */
-	private static Layout                        warningLayout       = new EnhancedPatternLayout("%d (%8r) [%t] " //$NON-NLS-1$
-	                                                                         + TerminalColor.YELLOW.getTag() + "%-5p" //$NON-NLS-1$
-	                                                                         + TerminalColor.NONE.getTag() + " %m%n");         //$NON-NLS-1$
-	                                                                                                                            
+	private static Layout                                warningLayout       = new EnhancedPatternLayout(
+	                                                                                                     "%d (%8r) [%t] " //$NON-NLS-1$
+	                                                                                                             + TerminalColor.YELLOW.getTag()
+	                                                                                                             + "%-5p" //$NON-NLS-1$
+	                                                                                                             + TerminalColor.NONE.getTag()
+	                                                                                                             + " %m%n");           //$NON-NLS-1$
+	                                                                                                                                    
 	/** The console appenders. */
-	private static List<WriterAppender>          consoleAppenders    = new LinkedList<WriterAppender>();
+	private static List<WriterAppender>                  consoleAppenders    = new LinkedList<WriterAppender>();
 	
 	/** The show no colors layout. */
-	private static Layout                        showNoColorsLayout  = new EnhancedPatternLayout(
-	                                                                                             "%d (%8r) [%t] ALWAYS  %m%n"); //$NON-NLS-1$
-	                                                                                                                            
+	private static Layout                                showNoColorsLayout  = new EnhancedPatternLayout(
+	                                                                                                     "%d (%8r) [%t] ALWAYS  %m%n"); //$NON-NLS-1$
+	                                                                                                                                    
 	static {
 		readConfiguration();
 	}
 	
+	public static final Highlighter                      byPassHighlighter   = new Highlighter(LogLevel.ERROR,
+	                                                                                 LogLevel.TRACE) {
+		                                                                         
+		                                                                         /*
+																				  * (non-Javadoc)
+																				  * @see
+																				  * net.ownhero.dev.kisa.Highlighter
+																				  * #highlight(java.lang.String)
+																				  */
+		                                                                         @Override
+		                                                                         public String highlight(final String message) {
+			                                                                         return message;
+		                                                                         }
+		                                                                         
+		                                                                         @Override
+		                                                                         public boolean matches(final String message,
+		                                                                                                final LogLevel level,
+		                                                                                                final String origin) {
+			                                                                         return false;
+		                                                                         }
+	                                                                         };
+	
 	/** The Constant debug. */
-	public static final PrintStream              debug               = new LogStream(LogLevel.DEBUG);
+	public static final PrintStream                      debug               = new LogStream(LogLevel.DEBUG);
 	
 	/** The Constant info. */
-	public static final PrintStream              info                = new LogStream(LogLevel.INFO);
+	public static final PrintStream                      info                = new LogStream(LogLevel.INFO);
 	
 	/** The Constant warn. */
-	public static final PrintStream              warn                = new LogStream(LogLevel.WARN);
+	public static final PrintStream                      warn                = new LogStream(LogLevel.WARN);
 	
 	/** The Constant trace. */
-	public static final PrintStream              trace               = new LogStream(LogLevel.TRACE);
+	public static final PrintStream                      trace               = new LogStream(LogLevel.TRACE);
 	
 	/** The Constant error. */
-	public static final PrintStream              error               = new LogStream(LogLevel.ERROR);
+	public static final PrintStream                      error               = new LogStream(LogLevel.ERROR);
 	
-	private static final org.apache.log4j.Logger logger              = org.apache.log4j.Logger.getLogger(Logger.class);
+	private static final org.apache.log4j.Logger         logger              = org.apache.log4j.Logger.getLogger(Logger.class);
+	
+	private static final Map<LogLevel, Set<Highlighter>> highlighters        = new HashMap<LogLevel, Set<Highlighter>>();
+	
+	/**
+	 * @param highlighter
+	 */
+	public static final void addHighlighter(final Highlighter highlighter) {
+		final LogLevel[] values = LogLevel.values();
+		
+		for (int i = highlighter.getMin().ordinal(); i <= highlighter.getMax().ordinal(); ++i) {
+			if (!highlighters.containsKey(values[i])) {
+				highlighters.put(values[i], new HashSet<Highlighter>());
+			}
+			highlighters.get(values[i]).add(highlighter);
+		}
+	}
 	
 	/**
 	 * requests the logger for the calling instance and the classname::methodname#linenumber tag and uses this
@@ -715,12 +766,16 @@ public class Logger {
 		
 		if (throwable != null) {
 			if (arguments.length > 0) {
-				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, String.format(message, arguments),
+				final String logString = String.format(message, arguments);
+				final Highlighter highlighter = getHighlighter(logString, LogLevel.DEBUG, prefix);
+				
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, highlighter.highlight(logString),
 				                                 throwable.getMessage() != null
 				                                                               ? throwable.getMessage()
 				                                                               : "(null)");
 			} else if (message != null) {
-				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, message,
+				final Highlighter highlighter = getHighlighter(message, LogLevel.DEBUG, prefix);
+				formattedMessage = String.format("%s%s [[Message: %s]]", prefix, highlighter.highlight(message),
 				                                 throwable.getMessage() != null
 				                                                               ? throwable.getMessage()
 				                                                               : "(null)");
@@ -733,9 +788,14 @@ public class Logger {
 			log.debug(formattedMessage, throwable);
 		} else {
 			if (arguments.length > 0) {
-				formattedMessage = String.format("%s%s", prefix, String.format(message, arguments));
+				final String logString = String.format(message, arguments);
+				final Highlighter highlighter = getHighlighter(logString, LogLevel.DEBUG, prefix);
+				
+				formattedMessage = String.format("%s%s", prefix, highlighter.highlight(logString));
 			} else if (message != null) {
-				formattedMessage = String.format("%s%s", prefix, message);
+				final Highlighter highlighter = getHighlighter(message, LogLevel.DEBUG, prefix);
+				
+				formattedMessage = String.format("%s%s", prefix, highlighter.highlight(message));
 			} else {
 				formattedMessage = String.format("%sERROR", prefix);
 			}
@@ -967,6 +1027,20 @@ public class Logger {
 	                         final String message,
 	                         final Object... arguments) {
 		error(3, throwable, message, arguments);
+	}
+	
+	private static final Highlighter getHighlighter(final String logString,
+	                                                final LogLevel level,
+	                                                final String prefix) {
+		if (hasColorSupport && highlighters.containsKey(LogLevel.DEBUG)) {
+			for (final Highlighter h : highlighters.get(LogLevel.DEBUG)) {
+				if (h.matches(logString, LogLevel.DEBUG, prefix)) {
+					return h;
+				}
+			}
+		}
+		
+		return byPassHighlighter;
 	}
 	
 	/**
