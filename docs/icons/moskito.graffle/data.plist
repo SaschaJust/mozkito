@@ -55,7 +55,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2012-07-05 15:07:56 +0000</string>
+	<string>2012-07-18 11:38:11 +0000</string>
 	<key>Modifier</key>
 	<string>Sascha Just</string>
 	<key>NotesVisible</key>
@@ -7580,13 +7580,13 @@
 			<array>
 				<dict>
 					<key>Lock</key>
-					<string>YES</string>
+					<string>NO</string>
 					<key>Name</key>
 					<string>mozkito</string>
 					<key>Print</key>
 					<string>YES</string>
 					<key>View</key>
-					<string>YES</string>
+					<string>NO</string>
 				</dict>
 				<dict>
 					<key>Lock</key>

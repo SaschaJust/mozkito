@@ -22,9 +22,8 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.Feature;
 
 /**
  * The Class TotalAggreementStrategy.
@@ -92,11 +91,11 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public IMapping map(final Mapping mapping) {
+	public Composite map(final Composite composite) {
 		int value = 0;
 		
-		final Queue<MappingEngineFeature> features = mapping.getFeatures();
-		for (final MappingEngineFeature feature : features) {
+		final Queue<Feature> features = composite.getRelation().getFeatures();
+		for (final Feature feature : features) {
 			final int cache = Double.compare(feature.getConfidence(), 0.0d);
 			if (Math.abs(value - cache) > 1) {
 				value = 0;
@@ -106,14 +105,14 @@ public class TotalAggreementStrategy extends MappingStrategy {
 		}
 		
 		if (value > 0) {
-			mapping.addStrategy(getHandle(), true);
+			composite.addStrategy(getHandle(), true);
 		} else if (value < 0) {
-			mapping.addStrategy(getHandle(), false);
+			composite.addStrategy(getHandle(), false);
 		} else {
-			mapping.addStrategy(getHandle(), null);
+			composite.addStrategy(getHandle(), null);
 		}
 		
-		return mapping;
+		return composite;
 	}
 	
 }

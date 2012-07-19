@@ -101,6 +101,12 @@ public class MappableTransaction extends MappableEntity {
 				return getTransaction().getMessage();
 			case ID:
 				return getId();
+			case CHANGER:
+				return getTransaction().getAuthor();
+			case COMMENT:
+				return getTransaction().getMessage();
+			case MODIFICATION_TIMESTAMP:
+				return getTransaction().getTimestamp();
 			default:
 				return null;
 		}

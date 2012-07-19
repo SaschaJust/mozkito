@@ -29,7 +29,7 @@ import org.joda.time.DateTime;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -180,7 +180,7 @@ public class CreationOrderEngine extends MappingEngine {
 	@Override
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
-	                  final Mapping score) {
+	                  final Relation score) {
 		double localConfidence = 0d;
 		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
 			localConfidence = getConfidence();

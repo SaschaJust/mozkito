@@ -44,7 +44,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -303,11 +303,11 @@ public abstract class MappingEngine extends Node {
 	private ISettings settings;
 	
 	/**
-	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
+	 * Using this method, one can add features to a given {@link Relation}. The given score will be manipulated using the
 	 * values given. The values are automatically <code>null</code> checked and truncated if needed.
 	 * 
 	 * @param score
-	 *            the {@link Mapping} a new feature shall be added
+	 *            the {@link Relation} a new feature shall be added
 	 * @param confidence
 	 *            a confidence value representing the impact of the feature
 	 * @param fromFieldName
@@ -325,7 +325,7 @@ public abstract class MappingEngine extends Node {
 	 *            the particular substring of the field (see {@link FieldKey}) of the "to" entity that caused this
 	 *            feature
 	 */
-	public final void addFeature(@NotNull final Mapping score,
+	public final void addFeature(@NotNull final Relation score,
 	                             final double confidence,
 	                             @NotNull @NotEmpty final String fromFieldName,
 	                             final Object fromFieldContent,
@@ -381,12 +381,12 @@ public abstract class MappingEngine extends Node {
 	 * @param to
 	 *            the 'to' entity
 	 * @param score
-	 *            the actual {@link Mapping} that will be manipulated by this method
+	 *            the actual {@link Relation} that will be manipulated by this method
 	 */
 	@NoneNull
 	public abstract void score(final MappableEntity from,
 	                           final MappableEntity to,
-	                           final Mapping score);
+	                           final Relation score);
 	
 	/**
 	 * Sets the settings.

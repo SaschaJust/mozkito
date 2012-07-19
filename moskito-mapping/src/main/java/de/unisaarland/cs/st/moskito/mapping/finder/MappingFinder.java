@@ -23,14 +23,13 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
-import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
+import de.unisaarland.cs.st.moskito.mapping.filters.Filter;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
-import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.storages.MappingStorage;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
@@ -49,10 +48,10 @@ public class MappingFinder {
 	private final Map<String, MappingEngine>                             engines    = new HashMap<String, MappingEngine>();
 	
 	/** The filters. */
-	private final Map<Class<? extends MappingFilter>, MappingFilter>     filters    = new HashMap<Class<? extends MappingFilter>, MappingFilter>();
+	private final Map<Class<? extends Filter>, Filter>                   filters    = new HashMap<Class<? extends Filter>, Filter>();
 	
 	/** The selectors. */
-	private final Map<Class<? extends MappingSelector>, MappingSelector> selectors  = new HashMap<Class<? extends MappingSelector>, MappingSelector>();
+	private final Map<Class<? extends Selector>, Selector>               selectors  = new HashMap<Class<? extends Selector>, Selector>();
 	
 	/** The splitters. */
 	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
@@ -95,7 +94,7 @@ public class MappingFinder {
 	 * @param filter
 	 *            the filter
 	 */
-	public void addFilter(final MappingFilter filter) {
+	public void addFilter(final Filter filter) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available filters.", filter.getHandle());
 		}
@@ -111,7 +110,7 @@ public class MappingFinder {
 	 * @param selector
 	 *            the selector
 	 */
-	public void addSelector(final MappingSelector selector) {
+	public void addSelector(final Selector selector) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available selectors.", selector.getHandle());
 		}
@@ -183,18 +182,18 @@ public class MappingFinder {
 	/**
 	 * Filter.
 	 * 
-	 * @param mapping
+	 * @param composite
 	 *            the mapping
 	 * @return the filtered mapping
 	 */
-	public FilteredMapping filter(final IMapping mapping) {
-		final Set<MappingFilter> triggeringFilters = new HashSet<MappingFilter>();
+	public FilteredMapping filter(final Composite composite) {
+		final Set<Filter> triggeringFilters = new HashSet<Filter>();
 		
-		for (final MappingFilter filter : this.filters.values()) {
-			filter.filter(mapping, triggeringFilters);
+		for (final Filter filter : this.filters.values()) {
+			filter.filter(composite, triggeringFilters);
 		}
 		
-		final FilteredMapping filteredMapping = new FilteredMapping(mapping, triggeringFilters);
+		final FilteredMapping filteredMapping = new FilteredMapping(composite, triggeringFilters);
 		return filteredMapping;
 	}
 	
@@ -211,14 +210,14 @@ public class MappingFinder {
 	 *            the to clazz
 	 * @return the list
 	 */
-	private <K, V> List<MappingSelector> findSelectors(final Class<K> fromClazz,
-	                                                   final Class<V> toClazz) {
-		final List<MappingSelector> list = new LinkedList<MappingSelector>();
+	private <K, V> List<Selector> findSelectors(final Class<K> fromClazz,
+	                                            final Class<V> toClazz) {
+		final List<Selector> list = new LinkedList<Selector>();
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Looking up selector for '%s'<->'%s'.", fromClazz.getSimpleName(), toClazz.getSimpleName());
 		}
-		for (final Class<? extends MappingSelector> klass : this.selectors.keySet()) {
+		for (final Class<? extends Selector> klass : this.selectors.keySet()) {
 			try {
 				if (Logger.logDebug()) {
 					Logger.debug("Checking for compatibility: '%s'", klass.getSimpleName());
@@ -265,10 +264,10 @@ public class MappingFinder {
 		final Set<T> candidates = new HashSet<T>();
 		
 		try {
-			final List<MappingSelector> activeSelectors = findSelectors(source.getBaseType(),
-			                                                            ((MappableEntity) targetClass.newInstance()).getBaseType());
+			final List<Selector> activeSelectors = findSelectors(source.getBaseType(),
+			                                                     ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
-			for (final MappingSelector selector : activeSelectors) {
+			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {
 					Logger.debug("Using selector '%s' on '%s' with target type '%s'.", selector.getHandle(),
 					             source.getHandle(), targetClass);
@@ -299,7 +298,7 @@ public class MappingFinder {
 	/**
 	 * @return the filters
 	 */
-	public final Map<Class<? extends MappingFilter>, MappingFilter> getFilters() {
+	public final Map<Class<? extends Filter>, Filter> getFilters() {
 		// PRECONDITIONS
 		
 		try {
@@ -313,7 +312,7 @@ public class MappingFinder {
 	/**
 	 * @return the selectors
 	 */
-	public final Map<Class<? extends MappingSelector>, MappingSelector> getSelectors() {
+	public final Map<Class<? extends Selector>, Selector> getSelectors() {
 		// PRECONDITIONS
 		
 		try {
@@ -397,18 +396,18 @@ public class MappingFinder {
 	 * 
 	 * @param strategy
 	 *            the strategy
-	 * @param mapping
+	 * @param composite
 	 *            the mapping
 	 * @return the mapping
 	 */
-	public Mapping map(final MappingStrategy strategy,
-	                   final Mapping mapping) {
+	public Composite map(final MappingStrategy strategy,
+	                     final Composite composite) {
 		if (Logger.logDebug()) {
 			Logger.debug("Mapping with strategy: " + strategy.getHandle());
 		}
-		strategy.map(mapping);
+		strategy.map(composite);
 		
-		return mapping;
+		return composite;
 		
 	}
 	
@@ -446,8 +445,8 @@ public class MappingFinder {
 	 *            the element2
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public Mapping score(final MappingEngine engine,
-	                     final Mapping score) {
+	public Relation score(final MappingEngine engine,
+	                      final Relation score) {
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Scoring with engine: " + engine.getHandle());
@@ -459,8 +458,8 @@ public class MappingFinder {
 			        + " returns NULL when asked for supported fields.");
 		}
 		
-		final MappableEntity element1 = score.getElement1();
-		final MappableEntity element2 = score.getElement2();
+		final MappableEntity element1 = score.getFrom();
+		final MappableEntity element2 = score.getTo();
 		
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		

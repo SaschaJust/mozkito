@@ -25,7 +25,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -184,7 +184,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
-	                        final Mapping score) {
+	                        final Relation score) {
 		double localConfidence = 0d;
 		
 		// check if the values in the author fields are equal

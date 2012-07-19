@@ -38,7 +38,7 @@ import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -284,7 +284,7 @@ public class RegexEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity element1,
 	                        final MappableEntity element2,
-	                        final Mapping score) {
+	                        final Relation score) {
 		double value = 0d;
 		String relevantString = ""; //$NON-NLS-1$
 		

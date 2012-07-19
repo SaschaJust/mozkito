@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -180,7 +180,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
-	                        final Mapping score) {
+	                        final Relation score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;

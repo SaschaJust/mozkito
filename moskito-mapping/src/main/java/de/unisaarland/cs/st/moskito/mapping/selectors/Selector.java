@@ -41,8 +41,8 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
@@ -53,13 +53,13 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public abstract class MappingSelector extends Node {
+public abstract class Selector extends Node {
 	
 	/**
 	 * The Class Options.
 	 */
 	public static class Options extends
-	        ArgumentSetOptions<Set<MappingSelector>, ArgumentSet<Set<MappingSelector>, Options>> {
+	        ArgumentSetOptions<Set<Selector>, ArgumentSet<Set<Selector>, Options>> {
 		
 		/** The Constant TAG. */
 		static final String                                                                                   TAG             = "selectors";                                      //$NON-NLS-1$
@@ -71,7 +71,7 @@ public abstract class MappingSelector extends Node {
 		private SetArgument.Options                                                                           enabledSelectorsOption;
 		
 		/** The selector options. */
-		private final Map<Class<? extends MappingSelector>, ArgumentSetOptions<? extends MappingSelector, ?>> selectorOptions = new HashMap<>();
+		private final Map<Class<? extends Selector>, ArgumentSetOptions<? extends Selector, ?>> selectorOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -91,9 +91,9 @@ public abstract class MappingSelector extends Node {
 		 */
 		@SuppressWarnings ({ "rawtypes", "unchecked" })
 		@Override
-		public Set<MappingSelector> init() {
+		public Set<Selector> init() {
 			// PRECONDITIONS
-			final Set<MappingSelector> set = new HashSet<MappingSelector>();
+			final Set<Selector> set = new HashSet<Selector>();
 			
 			try {
 				
@@ -105,9 +105,9 @@ public abstract class MappingSelector extends Node {
 						Logger.debug("Processing selector enabler '%s'.", name);
 					}
 					
-					Class<? extends MappingSelector> clazz;
+					Class<? extends Selector> clazz;
 					try {
-						clazz = (Class<? extends MappingSelector>) Class.forName(MappingSelector.class.getPackage()
+						clazz = (Class<? extends Selector>) Class.forName(Selector.class.getPackage()
 						                                                                              .getName()
 						        + '.'
 						        + name);
@@ -116,7 +116,7 @@ public abstract class MappingSelector extends Node {
 						
 					}
 					
-					final ArgumentSetOptions<? extends MappingSelector, ?> options = this.selectorOptions.get(clazz);
+					final ArgumentSetOptions<? extends Selector, ?> options = this.selectorOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn("Selector '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
@@ -125,8 +125,8 @@ public abstract class MappingSelector extends Node {
 						}
 						
 					} else {
-						final ArgumentSet<? extends MappingSelector, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
-						final MappingSelector selector = argumentSet.getValue();
+						final ArgumentSet<? extends Selector, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						final Selector selector = argumentSet.getValue();
 						if (Logger.logDebug()) {
 							Logger.debug("Adding configured selector '%s'.", selector);
 						}
@@ -157,15 +157,15 @@ public abstract class MappingSelector extends Node {
 				
 				try {
 					// first off, find all implemented selectors
-					final Collection<Class<? extends MappingSelector>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     MappingSelector.class,
+					final Collection<Class<? extends Selector>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                                     Selector.class,
 					                                                                                                     Modifier.ABSTRACT
 					                                                                                                             | Modifier.INTERFACE
 					                                                                                                             | Modifier.PRIVATE
 					                                                                                                             | Modifier.PROTECTED);
 					
 					// first compute the default value for the selector enabler option, i.e., all implemented selectors
-					for (final Class<? extends MappingSelector> selectorClass : collection) {
+					for (final Class<? extends Selector> selectorClass : collection) {
 						defaultSet.add(selectorClass.getSimpleName());
 					}
 					
@@ -176,11 +176,11 @@ public abstract class MappingSelector extends Node {
 					                                                      defaultSet, Requirement.required);
 					
 					// iterate over the selector classes to process dependencies
-					for (final Class<? extends MappingSelector> selectorClass : collection) {
+					for (final Class<? extends Selector> selectorClass : collection) {
 						// loading of selectors is in the responsibility of the direct parent class, thus we only
 						// process
 						// mapping classes of direct extensions of MappingSelector
-						if (selectorClass.getSuperclass() == MappingSelector.class) {
+						if (selectorClass.getSuperclass() == Selector.class) {
 							// MappingSelectors have to encapsulate their initializer/options. fetch them first.
 							final Class<?>[] declaredClasses = selectorClass.getDeclaredClasses();
 							
@@ -191,13 +191,13 @@ public abstract class MappingSelector extends Node {
 									
 									// fetch constructor of the options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingSelector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingSelector, ?>>) selectorOptionClass.getDeclaredConstructor(ArgumentSet.class,
+									final Constructor<ArgumentSetOptions<? extends Selector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Selector, ?>>) selectorOptionClass.getDeclaredConstructor(ArgumentSet.class,
 									                                                                                                                                                                                             Requirement.class);
 									
 									// instantiate the options and set to required if enabledSelectorsOptions contains
 									// the
 									// simple classname of the selector under suspect, i.e., c.getSimpleName()
-									final ArgumentSetOptions<? extends MappingSelector, ?> selectorOption = constructor.newInstance(set,
+									final ArgumentSetOptions<? extends Selector, ?> selectorOption = constructor.newInstance(set,
 									                                                                                                Requirement.contains(this.enabledSelectorsOption,
 									                                                                                                                     selectorClass.getSimpleName()));
 									
@@ -213,7 +213,7 @@ public abstract class MappingSelector extends Node {
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            selectorClass.getSimpleName(), MappingSelector.class.getSimpleName(),
+								            selectorClass.getSimpleName(), Selector.class.getSimpleName(),
 								            selectorClass.getSuperclass().getSimpleName());
 							}
 						}
@@ -243,7 +243,7 @@ public abstract class MappingSelector extends Node {
 	 */
 	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
 		
-		return new MappingSelector.Options(set, Requirement.required);
+		return new Selector.Options(set, Requirement.required);
 	}
 	
 	/** The settings. */
@@ -268,11 +268,11 @@ public abstract class MappingSelector extends Node {
 	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
 	                                                                              ArgumentSetRegistrationException,
 	                                                                              ArgumentRegistrationException {
-		ArgumentSet<?, ?> anchor = settings.getAnchor(MappingSelector.Options.TAG);
+		ArgumentSet<?, ?> anchor = settings.getAnchor(Selector.Options.TAG);
 		
 		if (anchor == null) {
 			if (this.options == null) {
-				this.options = new MappingSelector.Options(settings.getRoot(), Requirement.required);
+				this.options = new Selector.Options(settings.getRoot(), Requirement.required);
 			}
 			anchor = ArgumentSetFactory.create(this.options);
 		}

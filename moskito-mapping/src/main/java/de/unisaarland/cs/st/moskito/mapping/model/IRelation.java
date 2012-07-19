@@ -12,11 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.model;
 
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 
 /**
@@ -24,67 +19,55 @@ import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public interface IMapping extends Comparable<IMapping> {
+public interface IRelation extends Comparable<IRelation> {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public abstract int compareTo(final IMapping arg0);
+	int compareTo(final IRelation arg0);
+	
+	/**
+	 * Gets the candidate.
+	 * 
+	 * @return the candidate
+	 */
+	Candidate getCandidate();
 	
 	/**
 	 * Gets the class1.
 	 * 
 	 * @return the class1
 	 */
-	public abstract String getClass1();
+	String getClass1();
 	
 	/**
 	 * Gets the class2.
 	 * 
 	 * @return the class2
 	 */
-	public abstract String getClass2();
+	String getClass2();
 	
 	/**
 	 * Gets the element1.
 	 * 
 	 * @return the element1
 	 */
-	@ManyToOne (fetch = FetchType.EAGER)
-	public abstract MappableEntity getElement1();
+	MappableEntity getFrom();
 	
 	/**
 	 * Gets the element2.
 	 * 
 	 * @return the element2
 	 */
-	@ManyToOne (fetch = FetchType.EAGER)
-	public abstract MappableEntity getElement2();
-	
-	/**
-	 * Gets the from id.
-	 * 
-	 * @return the from id
-	 */
-	@Id
-	public abstract String getFromId();
-	
-	/**
-	 * Gets the to id.
-	 * 
-	 * @return the to id
-	 */
-	@Id
-	public abstract String getToId();
+	MappableEntity getTo();
 	
 	/**
 	 * Gets the total confidence.
 	 * 
 	 * @return the totalConfidence
 	 */
-	@Basic
-	public abstract double getTotalConfidence();
+	double getTotalConfidence();
 	
 }

@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -223,7 +223,7 @@ public class ReportTypeEngine extends MappingEngine {
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final Mapping score) {
+	                  final Relation score) {
 		if (element1 instanceof MappableReport) {
 			if (element1.get(FieldKey.TYPE) == getType()) {
 				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),

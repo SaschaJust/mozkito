@@ -22,7 +22,7 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
 import de.unisaarland.cs.st.moskito.mapping.requirements.ByPass;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -31,18 +31,26 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ByPassFilter extends MappingFilter {
+public class ByPassFilter extends Filter {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
 		
+		/** The Constant TAG. */
 		private static final String TAG         = "byPass";
+		
+		/** The Constant DESCRIPTION. */
 		private static final String DESCRIPTION = "...";
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, TAG, DESCRIPTION, requirements);
@@ -82,17 +90,25 @@ public class ByPassFilter extends MappingFilter {
 		
 	}
 	
+	/** The Constant DESCRIPTION. */
 	public static final String DESCRIPTION = "Does not filter at all (by-passing).";
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
-	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.filters.Filter#filter(de.unisaarland.cs.st.moskito.mapping.model.Composite,
+	 * java.util.Set)
 	 */
 	@Override
-	public Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                           final Set<MappingFilter> triggeringFilters) {
-		return triggeringFilters;
+	public Set<? extends Filter> filter(final Composite composite,
+	                                    final Set<Filter> triggeringFilters) {
+		// PRECONDITIONS
+		
+		try {
+			return triggeringFilters;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*

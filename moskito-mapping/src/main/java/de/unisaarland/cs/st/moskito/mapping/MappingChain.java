@@ -26,7 +26,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
@@ -49,7 +49,7 @@ public class MappingChain extends Chain<Settings> {
 	 */
 	public MappingChain(final Settings settings) {
 		super(settings, "mapping"); //$NON-NLS-1$
-		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
+		this.threadPool = new Pool(Relation.class.getSimpleName(), this);
 		
 		try {
 			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$

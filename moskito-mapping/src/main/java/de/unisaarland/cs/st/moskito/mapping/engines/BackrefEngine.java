@@ -25,7 +25,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -177,7 +177,7 @@ public class BackrefEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity element1,
 	                        final MappableEntity element2,
-	                        final Mapping score) {
+	                        final Relation score) {
 		final String fullText = element2.getText();
 		final String id = element1.getId();
 		

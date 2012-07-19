@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Embeddable
-public class MappingEngineFeature implements Annotated {
+public class Feature implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long                                        serialVersionUID = 4097360257338824107L;
@@ -58,7 +58,7 @@ public class MappingEngineFeature implements Annotated {
 	/**
 	 * used by persistence provider only.
 	 */
-	public MappingEngineFeature() {
+	Feature() {
 	}
 	
 	/**
@@ -77,8 +77,8 @@ public class MappingEngineFeature implements Annotated {
 	 * @param mappingEngine
 	 *            the mapping engine
 	 */
-	public MappingEngineFeature(final double confidence, final String fromFieldName, final String fromSubstring,
-	        final String toFieldName, final String toSubstring, final Class<? extends MappingEngine> mappingEngine) {
+	Feature(final double confidence, final String fromFieldName, final String fromSubstring, final String toFieldName,
+	        final String toSubstring, final Class<? extends MappingEngine> mappingEngine) {
 		setConfidence(confidence);
 		setFromFieldName(fromFieldName);
 		setFromSubstring(fromSubstring);

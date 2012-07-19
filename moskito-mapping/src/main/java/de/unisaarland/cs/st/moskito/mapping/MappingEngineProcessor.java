@@ -19,14 +19,14 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 
 /**
  * The Class MappingEngineProcessor.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MappingEngineProcessor extends Filter<Mapping> {
+public class MappingEngineProcessor extends Filter<Relation> {
 	
 	/**
 	 * Instantiates a new mapping engine processor.
@@ -44,18 +44,18 @@ public class MappingEngineProcessor extends Filter<Mapping> {
 	        final MappingEngine engine) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<Mapping, Mapping>(this) {
+		new ProcessHook<Relation, Relation>(this) {
 			
 			@Override
 			public void process() {
-				final Mapping candidate = getInputData();
+				final Relation candidate = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("[%s] Processing mapping for '%s' -> '%s'.", engine.getHandle(),
-					             candidate.getElement1(), candidate.getElement2());
+					             candidate.getFrom(), candidate.getTo());
 				}
 				
-				final Mapping score = finder.score(engine, candidate);
+				final Relation score = finder.score(engine, candidate);
 				
 				provideOutputData(score);
 				

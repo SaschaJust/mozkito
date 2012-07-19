@@ -43,7 +43,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class TransactionRegexSelector extends MappingSelector {
+public class TransactionRegexSelector extends Selector {
 	
 	public static final class Options extends
 	        ArgumentSetOptions<TransactionRegexSelector, ArgumentSet<TransactionRegexSelector, Options>> {

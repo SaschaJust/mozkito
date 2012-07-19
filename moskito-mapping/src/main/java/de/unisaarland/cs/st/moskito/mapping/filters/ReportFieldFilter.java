@@ -27,7 +27,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.EnhancedReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.Messages;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -37,7 +37,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ReportFieldFilter extends MappingFilter {
+public class ReportFieldFilter extends Filter {
 	
 	public static final class Options extends
 	        ArgumentSetOptions<ReportFieldFilter, ArgumentSet<ReportFieldFilter, Options>> {
@@ -123,9 +123,9 @@ public class ReportFieldFilter extends MappingFilter {
 	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
 	 */
 	@Override
-	public Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                           final Set<MappingFilter> triggeringFilters) {
-		if (mapping.getElement1().get(FieldKey.TYPE).equals(this.type)) {
+	public Set<? extends Filter> filter(final Composite composite,
+	                                    final Set<Filter> triggeringFilters) {
+		if (composite.getTo().get(FieldKey.TYPE).equals(this.type)) {
 			triggeringFilters.add(this);
 		}
 		return triggeringFilters;

@@ -7,15 +7,15 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 
 /**
  * The Class CandidatesConverter.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class CandidatesConverter extends Transformer<Candidate, Mapping> {
+public class CandidatesConverter extends Transformer<Candidate, Relation> {
 	
 	/**
 	 * Instantiates a new candidates converter.
@@ -28,12 +28,12 @@ public class CandidatesConverter extends Transformer<Candidate, Mapping> {
 	public CandidatesConverter(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<Candidate, Mapping>(this) {
+		new ProcessHook<Candidate, Relation>(this) {
 			
 			@Override
 			public void process() {
 				final Candidate data = getInputData();
-				provideOutputData(new Mapping(data.getFrom(), data.getTo()), true);
+				provideOutputData(new Relation(data.getFrom(), data.getTo()), true);
 			}
 		};
 	}

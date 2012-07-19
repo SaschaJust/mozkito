@@ -14,11 +14,11 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
-import de.unisaarland.cs.st.moskito.mapping.elements.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
+import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**

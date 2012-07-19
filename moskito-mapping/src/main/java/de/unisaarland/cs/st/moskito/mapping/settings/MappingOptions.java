@@ -31,9 +31,9 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine.Options;
-import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
+import de.unisaarland.cs.st.moskito.mapping.filters.Filter;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
@@ -68,10 +68,10 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
 	
 	/** The filters. */
-	private final Set<MappingFilter>   filters     = new HashSet<MappingFilter>();
+	private final Set<Filter>   filters     = new HashSet<Filter>();
 	
 	/** The selectors. */
-	private final Set<MappingSelector> selectors   = new HashSet<MappingSelector>();
+	private final Set<Selector> selectors   = new HashSet<Selector>();
 	
 	/** The splitters. */
 	private final Set<MappingSplitter> splitters   = new HashSet<MappingSplitter>();
@@ -80,7 +80,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
 	private MappingEngine.Options      engineOptions;
 	private TupleArgument.Options      sourceOptions;
-	private MappingSelector.Options    selectorOptions;
+	private Selector.Options    selectorOptions;
 	
 	/**
 	 * @param argumentSet
@@ -106,7 +106,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the filters
 	 */
-	public final Set<MappingFilter> getFilters() {
+	public final Set<Filter> getFilters() {
 		return this.filters;
 	}
 	
@@ -115,7 +115,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the selectors
 	 */
-	public final Set<MappingSelector> getSelectors() {
+	public final Set<Selector> getSelectors() {
 		return this.selectors;
 	}
 	
@@ -169,12 +169,12 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			finder.addStrategy(strategy);
 		}
 		
-		for (final MappingFilter filter : this.filters) {
+		for (final Filter filter : this.filters) {
 			finder.addFilter(filter);
 		}
 		
-		final ArgumentSet<Set<MappingSelector>, MappingSelector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
-		for (final MappingSelector selector : selectorArgument.getValue()) {
+		final ArgumentSet<Set<Selector>, Selector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
+		for (final Selector selector : selectorArgument.getValue()) {
 			finder.addSelector(selector);
 		}
 		
@@ -214,7 +214,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			this.engineOptions = MappingEngine.getOptions(set);
 			map.put(this.engineOptions.getName(), this.engineOptions);
 			
-			this.selectorOptions = MappingSelector.getOptions(set);
+			this.selectorOptions = Selector.getOptions(set);
 			map.put(this.selectorOptions.getName(), this.selectorOptions);
 			
 			return map;

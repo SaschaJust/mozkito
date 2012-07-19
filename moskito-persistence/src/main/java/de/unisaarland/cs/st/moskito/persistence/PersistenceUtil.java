@@ -72,8 +72,8 @@ public interface PersistenceUtil {
 	public <T> List<T> load(final Criteria<T> criteria,
 	                        int sizeLimit);
 	
-	public <T, I> T loadById(final I id,
-	                         Class<T> clazz);
+	public <T extends Annotated> T loadById(final Object id,
+	                                        Class<T> clazz);
 	
 	public void rollbackTransaction();
 	

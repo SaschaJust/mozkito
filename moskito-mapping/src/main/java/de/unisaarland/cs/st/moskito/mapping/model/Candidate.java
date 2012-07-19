@@ -10,11 +10,15 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *****************************************************************************/
-package de.unisaarland.cs.st.moskito.mapping.elements;
+package de.unisaarland.cs.st.moskito.mapping.model;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 
 /**
  * This class represents a potential mapping pair and thus encapsulates to {@link MappableEntity}s. {@link Candidate}s
@@ -31,15 +35,33 @@ public class Candidate {
 	/** a potential target. */
 	MappableEntity to;
 	
+	/** The preselectors. */
+	Set<String>    selectors = new HashSet<>();
+	
 	/**
 	 * Instantiates a new candidate.
 	 * 
 	 * @param candidatePair
 	 *            a {@link Tuple} representing the pair (from/to)
+	 * @param selector
+	 *            the selector
 	 */
-	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair) {
+	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair,
+	        final Selector selector) {
 		this.from = candidatePair.getFirst();
 		this.to = candidatePair.getSecond();
+		this.selectors.add(selector.getHandle());
+	}
+	
+	/**
+	 * Adds the selector.
+	 * 
+	 * @param selector
+	 *            the selector
+	 * @return true, if successful
+	 */
+	public boolean addSelector(final Selector selector) {
+		return this.selectors.add(selector.getHandle());
 	}
 	
 	/*

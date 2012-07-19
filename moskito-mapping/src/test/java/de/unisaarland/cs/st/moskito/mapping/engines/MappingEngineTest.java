@@ -55,8 +55,8 @@ import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
+import de.unisaarland.cs.st.moskito.mapping.model.Feature;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
@@ -78,7 +78,7 @@ public class MappingEngineTest {
 	static Report              report;
 	
 	/** The score. */
-	static Mapping             score;
+	static Relation             score;
 	
 	/** The transaction. */
 	static RCSTransaction      transaction;
@@ -186,7 +186,7 @@ public class MappingEngineTest {
 		final MappingFinder mappingFinder = mappingArguments.getValue();
 		this.engines = mappingFinder.getEngines().values();
 		
-		score = new Mapping(mappableReport, mappableTransaction);
+		score = new Relation(mappableReport, mappableTransaction);
 	}
 	
 	/**
@@ -200,7 +200,7 @@ public class MappingEngineTest {
 				System.err.println(this.settings.toString());
 				
 				engine.score(mappableReport, mappableTransaction, score);
-				MappingEngineFeature feature = score.getFeatures().iterator().next();
+				Feature feature = score.getFeatures().iterator().next();
 				double confidence = feature.getConfidence();
 				System.err.println(confidence);
 				System.err.println(engine.getConfidence());
@@ -210,7 +210,7 @@ public class MappingEngineTest {
 				System.err.println(feature.getTransactionSubstring());
 				assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence, 0.0001);
 				
-				score = new Mapping(mappableTransaction, mappableReport);
+				score = new Relation(mappableTransaction, mappableReport);
 				engine.score(mappableTransaction, mappableReport, score);
 				feature = score.getFeatures().iterator().next();
 				confidence = feature.getConfidence();
