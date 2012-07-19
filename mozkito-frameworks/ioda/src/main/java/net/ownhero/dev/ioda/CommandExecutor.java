@@ -113,9 +113,8 @@ public class CommandExecutor extends Thread {
 		 * mappings.
 		 */
 		if ((environment != null) && (environment.keySet().size() > 0)) {
-			final Map<String, String> actualEnvironment = processBuilder.environment();
 			for (final String environmentVariable : environment.keySet()) {
-				actualEnvironment.put(environmentVariable, environment.get(environmentVariable));
+				processBuilder.environment().put(environmentVariable, environment.get(environmentVariable));
 			}
 		}
 		
@@ -127,9 +126,7 @@ public class CommandExecutor extends Thread {
 			                      : "(null)") + "][input:" + (input != null
 			                                                               ? "present"
 			                                                               : "omitted") + "][environment:"
-			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null
-			                                                                                ? environment
-			                                                                                : System.getenv())) + "]");
+			        + StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())) + "]");
 		}
 		
 		// Merge stdout and stderr to one stream
@@ -198,9 +195,7 @@ public class CommandExecutor extends Thread {
 					                                   ? "present"
 					                                   : "omitted"));
 					stringBuilder.append("][environment:");
-					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils.mapToString(environment != null
-					                                                                                           ? environment
-					                                                                                           : System.getenv())));
+					stringBuilder.append(StringEscapeUtils.escapeJava(JavaUtils.mapToString(processBuilder.environment())));
 					stringBuilder.append("] failed with exitCode: ");
 					stringBuilder.append(returnValue);
 					Logger.error(stringBuilder.toString());

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -45,6 +46,19 @@ import org.apache.commons.lang.StringEscapeUtils;
  * 
  */
 public class ClassFinder {
+	
+	private static final Set<URL> externalResources = new HashSet<>();
+	
+	/**
+	 * Adds the external resource.
+	 * 
+	 * @param resource
+	 *            the resource
+	 * @return true, if successful
+	 */
+	public static synchronized final boolean addExternalResource(final URL resource) {
+		return externalResources.add(resource);
+	}
 	
 	/**
 	 * @param baseClass
@@ -66,20 +80,6 @@ public class ClassFinder {
 	
 	/**
 	 * @param pakkage
-	 * @return
-	 * @throws IOException
-	 * @throws WrongClassSearchMethodException
-	 * @throws ClassNotFoundException
-	 */
-	@Deprecated
-	public static Collection<Class<?>> getAllClasses(@NotNull final Package pakkage) throws ClassNotFoundException,
-	                                                                                WrongClassSearchMethodException,
-	                                                                                IOException {
-		return getAllClasses(pakkage, null);
-	}
-	
-	/**
-	 * @param pakkage
 	 * @param modifiers
 	 *            an Integer value representing properties the class shall not have (e.g. private, interface, abstract).
 	 *            See {@link Modifier} for details.
@@ -94,17 +94,10 @@ public class ClassFinder {
 	                                                                         IOException {
 		final List<String> pathList = new LinkedList<String>();
 		
-		String classPaths = System.getProperty("java.class.path");
-		String[] split = classPaths.split(System.getProperty("path.separator"));
+		final String classPaths = System.getProperty("java.class.path");
+		final String[] split = classPaths.split(System.getProperty("path.separator"));
 		for (final String classPath : split) {
 			pathList.add(classPath);
-		}
-		classPaths = System.getProperty("reposuiteClassLookup");
-		if (classPaths != null) {
-			split = classPaths.split(System.getProperty("path.separator"));
-			for (final String classPath : split) {
-				pathList.add(classPath);
-			}
 		}
 		
 		final Collection<Class<?>> discoveredClasses = new HashSet<Class<?>>();
@@ -117,6 +110,17 @@ public class ClassFinder {
 				discoveredClasses.addAll(getClassesFromClasspath(thePackage, modifiers));
 			}
 		}
+		
+		for (final URL resource : externalResources) {
+			if (resource.getPath().toLowerCase().endsWith(".jar")) {
+				discoveredClasses.addAll(getClassesFromJarResource(thePackage, resource, modifiers));
+			} else if (resource.getPath().toLowerCase().endsWith(".class")) {
+				if (Logger.logError()) {
+					Logger.error("Loading classes from external resources outside a JAR is currently not supported.");
+				}
+			}
+		}
+		
 		return discoveredClasses;
 	}
 	
@@ -130,22 +134,13 @@ public class ClassFinder {
 		
 		final List<String> pathList = new LinkedList<String>();
 		
-		String classPaths = classPath == null
-		                                     ? System.getProperty("java.class.path")
-		                                     : classPath;
-		String[] split = classPaths.split(System.getProperty("path.separator"));
+		final String classPaths = classPath == null
+		                                           ? System.getProperty("java.class.path")
+		                                           : classPath;
+		final String[] split = classPaths.split(System.getProperty("path.separator"));
 		for (final String cp : split) {
 			pathList.add(cp);
 		}
-		classPaths = System.getProperty("reposuiteClassLookup");
-		if (classPaths != null) {
-			split = classPaths.split(System.getProperty("path.separator"));
-			for (final String cp : split) {
-				pathList.add(cp);
-			}
-		}
-		
-		new HashSet<Class<?>>();
 		
 		for (final String cp : pathList) {
 			if (cp.endsWith(".jar")) {
@@ -154,25 +149,18 @@ public class ClassFinder {
 				classNames.addAll(getClassNamesFromClassPath(cp));
 			}
 		}
+		
+		for (final URL resource : externalResources) {
+			if (resource.getPath().toLowerCase().endsWith(".jar")) {
+				classNames.addAll(getClassNamesFromJarResource(resource));
+			} else if (resource.getPath().toLowerCase().endsWith(".class")) {
+				if (Logger.logError()) {
+					Logger.error("Loading classes from external resources outside a JAR is currently not supported.");
+				}
+			}
+		}
+		
 		return classNames;
-	}
-	
-	/**
-	 * @param <T>
-	 * @param pakkage
-	 * @param superClass
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws WrongClassSearchMethodException
-	 * @throws IOException
-	 * @Deprecated use {@link ClassFinder#getClassesExtendingClass(Package, Class, Integer)} instead
-	 */
-	@Deprecated
-	public static <T> Collection<Class<? extends T>> getClassesExtendingClass(final Package pakkage,
-	                                                                          final Class<T> superClass) throws ClassNotFoundException,
-	                                                                                                    WrongClassSearchMethodException,
-	                                                                                                    IOException {
-		return getClassesExtendingClass(pakkage, superClass, null);
 	}
 	
 	/**
@@ -221,21 +209,6 @@ public class ClassFinder {
 		}
 		
 		return classList;
-	}
-	
-	/**
-	 * @param packageName
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws WrongClassSearchMethodException
-	 * @throws IOException
-	 * @deprecated
-	 */
-	@Deprecated
-	public static Collection<Class<?>> getClassesFromClasspath(final String packageName) throws ClassNotFoundException,
-	                                                                                    WrongClassSearchMethodException,
-	                                                                                    IOException {
-		return getClassesFromClasspath(packageName, null);
 	}
 	
 	/**
@@ -326,20 +299,6 @@ public class ClassFinder {
 	}
 	
 	/**
-	 * @param packageName
-	 * @param filePath
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws WrongClassSearchMethodException
-	 */
-	@Deprecated
-	public static Collection<Class<?>> getClassesFromJarFile(final String packageName,
-	                                                         final String filePath) throws ClassNotFoundException,
-	                                                                               WrongClassSearchMethodException {
-		return getClassesFromJarFile(packageName, filePath, null);
-	}
-	
-	/**
 	 * Scans through the given JAR file and finds all class objects for a given package name
 	 * 
 	 * @param packageName
@@ -354,63 +313,69 @@ public class ClassFinder {
 	                                                         final String filePath,
 	                                                         final Integer modifiers) throws ClassNotFoundException,
 	                                                                                 WrongClassSearchMethodException {
-		// String filePath =
-		// ClassFinder.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		
+		try {
+			final URL resource = new File(filePath).toURI().toURL();
+			
+			return getClassesFromJarResource(packageName, resource, modifiers);
+		} catch (final MalformedURLException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			throw new ClassNotFoundException();
+		}
+	}
+	
+	public static Collection<Class<?>> getClassesFromJarResource(final String packageName,
+	                                                             final URL resource,
+	                                                             final Integer modifiers) throws ClassNotFoundException,
+	                                                                                     WrongClassSearchMethodException {
 		final Collection<Class<?>> classes = new HashSet<Class<?>>();
+		JarInputStream inputStream = null;
 		
-		// determine the full qualified pathname string from the package name by
-		// replacing all '.' with OS file separators.
 		final String path = packageName.replaceAll("\\.", FileUtils.fileSeparator) + FileUtils.fileSeparator;
 		
 		try {
-			final JarFile currentFile = new JarFile(filePath);
+			inputStream = new JarInputStream(resource.openStream());
+			JarEntry current = null;
 			
-			/*
-			 * step through all elements in the jar file and check if there exists a class file in given package. If so,
-			 * load it and add it to the collection.
-			 */
-			for (final Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
-				final JarEntry current = e.nextElement();
-				
-				if ((current.getName().length() > path.length())
-				        && current.getName().substring(0, path.length()).equals(path)
-				        && current.getName().endsWith(".class")) {
-					final Class<?> class1 = Class.forName(current.getName()
-					                                             .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
-					                                                         ".").replace(".class", ""));
-					if (modifiers != null) {
-						if ((class1.getModifiers() & modifiers) == 0) {
+			while ((current = inputStream.getNextJarEntry()) != null) {
+				final String currentName = current.getName();
+				if (!current.isDirectory()) {
+					if (currentName.toLowerCase().endsWith(".jar")) {
+						if (Logger.logError()) {
+							Logger.error("JAR in JAR is not supported yet. Come back to me after ICSE 2013 deadline.");
+						}
+					} else if ((current.getName().length() > path.length())
+					        && current.getName().substring(0, path.length()).equals(path)
+					        && current.getName().endsWith(".class")) {
+						final Class<?> class1 = Class.forName(current.getName()
+						                                             .replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator),
+						                                                         ".").replace(".class", ""));
+						if (modifiers != null) {
+							if ((class1.getModifiers() & modifiers) == 0) {
+								classes.add(class1);
+							}
+						} else {
 							classes.add(class1);
 						}
-					} else {
-						classes.add(class1);
 					}
 				}
 			}
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
-				Logger.warn("Skipping invalid JAR file `" + filePath + "`: " + e.getMessage());
+				Logger.warn("Skipping invalid JAR file `" + resource.toString() + "`: " + e.getMessage());
+			}
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (final IOException ignore) {
+					// ignore
+				}
 			}
 		}
 		
 		return classes;
-	}
-	
-	/**
-	 * @param pakkage
-	 * @param theInterface
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws WrongClassSearchMethodException
-	 * @throws IOException
-	 */
-	@Deprecated
-	public static <T> Collection<Class<T>> getClassesOfInterface(final Package pakkage,
-	                                                             final Class<T> theInterface) throws ClassNotFoundException,
-	                                                                                         WrongClassSearchMethodException,
-	                                                                                         IOException {
-		return getClassesOfInterface(pakkage, theInterface, null);
 	}
 	
 	/**
@@ -545,34 +510,69 @@ public class ClassFinder {
 	 * @return
 	 */
 	private static Set<String> getClassNamesFromJarFile(final String filePath) {
-		final Set<String> classNames = new HashSet<String>();
 		try {
-			final JarFile currentFile = new JarFile(filePath);
-			
-			/*
-			 * step through all elements in the jar file and check if there exists a class file in given package. If so,
-			 * load it and add it to the collection.
-			 */
-			for (final Enumeration<JarEntry> e = currentFile.entries(); e.hasMoreElements();) {
-				final JarEntry current = e.nextElement();
+			final URL resource = new File(filePath).toURI().toURL();
+			return getClassNamesFromJarResource(resource);
+		} catch (final MalformedURLException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			return new HashSet<>();
+		}
+	}
+	
+	/**
+	 * @param resource
+	 * @return
+	 */
+	private static Set<String> getClassNamesFromJarResource(final URL resource) {
+		// PRECONDITIONS
+		
+		JarInputStream inputStream = null;
+		final Set<String> classNames = new HashSet<String>();
+		
+		try {
+			try {
+				inputStream = new JarInputStream(resource.openStream());
+				JarEntry current = null;
 				
-				if (current.getName().endsWith(".class")) {
-					String path = current.getName();
-					path = path.replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".");
-					path = path.replaceAll("\\$[^.]+", "");
-					if (path.endsWith(".class")) {
-						path = path.substring(0, path.length() - ".class".length());
+				while ((current = inputStream.getNextJarEntry()) != null) {
+					final String currentName = current.getName();
+					if (!current.isDirectory()) {
+						if (currentName.toLowerCase().endsWith(".jar")) {
+							if (Logger.logError()) {
+								Logger.error("JAR in JAR is not supported yet. Come back to me after ICSE 2013 deadline.");
+							}
+						} else if (currentName.endsWith(".class")) {
+							String path = current.getName();
+							path = path.replaceAll(StringEscapeUtils.escapeJava(FileUtils.fileSeparator), ".");
+							path = path.replaceAll("\\$[^.]+", "");
+							if (path.endsWith(".class")) {
+								path = path.substring(0, path.length() - ".class".length());
+							}
+							path = path.replaceFirst("^\\.+", "");
+							classNames.add(path);
+						}
 					}
-					path = path.replaceFirst("^\\.+", "");
-					classNames.add(path);
+				}
+			} catch (final IOException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Skipping invalid JAR file `" + resource.toString() + "`: " + e.getMessage());
+				}
+			} finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					} catch (final IOException ignore) {
+						// ignore
+					}
 				}
 			}
-		} catch (final IOException e) {
-			if (Logger.logWarn()) {
-				Logger.warn(e, "Skipping invalid JAR file '%s'.", filePath);
-			}
+			
+			return classNames;
+		} finally {
+			// POSTCONDITIONS
 		}
-		return classNames;
 	}
 	
 	/**
