@@ -63,6 +63,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 			this.genealogyArgs = ArgumentSetFactory.create(genealogyOptions);
 			this.changeOpReaderOptions = new ChangeOperationReader.Options(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);
+			ArgumentSetFactory.create(this.changeOpReaderOptions);
 			
 		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {

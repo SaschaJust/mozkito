@@ -568,13 +568,13 @@ public class Untangling {
 			
 			// report the descriptive statistics about the partition scores.
 			try {
-				outWriter.append("Avg. MissRate:," + stat.getMean());
+				outWriter.append("Avg. MissRate:" + stat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Med. MissRate:," + stat.getPercentile(50));
+				outWriter.append("Med. MissRate:" + stat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Avg. relative MissRate:," + relativeStat.getMean());
+				outWriter.append("Avg. relative MissRate:" + relativeStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Med. relative MissRate:," + relativeStat.getPercentile(50));
+				outWriter.append("Med. relative MissRate:" + relativeStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
 				outWriter.append("Used transactions:");
 				for (final RCSTransaction t : usedTransactions) {
