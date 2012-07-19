@@ -26,7 +26,6 @@ import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
@@ -101,12 +100,6 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 			                                                                                "Filename to write result metric matrix into.",
 			                                                                                null, Requirement.required,
 			                                                                                true));
-			
-			new StringArgument.Options(
-			                           setting.getRoot(),
-			                           "fixPattern",
-			                           "An regexp string that will be used to detect bug reports within commit message. (Remember to use double slashes)",
-			                           null, Requirement.required);
 		} catch (final ArgumentRegistrationException e) {
 			throw new UnrecoverableError(e);
 		} catch (final SettingsParseError e) {
@@ -208,6 +201,11 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				                                                                                                                   Modifier.ABSTRACT
 				                                                                                                                           | Modifier.INTERFACE
 				                                                                                                                           | Modifier.PRIVATE);
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Found %d GenealogyMetrics: %s.", metricClasses.size(),
+					             net.ownhero.dev.ioda.JavaUtils.collectionToString(metricClasses));
+				}
 				
 				for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
 					if (!Modifier.isAbstract(metricClass.getModifiers())) {
