@@ -102,7 +102,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			                                                    "ignoreTests",
 			                                                    "Set to false if test cases shall be contained by resulting change genealogy.",
 			                                                    true, Requirement.required);
-			
+			map.put(this.skipTestsOptions.getName(), this.skipTestsOptions);
 			map.put(this.branchNameOptions.getName(), this.branchNameOptions);
 			return map;
 		}
