@@ -23,6 +23,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.MapCondition;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Graph.
@@ -128,6 +129,10 @@ public class Graph {
 		INode tailThread = null;
 		
 		for (final Class<?> inputType : this.connectionTypes) {
+			if (Logger.logDebug()) {
+				Logger.debug("Processing nodes with input type '%s'.", inputType);
+			}
+			
 			headThread = null;
 			tailThread = null;
 			final Map<Class<? extends Node>, LinkedList<INode>> inputMap = this.inputTypes.get(inputType);
@@ -144,6 +149,12 @@ public class Graph {
 			// @formatter:on
 			if (inputMap.containsKey(Multiplexer.class)) {
 				final LinkedList<INode> muxList = inputMap.get(Multiplexer.class);
+				
+				if (Logger.logDebug()) {
+					Logger.debug("Found '%s' ('%s') with input type '%s'", Multiplexer.class.getSimpleName(),
+					             muxList.get(0).getName(), inputType);
+				}
+				
 				if (muxList.size() > 1) {
 					throw new InvalidGraphLayoutException(
 					                                      String.format("Found %s %ss with the same input type: %s",
@@ -155,6 +166,13 @@ public class Graph {
 				if (inputMap.containsKey(Demultiplexer.class)) {
 					// cross
 					final LinkedList<INode> demuxList = inputMap.get(Demultiplexer.class);
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Found '%s' ('%s') with input type '%s'", Demultiplexer.class.getSimpleName(),
+						             demuxList.get(0).getName(), inputType);
+						Logger.debug("Thus, we definitely got a cross layout >-<");
+					}
+					
 					if (demuxList.size() > 1) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss with the same input type: %s",
@@ -225,6 +243,11 @@ public class Graph {
 				} else {
 					// y-open
 					final INode mux = muxList.iterator().next();
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Did not find any corresponding Demultiplexer for the foud Multiplexer. This is definitely a y-opne graph.");
+					}
+					
 					headThread = mux;
 					tailThread = mux;
 					
@@ -262,9 +285,18 @@ public class Graph {
 					tailThreads.add(tailThread);
 				}
 			} else {
+				
 				if (inputMap.containsKey(Demultiplexer.class)) {
 					// y-close
+					
 					final LinkedList<INode> demuxList = inputMap.get(Demultiplexer.class);
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Found '%s' ('%s'), but did not find a '%s' with the sam input type. Thus, we have a y-close layout here.",
+						             Demultiplexer.class.getSimpleName(), demuxList.get(0).getName(),
+						             Multiplexer.class.getSimpleName());
+					}
+					
 					if (demuxList.size() > 1) {
 						throw new InvalidGraphLayoutException(
 						                                      String.format("Found %s %ss with the same input type: %s",
@@ -315,6 +347,11 @@ public class Graph {
 					}
 				} else {
 					// flat
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Did neither find '%s' or '%s' for input type '%s'. Hence, this fragment of the graph is flat.",
+						             Multiplexer.class.getSimpleName(), Demultiplexer.class.getSimpleName(), inputType);
+					}
 					final LinkedList<INode> sinkList = inputMap.get(Sink.class);
 					if ((sinkList != null) && (sinkList.size() > 1)) {
 						throw new InvalidGraphLayoutException(
@@ -368,6 +405,14 @@ public class Graph {
 							orphanedSinks.put(sink.getInputType(), (Sink<?>) sink);
 							
 						}
+					}
+					
+					if (headThread != null) {
+						headThreads.add(headThread);
+					}
+					
+					if (tailThread != null) {
+						tailThreads.add(tailThread);
 					}
 				}
 			}

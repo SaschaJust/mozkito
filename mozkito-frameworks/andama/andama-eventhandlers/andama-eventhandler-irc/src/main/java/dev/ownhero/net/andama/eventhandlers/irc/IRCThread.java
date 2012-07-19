@@ -89,15 +89,53 @@ public class IRCThread extends Thread implements SettingsProvider {
 		
 	}
 	
+	/**
+	 * Start.
+	 * 
+	 * @param owner
+	 *            the owner
+	 */
+	public static final void start(final String owner) {
+		final IRCThread thread = new IRCThread(owner);
+		thread.start();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			
+			/*
+			 * (non-Javadoc)
+			 * @see java.lang.Thread#run()
+			 */
+			@Override
+			public void run() {
+				// PRECONDITIONS
+				
+				try {
+					thread.getBot().disconnect();
+					
+					try {
+						thread.join();
+					} catch (final InterruptedException e) {
+						if (Logger.logError()) {
+							Logger.error(e);
+						}
+						
+					}
+				} finally {
+					// POSTCONDITIONS
+				}
+			}
+		});
+	}
+	
 	/** The bot. */
 	private final IRCEventhandler                                 bot;
-	
 	private ISettings                                             settings;
 	private Options                                               portOption;
 	private net.ownhero.dev.hiari.settings.StringArgument.Options hostOption;
 	private StringArgument                                        hostArgument;
 	private String                                                host;
 	private LongArgument                                          portArgument;
+	
 	private int                                                   port;
 	
 	/**

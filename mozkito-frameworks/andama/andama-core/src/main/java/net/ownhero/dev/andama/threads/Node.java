@@ -594,7 +594,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			this.knownThreads.add(thread);
 			
 			if (Logger.logInfo()) {
-				Logger.info("[" + getHandle() + "] Linking input connector to [" + thread.getHandle() + "]");
+				Logger.info("[%s:%s] Linking input connector to [%s:%s]", getName(), getThreadID(), thread.getName(),
+				            thread.getThreadID());
 			}
 			
 			if (thread.hasOutputConnector() && !thread.isOutputConnected(this)) {
@@ -628,7 +629,8 @@ abstract class Node<K, V> extends Thread implements INode<K, V>, Comparable<Node
 			this.outputThreads.put(thread, storage);
 			
 			if (Logger.logInfo()) {
-				Logger.info("[" + getHandle() + "] Linking output connector to [" + thread.getHandle() + "]");
+				Logger.info("[%s:%s] Linking output connector to [%s:%s]", getName(), getThreadID(), thread.getName(),
+				            thread.getThreadID());
 			}
 			
 			if (thread.hasInputConnector() && !thread.isInputConnected(this)) {

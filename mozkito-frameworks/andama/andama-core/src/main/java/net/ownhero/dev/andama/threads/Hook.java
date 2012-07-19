@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import net.ownhero.dev.andama.messages.EventBus;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Hook.
@@ -54,6 +55,9 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 	 *            the thread
 	 */
 	public Hook(final Node<K, V> thread) {
+		if (Logger.logDebug()) {
+			Logger.debug("Adding '%s' to '%s'.", getHandle(), thread);
+		}
 		this.thread = thread;
 		
 		Class<?> clazz = this.getClass();
@@ -92,6 +96,7 @@ public abstract class Hook<K, V> implements IHook<K, V> {
 	 * 
 	 * @return the event bus
 	 */
+	@Override
 	public EventBus getEventBus() {
 		return getThread().getEventBus();
 	}
