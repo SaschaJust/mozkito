@@ -58,6 +58,7 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                   true, Requirement.required));
 			
 			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			ArgumentSetFactory.create(databaseOptions);
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);
 			this.genealogyArgs = ArgumentSetFactory.create(genealogyOptions);
