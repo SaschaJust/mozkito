@@ -147,6 +147,11 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	public void setup() {
 		this.genealogy = this.genealogyArguments.getValue();
 		
+		if (Logger.logInfo()) {
+			Logger.info("Found change genealogy with %d vertices and %d edges.", this.genealogy.vertexSize(),
+			            this.genealogy.edgeSize());
+		}
+		
 		this.granularity = this.granularityArgument.getValue();
 		
 		/*
