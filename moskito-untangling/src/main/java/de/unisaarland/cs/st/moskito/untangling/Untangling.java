@@ -208,7 +208,7 @@ public class Untangling {
 		                                                                                                               partitions);
 		
 		int minDiff = Integer.MAX_VALUE;
-		double minJaccard = Double.MAX_VALUE;
+		double maxJaccard = 0;
 		int numCorrectPartition = 0;
 		int numFalsePartition = 0;
 		
@@ -236,14 +236,14 @@ public class Untangling {
 			if (diff < minDiff) {
 				minDiff = diff;
 			}
-			if (jaccard < minJaccard) {
-				minJaccard = jaccard;
+			if (jaccard > maxJaccard) {
+				maxJaccard = jaccard;
 				numCorrectPartition = numCorrect;
 				numFalsePartition = numFalse;
 			}
 		}
 		
-		return new UntanglingComparisonResult(minDiff, minJaccard, numCorrectPartition, numFalsePartition, blob.size());
+		return new UntanglingComparisonResult(minDiff, maxJaccard, numCorrectPartition, numFalsePartition, blob.size());
 	}
 	
 	/**
