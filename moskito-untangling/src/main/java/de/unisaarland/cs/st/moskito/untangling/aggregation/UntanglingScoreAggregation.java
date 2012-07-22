@@ -77,7 +77,8 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		transactions.addAll(transactionSet);
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Fetching training samples: %d or %d change sets.", trainFraction, transactions.size());
+			Logger.debug("Fetching training samples: %s or %s change sets.", String.valueOf(trainFraction),
+			             String.valueOf(transactions.size()));
 		}
 		
 		int numSamples = (int) (transactions.size() * trainFraction);
