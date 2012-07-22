@@ -442,7 +442,14 @@ public class Untangling {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
 				for (final ChangeSet s : entry.getValue()) {
-					for (final ArtificialBlob blob : blobsPerChangeSet.get(s)) {
+					if (s == null) {
+						throw new UnrecoverableError("s == null!");
+					}
+					final Set<ArtificialBlob> tmpSet = blobsPerChangeSet.get(s);
+					if (tmpSet == null) {
+						throw new UnrecoverableError("blobsPerChangeSet.get(s) == null!");
+					}
+					for (final ArtificialBlob blob : tmpSet) {
 						blobSet.addAll(blob.getAtomicTransactions());
 					}
 				}
