@@ -439,23 +439,17 @@ public class Untangling {
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> blobSet = new HashSet<>();
 				final ChangeSet key = entry.getKey();
-				if (key == null) {
-					throw new UnrecoverableError("key == null");
-				}
 				final Set<ArtificialBlob> set = blobsPerChangeSet.get(key);
 				if (set == null) {
-					throw new UnrecoverableError("set == null");
+					continue;
 				}
 				for (final ArtificialBlob blob : set) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
 				for (final ChangeSet s : entry.getValue()) {
-					if (s == null) {
-						throw new UnrecoverableError("s == null!");
-					}
 					final Set<ArtificialBlob> tmpSet = blobsPerChangeSet.get(s);
 					if (tmpSet == null) {
-						throw new UnrecoverableError("blobsPerChangeSet.get(s) == null!");
+						continue;
 					}
 					for (final ArtificialBlob blob : tmpSet) {
 						blobSet.addAll(blob.getAtomicTransactions());
