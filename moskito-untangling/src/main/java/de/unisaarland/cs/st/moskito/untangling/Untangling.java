@@ -434,24 +434,12 @@ public class Untangling {
 				}
 			}
 			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new LinkedList<>();
-			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
-				if (entry == null) {
-					throw new UnrecoverableError("Detected null entry in possibleArtificialBobCombinations!");
-				}
+			for (final ChangeSet keyChangeSet : combinationCandidates.keySet()) {
 				final Set<ChangeSet> blobSet = new HashSet<>();
-				if (entry.getKey() == null) {
-					throw new UnrecoverableError("entry.getKey() is NULL. ERROR!");
-				}
-				if (entry.getValue() == null) {
-					throw new UnrecoverableError("entry.getValue() is NULL. ERROR!");
-				}
-				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
+				for (final ArtificialBlob blob : blobsPerChangeSet.get(keyChangeSet)) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
-				for (final ChangeSet s : entry.getValue()) {
-					if (s == null) {
-						throw new UnrecoverableError("entry.getValue() caontains NULL. ERROR!");
-					}
+				for (final ChangeSet s : combinationCandidates.get(keyChangeSet)) {
 					for (final ArtificialBlob blob : blobsPerChangeSet.get(s)) {
 						blobSet.addAll(blob.getAtomicTransactions());
 					}
@@ -460,22 +448,23 @@ public class Untangling {
 			}
 			if (this.untanglingControl.getMinBlobSize() > 2) {
 				artificialBlobs.clear();
-				final ArtificialBlobGenerator pseudoBlobGenerator = new ArtificialBlobGenerator(
-				                                                                                new CombineOperator<ChangeSet>() {
-					                                                                                
-					                                                                                @Override
-					                                                                                public boolean canBeCombined(final ChangeSet t1,
-					                                                                                                             final ChangeSet t2) {
-						                                                                                return true;
-					                                                                                }
-				                                                                                });
-				
-				for (final Set<ChangeSet> blobSet : possibleArtificialBlobCombinations) {
-					artificialBlobs.addAll(pseudoBlobGenerator.generateAll(blobSet,
-					                                                       this.untanglingControl.getMinBlobSize(),
-					                                                       this.untanglingControl.getMaxBlobSize()));
-				}
 			}
+			final ArtificialBlobGenerator pseudoBlobGenerator = new ArtificialBlobGenerator(
+			                                                                                new CombineOperator<ChangeSet>() {
+				                                                                                
+				                                                                                @Override
+				                                                                                public boolean canBeCombined(final ChangeSet t1,
+				                                                                                                             final ChangeSet t2) {
+					                                                                                return true;
+				                                                                                }
+			                                                                                });
+			
+			for (final Set<ChangeSet> blobSet : possibleArtificialBlobCombinations) {
+				artificialBlobs.addAll(pseudoBlobGenerator.generateAll(blobSet,
+				                                                       this.untanglingControl.getMinBlobSize(),
+				                                                       this.untanglingControl.getMaxBlobSize()));
+			}
+			
 		}
 		
 		int blobSetSize = artificialBlobs.size();
