@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -433,13 +434,14 @@ public class Untangling {
 					blobsPerChangeSet.get(t).add(blob);
 				}
 			}
-			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new LinkedList<>();
-			for (final ChangeSet keyChangeSet : combinationCandidates.keySet()) {
+			
+			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new ArrayList<>();
+			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> blobSet = new HashSet<>();
-				for (final ArtificialBlob blob : blobsPerChangeSet.get(keyChangeSet)) {
+				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
-				for (final ChangeSet s : combinationCandidates.get(keyChangeSet)) {
+				for (final ChangeSet s : entry.getValue()) {
 					for (final ArtificialBlob blob : blobsPerChangeSet.get(s)) {
 						blobSet.addAll(blob.getAtomicTransactions());
 					}
