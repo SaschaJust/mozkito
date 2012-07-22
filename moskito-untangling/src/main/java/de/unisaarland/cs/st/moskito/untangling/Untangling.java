@@ -438,7 +438,15 @@ public class Untangling {
 			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new ArrayList<>();
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> blobSet = new HashSet<>();
-				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
+				final ChangeSet key = entry.getKey();
+				if (key == null) {
+					throw new UnrecoverableError("key == null");
+				}
+				final Set<ArtificialBlob> set = blobsPerChangeSet.get(key);
+				if (set == null) {
+					throw new UnrecoverableError("set == null");
+				}
+				for (final ArtificialBlob blob : set) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
 				for (final ChangeSet s : entry.getValue()) {
