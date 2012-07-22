@@ -442,10 +442,16 @@ public class Untangling {
 				if (entry.getKey() == null) {
 					throw new UnrecoverableError("entry.getKey() is NULL. ERROR!");
 				}
+				if (entry.getValue() == null) {
+					throw new UnrecoverableError("entry.getValue() is NULL. ERROR!");
+				}
 				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
 				for (final ChangeSet s : entry.getValue()) {
+					if (s == null) {
+						throw new UnrecoverableError("entry.getValue() caontains NULL. ERROR!");
+					}
 					for (final ArtificialBlob blob : blobsPerChangeSet.get(s)) {
 						blobSet.addAll(blob.getAtomicTransactions());
 					}
