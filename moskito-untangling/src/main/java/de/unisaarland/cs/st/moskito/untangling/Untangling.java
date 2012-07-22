@@ -519,10 +519,14 @@ public class Untangling {
 				changeSetsInBlobs.addAll(blob.getAtomicTransactions());
 			}
 			
+			final String experimentInfo = String.format("Generated %d artificial blobs based on %d change sets using blobWindowSize=%d, minBlobSize=%d, and maxBlobSizeWindow=%d",
+			                                            blobSetSize, changeSetsInBlobs.size(),
+			                                            this.untanglingControl.getBlobWindowSize(),
+			                                            this.untanglingControl.getMinBlobSize(),
+			                                            this.untanglingControl.getMaxBlobSize());
+			
 			if (Logger.logInfo()) {
-				Logger.info("Generated %d artificial blobs based on %d change sets using blobWindowSize=%d, minBlobSize=%d, and maxBlobSizeWindow=%d",
-				            blobSetSize, changeSetsInBlobs.size(), this.untanglingControl.getBlobWindowSize(),
-				            this.untanglingControl.getMinBlobSize(), this.untanglingControl.getMaxBlobSize());
+				Logger.info(experimentInfo);
 			}
 			
 			final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
@@ -656,6 +660,8 @@ public class Untangling {
 				outWriter.append(FileUtils.lineSeparator);
 				outWriter.append(this.aggregator.getInfo());
 				outWriter.append(FileUtils.lineSeparator);
+				
+				outWriter.append(experimentInfo);
 				
 				outWriter.close();
 			} catch (final IOException e) {
