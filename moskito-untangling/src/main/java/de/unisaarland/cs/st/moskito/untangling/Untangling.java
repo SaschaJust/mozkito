@@ -419,6 +419,15 @@ public class Untangling {
 			}
 		}
 		
+		if (Logger.logInfo()) {
+			final Set<ChangeSet> changeSetsInBlobsSet = new HashSet<>();
+			for (final ArtificialBlob blob : artificialBlobs) {
+				changeSetsInBlobsSet.addAll(blob.getAtomicTransactions());
+			}
+			Logger.info("Found %d artificial blobs based on %d change sets using blobWindowSize=%d, minBlobSize=2, and maxBlobSizeWindow=2",
+			            artificialBlobs.size(), changeSetsInBlobsSet.size(), this.untanglingControl.getBlobWindowSize());
+		}
+		
 		if (this.untanglingControl.getMaxBlobSize() > 2) {
 			/*
 			 * now use the artificial blobs of size two to generate higher order blobs. For that purpose, use the
