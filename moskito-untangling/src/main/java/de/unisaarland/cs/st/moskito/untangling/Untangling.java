@@ -434,7 +434,13 @@ public class Untangling {
 				}
 			}
 			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new LinkedList<>();
+			if (Logger.logTrace()) {
+				Logger.trace(combinationCandidates.entrySet().toString());
+			}
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
+				if (entry == null) {
+					throw new UnrecoverableError("Detected null entry in possibleArtificialBobCombinations!");
+				}
 				final Set<ChangeSet> blobSet = new HashSet<>();
 				for (final ArtificialBlob blob : blobsPerChangeSet.get(entry.getKey())) {
 					blobSet.addAll(blob.getAtomicTransactions());
