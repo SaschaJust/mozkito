@@ -479,11 +479,6 @@ public class Untangling {
 		}
 		
 		int blobSetSize = artificialBlobs.size();
-		if (Logger.logInfo()) {
-			Logger.info("Generated %d artificial blobs using blobWindowSize=%d, minBlobSize=%d, and maxBlobSizeWindow=%d",
-			            blobSetSize, this.untanglingControl.getBlobWindowSize(),
-			            this.untanglingControl.getMinBlobSize(), this.untanglingControl.getMaxBlobSize());
-		}
 		
 		// TODO this is a debugging fragment. Remove later.
 		if (System.getProperty("generateBlobsOnly") != null) {
@@ -497,6 +492,10 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 			
 			if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
+				if (Logger.logDebug()) {
+					Logger.debug("Sampling %d artificial blobs to get %d random instances.", artificialBlobs.size(),
+					             this.untanglingControl.getN());
+				}
 				final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
 				for (int i = 0; i < this.untanglingControl.getN(); ++i) {
 					final int r = random.nextInt(artificialBlobs.size());
@@ -504,6 +503,17 @@ public class Untangling {
 				}
 				artificialBlobs = selectedArtificialBlobs;
 				blobSetSize = artificialBlobs.size();
+			}
+			
+			final Set<ChangeSet> changeSetsInBlobs = new HashSet<ChangeSet>();
+			for (final ArtificialBlob blob : artificialBlobs) {
+				changeSetsInBlobs.addAll(blob.getAtomicTransactions());
+			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("Generated %d artificial blobs based on %d change sets using blobWindowSize=%d, minBlobSize=%d, and maxBlobSizeWindow=%d",
+				            blobSetSize, changeSetsInBlobs.size(), this.untanglingControl.getBlobWindowSize(),
+				            this.untanglingControl.getMinBlobSize(), this.untanglingControl.getMaxBlobSize());
 			}
 			
 			final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
@@ -532,21 +542,12 @@ public class Untangling {
 				case LINEAR_REGRESSION:
 					final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
 					// train score aggregation model
-					final Set<ChangeSet> trainTransactions = new HashSet<ChangeSet>();
-					for (final ArtificialBlob blob : artificialBlobs) {
-						trainTransactions.addAll(blob.getAtomicTransactions());
-					}
-					linarRegressionAggregator.train(trainTransactions);
+					linarRegressionAggregator.train(changeSetsInBlobs);
 					this.aggregator = linarRegressionAggregator;
 					break;
 				case SVM:
 					final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
-					// train score aggregation model
-					final Set<ChangeSet> svmTrainTransactions = new HashSet<ChangeSet>();
-					for (final ArtificialBlob blob : artificialBlobs) {
-						svmTrainTransactions.addAll(blob.getAtomicTransactions());
-					}
-					svmAggregator.train(svmTrainTransactions);
+					svmAggregator.train(changeSetsInBlobs);
 					this.aggregator = svmAggregator;
 					break;
 				default:
