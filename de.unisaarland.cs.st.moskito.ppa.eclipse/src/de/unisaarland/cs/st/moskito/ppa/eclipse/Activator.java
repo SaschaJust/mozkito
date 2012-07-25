@@ -13,6 +13,12 @@
 
 package de.unisaarland.cs.st.moskito.ppa.eclipse;
 
+import java.net.URL;
+import java.util.Dictionary;
+
+import net.ownhero.dev.ioda.ClassFinder;
+
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -30,6 +36,17 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		Bundle bundle = bundleContext.getBundle();
+		@SuppressWarnings("rawtypes")
+		Dictionary headers = bundle.getHeaders();
+		String[] classPaths = headers.get("Bundle-ClassPath").toString().split(",");
+		
+		for(String path : classPaths){
+			if(!path.equals(".")){
+				URL resource = bundle.getResource(path);
+				ClassFinder.addExternalResource(resource);
+			}
+		}
 	}
 	
 	/*

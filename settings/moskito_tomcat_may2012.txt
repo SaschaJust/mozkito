@@ -4,7 +4,7 @@ database.password=miner
 
 repository.uri=/data/kim/miner_repos/apache/tomcat/tomcat_09_05_2012.git
 repository.type=GIT
-repository.mainBranch=trunk
+repository.mainBranch=origin/trunk
 log.level=info
 headless
 

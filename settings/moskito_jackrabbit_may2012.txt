@@ -4,7 +4,7 @@ database.password=miner
 log.level=info
 repository.uri=/data/kim/miner_repos/apache/jackrabbit/jackrabbit_08_05_2012.git
 repository.type=GIT
-repository.mainBranch=trunk
+repository.mainBranch=origin/trunk
 headless
 
 tracker.type=JIRA

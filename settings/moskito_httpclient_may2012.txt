@@ -12,4 +12,11 @@ tracker.useProxy=true
 tracker.proxy.cacheDir=/scratch/kim/miner_repos/apache/httpclient/jira_cache/
 tracker.uri=https://issues.apache.org/jira/
 jira.projectKey=HTTPCLIENT
-genealogy.graphdb=/data/kim/genealogies/httpclient/may2012/
+
+#genealogy.graphdb=/data/kim/genealogies/httpclient/may2012/
+genealogy.graphdb=/tmpfs/gen_httpclient_may2012/
+
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/httpclient/httpclient_may2012_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/httpclient/httpclient_may2012_genealogy_transaction_fileMetrics.csv
+

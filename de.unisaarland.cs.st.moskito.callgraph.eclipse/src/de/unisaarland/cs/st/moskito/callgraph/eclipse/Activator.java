@@ -15,8 +15,6 @@ package de.unisaarland.cs.st.moskito.callgraph.eclipse;
 
 import java.net.URL;
 import java.util.Dictionary;
-import java.util.jar.JarInputStream;
-import java.util.zip.ZipEntry;
 
 import net.ownhero.dev.ioda.ClassFinder;
 

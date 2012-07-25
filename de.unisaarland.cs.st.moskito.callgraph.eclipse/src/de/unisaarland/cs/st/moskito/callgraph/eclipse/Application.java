@@ -13,12 +13,8 @@
 
 package de.unisaarland.cs.st.moskito.callgraph.eclipse;
 
-import java.net.URL;
-
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.osgi.framework.adaptor.ClassLoaderDelegate;
-import org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader;
 
 /**
  * This class controls all aspects of the application's execution
