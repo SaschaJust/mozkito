@@ -8,6 +8,7 @@ repository.mainBranch=origin/trunk
 log.level=info
 headless
 
+
 tracker.type=BUGZILLA
 bugzilla.overviewURI=https://issues.apache.org/bugzilla/buglist.cgi?product=Tomcat%205&limit=0
 tracker.useProxy=true
