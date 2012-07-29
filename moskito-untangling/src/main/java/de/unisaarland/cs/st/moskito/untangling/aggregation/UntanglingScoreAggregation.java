@@ -15,7 +15,6 @@ package de.unisaarland.cs.st.moskito.untangling.aggregation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -31,8 +30,6 @@ import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.clustering.ScoreAggregation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
-import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
-import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
@@ -110,7 +107,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
 					final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
-					final List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
+					final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 					for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 						values.add(v.getScore(operationArray[i], operationArray[j]));
 					}
@@ -119,71 +116,61 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
-		final Set<Tuple<Integer, Integer>> seenCombinations = new HashSet<Tuple<Integer, Integer>>();
-		
-		final Comparator<? super RCSTransaction> transactionComparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
-		
 		// generate the negative examples
 		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
-		final List<ChangeSet> selectedTransactionList = new LinkedList<ChangeSet>();
-		selectedTransactionList.addAll(selectedTransactions.keySet());
-		final int k = positiveValues.size();
-		final long factorial = ((k - 1) * k) / 2;
-		for (int i = 0; (i < k) && (seenCombinations.size() < factorial); ++i) {
-			int t1Index = -1;
-			int t2Index = -1;
-			while (t1Index == t2Index) {
-				t1Index = Untangling.random.nextInt(selectedTransactionList.size());
-				t2Index = Untangling.random.nextInt(selectedTransactionList.size());
+		
+		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> negativePool = new LinkedList<>();
+		
+		for (final Entry<ChangeSet, Set<JavaChangeOperation>> entry : selectedTransactions.entrySet()) {
+			final List<JavaChangeOperation> opList = new ArrayList<>(entry.getValue().size());
+			opList.addAll(entry.getValue());
+			for (int i = 0; i < opList.size(); ++i) {
+				for (int j = i + 1; j < opList.size(); ++j) {
+					final Tuple<JavaChangeOperation, JavaChangeOperation> negInnerTuple = new Tuple<JavaChangeOperation, JavaChangeOperation>(
+					                                                                                                                          opList.get(i),
+					                                                                                                                          opList.get(j));
+					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>(
+					                                                                                            negInnerTuple,
+					                                                                                            entry.getKey()
+					                                                                                                 .getTransaction()));
+				}
 			}
-			
-			// get two random atomic transactions from the selected transaction
-			final ChangeSet t1 = selectedTransactionList.get(t1Index);
-			final ChangeSet t2 = selectedTransactionList.get(t2Index);
-			
-			if (t1Index < t2Index) {
-				seenCombinations.add(new Tuple<Integer, Integer>(t1Index, t2Index));
-			} else {
-				seenCombinations.add(new Tuple<Integer, Integer>(t2Index, t1Index));
-			}
-			
-			final List<JavaChangeOperation> t1Ops = new LinkedList<JavaChangeOperation>();
-			t1Ops.addAll(selectedTransactions.get(t1));
-			
-			final List<JavaChangeOperation> t2Ops = new LinkedList<JavaChangeOperation>();
-			t2Ops.addAll(selectedTransactions.get(t2));
-			
-			final int t1OpIndex = Untangling.random.nextInt(t1Ops.size());
-			final int t2OpIndex = Untangling.random.nextInt(t2Ops.size());
-			
-			final JavaChangeOperation op1 = t1Ops.get(t1OpIndex);
-			final JavaChangeOperation op2 = t2Ops.get(t2OpIndex);
-			
-			if (op1.equals(op2)) {
-				--i;
-				continue;
-			}
-			
-			List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = null;
-			
-			if (transactionComparator.compare(t1.getTransaction(), t2.getTransaction()) > 0) {
-				scoreVisitors = untangling.generateScoreVisitors(t1.getTransaction());
-			} else {
-				scoreVisitors = untangling.generateScoreVisitors(t2.getTransaction());
-			}
-			
-			final List<Double> values = new ArrayList<Double>(scoreVisitors.size() + 1);
-			for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
-				final double value = v.getScore(op1, op2);
-				values.add(value);
-			}
-			negativeValues.add(values);
 		}
 		
+		final int k = positiveValues.size();
+		final long factorial = ((k - 1) * k) / 2;
+		final Set<Integer> seenSamples = new HashSet<>();
+		if (factorial < negativePool.size()) {
+			for (int i = 0; i < factorial; ++i) {
+				// select random negative sample
+				int sampleIndex = Untangling.random.nextInt(negativePool.size());
+				while (seenSamples.contains(sampleIndex)) {
+					sampleIndex = Untangling.random.nextInt(negativePool.size());
+				}
+				final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction> sample = negativePool.get(sampleIndex);
+				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(sample.getSecond());
+				final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+				for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+					final double value = v.getScore(sample.getFirst().getFirst(), sample.getFirst().getSecond());
+					values.add(value);
+				}
+				negativeValues.add(values);
+			}
+		} else {
+			for (final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction> sample : negativePool) {
+				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(sample.getSecond());
+				final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
+				for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+					final double value = v.getScore(sample.getFirst().getFirst(), sample.getFirst().getSecond());
+					values.add(value);
+				}
+				negativeValues.add(values);
+			}
+		}
 		final Map<SampleType, List<List<Double>>> result = new HashMap<SampleType, List<List<Double>>>();
 		
 		result.put(SampleType.POSITIVE, positiveValues);
-		result.put(SampleType.NEGATIVE, positiveValues);
+		result.put(SampleType.NEGATIVE, negativeValues);
 		
 		return result;
 	}
