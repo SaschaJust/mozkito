@@ -31,6 +31,9 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -191,6 +194,7 @@ public class RandomForestAggregation extends UntanglingScoreAggregation {
 		} catch (final Exception e) {
 			if (Logger.logError()) {
 				Logger.error(this.trainingInstances.toSummaryString());
+				Logger.error(ExceptionUtils.getFullStackTrace(e.getCause()));
 			}
 			throw new UnrecoverableError(e.getMessage());
 		}
