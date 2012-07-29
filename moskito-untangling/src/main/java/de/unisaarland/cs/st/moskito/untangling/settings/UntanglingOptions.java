@@ -322,7 +322,7 @@ public class UntanglingOptions extends
 			                                                                       set,
 			                                                                       "scoreMode",
 			                                                                       "Method to combine single initial clustering matrix scores.",
-			                                                                       ScoreCombinationMode.RANDOM_FOREST,
+			                                                                       ScoreCombinationMode.SVM,
 			                                                                       Requirement.optional);
 			map.put(this.scoreModeOptions.getName(), this.scoreModeOptions);
 			
