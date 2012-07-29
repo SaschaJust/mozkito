@@ -189,6 +189,9 @@ public class RandomForestAggregation extends UntanglingScoreAggregation {
 		try {
 			this.model.buildClassifier(this.trainingInstances);
 		} catch (final Exception e) {
+			if (Logger.logError()) {
+				Logger.error(this.trainingInstances.toSummaryString());
+			}
 			throw new UnrecoverableError(e.getMessage());
 		}
 		
