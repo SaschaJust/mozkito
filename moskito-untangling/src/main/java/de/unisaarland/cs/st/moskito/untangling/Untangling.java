@@ -94,7 +94,7 @@ public class Untangling {
 		SUM, /** The VARSUM. */
 		VARSUM, /** The LINEA r_ regression. */
 		LINEAR_REGRESSION, /** The SVM. */
-		SVM;
+		SVM, RANDOM_FOREST;
 		
 		/**
 		 * String values.

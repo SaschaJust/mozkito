@@ -43,3 +43,4 @@ moskito-callgraph/pom.xml.versionsBackup
 moskito-bugs/pom.xml.versionsBackup
 */eclipse
 .DS_Store
+.svn
