@@ -63,6 +63,7 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.LinearRegressionAggregation;
+import de.unisaarland.cs.st.moskito.untangling.aggregation.RandomForestAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.moskito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlob;
@@ -562,6 +563,11 @@ public class Untangling {
 					final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 					svmAggregator.train(changeSetsInBlobs);
 					this.aggregator = svmAggregator;
+					break;
+				case RANDOM_FOREST:
+					final RandomForestAggregation rFAggregator = new RandomForestAggregation(this);
+					rFAggregator.train(changeSetsInBlobs);
+					this.aggregator = rFAggregator;
 					break;
 				default:
 					throw new UnrecoverableError("Unknown score aggregation mode found: "
