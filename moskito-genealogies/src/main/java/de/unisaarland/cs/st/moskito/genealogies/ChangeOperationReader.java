@@ -112,6 +112,8 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	private final BranchFactory            branchFactory;
 	private final PersistenceUtil          persistenceUtil;
 	private final boolean                  ignoreTests;
+	private final int                      numTransaction;
+	private int                            tCounter = 0;
 	
 	private ChangeOperationReader(final PersistenceUtil persistenceUtil, final String branchName,
 	        final boolean ignoreTests) {
@@ -140,6 +142,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			                    + " RCSTransactions that were found in branch %s to build the change genealogy.",
 			            this.branchFactory.getMasterBranch().getName());
 		}
+		this.numTransaction = masterTransactions.size();
 		this.iterator = masterTransactions.iterator();
 	}
 	
@@ -165,11 +168,12 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	@Override
 	public Collection<JavaChangeOperation> next() {
 		// PRECONDITIONS
-		
+		++this.tCounter;
 		try {
 			final RCSTransaction transaction = this.iterator.next();
 			if (Logger.logInfo()) {
-				Logger.info("Processing transaction %s.", transaction.getId());
+				Logger.info("Processing transaction %s (%s/%s).", transaction.getId(), String.valueOf(this.tCounter),
+				            String.valueOf(this.numTransaction));
 			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			
