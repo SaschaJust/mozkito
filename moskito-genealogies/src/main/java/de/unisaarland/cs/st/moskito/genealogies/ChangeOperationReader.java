@@ -168,6 +168,9 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		
 		try {
 			final RCSTransaction transaction = this.iterator.next();
+			if (Logger.logInfo()) {
+				Logger.info("Processing transaction %s.", transaction.getId());
+			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			
 			if (this.ignoreTests) {

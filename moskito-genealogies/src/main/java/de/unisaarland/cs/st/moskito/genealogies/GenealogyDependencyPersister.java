@@ -75,6 +75,10 @@ public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProces
 					final JavaElementLocation location = operation.getChangedElementLocation();
 					final JavaElement element = location.getElement();
 					
+					if (element.getPackageName().contains("UNKNOWN")) {
+						continue;
+					}
+					
 					switch (operation.getChangeType()) {
 						case Deleted:
 							if (element instanceof JavaMethodDefinition) {

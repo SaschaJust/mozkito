@@ -637,8 +637,8 @@ public class JavaMethodRegistry {
 		}
 		
 		if (del.isBefore(toDelete)) {
-			if (Logger.logError()) {
-				Logger.error("Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
+			if (Logger.logWarn()) {
+				Logger.warn("Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
 				        + del + ", previous definition=" + toDelete);
 			}
 			return null;
