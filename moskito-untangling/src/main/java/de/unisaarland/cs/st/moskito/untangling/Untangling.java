@@ -684,9 +684,9 @@ public class Untangling {
 				outWriter.append(FileUtils.lineSeparator);
 				outWriter.append("Avg. Precision:" + precisionStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Med. relative FileError:" + precisionStat.getPercentile(50));
+				outWriter.append("Med. relative FileError:" + fileErrorStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Avg. relative FileError:" + precisionStat.getMean());
+				outWriter.append("Avg. relative FileError:" + fileErrorStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
 				
 				outWriter.append("Used transactions:");
