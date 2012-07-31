@@ -213,7 +213,8 @@ public class Untangling {
 		double maxJaccard = 0;
 		int numCorrectPartition = 0;
 		int numFalsePartition = 0;
-		
+		int fileError = 0;
+		final Set<Long> blobFiles = new HashSet<>();
 		while (pGen.hasMore()) {
 			final List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
 			int diff = 0;
@@ -242,10 +243,35 @@ public class Untangling {
 				maxJaccard = jaccard;
 				numCorrectPartition = numCorrect;
 				numFalsePartition = numFalse;
+				final boolean compBlobFiles = blobFiles.isEmpty();
+				
+				final List<Set<Long>> trueFilePartition = new ArrayList<>(originalPartitions.size());
+				for (final List<JavaChangeOperation> originalPart : originalPartitions) {
+					final Set<Long> filePart = new HashSet<>();
+					for (final JavaChangeOperation op : originalPart) {
+						final long fileId = op.getRevision().getChangedFile().getGeneratedId();
+						filePart.add(fileId);
+						if (compBlobFiles) {
+							blobFiles.add(fileId);
+						}
+					}
+					trueFilePartition.add(filePart);
+				}
+				
+				fileError = 0;
+				for (int i = 0; i < nextPermutation.size(); ++i) {
+					final Set<JavaChangeOperation> originalPart = nextPermutation.get(i);
+					final Set<Long> filePart = new HashSet<>();
+					for (final JavaChangeOperation op : originalPart) {
+						filePart.add(op.getRevision().getChangedFile().getGeneratedId());
+					}
+					fileError += CollectionUtils.subtract(filePart, trueFilePartition.get(i)).size();
+				}
+				
 			}
 		}
-		
-		return new UntanglingComparisonResult(minDiff, maxJaccard, numCorrectPartition, numFalsePartition, blob.size());
+		return new UntanglingComparisonResult(minDiff, maxJaccard, numCorrectPartition, numFalsePartition, blob.size(),
+		                                      (((double) fileError) / ((double) blobFiles.size())));
 	}
 	
 	/**
@@ -498,7 +524,7 @@ public class Untangling {
 		final File outFile = this.untanglingControl.getOutputFile();
 		try (FileWriter fileWriter = new FileWriter(outFile); BufferedWriter outWriter = new BufferedWriter(fileWriter);) {
 			
-			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore,JaccardIndex,TP,FP, Precision");
+			outWriter.write("DiffSize,#ChangeOperations,relativeDiffSize,lowestScore,JaccardIndex,TP,FP, Precision, Rel.FileError");
 			outWriter.append(FileUtils.lineSeparator);
 			
 			if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
@@ -581,6 +607,8 @@ public class Untangling {
 			final DescriptiveStatistics jaccardIndexStat = new DescriptiveStatistics();
 			final DescriptiveStatistics precisionStat = new DescriptiveStatistics();
 			
+			final DescriptiveStatistics fileErrorStat = new DescriptiveStatistics();
+			
 			int counter = 0;
 			for (final ArtificialBlob blob : artificialBlobs) {
 				
@@ -608,6 +636,7 @@ public class Untangling {
 					relativeDiffStat.addValue(diffResult.getRelativeDiff());
 					jaccardIndexStat.addValue(diffResult.getMinJaccarIndex());
 					precisionStat.addValue(diffResult.getPrecision());
+					fileErrorStat.addValue(diffResult.getFileError());
 					try {
 						outWriter.append(String.valueOf(diffResult.getDiff()));
 						outWriter.append(",");
@@ -624,6 +653,8 @@ public class Untangling {
 						outWriter.append(String.valueOf(diffResult.getNumFalsePartition()));
 						outWriter.append(",");
 						outWriter.append(String.valueOf(diffResult.getPrecision()));
+						outWriter.append(",");
+						outWriter.append(String.valueOf(diffResult.getFileError()));
 						outWriter.append(FileUtils.lineSeparator);
 					} catch (final IOException e) {
 						throw new UnrecoverableError(e.getMessage(), e);
@@ -644,14 +675,18 @@ public class Untangling {
 				outWriter.append("Med. relative MissRate:" + relativeDiffStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
 				
-				outWriter.append("Avg. JaccardIndex:" + jaccardIndexStat.getPercentile(50));
+				outWriter.append("Med. JaccardIndex:" + jaccardIndexStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Mean. JaccardIndex:" + jaccardIndexStat.getMean());
+				outWriter.append("Avg. JaccardIndex:" + jaccardIndexStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
 				
-				outWriter.append("Avg. Precision:" + precisionStat.getPercentile(50));
+				outWriter.append("Med. Precision:" + precisionStat.getPercentile(50));
 				outWriter.append(FileUtils.lineSeparator);
-				outWriter.append("Mean. Precision:" + precisionStat.getMean());
+				outWriter.append("Avg. Precision:" + precisionStat.getMean());
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Med. relative FileError:" + precisionStat.getPercentile(50));
+				outWriter.append(FileUtils.lineSeparator);
+				outWriter.append("Avg. relative FileError:" + precisionStat.getMean());
 				outWriter.append(FileUtils.lineSeparator);
 				
 				outWriter.append("Used transactions:");

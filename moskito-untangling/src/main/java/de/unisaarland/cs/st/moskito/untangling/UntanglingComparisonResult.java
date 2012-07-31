@@ -30,13 +30,16 @@ public class UntanglingComparisonResult {
 	
 	private final int    blobSize;
 	
+	private final double fileError;
+	
 	public UntanglingComparisonResult(final int diff, final double minJaccarIndex, final int numCorrectPartition,
-	        final int numFalsePartition, final int blobSize) {
+	        final int numFalsePartition, final int blobSize, final double fileError) {
 		this.diff = diff;
 		this.minJaccarIndex = minJaccarIndex;
 		this.numCorrectPartition = numCorrectPartition;
 		this.numFalsePartition = numFalsePartition;
 		this.blobSize = blobSize;
+		this.fileError = fileError;
 	}
 	
 	public int getBlobSize() {
@@ -59,6 +62,10 @@ public class UntanglingComparisonResult {
 			// POSTCONDITIONS
 			Condition.notNull(this.diff, "Field '%s' in '%s'.", "diff", getClass().getSimpleName());
 		}
+	}
+	
+	public double getFileError() {
+		return this.fileError;
 	}
 	
 	public double getMinJaccarIndex() {
