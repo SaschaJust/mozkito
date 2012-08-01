@@ -215,6 +215,8 @@ public class Untangling {
 		int numFalsePartition = 0;
 		int fileError = 0;
 		final Set<Long> blobFiles = new HashSet<>();
+		double fileErrorBase = 0;
+		
 		while (pGen.hasMore()) {
 			final List<Set<JavaChangeOperation>> nextPermutation = pGen.nextPermutationAsList();
 			int diff = 0;
@@ -259,6 +261,7 @@ public class Untangling {
 				}
 				
 				fileError = 0;
+				fileErrorBase = 0;
 				for (int i = 0; i < nextPermutation.size(); ++i) {
 					final Set<JavaChangeOperation> originalPart = nextPermutation.get(i);
 					final Set<Long> filePart = new HashSet<>();
@@ -266,12 +269,13 @@ public class Untangling {
 						filePart.add(op.getRevision().getChangedFile().getGeneratedId());
 					}
 					fileError += CollectionUtils.subtract(filePart, trueFilePartition.get(i)).size();
+					fileErrorBase += filePart.size();
 				}
 				
 			}
 		}
 		return new UntanglingComparisonResult(minDiff, maxJaccard, numCorrectPartition, numFalsePartition, blob.size(),
-		                                      (((double) fileError) / ((double) blobFiles.size())));
+		                                      ((fileError) / fileErrorBase));
 	}
 	
 	/**
