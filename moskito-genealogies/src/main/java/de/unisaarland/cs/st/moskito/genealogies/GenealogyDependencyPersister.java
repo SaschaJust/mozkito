@@ -92,13 +92,6 @@ public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProces
 										        + "` when adding JavaMethodDefinitionDeletion.");
 									}
 								} else {
-									if (operation.isBefore(previousDefinition)) {
-										if (Logger.logError()) {
-											Logger.error("Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-											        + operation + ", previous definition=" + previousDefinition);
-										}
-										break;
-									}
 									GenealogyDependencyPersister.this.genealogy.addEdge(operation,
 									                                                    previousDefinition,
 									                                                    GenealogyEdgeType.DeletedDefinitionOnDefinition);
@@ -149,20 +142,6 @@ public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProces
 								
 								final JavaChangeOperation previousDefinition = GenealogyDependencyPersister.this.registry.findPreviousDefinition(element,
 								                                                                                                                 true);
-								
-								if (operation.isBefore(previousDefinition)) {
-									if (Logger.logError()) {
-										Logger.error("Fatal error occured. Found previous method definition that were added after the current operation: current operation="
-										        + operation
-										        + " in transaction "
-										        + operation.getRevision().getTransaction().getId()
-										        + ", previous definition="
-										        + previousDefinition
-										        + " in transaction "
-										        + previousDefinition.getRevision().getTransaction().getId());
-									}
-									break;
-								}
 								
 								if (previousDefinition != null) {
 									if (previousDefinition.getChangeType().equals(ChangeType.Deleted)) {

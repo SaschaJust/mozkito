@@ -86,16 +86,16 @@ public class JavaMethodRegistry {
 			invocationsInClass.put(fullQualifiedName, new ArrayList<JavaChangeOperation>());
 		}
 		final ArrayList<JavaChangeOperation> invList = invocationsInClass.get(fullQualifiedName);
-		if ((!invList.isEmpty()) && (call.isBefore(invList.get(invList.size() - 1)))) {
-			if (Logger.logError()) {
-				Logger.error("Attempt to add an earlier JavaChangeOperation to the "
-				        + "JavaMethodRegistry than the previous registered event. "
-				        + "This might lead to serious problems. Abort! "
-				        + "Please ensure to process JavaChangeOperations following repository timeline: previousCall="
-				        + invList.get(invList.size() - 1) + " tried to add=" + call);
-			}
-			return;
-		}
+		// if ((!invList.isEmpty()) && (call.isBefore(invList.get(invList.size() - 1)))) {
+		// if (Logger.logError()) {
+		// Logger.error("Attempt to add an earlier JavaChangeOperation to the "
+		// + "JavaMethodRegistry than the previous registered event. "
+		// + "This might lead to serious problems. Abort! "
+		// + "Please ensure to process JavaChangeOperations following repository timeline: previousCall="
+		// + invList.get(invList.size() - 1) + " tried to add=" + call);
+		// }
+		// return;
+		// }
 		invList.add(call);
 	}
 	
@@ -636,13 +636,13 @@ public class JavaMethodRegistry {
 			return null;
 		}
 		
-		if (del.isBefore(toDelete)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
-				        + del + ", previous definition=" + toDelete);
-			}
-			return null;
-		}
+		// if (del.isBefore(toDelete)) {
+		// if (Logger.logWarn()) {
+		// Logger.warn("Fatal error occured. Trying to delete method call that was added by later operation than the current operation: current operation="
+		// + del + ", previous definition=" + toDelete);
+		// }
+		// return null;
+		// }
 		
 		if (!this.methodInvocations.containsKey(callingPosition)) {
 			return null;
