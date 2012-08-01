@@ -38,6 +38,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.neo4j.Neo4jVertexCache;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
@@ -67,6 +68,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	private final Index<Node>                nodeIndex;
 	private final Index<Node>                rootIndex;
+	Neo4jVertexCache                         vertexCache;
 	
 	private final TransactionChangeGenealogy transactionGenealogy;
 	
@@ -85,7 +87,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		this.indexManager = graph.index();
 		this.nodeIndex = this.indexManager.forNodes(NODE_ID);
 		this.rootIndex = this.indexManager.forNodes(ROOT_VERTICES);
-		
+		this.vertexCache = new Neo4jVertexCache(this.nodeIndex);
 		final File transactionDbFile = new File(dbFile.getAbsolutePath() + FileUtils.fileSeparator + "transactionLayer");
 		
 		final GraphDatabaseService transactionGraphService = new EmbeddedGraphDatabase(
@@ -309,7 +311,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		}
 		
 		boolean edgeAlreadyExists = false;
-		for (final GenealogyEdgeType existingEdgeType : getEdges(dependent, target)) {
+		for (final GenealogyEdgeType existingEdgeType : getEdges(from, to)) {
 			if (existingEdgeType.equals(edgeType)) {
 				edgeAlreadyExists = true;
 				break;
@@ -532,6 +534,12 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			return null;
 		}
 		
+		return getEdge(fromNode, toNode);
+	}
+	
+	@NoneNull
+	public GenealogyEdgeType getEdge(final Node fromNode,
+	                                 final Node toNode) {
 		final Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
 		                                                                       GenealogyEdgeType.CallOnDefinition,
 		                                                                       GenealogyEdgeType.DefinitionOnDefinition,
@@ -562,6 +570,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			}
 			return null;
 		}
+		
+		return getEdges(fromNode, toNode);
+	}
+	
+	@NoneNull
+	private Collection<GenealogyEdgeType> getEdges(final Node fromNode,
+	                                               final Node toNode) {
 		
 		final Iterable<Relationship> relationships = fromNode.getRelationships(Direction.OUTGOING,
 		                                                                       GenealogyEdgeType.CallOnDefinition,
@@ -616,14 +631,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	private Node getNodeForVertex(final JavaChangeOperation op) {
-		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, op.getId());
-		if (!indexHits.hasNext()) {
-			indexHits.close();
-			return null;
-		}
-		final Node node = indexHits.next();
-		indexHits.close();
-		return node;
+		return this.vertexCache.getNode(op);
 	}
 	
 	@Override
