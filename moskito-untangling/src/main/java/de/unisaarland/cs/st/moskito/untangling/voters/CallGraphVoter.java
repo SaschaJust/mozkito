@@ -265,6 +265,21 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#close()
+	 */
+	@Override
+	public void close() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Distance.
 	 * 

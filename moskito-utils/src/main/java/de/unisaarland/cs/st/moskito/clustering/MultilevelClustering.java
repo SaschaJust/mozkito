@@ -191,6 +191,9 @@ public class MultilevelClustering<T> {
 		for (final Cluster<T> cluster : existingClusters) {
 			result.add(cluster.getAllElements());
 		}
+		for (final MultilevelClusteringScoreVisitor<T> visitor : this.scoreVisitors) {
+			visitor.close();
+		}
 		return result;
 	}
 	

@@ -32,6 +32,21 @@ public class MultilevelClusteringTest {
 	private class StringScoreVisitor implements MultilevelClusteringScoreVisitor<String>,
 	        MultilevelClusteringCollapseVisitor<String> {
 		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#close()
+		 */
+		@Override
+		public void close() {
+			// PRECONDITIONS
+			
+			try {
+				// TODO Auto-generated method stub
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
 		public int getLevenshteinDistance(final String s,
 		                                  final String t) {
 			if ((s == null) || (t == null)) {
@@ -141,6 +156,21 @@ public class MultilevelClusteringTest {
 	        MultilevelClusteringCollapseVisitor<Integer> {
 		
 		private int counter = 0;
+		
+		/*
+		 * (non-Javadoc)
+		 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#close()
+		 */
+		@Override
+		public void close() {
+			// PRECONDITIONS
+			
+			try {
+				// TODO Auto-generated method stub
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
 		
 		@Override
 		public double getMaxPossibleScore() {

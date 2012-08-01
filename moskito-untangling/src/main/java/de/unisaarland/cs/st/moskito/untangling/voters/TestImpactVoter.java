@@ -146,6 +146,21 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	
 	/*
 	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#close()
+	 */
+	@Override
+	public void close() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#getMaxPossibleScore()
 	 */
 	@Override

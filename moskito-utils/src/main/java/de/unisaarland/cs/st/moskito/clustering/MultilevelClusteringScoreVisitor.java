@@ -21,6 +21,8 @@ package de.unisaarland.cs.st.moskito.clustering;
  */
 public interface MultilevelClusteringScoreVisitor<T> {
 	
+	public void close();
+	
 	/**
 	 * Returns the highest possible score value
 	 * 

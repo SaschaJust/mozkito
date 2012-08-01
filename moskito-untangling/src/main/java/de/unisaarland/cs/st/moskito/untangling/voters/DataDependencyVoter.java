@@ -163,7 +163,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	private final File                     eclipseDir;
 	
 	/** The checkout dir. */
-	private File                           checkoutDir      = null;
+	private File                           checkoutDir = null;
 	
 	/** The cache dir. */
 	private final File                     cacheDir;
@@ -172,10 +172,9 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	private final RCSTransaction           transaction;
 	
 	/** The cache. */
-	private Map<String, Set<Set<Integer>>> cache            = new HashMap<String, Set<Set<Integer>>>();
+	private Map<String, Set<Set<Integer>>> cache       = new HashMap<>();
 	
-	/** The current cache file. */
-	private File                           currentCacheFile = null;
+	private final File                     cacheFile;
 	
 	/**
 	 * Instantiates a new data dependency voter.
@@ -186,11 +185,12 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 *            the repository
 	 * @param transaction
 	 *            the transaction
-	 * @param cacheFile
+	 * @param cacheDir
 	 *            the cache file
 	 */
+	@SuppressWarnings ("unchecked")
 	public DataDependencyVoter(@NotNull final File eclipseDir, @NotNull final Repository repository,
-	        final RCSTransaction transaction, final File cacheFile) {
+	        final RCSTransaction transaction, final File cacheDir) {
 		this.transaction = transaction;
 		this.eclipseDir = eclipseDir;
 		if (this.checkoutDir == null) {
@@ -199,7 +199,40 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
 			}
 		}
-		this.cacheDir = cacheFile;
+		this.cacheDir = cacheDir;
+		final String cacheFileName = this.transaction.getId() + ".dd";
+		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
+		if ((this.cacheDir != null) && (this.cacheFile.exists())) {
+			try (final ObjectInputStream objIn = new ObjectInputStream(
+			                                                           new BufferedInputStream(
+			                                                                                   new FileInputStream(
+			                                                                                                       this.cacheFile)));) {
+				this.cache = (Map<String, Set<Set<Integer>>>) objIn.readObject();
+				objIn.close();
+				
+			} catch (IOException | ClassNotFoundException ignore) {
+				// ignore
+			}
+		}
+		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor#close()
+	 */
+	@Override
+	public void close() {
+		// PRECONDITIONS
+		
+		try (final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.cacheFile))) {
+			out.writeObject(this.cache);
+			out.close();
+		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+		}
 	}
 	
 	/*
@@ -216,7 +249,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 * @see de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
 	 * java.lang.Object)
 	 */
-	@SuppressWarnings ("unchecked")
 	@Override
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
@@ -230,23 +262,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		// build path for file to analyze
 		final File file = new File(this.checkoutDir.getAbsolutePath() + op1.getChangedPath());
-		
-		final String cacheFileName = this.transaction.getId() + ".dd";
-		final File cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
-		try {
-			if ((this.currentCacheFile != null) && (!this.currentCacheFile.getName().equals(cacheFile.getName()))) {
-				if ((this.cacheDir != null) && (cacheFile.exists())) {
-					final ObjectInputStream objIn = new ObjectInputStream(
-					                                                      new BufferedInputStream(
-					                                                                              new FileInputStream(
-					                                                                                                  cacheFile)));
-					this.cache = (Map<String, Set<Set<Integer>>>) objIn.readObject();
-					objIn.close();
-				}
-			}
-		} catch (IOException | ClassNotFoundException ignore) {
-			// ignore
-		}
 		
 		if ((!this.cache.containsKey(file.getAbsolutePath())) && (file.exists())) {
 			if (!file.exists()) {
@@ -315,22 +330,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 			
 			this.cache.put(file.getAbsolutePath(), lineDependencies);
-			
-			// store changed cache
-			try {
-				final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cacheFile));
-				out.writeObject(this.cache);
-				out.close();
-				this.currentCacheFile = cacheFile;
-			} catch (final FileNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			} catch (final IOException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
 		}
 		
 		final Set<Set<Integer>> lineDependencies = this.cache.get(file.getAbsolutePath());
