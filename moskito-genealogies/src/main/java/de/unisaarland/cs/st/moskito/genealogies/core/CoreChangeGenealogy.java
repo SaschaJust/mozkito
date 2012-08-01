@@ -38,7 +38,9 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.neo4j.Neo4jRootCache;
 import de.unisaarland.cs.st.moskito.genealogies.neo4j.Neo4jVertexCache;
+import de.unisaarland.cs.st.moskito.genealogies.persistence.JavaChangeOperationCache;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
@@ -67,10 +69,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	private final IndexManager               indexManager;
 	
 	private final Index<Node>                nodeIndex;
-	private final Index<Node>                rootIndex;
-	Neo4jVertexCache                         vertexCache;
+	private final Neo4jVertexCache           vertexCache;
+	private final JavaChangeOperationCache   operationCache;
 	
 	private final TransactionChangeGenealogy transactionGenealogy;
+	private final Neo4jRootCache             rootCache;
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -86,7 +89,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		this.persistenceUtil = persistenceUtil;
 		this.indexManager = graph.index();
 		this.nodeIndex = this.indexManager.forNodes(NODE_ID);
-		this.rootIndex = this.indexManager.forNodes(ROOT_VERTICES);
+		
+		this.rootCache = new Neo4jRootCache(graph);
+		this.operationCache = new JavaChangeOperationCache(persistenceUtil);
 		this.vertexCache = new Neo4jVertexCache(this.nodeIndex);
 		final File transactionDbFile = new File(dbFile.getAbsolutePath() + FileUtils.fileSeparator + "transactionLayer");
 		
@@ -102,6 +107,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		
 		this.transactionGenealogy = new TransactionChangeGenealogy(transactionGraphService, transactionDbFile,
 		                                                           persistenceUtil, this);
+		
 	}
 	
 	/**
@@ -328,10 +334,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			tx.success();
 			tx.finish();
 			if (isRoot(to)) {
-				final Transaction tx2 = this.graph.beginTx();
-				this.rootIndex.remove(to, ROOT_VERTICES);
-				tx2.success();
-				tx2.finish();
+				this.rootCache.remove(to);
 			}
 			
 		}
@@ -372,7 +375,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		node.setProperty(NODE_ID, v.getId());
 		
 		this.nodeIndex.add(node, NODE_ID, node.getProperty(NODE_ID));
-		this.rootIndex.add(node, ROOT_VERTICES, 1);
+		this.rootCache.add(node);
 		
 		tx.success();
 		tx.finish();
@@ -696,11 +699,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	@Override
 	public Collection<JavaChangeOperation> getRoots() {
 		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
-		final IndexHits<Node> indexHits = this.rootIndex.query(ROOT_VERTICES, 1);
-		while (indexHits.hasNext()) {
-			result.add(getVertexForNode(indexHits.next()));
+		for (final Node op : this.rootCache) {
+			result.add(getVertexForNode(op));
 		}
-		indexHits.close();
 		return result;
 	}
 	
@@ -710,7 +711,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	private JavaChangeOperation getVertexForNode(final Node dependentNode) {
 		final Long operationId = (Long) dependentNode.getProperty(NODE_ID);
-		return loadById(operationId, JavaChangeOperation.class);
+		return this.operationCache.loadById(operationId);
 	}
 	
 	public boolean hasVertex(final JavaChangeOperation vertex) {
@@ -744,22 +745,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	}
 	
 	private boolean isRoot(final Node node) {
-		final IndexHits<Node> indexHits = this.rootIndex.query(ROOT_VERTICES, 1);
-		boolean result = false;
-		while (indexHits.hasNext()) {
-			final Node hit = indexHits.next();
-			result |= (hit.getId() == node.getId());
-			if (result) {
-				break;
-			}
-		}
-		indexHits.close();
-		return result;
-	}
-	
-	public JavaChangeOperation loadById(final long id,
-	                                    final Class<? extends JavaChangeOperation> clazz) {
-		return this.persistenceUtil.loadById(id, clazz);
+		return this.rootCache.isRoot(node);
 	}
 	
 	/**
@@ -816,7 +802,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			
 			@Override
 			public JavaChangeOperation next() {
-				return loadById(this.idIter.next(), JavaChangeOperation.class);
+				return CoreChangeGenealogy.this.operationCache.loadById(this.idIter.next());
 			}
 			
 			@Override
