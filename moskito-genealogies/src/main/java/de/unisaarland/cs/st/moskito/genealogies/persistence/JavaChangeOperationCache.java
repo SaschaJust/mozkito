@@ -67,6 +67,7 @@ public class JavaChangeOperationCache {
 		 * @return
 		 */
 		public long getOperationId() {
+			this.lastAccess = new DateTime();
 			return this.operation.getId();
 		}
 	}
@@ -84,7 +85,8 @@ public class JavaChangeOperationCache {
 		}
 		final JavaChangeOperation op = this.persistenceUtil.loadById(id, JavaChangeOperation.class);
 		if (op != null) {
-			if (this.cache.size() > 2500) {
+			// TODO make cache size configurable
+			if (this.cache.size() > 5000) {
 				final List<JavaChangeOperationCacheEntry> cacheList = new ArrayList<>(this.cache.size());
 				cacheList.addAll(this.cache.values());
 				Collections.sort(cacheList);

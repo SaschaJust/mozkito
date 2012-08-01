@@ -68,6 +68,7 @@ public class Neo4jVertexCache {
 		}
 		
 		public long getNodeId() {
+			access();
 			return this.nodeid;
 		}
 		
@@ -93,7 +94,7 @@ public class Neo4jVertexCache {
 		final Node node = indexHits.next();
 		this.cache.put(op.getId(), new Neo4jVertexCacheEntry(op.getId(), node));
 		indexHits.close();
-		
+		// TODO make cache size configurable
 		if (this.cache.size() > 25000) {
 			final List<Neo4jVertexCacheEntry> cacheList = new ArrayList<>(this.cache.size());
 			cacheList.addAll(this.cache.values());
