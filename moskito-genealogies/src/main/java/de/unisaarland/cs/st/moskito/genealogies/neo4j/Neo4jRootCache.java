@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.genealogies.neo4j;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
  */
 public class Neo4jRootCache implements Iterable<Node> {
 	
-	private Set<Node>                  cache;
+	private final Set<Node>            cache = new HashSet<>();
 	private final GraphDatabaseService graph;
 	private final Index<Node>          rootIndex;
 	
