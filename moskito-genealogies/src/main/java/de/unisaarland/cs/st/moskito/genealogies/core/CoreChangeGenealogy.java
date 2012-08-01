@@ -132,16 +132,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		final JavaElement targetElement = target.getChangedElementLocation().getElement();
 		final ChangeType targetChangeType = target.getChangeType();
 		
-		if (dependent.getRevision().getTransaction().getTimestamp()
-		             .isBefore(target.getRevision().getTransaction().getTimestamp())) {
-			if (Logger.logError()) {
-				Logger.error("Trying to add edge between dependent and target for which "
-				        + "the dependant occured before the target. THIS IS IMPOSSIBLE. "
-				        + "The future cannot influence the past: " + dependent + " --> " + target);
-			}
-			return false;
-		}
-		
 		switch (edgeType) {
 			case DefinitionOnDefinition:
 			case DefinitionOnDeletedDefinition:
