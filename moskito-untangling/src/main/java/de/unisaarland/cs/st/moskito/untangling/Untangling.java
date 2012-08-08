@@ -532,9 +532,9 @@ public class Untangling {
 			outWriter.append(FileUtils.lineSeparator);
 			
 			if ((this.untanglingControl.getN() != -1l) && (this.untanglingControl.getN() < artificialBlobs.size())) {
-				if (Logger.logDebug()) {
-					Logger.debug("Sampling %d artificial blobs to get %d random instances.", artificialBlobs.size(),
-					             this.untanglingControl.getN());
+				if (Logger.logInfo()) {
+					Logger.info("Sampling %d artificial blobs to get %d random instances.", artificialBlobs.size(),
+					            this.untanglingControl.getN());
 				}
 				final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
 				for (int i = 0; i < this.untanglingControl.getN(); ++i) {
