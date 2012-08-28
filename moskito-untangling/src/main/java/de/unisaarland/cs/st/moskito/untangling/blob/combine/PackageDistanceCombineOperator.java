@@ -25,6 +25,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -160,8 +161,18 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 			final String path = rev.getChangedFile().getPath(t1.getTransaction());
 			for (final RCSRevision rev2 : t2.getTransaction().getRevisions()) {
 				final String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
+				if (Logger.logDebug()) {
+					Logger.debug("Trying to combine %s and %s using max package distance of %d ...", path, path2,
+					             this.maxPackageDistance.intValue());
+				}
 				if (canCombinePaths(path, path2, this.maxPackageDistance.intValue())) {
+					if (Logger.logDebug()) {
+						Logger.debug("OK");
+					}
 					return true;
+				}
+				if (Logger.logDebug()) {
+					Logger.debug("FAILED");
 				}
 			}
 		}
