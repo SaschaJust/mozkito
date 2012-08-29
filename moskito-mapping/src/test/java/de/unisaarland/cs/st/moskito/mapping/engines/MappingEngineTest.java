@@ -38,6 +38,7 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.Tuple;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,8 +55,9 @@ import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.model.Feature;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
@@ -77,7 +79,7 @@ public class MappingEngineTest {
 	static Report              report;
 	
 	/** The score. */
-	static Mapping             score;
+	static Relation            score;
 	
 	/** The transaction. */
 	static RCSTransaction      transaction;
@@ -185,7 +187,7 @@ public class MappingEngineTest {
 		final MappingFinder mappingFinder = mappingArguments.getValue();
 		this.engines = mappingFinder.getEngines().values();
 		
-		score = new Mapping(mappableReport, mappableTransaction);
+		score = new Relation(new Candidate(new Tuple(mappableReport, mappableTransaction), null));
 	}
 	
 	/**
@@ -195,11 +197,11 @@ public class MappingEngineTest {
 	public void testBackrefEngine() {
 		for (final MappingEngine mEngine : this.engines) {
 			if (mEngine.getHandle().equals(BackrefEngine.class.getSimpleName())) {
-				final BackrefEngine engine = new BackrefEngine();
+				final BackrefEngine engine = new BackrefEngine(1.0d);
 				System.err.println(this.settings.toString());
 				
 				engine.score(mappableReport, mappableTransaction, score);
-				MappingEngineFeature feature = score.getFeatures().iterator().next();
+				Feature feature = score.getFeatures().iterator().next();
 				double confidence = feature.getConfidence();
 				System.err.println(confidence);
 				System.err.println(engine.getConfidence());
@@ -209,7 +211,7 @@ public class MappingEngineTest {
 				System.err.println(feature.getTransactionSubstring());
 				assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence, 0.0001);
 				
-				score = new Mapping(mappableTransaction, mappableReport);
+				score = new Relation(mappableTransaction, mappableReport);
 				engine.score(mappableTransaction, mappableReport, score);
 				feature = score.getFeatures().iterator().next();
 				confidence = feature.getConfidence();
@@ -246,13 +248,13 @@ public class MappingEngineTest {
 			fail(e.getMessage());
 		}
 		
-		final MappableEntity transaction = new MappableTransaction();
-		final MappableEntity report = new MappableReport();
+		new MappableTransaction();
+		new MappableReport();
 		
 		final Map<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>> map = new HashMap<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>>() {
 			
 			{
-				put(new AuthorEqualityEngine(), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
+				put(new AuthorEqualityEngine(1d), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
 					
 					{
 						for (final MappableEntity fromEntity : mappableEntities) {
@@ -266,12 +268,15 @@ public class MappingEngineTest {
 						
 					}
 				});
-				put(new TimestampEngine(), new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
-					
-					{
-						add(new Tuple<MappableEntity, MappableEntity>(transaction, report));
-					}
-				});
+				put(new TimestampEngine(new Interval(transaction.getTimestamp().getMillis() - (1000 * 3600),
+				                                     transaction.getTimestamp().getMillis() + (1000 * 3600))),
+				    new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
+					    
+					    {
+						    add(new Tuple<MappableEntity, MappableEntity>(new MappableTransaction(transaction),
+						                                                  new MappableReport(report)));
+					    }
+				    });
 				
 			}
 		};

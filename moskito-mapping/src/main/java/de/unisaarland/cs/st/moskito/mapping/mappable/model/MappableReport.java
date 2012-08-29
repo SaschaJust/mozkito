@@ -197,7 +197,8 @@ public class MappableReport extends MappableEntity implements Annotated {
 	 */
 	@Override
 	public String getId() {
-		return getReport().getId() + "";
+		// TODO: access mapping.selectors.reportRegex.tag to strip everything but the id number
+		return getReport().getId().replaceAll("[^0-9]", "");
 	}
 	
 	/**
@@ -260,5 +261,18 @@ public class MappableReport extends MappableEntity implements Annotated {
 				add(FieldKey.RESOLUTION_TIMESTAMP);
 			}
 		};
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("MappableReport [report=");
+		builder.append(this.report);
+		builder.append("]");
+		return builder.toString();
 	}
 }

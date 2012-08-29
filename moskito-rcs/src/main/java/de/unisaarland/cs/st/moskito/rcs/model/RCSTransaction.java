@@ -222,7 +222,7 @@ public class RCSTransaction implements Annotated {
 	 */
 	@Transient
 	public Person getAuthor() {
-		return getPersons().get("author");
+		return getPersons() != null ? getPersons().get("author") : new Person("unknown",null,null);
 	}
 	
 	@ElementCollection
@@ -282,7 +282,7 @@ public class RCSTransaction implements Annotated {
 	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return this.children;
+		return this.children != null ? this.children : new HashSet<RCSTransaction>();
 	}
 	
 	/**
@@ -370,7 +370,7 @@ public class RCSTransaction implements Annotated {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return this.revisions;
+		return this.revisions != null ? this.revisions : new HashSet<RCSRevision>();
 	}
 	
 	/**

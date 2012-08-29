@@ -41,7 +41,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -72,7 +72,7 @@ public class TimestampEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, TimestampEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -240,43 +240,97 @@ public class TimestampEngine extends MappingEngine {
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final Mapping score) {
+	                  final Relation score) {
 		double value = 0d;
 		
 		final DateTime element1Timestamp = ((DateTime) element1.get(FieldKey.CREATION_TIMESTAMP));
 		final DateTime element2CreationTimestamp = ((DateTime) element2.get(FieldKey.CREATION_TIMESTAMP));
 		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
-		ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
-		final Report report = ((MappableReport) element2).getReport();
-		Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (Logger.logDebug()) {
+			Logger.debug("Creation FROM:%s, Creation TO:%s, Resolution TO:%s", element1Timestamp,
+			             element2CreationTimestamp, element2ResolutionTimestamp);
+		}
 		
-		final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
-		                                            element1Timestamp.plus(getInterval().getEndMillis()));
-		
-		if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
-			final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
-			for (final HistoryElement element : history.getElements()) {
-				final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
-				                                                                           .toLowerCase());
-				@SuppressWarnings ("unchecked")
-				final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
-				if (val.equals(Resolution.RESOLVED)) {
-					if (localInterval.contains(element.getTimestamp())) {
+		if ((element1Timestamp != null) && (element2CreationTimestamp != null) && (element2ResolutionTimestamp != null)) {
+			
+			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
+			final Report report = ((MappableReport) element2).getReport();
+			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
+			                                            element1Timestamp.plus(getInterval().getEndMillis()));
+			
+			if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
+				// report got created before transaction
+				if (Logger.logDebug()) {
+					Logger.debug("report got created before transaction");
+				}
+				//final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
+				
+				/*if (!history.isEmpty()) {
+					for (final HistoryElement element : history.getElements()) {
+						if (Logger.logDebug()) {
+							Logger.debug("Checking history element: %s", element);
+						}
+						final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
+						                                                                           .toLowerCase());
+						@SuppressWarnings ("unchecked")
+						final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
+						if (val != null && val.equals(Resolution.RESOLVED)) {
+							if (Logger.logDebug()) {
+								Logger.debug("This element set solved flag.");
+							}
+							if (localInterval.contains(element.getTimestamp())) {
+								value = 1;
+								if (Logger.logDebug()) {
+									Logger.debug("Resolution is within specified interval, value: %s", value);
+								}
+							} else if (element.getTimestamp().isAfter(element1Timestamp)) {
+								value = Math.max(value,
+								                 1.0d / (1.0d + ((element.getTimestamp().getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+								if (Logger.logDebug()) {
+									Logger.debug("Resolution is later than specified, value: %s", value);
+								}
+							}
+						}
+					}
+				} else {*/
+					if (localInterval.contains(element2ResolutionTimestamp)) {
 						value = 1;
-						
+						if (Logger.logDebug()) {
+							Logger.debug("Resolution is within specified interval, value: %s", value);
+						}
 					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
 						value = Math.max(value,
 						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+						if (Logger.logDebug()) {
+							Logger.debug("Resolution is later than specified, value: %s", value);
+						}
 					}
+				//}
+				
+			} else {
+				if (Logger.logDebug()) {
+					Logger.debug("Report got created after transaction");
 				}
+				value = -1;
 			}
 			
+			if (Logger.logDebug()) {
+				Logger.debug("Scoring with confidence: %s", value);
+			}
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
+			           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
+			           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
+		} else {
+			if (Logger.logDebug()) {
+				Logger.debug("Scoring with confidence: %s", value);
+			}
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), MappingEngine.getUnknown(),
+			           MappingEngine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), MappingEngine.getUnknown(),
+			           MappingEngine.getUnknown());
 		}
-		
-		addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
-		           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
-		           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 	}
 	
 	/*

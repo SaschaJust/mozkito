@@ -29,7 +29,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -61,7 +61,7 @@ public class ReportTypeEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "reportType", "...", requirements);
+			super(argumentSet, ReportTypeEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -156,7 +156,7 @@ public class ReportTypeEngine extends MappingEngine {
 	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
 	                                                           
 	/** The constant defaultConfidence. */
-	private static final Double DEAFULT_CONFIDENCE = -1d;
+	private static final Double DEAFULT_CONFIDENCE = 1d;
 	
 	/** The default type. */
 	private static final Type   DEFAULT_TYPE       = Type.BUG;
@@ -223,24 +223,20 @@ public class ReportTypeEngine extends MappingEngine {
 	@Override
 	public void score(final MappableEntity element1,
 	                  final MappableEntity element2,
-	                  final Mapping score) {
+	                  final Relation score) {
 		if (element1 instanceof MappableReport) {
-			if (element1.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				                 element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown(),
-				                 this.getClass());
+			if (element1.get(FieldKey.TYPE) == getType()) {
+				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
+				           element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
 			}
-		} else
-		
-		if (element2 instanceof MappableReport) {
-			if (element2.get(FieldKey.TYPE) != getType()) {
-				score.addFeature(getConfidence(), getUnused(), getUnknown(), getUnknown(), FieldKey.TYPE.name(),
-				                 element2.get(FieldKey.TYPE).toString(), element2.get(FieldKey.TYPE).toString(),
-				                 this.getClass());
+		} else if (element2 instanceof MappableReport) {
+			if (element2.get(FieldKey.TYPE) == getType()) {
+				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element2.get(FieldKey.TYPE).toString(),
+				           element2.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
 			}
 		} else {
-			score.addFeature(0, getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(), getUnknown(),
-			                 this.getClass());
+			addFeature(score, -getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
+			           getUnknown());
 		}
 		
 	}

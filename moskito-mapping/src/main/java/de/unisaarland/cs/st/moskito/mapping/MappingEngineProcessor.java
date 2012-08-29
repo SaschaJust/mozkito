@@ -19,15 +19,14 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 
 /**
  * The Class MappingEngineProcessor.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MappingEngineProcessor extends Filter<Mapping> {
+public class MappingEngineProcessor extends Filter<Relation> {
 	
 	/**
 	 * Instantiates a new mapping engine processor.
@@ -44,20 +43,19 @@ public class MappingEngineProcessor extends Filter<Mapping> {
 	public MappingEngineProcessor(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final MappingEngine engine) {
 		super(threadGroup, settings, false);
-		new Mapping(null, null);
 		
-		new ProcessHook<Mapping, Mapping>(this) {
+		new ProcessHook<Relation, Relation>(this) {
 			
 			@Override
 			public void process() {
-				final IMapping candidate = getInputData();
+				final Relation candidate = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Processing mapping for " + candidate.getElement1() + " to " + candidate.getElement2()
-					        + ".");
+					Logger.debug("[%s] Processing mapping for '%s' -> '%s'.", engine.getHandle(),
+					             candidate.getFrom(), candidate.getTo());
 				}
 				
-				final Mapping score = finder.score(engine, candidate.getElement1(), candidate.getElement2());
+				final Relation score = finder.score(engine, candidate);
 				
 				provideOutputData(score);
 				

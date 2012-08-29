@@ -12,24 +12,32 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.selectors;
 
-import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
-import de.unisaarland.cs.st.moskito.bugs.tracker.model.Comment;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
+
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -39,13 +47,106 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ReportRegexSelector extends MappingSelector {
+public class ReportRegexSelector extends Selector {
+	
+	public static final class Options extends
+	        ArgumentSetOptions<ReportRegexSelector, ArgumentSet<ReportRegexSelector, Options>> {
+		
+		private static final String                                   TAG         = "reportRegex";
+		private static final String                                   DESCRIPTION = "...";
+		private StringArgument.Options                                patternOption;
+		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ReportRegexSelector init() {
+			// PRECONDITIONS
+			
+			try {
+				final StringArgument patternArgument = getSettings().getArgument(this.patternOption);
+				final ReportRegexSelector selector = new ReportRegexSelector(patternArgument.getValue());
+				final StringArgument tagArgument = getSettings().getArgument(this.tagOption);
+				
+				final String tag = tagArgument.getValue();
+				if (tag != null) {
+					selector.setTagFormat(tag);
+				}
+				return selector;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				final Map<String, IOptions<?, ?>> map = new HashMap<>();
+				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
+				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
+				                                                Requirement.required);
+				map.put(this.patternOption.getName(), this.patternOption);
+				
+				this.tagOption = new StringArgument.Options(
+				                                            argumentSet,
+				                                            "tag",
+				                                            "Format string like 'XSTR-%s' that determines how the match from the regex should be used when querying the database.",
+				                                            null, Requirement.optional);
+				map.put(this.tagOption.getName(), this.tagOption);
+				
+				return map;
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
-	
+	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
+	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";
 	/** The pattern. */
-	private String              pattern;
+	private final String        pattern;
+	
+	private String              tagFormat       = null;
+	
+	@Deprecated
+	public ReportRegexSelector() {
+		this.pattern = DEFAULT_PATTERN;
+	}
+	
+	/**
+	 * @param value
+	 */
+	public ReportRegexSelector(final String pattern) {
+		// PRECONDITIONS
+		
+		try {
+			this.pattern = pattern;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -67,98 +168,67 @@ public class ReportRegexSelector extends MappingSelector {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.settings.registerable.ArgumentProvider#initSettings(net.ownhero.dev.andama.settings.
-	 * DynamicArgumentSet)
-	 */
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector#parse (java.lang.Object)
 	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public <T extends MappableEntity> List<T> parse(final MappableEntity element,
 	                                                final Class<T> targetType,
 	                                                final PersistenceUtil util) {
 		final List<T> list = new LinkedList<T>();
-		final List<String> ids = new LinkedList<String>();
+		final List<String> ids = new LinkedList<>();
 		final Regex regex = new Regex(this.pattern);
 		
-		try {
-			
-			final Criteria<?> criteria = util.createCriteria(targetType.newInstance().getBaseType());
-			
-			for (int i = 0; i < element.getSize(FieldKey.COMMENT); ++i) {
-				final Comment comment = (Comment) element.get(FieldKey.COMMENT, i);
-				final MultiMatch multiMatch = regex.findAll(comment.getMessage());
-				
-				if (multiMatch != null) {
-					for (final Match match : multiMatch) {
-						
-						ids.add(match.getGroup(1).getMatch());
-					}
-				}
-			}
-			
-			criteria.in("id", ids);
-			final List<?> load = util.load(criteria);
-			
-			for (final Object instance : load) {
-				try {
-					final Constructor<T> constructor = targetType.getConstructor(instance.getClass());
-					list.add(constructor.newInstance(instance));
-				} catch (final Exception e) {
-					throw new UnrecoverableError(e);
-				}
-			}
-		} catch (final Exception e) {
-			throw new UnrecoverableError(e);
+		final Criteria<Report> criteria = util.createCriteria(Report.class);
+		
+		final MultiMatch multiMatch = regex.findAll(element.get(FieldKey.BODY).toString());
+		if (Logger.logDebug()) {
+			Logger.debug("Parsing commit message '" + element.get(FieldKey.BODY).toString() + "' and found "
+			        + (multiMatch != null
+			                             ? multiMatch.size()
+			                             : 0) + " matches for regex '" + this.pattern + "'.");
 		}
+		
+		if (multiMatch != null) {
+			for (final Match match : multiMatch) {
+				if (Logger.logDebug()) {
+					Logger.debug("While parsings " + element.get(FieldKey.ID).toString()
+					        + " i stumbled upon this match: " + match.getGroup(1).getMatch());
+				}
+				ids.add(this.tagFormat != null
+				                              ? String.format(this.tagFormat, match.getGroup(1).getMatch())
+				                              : match.getGroup(1).getMatch());
+			}
+		}
+		criteria.in("id", ids);
+		final List<Report> loadedList = util.load(criteria);
+		
+		list.addAll(CollectionUtils.collect(loadedList, new Transformer() {
+			
+			@Override
+			public MappableReport transform(final Object input) {
+				return new MappableReport((Report) input);
+			}
+		}));
 		
 		return list;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
+	/**
+	 * @param tagFormat
+	 *            the tagFormat to set
 	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
+	final void setTagFormat(final String tagFormat) {
 		// PRECONDITIONS
+		Condition.notNull(tagFormat, "Argument '%s' in '%s'.", "tagFormat", getClass().getSimpleName());
 		
 		try {
-			new StringArgument.Options(root, "pattern", "Pattern of report ids to scan for.", "(\\p{XDigit}{7,})",
-			                           Requirement.required);
-			return root;
+			this.tagFormat = tagFormat;
 		} finally {
 			// POSTCONDITIONS
+			CompareCondition.equals(this.tagFormat, tagFormat,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
-	}
-	
-	/**
-	 * Sets the pattern.
-	 * 
-	 * @param pattern
-	 *            the pattern to set
-	 */
-	@SuppressWarnings ("unused")
-	private void setPattern(final String pattern) {
-		this.pattern = pattern;
 	}
 	
 	/*
@@ -168,7 +238,7 @@ public class ReportRegexSelector extends MappingSelector {
 	@Override
 	public boolean supports(final Class<?> from,
 	                        final Class<?> to) {
-		return from.equals(Report.class) && to.equals(RCSTransaction.class);
+		return from.equals(RCSTransaction.class) && to.equals(Report.class);
 	}
 	
 }

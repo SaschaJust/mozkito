@@ -59,11 +59,8 @@ import de.unisaarland.cs.st.moskito.persistence.model.Person;
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
-	/** The history parser. */
-	private BugzillaHistoryParser historyParser;
-	
 	/** The sibling regex. */
-	protected static Regex        siblingRegex = new Regex("bug\\s+({sibling}\\d+)");
+	protected static Regex siblingRegex = new Regex("bug\\s+({sibling}\\d+)");
 	
 	/**
 	 * Instantiates a new bugzilla parser.

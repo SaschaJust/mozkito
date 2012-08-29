@@ -55,6 +55,7 @@
 		<module>moskito-bugs-importclassification</module>
 		<module>moskito-persons</module>
 		<module>moskito-mapping</module>
+		<module>moskito-mapping-export</module>
 		<module>moskito-infozilla</module>
 		<module>moskito-genealogies</module>
 		<module>moskito-genealogies-metrics</module>

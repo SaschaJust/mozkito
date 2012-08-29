@@ -101,6 +101,12 @@ public class MappableTransaction extends MappableEntity {
 				return getTransaction().getMessage();
 			case ID:
 				return getId();
+			case CHANGER:
+				return getTransaction().getAuthor();
+			case COMMENT:
+				return getTransaction().getMessage();
+			case MODIFICATION_TIMESTAMP:
+				return getTransaction().getTimestamp();
 			default:
 				return null;
 		}
@@ -218,5 +224,18 @@ public class MappableTransaction extends MappableEntity {
 				add(FieldKey.SUMMARY);
 			}
 		};
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("MappableTransaction [transaction=");
+		builder.append(this.transaction);
+		builder.append("]");
+		return builder.toString();
 	}
 }

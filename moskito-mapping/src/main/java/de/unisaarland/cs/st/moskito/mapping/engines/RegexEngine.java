@@ -38,7 +38,7 @@ import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -154,7 +154,7 @@ public class RegexEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, RegexEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -284,7 +284,7 @@ public class RegexEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity element1,
 	                        final MappableEntity element2,
-	                        final Mapping score) {
+	                        final Relation score) {
 		double value = 0d;
 		String relevantString = ""; //$NON-NLS-1$
 		
@@ -293,7 +293,7 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		for (final Matcher matcher : this.matchers) {
-			final Regex regex = matcher.getRegex(element2.get(FieldKey.ID).toString());
+			final Regex regex = matcher.getRegex(element2.getId());
 			
 			if (value < matcher.getScore()) {
 				
@@ -301,9 +301,11 @@ public class RegexEngine extends MappingEngine {
 					Logger.debug("Using regex '" + regex.getPattern() + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
-					
-					value += matcher.getScore();
+					value = matcher.getScore();
 					relevantString = regex.getGroup("match"); //$NON-NLS-1$
+					if (Logger.logDebug()) {
+						Logger.debug("Found match: %s", relevantString);
+					}
 				}
 			}
 		}

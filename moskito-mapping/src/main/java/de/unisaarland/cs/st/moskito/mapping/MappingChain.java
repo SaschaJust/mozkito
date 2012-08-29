@@ -13,7 +13,6 @@
 package de.unisaarland.cs.st.moskito.mapping;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.andama.messages.StartupEvent;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -27,12 +26,10 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
-import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
-import dev.ownhero.net.andama.eventhandlers.irc.IRCThread;
 
 /**
  * The Class MappingChain.
@@ -52,7 +49,7 @@ public class MappingChain extends Chain<Settings> {
 	 */
 	public MappingChain(final Settings settings) {
 		super(settings, "mapping"); //$NON-NLS-1$
-		this.threadPool = new Pool(Mapping.class.getSimpleName(), this);
+		this.threadPool = new Pool(Relation.class.getSimpleName(), this);
 		
 		try {
 			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
@@ -95,21 +92,24 @@ public class MappingChain extends Chain<Settings> {
 			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
 			new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
 			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
+			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
 			new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
 			// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
 			// getSettings(), finder);
-			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
 			// new ScoringFilterMux(this.threadPool.getThreadGroup(),
 			// getSettings());
 			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
 			// getSettings());
 			for (final MappingEngine engine : finder.getEngines().values()) {
+				if (Logger.logInfo()) {
+					Logger.info("Creating node for engine '%s'.", engine);
+				}
 				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
 			}
 			
-			for (final MappingStrategy strategy : finder.getStrategies().values()) {
-				new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
-			}
+			// for (final MappingStrategy strategy : finder.getStrategies().values()) {
+			// new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
+			// }
 			// new ScoringPersister(this.threadPool.getThreadGroup(),
 			// getSettings(), persistenceUtil);
 			// ScoringSplitter splitter = new
@@ -129,9 +129,9 @@ public class MappingChain extends Chain<Settings> {
 			// return;
 		}
 		
-		final IRCThread t = new IRCThread("mapping");
-		t.start();
-		
-		getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
+		// final IRCThread t = new IRCThread("mapping");
+		// t.start();
+		//
+		// getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
 	}
 }

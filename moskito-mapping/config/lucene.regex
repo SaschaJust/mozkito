@@ -1,0 +1,2 @@
+1.0 "({match}LUCENE-##ID##)" CASE_INSENSITIVE
+1.0 "({match}JIRA-##ID##)" CASE_INSENSITIVE

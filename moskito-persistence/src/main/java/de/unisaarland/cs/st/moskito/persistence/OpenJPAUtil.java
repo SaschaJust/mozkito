@@ -377,8 +377,8 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see de.unisaarland.cs.st.moskito.persistence.PersistenceUtil#loadById(java .lang.Object, java.lang.Class)
 	 */
 	@Override
-	public <T, I> T loadById(final I id,
-	                         final Class<T> clazz) {
+	public <T extends Annotated> T loadById(final Object id,
+	                                        final Class<T> clazz) {
 		// determine id column
 		for (final Method m : clazz.getDeclaredMethods()) {
 			// found

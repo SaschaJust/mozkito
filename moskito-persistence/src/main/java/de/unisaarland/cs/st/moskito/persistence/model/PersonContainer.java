@@ -93,7 +93,7 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	@Transient
 	public Person get(final String id) {
-		return getMap().get(id.toLowerCase());
+		return getMap() != null ? getMap().get(id.toLowerCase()) : null;
 	}
 	
 	/**

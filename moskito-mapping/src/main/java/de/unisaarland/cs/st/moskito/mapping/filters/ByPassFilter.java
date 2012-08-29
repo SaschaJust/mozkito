@@ -12,30 +12,103 @@
  *****************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.filters;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.requirements.ByPass;
+import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
 /**
  * The Class ByPassFilter.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ByPassFilter extends MappingFilter {
+public class ByPassFilter extends Filter {
+	
+	/**
+	 * The Class Options.
+	 */
+	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
+		
+		/** The Constant TAG. */
+		private static final String TAG         = "byPass";
+		
+		/** The Constant DESCRIPTION. */
+		private static final String DESCRIPTION = "...";
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ByPassFilter init() {
+			// PRECONDITIONS
+			
+			try {
+				return new ByPassFilter();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<String, IOptions<?, ?>>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	/** The Constant DESCRIPTION. */
+	public static final String DESCRIPTION = "Does not filter at all (by-passing).";
 	
 	/*
 	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#filter(de
-	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
+	 * @see
+	 * de.unisaarland.cs.st.moskito.mapping.filters.Filter#filter(de.unisaarland.cs.st.moskito.mapping.model.Composite,
+	 * java.util.Set)
 	 */
 	@Override
-	public Set<? extends MappingFilter> filter(final IMapping mapping,
-	                                           final Set<? extends MappingFilter> triggeringFilters) {
-		return triggeringFilters;
+	public Set<? extends Filter> filter(final Composite composite,
+	                                    final Set<Filter> triggeringFilters) {
+		// PRECONDITIONS
+		
+		try {
+			return triggeringFilters;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/*
@@ -44,41 +117,21 @@ public class ByPassFilter extends MappingFilter {
 	 */
 	@Override
 	public String getDescription() {
-		return "Does not filter at all (by-passing).";
-		
+		return DESCRIPTION;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
+	 * @see de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter#supported()
 	 */
 	@Override
-	public void init() {
+	public Expression supported() {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			return new ByPass();
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
 }

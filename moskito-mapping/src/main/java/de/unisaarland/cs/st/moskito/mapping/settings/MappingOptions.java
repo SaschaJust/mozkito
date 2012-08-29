@@ -20,17 +20,24 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.TupleArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Highlighter;
+import net.ownhero.dev.kisa.LogLevel;
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine.Options;
-import de.unisaarland.cs.st.moskito.mapping.filters.MappingFilter;
+import de.unisaarland.cs.st.moskito.mapping.filters.Filter;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.selectors.MappingSelector;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.mapping.splitters.MappingSplitter;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class MappingArguments.
@@ -38,6 +45,18 @@ import de.unisaarland.cs.st.moskito.mapping.training.MappingTrainer;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
+	
+	static {
+		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
+			
+			@Override
+			public boolean matches(final String message,
+			                       final LogLevel level,
+			                       final String prefix) {
+				return message.matches("Adding new mapping engines dependency.*");
+			}
+		});
+	}
 	
 	private static final String        DESCRIPTION = "TODO";
 	public static final String         NAME        = "mapping";
@@ -49,17 +68,19 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
 	
 	/** The filters. */
-	private final Set<MappingFilter>   filters     = new HashSet<MappingFilter>();
+	private final Set<Filter>   filters     = new HashSet<Filter>();
 	
 	/** The selectors. */
-	private final Set<MappingSelector> selectors   = new HashSet<MappingSelector>();
+	private final Set<Selector> selectors   = new HashSet<Selector>();
 	
 	/** The splitters. */
 	private final Set<MappingSplitter> splitters   = new HashSet<MappingSplitter>();
 	
 	/** The trainers. */
 	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
-	private Options                    engineOptions;
+	private MappingEngine.Options      engineOptions;
+	private TupleArgument.Options      sourceOptions;
+	private Selector.Options    selectorOptions;
 	
 	/**
 	 * @param argumentSet
@@ -85,7 +106,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the filters
 	 */
-	public final Set<MappingFilter> getFilters() {
+	public final Set<Filter> getFilters() {
 		return this.filters;
 	}
 	
@@ -94,7 +115,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the selectors
 	 */
-	public final Set<MappingSelector> getSelectors() {
+	public final Set<Selector> getSelectors() {
 		return this.selectors;
 	}
 	
@@ -148,11 +169,12 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			finder.addStrategy(strategy);
 		}
 		
-		for (final MappingFilter filter : this.filters) {
+		for (final Filter filter : this.filters) {
 			finder.addFilter(filter);
 		}
 		
-		for (final MappingSelector selector : this.selectors) {
+		final ArgumentSet<Set<Selector>, Selector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
+		for (final Selector selector : selectorArgument.getValue()) {
 			finder.addSelector(selector);
 		}
 		
@@ -178,8 +200,22 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		
 		try {
 			final HashMap<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+			
+			this.sourceOptions = new TupleArgument.Options(
+			                                               set,
+			                                               "sourceTypes",
+			                                               "Determines what kind of stuff you want to map. E.g. =RCSTransaction,Report",
+			                                               new Tuple<String, String>(
+			                                                                         RCSTransaction.class.getSimpleName(),
+			                                                                         Report.class.getSimpleName()),
+			                                               Requirement.required);
+			map.put(this.sourceOptions.getName(), this.sourceOptions);
+			
 			this.engineOptions = MappingEngine.getOptions(set);
 			map.put(this.engineOptions.getName(), this.engineOptions);
+			
+			this.selectorOptions = Selector.getOptions(set);
+			map.put(this.selectorOptions.getName(), this.selectorOptions);
 			
 			return map;
 		} finally {

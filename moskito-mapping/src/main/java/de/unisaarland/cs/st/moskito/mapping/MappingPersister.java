@@ -19,7 +19,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
@@ -27,7 +27,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MappingPersister extends Sink<Mapping> {
+public class MappingPersister extends Sink<Relation> {
 	
 	/** The i. */
 	private Integer i = 0;
@@ -45,7 +45,7 @@ public class MappingPersister extends Sink<Mapping> {
 	public MappingPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<Mapping, Mapping>(this) {
+		new PreExecutionHook<Relation, Relation>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -53,11 +53,11 @@ public class MappingPersister extends Sink<Mapping> {
 			}
 		};
 		
-		new ProcessHook<Mapping, Mapping>(this) {
+		new ProcessHook<Relation, Relation>(this) {
 			
 			@Override
 			public void process() {
-				final Mapping score = getInputData();
+				final Relation score = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + score);
@@ -72,7 +72,7 @@ public class MappingPersister extends Sink<Mapping> {
 			}
 		};
 		
-		new PostExecutionHook<Mapping, Mapping>(this) {
+		new PostExecutionHook<Relation, Relation>(this) {
 			
 			@Override
 			public void postExecution() {

@@ -19,15 +19,15 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.IRelation;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 
 /**
  * The Class Filter.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class Filter extends Transformer<Mapping, FilteredMapping> {
+public class Filter extends Transformer<Relation, FilteredMapping> {
 	
 	/**
 	 * Instantiates a new filter.
@@ -41,11 +41,11 @@ public class Filter extends Transformer<Mapping, FilteredMapping> {
 	 */
 	public Filter(final Group threadGroup, final Settings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		new ProcessHook<Mapping, FilteredMapping>(this) {
+		new ProcessHook<Relation, FilteredMapping>(this) {
 			
 			@Override
 			public void process() {
-				final IMapping inputData = getInputData();
+				final IRelation inputData = getInputData();
 				final FilteredMapping mapping = finder.filter(inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {

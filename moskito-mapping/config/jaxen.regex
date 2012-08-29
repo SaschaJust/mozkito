@@ -1,0 +1,5 @@
+1.0 "({match}JAXEN-##ID##)" CASE_INSENSITIVE
+1.0 "({match}JIRA-##ID##)" CASE_INSENSITIVE
+1.0 "({match}###ID##)" CASE_INSENSITIVE
+1.0 "({match}bug:?\s+#?##ID##)" CASE_INSENSITIVE
+1.0 "({match}bugs?:?\s+(#?\p{Digit}+,)*#?##ID##)" CASE_INSENSITIVE

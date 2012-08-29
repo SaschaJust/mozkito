@@ -12,15 +12,18 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.strategies;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import de.unisaarland.cs.st.moskito.mapping.model.IMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
-import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.Feature;
 
 /**
  * The Class TotalAggreementStrategy.
@@ -28,6 +31,50 @@ import de.unisaarland.cs.st.moskito.mapping.model.MappingEngineFeature;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TotalAggreementStrategy extends MappingStrategy {
+	
+	public static final class Options extends
+	        ArgumentSetOptions<TotalAggreementStrategy, ArgumentSet<TotalAggreementStrategy, Options>> {
+		
+		private static final String TAG         = "totalAgreement";
+		private static final String DESCRIPTION = "...";
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public TotalAggreementStrategy init() {
+			// PRECONDITIONS
+			
+			try {
+				return new TotalAggreementStrategy();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			return new HashMap<String, IOptions<?, ?>>();
+		}
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -40,30 +87,15 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#init()
-	 */
-	@Override
-	public void init() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy#map
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public IMapping map(final Mapping mapping) {
+	public Composite map(final Composite composite) {
 		int value = 0;
 		
-		final Queue<MappingEngineFeature> features = mapping.getFeatures();
-		for (final MappingEngineFeature feature : features) {
+		final Queue<Feature> features = composite.getRelation().getFeatures();
+		for (final Feature feature : features) {
 			final int cache = Double.compare(feature.getConfidence(), 0.0d);
 			if (Math.abs(value - cache) > 1) {
 				value = 0;
@@ -73,32 +105,14 @@ public class TotalAggreementStrategy extends MappingStrategy {
 		}
 		
 		if (value > 0) {
-			mapping.addStrategy(getHandle(), true);
+			composite.addStrategy(getHandle(), true);
 		} else if (value < 0) {
-			mapping.addStrategy(getHandle(), false);
+			composite.addStrategy(getHandle(), false);
 		} else {
-			mapping.addStrategy(getHandle(), null);
+			composite.addStrategy(getHandle(), null);
 		}
 		
-		return mapping;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.hiari.settings.SettingsProvider#provide(net.ownhero.dev.hiari.settings.ArgumentSet)
-	 */
-	@Override
-	public ArgumentSet<?, ?> provide(final ArgumentSet<?, ?> root) throws ArgumentRegistrationException,
-	                                                              ArgumentSetRegistrationException,
-	                                                              SettingsParseError {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
+		return composite;
 	}
 	
 }

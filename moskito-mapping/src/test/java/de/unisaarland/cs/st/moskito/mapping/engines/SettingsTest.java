@@ -12,6 +12,7 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import static org.junit.Assert.fail;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -34,21 +35,36 @@ public class SettingsTest {
 	
 	@Test
 	public void test() {
+		Settings settings = null;
 		try {
-			final Settings settings = new Settings();
-			final ArgumentSet<MappingFinder, MappingOptions> argumentSet = ArgumentSetFactory.create(new MappingOptions(
-			                                                                                                            settings.getRoot(),
-			                                                                                                            Requirement.required));
-			final MappingFinder finder = argumentSet.getValue();
-			
-			for (final MappingEngine engine : finder.getEngines().values()) {
-				System.err.println(String.format("%s\t%s", engine.getHandle(), engine.getDescription()));
-			}
-		} catch (final SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
+			settings = new Settings();
+		} catch (final SettingsParseError e1) {
 			if (Logger.logError()) {
-				Logger.error(e);
+				Logger.error(e1);
 			}
-			
+			fail();
+		}
+		
+		if (settings != null) {
+			try {
+				final ArgumentSet<MappingFinder, MappingOptions> argumentSet = ArgumentSetFactory.create(new MappingOptions(
+				                                                                                                            settings.getRoot(),
+				                                                                                                            Requirement.required));
+				System.err.println(settings.getHelpString());
+				System.err.println(settings.toString());
+				final MappingFinder finder = argumentSet.getValue();
+				
+				for (final MappingEngine engine : finder.getEngines().values()) {
+					System.err.println(String.format("%s\t%s", engine.getHandle(), engine.getDescription()));
+				}
+			} catch (final SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {
+				if (Logger.logError()) {
+					Logger.error(e);
+				}
+				System.err.println(settings.toString());
+				System.err.println(settings.getHelpString());
+				fail();
+			}
 		}
 		
 	}

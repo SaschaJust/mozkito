@@ -44,7 +44,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -159,48 +159,77 @@ public abstract class MappingEngine extends Node {
 				final HashSet<String> defaultSet = new HashSet<String>();
 				
 				try {
+					// first off, find all implemented engines
 					final Collection<Class<? extends MappingEngine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
 					                                                                                                   MappingEngine.class,
 					                                                                                                   Modifier.ABSTRACT
 					                                                                                                           | Modifier.INTERFACE
 					                                                                                                           | Modifier.PRIVATE
 					                                                                                                           | Modifier.PROTECTED);
-					for (final Class<? extends MappingEngine> c : collection) {
-						if (c.getSuperclass() == MappingEngine.class) {
-							final Class<?>[] declaredClasses = c.getDeclaredClasses();
-							for (final Class<?> dC : declaredClasses) {
-								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
+					
+					// first compute the default value for the engine enabler option, i.e., all implemented engines
+					for (final Class<? extends MappingEngine> engineClass : collection) {
+						defaultSet.add(engineClass.getSimpleName());
+					}
+					
+					// now create the enabler for the engines
+					this.enabledEnginesOption = new SetArgument.Options(
+					                                                    set,
+					                                                    "enabled", Messages.getString("MappingEngine.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+					                                                    defaultSet, Requirement.required);
+					
+					// iterate over the engine classes to process dependencies
+					for (final Class<? extends MappingEngine> engineClass : collection) {
+						// loading of engines is in the responsibility of the direct parent class, thus we only process
+						// mapping classes of direct extensions of MappingEngine
+						if (engineClass.getSuperclass() == MappingEngine.class) {
+							// MappingEngines have to encapsulate their initializer/options. fetch them first.
+							final Class<?>[] declaredClasses = engineClass.getDeclaredClasses();
+							
+							for (final Class<?> engineOptionClass : declaredClasses) {
+								// check if we found the options to initialize the engine under suspect
+								if (ArgumentSetOptions.class.isAssignableFrom(engineOptionClass)) {
 									// found options
+									
+									// fetch constructor of the options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingEngine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingEngine, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                        Requirement.class);
-									final ArgumentSetOptions<? extends MappingEngine, ?> instance = constructor.newInstance(set,
-									                                                                                        Requirement.required);
-									this.engineOptions.put(c, instance);
-									map.put(instance.getName(), instance);
+									final Constructor<ArgumentSetOptions<? extends MappingEngine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingEngine, ?>>) engineOptionClass.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                                       Requirement.class);
+									
+									// instantiate the options and set to required if enabledEnginesOptions contains the
+									// simple classname of the engine under suspect, i.e., c.getSimpleName()
+									final ArgumentSetOptions<? extends MappingEngine, ?> engineOption = constructor.newInstance(set,
+									                                                                                            Requirement.contains(this.enabledEnginesOption,
+									                                                                                                                 engineClass.getSimpleName()));
+									System.out.println(engineOption
+									        + " is "
+									        + (Requirement.contains(this.enabledEnginesOption,
+									                                engineClass.getSimpleName()).check()
+									                                                                    ? "required"
+									                                                                    : "unrequired"));
+									
+									if (Logger.logDebug()) {
+										Logger.debug("Adding new mapping engines dependency '%s' with list activator '%s'",
+										             engineOption.getTag(), this.enabledEnginesOption.getTag());
+									}
+									
+									this.engineOptions.put(engineClass, engineOption);
+									map.put(engineOption.getName(), engineOption);
 								}
 							}
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), MappingEngine.class.getSimpleName(), c.getSuperclass()
-								                                                                     .getSimpleName());
+								            engineClass.getSimpleName(), MappingEngine.class.getSimpleName(),
+								            engineClass.getSuperclass().getSimpleName());
 							}
 						}
-						
-						defaultSet.add(c.getSimpleName());
-						
 					}
 				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
 				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				        | NoSuchMethodException | SecurityException | InstantiationException e) {
 					throw new UnrecoverableError(e);
 				}
-				
-				this.enabledEnginesOption = new SetArgument.Options(
-				                                                    set,
-				                                                    "enabled", Messages.getString("MappingEngine.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-				                                                    defaultSet, Requirement.required);
 				
 				map.put(this.enabledEnginesOption.getName(), this.enabledEnginesOption);
 				
@@ -209,7 +238,6 @@ public abstract class MappingEngine extends Node {
 				// POSTCONDITIONS
 			}
 		}
-		
 	}
 	
 	/** The Constant defaultNegative. */
@@ -275,11 +303,11 @@ public abstract class MappingEngine extends Node {
 	private ISettings settings;
 	
 	/**
-	 * Using this method, one can add features to a given {@link Mapping}. The given score will be manipulated using the
+	 * Using this method, one can add features to a given {@link Relation}. The given score will be manipulated using the
 	 * values given. The values are automatically <code>null</code> checked and truncated if needed.
 	 * 
 	 * @param score
-	 *            the {@link Mapping} a new feature shall be added
+	 *            the {@link Relation} a new feature shall be added
 	 * @param confidence
 	 *            a confidence value representing the impact of the feature
 	 * @param fromFieldName
@@ -297,7 +325,7 @@ public abstract class MappingEngine extends Node {
 	 *            the particular substring of the field (see {@link FieldKey}) of the "to" entity that caused this
 	 *            feature
 	 */
-	public final void addFeature(@NotNull final Mapping score,
+	public final void addFeature(@NotNull final Relation score,
 	                             final double confidence,
 	                             @NotNull @NotEmpty final String fromFieldName,
 	                             final Object fromFieldContent,
@@ -353,12 +381,12 @@ public abstract class MappingEngine extends Node {
 	 * @param to
 	 *            the 'to' entity
 	 * @param score
-	 *            the actual {@link Mapping} that will be manipulated by this method
+	 *            the actual {@link Relation} that will be manipulated by this method
 	 */
 	@NoneNull
 	public abstract void score(final MappableEntity from,
 	                           final MappableEntity to,
-	                           final Mapping score);
+	                           final Relation score);
 	
 	/**
 	 * Sets the settings.

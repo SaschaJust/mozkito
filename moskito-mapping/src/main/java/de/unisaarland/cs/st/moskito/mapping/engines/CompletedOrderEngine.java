@@ -23,12 +23,13 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -60,7 +61,7 @@ public class CompletedOrderEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -109,7 +110,7 @@ public class CompletedOrderEngine extends MappingEngine {
 	private static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
 	                                                                                                         
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = -1d;
+	private static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/**
 	 * Gets the default confidence.
@@ -179,13 +180,16 @@ public class CompletedOrderEngine extends MappingEngine {
 	@Override
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
-	                        final Mapping score) {
+	                        final Relation score) {
 		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
-		        && transaction.getTimestamp().isAfter(report.getResolutionTimestamp())) {
+		        && transaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
+			if (Logger.logDebug()) {
+				Logger.debug("Transaction was committed before report got marked as resolved.");
+			}
 			localConfidence = getConfidence();
 		}
 		

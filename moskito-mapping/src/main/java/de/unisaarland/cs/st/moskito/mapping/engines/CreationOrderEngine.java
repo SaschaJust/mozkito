@@ -26,13 +26,15 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.joda.time.DateTime;
 
+import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class CreationOrderEngine.
@@ -59,7 +61,7 @@ public class CreationOrderEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, "authorEquality", "...", requirements);
+			super(argumentSet, CreationOrderEngine.class.getSimpleName(), "...", requirements);
 		}
 		
 		/*
@@ -108,7 +110,7 @@ public class CreationOrderEngine extends MappingEngine {
 	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
 	                                                                                                        
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = -1d;
+	private static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/**
 	 * Gets the default confidence.
@@ -178,7 +180,7 @@ public class CreationOrderEngine extends MappingEngine {
 	@Override
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
-	                  final Mapping score) {
+	                  final Relation score) {
 		double localConfidence = 0d;
 		if (((DateTime) from.get(FieldKey.CREATION_TIMESTAMP)).isBefore(((DateTime) to.get(FieldKey.CREATION_TIMESTAMP)))) {
 			localConfidence = getConfidence();
@@ -198,8 +200,7 @@ public class CreationOrderEngine extends MappingEngine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(Index.ONE, FieldKey.CREATION_TIMESTAMP), new Atom(Index.OTHER,
-		                                                                          FieldKey.CREATION_TIMESTAMP));
+		return new And(new Atom(Index.FROM, Report.class), new Atom(Index.TO, RCSTransaction.class));
 	}
 	
 }
