@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.moskito.mapping;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.threads.Group;
@@ -11,14 +12,14 @@ import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
+import de.unisaarland.cs.st.moskito.mapping.elements.CandidateFactory;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
@@ -27,6 +28,9 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class TransactionFinder extends Transformer<Report, Candidate> {
+	
+	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
+	                                                                                                                    MappableTransaction.class);
 	
 	/**
 	 * Instantiates a new transaction finder.
@@ -52,18 +56,26 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 			public void preProcess() {
 				if (candidates.isEmpty()) {
 					final MappableReport mapReport = new MappableReport(getInputData());
-					final Set<MappableTransaction> transactionCandidates = finder.getCandidates(mapReport,
-					                                                                            MappableTransaction.class,
-					                                                                            util);
+					final Map<MappableTransaction, Set<Selector>> transactionCandidates = finder.getCandidates(mapReport,
+					                                                                                           MappableTransaction.class,
+					                                                                                           util);
 					
 					if (Logger.logInfo()) {
 						Logger.info("Processing '%s'->%s with '%s' candidates.", mapReport.getHandle(),
 						            mapReport.toString(), transactionCandidates.size());
 					}
 					
-					for (final MappableTransaction mapTransaction : transactionCandidates) {
-						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapReport,
-						                                                                       mapTransaction)));
+					for (final MappableTransaction mapTransaction : transactionCandidates.keySet()) {
+						if (TransactionFinder.this.candidateFactory.isKnown(mapReport, mapTransaction)) {
+							if (Logger.logInfo()) {
+								Logger.info("Skipping candidate '%s'<->'%s'. Already processed.");
+							}
+						} else {
+							candidates.add(TransactionFinder.this.candidateFactory.getCandidate(mapReport,
+							                                                                    mapTransaction,
+							                                                                    transactionCandidates.get(mapTransaction)));
+						}
+						
 					}
 				}
 			}

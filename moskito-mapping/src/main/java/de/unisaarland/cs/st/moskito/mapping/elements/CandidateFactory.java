@@ -13,20 +13,31 @@
 package de.unisaarland.cs.st.moskito.mapping.elements;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * A factory for creating Candidate objects.
  * 
+ * @param <FROM>
+ *            the generic type
+ * @param <TO>
+ *            the generic type
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class CandidateFactory {
+public class CandidateFactory<FROM, TO> {
 	
-	private static CandidateFactory<?, ?> factory = new CandidateFactory<>();
+	/** The factories. */
+	private static Map<Set<Class<? extends MappableEntity>>, CandidateFactory<?, ?>> factories = new HashMap<>();
 	
 	/**
 	 * Gets the simple name of the class.
@@ -63,16 +74,92 @@ public class CandidateFactory {
 		}
 	}
 	
-	public static final <A extends MappableEntity, B extends MappableEntity> CandidateFactory<A, B> getInstance() {
-		if (factory == null) {
-			factory = new CandidateFactory<A, B>();
+	/**
+	 * Gets the single instance of CandidateFactory.
+	 * 
+	 * @param <ONE>
+	 *            the generic type
+	 * @param <OTHER>
+	 *            the generic type
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @return single instance of CandidateFactory
+	 */
+	@SuppressWarnings ("unchecked")
+	public static final <ONE extends MappableEntity, OTHER extends MappableEntity> CandidateFactory<ONE, OTHER> getInstance(final Class<ONE> from,
+	                                                                                                                        final Class<OTHER> to) {
+		@SuppressWarnings ("serial")
+		final HashSet<Class<? extends MappableEntity>> set = new HashSet<Class<? extends MappableEntity>>() {
+			
+			{
+				add(from);
+				add(to);
+			}
+		};
+		
+		if (!factories.containsKey(set)) {
+			factories.put(set, new CandidateFactory<ONE, OTHER>());
 		}
 		
-		return (CandidateFactory<A, B>) factory;
+		return (CandidateFactory<ONE, OTHER>) factories.get(set);
 	}
 	
-	private final Map<FROM, Map<TO, Candidate>> fromMap = new HashMap<>();
+	/** The candidates. */
+	private final Map<Set<String>, Candidate> candidates = new HashMap<>();
 	
-	private final Map<TO, Map<FROM, Candidate>> toMap   = new HashMap<>();
+	/**
+	 * Gets the candidate.
+	 * 
+	 * @param one
+	 *            the one
+	 * @param other
+	 *            the other
+	 * @param selectors
+	 *            the selector
+	 * @return the candidate
+	 */
+	public final Candidate getCandidate(final @NotNull MappableEntity one,
+	                                    @NotNull final MappableEntity other,
+	                                    final Set<Selector> selectors) {
+		@SuppressWarnings ("serial")
+		final HashSet<String> set = new HashSet<String>() {
+			
+			{
+				add(one.getId());
+				add(other.getId());
+			}
+		};
+		
+		if (!this.candidates.containsKey(set)) {
+			this.candidates.put(set, new Candidate(new Tuple<MappableEntity, MappableEntity>(one, other), selectors));
+		}
+		
+		return this.candidates.get(set);
+	}
+	
+	/**
+	 * Checks if is known.
+	 * 
+	 * @param one
+	 *            the one
+	 * @param other
+	 *            the other
+	 * @return true, if is known
+	 */
+	public final boolean isKnown(final @NotNull MappableEntity one,
+	                             @NotNull final MappableEntity other) {
+		@SuppressWarnings ("serial")
+		final HashSet<String> set = new HashSet<String>() {
+			
+			{
+				add(one.getId());
+				add(other.getId());
+			}
+		};
+		
+		return this.candidates.containsKey(set);
+	}
 	
 }

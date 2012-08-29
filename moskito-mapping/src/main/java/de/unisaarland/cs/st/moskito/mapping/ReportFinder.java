@@ -4,6 +4,7 @@
 package de.unisaarland.cs.st.moskito.mapping;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.andama.threads.Group;
@@ -11,13 +12,13 @@ import net.ownhero.dev.andama.threads.PreProcessHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.mapping.elements.CandidateFactory;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -27,6 +28,10 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
+	
+	/** The candidate factory. */
+	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
+	                                                                                                                    MappableTransaction.class);
 	
 	/**
 	 * Instantiates a new report finder.
@@ -51,21 +56,27 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					final RCSTransaction inputData = getInputData();
-					final MappableTransaction mapTransaction = new MappableTransaction(inputData);
-					// TODO store selectors and reuse them
-					final Set<MappableReport> reportCandidates = finder.getCandidates(mapTransaction,
-					                                                                  MappableReport.class,
-					                                                                  persistenceUtil);
+					final MappableTransaction mapTransaction = new MappableTransaction(getInputData());
+					final Map<MappableReport, Set<Selector>> reportCandidates = finder.getCandidates(mapTransaction,
+					                                                                                 MappableReport.class,
+					                                                                                 persistenceUtil);
 					
 					if (Logger.logInfo()) {
 						Logger.info("Processing '%s'->%s with '%s' candidates.", mapTransaction.getHandle(),
 						            mapTransaction.toString(), reportCandidates.size());
 					}
 					
-					for (final MappableReport mapReport : reportCandidates) {
-						candidates.add(new Candidate(new Tuple<MappableEntity, MappableEntity>(mapTransaction,
-						                                                                       mapReport)));
+					for (final MappableReport mapReport : reportCandidates.keySet()) {
+						if (ReportFinder.this.candidateFactory.isKnown(mapReport, mapTransaction)) {
+							if (Logger.logInfo()) {
+								Logger.info("Skipping candidate '%s'<->'%s'. Already processed.");
+							}
+						} else {
+							candidates.add(ReportFinder.this.candidateFactory.getCandidate(mapReport,
+							                                                               mapTransaction,
+							                                                               reportCandidates.get(mapTransaction)));
+						}
+						
 					}
 				}
 			}

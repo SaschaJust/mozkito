@@ -33,7 +33,7 @@ public class CandidatesConverter extends Transformer<Candidate, Relation> {
 			@Override
 			public void process() {
 				final Candidate data = getInputData();
-				provideOutputData(new Relation(data.getFrom(), data.getTo()), true);
+				provideOutputData(new Relation(data));
 			}
 		};
 	}

@@ -47,10 +47,13 @@ public class Candidate {
 	 *            the selector
 	 */
 	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair,
-	        final Selector selector) {
+	        final Set<Selector> selectors) {
 		this.from = candidatePair.getFirst();
 		this.to = candidatePair.getSecond();
-		this.selectors.add(selector.getHandle());
+		
+		for (final Selector selector : selectors) {
+			this.selectors.add(selector.getHandle());
+		}
 	}
 	
 	/**

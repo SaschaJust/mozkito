@@ -55,8 +55,9 @@ import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableReport;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
-import de.unisaarland.cs.st.moskito.mapping.model.Relation;
+import de.unisaarland.cs.st.moskito.mapping.model.Candidate;
 import de.unisaarland.cs.st.moskito.mapping.model.Feature;
+import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
@@ -78,7 +79,7 @@ public class MappingEngineTest {
 	static Report              report;
 	
 	/** The score. */
-	static Relation             score;
+	static Relation            score;
 	
 	/** The transaction. */
 	static RCSTransaction      transaction;
@@ -186,7 +187,7 @@ public class MappingEngineTest {
 		final MappingFinder mappingFinder = mappingArguments.getValue();
 		this.engines = mappingFinder.getEngines().values();
 		
-		score = new Relation(mappableReport, mappableTransaction);
+		score = new Relation(new Candidate(new Tuple(mappableReport, mappableTransaction), null));
 	}
 	
 	/**

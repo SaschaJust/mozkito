@@ -258,10 +258,10 @@ public class MappingFinder {
 	 *            the util
 	 * @return the candidates
 	 */
-	public <T extends MappableEntity> Set<T> getCandidates(final MappableEntity source,
-	                                                       final Class<T> targetClass,
-	                                                       final PersistenceUtil util) {
-		final Set<T> candidates = new HashSet<T>();
+	public <T extends MappableEntity> Map<T, Set<Selector>> getCandidates(final MappableEntity source,
+	                                                                      final Class<T> targetClass,
+	                                                                      final PersistenceUtil util) {
+		final Map<T, Set<Selector>> candidates = new HashMap<>();
 		
 		try {
 			final List<Selector> activeSelectors = findSelectors(source.getBaseType(),
@@ -272,7 +272,17 @@ public class MappingFinder {
 					Logger.debug("Using selector '%s' on '%s' with target type '%s'.", selector.getHandle(),
 					             source.getHandle(), targetClass);
 				}
-				candidates.addAll(selector.parse(source, targetClass, util));
+				
+				final List<T> parsingResults = selector.parse(source, targetClass, util);
+				
+				for (final T mappableEntity : parsingResults) {
+					if (!candidates.containsKey(mappableEntity)) {
+						candidates.put(mappableEntity, new HashSet<Selector>());
+					}
+					
+					final Set<Selector> selectorSet = candidates.get(mappableEntity);
+					selectorSet.add(selector);
+				}
 			}
 		} catch (final Exception e) {
 			throw new UnrecoverableError(e);
