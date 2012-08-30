@@ -21,9 +21,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
-
-import org.junit.Test;
-
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 
@@ -33,8 +30,7 @@ import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
  */
 public class SettingsTest {
 	
-	@Test
-	public void test() {
+	public void noTest() {
 		Settings settings = null;
 		try {
 			settings = new Settings();
