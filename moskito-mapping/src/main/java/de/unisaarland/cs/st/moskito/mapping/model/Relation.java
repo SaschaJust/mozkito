@@ -22,7 +22,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -31,7 +30,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import de.unisaarland.cs.st.moskito.mapping.elements.MapId;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
@@ -42,7 +40,6 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 @Entity
-@IdClass (MapId.class)
 public class Relation implements Annotated, IRelation {
 	
 	/** The Constant serialVersionUID. */
@@ -167,24 +164,6 @@ public class Relation implements Annotated, IRelation {
 		return getCandidate().getTo().getBaseType().getCanonicalName();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement1()
-	 */
-	@Override
-	public MappableEntity getFrom() {
-		return getCandidate().getFrom();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement2()
-	 */
-	@Override
-	public MappableEntity getTo() {
-		return getCandidate().getTo();
-	}
-	
 	/**
 	 * Gets the features.
 	 * 
@@ -193,6 +172,15 @@ public class Relation implements Annotated, IRelation {
 	@ElementCollection (fetch = FetchType.EAGER)
 	public Queue<Feature> getFeatures() {
 		return this.features;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement1()
+	 */
+	@Override
+	public MappableEntity getFrom() {
+		return getCandidate().getFrom();
 	}
 	
 	/**
@@ -209,6 +197,15 @@ public class Relation implements Annotated, IRelation {
 		}
 		
 		return engines;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.unisaarland.cs.st.moskito.mapping.model.IMapping#getElement2()
+	 */
+	@Override
+	public MappableEntity getTo() {
+		return getCandidate().getTo();
 	}
 	
 	/*

@@ -15,10 +15,13 @@ package de.unisaarland.cs.st.moskito.mapping.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Id;
+
 import net.ownhero.dev.ioda.Tuple;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
+import de.unisaarland.cs.st.moskito.persistence.Annotated;
 
 /**
  * This class represents a potential mapping pair and thus encapsulates to {@link MappableEntity}s. {@link Candidate}s
@@ -27,24 +30,27 @@ import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Candidate {
+public class Candidate implements Annotated {
+	
+	/** The Constant serialVersionUID. */
+	private static final long    serialVersionUID = 1464864624834219097L;
 	
 	/** the entity under subject. */
-	MappableEntity from;
+	private final MappableEntity from;
 	
 	/** a potential target. */
-	MappableEntity to;
+	private final MappableEntity to;
 	
 	/** The preselectors. */
-	Set<String>    selectors = new HashSet<>();
+	private final Set<String>    selectors        = new HashSet<>();
 	
 	/**
 	 * Instantiates a new candidate.
 	 * 
 	 * @param candidatePair
 	 *            a {@link Tuple} representing the pair (from/to)
-	 * @param selector
-	 *            the selector
+	 * @param selectors
+	 *            the selectors
 	 */
 	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair,
 	        final Set<Selector> selectors) {
@@ -105,6 +111,7 @@ public class Candidate {
 	 * 
 	 * @return the from entity
 	 */
+	@Id
 	public final MappableEntity getFrom() {
 		return this.from;
 	}
@@ -114,6 +121,7 @@ public class Candidate {
 	 * 
 	 * @return the to entity
 	 */
+	@Id
 	public final MappableEntity getTo() {
 		return this.to;
 	}
