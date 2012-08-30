@@ -27,7 +27,7 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.elements.Type;
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.EnhancedReport;
 import de.unisaarland.cs.st.moskito.bugs.tracker.settings.Messages;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
@@ -123,7 +123,7 @@ public class ReportFieldFilter extends Filter {
 	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
 	 */
 	@Override
-	public Set<? extends Filter> filter(final Composite composite,
+	public Set<? extends Filter> filter(final IComposite composite,
 	                                    final Set<Filter> triggeringFilters) {
 		if (composite.getTo().get(FieldKey.TYPE).equals(this.type)) {
 			triggeringFilters.add(this);

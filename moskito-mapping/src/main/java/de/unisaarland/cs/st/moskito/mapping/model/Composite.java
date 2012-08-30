@@ -28,7 +28,7 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class Composite implements Annotated {
+public class Composite implements Annotated, IComposite {
 	
 	private static final long    serialVersionUID = 4247288063693897409L;
 	private Relation             relation;
@@ -45,30 +45,29 @@ public class Composite implements Annotated {
 		this.relation = relation;
 	}
 	
-	/**
-	 * Adds the strategy.
-	 * 
-	 * @param strategyName
-	 *            the strategy name
-	 * @param valid
-	 *            the valid
-	 */
-	@Transient
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
+     */
+	@Override
+    @Transient
 	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
 	                        final Boolean valid) {
 		getStrategies().put(strategyName, valid);
 	}
 	
-	public final MappableEntity getFrom() {
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#getFrom()
+     */
+	@Override
+    public final MappableEntity getFrom() {
 		return getRelation().getFrom();
 	}
 	
-	/**
-	 * Gets the simple name of the class.
-	 * 
-	 * @return the simple name of the class.
-	 */
-	public final String getHandle() {
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#getHandle()
+     */
+	@Override
+    public final String getHandle() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
@@ -98,21 +97,27 @@ public class Composite implements Annotated {
 		}
 	}
 	
-	/**
-	 * @return the relation
-	 */
-	public final Relation getRelation() {
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#getRelation()
+     */
+	@Override
+    public final Relation getRelation() {
 		return this.relation;
 	}
 	
-	/**
-	 * @return the strategies
-	 */
-	public final Map<String, Boolean> getStrategies() {
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#getStrategies()
+     */
+	@Override
+    public final Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
 	
-	public final MappableEntity getTo() {
+	/* (non-Javadoc)
+     * @see de.unisaarland.cs.st.moskito.mapping.model.IComposite#getTo()
+     */
+	@Override
+    public final MappableEntity getTo() {
 		return getRelation().getTo();
 	}
 	

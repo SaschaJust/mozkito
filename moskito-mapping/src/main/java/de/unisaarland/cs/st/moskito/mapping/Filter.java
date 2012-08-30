@@ -18,16 +18,16 @@ import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
-import de.unisaarland.cs.st.moskito.mapping.model.IRelation;
-import de.unisaarland.cs.st.moskito.mapping.model.Relation;
+import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 
 /**
  * The Class Filter.
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class Filter extends Transformer<Relation, FilteredMapping> {
+public class Filter extends Transformer<Composite, Mapping> {
 	
 	/**
 	 * Instantiates a new filter.
@@ -41,12 +41,12 @@ public class Filter extends Transformer<Relation, FilteredMapping> {
 	 */
 	public Filter(final Group threadGroup, final Settings settings, final MappingFinder finder) {
 		super(threadGroup, settings, false);
-		new ProcessHook<Relation, FilteredMapping>(this) {
+		new ProcessHook<Composite, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				final IRelation inputData = getInputData();
-				final FilteredMapping mapping = finder.filter(inputData);
+				final IComposite inputData = getInputData();
+				final Mapping mapping = finder.filter(inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);

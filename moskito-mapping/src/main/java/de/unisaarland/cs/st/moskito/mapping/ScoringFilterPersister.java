@@ -22,7 +22,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
 /**
@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ScoringFilterPersister extends Sink<FilteredMapping> {
+public class ScoringFilterPersister extends Sink<Mapping> {
 	
 	/** The i. */
 	private Integer i = 0;
@@ -49,7 +49,7 @@ public class ScoringFilterPersister extends Sink<FilteredMapping> {
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<FilteredMapping, FilteredMapping>(this) {
+		new PreExecutionHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -57,11 +57,11 @@ public class ScoringFilterPersister extends Sink<FilteredMapping> {
 			}
 		};
 		
-		new ProcessHook<FilteredMapping, FilteredMapping>(this) {
+		new ProcessHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				final FilteredMapping score = getInputData();
+				final Mapping score = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + score);
@@ -76,7 +76,7 @@ public class ScoringFilterPersister extends Sink<FilteredMapping> {
 			}
 		};
 		
-		new PostExecutionHook<FilteredMapping, FilteredMapping>(this) {
+		new PostExecutionHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void postExecution() {

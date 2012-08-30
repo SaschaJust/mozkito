@@ -25,7 +25,8 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.MappingEngine;
 import de.unisaarland.cs.st.moskito.mapping.filters.Filter;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -186,14 +187,14 @@ public class MappingFinder {
 	 *            the mapping
 	 * @return the filtered mapping
 	 */
-	public FilteredMapping filter(final Composite composite) {
+	public Mapping filter(final IComposite composite) {
 		final Set<Filter> triggeringFilters = new HashSet<Filter>();
 		
 		for (final Filter filter : this.filters.values()) {
 			filter.filter(composite, triggeringFilters);
 		}
 		
-		final FilteredMapping filteredMapping = new FilteredMapping(composite, triggeringFilters);
+		final Mapping filteredMapping = new Mapping(composite, triggeringFilters);
 		return filteredMapping;
 	}
 	
@@ -410,11 +411,12 @@ public class MappingFinder {
 	 *            the mapping
 	 * @return the mapping
 	 */
-	public Composite map(final MappingStrategy strategy,
-	                     final Composite composite) {
+	public IComposite map(final MappingStrategy strategy,
+	                      final IComposite composite) {
 		if (Logger.logDebug()) {
 			Logger.debug("Mapping with strategy: " + strategy.getHandle());
 		}
+		
 		strategy.map(composite);
 		
 		return composite;
@@ -494,7 +496,7 @@ public class MappingFinder {
 	 *            the util
 	 * @return the list
 	 */
-	public List<Annotated> split(final FilteredMapping data,
+	public List<Annotated> split(final Mapping data,
 	                             final PersistenceUtil util) {
 		final LinkedList<Annotated> list = new LinkedList<Annotated>();
 		

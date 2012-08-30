@@ -14,7 +14,7 @@ import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.FilteredMapping;
+import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
 import de.unisaarland.cs.st.moskito.persistence.Annotated;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 
@@ -23,7 +23,7 @@ import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class ScoringSplitter extends Sink<FilteredMapping> {
+public class ScoringSplitter extends Sink<Mapping> {
 	
 	/**
 	 * Instantiates a new scoring splitter.
@@ -41,7 +41,7 @@ public class ScoringSplitter extends Sink<FilteredMapping> {
 	        final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<FilteredMapping, FilteredMapping>(this) {
+		new PreExecutionHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -50,7 +50,7 @@ public class ScoringSplitter extends Sink<FilteredMapping> {
 			}
 		};
 		
-		new PostExecutionHook<FilteredMapping, FilteredMapping>(this) {
+		new PostExecutionHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void postExecution() {
@@ -60,7 +60,7 @@ public class ScoringSplitter extends Sink<FilteredMapping> {
 			
 		};
 		
-		new ProcessHook<FilteredMapping, FilteredMapping>(this) {
+		new ProcessHook<Mapping, Mapping>(this) {
 			
 			int             i    = 0;
 			List<Annotated> list = new LinkedList<Annotated>();
@@ -71,7 +71,7 @@ public class ScoringSplitter extends Sink<FilteredMapping> {
 					Logger.debug("Split analyzing " + getInputData());
 				}
 				
-				final FilteredMapping data = getInputData();
+				final Mapping data = getInputData();
 				
 				this.list.addAll(finder.split(data, persistenceUtil));
 				

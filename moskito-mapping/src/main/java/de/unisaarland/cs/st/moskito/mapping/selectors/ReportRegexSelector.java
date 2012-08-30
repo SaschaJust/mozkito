@@ -142,6 +142,8 @@ public class ReportRegexSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
+			// TODO warn if pattern does not contain groups
+			// TODO error if pattern contains more than 1 group and does not have a named group 'id'
 			this.pattern = pattern;
 		} finally {
 			// POSTCONDITIONS

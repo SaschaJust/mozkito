@@ -36,7 +36,7 @@ import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.Messages;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 
 /**
@@ -223,6 +223,6 @@ public abstract class MappingStrategy extends Node {
 	 *            the mapping
 	 * @return the i mapping
 	 */
-	public abstract Composite map(Composite mapping);
+	public abstract IComposite map(IComposite composite);
 	
 }

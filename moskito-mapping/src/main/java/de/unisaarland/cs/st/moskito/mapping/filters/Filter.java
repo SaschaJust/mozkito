@@ -37,7 +37,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.engines.Messages;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.register.Node;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -229,7 +229,7 @@ public abstract class Filter extends Node {
 	 * @return the set<? extends mapping filter>
 	 */
 	@NoneNull
-	public abstract Set<? extends Filter> filter(final Composite composite,
+	public abstract Set<? extends Filter> filter(final IComposite composite,
 	                                             Set<Filter> triggeringFilters);
 	
 	public abstract Expression supported();

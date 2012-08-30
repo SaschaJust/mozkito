@@ -60,6 +60,7 @@ import de.unisaarland.cs.st.moskito.mapping.model.Feature;
 import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.mapping.selectors.Selector;
 import de.unisaarland.cs.st.moskito.mapping.settings.MappingOptions;
 import de.unisaarland.cs.st.moskito.persistence.model.Person;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
@@ -211,7 +212,9 @@ public class MappingEngineTest {
 				System.err.println(feature.getTransactionSubstring());
 				assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence, 0.0001);
 				
-				score = new Relation(mappableTransaction, mappableReport);
+				score = new Relation(new Candidate(new Tuple<MappableTransaction, MappableReport>(mappableTransaction,
+				                                                                                  mappableReport),
+				                                   new HashSet<Selector>()));
 				engine.score(mappableTransaction, mappableReport, score);
 				feature = score.getFeatures().iterator().next();
 				confidence = feature.getConfidence();

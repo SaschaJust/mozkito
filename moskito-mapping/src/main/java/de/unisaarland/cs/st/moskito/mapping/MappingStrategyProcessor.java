@@ -19,7 +19,7 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.mapping.finder.MappingFinder;
-import de.unisaarland.cs.st.moskito.mapping.model.Relation;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
 
 /**
@@ -27,7 +27,7 @@ import de.unisaarland.cs.st.moskito.mapping.strategies.MappingStrategy;
  * 
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class MappingStrategyProcessor extends Filter<Relation> {
+public class MappingStrategyProcessor extends Filter<IComposite> {
 	
 	/**
 	 * Instantiates a new mapping strategy processor.
@@ -44,12 +44,12 @@ public class MappingStrategyProcessor extends Filter<Relation> {
 	public MappingStrategyProcessor(final Group threadGroup, final Settings settings, final MappingFinder finder,
 	        final MappingStrategy strategy) {
 		super(threadGroup, settings, false);
-		new ProcessHook<Relation, Relation>(this) {
+		new ProcessHook<IComposite, IComposite>(this) {
 			
 			@Override
 			public void process() {
-				final Relation inputData = getInputData();
-				final Relation mapping = finder.map(strategy, inputData);
+				final IComposite inputData = getInputData();
+				final IComposite mapping = finder.map(strategy, inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);

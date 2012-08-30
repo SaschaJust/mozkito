@@ -22,8 +22,8 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
 import de.unisaarland.cs.st.moskito.mapping.model.Feature;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 
 /**
  * The Class TotalAggreementStrategy.
@@ -91,7 +91,7 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	 * (de.unisaarland.cs.st.moskito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public Composite map(final Composite composite) {
+	public IComposite map(final IComposite composite) {
 		int value = 0;
 		
 		final Queue<Feature> features = composite.getRelation().getFeatures();

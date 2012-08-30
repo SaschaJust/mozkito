@@ -22,7 +22,7 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import de.unisaarland.cs.st.moskito.mapping.model.Composite;
+import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.requirements.ByPass;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 
@@ -100,7 +100,7 @@ public class ByPassFilter extends Filter {
 	 * java.util.Set)
 	 */
 	@Override
-	public Set<? extends Filter> filter(final Composite composite,
+	public Set<? extends Filter> filter(final IComposite composite,
 	                                    final Set<Filter> triggeringFilters) {
 		// PRECONDITIONS
 		
