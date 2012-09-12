@@ -425,6 +425,11 @@ public class Untangling {
 			// build all artificial blobs. Combine all atomic transactions.
 			final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
 			
+			if (Logger.logInfo()) {
+				Logger.info("Generating artificial blobs using %d combination candidates.",
+				            combinationCandidates.size());
+			}
+			
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
 				entrySet.addAll(entry.getValue());
