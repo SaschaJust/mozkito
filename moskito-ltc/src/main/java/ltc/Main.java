@@ -141,26 +141,28 @@ public class Main {
 			
 			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
-			
-			int hitCounter = 0;
+			final List<RCSTransaction> transactions = new LinkedList<>();
 			for (final RCSTransaction t : masterTransactions) {
 				if (transactionLayer.containsVertex(t)) {
-					++hitCounter;
+					transactions.add(t);
 				}
 			}
 			
-			if (Logger.logInfo()) {
-				Logger.info("%d out of %d transactions found in genealogy graph.", hitCounter,
-				            masterTransactions.size());
+			if (Logger.logDebug()) {
+				Logger.debug("%d out of %d transactions found in genealogy graph.", transactions.size(),
+				             masterTransactions.size());
 			}
 			
-			final int trainSize = new Double(masterTransactions.size() * 0.1).intValue();
+			final int trainSize = new Double(transactions.size() * 0.1).intValue();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Training set contains %d entities.", trainSize);
 			}
 			
-			experiment.run(masterTransactions, trainSize, innerRulesOpt.getValue());
+			final List<RCSTransaction> trainList = transactions.subList(0, trainSize);
+			final List<RCSTransaction> testList = transactions.subList(trainSize, transactions.size());
+			
+			experiment.run(trainList, testList, innerRulesOpt.getValue());
 			
 			if (Logger.logInfo()) {
 				Logger.info("All done. Cerio.");

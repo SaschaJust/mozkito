@@ -15,6 +15,7 @@ package de.unisaarland.cs.st.reposuite.ltc;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -26,7 +27,6 @@ import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.VertexSelector;
-import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.ltc.LTCRecommendation.ChangeProperty;
@@ -90,24 +90,21 @@ public class LTCExperiment {
 	}
 	
 	@NoneNull
-	public void run(final TransactionSet transactions,
-	                final int trainSize,
+	public void run(final List<RCSTransaction> trainingSet,
+	                final List<RCSTransaction> testingSet,
 	                final boolean includeInnerRules) {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Training phase.");
 		}
 		
-		final Iterator<RCSTransaction> transactionIter = transactions.iterator();
-		
-		for (int i = 0; ((i < trainSize) && transactionIter.hasNext()); ++i) {
-			train(transactionIter.next(), includeInnerRules);
+		for (final RCSTransaction trainingInstance : trainingSet) {
+			train(trainingInstance, includeInnerRules);
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Testing phase.");
 		}
-		while (transactionIter.hasNext()) {
-			final RCSTransaction testInstance = transactionIter.next();
+		for (final RCSTransaction testInstance : testingSet) {
 			test(testInstance);
 			train(testInstance, includeInnerRules);
 		}
