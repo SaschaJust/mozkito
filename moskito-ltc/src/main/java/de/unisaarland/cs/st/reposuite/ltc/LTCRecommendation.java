@@ -69,9 +69,8 @@ public class LTCRecommendation {
 	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
 	                                                              final ChangeProperty property) {
 		
-		final Set<LTCRecommendation> result = new HashSet<>();
-		for (final LTCRecommendation r : recommendations.get(changedFile).values()) {
-			result.add(r);
+		if (!recommendations.containsKey(changedFile)) {
+			return new TreeSet<LTCRecommendation>();
 		}
 		
 		final SortedSet<LTCRecommendation> treeSet = new TreeSet<>(new Comparator<LTCRecommendation>() {
@@ -93,7 +92,7 @@ public class LTCRecommendation {
 				}
 			}
 		});
-		
+		treeSet.addAll(recommendations.get(changedFile).values());
 		return treeSet;
 	}
 	
