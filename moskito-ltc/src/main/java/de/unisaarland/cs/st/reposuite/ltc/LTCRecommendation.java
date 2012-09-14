@@ -129,6 +129,9 @@ public class LTCRecommendation {
 	 * @return
 	 */
 	public double getConfidence(final ChangeProperty property) {
+		if (this.premiseChanges.isEmpty()) {
+			return 0;
+		}
 		return (getSupport(property) / (double) this.premiseChanges.size());
 	}
 	
@@ -140,6 +143,9 @@ public class LTCRecommendation {
 	 * @return
 	 */
 	public int getSupport(final ChangeProperty property) {
+		if (!this.support.containsKey(property)) {
+			return 0;
+		}
 		return this.support.get(property).size();
 	}
 	
