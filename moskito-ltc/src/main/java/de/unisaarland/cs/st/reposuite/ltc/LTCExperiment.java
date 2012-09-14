@@ -173,7 +173,9 @@ public class LTCExperiment {
 		}
 		
 		// make recommendations and register results
-		final SortedSet<LTCRecommendation> recommendations = new TreeSet<>();
+		final SortedSet<LTCRecommendation> recommendations = new TreeSet<>(
+		                                                                   new LTCRecommendationComparator(
+		                                                                                                   changeProperty));
 		for (final RCSFile changedFile : t.getChangedFiles()) {
 			final SortedSet<LTCRecommendation> fileRecommends = LTCRecommendation.getRecommendations(changedFile,
 			                                                                                         changeProperty);

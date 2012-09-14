@@ -12,7 +12,6 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.reposuite.ltc;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -73,25 +72,7 @@ public class LTCRecommendation {
 			return new TreeSet<LTCRecommendation>();
 		}
 		
-		final SortedSet<LTCRecommendation> treeSet = new TreeSet<>(new Comparator<LTCRecommendation>() {
-			
-			@Override
-			public int compare(final LTCRecommendation o1,
-			                   final LTCRecommendation o2) {
-				if (o1.getConfidence(property) > o2.getConfidence(property)) {
-					return -1;
-				} else if (o1.getConfidence(property) < o2.getConfidence(property)) {
-					return 1;
-				} else {
-					if (o1.getSupport(property) > o2.getSupport(property)) {
-						return -1;
-					} else if (o1.getSupport(property) < o2.getSupport(property)) {
-						return 1;
-					}
-					return 0;
-				}
-			}
-		});
+		final SortedSet<LTCRecommendation> treeSet = new TreeSet<>(new LTCRecommendationComparator(property));
 		treeSet.addAll(recommendations.get(changedFile).values());
 		return treeSet;
 	}
