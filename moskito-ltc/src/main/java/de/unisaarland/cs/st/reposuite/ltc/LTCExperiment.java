@@ -61,19 +61,20 @@ public class LTCExperiment {
 	private int                                   numVertices              = 0;
 	private int                                   numRecommendatedVertices = 0;
 	private final double                          minConfidence;
-	
+	private final int                             timeWindow;
 	private final int                             minSupport;
 	
 	private final int                             keepFormulaMaxDays;
 	
 	@NoneNull
 	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
-	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays) {
+	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow) {
 		this.genealogy = genealogy;
 		this.formulaFactory = formulaFactory;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.keepFormulaMaxDays = keepFormulaMaxDays;
+		this.timeWindow = timeWindow;
 	}
 	
 	public double getAverageLowestRank() {
@@ -160,7 +161,7 @@ public class LTCExperiment {
 			                                                                                   public boolean selectVertex(final RCSTransaction vertex) {
 				                                                                                   if (Math.abs(Days.daysBetween(t.getTimestamp(),
 				                                                                                                                 vertex.getTimestamp())
-				                                                                                                    .getDays()) < LTCExperiment.this.keepFormulaMaxDays) {
+				                                                                                                    .getDays()) < LTCExperiment.this.timeWindow) {
 					                                                                                   return true;
 				                                                                                   }
 				                                                                                   return false;

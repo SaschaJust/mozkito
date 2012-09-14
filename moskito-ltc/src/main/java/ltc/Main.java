@@ -39,6 +39,7 @@ import de.unisaarland.cs.st.moskito.persistence.RCSPersistenceUtil;
 import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
 import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.reposuite.ltc.AG_EF_FormulaGenearator;
 import de.unisaarland.cs.st.reposuite.ltc.EF_FormulaGenearator;
@@ -88,6 +89,13 @@ public class Main {
 			                                                                                      30l,
 			                                                                                      Requirement.required));
 			
+			final LongArgument timeWindowOpt = ArgumentFactory.create(new LongArgument.Options(
+			                                                                                   settings.getRoot(),
+			                                                                                   "timeWindowLength",
+			                                                                                   "The maximal number of days in which a LTC must evakate to true.",
+			                                                                                   null,
+			                                                                                   Requirement.required));
+			
 			final DoubleArgument minConfidenceOpt = ArgumentFactory.create(new DoubleArgument.Options(
 			                                                                                          settings.getRoot(),
 			                                                                                          "minConfidence",
@@ -115,7 +123,8 @@ public class Main {
 			final LTCExperiment experiment = new LTCExperiment(transactionLayer, formulaFactory,
 			                                                   minSupportOpt.getValue().intValue(),
 			                                                   minConfidenceOpt.getValue().doubleValue(),
-			                                                   formulaExpiryOpt.getValue().intValue());
+			                                                   formulaExpiryOpt.getValue().intValue(),
+			                                                   timeWindowOpt.getValue().intValue());
 			
 			final RCSBranch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), RCSBranch.class);
 			if (masterBranch == null) {
@@ -132,6 +141,19 @@ public class Main {
 			
 			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
+			
+			int hitCounter = 0;
+			for (final RCSTransaction t : masterTransactions) {
+				if (transactionLayer.containsVertex(t)) {
+					++hitCounter;
+				}
+			}
+			
+			if (Logger.logInfo()) {
+				Logger.info("%d out of %d transactions found in genealogy graph.", hitCounter,
+				            masterTransactions.size());
+			}
+			
 			final int trainSize = new Double(masterTransactions.size() * 0.1).intValue();
 			
 			if (Logger.logInfo()) {
