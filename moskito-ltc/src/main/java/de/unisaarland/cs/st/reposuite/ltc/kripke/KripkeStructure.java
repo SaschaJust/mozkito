@@ -110,11 +110,13 @@ public class KripkeStructure<V> {
 		
 		for (final T from : vertices2States.keySet()) {
 			for (final T to : changeGenealogy.getAllDependants(from)) {
-				final State fromState = vertices2States.get(from);
-				final State toState = vertices2States.get(to);
-				// TODO this is a quick fix. We need to ensure this property on the genealogy graph
-				if ((from != null) && (to != null)) {
-					kripkeStruct.addState(fromState, toState);
+				if (selector.selectVertex(to)) {
+					final State fromState = vertices2States.get(from);
+					final State toState = vertices2States.get(to);
+					// TODO this is a quick fix. We need to ensure this property on the genealogy graph
+					if ((from != null) && (to != null)) {
+						kripkeStruct.addState(fromState, toState);
+					}
 				}
 			}
 		}
