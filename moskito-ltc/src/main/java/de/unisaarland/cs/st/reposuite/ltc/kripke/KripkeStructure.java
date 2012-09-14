@@ -18,11 +18,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.utils.VertexSelector;
 import de.unisaarland.cs.st.reposuite.ltc.ctl.CTLFormula;
 
 /**
@@ -59,7 +61,9 @@ public class KripkeStructure<V> {
 	 * @return Kripke structure created from the given object usage model.
 	 */
 	public static <T> KripkeStructure<T> createFrom(final ChangeGenealogy<T> changeGenealogy,
-	                                                final LabelGenerator<T> labelGenerator) {
+	                                                final T rootVertex,
+	                                                final LabelGenerator<T> labelGenerator,
+	                                                final VertexSelector<T> selector) {
 		// This method creates a Kripke structure from the given OUM by
 		// following the method described in the following paper:
 		// Jonsson, Bengt, Ahmed Hussain Khan, and Joachim Parrow. 1990.
@@ -72,20 +76,24 @@ public class KripkeStructure<V> {
 		final Set<State> finalTransitionStates = new HashSet<State>();
 		
 		// Create states in the Kripke structure.
-		// FIXME this is not nice but should work. :-)
 		final State initialState = kripkeStruct.createNewState(null);
 		
 		kripkeStruct.markStateAsInitial(initialState);
 		
 		final HashMap<T, State> vertices2States = new HashMap<T, State>();
-		for (final T v : changeGenealogy.vertexSet()) {
-			final Collection<T> allParents = changeGenealogy.getAllParents(v);
-			if (allParents.isEmpty()) {
-				continue;
+		
+		final LinkedList<T> verticesToProcess = new LinkedList<>();
+		verticesToProcess.add(rootVertex);
+		while (!verticesToProcess.isEmpty()) {
+			final T vertex = verticesToProcess.poll();
+			for (final T dependent : changeGenealogy.getAllDependants(vertex)) {
+				if (selector.selectVertex(dependent)) {
+					verticesToProcess.add(dependent);
+				}
 			}
-			vertices2States.put(v, kripkeStruct.createNewState(v));
-			final State state = vertices2States.get(v);
-			final Collection<T> allDependents = changeGenealogy.getAllDependants(v);
+			vertices2States.put(vertex, kripkeStruct.createNewState(vertex));
+			final State state = vertices2States.get(vertex);
+			final Collection<T> allDependents = changeGenealogy.getAllDependants(vertex);
 			if (allDependents.isEmpty()) {
 				// if there are no outgoing edges, the state is a final state
 				finalTransitionStates.add(state);
@@ -93,8 +101,7 @@ public class KripkeStructure<V> {
 			}
 			if (!kripkeStruct.getInitialStates().contains(state)) {
 				// add file path as labels
-				
-				final Collection<Label> labels = labelGenerator.getLabels(v);
+				final Collection<Label> labels = labelGenerator.getLabels(vertex);
 				for (final Label label : labels) {
 					kripkeStruct.addLabelToState(state, label);
 				}
@@ -594,6 +601,10 @@ public class KripkeStructure<V> {
 			this.state2successors.get(s).remove(state);
 		}
 		this.trueFormulas.remove(state);
+	}
+	
+	public int size() {
+		return this.states2vertices.size();
 	}
 	
 	/*

@@ -13,6 +13,40 @@
 
 package ltc;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.RCSPersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet;
+import de.unisaarland.cs.st.moskito.rcs.collections.TransactionSet.TransactionSetOrder;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSBranch;
+import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.reposuite.ltc.AG_EF_FormulaGenearator;
+import de.unisaarland.cs.st.reposuite.ltc.EF_FormulaGenearator;
+import de.unisaarland.cs.st.reposuite.ltc.EF_and_FormulaGenearator;
+import de.unisaarland.cs.st.reposuite.ltc.EFandEF_FormulaGenearator;
+import de.unisaarland.cs.st.reposuite.ltc.LTCExperiment;
+import de.unisaarland.cs.st.reposuite.ltc.LTCFormulaFactory;
+
 /**
  * The Class Main.
  * 
@@ -26,9 +60,102 @@ public class Main {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
+	public static void main(final String[] args) {
+		try {
+			final Settings settings = new Settings();
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			final PersistenceUtil persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
+			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
+			                                                               databaseOptions);
+			
+			final BooleanArgument innerRulesOpt = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                                         settings.getRoot(),
+			                                                                                         "includeInnerRules",
+			                                                                                         "Select TRUE if you want to inlcude inner transaction rules into recommendations.",
+			                                                                                         false,
+			                                                                                         Requirement.required));
+			
+			final LongArgument minSupportOpt = ArgumentFactory.create(new LongArgument.Options(
+			                                                                                   settings.getRoot(),
+			                                                                                   "minSupport",
+			                                                                                   "The minimal support value a LTC rule must have to be selected as recommendation.",
+			                                                                                   3l, Requirement.required));
+			
+			final LongArgument formulaExpiryOpt = ArgumentFactory.create(new LongArgument.Options(
+			                                                                                      settings.getRoot(),
+			                                                                                      "formulaExpiry",
+			                                                                                      "The maximal number of days a formula is supported backwards.",
+			                                                                                      30l,
+			                                                                                      Requirement.required));
+			
+			final DoubleArgument minConfidenceOpt = ArgumentFactory.create(new DoubleArgument.Options(
+			                                                                                          settings.getRoot(),
+			                                                                                          "minConfidence",
+			                                                                                          "The minimal confidence value a LTC rule must have to be selected as recommendation.",
+			                                                                                          0.5d,
+			                                                                                          Requirement.required));
+			
+			final StringArgument branchNameOptions = ArgumentFactory.create(new StringArgument.Options(
+			                                                                                           settings.getRoot(),
+			                                                                                           "branch",
+			                                                                                           "Use transactions of this branch to generate LTCs for. Make sure that this matches the tranactions in the genealogy graph.",
+			                                                                                           RCSBranch.MASTER_BRANCH_NAME,
+			                                                                                           Requirement.required));
+			
+			final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgument = ArgumentSetFactory.create(genealogyOptions);
+			final CoreChangeGenealogy coreChangeGenealogy = genealogyArgument.getValue();
+			final TransactionChangeGenealogy transactionLayer = coreChangeGenealogy.getTransactionLayer();
+			
+			final LTCFormulaFactory formulaFactory = new LTCFormulaFactory();
+			formulaFactory.register(new EF_FormulaGenearator());
+			formulaFactory.register(new EF_and_FormulaGenearator());
+			formulaFactory.register(new EFandEF_FormulaGenearator());
+			formulaFactory.register(new AG_EF_FormulaGenearator());
+			
+			final LTCExperiment experiment = new LTCExperiment(transactionLayer, formulaFactory,
+			                                                   minSupportOpt.getValue().intValue(),
+			                                                   minConfidenceOpt.getValue().doubleValue(),
+			                                                   formulaExpiryOpt.getValue().intValue());
+			
+			final RCSBranch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), RCSBranch.class);
+			if (masterBranch == null) {
+				final List<String> branchNames = new LinkedList<>();
+				for (final RCSBranch branch : persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class))) {
+					branchNames.add(branch.getName());
+				}
+				if (Logger.logError()) {
+					Logger.error("Could not find a branch with name %s. Cannot create genealogy graph. Temrinating. Possible branch names are: %s.",
+					             branchNameOptions.getValue(), JavaUtils.collectionToString(branchNames));
+				}
+				throw new Shutdown();
+			}
+			
+			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
+			                                                                             TransactionSetOrder.ASC);
+			final int trainSize = new Double(masterTransactions.size() * 0.1).intValue();
+			
+			if (Logger.logInfo()) {
+				Logger.info("Training set contains %d entities.", trainSize);
+			}
+			
+			experiment.run(masterTransactions, trainSize, innerRulesOpt.getValue());
+			
+			if (Logger.logInfo()) {
+				Logger.info("All done. Cerio.");
+			}
+		} catch (final Shutdown e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+		} catch (final SettingsParseError e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+		} catch (ArgumentRegistrationException | ArgumentSetRegistrationException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			
+		}
 	}
-	
 }
