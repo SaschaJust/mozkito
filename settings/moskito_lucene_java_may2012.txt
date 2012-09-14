@@ -14,3 +14,11 @@ tracker.uri=https://issues.apache.org/jira/
 #rest/api/2.0.alpha1/
 
 jira.projectKey=LUCENE
+
+#genealogy.graphdb=/data/kim/genealogies/lucene/februar2012/
+genealogy.graphdb=/kim_1_tmpfs/genealogies/lucene/februar2012/
+genealogyReader.branch=origin/trunk
+
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/lucene/lucene_februar2012_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/lucene/lucene_februar2012_genealogy_transaction_fileMetrics.csv
