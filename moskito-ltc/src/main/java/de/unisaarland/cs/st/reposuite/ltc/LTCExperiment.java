@@ -126,8 +126,8 @@ public class LTCExperiment {
 	@NoneNull
 	public void test(final RCSTransaction t) {
 		
-		if (Logger.logDebug()) {
-			Logger.debug("Recommending LTC changes for transaction %s.", t.getId());
+		if (Logger.logInfo()) {
+			Logger.info("Recommending LTC changes for transaction %s.", t.getId());
 		}
 		
 		++this.numVertices;
