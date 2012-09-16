@@ -116,13 +116,13 @@ public class LTCExperiment {
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Produced recommendations for %d change sets.", getNumRecommendatedVertices());
+			Logger.info("Produced recommendations for %f change sets.", getNumRecommendatedVertices());
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Average lowest rank is: %d.", getAverageLowestRank());
+			Logger.info("Average lowest rank is: %f.", getAverageLowestRank());
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Precision is: %d.", getPrecision());
+			Logger.info("Precision is: %f.", getPrecision());
 		}
 	}
 	
@@ -229,12 +229,13 @@ public class LTCExperiment {
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
 		
-		if ((this.changeSetSizeStat.getN() > 10)
+		if ((this.changeSetSizeStat.getN() > 50)
 		        && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(0.75))) {
 			if (Logger.logDebug()) {
 				Logger.debug("Ignoring LTC rules from transaction %s. Change set size exceeds 3/4-percintile of median change set size.",
 				             t.getId());
 			}
+			this.changeSetSizeStat.addValue(t.getRevisions().size());
 			return;
 		}
 		this.changeSetSizeStat.addValue(t.getRevisions().size());
