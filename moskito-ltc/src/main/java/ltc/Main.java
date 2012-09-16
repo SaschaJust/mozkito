@@ -96,6 +96,12 @@ public class Main {
 			                                                                                   null,
 			                                                                                   Requirement.required));
 			
+			final LongArgument numRecomOpt = ArgumentFactory.create(new LongArgument.Options(
+			                                                                                 settings.getRoot(),
+			                                                                                 "numRecommendations",
+			                                                                                 "The maximal number of recommendations to be reported.",
+			                                                                                 3l, Requirement.required));
+			
 			final DoubleArgument minConfidenceOpt = ArgumentFactory.create(new DoubleArgument.Options(
 			                                                                                          settings.getRoot(),
 			                                                                                          "minConfidence",
@@ -124,7 +130,8 @@ public class Main {
 			                                                   minSupportOpt.getValue().intValue(),
 			                                                   minConfidenceOpt.getValue().doubleValue(),
 			                                                   formulaExpiryOpt.getValue().intValue(),
-			                                                   timeWindowOpt.getValue().intValue());
+			                                                   timeWindowOpt.getValue().intValue(),
+			                                                   numRecomOpt.getValue().intValue());
 			
 			final RCSBranch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), RCSBranch.class);
 			if (masterBranch == null) {

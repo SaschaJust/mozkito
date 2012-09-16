@@ -69,15 +69,19 @@ public class LTCExperiment {
 	private final DescriptiveStatistics           changeSetSizeStat        = new DescriptiveStatistics();
 	private final int                             keepFormulaMaxDays;
 	
+	private final int                             numRecommendations;
+	
 	@NoneNull
 	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
-	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow) {
+	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow,
+	        final int numRecommendations) {
 		this.genealogy = genealogy;
 		this.formulaFactory = formulaFactory;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.keepFormulaMaxDays = keepFormulaMaxDays;
 		this.timeWindow = timeWindow;
+		this.numRecommendations = numRecommendations;
 	}
 	
 	public double getAverageLowestRank() {
@@ -208,11 +212,13 @@ public class LTCExperiment {
 			}
 			
 		}
-		
+		if (Logger.logDebug()) {
+			Logger.debug("Produced %s recommendations.", String.valueOf(recommendations.size()));
+		}
 		final Iterator<LTCRecommendation> rIterator = recommendations.iterator();
 		int lowestRank = 4;
 		
-		for (int i = 0; ((i < 3) && rIterator.hasNext()); ++i) {
+		for (int i = 0; ((i < this.numRecommendations) && rIterator.hasNext()); ++i) {
 			final LTCRecommendation recommendation = rIterator.next();
 			final boolean valid = recommendation.getFormula().modelCheck(kripkeStructure);
 			if (valid) {
