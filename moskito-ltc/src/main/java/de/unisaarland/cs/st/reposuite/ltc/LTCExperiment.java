@@ -237,6 +237,7 @@ public class LTCExperiment {
 			}
 			return;
 		}
+		this.changeSetSizeStat.addValue(t.getRevisions().size());
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Learning LTC rules from transaction %s.", t.getId());
