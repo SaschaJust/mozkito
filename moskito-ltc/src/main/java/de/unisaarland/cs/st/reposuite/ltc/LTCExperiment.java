@@ -116,18 +116,25 @@ public class LTCExperiment {
 		}
 		
 		if (Logger.logInfo()) {
-			Logger.info("Produced recommendations for %f change sets.", getNumRecommendatedVertices());
+			Logger.info("Produced recommendations for %s change sets.", String.valueOf(getNumRecommendatedVertices()));
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Average lowest rank is: %f.", getAverageLowestRank());
+			Logger.info("Average lowest rank is: %s.", String.valueOf(getAverageLowestRank()));
 		}
 		if (Logger.logInfo()) {
-			Logger.info("Precision is: %f.", getPrecision());
+			Logger.info("Precision is: %s.", String.valueOf(getPrecision()));
 		}
 	}
 	
 	@NoneNull
 	public void test(final RCSTransaction t) {
+		
+		if ((t.getRevisions().size() > 5) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
+			if (Logger.logInfo()) {
+				Logger.info("NOT recommeding LTC changes for transaction %s. Too many changed files: %s.", t.getId(),
+				            String.valueOf(t.getRevisions().size()));
+			}
+		}
 		
 		if (Logger.logInfo()) {
 			Logger.info("Recommending LTC changes for transaction %s.", t.getId());
@@ -229,8 +236,7 @@ public class LTCExperiment {
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
 		
-		if ((this.changeSetSizeStat.getN() > 50)
-		        && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(0.75))) {
+		if ((t.getRevisions().size() > 5) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
 			if (Logger.logDebug()) {
 				Logger.debug("Ignoring LTC rules from transaction %s. Change set size exceeds 3/4-percintile of median change set size.",
 				             t.getId());
