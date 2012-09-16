@@ -27,7 +27,9 @@ import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.utils.VertexSelector;
+import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSRevision;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.reposuite.ltc.LTCRecommendation.ChangeProperty;
 import de.unisaarland.cs.st.reposuite.ltc.ctl.CTLFormula;
@@ -176,7 +178,11 @@ public class LTCExperiment {
 		final SortedSet<LTCRecommendation> recommendations = new TreeSet<>(
 		                                                                   new LTCRecommendationComparator(
 		                                                                                                   changeProperty));
-		for (final RCSFile changedFile : t.getChangedFiles()) {
+		for (final RCSRevision revision : t.getRevisions()) {
+			if (revision.getChangeType().equals(ChangeType.Deleted)) {
+				continue;
+			}
+			final RCSFile changedFile = revision.getChangedFile();
 			final SortedSet<LTCRecommendation> fileRecommends = LTCRecommendation.getRecommendations(changedFile,
 			                                                                                         changeProperty);
 			final Iterator<LTCRecommendation> fileRecommendIterator = fileRecommends.iterator();
@@ -249,7 +255,11 @@ public class LTCExperiment {
 		
 		// add support for these formulas
 		for (final CTLFormula f : templateFormulas) {
-			for (final RCSFile changedFile : t.getChangedFiles()) {
+			for (final RCSRevision revision : t.getRevisions()) {
+				if (revision.getChangeType().equals(ChangeType.Deleted)) {
+					continue;
+				}
+				final RCSFile changedFile = revision.getChangedFile();
 				LTCRecommendation.getRecommendation(changedFile, f).addSupport(t,
 				                                                               changeProperty,
 				                                                               t.getTimestamp()
