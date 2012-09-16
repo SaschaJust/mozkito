@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
 
 import de.unisaarland.cs.st.moskito.genealogies.ChangeGenealogy;
@@ -65,7 +66,7 @@ public class LTCExperiment {
 	private final double                          minConfidence;
 	private final int                             timeWindow;
 	private final int                             minSupport;
-	
+	private final DescriptiveStatistics           changeSetSizeStat        = new DescriptiveStatistics();
 	private final int                             keepFormulaMaxDays;
 	
 	@NoneNull
@@ -227,6 +228,15 @@ public class LTCExperiment {
 	public void train(final RCSTransaction t,
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
+		
+		if ((this.changeSetSizeStat.getN() > 10)
+		        && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(0.75))) {
+			if (Logger.logDebug()) {
+				Logger.debug("Ignoring LTC rules from transaction %s. Change set size exceeds 3/4-percintile of median change set size.",
+				             t.getId());
+			}
+			return;
+		}
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Learning LTC rules from transaction %s.", t.getId());
