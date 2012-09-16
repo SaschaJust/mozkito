@@ -129,7 +129,7 @@ public class LTCExperiment {
 	@NoneNull
 	public void test(final RCSTransaction t) {
 		
-		if ((t.getRevisions().size() > 5) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
+		if ((t.getRevisions().size() > 10) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
 			if (Logger.logInfo()) {
 				Logger.info("NOT recommeding LTC changes for transaction %s. Too many changed files: %s.", t.getId(),
 				            String.valueOf(t.getRevisions().size()));
@@ -236,7 +236,7 @@ public class LTCExperiment {
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
 		
-		if ((t.getRevisions().size() > 5) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
+		if ((t.getRevisions().size() > 10) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
 			if (Logger.logDebug()) {
 				Logger.debug("Ignoring LTC rules from transaction %s. Change set size exceeds 3/4-percintile of median change set size.",
 				             t.getId());
