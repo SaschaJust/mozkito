@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
@@ -77,13 +78,13 @@ public class LTCRecommendation {
 		return treeSet;
 	}
 	
-	private final RCSFile                                    premise;
+	private final RCSFile                                             premise;
 	
-	private final CTLFormula                                 formula;
+	private final CTLFormula                                          formula;
 	
-	private final Map<ChangeProperty, Queue<RCSTransaction>> support        = new HashMap<>();
+	private final Map<ChangeProperty, Queue<Tuple<String, DateTime>>> support        = new HashMap<>();
 	
-	private final Set<RCSTransaction>                        premiseChanges = new HashSet<>();
+	private final Set<RCSTransaction>                                 premiseChanges = new HashSet<>();
 	
 	/**
 	 * @param premise
@@ -93,26 +94,28 @@ public class LTCRecommendation {
 	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
 		this.premise = premise;
 		this.formula = formula;
-		this.support.put(ChangeProperty.NONE, new LinkedList<RCSTransaction>());
+		this.support.put(ChangeProperty.NONE, new LinkedList<Tuple<String, DateTime>>());
 	}
 	
 	public void addSupport(final RCSTransaction transaction,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
 		if (!this.support.containsKey(property)) {
-			this.support.put(property, new LinkedList<RCSTransaction>());
+			this.support.put(property, new LinkedList<Tuple<String, DateTime>>());
 		}
 		
-		this.support.get(ChangeProperty.NONE).add(transaction);
-		RCSTransaction supportEntry = this.support.get(ChangeProperty.NONE).peek();
-		while ((supportEntry != null) && supportEntry.getTimestamp().isBefore(expiry)) {
+		this.support.get(ChangeProperty.NONE).add(new Tuple<String, DateTime>(transaction.getId(),
+		                                                                      transaction.getTimestamp()));
+		Tuple<String, DateTime> supportEntry = this.support.get(ChangeProperty.NONE).peek();
+		while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 			supportEntry = this.support.get(ChangeProperty.NONE).poll();
 		}
 		
 		if (!property.equals(ChangeProperty.NONE)) {
-			this.support.get(property).add(transaction);
+			this.support.get(property)
+			            .add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
 			supportEntry = this.support.get(property).peek();
-			while ((supportEntry != null) && supportEntry.getTimestamp().isBefore(expiry)) {
+			while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 				supportEntry = this.support.get(property).poll();
 			}
 		}
