@@ -13,11 +13,9 @@
 package de.unisaarland.cs.st.reposuite.ltc;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -84,7 +82,7 @@ public class LTCRecommendation {
 	
 	private final Map<ChangeProperty, Queue<Tuple<String, DateTime>>> support        = new HashMap<>();
 	
-	private final Set<String>                                         premiseChanges = new HashSet<>();
+	private final Queue<Tuple<String, DateTime>>                      premiseChanges = new LinkedList<>();
 	
 	/**
 	 * @param premise
@@ -110,6 +108,10 @@ public class LTCRecommendation {
 		while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 			supportEntry = this.support.get(ChangeProperty.NONE).poll();
 		}
+		Tuple<String, DateTime> premiseEntry = this.premiseChanges.peek();
+		while ((premiseEntry != null) && premiseEntry.getSecond().isBefore(expiry)) {
+			premiseEntry = this.premiseChanges.poll();
+		}
 		
 		if (!property.equals(ChangeProperty.NONE)) {
 			this.support.get(property)
@@ -124,7 +126,7 @@ public class LTCRecommendation {
 	public void fileChanged(final RCSFile file,
 	                        final RCSTransaction transaction) {
 		if (this.premise.equals(file)) {
-			this.premiseChanges.add(transaction.getId());
+			this.premiseChanges.add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
 		}
 	}
 	
