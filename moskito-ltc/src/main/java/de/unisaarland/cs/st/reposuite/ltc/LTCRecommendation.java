@@ -76,7 +76,7 @@ public class LTCRecommendation {
 		return treeSet;
 	}
 	
-	private final RCSFile                                             premise;
+	private final Long                                                premise;
 	
 	private final CTLFormula                                          formula;
 	
@@ -90,7 +90,7 @@ public class LTCRecommendation {
 	 */
 	@NoneNull
 	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
-		this.premise = premise;
+		this.premise = premise.getGeneratedId();
 		this.formula = formula;
 		this.support.put(ChangeProperty.NONE, new LinkedList<Tuple<String, DateTime>>());
 	}
@@ -125,7 +125,7 @@ public class LTCRecommendation {
 	
 	public void fileChanged(final RCSFile file,
 	                        final RCSTransaction transaction) {
-		if (this.premise.equals(file)) {
+		if (this.premise.equals(file.getGeneratedId())) {
 			this.premiseChanges.add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
 		}
 	}
