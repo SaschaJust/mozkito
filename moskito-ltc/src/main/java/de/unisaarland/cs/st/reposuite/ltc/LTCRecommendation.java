@@ -45,34 +45,34 @@ public class LTCRecommendation {
 	 */
 	public static void addChange(final RCSFile changedFile,
 	                             final RCSTransaction transaction) {
-		if (!recommendations.containsKey(changedFile)) {
+		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
-		for (final LTCRecommendation r : recommendations.get(changedFile).values()) {
+		for (final LTCRecommendation r : recommendations.get(changedFile.getGeneratedId()).values()) {
 			r.fileChanged(changedFile, transaction);
 		}
 	}
 	
 	public static LTCRecommendation getRecommendation(final RCSFile premise,
 	                                                  final CTLFormula formula) {
-		if (!recommendations.containsKey(premise)) {
+		if (!recommendations.containsKey(premise.getGeneratedId())) {
 			recommendations.put(premise.getGeneratedId(), new HashMap<CTLFormula, LTCRecommendation>());
 		}
-		if (!recommendations.get(premise).containsKey(formula)) {
-			recommendations.get(premise).put(formula, new LTCRecommendation(premise, formula));
+		if (!recommendations.get(premise.getGeneratedId()).containsKey(formula)) {
+			recommendations.get(premise.getGeneratedId()).put(formula, new LTCRecommendation(premise, formula));
 		}
-		return recommendations.get(premise).get(formula);
+		return recommendations.get(premise.getGeneratedId()).get(formula);
 	}
 	
 	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
 	                                                              final ChangeProperty property) {
 		
-		if (!recommendations.containsKey(changedFile)) {
+		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
 			return new TreeSet<LTCRecommendation>();
 		}
 		
 		final SortedSet<LTCRecommendation> treeSet = new TreeSet<>(new LTCRecommendationComparator(property));
-		treeSet.addAll(recommendations.get(changedFile).values());
+		treeSet.addAll(recommendations.get(changedFile.getGeneratedId()).values());
 		return treeSet;
 	}
 	
