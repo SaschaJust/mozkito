@@ -40,7 +40,7 @@ public class LTCRecommendation {
 		FIX, BIGCHANGE, NONE;
 	}
 	
-	private static Map<RCSFile, Map<CTLFormula, LTCRecommendation>> recommendations = new HashMap<>();
+	private static Map<Long, Map<CTLFormula, LTCRecommendation>> recommendations = new HashMap<>();
 	
 	/**
 	 * @param changedFile
@@ -58,7 +58,7 @@ public class LTCRecommendation {
 	public static LTCRecommendation getRecommendation(final RCSFile premise,
 	                                                  final CTLFormula formula) {
 		if (!recommendations.containsKey(premise)) {
-			recommendations.put(premise, new HashMap<CTLFormula, LTCRecommendation>());
+			recommendations.put(premise.getGeneratedId(), new HashMap<CTLFormula, LTCRecommendation>());
 		}
 		if (!recommendations.get(premise).containsKey(formula)) {
 			recommendations.get(premise).put(formula, new LTCRecommendation(premise, formula));
@@ -84,7 +84,7 @@ public class LTCRecommendation {
 	
 	private final Map<ChangeProperty, Queue<Tuple<String, DateTime>>> support        = new HashMap<>();
 	
-	private final Set<RCSTransaction>                                 premiseChanges = new HashSet<>();
+	private final Set<String>                                         premiseChanges = new HashSet<>();
 	
 	/**
 	 * @param premise
@@ -124,7 +124,7 @@ public class LTCRecommendation {
 	public void fileChanged(final RCSFile file,
 	                        final RCSTransaction transaction) {
 		if (this.premise.equals(file)) {
-			this.premiseChanges.add(transaction);
+			this.premiseChanges.add(transaction.getId());
 		}
 	}
 	
