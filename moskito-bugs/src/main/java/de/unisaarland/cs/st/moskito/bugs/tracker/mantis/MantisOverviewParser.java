@@ -245,8 +245,18 @@ public class MantisOverviewParser implements OverviewParser {
 					}
 					for (final Group regexGroup : find) {
 						if ((regexGroup.getName() != null) && (regexGroup.getName().equals("bugid"))) {
+							final String bugId = regexGroup.getMatch();
+							final StringBuilder bugIdBuilder = new StringBuilder();
+							for (int j = 0; j < (bugId.length() - 7); ++j) {
+								bugIdBuilder.append("0");
+							}
+							bugIdBuilder.append(bugId);
+							if (Logger.logDebug()) {
+								Logger.debug("Creating ReportLink with uri %s and bugId %s",
+								             this.tracker.getUri().toASCIIString() + href, bugIdBuilder.toString());
+							}
 							result.add(new ReportLink(new URI(this.tracker.getUri().toASCIIString() + href),
-							                          regexGroup.getMatch()));
+							                          bugIdBuilder.toString()));
 							break;
 						}
 					}
