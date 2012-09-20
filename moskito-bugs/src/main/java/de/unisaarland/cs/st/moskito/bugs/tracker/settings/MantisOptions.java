@@ -108,6 +108,10 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 						Logger.warn("Specified mantis overview CSV file %s contains HEADER line only.");
 					}
 				}
+				if (Logger.logInfo()) {
+					Logger.info("Added %s bug IDs from overview CSV file %s.", String.valueOf(links.size()),
+					            csvFile.getAbsolutePath());
+				}
 				this.tracker.setReportIds(links);
 			}
 			return this.tracker;
