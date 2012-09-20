@@ -12,19 +12,27 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
+import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
@@ -38,7 +46,8 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
         ITrackerOptions {
 	
 	/** The tracker. */
-	private MantisTracker tracker;
+	private MantisTracker                                            tracker;
+	private net.ownhero.dev.hiari.settings.InputFileArgument.Options csvOptions;
 	
 	/**
 	 * Instantiates a new mantis options.
@@ -64,7 +73,43 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		// PRECONDITIONS
 		
 		try {
+			final File csvFile = getSettings().getArgument(this.csvOptions).getValue();
 			this.tracker = new MantisTracker();
+			if (csvFile.exists()) {
+				final Collection<String> links = new HashSet<>();
+				try (final CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+					String[] nextLine;
+					nextLine = reader.readNext();
+					if (nextLine == null) {
+						throw new UnrecoverableError(
+						                             String.format("Specified mantis overview CSV file %s is empty! CSV must contain HEADER line.",
+						                                           csvFile.getAbsolutePath()));
+					}
+					int idIndex = -1;
+					for (int i = 0; i < nextLine.length; ++i) {
+						if (nextLine[i].toLowerCase().equals("id")) {
+							idIndex = i;
+							break;
+						}
+					}
+					if (idIndex < 0) {
+						throw new UnrecoverableError(
+						                             String.format("Specified mantis overview CSV file %s must contain HEADER line INCLUDING 'Id' column. Please make sure to generate overview file matching this specification.",
+						                                           csvFile.getAbsolutePath()));
+					}
+					while ((nextLine = reader.readNext()) != null) {
+						links.add(nextLine[idIndex]);
+					}
+				} catch (final IOException e) {
+					throw new UnrecoverableError(e);
+				}
+				if (links.isEmpty()) {
+					if (Logger.logWarn()) {
+						Logger.warn("Specified mantis overview CSV file %s contains HEADER line only.");
+					}
+				}
+				this.tracker.setReportIds(links);
+			}
 			return this.tracker;
 		} finally {
 			// POSTCONDITIONS
@@ -84,6 +129,14 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 		try {
 			
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
+			
+			this.csvOptions = new InputFileArgument.Options(
+			                                                set,
+			                                                "mantisCSV",
+			                                                "CSV overview file generated using Mantis itself. Parsing overview pages automatically can .",
+			                                                null, Requirement.optional);
+			map.put(this.csvOptions.getName(), this.csvOptions);
+			
 			return map;
 		} finally {
 			// POSTCONDITIONS
