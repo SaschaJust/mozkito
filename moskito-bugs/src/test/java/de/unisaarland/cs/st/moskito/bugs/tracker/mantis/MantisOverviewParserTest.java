@@ -75,8 +75,8 @@ public class MantisOverviewParserTest {
 		final List<ReportLink> links = this.parser.handlePage(this.overviewUri);
 		assertEquals(50, links.size());
 		
-		assertEquals("20069", links.get(0).getBugId());
-		assertEquals(this.trackerUri + "/view.php?id=20069", links.get(0).getUri().toASCIIString());
+		assertEquals("0020069", links.get(0).getBugId());
+		assertEquals(this.trackerUri + "view.php?id=0020069", links.get(0).getUri().toASCIIString());
 		
 	}
 }
