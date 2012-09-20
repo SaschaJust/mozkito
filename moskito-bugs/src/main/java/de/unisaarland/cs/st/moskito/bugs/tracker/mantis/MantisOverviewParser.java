@@ -168,7 +168,7 @@ public class MantisOverviewParser implements OverviewParser {
 				sb.append("view.php?id=");
 				sb.append(bugId);
 				final StringBuilder bugIdBuilder = new StringBuilder();
-				for (int i = 0; i < (bugId.length() - 7); ++i) {
+				for (int i = 0; i < (7 - bugId.length()); ++i) {
 					bugIdBuilder.append("0");
 				}
 				bugIdBuilder.append(bugId);
@@ -247,7 +247,7 @@ public class MantisOverviewParser implements OverviewParser {
 						if ((regexGroup.getName() != null) && (regexGroup.getName().equals("bugid"))) {
 							final String bugId = regexGroup.getMatch();
 							final StringBuilder bugIdBuilder = new StringBuilder();
-							for (int j = 0; j < (bugId.length() - 7); ++j) {
+							for (int j = 0; j < (7 - bugId.length()); ++j) {
 								bugIdBuilder.append("0");
 							}
 							bugIdBuilder.append(bugId);
