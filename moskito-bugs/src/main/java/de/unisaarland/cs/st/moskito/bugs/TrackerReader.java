@@ -58,8 +58,8 @@ public class TrackerReader extends Source<ReportLink> {
 					
 					final Report report = persistenceUtil.loadById(bugURI.getBugId(), Report.class);
 					if (report != null) {
-						if (Logger.logDebug()) {
-							Logger.debug("Skipping already persisted bug report %s.", report.getId());
+						if (Logger.logInfo()) {
+							Logger.info("Skipping already persisted bug report %s.", report.getId());
 						}
 						skipOutputData();
 					} else {
