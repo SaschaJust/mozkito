@@ -167,7 +167,12 @@ public class MantisOverviewParser implements OverviewParser {
 				sb.append(this.tracker.getUri().toASCIIString());
 				sb.append("view.php?id=");
 				sb.append(bugId);
-				return new ReportLink(new URI(sb.toString()), bugId);
+				final StringBuilder bugIdBuilder = new StringBuilder();
+				for (int i = 0; i < (bugId.length() - 7); ++i) {
+					bugIdBuilder.append("0");
+				}
+				bugIdBuilder.append(bugId);
+				return new ReportLink(new URI(sb.toString()), bugIdBuilder.toString());
 			} catch (final URISyntaxException e) {
 				throw new UnrecoverableError(e);
 			}
