@@ -12,6 +12,7 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.bugs.tracker.settings;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,7 +33,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
-import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 import de.unisaarland.cs.st.moskito.bugs.tracker.mantis.MantisTracker;
@@ -77,17 +77,18 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 			this.tracker = new MantisTracker();
 			if (csvFile.exists()) {
 				final Collection<String> links = new HashSet<>();
-				try (final CSVReader reader = new CSVReader(new FileReader(csvFile))) {
-					String[] nextLine;
-					nextLine = reader.readNext();
+				try (final BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+					String nextLine;
+					nextLine = reader.readLine();
 					if (nextLine == null) {
 						throw new UnrecoverableError(
 						                             String.format("Specified mantis overview CSV file %s is empty! CSV must contain HEADER line.",
 						                                           csvFile.getAbsolutePath()));
 					}
 					int idIndex = -1;
-					for (int i = 0; i < nextLine.length; ++i) {
-						if (nextLine[i].toLowerCase().equals("id")) {
+					String[] lineParts = nextLine.split(",");
+					for (int i = 0; i < lineParts.length; ++i) {
+						if (lineParts[i].toLowerCase().replaceAll("\"", "").equals("id")) {
 							idIndex = i;
 							break;
 						}
@@ -97,8 +98,9 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 						                             String.format("Specified mantis overview CSV file %s must contain HEADER line INCLUDING 'Id' column. Please make sure to generate overview file matching this specification.",
 						                                           csvFile.getAbsolutePath()));
 					}
-					while ((nextLine = reader.readNext()) != null) {
-						links.add(nextLine[idIndex]);
+					while ((nextLine = reader.readLine()) != null) {
+						lineParts = nextLine.split(",");
+						links.add(lineParts[idIndex].replaceAll("\"", ""));
 					}
 				} catch (final IOException e) {
 					throw new UnrecoverableError(e);
