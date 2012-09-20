@@ -172,6 +172,9 @@ public class MantisOverviewParser implements OverviewParser {
 					bugIdBuilder.append("0");
 				}
 				bugIdBuilder.append(bugId);
+				if (Logger.logDebug()) {
+					Logger.debug("Creating ReportLink with uri %s and bugId %s", sb.toString(), bugIdBuilder.toString());
+				}
 				return new ReportLink(new URI(sb.toString()), bugIdBuilder.toString());
 			} catch (final URISyntaxException e) {
 				throw new UnrecoverableError(e);

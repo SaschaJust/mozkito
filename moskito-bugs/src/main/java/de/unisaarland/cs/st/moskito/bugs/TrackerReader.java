@@ -52,8 +52,8 @@ public class TrackerReader extends Source<ReportLink> {
 			public void process() {
 				final ReportLink bugURI = tracker.getNextReportLink();
 				if (bugURI != null) {
-					if (Logger.logTrace()) {
-						Logger.trace("Checking if bug report was persisted already. If so skipping bug report ...");
+					if (Logger.logDebug()) {
+						Logger.debug("Checking if bug report with id %s is persisted already. If so skipping bug report ...");
 					}
 					
 					final Report report = persistenceUtil.loadById(bugURI.getBugId(), Report.class);
