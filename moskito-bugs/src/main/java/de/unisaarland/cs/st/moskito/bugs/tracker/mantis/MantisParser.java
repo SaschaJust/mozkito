@@ -1303,6 +1303,9 @@ public class MantisParser implements Parser {
 			}
 			
 			this.report = createDocument(rawContent);
+			if (this.report == null) {
+				return false;
+			}
 			this.document = Jsoup.parse(this.report.getContent());
 			tables = this.document.getElementsByClass("width100");
 			if ((tables == null) || (tables.isEmpty())) {

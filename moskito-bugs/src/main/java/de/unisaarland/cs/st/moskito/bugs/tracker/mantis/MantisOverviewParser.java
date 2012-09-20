@@ -58,8 +58,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new mantis overview parser.
-	 *
-	 * @param tracker the tracker
+	 * 
+	 * @param tracker
+	 *            the tracker
 	 */
 	public MantisOverviewParser(final MantisTracker tracker) {
 		this.tracker = tracker;
@@ -67,8 +68,9 @@ public class MantisOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new mantis overview parser.
-	 *
-	 * @param uri the uri
+	 * 
+	 * @param uri
+	 *            the uri
 	 */
 	protected MantisOverviewParser(final URI uri) {
 		// PRECONDITIONS
