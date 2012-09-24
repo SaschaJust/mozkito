@@ -326,8 +326,17 @@ public class Untangling {
 		final Set<ChangeSet> atomicChangeSets = new HashSet<ChangeSet>();
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
-		for (final String tId : this.untanglingControl.getAtomicTransactionIds()) {
-			final RCSTransaction t = persistenceUtil.loadById(tId, RCSTransaction.class);
+		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		Criteria<RCSTransaction> transactionCriteria = null;
+		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
+		} else {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+		}
+		
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		
+		for (final RCSTransaction t : atomicTransactions) {
 			atomicChangeSets.add(new ChangeSet(t, PPAPersistenceUtil.getChangeOperation(persistenceUtil, t)));
 		}
 		
