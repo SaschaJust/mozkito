@@ -157,9 +157,7 @@ public class UntanglingOptions extends
 	
 	private void addOption(final IOptions<?, ?> options,
 	                       final Map<String, IOptions<?, ?>> map) {
-		if (options.required()) {
-			map.put(options.getName(), options);
-		}
+		map.put(options.getName(), options);
 	}
 	
 	/*
