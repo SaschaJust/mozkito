@@ -31,6 +31,8 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
+import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import weka.classifiers.functions.LinearRegression;
@@ -75,6 +77,39 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	 */
 	public LinearRegressionAggregation(final Untangling untangling) {
 		super();
+		this.untangling = untangling;
+		if (System.getProperty("linerRegressionModel") != null) {
+			final File serialFile = new File(System.getProperty("linerRegressionModel"));
+			if (serialFile.exists()) {
+				try {
+					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					final Object[] objects = (Object[]) in.readObject();
+					in.close();
+					this.model = (LinearRegression) objects[0];
+					this.trainingInstances = (Instances) objects[1];
+					this.trained = true;
+				} catch (final FileNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				} catch (final IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				} catch (final ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				}
+				
+			}
+		}
+	}
+	
+	public LinearRegressionAggregation(final Untangling untangling,
+	        @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
+		super();
+		LinearRegressionAggregation.TRAIN_FRACTION = trainFraction;
 		this.untangling = untangling;
 		if (System.getProperty("linerRegressionModel") != null) {
 			final File serialFile = new File(System.getProperty("linerRegressionModel"));

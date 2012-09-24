@@ -362,18 +362,18 @@ public class Untangling {
 				this.aggregator = new VarSumAggregation<JavaChangeOperation>();
 				break;
 			case LINEAR_REGRESSION:
-				final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this);
+				final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this, 1d);
 				// train score aggregation model
 				linarRegressionAggregator.train(atomicChangeSets);
 				this.aggregator = linarRegressionAggregator;
 				break;
 			case SVM:
-				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
+				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this, 1d);
 				svmAggregator.train(atomicChangeSets);
 				this.aggregator = svmAggregator;
 				break;
 			case RANDOM_FOREST:
-				final RandomForestAggregation rFAggregator = new RandomForestAggregation(this);
+				final RandomForestAggregation rFAggregator = new RandomForestAggregation(this, 1d);
 				rFAggregator.train(atomicChangeSets);
 				this.aggregator = rFAggregator;
 				break;

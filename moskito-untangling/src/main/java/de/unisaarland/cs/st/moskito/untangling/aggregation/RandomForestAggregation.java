@@ -29,6 +29,8 @@ import java.util.Map;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
+import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -75,6 +77,13 @@ public class RandomForestAggregation extends UntanglingScoreAggregation {
 	 */
 	public RandomForestAggregation(final Untangling untangling) {
 		super();
+		this.untangling = untangling;
+	}
+	
+	public RandomForestAggregation(final Untangling untangling,
+	        @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
+		super();
+		RandomForestAggregation.TRAIN_FRACTION = trainFraction;
 		this.untangling = untangling;
 	}
 	
