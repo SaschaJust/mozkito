@@ -155,6 +155,13 @@ public class UntanglingOptions extends
 		super(argumentSet, "untangling", "Options to configure the untangling process details.", requirements);
 	}
 	
+	private void addOption(final IOptions<?, ?> options,
+	                       final Map<String, IOptions<?, ?>> map) {
+		if (options.required()) {
+			map.put(options.getName(), options);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
@@ -335,71 +342,73 @@ public class UntanglingOptions extends
 			                                                              "precisionExperiment",
 			                                                              "Set to true if you want to measure the precision of the untangling algorithm. By default algorithm will be used to untangle given change sets.",
 			                                                              false, Requirement.required);
+			addOption(this.precisionExperimentOptions, map);
 			
-			if (this.precisionExperimentOptions.required()) {
-				this.blobWindowSizeOptions = new LongArgument.Options(
-				                                                      set,
-				                                                      "blobWindowSize",
-				                                                      "Max number of days changes sets might be appart to be condifered for tangling. (-1 = unlimited)",
-				                                                      14l,
-				                                                      Requirement.equals(this.precisionExperimentOptions,
-				                                                                         true));
-				map.put(this.blobWindowSizeOptions.getName(), this.blobWindowSizeOptions);
-				this.minBlobSizeOptions = new LongArgument.Options(
-				                                                   set,
-				                                                   "minBlobsize",
-				                                                   "The minimal number of transactions to be combined within a blob.",
-				                                                   2l,
-				                                                   Requirement.equals(this.precisionExperimentOptions,
-				                                                                      true));
-				map.put(this.minBlobSizeOptions.getName(), this.minBlobSizeOptions);
-				
-				this.maxBlobSizeOptions = new LongArgument.Options(
-				                                                   set,
-				                                                   "maxBlobsize",
-				                                                   "The maximal number of transactions to be combined within a blob. (-1 means not limit)",
-				                                                   -1l,
-				                                                   Requirement.equals(this.precisionExperimentOptions,
-				                                                                      true));
-				map.put(this.maxBlobSizeOptions.getName(), this.maxBlobSizeOptions);
-				
-				this.dryRunOptions = new BooleanArgument.Options(
-				                                                 set,
-				                                                 "dryrun",
-				                                                 "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
-				                                                 false, Requirement.optional);
-				map.put(this.dryRunOptions.getName(), this.dryRunOptions);
-				
-				this.nOptions = new LongArgument.Options(set, "n",
-				                                         "Choose n random artificial blobs. (-1 = unlimited)", -1l,
-				                                         Requirement.optional);
-				map.put(this.nOptions.getName(), this.nOptions);
-				
-				this.seedOptions = new LongArgument.Options(set, "seed", "Use random seed.", null, Requirement.optional);
-				map.put(this.seedOptions.getName(), this.seedOptions);
-				
-				this.generatorStrategyOptions = new EnumArgument.Options<>(
-				                                                           set,
-				                                                           "generatorStrategy",
-				                                                           "Strategy to construct artifical blobs.",
-				                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
-				                                                           Requirement.required);
-				map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
-				
+			this.blobWindowSizeOptions = new LongArgument.Options(
+			                                                      set,
+			                                                      "blobWindowSize",
+			                                                      "Max number of days changes sets might be appart to be condifered for tangling. (-1 = unlimited)",
+			                                                      14l,
+			                                                      Requirement.equals(this.precisionExperimentOptions,
+			                                                                         true));
+			addOption(this.blobWindowSizeOptions, map);
+			
+			this.minBlobSizeOptions = new LongArgument.Options(
+			                                                   set,
+			                                                   "minBlobsize",
+			                                                   "The minimal number of transactions to be combined within a blob.",
+			                                                   2l, Requirement.equals(this.precisionExperimentOptions,
+			                                                                          true));
+			addOption(this.minBlobSizeOptions, map);
+			
+			this.maxBlobSizeOptions = new LongArgument.Options(
+			                                                   set,
+			                                                   "maxBlobsize",
+			                                                   "The maximal number of transactions to be combined within a blob. (-1 means not limit)",
+			                                                   -1l, Requirement.equals(this.precisionExperimentOptions,
+			                                                                           true));
+			addOption(this.maxBlobSizeOptions, map);
+			
+			this.dryRunOptions = new BooleanArgument.Options(
+			                                                 set,
+			                                                 "dryrun",
+			                                                 "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
+			                                                 false, Requirement.equals(this.precisionExperimentOptions,
+			                                                                           true));
+			addOption(this.dryRunOptions, map);
+			
+			this.nOptions = new LongArgument.Options(set, "n", "Choose n random artificial blobs. (-1 = unlimited)",
+			                                         -1l, Requirement.equals(this.precisionExperimentOptions, true));
+			addOption(this.nOptions, map);
+			
+			this.seedOptions = new LongArgument.Options(set, "seed", "Use random seed.", null, Requirement.optional);
+			addOption(this.seedOptions, map);
+			
+			this.generatorStrategyOptions = new EnumArgument.Options<>(
+			                                                           set,
+			                                                           "generatorStrategy",
+			                                                           "Strategy to construct artifical blobs.",
+			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
+			                                                           Requirement.equals(this.precisionExperimentOptions,
+			                                                                              true));
+			addOption(this.generatorStrategyOptions, map);
+			
+			if (this.generatorStrategyOptions.required()) {
 				this.artificialBlobCacheOptions = new DirectoryArgument.Options(
 				                                                                set,
 				                                                                "blobCacheDir",
 				                                                                "Directory that will be used to cache artificial blobs for reuse. Caching strategies is handled internally using database settings and other relevant settings.",
 				                                                                null, Requirement.optional, true);
-				map.put(this.artificialBlobCacheOptions.getName(), this.artificialBlobCacheOptions);
-			}// precision experiment END
-			else {
-				this.toUntangleOptions = new InputFileArgument.Options(
-				                                                       set,
-				                                                       "changeSets",
-				                                                       "CSV file contain change sets to be untangled. Format: <change set id>,<num partitions>. If num partitions less than one, untangling algorithm will interpret value as merging threshold.",
-				                                                       null, Requirement.required);
+				addOption(this.artificialBlobCacheOptions, map);
 			}
+			this.toUntangleOptions = new InputFileArgument.Options(
+			                                                       set,
+			                                                       "changeSets",
+			                                                       "CSV file contain change sets to be untangled. Format: <change set id>,<num partitions>. If num partitions less than one, untangling algorithm will interpret value as merging threshold.",
+			                                                       null,
+			                                                       Requirement.equals(this.precisionExperimentOptions,
+			                                                                          false));
+			addOption(this.toUntangleOptions, map);
 			
 			this.outOptions = new OutputFileArgument.Options(
 			                                                 set,
