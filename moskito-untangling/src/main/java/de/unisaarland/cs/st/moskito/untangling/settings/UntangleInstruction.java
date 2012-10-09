@@ -44,4 +44,15 @@ public class UntangleInstruction {
 	public double getTreshold() {
 		return this.threshold;
 	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("UntanglingInstruction[transactionid=");
+		sb.append(getChangeSet().getTransaction().getId());
+		sb.append(", numPartitions=");
+		sb.append(getNumPartitions());
+		sb.append("]");
+		return sb.toString();
+	}
 }

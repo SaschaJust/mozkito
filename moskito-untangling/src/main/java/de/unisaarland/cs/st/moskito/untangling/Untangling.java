@@ -386,7 +386,15 @@ public class Untangling {
 			
 			outWriter.write("ChangeSetID,PartitionNumber,ChangeOperationIDs");
 			outWriter.append(FileUtils.lineSeparator);
+			int iCounter = 0;
+			final String numInstructions = String.valueOf(this.untanglingControl.getChangeSetsToUntangle().size());
 			for (final UntangleInstruction instruction : this.untanglingControl.getChangeSetsToUntangle()) {
+				
+				if (Logger.logInfo()) {
+					Logger.info("Processing untangling instruction: %s (%s / %s).", instruction.toString(),
+					            (String.valueOf(++iCounter)), numInstructions);
+				}
+				
 				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(instruction.getChangeSet()
 				                                                                                                                   .getTransaction());
 				
