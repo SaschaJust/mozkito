@@ -253,6 +253,11 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Computing data dependency score for transaction %s and JavaChangeOperations %s and %s.",
+			             this.transaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
+		}
+		
 		final String filePath1 = op1.getChangedElementLocation().getFilePath();
 		final String filePath2 = op2.getChangedElementLocation().getFilePath();
 		

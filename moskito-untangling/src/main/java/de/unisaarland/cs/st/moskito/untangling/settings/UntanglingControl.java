@@ -82,6 +82,8 @@ public class UntanglingControl {
 	
 	private Collection<UntangleInstruction>                                                                                     changeSetsToUntangle;
 	
+	private File                                                                                                                modelCacheDir;
+	
 	public UntanglingControl(final boolean measurePrecision) {
 		this.measurePrecision = measurePrecision;
 	}
@@ -179,6 +181,10 @@ public class UntanglingControl {
 	 */
 	public int getMinBlobSize() {
 		return this.minBlobSize.intValue();
+	}
+	
+	public File getModelCacheDir() {
+		return this.modelCacheDir;
 	}
 	
 	/**
@@ -376,6 +382,19 @@ public class UntanglingControl {
 		
 		try {
 			this.minBlobSize = minBlobSize;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param value
+	 */
+	public void setSerialModel(final File value) {
+		// PRECONDITIONS
+		
+		try {
+			this.modelCacheDir = value;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -185,10 +185,16 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 			return true;
 		}
 		
-		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train SVM regression on must be not empty");
 		
+		if (Logger.logInfo()) {
+			Logger.info("Creating SVM training samples ...");
+		}
 		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION,
 		                                                                     this.untangling);
+		if (Logger.logInfo()) {
+			Logger.info("SVM training samples created.");
+		}
 		
 		final List<List<Double>> positiveSamples = samples.get(SampleType.POSITIVE);
 		final List<List<Double>> negativeSamples = samples.get(SampleType.NEGATIVE);
