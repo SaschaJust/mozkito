@@ -103,19 +103,24 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		if (Logger.logDebug()) {
 			Logger.debug("Creating positive samples.");
 		}
+		
 		for (final Entry<ChangeSet, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
 			final ChangeSet t = e.getKey();
 			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
 			                                                                                           .size()]);
+			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
-					final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
+					
 					final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 					for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
 						values.add(v.getScore(operationArray[i], operationArray[j]));
 					}
 					positiveValues.add(values);
 				}
+			}
+			for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {
+				v.close();
 			}
 		}
 		
