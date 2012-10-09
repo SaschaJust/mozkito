@@ -193,12 +193,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	        final RCSTransaction transaction, final File cacheDir) {
 		this.transaction = transaction;
 		this.eclipseDir = eclipseDir;
-		if (this.checkoutDir == null) {
-			this.checkoutDir = repository.checkoutPath("/", transaction.getId());
-			if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
-			}
-		}
 		this.cacheDir = cacheDir;
 		final String cacheFileName = this.transaction.getId() + ".dd";
 		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
@@ -212,6 +206,13 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			} catch (IOException | ClassNotFoundException ignore) {
 				// ignore
+			}
+		} else {
+			if (this.checkoutDir == null) {
+				this.checkoutDir = repository.checkoutPath("/", transaction.getId());
+				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
+					throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
+				}
 			}
 		}
 		
