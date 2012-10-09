@@ -143,6 +143,8 @@ public class UntanglingOptions extends
 	
 	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      toUntangleOptions;
 	
+	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      serialModelOptions;
+	
 	/**
 	 * Instantiates a new untangling options.
 	 * 
@@ -262,6 +264,7 @@ public class UntanglingOptions extends
 					}
 				}
 				control.setChangeSetsToUntangle(instructions);
+				control.setSerialModel(getSettings().getArgument(this.serialModelOptions).getValue());
 			}
 			
 			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Options> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
@@ -399,6 +402,11 @@ public class UntanglingOptions extends
 				                                                                null, Requirement.optional, true);
 				addOption(this.artificialBlobCacheOptions, map);
 			}
+			
+			this.serialModelOptions = new InputFileArgument.Options(set, "serialModel",
+			                                                        "File containing a serial training model", null,
+			                                                        Requirement.optional);
+			
 			this.toUntangleOptions = new InputFileArgument.Options(
 			                                                       set,
 			                                                       "changeSets",

@@ -100,6 +100,9 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		final List<List<Double>> positiveValues = new LinkedList<List<Double>>();
 		
 		// generate the positive examples
+		if (Logger.logDebug()) {
+			Logger.debug("Creating positive samples.");
+		}
 		for (final Entry<ChangeSet, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
 			final ChangeSet t = e.getKey();
 			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
@@ -117,6 +120,10 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		}
 		
 		// generate the negative examples
+		if (Logger.logDebug()) {
+			Logger.debug("Creating negative samples.");
+		}
+		
 		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
 		
 		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> negativePool = new LinkedList<>();
