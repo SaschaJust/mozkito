@@ -264,7 +264,6 @@ public class UntanglingOptions extends
 					}
 				}
 				control.setChangeSetsToUntangle(instructions);
-				control.setSerialModel(getSettings().getArgument(this.serialModelOptions).getValue());
 			}
 			
 			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Options> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
