@@ -45,10 +45,12 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.changecouplings.ChangeCouplingRuleFactory;
 import de.unisaarland.cs.st.moskito.changecouplings.model.MethodChangeCoupling;
 import de.unisaarland.cs.st.moskito.changecouplings.model.SerialMethodChangeCoupling;
+import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
@@ -314,16 +316,13 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		Condition.notNull(element1, "Local variable '%s' in '%s:%s'.", "element1", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
 		Condition.notNull(element2, "Local variable '%s' in '%s:%s'.", "element2", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		// Condition.check(element1.getElementType().equals(element2.getElementType()),
-		// "The change operations must be on the same types of elements");
-		//
-		// if (!element1.getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
-		// if (Logger.logWarn()) {
-		// Logger.warn("ChangeCouplingVoter does not support change operations on element type "
-		// + element1.getElementType() + ". Returning 0.");
-		// }
-		// return MultilevelClustering.IGNORE_SCORE;
-		// }
+		if (!element1.getElementType().equals(element2.getElementType())) {
+			return MultilevelClustering.IGNORE_SCORE;
+		}
+		
+		if (!element1.getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
+			return MultilevelClustering.IGNORE_SCORE;
+		}
 		
 		// get relevant method names
 		final Set<String> relevantMethodNames = new HashSet<String>();
