@@ -266,9 +266,9 @@ public class TimestampEngine extends MappingEngine {
 				if (Logger.logDebug()) {
 					Logger.debug("report got created before transaction");
 				}
-				//final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
+				final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
 				
-				/*if (!history.isEmpty()) {
+				if (!history.isEmpty()) {
 					for (final HistoryElement element : history.getElements()) {
 						if (Logger.logDebug()) {
 							Logger.debug("Checking history element: %s", element);
@@ -277,7 +277,7 @@ public class TimestampEngine extends MappingEngine {
 						                                                                           .toLowerCase());
 						@SuppressWarnings ("unchecked")
 						final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
-						if (val != null && val.equals(Resolution.RESOLVED)) {
+						if ((val != null) && val.equals(Resolution.RESOLVED)) {
 							if (Logger.logDebug()) {
 								Logger.debug("This element set solved flag.");
 							}
@@ -295,7 +295,8 @@ public class TimestampEngine extends MappingEngine {
 							}
 						}
 					}
-				} else {*/
+				} else {
+					
 					if (localInterval.contains(element2ResolutionTimestamp)) {
 						value = 1;
 						if (Logger.logDebug()) {
@@ -308,7 +309,7 @@ public class TimestampEngine extends MappingEngine {
 							Logger.debug("Resolution is later than specified, value: %s", value);
 						}
 					}
-				//}
+				}
 				
 			} else {
 				if (Logger.logDebug()) {

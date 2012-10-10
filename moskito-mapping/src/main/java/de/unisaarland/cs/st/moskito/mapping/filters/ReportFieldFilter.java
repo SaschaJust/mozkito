@@ -43,7 +43,7 @@ public class ReportFieldFilter extends Filter {
 	        ArgumentSetOptions<ReportFieldFilter, ArgumentSet<ReportFieldFilter, Options>> {
 		
 		private static final String        TAG         = "reportField";
-		private static final String        DESCRIPTION = "...";
+		private static final String        DESCRIPTION = Messages.getString("ReportFieldFilter.optionSetDescription");
 		private EnumArgument.Options<Type> typeOption;
 		
 		/**
