@@ -275,13 +275,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/**

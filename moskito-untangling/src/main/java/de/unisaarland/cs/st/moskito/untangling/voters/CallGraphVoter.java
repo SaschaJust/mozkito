@@ -271,13 +271,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/**

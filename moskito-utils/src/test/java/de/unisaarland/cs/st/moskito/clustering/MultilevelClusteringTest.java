@@ -38,13 +38,7 @@ public class MultilevelClusteringTest {
 		 */
 		@Override
 		public void close() {
-			// PRECONDITIONS
-			
-			try {
-				// TODO Auto-generated method stub
-			} finally {
-				// POSTCONDITIONS
-			}
+			return;
 		}
 		
 		public int getLevenshteinDistance(final String s,
@@ -163,13 +157,7 @@ public class MultilevelClusteringTest {
 		 */
 		@Override
 		public void close() {
-			// PRECONDITIONS
-			
-			try {
-				// TODO Auto-generated method stub
-			} finally {
-				// POSTCONDITIONS
-			}
+			return;
 		}
 		
 		@Override

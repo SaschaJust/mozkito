@@ -491,7 +491,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * @return the element
 	 */
 	@Type (JavaElement.class)
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public JavaElement getElement() {
 		return this.element;
 	}

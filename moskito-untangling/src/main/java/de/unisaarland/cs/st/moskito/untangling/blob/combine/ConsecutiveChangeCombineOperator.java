@@ -109,7 +109,6 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 			
 			if (cl1T.getAuthor().equals(cl2T.getAuthor())) {
 				// only consider change sets stemming from the same author.
-				// FIXME Careful. Make sure persons-merge was performed.
 				final DateTime cl1Time = cl1T.getTimestamp();
 				final DateTime cl2Time = cl2T.getTimestamp();
 				
