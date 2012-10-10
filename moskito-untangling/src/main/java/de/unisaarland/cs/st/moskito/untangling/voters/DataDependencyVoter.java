@@ -40,6 +40,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
@@ -201,6 +202,9 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			                                                                                   new FileInputStream(
 			                                                                                                       this.cacheFile)));) {
 				this.cache = (Map<String, Set<Set<Integer>>>) objIn.readObject();
+				if (this.cache == null) {
+					this.cache = new HashMap<>();
+				}
 				objIn.close();
 				
 			} catch (IOException | ClassNotFoundException ignore) {
@@ -258,8 +262,16 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			             this.transaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
 		}
 		
+		Condition.notNull(op1.getChangedElementLocation(), "op1.getChangeElementLocation() must not be NULL.",
+		                  new Object[0]);
+		Condition.notNull(op1.getChangedElementLocation(), "op2.getChangeElementLocation() must not be NULL.",
+		                  new Object[0]);
+		
 		final String filePath1 = op1.getChangedElementLocation().getFilePath();
 		final String filePath2 = op2.getChangedElementLocation().getFilePath();
+		
+		Condition.notNull(filePath1, "op1.getChangeElementLocation().getFilePath() must not be NULL.", new Object[0]);
+		Condition.notNull(filePath2, "op2.getChangeElementLocation().getFilePath() must not be NULL.", new Object[0]);
 		
 		if (!filePath1.equals(filePath2)) {
 			return MultilevelClustering.IGNORE_SCORE;
