@@ -79,9 +79,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 					RCSFile file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(),
-						
-						fileName));
+						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
 						if (file == null) {
 							
 							if (Logger.logWarn()) {
