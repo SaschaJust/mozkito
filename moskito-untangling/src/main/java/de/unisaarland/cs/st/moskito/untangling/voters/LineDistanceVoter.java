@@ -32,13 +32,7 @@ public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/*

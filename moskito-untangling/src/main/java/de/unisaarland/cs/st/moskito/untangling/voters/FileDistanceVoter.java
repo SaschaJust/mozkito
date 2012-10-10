@@ -35,13 +35,7 @@ public class FileDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/*

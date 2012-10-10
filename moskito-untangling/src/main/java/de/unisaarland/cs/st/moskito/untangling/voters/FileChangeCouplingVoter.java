@@ -146,13 +146,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/*
