@@ -87,19 +87,27 @@ public class TimestampEngine extends MappingEngine {
 				final TupleArgument intervalArgument = getSettings().getArgument(this.intervalOption);
 				final Tuple<String, String> tuple = intervalArgument.getValue();
 				
-				int start = 0;
-				int end = 0;
+				long start = 0;
+				long end = 0;
 				
 				start = parseIntervalString(tuple.getFirst());
+
+				if (Logger.logDebug()) {
+					Logger.debug("startInterval: " + (start*1000));
+				}
+
 				end = parseIntervalString(tuple.getSecond());
-				
+				if (Logger.logDebug()) {
+					Logger.debug("endInterval: " + (end*1000));
+				}
+
 				// inplace swap
 				if (start > end) {
 					start ^= end ^= start ^= end;
 				}
 				
 				if (Logger.logInfo()) {
-					Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [" + start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
 				return new TimestampEngine(new Interval(start * 1000, end * 1000));

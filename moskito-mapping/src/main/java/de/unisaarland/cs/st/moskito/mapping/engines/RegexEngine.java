@@ -36,6 +36,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -330,7 +331,8 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
+		//return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
+		return new And(new Atom(Index.FROM, RCSTransaction.class ), new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID)));
 	}
 	
 }
