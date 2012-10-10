@@ -17,7 +17,9 @@ package de.unisaarland.cs.st.moskito.rcs.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
@@ -42,6 +44,68 @@ import de.unisaarland.cs.st.moskito.persistence.Annotated;
 @Entity
 @Table (name = "rcsfile")
 public class RCSFile implements Annotated, Serializable {
+	
+	private class FileNameTransactionIterator implements Iterator<RCSTransaction>, Iterable<RCSTransaction> {
+		
+		private final Stack<RCSTransaction> mergePoints = new Stack<>();
+		private RCSTransaction              current;
+		
+		public FileNameTransactionIterator(final RCSTransaction startTransaction) {
+			this.current = startTransaction;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		@Override
+		public boolean hasNext() {
+			return (this.current.getBranchParent() != null) || (!this.mergePoints.isEmpty());
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Iterable#iterator()
+		 */
+		@Override
+		public Iterator<RCSTransaction> iterator() {
+			return this;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		@Override
+		public RCSTransaction next() {
+			final RCSTransaction mergeParent = this.current.getMergeParent();
+			if (mergeParent != null) {
+				if (this.current.getBranchParent() != null) {
+					this.mergePoints.push(this.current.getBranchParent());
+				}
+				this.current = mergeParent;
+			} else {
+				this.current = this.current.getBranchParent();
+				if (this.current == null) {
+					// no more branch parents. Check for merge points
+					if (!this.mergePoints.isEmpty()) {
+						this.current = this.mergePoints.pop();
+					}
+				}
+			}
+			return this.current;
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		@Override
+		public void remove() {
+			return;
+		}
+		
+	}
 	
 	/**
 	 * 
@@ -145,20 +209,19 @@ public class RCSFile implements Annotated, Serializable {
 	 */
 	@Transient
 	public String getPath(final RCSTransaction transaction) {
-		RCSTransaction current = transaction;
 		
-		while ((current != null) && !getChangedNames().containsKey(current.getId())) {
-			current = current.getBranchParent();
+		final FileNameTransactionIterator fileNameIter = new FileNameTransactionIterator(transaction);
+		while (fileNameIter.hasNext()) {
+			final RCSTransaction current = fileNameIter.next();
+			if (getChangedNames().containsKey(current.getId())) {
+				return getChangedNames().get(current.getId());
+			}
 		}
 		
-		if (current != null) {
-			return getChangedNames().get(current.getId());
-		}
 		if (Logger.logWarn()) {
 			Logger.warn("Could not determine path for RCSFile (id=" + getGeneratedId() + ") for transaction "
 			        + transaction.getId() + ". Returning latestPath.");
 		}
-		// FIXME see https://hg.st.cs.uni-saarland.de/issues/271
 		return getLatestPath();
 	}
 	
