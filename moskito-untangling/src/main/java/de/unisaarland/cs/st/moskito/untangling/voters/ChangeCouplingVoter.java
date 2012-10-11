@@ -47,7 +47,6 @@ import de.unisaarland.cs.st.moskito.changecouplings.model.MethodChangeCoupling;
 import de.unisaarland.cs.st.moskito.changecouplings.model.SerialMethodChangeCoupling;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
-import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
@@ -192,8 +191,6 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	/** The persistence util. */
 	private final PersistenceUtil            persistenceUtil;
 	
-	private final int                        numChangeOperations;
-	
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
@@ -217,8 +214,6 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
-		
-		this.numChangeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil, transaction).size();
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
 			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
@@ -311,9 +306,6 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	public double getScore(final JavaChangeOperation t1,
 	                       final JavaChangeOperation t2) {
 		
-		if (this.numChangeOperations > 100) {
-			return MultilevelClustering.IGNORE_SCORE;
-		}
 		double score = 0d;
 		
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
@@ -366,6 +358,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			});
 			score = currentCouplings.get(0).getConfidence();
+		} else {
+			return MultilevelClustering.IGNORE_SCORE;
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);
 		Condition.check(score >= 0d, "The returned distance must be a value between 0 and 1, but was: " + score);
