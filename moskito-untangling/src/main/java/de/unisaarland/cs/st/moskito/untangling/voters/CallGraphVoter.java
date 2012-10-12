@@ -14,6 +14,7 @@ package de.unisaarland.cs.st.moskito.untangling.voters;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
@@ -35,6 +37,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
+import serp.util.Strings;
 import de.unisaarland.cs.st.moskito.callgraph.model.CallGraph;
 import de.unisaarland.cs.st.moskito.callgraph.model.CallGraphEdge;
 import de.unisaarland.cs.st.moskito.callgraph.model.MethodVertex;
@@ -103,6 +106,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callgraphEclipseOptions;
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callGraphCacheDirOptions;
 		private final RepositoryOptions                                  repositoryOptions;
+		private net.ownhero.dev.hiari.settings.ListArgument.Options      negativeFilenameListArgument;
 		
 		/**
 		 * @param argumentSet
@@ -130,6 +134,9 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			final DatabaseOptions databaseOptions = this.repositoryOptions.getDatabaseOptions();
 			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArgs = getSettings().getArgumentSet(databaseOptions);
 			
+			final List<String> negativeFilenameList = getSettings().getArgument(this.negativeFilenameListArgument)
+			                                                       .getValue();
+			
 			final List<String> eclipseArgs = new LinkedList<String>();
 			eclipseArgs.add("-vmargs");
 			eclipseArgs.add("-Dppa");
@@ -146,7 +153,10 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			eclipseArgs.add("-Ddatabase.type="
 			        + databaseArgs.getArgument(databaseOptions.getDatabaseType()).getValue().toString());
 			eclipseArgs.add("-Ddatabase.unit=" + databaseArgs.getArgument(databaseOptions.getDatabaseUnit()).getValue());
-			
+			if (!negativeFilenameList.isEmpty()) {
+				eclipseArgs.add("-DnegativeFileFilter="
+				        + Strings.join(negativeFilenameList.toArray(new String[negativeFilenameList.size()]), ","));
+			}
 			return new CallGraphVoter.Factory(callgraphEclipse, eclipseArgs.toArray(new String[eclipseArgs.size()]),
 			                                  callGraphCacheDir);
 			
@@ -177,6 +187,12 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			                                                              null, Requirement.required, false);
 			map.put(this.callGraphCacheDirOptions.getName(), this.callGraphCacheDirOptions);
 			
+			this.negativeFilenameListArgument = new ListArgument.Options(
+			                                                             argumentSet,
+			                                                             "negativeFileFilter",
+			                                                             "Ignore source files whose file name ends of one of these strings. (entries are separated using ',')",
+			                                                             new ArrayList<String>(0), Requirement.optional);
+			map.put(this.negativeFilenameListArgument.getName(), this.negativeFilenameListArgument);
 			return map;
 		}
 	}
