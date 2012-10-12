@@ -13,8 +13,10 @@
 package de.unisaarland.cs.st.moskito.callgraph;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -22,6 +24,7 @@ import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
+import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.SetArgument;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -81,6 +84,8 @@ public class CallGraphToolChain {
 	/** The out argument. */
 	private OutputFileArgument                         outArgument;
 	
+	private ListArgument                               negativeFilenameListArgument;
+	
 	/**
 	 * Instantiates a new call graph tool chain.
 	 * 
@@ -134,6 +139,13 @@ public class CallGraphToolChain {
 			                                                                         "File to store the serialized CallGraph in.",
 			                                                                         null, Requirement.required, true));
 			
+			this.negativeFilenameListArgument = ArgumentFactory.create(new ListArgument.Options(
+			                                                                                    settings.getRoot(),
+			                                                                                    "negativeFileFilter",
+			                                                                                    "Ignore source files whose file name ends of one of these strings. (entries are separated using ',')",
+			                                                                                    new ArrayList<String>(0),
+			                                                                                    Requirement.optional));
+			
 			this.transactionId = this.transactionArgument.getValue();
 			
 			if (this.transactionId != null) {
@@ -166,6 +178,19 @@ public class CallGraphToolChain {
 		final JavaElementFactory elementFactory = new JavaElementFactory();
 		
 		final JavaElementLocationSet elemCache = new JavaElementLocationSet(elementFactory);
+		
+		final List<String> negativeList = this.negativeFilenameListArgument.getValue();
+		if ((negativeList != null) && (!negativeList.isEmpty())) {
+			final List<File> filesToIgnore = new ArrayList<File>(files.size());
+			for (final File f : files) {
+				for (final String p : negativeList) {
+					if (f.getAbsolutePath().endsWith(p)) {
+						filesToIgnore.add(f);
+					}
+				}
+			}
+			files.removeAll(filesToIgnore);
+		}
 		
 		final Map<File, CompilationUnit> compilationUnits = PPAUtils.getCUs(files, new PPAOptions());
 		
