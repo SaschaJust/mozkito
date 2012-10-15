@@ -306,7 +306,7 @@ public class RegexEngine extends MappingEngine {
 		for (final Matcher matcher : this.matchers) {
 			String id = element2.getId();
 			if (this.ignoreLeadingZeroes) {
-				id = id.replaceAll("^0+", "");
+				id = id.replaceAll("^0+", "0*");
 				if (Logger.logDebug()) {
 					Logger.debug("Stripping leading zeroes. New ID: '%s'", id);
 				}
