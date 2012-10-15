@@ -205,7 +205,7 @@ public class OpenBravoReportSelector extends MappingSelector {
 				}
 				
 				theId = theId.length() < this.minIdLength
-				                                         ? String.format("%0" + this.minIdLength, theId)
+				                                         ? String.format("%0" + this.minIdLength + "s", theId)
 				                                         : theId;
 				if (Logger.logDebug()) {
 					Logger.debug("New id string: %s", theId);
