@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *******************************************************************************/
-package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction;
+package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,10 +23,9 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyTransactionNode;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.DaysBetweenUtils;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
 import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -38,7 +37,7 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
+public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 	
 	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
@@ -70,7 +69,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	 * @param genealogy
 	 *            the genealogy
 	 */
-	public TransactionCodeAgeMetrics(final TransactionChangeGenealogy genealogy) {
+	public PartitionCodeAgeMetrics(final PartitionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
 	}
@@ -97,10 +96,8 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override
-	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
-		final RCSTransaction transaction = item.getNode();
-		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-		                                                                                               transaction);
+	public Collection<GenealogyMetricValue> handle(final GenealogyPartitionNode item) {
+		final Collection<JavaChangeOperation> changeOperations = item.getNode();
 		final DescriptiveStatistics lastModifiedStats = new DescriptiveStatistics();
 		final DescriptiveStatistics ageStats = new DescriptiveStatistics();
 		final DescriptiveStatistics numChangesStats = new DescriptiveStatistics();
@@ -109,6 +106,8 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
+			final DateTime before = op.getRevision().getTransaction().getTimestamp();
+			
 			final List<RCSTransaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
 			                                                                                                element);
 			
@@ -116,7 +115,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				numChangesStats.addValue(pastTransactions.size());
 				
 				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
-				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+				lastModifiedStats.addValue(Math.abs(Days.daysBetween(lastModified.getTimestamp(), before).getDays()));
 			}
 			// final RCSTransaction firstModified =
 			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
@@ -130,7 +129,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				}
 				continue;
 			}
-			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, transaction.getTimestamp()).getDays()));
+			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, before).getDays()));
 		}
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
