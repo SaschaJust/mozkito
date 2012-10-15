@@ -35,11 +35,6 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-infozilla</artifactId>
-			<version>0.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>de.unisaarland.cs.st</groupId>
 			<artifactId>moskito-bugs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
