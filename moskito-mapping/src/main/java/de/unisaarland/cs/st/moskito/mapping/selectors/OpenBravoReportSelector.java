@@ -53,7 +53,7 @@ public class OpenBravoReportSelector extends MappingSelector {
 	public static final class Options extends
 	        ArgumentSetOptions<OpenBravoReportSelector, ArgumentSet<OpenBravoReportSelector, Options>> {
 		
-		private static final String    TAG         = "reportRegex";
+		private static final String    TAG         = "openBravo";
 		private static final String    DESCRIPTION = "...";
 		private StringArgument.Options patternOption;
 		private LongArgument.Options   minIdLength;
