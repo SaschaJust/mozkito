@@ -34,6 +34,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang.StringUtils;
 
 import de.unisaarland.cs.st.moskito.bugs.tracker.model.Report;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
@@ -129,8 +130,10 @@ public class OpenBravoReportSelector extends MappingSelector {
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
 	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";
+	
 	/** The pattern. */
 	private final String        pattern;
+	
 	private int                 minIdLength;
 	
 	@Deprecated
@@ -200,12 +203,8 @@ public class OpenBravoReportSelector extends MappingSelector {
 				}
 				String theId = match.getGroup(1).getMatch();
 				
-				if (Logger.logDebug()) {
-					Logger.debug("formatting ID %s with format string '%s'", theId, "%0" + this.minIdLength + "s");
-				}
-				
 				theId = theId.length() < this.minIdLength
-				                                         ? String.format("%0" + this.minIdLength + "s", theId)
+				                                         ? StringUtils.leftPad(theId, this.minIdLength, '0')
 				                                         : theId;
 				if (Logger.logDebug()) {
 					Logger.debug("New id string: %s", theId);
@@ -254,5 +253,4 @@ public class OpenBravoReportSelector extends MappingSelector {
 	                        final Class<?> to) {
 		return from.equals(RCSTransaction.class) && to.equals(Report.class);
 	}
-	
 }
