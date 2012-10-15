@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -36,7 +37,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 import au.com.bytecode.opencsv.CSVReader;
-import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
 import de.unisaarland.cs.st.moskito.mapping.model.Mapping;
@@ -44,6 +44,7 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * The Class RegexEngine.
@@ -144,7 +145,8 @@ public class RegexEngine extends MappingEngine {
 	 */
 	public static final class Options extends ArgumentSetOptions<RegexEngine, ArgumentSet<RegexEngine, Options>> {
 		
-		private URIArgument.Options configURIOption;
+		private URIArgument.Options     configURIOption;
+		private BooleanArgument.Options ignoreLeadingZeroes;
 		
 		/**
 		 * Instantiates a new options.
@@ -168,7 +170,9 @@ public class RegexEngine extends MappingEngine {
 			
 			try {
 				final URIArgument configURIArgument = getSettings().getArgument(this.configURIOption);
-				return new RegexEngine(configURIArgument.getValue());
+				final RegexEngine engine = new RegexEngine(configURIArgument.getValue());
+				engine.ignoreLeadingZeroes = true;
+				return engine;
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -190,6 +194,10 @@ public class RegexEngine extends MappingEngine {
 				                                               Messages.getString("RegexEngine.configDescription"), //$NON-NLS-1$
 				                                               null, Requirement.required);
 				map.put(this.configURIOption.getName(), this.configURIOption);
+				this.ignoreLeadingZeroes = new BooleanArgument.Options(argumentSet, "ignoreLeadingZeroes",
+				                                                       "Ignores leading zeroes when checking for IDs",
+				                                                       false, Requirement.required);
+				map.put(this.ignoreLeadingZeroes.getName(), this.ignoreLeadingZeroes);
 				return map;
 			} finally {
 				// POSTCONDITIONS
@@ -206,6 +214,8 @@ public class RegexEngine extends MappingEngine {
 	private Collection<Matcher> matchers;
 	
 	private URI                 configURI;
+	
+	private boolean             ignoreLeadingZeroes = false;
 	
 	/**
 	 * @param configURIArgument
@@ -294,7 +304,14 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		for (final Matcher matcher : this.matchers) {
-			final Regex regex = matcher.getRegex(element2.getId());
+			String id = element2.getId();
+			if (this.ignoreLeadingZeroes) {
+				id = id.replaceAll("^0+", "");
+				if (Logger.logDebug()) {
+					Logger.debug("Stripping leading zeroes. New ID: '%s'", id);
+				}
+			}
+			final Regex regex = matcher.getRegex(id);
 			
 			if (value < matcher.getScore()) {
 				
@@ -331,8 +348,9 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public final Expression supported() {
-		//return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
-		return new And(new Atom(Index.FROM, RCSTransaction.class ), new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID)));
+		// return new And(new Atom(Index.FROM, FieldKey.BODY), new Atom(Index.TO, FieldKey.ID));
+		return new And(new Atom(Index.FROM, RCSTransaction.class), new And(new Atom(Index.FROM, FieldKey.BODY),
+		                                                                   new Atom(Index.TO, FieldKey.ID)));
 	}
 	
 }
