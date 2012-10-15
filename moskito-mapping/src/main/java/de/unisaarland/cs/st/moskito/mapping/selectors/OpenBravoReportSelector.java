@@ -85,6 +85,9 @@ public class OpenBravoReportSelector extends MappingSelector {
 				                                                     ? tagArgument.getValue().intValue()
 				                                                     : null;
 				if (length != null) {
+					if (Logger.logDebug()) {
+						Logger.debug("Setting minimum ID length to %s.", length);
+					}
 					selector.setMinIdLength(length);
 				}
 				return selector;
