@@ -198,11 +198,20 @@ public class OpenBravoReportSelector extends MappingSelector {
 					Logger.debug("While parsings " + element.get(FieldKey.ID).toString()
 					        + " i stumbled upon this match: " + match.getGroup(1).getMatch());
 				}
-				final String theId = match.getGroup(1).getMatch();
+				String theId = match.getGroup(1).getMatch();
 				
-				ids.add(theId.length() < this.minIdLength
+				if (Logger.logDebug()) {
+					Logger.debug("formatting ID %s", theId);
+				}
+				
+				theId = theId.length() < this.minIdLength
 				                                         ? String.format("%0" + this.minIdLength, theId)
-				                                         : theId);
+				                                         : theId;
+				if (Logger.logDebug()) {
+					Logger.debug("New id string: %s", theId);
+				}
+				
+				ids.add(theId);
 			}
 		}
 		criteria.in("id", ids);
