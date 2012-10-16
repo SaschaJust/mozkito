@@ -74,6 +74,11 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                               databaseOptions);
 			ArgumentSetFactory.create(this.changeOpReaderOptions);
 			
+			if (getSettings().helpRequested()) {
+				System.err.println(getSettings().getHelpString());
+				throw new Shutdown();
+			}
+			
 		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e);

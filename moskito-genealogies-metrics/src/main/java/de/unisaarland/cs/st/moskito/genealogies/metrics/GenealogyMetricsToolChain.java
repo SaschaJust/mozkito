@@ -24,6 +24,8 @@ import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.InputFileArgument;
+import net.ownhero.dev.hiari.settings.InputFileArgument.Options;
 import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -35,9 +37,14 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.layer.UntanglingMetricsPartitioner;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
+import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
@@ -72,6 +79,8 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	/** The granularity. */
 	private MetricLevel                                              granularity;
 	
+	private InputFileArgument                                        untanglingFileArgument;
+	
 	/**
 	 * Instantiates a new genealogy metrics tool chain.
 	 * 
@@ -81,14 +90,17 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	 *            the granularity options
 	 * @param genealogyOptions
 	 *            the genealogy options
+	 * @param untanglingPartFileOptions
 	 */
 	public GenealogyMetricsToolChain(final Settings setting,
-	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions) {
+	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions,
+	        final Options untanglingPartFileOptions) {
 		super(setting);
 		this.threadPool = new Pool(GenealogyMetricsToolChain.class.getSimpleName(), this);
 		try {
 			this.genealogyArguments = ArgumentSetFactory.create(genealogyOptions);
 			this.granularityArgument = ArgumentFactory.create(granularityOptions);
+			this.untanglingFileArgument = ArgumentFactory.create(untanglingPartFileOptions);
 			this.outputFileArgument = ArgumentFactory.create(new OutputFileArgument.Options(
 			                                                                                setting.getRoot(),
 			                                                                                "metricOut",
@@ -156,6 +168,41 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 		 */
 		
 		switch (this.granularity) {
+			case UNTANGLINGPARTITION:
+				final UntanglingMetricsPartitioner partitioner = new UntanglingMetricsPartitioner(
+				                                                                                  this.untanglingFileArgument.getValue());
+				final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(this.genealogy,
+				                                                                                       partitioner);
+				new PartiallyPartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
+				                                      partitionChangeGenealogy, partitioner.getPartitions());
+				new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
+				
+				// start all partition metrics
+				try {
+					
+					final Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
+					                                                                                                                 GenealogyPartitionMetric.class,
+					                                                                                                                 Modifier.ABSTRACT
+					                                                                                                                         | Modifier.INTERFACE
+					                                                                                                                         | Modifier.PRIVATE);
+					
+					for (final Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
+						if (!Modifier.isAbstract(metricClass.getModifiers())) {
+							final Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
+							if (constructor != null) {
+								final GenealogyPartitionMetric metric = constructor.newInstance(partitionChangeGenealogy);
+								new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
+								                                   metric);
+							}
+						}
+					}
+				} catch (final Exception e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+					throw new UnrecoverableError(e);
+				}
+				break;
 			case CHANGEOPERATIONPARTITION:
 				throw new UnrecoverableError("Change Operation Partition not yet supported");
 				// final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
