@@ -13,11 +13,14 @@
 package de.unisaarland.cs.st.moskito.bugs.tracker.mantis;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.HashSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
 import de.unisaarland.cs.st.moskito.bugs.tracker.Parser;
 import de.unisaarland.cs.st.moskito.bugs.tracker.ReportLink;
@@ -31,6 +34,8 @@ import de.unisaarland.cs.st.moskito.bugs.tracker.Tracker;
 public class MantisTracker extends Tracker {
 	
 	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
+	
+	private Collection<String> bugIds = null;
 	
 	/*
 	 * (non-Javadoc)
@@ -56,6 +61,19 @@ public class MantisTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
+			if (this.bugIds != null) {
+				final Collection<ReportLink> links = new HashSet<>();
+				for (final String id : this.bugIds) {
+					try {
+						links.add(MantisOverviewParser.getLinkFromId(getUri(), id));
+					} catch (final URISyntaxException e) {
+						if (Logger.logError()) {
+							Logger.error(e);
+						}
+					}
+				}
+				return links;
+			}
 			final MantisOverviewParser overviewParser = new MantisOverviewParser(this);
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse overview to extract bug report IDs. See earlier error.");
@@ -64,6 +82,10 @@ public class MantisTracker extends Tracker {
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	public void setReportIds(final Collection<String> ids) {
+		this.bugIds = ids;
 	}
 	
 	/*
@@ -80,8 +102,9 @@ public class MantisTracker extends Tracker {
 	
 	/**
 	 * Sets the uri.
-	 *
-	 * @param uri the new uri
+	 * 
+	 * @param uri
+	 *            the new uri
 	 */
 	protected void setUri(final URI uri) {
 		this.trackerURI = uri;

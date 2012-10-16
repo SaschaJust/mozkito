@@ -12,8 +12,8 @@ tracker.useProxy=true
 tracker.proxy.cacheDir=/scratch/kim/miner_repos/rhino/bugzilla_cache/
 tracker.uri=https://bugzilla.mozilla.org
 
-#genealogy.graphdb=/data/kim/genealogies/rhino/februar2012/
-genealogy.graphdb=/tmpfs/gen_rhino_februar2012/
+genealogy.graphdb=/data/kim/genealogies/rhino/februar2012/
+#genealogy.graphdb=/tmpfs/gen_rhino_februar2012/
 
 metricLevel=TRANSACTION
 metricOut=/data/kim/genealogies/rhino/rhino_februar2012_genealogy_transaction_metrics.csv

@@ -43,6 +43,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.jdom.IllegalDataException;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
@@ -393,15 +394,7 @@ public class MantisParser implements Parser {
 			reader.close();
 			
 			return new XmlReport(rawReport, document);
-		} catch (final TransformerFactoryConfigurationError e) {
-			if (Logger.logError()) {
-				Logger.error(e, "Cannot create XML document!");
-			}
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e, "Cannot create XML document!");
-			}
-		} catch (final JDOMException e) {
+		} catch (final TransformerFactoryConfigurationError | IOException | JDOMException | IllegalDataException e) {
 			if (Logger.logError()) {
 				Logger.error(e, "Cannot create XML document!");
 			}
@@ -1303,6 +1296,9 @@ public class MantisParser implements Parser {
 			}
 			
 			this.report = createDocument(rawContent);
+			if (this.report == null) {
+				return false;
+			}
 			this.document = Jsoup.parse(this.report.getContent());
 			tables = this.document.getElementsByClass("width100");
 			if ((tables == null) || (tables.isEmpty())) {

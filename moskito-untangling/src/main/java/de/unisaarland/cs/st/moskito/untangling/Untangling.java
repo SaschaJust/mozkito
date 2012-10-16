@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 import de.unisaarland.cs.st.moskito.untangling.blob.SerializableArtificialBlob;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.CombineOperator;
+import de.unisaarland.cs.st.moskito.untangling.settings.UntangleInstruction;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingControl;
 import de.unisaarland.cs.st.moskito.untangling.settings.UntanglingOptions;
 import de.unisaarland.cs.st.moskito.untangling.voters.FileDistanceVoter;
@@ -316,7 +318,126 @@ public class Untangling {
 	 * Run.
 	 */
 	public void run() {
+		if (this.untanglingControl.measurePrecision()) {
+			runPrecisionExperiment();
+			return;
+		}
 		
+		final Set<ChangeSet> atomicChangeSets = new HashSet<ChangeSet>();
+		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
+		
+		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		Criteria<RCSTransaction> transactionCriteria = null;
+		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
+		} else {
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+		}
+		
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		
+		for (final RCSTransaction t : atomicTransactions) {
+			atomicChangeSets.add(new ChangeSet(t, PPAPersistenceUtil.getChangeOperation(persistenceUtil, t)));
+		}
+		
+		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
+		switch (this.untanglingControl.getCollapseMode()) {
+			case AVG:
+				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				break;
+			case RATIO:
+				collapseVisitor = new AvgCollapseVisitor<JavaChangeOperation>();
+				break;
+			default:
+				collapseVisitor = new MaxCollapseVisitor<JavaChangeOperation>();
+				break;
+		}
+		
+		// create the corresponding score aggregation model
+		switch (this.untanglingControl.getScoreMode()) {
+			case SUM:
+				this.aggregator = new SumAggregation<JavaChangeOperation>();
+				break;
+			case VARSUM:
+				this.aggregator = new VarSumAggregation<JavaChangeOperation>();
+				break;
+			case LINEAR_REGRESSION:
+				final LinearRegressionAggregation linarRegressionAggregator = new LinearRegressionAggregation(this, 1d);
+				// train score aggregation model
+				linarRegressionAggregator.train(atomicChangeSets);
+				this.aggregator = linarRegressionAggregator;
+				break;
+			case SVM:
+				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this, 1d);
+				svmAggregator.train(atomicChangeSets);
+				this.aggregator = svmAggregator;
+				break;
+			case RANDOM_FOREST:
+				final RandomForestAggregation rFAggregator = new RandomForestAggregation(this, 1d);
+				rFAggregator.train(atomicChangeSets);
+				this.aggregator = rFAggregator;
+				break;
+			default:
+				throw new UnrecoverableError("Unknown score aggregation mode found: "
+				        + this.untanglingControl.getScoreMode());
+		}
+		
+		try (BufferedWriter outWriter = new BufferedWriter(new FileWriter(this.untanglingControl.getOutputFile()))) {
+			
+			outWriter.write("ChangeSetID,PartitionNumber,ChangeOperationIDs");
+			outWriter.append(FileUtils.lineSeparator);
+			int iCounter = 0;
+			final String numInstructions = String.valueOf(this.untanglingControl.getChangeSetsToUntangle().size());
+			for (final UntangleInstruction instruction : this.untanglingControl.getChangeSetsToUntangle()) {
+				
+				if (Logger.logInfo()) {
+					Logger.info("Processing untangling instruction: %s (%s / %s).", instruction.toString(),
+					            (String.valueOf(++iCounter)), numInstructions);
+				}
+				
+				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(instruction.getChangeSet()
+				                                                                                                                   .getTransaction());
+				
+				final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
+				                                                                                                           instruction.getChangeSet()
+				                                                                                                                      .getOperations(),
+				                                                                                                           scoreVisitors,
+				                                                                                                           this.aggregator,
+				                                                                                                           collapseVisitor);
+				Set<Set<JavaChangeOperation>> partitions = null;
+				if (instruction.getNumPartitions() > 0) {
+					partitions = clustering.getPartitions(instruction.getNumPartitions());
+				} else {
+					// TODO implement threshold untangling support
+					throw new UnrecoverableError("Threshold untangling not yet supported.");
+				}
+				
+				int counter = 0;
+				for (final Set<JavaChangeOperation> partition : partitions) {
+					outWriter.append(instruction.getChangeSet().getTransaction().getId());
+					outWriter.append(",");
+					outWriter.append(String.valueOf(counter++));
+					outWriter.append(",");
+					final Iterator<JavaChangeOperation> iterator = partition.iterator();
+					if (iterator.hasNext()) {
+						outWriter.append(String.valueOf(iterator.next().getId()));
+					}
+					while (iterator.hasNext()) {
+						outWriter.append(":");
+						outWriter.append(String.valueOf(iterator.next().getId()));
+					}
+					outWriter.append(FileUtils.lineSeparator);
+				}
+			}
+		} catch (final IOException e) {
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
+			
+		}
+	}
+	
+	public void runPrecisionExperiment() {
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
@@ -384,7 +505,7 @@ public class Untangling {
 		
 		for (final RCSTransaction t : atomicTransactions) {
 			
-			// FIXME this is required due to some unknown problem which
+			// this is required due to some unknown problem which
 			// causes NullpointerExceptions because Fetch.LAZY returns null.
 			t.getAuthor();
 			t.toString();
@@ -424,6 +545,11 @@ public class Untangling {
 			
 			// build all artificial blobs. Combine all atomic transactions.
 			final ArtificialBlobGenerator blobGenerator = new ArtificialBlobGenerator(combineOperator);
+			
+			if (Logger.logInfo()) {
+				Logger.info("Generating artificial blobs using %d combination candidates.",
+				            combinationCandidates.size());
+			}
 			
 			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
 				final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
@@ -519,11 +645,6 @@ public class Untangling {
 		}
 		
 		int blobSetSize = artificialBlobs.size();
-		
-		// TODO this is a debugging fragment. Remove later.
-		if (System.getProperty("generateBlobsOnly") != null) {
-			return;
-		}
 		
 		final File outFile = this.untanglingControl.getOutputFile();
 		try (FileWriter fileWriter = new FileWriter(outFile); BufferedWriter outWriter = new BufferedWriter(fileWriter);) {

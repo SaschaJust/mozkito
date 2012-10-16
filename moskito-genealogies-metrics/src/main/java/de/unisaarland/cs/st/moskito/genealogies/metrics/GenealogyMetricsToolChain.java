@@ -35,14 +35,9 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.layer.DefaultPartitionGenerator;
-import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyCoreMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.core.GenealogyMetricThread;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
@@ -160,102 +155,109 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 		 * the granularity level selected for this run.
 		 */
 		
-		if (this.granularity.equals(MetricLevel.CHANGEOPERATIONPARTITION)) {
-			final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
-			                                                                                       this.genealogy,
-			                                                                                       new DefaultPartitionGenerator(
-			                                                                                                                     this.genealogy));
-			new PartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), partitionChangeGenealogy);
-			new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
-			
-			// start all partition metrics
-			try {
+		switch (this.granularity) {
+			case CHANGEOPERATIONPARTITION:
+				throw new UnrecoverableError("Change Operation Partition not yet supported");
+				// final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(
+				// this.genealogy,
+				// new DefaultPartitionGenerator(
+				// this.genealogy));
+				// new PartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
+				// partitionChangeGenealogy);
+				// new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
+				//
+				// // start all partition metrics
+				// try {
+				//
+				// final Collection<Class<? extends GenealogyPartitionMetric>> metricClasses =
+				// ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
+				// GenealogyPartitionMetric.class,
+				// Modifier.ABSTRACT
+				// | Modifier.INTERFACE
+				// | Modifier.PRIVATE);
+				//
+				// for (final Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
+				// if (!Modifier.isAbstract(metricClass.getModifiers())) {
+				// final Constructor<? extends GenealogyPartitionMetric> constructor =
+				// metricClass.getConstructor(PartitionChangeGenealogy.class);
+				// if (constructor != null) {
+				// final GenealogyPartitionMetric metric = constructor.newInstance(partitionChangeGenealogy);
+				// new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
+				// }
+				// }
+				// }
+				// } catch (final Exception e) {
+				// if (Logger.logError()) {
+				// Logger.error(e);
+				// }
+				// throw new UnrecoverableError(e);
+				// }
+			case TRANSACTION:
+				final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
+				new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
+				                               transactionChangeGenealogy);
+				new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 				
-				final Collection<Class<? extends GenealogyPartitionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyPartitionMetric.class.getPackage(),
-				                                                                                                                 GenealogyPartitionMetric.class,
-				                                                                                                                 Modifier.ABSTRACT
-				                                                                                                                         | Modifier.INTERFACE
-				                                                                                                                         | Modifier.PRIVATE);
+				// start all transaction metrics
 				
-				for (final Class<? extends GenealogyPartitionMetric> metricClass : metricClasses) {
-					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						final Constructor<? extends GenealogyPartitionMetric> constructor = metricClass.getConstructor(PartitionChangeGenealogy.class);
-						if (constructor != null) {
-							final GenealogyPartitionMetric metric = constructor.newInstance(partitionChangeGenealogy);
-							new PartitionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), metric);
+				try {
+					final Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
+					                                                                                                                   GenealogyTransactionMetric.class,
+					                                                                                                                   Modifier.ABSTRACT
+					                                                                                                                           | Modifier.INTERFACE
+					                                                                                                                           | Modifier.PRIVATE);
+					
+					if (Logger.logDebug()) {
+						Logger.debug("Found %d GenealogyMetrics: %s.", metricClasses.size(),
+						             net.ownhero.dev.ioda.JavaUtils.collectionToString(metricClasses));
+					}
+					
+					for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
+						if (!Modifier.isAbstract(metricClass.getModifiers())) {
+							final Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
+							if (constructor != null) {
+								final GenealogyTransactionMetric metric = constructor.newInstance(transactionChangeGenealogy);
+								new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
+								                                     metric);
+							}
 						}
 					}
+				} catch (final Exception e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+					throw new UnrecoverableError(e);
 				}
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			}
-			
-		} else if (this.granularity.equals(MetricLevel.TRANSACTION)) {
-			final TransactionChangeGenealogy transactionChangeGenealogy = this.genealogy.getTransactionLayer();
-			new TransactionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(), transactionChangeGenealogy);
-			new TransactionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
-			
-			// start all transaction metrics
-			
-			try {
-				final Collection<Class<? extends GenealogyTransactionMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyTransactionMetric.class.getPackage(),
-				                                                                                                                   GenealogyTransactionMetric.class,
-				                                                                                                                   Modifier.ABSTRACT
-				                                                                                                                           | Modifier.INTERFACE
-				                                                                                                                           | Modifier.PRIVATE);
+				break;
+			default:
+				new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
+				new GenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
+				// start all core metrics
 				
-				if (Logger.logDebug()) {
-					Logger.debug("Found %d GenealogyMetrics: %s.", metricClasses.size(),
-					             net.ownhero.dev.ioda.JavaUtils.collectionToString(metricClasses));
-				}
-				
-				for (final Class<? extends GenealogyTransactionMetric> metricClass : metricClasses) {
-					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						final Constructor<? extends GenealogyTransactionMetric> constructor = metricClass.getConstructor(TransactionChangeGenealogy.class);
-						if (constructor != null) {
-							final GenealogyTransactionMetric metric = constructor.newInstance(transactionChangeGenealogy);
-							new TransactionGenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(),
-							                                     metric);
+				try {
+					final Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyCoreMetric.class.getPackage(),
+					                                                                                                            GenealogyCoreMetric.class,
+					                                                                                                            Modifier.ABSTRACT
+					                                                                                                                    | Modifier.INTERFACE
+					                                                                                                                    | Modifier.PRIVATE);
+					
+					for (final Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
+						if (!Modifier.isAbstract(metricClass.getModifiers())) {
+							final Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(CoreChangeGenealogy.class);
+							if (constructor != null) {
+								final GenealogyCoreMetric coreMetric = constructor.newInstance(this.genealogy);
+								new GenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), coreMetric);
+							}
 						}
 					}
-				}
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			}
-			
-		} else {
-			new GenealogyReader(this.threadPool.getThreadGroup(), getSettings(), this.genealogy);
-			new GenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
-			// start all core metrics
-			
-			try {
-				final Collection<Class<? extends GenealogyCoreMetric>> metricClasses = ClassFinder.getClassesExtendingClass(GenealogyCoreMetric.class.getPackage(),
-				                                                                                                            GenealogyCoreMetric.class,
-				                                                                                                            Modifier.ABSTRACT
-				                                                                                                                    | Modifier.INTERFACE
-				                                                                                                                    | Modifier.PRIVATE);
-				
-				for (final Class<? extends GenealogyCoreMetric> metricClass : metricClasses) {
-					if (!Modifier.isAbstract(metricClass.getModifiers())) {
-						final Constructor<? extends GenealogyCoreMetric> constructor = metricClass.getConstructor(CoreChangeGenealogy.class);
-						if (constructor != null) {
-							final GenealogyCoreMetric coreMetric = constructor.newInstance(this.genealogy);
-							new GenealogyMetricThread(this.threadPool.getThreadGroup(), getSettings(), coreMetric);
-						}
+				} catch (final Exception e) {
+					if (Logger.logError()) {
+						Logger.error(e);
 					}
+					throw new UnrecoverableError(e);
 				}
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				throw new UnrecoverableError(e);
-			}
+				break;
+		
 		}
 		
 		// start a demuxer and a sink that receives all the metric values

@@ -10,43 +10,19 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
+package de.unisaarland.cs.st.reposuite.ltc;
 
-package de.unisaarland.cs.st.reposuite.ltc.kripke;
+import java.util.Collection;
+
+import de.unisaarland.cs.st.reposuite.ltc.ctl.CTLFormula;
 
 /**
- * Instances of this class represent states in the Kripke structure. These states are all anonymous.
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
- * @author Andrzej Wasylkowski
  */
-public class State {
+public abstract class CTLFormulaGenerator<T> {
 	
-	/**
-	 * Creates a new state.
-	 */
-	public State() {
-	}
+	public abstract Collection<CTLFormula> generate(Collection<T> premises,
+	                                                Collection<T> implications);
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object other) {
-		return this == other;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// PRECONDITIONS
-		
-		try {
-			return super.hashCode();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
 }

@@ -10,43 +10,14 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
-package de.unisaarland.cs.st.reposuite.ltc.kripke;
+package de.unisaarland.cs.st.moskito.genealogies.utils;
 
 /**
- * Instances of this class represent states in the Kripke structure. These states are all anonymous.
+ * @author Kim Herzig <herzig@cs.uni-saarland.de>
  * 
- * @author Andrzej Wasylkowski
  */
-public class State {
+public interface VertexSelector<T> {
 	
-	/**
-	 * Creates a new state.
-	 */
-	public State() {
-	}
+	public boolean selectVertex(T vertex);
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object other) {
-		return this == other;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		// PRECONDITIONS
-		
-		try {
-			return super.hashCode();
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
 }

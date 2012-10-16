@@ -150,13 +150,7 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/*

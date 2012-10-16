@@ -12,9 +12,14 @@
  *******************************************************************************/
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,7 @@ import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.InputFileArgument;
 import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.LongArgument;
 import net.ownhero.dev.hiari.settings.LongArgument.Options;
@@ -31,13 +37,17 @@ import net.ownhero.dev.hiari.settings.OutputFileArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.moskito.settings.RepositoryOptions;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.ScoreCombinationMode;
 import de.unisaarland.cs.st.moskito.untangling.Untangling.UntanglingCollapse;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator;
 import de.unisaarland.cs.st.moskito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
+import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.ChangeCouplingCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
 import de.unisaarland.cs.st.moskito.untangling.blob.combine.PackageDistanceCombineOperator;
@@ -129,6 +139,12 @@ public class UntanglingOptions extends
 	
 	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                                      artificialBlobCacheOptions;
 	
+	private net.ownhero.dev.hiari.settings.BooleanArgument.Options                                        precisionExperimentOptions;
+	
+	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      toUntangleOptions;
+	
+	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      serialModelOptions;
+	
 	/**
 	 * Instantiates a new untangling options.
 	 * 
@@ -141,6 +157,11 @@ public class UntanglingOptions extends
 		super(argumentSet, "untangling", "Options to configure the untangling process details.", requirements);
 	}
 	
+	private void addOption(final IOptions<?, ?> options,
+	                       final Map<String, IOptions<?, ?>> map) {
+		map.put(options.getName(), options);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
@@ -150,22 +171,99 @@ public class UntanglingOptions extends
 		// PRECONDITIONS
 		
 		try {
-			final UntanglingControl control = new UntanglingControl();
 			
-			final ArtificialBlobGeneratorStrategy strategy = getSettings().getArgument(this.generatorStrategyOptions)
-			                                                              .getValue();
-			switch (strategy) {
-				case CONSECUTIVE:
-					control.setCombineOperator(getSettings().getArgumentSet(this.consecutiveCombineOptions).getValue());
-					break;
-				case COUPLINGS:
-					control.setCombineOperator(getSettings().getArgumentSet(this.changeCouplingCombineOptions)
-					                                        .getValue());
-					break;
-				default:
-					control.setCombineOperator(getSettings().getArgumentSet(this.packageDistanceCombineOptions)
-					                                        .getValue());
-					break;
+			final Boolean precisionExperiment = getSettings().getArgument(this.precisionExperimentOptions).getValue();
+			
+			final UntanglingControl control = new UntanglingControl(precisionExperiment);
+			
+			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
+			control.setPersistenceUtil(persistenceUtil);
+			
+			if (precisionExperiment) {
+				final ArtificialBlobGeneratorStrategy strategy = getSettings().getArgument(this.generatorStrategyOptions)
+				                                                              .getValue();
+				switch (strategy) {
+					case CONSECUTIVE:
+						control.setCombineOperator(getSettings().getArgumentSet(this.consecutiveCombineOptions)
+						                                        .getValue());
+						break;
+					case COUPLINGS:
+						control.setCombineOperator(getSettings().getArgumentSet(this.changeCouplingCombineOptions)
+						                                        .getValue());
+						break;
+					default:
+						control.setCombineOperator(getSettings().getArgumentSet(this.packageDistanceCombineOptions)
+						                                        .getValue());
+						break;
+				}
+				
+				final LongArgument seedArg = getSettings().getArgument(this.seedOptions);
+				if (seedArg != null) {
+					final Long seed = seedArg.getValue();
+					control.setSeed(seed);
+				}
+				
+				final Long blobWindowSize = getSettings().getArgument(this.blobWindowSizeOptions).getValue();
+				control.setBlobWindowSize(blobWindowSize);
+				
+				final Long minBlobSize = getSettings().getArgument(this.minBlobSizeOptions).getValue();
+				control.setMinBlobSize(minBlobSize);
+				final Long maxBlobSize = getSettings().getArgument(this.maxBlobSizeOptions).getValue();
+				control.setMaxBlobSize(maxBlobSize);
+				
+				final LongArgument nArg = getSettings().getArgument(this.nOptions);
+				if (nArg != null) {
+					final Long n = nArg.getValue();
+					control.setN(n);
+				}
+				
+				final Boolean dryRun = getSettings().getArgument(this.dryRunOptions).getValue();
+				control.setDryRun(dryRun);
+				
+				final File artificialBlobCache = getSettings().getArgument(this.artificialBlobCacheOptions).getValue();
+				if (artificialBlobCache != null) {
+					control.setArtificialBlobCacheDir(artificialBlobCache);
+				}
+			} // precision experiment END
+			else {
+				final File changeSetsToUntangle = getSettings().getArgument(this.toUntangleOptions).getValue();
+				final Collection<UntangleInstruction> instructions = new LinkedList<>();
+				try (BufferedReader reader = new BufferedReader(new FileReader(changeSetsToUntangle))) {
+					String line = reader.readLine();
+					if (line == null) {
+						if (Logger.logError()) {
+							Logger.error("Empty set of change sets to be untangled.");
+						}
+					}
+					while ((line = reader.readLine()) != null) {
+						final String[] lineParts = line.split(",");
+						if (lineParts.length != 2) {
+							if (Logger.logWarn()) {
+								Logger.warn("Malformatted line in file containing change sets to be untangled. Ignoring line: %s",
+								            line);
+							}
+						}
+						final RCSTransaction transaction = persistenceUtil.loadById(lineParts[0], RCSTransaction.class);
+						if (transaction == null) {
+							if (Logger.logWarn()) {
+								Logger.warn("Could not find change set with ID %s. Ignoring corresponding line in change set file.",
+								            lineParts[0]);
+							}
+							continue;
+						}
+						instructions.add(new UntangleInstruction(
+						                                         new ChangeSet(
+						                                                       transaction,
+						                                                       PPAPersistenceUtil.getChangeOperation(persistenceUtil,
+						                                                                                             transaction)),
+						                                         Double.valueOf(lineParts[1])));
+					}
+				} catch (NumberFormatException | IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				}
+				control.setChangeSetsToUntangle(instructions);
 			}
 			
 			final ArgumentSet<de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Factory, de.unisaarland.cs.st.moskito.untangling.voters.CallGraphVoter.Options> callGraphVoterArg = getSettings().getArgumentSet(this.callGraphVoterOptions);
@@ -200,51 +298,20 @@ public class UntanglingOptions extends
 				}
 			}
 			
-			final LongArgument seedArg = getSettings().getArgument(this.seedOptions);
-			if (seedArg != null) {
-				final Long seed = seedArg.getValue();
-				control.setSeed(seed);
-			}
-			
 			final ListArgument atomicChangesArg = getSettings().getArgument(this.atomicChangesOptions);
 			if (atomicChangesArg != null) {
 				final List<String> atomicTransactionIds = atomicChangesArg.getValue();
 				control.setAtomicTransactionIds(atomicTransactionIds);
 			}
 			
-			final PersistenceUtil persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
-			control.setPersistenceUtil(persistenceUtil);
-			
-			final Long blobWindowSize = getSettings().getArgument(this.blobWindowSizeOptions).getValue();
-			control.setBlobWindowSize(blobWindowSize);
-			
-			final Long minBlobSize = getSettings().getArgument(this.minBlobSizeOptions).getValue();
-			control.setMinBlobSize(minBlobSize);
-			final Long maxBlobSize = getSettings().getArgument(this.maxBlobSizeOptions).getValue();
-			control.setMaxBlobSize(maxBlobSize);
-			
 			final File outFile = getSettings().getArgument(this.outOptions).getValue();
 			control.setOutputFile(outFile);
-			
-			final LongArgument nArg = getSettings().getArgument(this.nOptions);
-			if (nArg != null) {
-				final Long n = nArg.getValue();
-				control.setN(n);
-			}
 			
 			final UntanglingCollapse collapseMode = getSettings().getArgument(this.collapseModeOptions).getValue();
 			control.setCollapseMode(collapseMode);
 			
 			final ScoreCombinationMode scoreMode = getSettings().getArgument(this.scoreModeOptions).getValue();
 			control.setScoreMode(scoreMode);
-			
-			final Boolean dryRun = getSettings().getArgument(this.dryRunOptions).getValue();
-			control.setDryRun(dryRun);
-			
-			final File artificialBlobCache = getSettings().getArgument(this.artificialBlobCacheOptions).getValue();
-			if (artificialBlobCache != null) {
-				control.setArtificialBlobCacheDir(artificialBlobCache);
-			}
 			
 			return control;
 		} finally {
@@ -270,45 +337,90 @@ public class UntanglingOptions extends
 			                                               this.databaseOptions);
 			map.put(this.repositoryOptions.getName(), this.repositoryOptions);
 			
+			this.precisionExperimentOptions = new BooleanArgument.Options(
+			                                                              set,
+			                                                              "precisionExperiment",
+			                                                              "Set to true if you want to measure the precision of the untangling algorithm. By default algorithm will be used to untangle given change sets.",
+			                                                              false, Requirement.required);
+			addOption(this.precisionExperimentOptions, map);
+			
 			this.blobWindowSizeOptions = new LongArgument.Options(
 			                                                      set,
 			                                                      "blobWindowSize",
 			                                                      "Max number of days changes sets might be appart to be condifered for tangling. (-1 = unlimited)",
-			                                                      14l, Requirement.required);
-			map.put(this.blobWindowSizeOptions.getName(), this.blobWindowSizeOptions);
+			                                                      14l,
+			                                                      Requirement.equals(this.precisionExperimentOptions,
+			                                                                         true));
+			addOption(this.blobWindowSizeOptions, map);
 			
 			this.minBlobSizeOptions = new LongArgument.Options(
 			                                                   set,
 			                                                   "minBlobsize",
 			                                                   "The minimal number of transactions to be combined within a blob.",
-			                                                   2l, Requirement.required);
-			map.put(this.minBlobSizeOptions.getName(), this.minBlobSizeOptions);
+			                                                   2l, Requirement.equals(this.precisionExperimentOptions,
+			                                                                          true));
+			addOption(this.minBlobSizeOptions, map);
 			
 			this.maxBlobSizeOptions = new LongArgument.Options(
 			                                                   set,
 			                                                   "maxBlobsize",
 			                                                   "The maximal number of transactions to be combined within a blob. (-1 means not limit)",
-			                                                   -1l, Requirement.required);
-			map.put(this.maxBlobSizeOptions.getName(), this.maxBlobSizeOptions);
-			
-			this.outOptions = new OutputFileArgument.Options(set, "outFile",
-			                                                 "Write descriptive statistics into this file", null,
-			                                                 Requirement.required, true);
-			map.put(this.outOptions.getName(), this.outOptions);
+			                                                   -1l, Requirement.equals(this.precisionExperimentOptions,
+			                                                                           true));
+			addOption(this.maxBlobSizeOptions, map);
 			
 			this.dryRunOptions = new BooleanArgument.Options(
 			                                                 set,
 			                                                 "dryrun",
 			                                                 "Setting this option means that the actual untangling will be skipped. This is for testing purposes only.",
-			                                                 false, Requirement.optional);
-			map.put(this.dryRunOptions.getName(), this.dryRunOptions);
+			                                                 false, Requirement.equals(this.precisionExperimentOptions,
+			                                                                           true));
+			addOption(this.dryRunOptions, map);
 			
 			this.nOptions = new LongArgument.Options(set, "n", "Choose n random artificial blobs. (-1 = unlimited)",
-			                                         -1l, Requirement.optional);
-			map.put(this.nOptions.getName(), this.nOptions);
+			                                         -1l, Requirement.equals(this.precisionExperimentOptions, true));
+			addOption(this.nOptions, map);
 			
 			this.seedOptions = new LongArgument.Options(set, "seed", "Use random seed.", null, Requirement.optional);
-			map.put(this.seedOptions.getName(), this.seedOptions);
+			addOption(this.seedOptions, map);
+			
+			this.generatorStrategyOptions = new EnumArgument.Options<>(
+			                                                           set,
+			                                                           "generatorStrategy",
+			                                                           "Strategy to construct artifical blobs.",
+			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
+			                                                           Requirement.equals(this.precisionExperimentOptions,
+			                                                                              true));
+			addOption(this.generatorStrategyOptions, map);
+			
+			if (this.generatorStrategyOptions.required()) {
+				this.artificialBlobCacheOptions = new DirectoryArgument.Options(
+				                                                                set,
+				                                                                "blobCacheDir",
+				                                                                "Directory that will be used to cache artificial blobs for reuse. Caching strategies is handled internally using database settings and other relevant settings.",
+				                                                                null, Requirement.optional, true);
+				addOption(this.artificialBlobCacheOptions, map);
+			}
+			
+			this.serialModelOptions = new InputFileArgument.Options(set, "serialModel",
+			                                                        "File containing a serial training model", null,
+			                                                        Requirement.optional);
+			
+			this.toUntangleOptions = new InputFileArgument.Options(
+			                                                       set,
+			                                                       "changeSets",
+			                                                       "CSV file contain change sets to be untangled. Format: <change set id>,<num partitions>. If num partitions less than one, untangling algorithm will interpret value as merging threshold.",
+			                                                       null,
+			                                                       Requirement.equals(this.precisionExperimentOptions,
+			                                                                          false));
+			addOption(this.toUntangleOptions, map);
+			
+			this.outOptions = new OutputFileArgument.Options(
+			                                                 set,
+			                                                 "outFile",
+			                                                 "Write output into this file: in case of precision experiment file will contain descriptive statistics. Otherwise file will contain untangled partition information.",
+			                                                 null, Requirement.required, true);
+			map.put(this.outOptions.getName(), this.outOptions);
 			
 			this.collapseModeOptions = new EnumArgument.Options<UntanglingCollapse>(
 			                                                                        set,
@@ -332,18 +444,6 @@ public class UntanglingOptions extends
 			                                                     "A list of transactions to be considered as atomic transactions (if not set read all atomic transactions from DB)",
 			                                                     new ArrayList<String>(0), Requirement.optional);
 			map.put(this.atomicChangesOptions.getName(), this.atomicChangesOptions);
-			
-			// / ####
-			
-			this.generatorStrategyOptions = new EnumArgument.Options<>(
-			                                                           set,
-			                                                           "generatorStrategy",
-			                                                           "Strategy to construct artifical blobs.",
-			                                                           ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy.PACKAGE,
-			                                                           Requirement.required);
-			if (this.generatorStrategyOptions.required()) {
-				map.put(this.generatorStrategyOptions.getName(), this.generatorStrategyOptions);
-			}
 			
 			this.changeCouplingCombineOptions = new ChangeCouplingCombineOperator.Options(
 			                                                                              set,
@@ -421,13 +521,6 @@ public class UntanglingOptions extends
 			if (this.testImpactVoterOptions.required()) {
 				map.put(this.testImpactVoterOptions.getName(), this.testImpactVoterOptions);
 			}
-			
-			this.artificialBlobCacheOptions = new DirectoryArgument.Options(
-			                                                                set,
-			                                                                "blobCacheDir",
-			                                                                "Directory that will be used to cache artificial blobs for reuse. Caching strategies is handled internally using database settings and other relevant settings.",
-			                                                                null, Requirement.optional, true);
-			map.put(this.artificialBlobCacheOptions.getName(), this.artificialBlobCacheOptions);
 			
 			return map;
 		} finally {

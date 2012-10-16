@@ -20,6 +20,6 @@ datadependency.cache.dir = /data/kim/cache.datadependency/gwt/
 
 #### Moskito Genealogies
 genealogy.graphdb=/data/kim/genealogies/gwt/may2011/
-genealogy.metric.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_metrics.csv
-genealogy.metric.fileAggregate.out=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_fileMetrics.csv
-fix.pattern="(issue number|bug|issue|#|fixes:|issues)\\s*:?\\s*({bugids}\\d+(,\\s*\\d+)*)"
+#genealogy.graphdb=/kim_1_tmpfs/genealogies/gwt/may2011/
+metricOut=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/gwt/gwt_may2011_genealogy_transaction_fileMetrics.csv

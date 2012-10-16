@@ -13,6 +13,7 @@
 package de.unisaarland.cs.st.moskito.untangling.settings;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,8 @@ import de.unisaarland.cs.st.moskito.untangling.voters.MultilevelClusteringScoreV
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class UntanglingControl {
+	
+	private final boolean                                                                                                       measurePrecision;
 	
 	/** The change coupling combine operator. */
 	private CombineOperator<ChangeSet>                                                                                          combineOperator;
@@ -77,6 +80,14 @@ public class UntanglingControl {
 	
 	private File                                                                                                                artificialBlobCacheDir = null;
 	
+	private Collection<UntangleInstruction>                                                                                     changeSetsToUntangle;
+	
+	private File                                                                                                                modelCacheDir;
+	
+	public UntanglingControl(final boolean measurePrecision) {
+		this.measurePrecision = measurePrecision;
+	}
+	
 	/**
 	 * Adds the confidence voter.
 	 * 
@@ -113,6 +124,10 @@ public class UntanglingControl {
 	 */
 	public int getBlobWindowSize() {
 		return this.blobWindowSize.intValue();
+	}
+	
+	public Collection<UntangleInstruction> getChangeSetsToUntangle() {
+		return this.changeSetsToUntangle;
 	}
 	
 	/**
@@ -166,6 +181,10 @@ public class UntanglingControl {
 	 */
 	public int getMinBlobSize() {
 		return this.minBlobSize.intValue();
+	}
+	
+	public File getModelCacheDir() {
+		return this.modelCacheDir;
 	}
 	
 	/**
@@ -222,6 +241,10 @@ public class UntanglingControl {
 		return this.dryRun;
 	}
 	
+	public boolean measurePrecision() {
+		return this.measurePrecision;
+	}
+	
 	/**
 	 * @param artificialBlobCache
 	 */
@@ -262,6 +285,19 @@ public class UntanglingControl {
 		
 		try {
 			this.blobWindowSize = blobWindowSize;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param changeSetsToUntangle
+	 */
+	public void setChangeSetsToUntangle(final Collection<UntangleInstruction> changeSetsToUntangle) {
+		// PRECONDITIONS
+		
+		try {
+			this.changeSetsToUntangle = changeSetsToUntangle;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -346,6 +382,19 @@ public class UntanglingControl {
 		
 		try {
 			this.minBlobSize = minBlobSize;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param value
+	 */
+	public void setSerialModel(final File value) {
+		// PRECONDITIONS
+		
+		try {
+			this.modelCacheDir = value;
 		} finally {
 			// POSTCONDITIONS
 		}

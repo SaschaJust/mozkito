@@ -275,13 +275,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	@Override
 	public void close() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
+		return;
 	}
 	
 	/**
@@ -311,6 +305,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	@NoneNull
 	public double getScore(final JavaChangeOperation t1,
 	                       final JavaChangeOperation t2) {
+		
 		double score = 0d;
 		
 		Condition.check(t1.getChangedElementLocation() != null, "The changed element location must not be null!");
@@ -322,14 +317,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		Condition.notNull(element1, "Local variable '%s' in '%s:%s'.", "element1", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
 		Condition.notNull(element2, "Local variable '%s' in '%s:%s'.", "element2", getHandle(), "getScore"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		Condition.check(element1.getElementType().equals(element2.getElementType()),
-		                "The change operations must be on the same types of elements");
+		if (!element1.getElementType().equals(element2.getElementType())) {
+			return MultilevelClustering.IGNORE_SCORE;
+		}
 		
 		if (!element1.getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
-			if (Logger.logWarn()) {
-				Logger.warn("ChangeCouplingVoter does not support change operations on element type "
-				        + element1.getElementType() + ". Returning 0.");
-			}
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
@@ -366,6 +358,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			});
 			score = currentCouplings.get(0).getConfidence();
+		} else {
+			return MultilevelClustering.IGNORE_SCORE;
 		}
 		Condition.check(score <= 1d, "The returned distance must be a value between 0 and 1, but was: " + score);
 		Condition.check(score >= 0d, "The returned distance must be a value between 0 and 1, but was: " + score);

@@ -33,11 +33,9 @@ datadependency.cache.dir = /data/kim/cache.datadependency/jruby/
 
 ##### Genealogy Metrics #####
 fix.pattern=JRUBY-({bugids}\\d+)
-#genealogy.graphdb=/data/kim/genealogies/jruby/july2010/
-genealogy.graphdb=/tmpfs/gen_jruby_july2010/
+genealogy.graphdb=/data/kim/genealogies/jruby/july2010/
+#genealogy.graphdb=/kim_2_tmpfs/genealogies/jruby/july2010/
 
-genealogy.metric.level=TRANSACTION
-#genealogy.metric.out=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_metrics.csv
-#genealogy.metric.fileAggregate.out=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_fileMetrics.csv
-genealogy.metric.out=/tmpfs/jruby/jruby_july2010_genealogy_transaction_metrics.csv
-genealogy.metric.fileAggregate.out=/tmpfs/jruby/jruby_july2010_genealogy_transaction_fileMetrics.csv
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/jruby/jruby_july2010_genealogy_transaction_fileMetrics.csv

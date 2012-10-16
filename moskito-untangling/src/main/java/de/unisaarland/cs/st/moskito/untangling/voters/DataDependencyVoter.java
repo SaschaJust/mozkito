@@ -16,7 +16,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClusteringScoreVisitor;
@@ -193,12 +193,6 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	        final RCSTransaction transaction, final File cacheDir) {
 		this.transaction = transaction;
 		this.eclipseDir = eclipseDir;
-		if (this.checkoutDir == null) {
-			this.checkoutDir = repository.checkoutPath("/", transaction.getId());
-			if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-				throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
-			}
-		}
 		this.cacheDir = cacheDir;
 		final String cacheFileName = this.transaction.getId() + ".dd";
 		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
@@ -208,13 +202,23 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			                                                                                   new FileInputStream(
 			                                                                                                       this.cacheFile)));) {
 				this.cache = (Map<String, Set<Set<Integer>>>) objIn.readObject();
+				if (this.cache == null) {
+					this.cache = new HashMap<>();
+				}
 				objIn.close();
 				
 			} catch (IOException | ClassNotFoundException ignore) {
 				// ignore
 			}
+		} else {
+			if (this.checkoutDir == null) {
+				this.checkoutDir = repository.checkoutPath("/", transaction.getId());
+				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
+					throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
+				}
+			}
 		}
-		
+		this.checkoutDir = repository.checkoutPath("/", transaction.getId());
 	}
 	
 	/*
@@ -253,26 +257,50 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	public double getScore(final JavaChangeOperation op1,
 	                       final JavaChangeOperation op2) {
 		
+		if (Logger.logDebug()) {
+			Logger.debug("Computing data dependency score for transaction %s and JavaChangeOperations %s and %s.",
+			             this.transaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
+		}
+		
+		Condition.notNull(op1.getChangedElementLocation(), "op1.getChangeElementLocation() must not be NULL.",
+		                  new Object[0]);
+		Condition.notNull(op1.getChangedElementLocation(), "op2.getChangeElementLocation() must not be NULL.",
+		                  new Object[0]);
+		
 		final String filePath1 = op1.getChangedElementLocation().getFilePath();
 		final String filePath2 = op2.getChangedElementLocation().getFilePath();
+		
+		Condition.notNull(filePath1, "op1.getChangeElementLocation().getFilePath() must not be NULL.", new Object[0]);
+		Condition.notNull(filePath2, "op2.getChangeElementLocation().getFilePath() must not be NULL.", new Object[0]);
 		
 		if (!filePath1.equals(filePath2)) {
 			return MultilevelClustering.IGNORE_SCORE;
 		}
 		
-		// build path for file to analyze
-		final File file = new File(this.checkoutDir.getAbsolutePath() + op1.getChangedPath());
+		final String cacheKey = op1.getChangedPath();
 		
-		if ((!this.cache.containsKey(file.getAbsolutePath())) && (file.exists())) {
+		if (!this.cache.containsKey(cacheKey)) {
+			
+			this.cache.put(cacheKey, null);
+			
+			// build path for file to analyze
+			if (this.checkoutDir == null) {
+				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
+					throw new UnrecoverableError("Could not checkout transaction " + this.transaction.getId());
+				}
+			}
+			
+			final File file = new File(this.checkoutDir.getAbsolutePath() + op1.getChangedPath());
+			
 			if (!file.exists()) {
 				if (Logger.logError()) {
-					Logger.error("Cannot find checked out file " + file.getAbsolutePath() + ". Returning IGNORE_SCORE.");
+					Logger.error("Cannot find checked out file %s. Returning IGNORE_SCORE.", file.getAbsolutePath());
 				}
-				this.cache.put(file.getAbsolutePath(), null);
+				
+				return MultilevelClustering.IGNORE_SCORE;
 			}
 			
 			final File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
-			
 			final String[] arguments = new String[] { "-vmargs", "-Din=" + file.getAbsolutePath(),
 			        "-Dout=" + eclipseOutFile.getAbsolutePath() };
 			
@@ -297,23 +325,14 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 					}
 					Logger.error(sb.toString());
 				}
-				this.cache.put(file.getAbsolutePath(), null);
+				return MultilevelClustering.IGNORE_SCORE;
 			}
 			
-			BufferedReader reader = null;
-			try {
-				reader = new BufferedReader(new FileReader(eclipseOutFile));
-			} catch (final FileNotFoundException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-				this.cache.put(file.getAbsolutePath(), null);
-			}
-			assert (reader != null);
-			
-			final Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
-			String line = "";
-			try {
+			try (BufferedReader reader = new BufferedReader(new FileReader(eclipseOutFile));) {
+				assert (reader != null);
+				
+				final Set<Set<Integer>> lineDependencies = new HashSet<Set<Integer>>();
+				String line = "";
 				while ((line = reader.readLine()) != null) {
 					final String[] lineParts = line.split(",");
 					final Set<Integer> set = new HashSet<Integer>();
@@ -322,17 +341,16 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 					}
 					lineDependencies.add(set);
 				}
+				this.cache.put(cacheKey, lineDependencies);
 			} catch (final IOException e) {
 				if (Logger.logError()) {
 					Logger.error(e);
 				}
-				this.cache.put(file.getAbsolutePath(), null);
 			}
 			
-			this.cache.put(file.getAbsolutePath(), lineDependencies);
 		}
 		
-		final Set<Set<Integer>> lineDependencies = this.cache.get(file.getAbsolutePath());
+		final Set<Set<Integer>> lineDependencies = this.cache.get(cacheKey);
 		if (lineDependencies == null) {
 			return MultilevelClustering.IGNORE_SCORE;
 		}

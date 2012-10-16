@@ -52,14 +52,15 @@ public class TrackerReader extends Source<ReportLink> {
 			public void process() {
 				final ReportLink bugURI = tracker.getNextReportLink();
 				if (bugURI != null) {
-					if (Logger.logTrace()) {
-						Logger.trace("Checking if bug report was persisted already. If so skipping bug report ...");
+					if (Logger.logDebug()) {
+						Logger.debug("Checking if bug report with id %s is persisted already. If so skipping bug report ...",
+						             bugURI.getBugId());
 					}
 					
 					final Report report = persistenceUtil.loadById(bugURI.getBugId(), Report.class);
 					if (report != null) {
-						if (Logger.logDebug()) {
-							Logger.debug("Skipping already persisted bug report %s.", report.getId());
+						if (Logger.logInfo()) {
+							Logger.info("Skipping already persisted bug report %s.", report.getId());
 						}
 						skipOutputData();
 					} else {

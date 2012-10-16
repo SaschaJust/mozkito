@@ -185,7 +185,7 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @return the changed element
 	 */
-	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	public JavaElementLocation getChangedElementLocation() {
 		return this.changedElementLocation;
 	}

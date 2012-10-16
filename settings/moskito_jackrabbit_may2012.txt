@@ -12,3 +12,11 @@ tracker.useProxy=true
 tracker.proxy.cacheDir=/scratch/kim/miner_repos/apache/jackrabbit/jira_cache/
 tracker.uri=https://issues.apache.org/jira/
 jira.projectKey=JCR
+
+genealogy.graphdb=/kim_1_tmpfs/genealogies/jackrabbit/may2012/
+genealogyReader.branch=origin/trunk
+
+metricLevel=TRANSACTION
+metricOut=/data/kim/genealogies/jackrabbit/jackrabbit_may2012_genealogy_transaction_metrics.csv
+fileAggregateOut=/data/kim/genealogies/jackrabbit/jackrabbit_may2012_genealogy_transaction_fileMetrics.csv
+

@@ -65,6 +65,8 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	premises = []
 	implications = []
 	current_id = -1
+	if len(q_rows) > 100:
+	  return -1
 	for q_row in q_rows:
 	  if current_id != q_row['premise']:
 	    current_id = q_row['premise']

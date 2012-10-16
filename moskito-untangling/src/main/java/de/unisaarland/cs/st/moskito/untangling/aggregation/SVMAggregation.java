@@ -28,6 +28,8 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
+import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
@@ -41,10 +43,10 @@ import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 public class SVMAggregation extends UntanglingScoreAggregation implements Serializable {
 	
 	/** The Constant serialVersionUID. */
-	private static final long   serialVersionUID = 5743363755550937828L;
+	private static final long serialVersionUID = 5743363755550937828L;
 	
 	/** The Constant TRAIN_FRACTION. */
-	private static final double TRAIN_FRACTION   = .5;
+	private static double     TRAIN_FRACTION   = .5;
 	
 	/**
 	 * Creates the instance.
@@ -54,6 +56,41 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 * @return the sVM aggregation
 	 */
 	public static SVMAggregation createInstance(final Untangling untangling) {
+		SVMAggregation result = null;
+		if (System.getProperty("svmModel") != null) {
+			final File serialFile = new File(System.getProperty("svmModel"));
+			if (serialFile.exists()) {
+				try {
+					final ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialFile));
+					result = (SVMAggregation) in.readObject();
+					in.close();
+				} catch (final FileNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				} catch (final IOException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				} catch (final ClassNotFoundException e) {
+					if (Logger.logError()) {
+						Logger.error(e);
+					}
+				}
+			}
+			if (Logger.logWarn()) {
+				Logger.warn("Could not deserialize SVMAggregation model. Creating new one.");
+			}
+		}
+		if (result == null) {
+			result = new SVMAggregation(untangling);
+		}
+		return result;
+	}
+	
+	public static SVMAggregation createInstance(final Untangling untangling,
+	                                            @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
+		TRAIN_FRACTION = trainFraction;
 		SVMAggregation result = null;
 		if (System.getProperty("svmModel") != null) {
 			final File serialFile = new File(System.getProperty("svmModel"));
@@ -148,10 +185,16 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 			return true;
 		}
 		
-		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
+		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train SVM regression on must be not empty");
 		
+		if (Logger.logInfo()) {
+			Logger.info("Creating SVM training samples ...");
+		}
 		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION,
 		                                                                     this.untangling);
+		if (Logger.logInfo()) {
+			Logger.info("SVM training samples created.");
+		}
 		
 		final List<List<Double>> positiveSamples = samples.get(SampleType.POSITIVE);
 		final List<List<Double>> negativeSamples = samples.get(SampleType.NEGATIVE);

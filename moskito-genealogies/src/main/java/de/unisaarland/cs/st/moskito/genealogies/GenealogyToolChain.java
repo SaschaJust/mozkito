@@ -13,6 +13,8 @@
 
 package de.unisaarland.cs.st.moskito.genealogies;
 
+import java.util.Iterator;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -26,9 +28,15 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.joda.time.Days;
+
 import de.unisaarland.cs.st.moskito.genealogies.ChangeOperationReader.Options;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.genealogies.core.TransactionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
 
 public class GenealogyToolChain extends Chain<Settings> {
@@ -82,14 +90,31 @@ public class GenealogyToolChain extends Chain<Settings> {
 		if (this.infoArgument.getValue()) {
 			
 			this.genealogy = this.genealogyArgs.getValue();
+			final TransactionChangeGenealogy transactionLayer = this.genealogy.getTransactionLayer();
 			if (Logger.logInfo()) {
 				Logger.info("Statistic on change genealogy graph:");
 				Logger.info("Number of vertices: " + this.genealogy.vertexSize());
 				Logger.info("Number of edges: " + this.genealogy.edgeSize());
 				
 				Logger.info("Statistic on change genealogy transaction layer:");
-				Logger.info("Number of vertices: " + this.genealogy.getTransactionLayer().vertexSize());
-				Logger.info("Number of edges: " + this.genealogy.getTransactionLayer().edgeSize());
+				Logger.info("Number of vertices: " + transactionLayer.vertexSize());
+				Logger.info("Number of edges: " + transactionLayer.edgeSize());
+				
+				final Iterator<RCSTransaction> vertexIterator = transactionLayer.vertexIterator();
+				final DescriptiveStatistics youngestGapStat = new DescriptiveStatistics();
+				while (vertexIterator.hasNext()) {
+					final RCSTransaction t = vertexIterator.next();
+					int dayGap = Integer.MAX_VALUE;
+					for (final RCSTransaction c : transactionLayer.getAllDependants(t)) {
+						final int gap = Math.abs(Days.daysBetween(t.getTimestamp(), c.getTimestamp()).getDays());
+						if (gap < dayGap) {
+							dayGap = gap;
+						}
+					}
+					youngestGapStat.addValue(dayGap);
+				}
+				Logger.info("Median number of days between vertex and youngest child (Median youngest child gap): "
+				        + youngestGapStat.getPercentile(50));
 			}
 		} else {
 			this.genealogy = this.genealogyArgs.getValue();
