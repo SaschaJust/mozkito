@@ -22,6 +22,7 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
@@ -39,6 +40,7 @@ public class SourceforgeTracker_NetTest {
 	 * Test live overview.
 	 */
 	@Test
+	@Ignore
 	public void testLiveOverview() {
 		final String liveUrl = "http://sourceforge.net/";
 		
@@ -176,6 +178,7 @@ public class SourceforgeTracker_NetTest {
 	 * Test setup.
 	 */
 	@Test
+	@Ignore
 	public void testSetup() {
 		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {

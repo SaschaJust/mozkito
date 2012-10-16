@@ -124,16 +124,19 @@ public class SourceforgeTracker extends Tracker {
 	                  final Long atId,
 	                  final Type bugType,
 	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
-		this.groupId = groupId;
-		this.atId = atId;
-		this.bugType = bugType;
-		super.setup(fetchURI, username, password, proxyConfig);
+		throw new UnrecoverableError(
+		                             "Sourceforge changed its interface again. Please update parsers! BUT: bug ids changed. Ergo: do not mine sourceforge before 2020.");
+		// this.groupId = groupId;
+		// this.atId = atId;
+		// this.bugType = bugType;
+		// super.setup(fetchURI, username, password, proxyConfig);
 	}
 	
 	/**
 	 * Sets the uri.
-	 *
-	 * @param uri the new uri
+	 * 
+	 * @param uri
+	 *            the new uri
 	 */
 	protected void setUri(final URI uri) {
 		this.trackerURI = uri;
