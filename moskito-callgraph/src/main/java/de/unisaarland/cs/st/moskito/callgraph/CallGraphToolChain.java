@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
@@ -145,6 +146,11 @@ public class CallGraphToolChain {
 			                                                                                    "Ignore source files whose file name ends of one of these strings. (entries are separated using ',')",
 			                                                                                    new ArrayList<String>(0),
 			                                                                                    Requirement.optional));
+			
+			if (settings.helpRequested()) {
+				System.err.println(settings.getHelpString());
+				throw new Shutdown();
+			}
 			
 			this.transactionId = this.transactionArgument.getValue();
 			
