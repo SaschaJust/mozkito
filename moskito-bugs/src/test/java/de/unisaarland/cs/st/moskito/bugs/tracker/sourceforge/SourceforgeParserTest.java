@@ -29,6 +29,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.unisaarland.cs.st.moskito.bugs.exceptions.InvalidParameterException;
@@ -53,6 +54,7 @@ public class SourceforgeParserTest {
 	 * Test attachment id regex.
 	 */
 	@Test
+	@Ignore
 	public void testAttachmentIdRegex() {
 		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
 		final Match find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
@@ -65,6 +67,7 @@ public class SourceforgeParserTest {
 	 * Test html comment regex.
 	 */
 	@Test
+	@Ignore
 	public void testHTMLCommentRegex() {
 		final String s = "<!-- google_ad_section_start -->\n\"JodaTest.java\"<!-- google_ad_section_end -->";
 		final Regex htmlCommentRegex = new Regex(SourceforgeParser.htmlCommentRegex.getPattern(), Pattern.MULTILINE
@@ -81,6 +84,7 @@ public class SourceforgeParserTest {
 	 *             the invalid parameter exception
 	 */
 	@Test
+	@Ignore
 	public void testIssueHistory() throws InvalidParameterException {
 		
 		try {
@@ -255,6 +259,7 @@ public class SourceforgeParserTest {
 	 *             the invalid parameter exception
 	 */
 	@Test
+	@Ignore
 	public void testIssueParser() throws InvalidParameterException {
 		try {
 			
