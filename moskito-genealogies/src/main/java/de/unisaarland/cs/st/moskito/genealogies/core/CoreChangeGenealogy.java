@@ -289,7 +289,6 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 				}
 				return false;
 		}
-		
 		// add both vertices
 		if (!containsVertex(dependent)) {
 			addVertex(dependent);
@@ -303,6 +302,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		final Node to = getNodeForVertex(target);
 		
 		if ((from == null) || (to == null)) {
+			if (Logger.logError()) {
+				Logger.error("One or more change genealogy structure nodes are NULL: from=%s to=%s", from, to);
+			}
 			return false;
 		}
 		
@@ -319,6 +321,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			if (relationship == null) {
 				tx.failure();
 				tx.finish();
+				if (Logger.logDebug()) {
+					Logger.debug("Relationship %s->%s already exists!", from, to);
+				}
 				return false;
 			}
 			tx.success();
