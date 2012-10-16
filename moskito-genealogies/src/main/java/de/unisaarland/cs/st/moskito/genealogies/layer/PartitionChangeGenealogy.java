@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.layer;
@@ -37,11 +34,11 @@ import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
  */
 public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<JavaChangeOperation>> {
 	
-	private PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator;
+	private final PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator;
 	
 	public PartitionChangeGenealogy(
-	        CoreChangeGenealogy coreGenealogy,
-	        PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
+	        final CoreChangeGenealogy coreGenealogy,
+	        final PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
 		super(coreGenealogy);
 		this.partitionGenerator = partitionGenerator;
 	}
@@ -57,14 +54,14 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 *            the existing partitions
 	 */
 	public PartitionChangeGenealogy(
-	        File graphDBDir,
-	        PersistenceUtil persistenceUtil,
-	        PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
+	        final File graphDBDir,
+	        final PersistenceUtil persistenceUtil,
+	        final PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> partitionGenerator) {
 		super(ChangeGenealogyUtils.readFromDB(graphDBDir, persistenceUtil));
 		this.partitionGenerator = partitionGenerator;
 	}
 	
-	public Collection<Collection<JavaChangeOperation>> buildPartitions(Collection<JavaChangeOperation> input) {
+	public Collection<Collection<JavaChangeOperation>> buildPartitions(final Collection<JavaChangeOperation> input) {
 		return this.partitionGenerator.partition(input);
 	}
 	
@@ -74,10 +71,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * java.lang.Object)
 	 */
 	@Override
-	public boolean containsEdge(Collection<JavaChangeOperation> from,
-	                            Collection<JavaChangeOperation> to) {
-		for (JavaChangeOperation singleFrom : from) {
-			for (JavaChangeOperation singleTo : to) {
+	public boolean containsEdge(final Collection<JavaChangeOperation> from,
+	                            final Collection<JavaChangeOperation> to) {
+		for (final JavaChangeOperation singleFrom : from) {
+			for (final JavaChangeOperation singleTo : to) {
 				if (this.core.containsEdge(singleFrom, singleTo)) {
 					return true;
 				}
@@ -91,12 +88,12 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy#containsVertex (java.lang.Object)
 	 */
 	@Override
-	public boolean containsVertex(Collection<JavaChangeOperation> vertex) {
+	public boolean containsVertex(final Collection<JavaChangeOperation> vertex) {
 		if (vertex.isEmpty()) {
 			return false;
 		}
 		boolean result = true;
-		for (JavaChangeOperation op : vertex) {
+		for (final JavaChangeOperation op : vertex) {
 			result &= this.core.hasVertex(op);
 		}
 		return result;
@@ -107,11 +104,11 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy#
 	 */
 	@Override
-	public Collection<Collection<JavaChangeOperation>> getDependants(Collection<JavaChangeOperation> t,
-	                                                                 GenealogyEdgeType... edgeTypes) {
-		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
-		for (JavaChangeOperation op : t) {
-			for (JavaChangeOperation dependent : this.core.getDependants(op, edgeTypes)) {
+	public Collection<Collection<JavaChangeOperation>> getDependants(final Collection<JavaChangeOperation> t,
+	                                                                 final GenealogyEdgeType... edgeTypes) {
+		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		for (final JavaChangeOperation op : t) {
+			for (final JavaChangeOperation dependent : this.core.getDependants(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}
@@ -125,12 +122,12 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy#getEdges (java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(Collection<JavaChangeOperation> from,
-	                                              Collection<JavaChangeOperation> to) {
-		Set<GenealogyEdgeType> edges = new HashSet<GenealogyEdgeType>();
-		for (JavaChangeOperation singleFrom : from) {
-			for (JavaChangeOperation singleTo : to) {
-				GenealogyEdgeType edge = this.core.getEdge(singleFrom, singleTo);
+	public Collection<GenealogyEdgeType> getEdges(final Collection<JavaChangeOperation> from,
+	                                              final Collection<JavaChangeOperation> to) {
+		final Set<GenealogyEdgeType> edges = new HashSet<GenealogyEdgeType>();
+		for (final JavaChangeOperation singleFrom : from) {
+			for (final JavaChangeOperation singleTo : to) {
+				final GenealogyEdgeType edge = this.core.getEdge(singleFrom, singleTo);
 				if (edge != null) {
 					edges.add(edge);
 				}
@@ -140,24 +137,25 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	}
 	
 	@Override
-	public String getNodeId(Collection<JavaChangeOperation> t) {
-		if (this.containsVertex(t) && (!t.isEmpty())) {
-			Iterator<JavaChangeOperation> iterator = t.iterator();
-			StringBuilder sb = new StringBuilder();
-			
-			JavaChangeOperation op = iterator.next();
-			
-			sb.append("[");
-			sb.append(this.core.getNodeId(op));
-			while (iterator.hasNext()) {
-				op = iterator.next();
-				sb.append(",");
-				sb.append(sb.append(this.core.getNodeId(op)));
-			}
-			sb.append("]");
-			return sb.toString();
-		}
-		return null;
+	public String getNodeId(final Collection<JavaChangeOperation> t) {
+		return this.partitionGenerator.getNodeId(t);
+		// if (this.containsVertex(t) && (!t.isEmpty())) {
+		// Iterator<JavaChangeOperation> iterator = t.iterator();
+		// StringBuilder sb = new StringBuilder();
+		//
+		// JavaChangeOperation op = iterator.next();
+		//
+		// sb.append("[");
+		// sb.append(this.core.getNodeId(op));
+		// while (iterator.hasNext()) {
+		// op = iterator.next();
+		// sb.append(",");
+		// sb.append(sb.append(this.core.getNodeId(op)));
+		// }
+		// sb.append("]");
+		// return sb.toString();
+		// }
+		// return null;
 	}
 	
 	/*
@@ -165,11 +163,11 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 * @see de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogy# getAllDependents(java.lang.Object)
 	 */
 	@Override
-	public Collection<Collection<JavaChangeOperation>> getParents(Collection<JavaChangeOperation> t,
-	                                                              GenealogyEdgeType... edgeTypes) {
-		Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
-		for (JavaChangeOperation op : t) {
-			for (JavaChangeOperation dependent : this.core.getParents(op, edgeTypes)) {
+	public Collection<Collection<JavaChangeOperation>> getParents(final Collection<JavaChangeOperation> t,
+	                                                              final GenealogyEdgeType... edgeTypes) {
+		final Collection<JavaChangeOperation> result = new HashSet<JavaChangeOperation>();
+		for (final JavaChangeOperation op : t) {
+			for (final JavaChangeOperation dependent : this.core.getParents(op, edgeTypes)) {
 				if (!t.contains(dependent)) {
 					result.add(dependent);
 				}
@@ -180,15 +178,15 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	
 	@Override
 	public Collection<Collection<JavaChangeOperation>> getRoots() {
-		Collection<Collection<JavaChangeOperation>> roots = new LinkedList<Collection<JavaChangeOperation>>();
-		Collection<JavaChangeOperation> vertices = new HashSet<JavaChangeOperation>();
-		Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
+		final Collection<Collection<JavaChangeOperation>> roots = new LinkedList<Collection<JavaChangeOperation>>();
+		final Collection<JavaChangeOperation> vertices = new HashSet<JavaChangeOperation>();
+		final Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
 		while (vertexIterator.hasNext()) {
 			vertices.add(vertexIterator.next());
 		}
-		Collection<Collection<JavaChangeOperation>> partitions = this.buildPartitions(vertices);
-		for (Collection<JavaChangeOperation> partition : partitions) {
-			if (this.getAllParents(partition).isEmpty()) {
+		final Collection<Collection<JavaChangeOperation>> partitions = buildPartitions(vertices);
+		for (final Collection<JavaChangeOperation> partition : partitions) {
+			if (getAllParents(partition).isEmpty()) {
 				roots.add(partition);
 			}
 		}
@@ -196,31 +194,31 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	}
 	
 	@Override
-	public int inDegree(Collection<JavaChangeOperation> node) {
+	public int inDegree(final Collection<JavaChangeOperation> node) {
 		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
-	public int inDegree(Collection<JavaChangeOperation> node,
-	                    GenealogyEdgeType... edgeTypes) {
+	public int inDegree(final Collection<JavaChangeOperation> node,
+	                    final GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (Collection<JavaChangeOperation> dependant : this.getDependants(node, edgeTypes)) {
-			numEdges += this.getEdges(dependant, node).size();
+		for (final Collection<JavaChangeOperation> dependant : getDependants(node, edgeTypes)) {
+			numEdges += getEdges(dependant, node).size();
 		}
 		return numEdges;
 	}
 	
 	@Override
-	public int outDegree(Collection<JavaChangeOperation> node) {
+	public int outDegree(final Collection<JavaChangeOperation> node) {
 		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
 	@Override
-	public int outDegree(Collection<JavaChangeOperation> node,
-	                     GenealogyEdgeType... edgeTypes) {
+	public int outDegree(final Collection<JavaChangeOperation> node,
+	                     final GenealogyEdgeType... edgeTypes) {
 		int numEdges = 0;
-		for (Collection<JavaChangeOperation> parent : this.getParents(node, edgeTypes)) {
-			numEdges += this.getEdges(node, parent).size();
+		for (final Collection<JavaChangeOperation> parent : getParents(node, edgeTypes)) {
+			numEdges += getEdges(node, parent).size();
 		}
 		return numEdges;
 	}
@@ -231,10 +229,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer<Collection<Ja
 	 */
 	@Override
 	public Iterable<Collection<JavaChangeOperation>> vertexSet() {
-		Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
-		Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
+		final Iterator<JavaChangeOperation> vertexIterator = this.core.vertexIterator();
+		final Collection<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		while (vertexIterator.hasNext()) {
-			JavaChangeOperation elem = vertexIterator.next();
+			final JavaChangeOperation elem = vertexIterator.next();
 			result.add(elem);
 		}
 		return buildPartitions(result);

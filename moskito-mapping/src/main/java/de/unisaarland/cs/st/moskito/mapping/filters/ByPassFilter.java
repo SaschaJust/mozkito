@@ -22,6 +22,7 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import de.unisaarland.cs.st.moskito.bugs.tracker.settings.Messages;
 import de.unisaarland.cs.st.moskito.mapping.model.IComposite;
 import de.unisaarland.cs.st.moskito.mapping.requirements.ByPass;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
@@ -39,11 +40,11 @@ public class ByPassFilter extends Filter {
 	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
 		
 		/** The Constant TAG. */
-		private static final String TAG         = "byPass";
-		
+		private static final String TAG         = "byPass";                                               //$NON-NLS-1$
+		                                                                                                   
 		/** The Constant DESCRIPTION. */
-		private static final String DESCRIPTION = "...";
-		
+		private static final String DESCRIPTION = Messages.getString("ByPassFilter.optionSetDescription"); //$NON-NLS-1$
+		                                                                                                   
 		/**
 		 * Instantiates a new options.
 		 * 
@@ -91,8 +92,8 @@ public class ByPassFilter extends Filter {
 	}
 	
 	/** The Constant DESCRIPTION. */
-	public static final String DESCRIPTION = "Does not filter at all (by-passing).";
-	
+	public static final String DESCRIPTION = Messages.getString("ByPassFilter.description"); //$NON-NLS-1$
+	                                                                                         
 	/*
 	 * (non-Javadoc)
 	 * @see

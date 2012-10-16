@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -47,7 +46,7 @@ public class Mapping implements Annotated {
 	 * @param triggeringFilters
 	 *            the triggering filters
 	 */
-	public Mapping(@NotNull final IComposite composite, @NotNull @NotEmpty final Set<Filter> triggeringFilters) {
+	public Mapping(@NotNull final IComposite composite, @NotNull final Set<Filter> triggeringFilters) {
 		// PRECONDITIONS
 		Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		

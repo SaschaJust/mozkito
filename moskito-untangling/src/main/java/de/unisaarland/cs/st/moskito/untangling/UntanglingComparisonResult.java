@@ -22,7 +22,7 @@ public class UntanglingComparisonResult {
 	
 	private final int    diff;
 	
-	private final double minJaccarIndex;
+	private final double maxJaccarIndex;
 	
 	private final int    numCorrectPartition;
 	
@@ -35,7 +35,7 @@ public class UntanglingComparisonResult {
 	public UntanglingComparisonResult(final int diff, final double minJaccarIndex, final int numCorrectPartition,
 	        final int numFalsePartition, final int blobSize, final double fileError) {
 		this.diff = diff;
-		this.minJaccarIndex = minJaccarIndex;
+		this.maxJaccarIndex = minJaccarIndex;
 		this.numCorrectPartition = numCorrectPartition;
 		this.numFalsePartition = numFalsePartition;
 		this.blobSize = blobSize;
@@ -68,14 +68,14 @@ public class UntanglingComparisonResult {
 		return this.fileError;
 	}
 	
-	public double getMinJaccarIndex() {
+	public double getMaxJaccarIndex() {
 		// PRECONDITIONS
 		
 		try {
-			return this.minJaccarIndex;
+			return this.maxJaccarIndex;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.minJaccarIndex, "Field '%s' in '%s'.", "minJaccarIndex", getClass().getSimpleName());
+			Condition.notNull(this.maxJaccarIndex, "Field '%s' in '%s'.", "minJaccarIndex", getClass().getSimpleName());
 		}
 	}
 	
