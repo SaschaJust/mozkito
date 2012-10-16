@@ -321,8 +321,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			if (relationship == null) {
 				tx.failure();
 				tx.finish();
-				if (Logger.logDebug()) {
-					Logger.debug("Relationship %s->%s already exists!", from, to);
+				if (Logger.logWarn()) {
+					Logger.warn("Relationship %s->%s already exists!", from, to);
 				}
 				return false;
 			}
