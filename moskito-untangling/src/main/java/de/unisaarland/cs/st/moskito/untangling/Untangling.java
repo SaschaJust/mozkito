@@ -759,7 +759,7 @@ public class Untangling {
 					final UntanglingComparisonResult diffResult = comparePartitions(blob, partitions);
 					diffStat.addValue(diffResult.getDiff());
 					relativeDiffStat.addValue(diffResult.getRelativeDiff());
-					jaccardIndexStat.addValue(diffResult.getMinJaccarIndex());
+					jaccardIndexStat.addValue(diffResult.getMaxJaccarIndex());
 					precisionStat.addValue(diffResult.getPrecision());
 					fileErrorStat.addValue(diffResult.getFileError());
 					try {
@@ -771,7 +771,7 @@ public class Untangling {
 						outWriter.append(",");
 						outWriter.append(String.valueOf(clustering.getLowestScore()));
 						outWriter.append(",");
-						outWriter.append(String.valueOf(diffResult.getMinJaccarIndex()));
+						outWriter.append(String.valueOf(diffResult.getMaxJaccarIndex()));
 						outWriter.append(",");
 						outWriter.append(String.valueOf(diffResult.getNumCorrectPartition()));
 						outWriter.append(",");
