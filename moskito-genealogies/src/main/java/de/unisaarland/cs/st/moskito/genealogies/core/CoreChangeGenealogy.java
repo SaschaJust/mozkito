@@ -308,6 +308,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			return false;
 		}
 		
+		if (target.getRevision().getTransaction().getTimestamp()
+		          .isAfter(dependent.getRevision().getTransaction().getTimestamp())) {
+			return false;
+		}
+		
 		boolean edgeAlreadyExists = false;
 		for (final GenealogyEdgeType existingEdgeType : getEdges(from, to)) {
 			if (existingEdgeType.equals(edgeType)) {
