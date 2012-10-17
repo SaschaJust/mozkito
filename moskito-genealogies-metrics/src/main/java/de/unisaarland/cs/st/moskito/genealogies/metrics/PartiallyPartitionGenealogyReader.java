@@ -52,7 +52,9 @@ public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartition
 			
 			@Override
 			public void process() {
-				for (final Collection<JavaChangeOperation> t : partitions) {
+				PartiallyPartitionGenealogyReader.this.iterator = partitions.iterator();
+				while (PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
+					final Collection<JavaChangeOperation> t = PartiallyPartitionGenealogyReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
