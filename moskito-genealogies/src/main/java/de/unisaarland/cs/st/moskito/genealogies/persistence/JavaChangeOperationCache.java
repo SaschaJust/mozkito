@@ -14,9 +14,9 @@ package de.unisaarland.cs.st.moskito.genealogies.persistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.joda.time.DateTime;
 
@@ -72,7 +72,7 @@ public class JavaChangeOperationCache {
 		}
 	}
 	
-	private final Map<Long, JavaChangeOperationCacheEntry> cache = new HashMap<>();
+	private final Map<Long, JavaChangeOperationCacheEntry> cache = new ConcurrentHashMap<>();
 	private final PersistenceUtil                          persistenceUtil;
 	
 	public JavaChangeOperationCache(final PersistenceUtil persistenceUtil) {
