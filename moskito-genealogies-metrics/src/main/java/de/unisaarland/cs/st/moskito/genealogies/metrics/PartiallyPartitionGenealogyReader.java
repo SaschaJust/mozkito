@@ -20,6 +20,8 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -55,7 +57,9 @@ public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartition
 				PartiallyPartitionGenealogyReader.this.iterator = partitions.iterator();
 				while (PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
 					final Collection<JavaChangeOperation> t = PartiallyPartitionGenealogyReader.this.iterator.next();
-					
+					Condition.notNull(t, "Change genealogy partition must not be null!");
+					CollectionCondition.notEmpty(t, "Change genealogy partition must not be empty! (%s)",
+					                             changeGenealogy.getNodeId(t));
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);
 					}
