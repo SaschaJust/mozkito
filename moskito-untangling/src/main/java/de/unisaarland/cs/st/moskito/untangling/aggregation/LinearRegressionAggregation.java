@@ -40,6 +40,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import de.unisaarland.cs.st.moskito.clustering.MultilevelClustering;
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
 import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
@@ -253,9 +254,21 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 			throw new UnrecoverableError(e.getMessage());
 		}
 		
+		// save train instances to ARFF file
+		final File arffFile = new File("linearRegressionTrainInstances.arff");
+		
 		// serialize model for later use
 		final File serialFile = new File("linearRegressionModel.ser");
 		try {
+			
+			final ArffSaver saver = new ArffSaver();
+			saver.setInstances(this.trainingInstances);
+			saver.setFile(arffFile);
+			saver.writeBatch();
+			if (Logger.logInfo()) {
+				Logger.info("Wrote training instances to file: " + arffFile.getAbsolutePath());
+			}
+			
 			final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialFile));
 			
 			final Object[] toWrite = new Object[] { this.model, this.trainingInstances };
