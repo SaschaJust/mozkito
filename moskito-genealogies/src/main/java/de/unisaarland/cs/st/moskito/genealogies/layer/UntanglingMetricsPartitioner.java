@@ -114,10 +114,17 @@ public class UntanglingMetricsPartitioner implements
 			}
 		}
 		CollectionCondition.noneNull(this.partitions.values(), "Partitions must not be NULL!");
-		for (final Collection<JavaChangeOperation> partition : this.partitions.values()) {
-			CollectionCondition.notEmpty(partition, "Partitions must not be empty!");
+		final Collection<Collection<JavaChangeOperation>> result = CollectionUtils.union(this.partitions.values(),
+		                                                                                 map.values());
+		
+		final Collection<Collection<JavaChangeOperation>> emptyPartitions = new HashSet<>();
+		for (final Collection<JavaChangeOperation> partition : result) {
+			if (partition.isEmpty()) {
+				emptyPartitions.add(partition);
+			}
 		}
-		return CollectionUtils.union(this.partitions.values(), map.values());
+		result.removeAll(emptyPartitions);
+		return result;
 	}
 	
 }
