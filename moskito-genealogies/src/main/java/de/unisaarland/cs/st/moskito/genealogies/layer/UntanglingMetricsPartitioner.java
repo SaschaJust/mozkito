@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
@@ -114,16 +115,23 @@ public class UntanglingMetricsPartitioner implements
 			}
 		}
 		CollectionCondition.noneNull(this.partitions.values(), "Partitions must not be NULL!");
+		
+		final Set<Long> emptyPartitions = new HashSet<>();
+		for (final Long id : this.partitions.keySet()) {
+			if (this.partitions.get(id).isEmpty()) {
+				emptyPartitions.add(id);
+			}
+		}
+		for (final Long id : emptyPartitions) {
+			this.partitions.remove(id);
+		}
+		
 		final Collection<Collection<JavaChangeOperation>> result = CollectionUtils.union(this.partitions.values(),
 		                                                                                 map.values());
 		
-		final Collection<Collection<JavaChangeOperation>> emptyPartitions = new HashSet<>();
 		for (final Collection<JavaChangeOperation> partition : result) {
-			if (partition.isEmpty()) {
-				emptyPartitions.add(partition);
-			}
+			CollectionCondition.notEmpty(partition, "All partitions must be not empty!");
 		}
-		result.removeAll(emptyPartitions);
 		return result;
 	}
 	
