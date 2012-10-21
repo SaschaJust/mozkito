@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 
 import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
@@ -45,17 +46,7 @@ public class JavaChangeOperationCache {
 		 */
 		@Override
 		public int compareTo(final JavaChangeOperationCacheEntry o) {
-			
-			try {
-				if (this.lastAccess.isAfter(o.lastAccess)) {
-					return 1;
-				} else if (this.lastAccess.isBefore(o.lastAccess)) {
-					return -1;
-				}
-				return 0;
-			} finally {
-				// POSTCONDITIONS
-			}
+			return DateTimeComparator.getInstance().compare(this.lastAccess, o.lastAccess);
 		}
 		
 		public JavaChangeOperation getOperation() {
