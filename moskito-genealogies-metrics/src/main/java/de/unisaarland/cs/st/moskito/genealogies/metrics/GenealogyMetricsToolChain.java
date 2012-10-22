@@ -170,7 +170,8 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 		switch (this.granularity) {
 			case UNTANGLINGPARTITION:
 				final UntanglingMetricsPartitioner partitioner = new UntanglingMetricsPartitioner(
-				                                                                                  this.untanglingFileArgument.getValue());
+				                                                                                  this.untanglingFileArgument.getValue(),
+				                                                                                  this.genealogy);
 				final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(this.genealogy,
 				                                                                                       partitioner);
 				new PartiallyPartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
