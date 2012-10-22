@@ -87,7 +87,9 @@ public class UntanglingMetricsPartitioner implements
 	public Collection<ChangeGenealogyLayerNode> getUntanglingPartitions() {
 		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
 		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
-			result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+			if (!entry.getValue().isEmpty()) {
+				result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+			}
 		}
 		for (final ChangeGenealogyLayerNode partition : result) {
 			Condition.check(!partition.isEmpty(), "All partitions must be not empty!");
