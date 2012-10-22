@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+import de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogyLayerNode;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
@@ -91,7 +92,7 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 			changedFiles.add(op.getRevision().getChangedFile());
 		}
 		
-		for (final Collection<JavaChangeOperation> parent : this.genealogy.getAllParents(item.getNode())) {
+		for (final ChangeGenealogyLayerNode parent : this.genealogy.getAllParents(item.getNode())) {
 			final Set<RCSFile> parentChangedFiles = new HashSet<RCSFile>();
 			for (final JavaChangeOperation op : parent) {
 				parentChangedFiles.add(op.getRevision().getChangedFile());
@@ -101,7 +102,7 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 			parentStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}
 		
-		for (final Collection<JavaChangeOperation> dependant : this.genealogy.getAllDependants(item.getNode())) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(item.getNode())) {
 			final Set<RCSFile> dependentChangedFiles = new HashSet<RCSFile>();
 			for (final JavaChangeOperation op : dependant) {
 				dependentChangedFiles.add(op.getRevision().getChangedFile());

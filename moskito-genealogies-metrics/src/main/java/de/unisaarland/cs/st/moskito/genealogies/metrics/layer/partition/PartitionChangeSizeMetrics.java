@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.partition;
@@ -22,14 +19,14 @@ import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+import de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogyLayerNode;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
  * The Class PartitionChangeSizeMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
@@ -57,19 +54,21 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	
 	/**
 	 * Instantiates a new partition change size metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
-	public PartitionChangeSizeMetrics(PartitionChangeGenealogy genealogy) {
+	public PartitionChangeSizeMetrics(final PartitionChangeGenealogy genealogy) {
 		super(genealogy);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
 	public Collection<String> getMetricNames() {
-		List<String> metricNames = new ArrayList<String>(7);
+		final List<String> metricNames = new ArrayList<String>(7);
 		metricNames.add(changeSize);
 		metricNames.add(avgDepChangeSize);
 		metricNames.add(maxDepChangeSize);
@@ -80,22 +79,23 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		return metricNames;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyPartitionNode item) {
-		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
+	public Collection<GenealogyMetricValue> handle(final GenealogyPartitionNode item) {
+		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
-		Collection<JavaChangeOperation> partition = item.getNode();
-		String nodeId = this.genealogy.getNodeId(partition);
+		final ChangeGenealogyLayerNode partition = item.getNode();
+		final String nodeId = partition.getNodeId();
 		
-		DescriptiveStatistics dependantStats = new DescriptiveStatistics();
-		DescriptiveStatistics parentStats = new DescriptiveStatistics();
+		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
+		final DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
 		metricValues.add(new GenealogyMetricValue(changeSize, nodeId, partition.size()));
 		
-		for (Collection<JavaChangeOperation> dependant : this.genealogy.getAllDependants(partition)) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(partition)) {
 			dependantStats.addValue(dependant.size());
 		}
 		
@@ -103,7 +103,7 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId, dependantStats.getMax()));
 		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId, dependantStats.getSum()));
 		
-		for (Collection<JavaChangeOperation> dependant : this.genealogy.getAllParents(partition)) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllParents(partition)) {
 			parentStats.addValue(dependant.size());
 		}
 		

@@ -174,7 +174,7 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 				final PartitionChangeGenealogy partitionChangeGenealogy = new PartitionChangeGenealogy(this.genealogy,
 				                                                                                       partitioner);
 				new PartiallyPartitionGenealogyReader(this.threadPool.getThreadGroup(), getSettings(),
-				                                      partitionChangeGenealogy, partitioner.getPartitions());
+				                                      partitionChangeGenealogy, partitioner.getUntanglingPartitions());
 				new PartitionGenealogyMetricMux(this.threadPool.getThreadGroup(), getSettings());
 				
 				// start all partition metrics

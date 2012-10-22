@@ -15,8 +15,6 @@ package de.unisaarland.cs.st.moskito.genealogies;
 
 public interface PartitionGenerator<I, O> {
 	
-	public String getNodeId(I node);
-	
 	public O partition(I input);
 	
 }

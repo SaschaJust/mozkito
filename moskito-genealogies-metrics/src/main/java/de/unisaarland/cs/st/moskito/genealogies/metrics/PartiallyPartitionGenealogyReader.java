@@ -20,21 +20,20 @@ import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogyLayerNode;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
-import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 
 /**
  * The Class PartitionGenealogyReader.
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartitionNode> {
+public class PartiallyPartitionGenealogyReader extends Source<ChangeGenealogyLayerNode> {
 	
 	/** The iterator. */
-	private Iterator<Collection<JavaChangeOperation>> iterator;
+	private Iterator<ChangeGenealogyLayerNode> iterator;
 	
 	/**
 	 * Instantiates a new partition genealogy reader.
@@ -47,30 +46,23 @@ public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartition
 	 *            the change genealogy
 	 */
 	public PartiallyPartitionGenealogyReader(final Group threadGroup, final Settings settings,
-	        final PartitionChangeGenealogy changeGenealogy, final Collection<Collection<JavaChangeOperation>> partitions) {
+	        final PartitionChangeGenealogy changeGenealogy, final Collection<ChangeGenealogyLayerNode> collection) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<GenealogyPartitionNode, GenealogyPartitionNode>(this) {
+		new ProcessHook<ChangeGenealogyLayerNode, ChangeGenealogyLayerNode>(this) {
 			
 			@Override
 			public void process() {
-				PartiallyPartitionGenealogyReader.this.iterator = partitions.iterator();
+				
+				PartiallyPartitionGenealogyReader.this.iterator = collection.iterator();
 				while (PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
-					final Collection<JavaChangeOperation> t = PartiallyPartitionGenealogyReader.this.iterator.next();
+					final ChangeGenealogyLayerNode t = PartiallyPartitionGenealogyReader.this.iterator.next();
 					Condition.notNull(t, "Change genealogy partition must not be null!");
-					CollectionCondition.notEmpty(t, "Change genealogy partition must not be empty! (%s)",
-					                             changeGenealogy.getNodeId(t));
 					if (Logger.logInfo()) {
-						Logger.info("Providing " + t);
+						Logger.info("Providing ChangeGenealogyLayerNode %s." + t.getNodeId());
 					}
 					
-					GenealogyPartitionNode node = null;
-					if (PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
-						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t));
-					} else {
-						node = new GenealogyPartitionNode(t, changeGenealogy.getNodeId(t), true);
-					}
-					providePartialOutputData(node);
+					providePartialOutputData(t);
 					if (!PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
 						setCompleted();
 					}
