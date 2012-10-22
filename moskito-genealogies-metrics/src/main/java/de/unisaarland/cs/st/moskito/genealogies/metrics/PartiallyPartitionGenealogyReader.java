@@ -30,7 +30,7 @@ import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
  * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public class PartiallyPartitionGenealogyReader extends Source<ChangeGenealogyLayerNode> {
+public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartitionNode> {
 	
 	/** The iterator. */
 	private Iterator<ChangeGenealogyLayerNode> iterator;
@@ -49,7 +49,7 @@ public class PartiallyPartitionGenealogyReader extends Source<ChangeGenealogyLay
 	        final PartitionChangeGenealogy changeGenealogy, final Collection<ChangeGenealogyLayerNode> collection) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<ChangeGenealogyLayerNode, ChangeGenealogyLayerNode>(this) {
+		new ProcessHook<GenealogyPartitionNode, GenealogyPartitionNode>(this) {
 			
 			@Override
 			public void process() {
@@ -62,9 +62,11 @@ public class PartiallyPartitionGenealogyReader extends Source<ChangeGenealogyLay
 						Logger.info("Providing ChangeGenealogyLayerNode %s." + t.getNodeId());
 					}
 					
-					providePartialOutputData(t);
 					if (!PartiallyPartitionGenealogyReader.this.iterator.hasNext()) {
+						providePartialOutputData(new GenealogyPartitionNode(t, true));
 						setCompleted();
+					} else {
+						providePartialOutputData(new GenealogyPartitionNode(t));
 					}
 				}
 			}
