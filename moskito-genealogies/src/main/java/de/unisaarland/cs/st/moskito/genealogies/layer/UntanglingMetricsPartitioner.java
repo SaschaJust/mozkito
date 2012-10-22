@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -27,7 +28,11 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import scala.actors.threadpool.Arrays;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
+import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.moskito.persistence.Criteria;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
@@ -37,8 +42,11 @@ public class UntanglingMetricsPartitioner implements
 	Map<Long, Collection<JavaChangeOperation>>   partitions     = new HashMap<>();
 	Map<Collection<JavaChangeOperation>, String> partitionNames = new HashMap<>();
 	
-	public UntanglingMetricsPartitioner(final File partitionFile) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(partitionFile))) {
+	public UntanglingMetricsPartitioner(final File partitionFile, final CoreChangeGenealogy coreGenealogy) {
+		
+		final PersistenceUtil persistenceUtil = coreGenealogy.getPersistenceUtil();
+		
+		try (final BufferedReader reader = new BufferedReader(new FileReader(partitionFile))) {
 			final String header = reader.readLine();
 			if (header == null) {
 				throw new UnrecoverableError("Partition file must not be empty.");
@@ -72,12 +80,20 @@ public class UntanglingMetricsPartitioner implements
 				final String changeSetId = lineParts[idIndex];
 				final int partNumber = Integer.valueOf(lineParts[partNumIndex]).intValue();
 				final String[] changeOperationIDs = lineParts[opIdIndex].split(":");
-				final Collection<JavaChangeOperation> tmpSet = new HashSet<>();
 				
-				for (final String opId : changeOperationIDs) {
-					this.partitions.put(Long.valueOf(opId), tmpSet);
+				final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
+				                                                              .in("id",
+				                                                                  Arrays.asList(changeOperationIDs));
+				final List<JavaChangeOperation> operations = persistenceUtil.load(criteria);
+				if (!operations.isEmpty()) {
+					final HashSet<JavaChangeOperation> opSet = new HashSet<JavaChangeOperation>(operations);
+					if (coreGenealogy.containsVertex(operations.get(0))) {
+						this.partitionNames.put(opSet, changeSetId + ";" + partNumber);
+					}
+					for (final JavaChangeOperation op : operations) {
+						this.partitions.put(op.getId(), opSet);
+					}
 				}
-				this.partitionNames.put(tmpSet, changeSetId + ";" + partNumber);
 			}
 		} catch (final IOException e) {
 			throw new UnrecoverableError(e);
@@ -101,8 +117,8 @@ public class UntanglingMetricsPartitioner implements
 	public Collection<ChangeGenealogyLayerNode> partition(final Collection<JavaChangeOperation> input) {
 		
 		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+		
 		for (final JavaChangeOperation operation : input) {
-			
 			if (!this.partitions.containsKey(operation.getId())) {
 				final RCSTransaction transaction = operation.getRevision().getTransaction();
 				if (!map.containsKey(transaction)) {
