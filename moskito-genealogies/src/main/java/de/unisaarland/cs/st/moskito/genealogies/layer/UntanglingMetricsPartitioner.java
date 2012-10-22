@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +29,6 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import scala.actors.threadpool.Arrays;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
@@ -80,10 +80,13 @@ public class UntanglingMetricsPartitioner implements
 				final String changeSetId = lineParts[idIndex];
 				final int partNumber = Integer.valueOf(lineParts[partNumIndex]).intValue();
 				final String[] changeOperationIDs = lineParts[opIdIndex].split(":");
+				final List<Long> idList = new ArrayList<>(changeOperationIDs.length);
+				for (final String opId : changeOperationIDs) {
+					idList.add(Long.valueOf(opId));
+				}
 				
 				final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
-				                                                              .in("id",
-				                                                                  Arrays.asList(changeOperationIDs));
+				                                                              .in("id", idList);
 				final List<JavaChangeOperation> operations = persistenceUtil.load(criteria);
 				if (!operations.isEmpty()) {
 					final HashSet<JavaChangeOperation> opSet = new HashSet<JavaChangeOperation>(operations);
