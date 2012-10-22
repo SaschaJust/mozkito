@@ -17,28 +17,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class TransactionPartitioner implements
-        PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> {
-	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator#getNodeId(java.lang.Object)
-	 */
-	@Override
-	public String getNodeId(final Collection<JavaChangeOperation> node) {
-		if (node.isEmpty()) {
-			return null;
-		}
-		return node.iterator().next().getRevision().getTransaction().getId();
-	}
+        PartitionGenerator<Collection<JavaChangeOperation>, Collection<PartitionChangeGenealogyNode>> {
 	
 	@Override
-	public Collection<Collection<JavaChangeOperation>> partition(final Collection<JavaChangeOperation> input) {
+	public Collection<PartitionChangeGenealogyNode> partition(final Collection<JavaChangeOperation> input) {
 		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
 		for (final JavaChangeOperation operation : input) {
 			final RCSTransaction transaction = operation.getRevision().getTransaction();
@@ -47,7 +37,13 @@ public class TransactionPartitioner implements
 			}
 			map.get(transaction).add(operation);
 		}
-		return map.values();
+		
+		final Set<PartitionChangeGenealogyNode> result = new HashSet<>();
+		for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
+			result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+		}
+		
+		return result;
 	}
 	
 }

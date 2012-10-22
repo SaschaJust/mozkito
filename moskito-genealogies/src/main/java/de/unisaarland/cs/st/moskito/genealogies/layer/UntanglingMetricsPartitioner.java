@@ -21,19 +21,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
-
-import org.apache.commons.collections.CollectionUtils;
-
+import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 public class UntanglingMetricsPartitioner implements
-        PartitionGenerator<Collection<JavaChangeOperation>, Collection<Collection<JavaChangeOperation>>> {
+        PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> {
 	
 	Map<Long, Collection<JavaChangeOperation>>   partitions     = new HashMap<>();
 	Map<Collection<JavaChangeOperation>, String> partitionNames = new HashMap<>();
@@ -85,22 +84,20 @@ public class UntanglingMetricsPartitioner implements
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator#getNodeId(java.lang.Object)
-	 */
-	@Override
-	public String getNodeId(final Collection<JavaChangeOperation> node) {
-		return this.partitionNames.get(node);
+	public Collection<ChangeGenealogyLayerNode> getUntanglingPartitions() {
+		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
+		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
+			result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+		}
+		for (final ChangeGenealogyLayerNode partition : result) {
+			Condition.check(!partition.isEmpty(), "All partitions must be not empty!");
+		}
+		return result;
 	}
 	
-	public Collection<Collection<JavaChangeOperation>> getPartitions() {
-		return this.partitions.values();
-	}
-	
-	@SuppressWarnings ("unchecked")
 	@Override
-	public Collection<Collection<JavaChangeOperation>> partition(final Collection<JavaChangeOperation> input) {
+	public Collection<ChangeGenealogyLayerNode> partition(final Collection<JavaChangeOperation> input) {
+		
 		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
 		for (final JavaChangeOperation operation : input) {
 			
@@ -126,11 +123,16 @@ public class UntanglingMetricsPartitioner implements
 			this.partitions.remove(id);
 		}
 		
-		final Collection<Collection<JavaChangeOperation>> result = CollectionUtils.union(this.partitions.values(),
-		                                                                                 map.values());
+		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
+		for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
+			result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+		}
+		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
+			result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+		}
 		
-		for (final Collection<JavaChangeOperation> partition : result) {
-			CollectionCondition.notEmpty(partition, "All partitions must be not empty!");
+		for (final ChangeGenealogyLayerNode partition : result) {
+			Condition.check(!partition.isEmpty(), "All partitions must be not empty!");
 		}
 		return result;
 	}

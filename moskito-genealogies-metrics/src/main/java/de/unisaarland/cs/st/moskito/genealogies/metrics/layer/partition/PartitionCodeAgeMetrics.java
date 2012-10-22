@@ -23,6 +23,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogyLayerNode;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
@@ -97,12 +98,12 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyPartitionNode item) {
-		final Collection<JavaChangeOperation> changeOperations = item.getNode();
+		final ChangeGenealogyLayerNode pNode = item.getNode();
 		final DescriptiveStatistics lastModifiedStats = new DescriptiveStatistics();
 		final DescriptiveStatistics ageStats = new DescriptiveStatistics();
 		final DescriptiveStatistics numChangesStats = new DescriptiveStatistics();
 		
-		for (final JavaChangeOperation op : changeOperations) {
+		for (final JavaChangeOperation op : pNode) {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			

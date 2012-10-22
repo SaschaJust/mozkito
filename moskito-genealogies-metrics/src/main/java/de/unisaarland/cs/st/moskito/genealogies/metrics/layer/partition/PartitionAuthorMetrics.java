@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.unisaarland.cs.st.moskito.genealogies.layer.ChangeGenealogyLayerNode;
 import de.unisaarland.cs.st.moskito.genealogies.layer.PartitionChangeGenealogy;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyPartitionNode;
@@ -67,11 +68,11 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 	public Collection<GenealogyMetricValue> handle(final GenealogyPartitionNode item) {
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
-		final Collection<JavaChangeOperation> transaction = item.getNode();
-		final String nodeId = this.genealogy.getNodeId(transaction);
+		final ChangeGenealogyLayerNode pNode = item.getNode();
+		final String nodeId = pNode.getNodeId();
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final Collection<JavaChangeOperation> dependant : this.genealogy.getAllDependants(transaction)) {
+		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(pNode)) {
 			for (final JavaChangeOperation tmpOp : dependant) {
 				depAuthors.add(tmpOp.getRevision().getTransaction().getPersons().getGeneratedId());
 			}
@@ -80,7 +81,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 		metricValues.add(new GenealogyMetricValue(numDepAuthors, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
-		for (final Collection<JavaChangeOperation> parent : this.genealogy.getAllParents(transaction)) {
+		for (final ChangeGenealogyLayerNode parent : this.genealogy.getAllParents(pNode)) {
 			for (final JavaChangeOperation tmpOp : parent) {
 				parentAuthors.add(tmpOp.getRevision().getTransaction().getPersons().getGeneratedId());
 			}

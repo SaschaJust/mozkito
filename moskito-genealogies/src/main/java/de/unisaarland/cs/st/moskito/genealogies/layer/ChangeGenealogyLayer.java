@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.layer;
@@ -35,7 +32,7 @@ import de.unisaarland.cs.st.moskito.genealogies.core.GenealogyEdgeType;
  *            the type of objects method results will be based on
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
-public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
+public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGenealogyLayerNode> {
 	
 	/** The core. */
 	protected CoreChangeGenealogy core;
@@ -46,7 +43,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @param core
 	 *            the core
 	 */
-	public ChangeGenealogyLayer(CoreChangeGenealogy core) {
+	public ChangeGenealogyLayer(final CoreChangeGenealogy core) {
 		this.core = core;
 	}
 	
@@ -68,8 +65,8 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return true, if successful
 	 */
 	@Override
-	public abstract boolean containsEdge(final T from,
-	                                     final T to);
+	public abstract boolean containsEdge(final ChangeGenealogyLayerNode from,
+	                                     final ChangeGenealogyLayerNode to);
 	
 	/**
 	 * Contains vertex.
@@ -79,7 +76,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return true, if successful
 	 */
 	@Override
-	public abstract boolean containsVertex(final T vertex);
+	public abstract boolean containsVertex(final ChangeGenealogyLayerNode vertex);
 	
 	/**
 	 * Edge size.
@@ -99,7 +96,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the all dependents
 	 */
 	@Override
-	public final Collection<T> getAllDependants(T t) {
+	public final Collection<ChangeGenealogyLayerNode> getAllDependants(final ChangeGenealogyLayerNode t) {
 		return getDependants(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -114,7 +111,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the all parents
 	 */
 	@Override
-	public final Collection<T> getAllParents(T t) {
+	public final Collection<ChangeGenealogyLayerNode> getAllParents(final ChangeGenealogyLayerNode t) {
 		return getParents(t, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -136,8 +133,8 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the dependents
 	 */
 	@Override
-	public abstract Collection<T> getDependants(T t,
-	                                            GenealogyEdgeType... edgeTypes);
+	public abstract Collection<ChangeGenealogyLayerNode> getDependants(ChangeGenealogyLayerNode t,
+	                                                                   GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.
@@ -149,8 +146,8 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the edges
 	 */
 	@Override
-	public abstract Collection<GenealogyEdgeType> getEdges(final T from,
-	                                                       final T to);
+	public abstract Collection<GenealogyEdgeType> getEdges(final ChangeGenealogyLayerNode from,
+	                                                       final ChangeGenealogyLayerNode to);
 	
 	/**
 	 * Gets the existing edge types.
@@ -192,8 +189,8 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the parents
 	 */
 	@Override
-	public abstract Collection<T> getParents(T t,
-	                                         GenealogyEdgeType... edgeTypes);
+	public abstract Collection<ChangeGenealogyLayerNode> getParents(ChangeGenealogyLayerNode t,
+	                                                                GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Vertex set.
@@ -201,7 +198,7 @@ public abstract class ChangeGenealogyLayer<T> implements ChangeGenealogy<T> {
 	 * @return the iterator
 	 */
 	@Override
-	public abstract Iterable<T> vertexSet();
+	public abstract Iterable<ChangeGenealogyLayerNode> vertexSet();
 	
 	/**
 	 * Vertex size.
