@@ -87,7 +87,7 @@ public class UntanglingMetricsPartitioner implements
 	public Collection<ChangeGenealogyLayerNode> getUntanglingPartitions() {
 		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
 		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
-			if (!entry.getValue().isEmpty()) {
+			if (!entry.getKey().isEmpty()) {
 				result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
 			}
 		}
@@ -127,10 +127,14 @@ public class UntanglingMetricsPartitioner implements
 		
 		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
 		for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
-			result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+			if (!entry.getValue().isEmpty()) {
+				result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+			}
 		}
 		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
-			result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+			if (!entry.getKey().isEmpty()) {
+				result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+			}
 		}
 		
 		for (final ChangeGenealogyLayerNode partition : result) {
