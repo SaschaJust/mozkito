@@ -12,4 +12,7 @@ tracker.proxy.cacheDir=/scratch/kim/miner_repos/jenkins/jira_cache/
 tracker.uri=https://issues.jenkins-ci.org/
 jira.projectKey=JENKINS
 
+repository.uri=/data/kim/miner_repos/jenkins/jenkins.14_09_2012.git
+repository.type=GIT
+headless
 
