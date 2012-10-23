@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
@@ -40,7 +41,7 @@ public class UntanglingMetricsPartitioner implements
 	Map<Long, Collection<JavaChangeOperation>>                                 partitions     = new HashMap<>();
 	Map<Collection<JavaChangeOperation>, String>                               partitionNames = new HashMap<>();
 	
-	Map<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionCache = new HashMap<>();
+	Map<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionCache = new ConcurrentHashMap<>();
 	
 	public UntanglingMetricsPartitioner(final File partitionFile, final CoreChangeGenealogy coreGenealogy) {
 		
