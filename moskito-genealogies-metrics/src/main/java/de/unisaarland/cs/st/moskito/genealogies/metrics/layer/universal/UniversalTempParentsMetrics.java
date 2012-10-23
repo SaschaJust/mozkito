@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package de.unisaarland.cs.st.moskito.genealogies.metrics.layer.universal;
@@ -28,8 +25,9 @@ import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricValue;
 
 /**
  * The Class UniversalTempParentsMetrics.
- *
- * @param <T> the generic type
+ * 
+ * @param <T>
+ *            the generic type
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class UniversalTempParentsMetrics<T> {
@@ -66,11 +64,11 @@ public class UniversalTempParentsMetrics<T> {
 	
 	/**
 	 * Gets the metric names.
-	 *
+	 * 
 	 * @return the metric names
 	 */
 	public static Collection<String> getMetricNames() {
-		Collection<String> result = new LinkedList<String>();
+		final Collection<String> result = new LinkedList<String>();
 		result.add(maxTempParentDepth1);
 		result.add(maxTempParentDepth2);
 		result.add(maxTempParentDepth5);
@@ -85,45 +83,48 @@ public class UniversalTempParentsMetrics<T> {
 	}
 	
 	/** The genealogy. */
-	private ChangeGenealogy<T> genealogy;
+	private final ChangeGenealogy<T> genealogy;
 	
 	/** The day time diff. */
-	private DayTimeDiff<T>     dayTimeDiff;
+	private final DayTimeDiff<T>     dayTimeDiff;
 	
 	/** The parents_1. */
-	private Set<String>        parents_1  = new HashSet<String>();
+	private final Set<String>        parents_1  = new HashSet<String>();
 	
 	/** The parents_2. */
-	private Set<String>        parents_2  = new HashSet<String>();
+	private final Set<String>        parents_2  = new HashSet<String>();
 	
 	/** The parents_5. */
-	private Set<String>        parents_5  = new HashSet<String>();
+	private final Set<String>        parents_5  = new HashSet<String>();
 	
 	/** The parents_10. */
-	private Set<String>        parents_10 = new HashSet<String>();
+	private final Set<String>        parents_10 = new HashSet<String>();
 	
 	/** The parents_14. */
-	private Set<String>        parents_14 = new HashSet<String>();
+	private final Set<String>        parents_14 = new HashSet<String>();
 	
 	/**
 	 * Instantiates a new universal temp parents metrics.
-	 *
-	 * @param genealogy the genealogy
-	 * @param dayTimeDiff the day time diff
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param dayTimeDiff
+	 *            the day time diff
 	 */
-	public UniversalTempParentsMetrics(ChangeGenealogy<T> genealogy, DayTimeDiff<T> dayTimeDiff) {
+	public UniversalTempParentsMetrics(final ChangeGenealogy<T> genealogy, final DayTimeDiff<T> dayTimeDiff) {
 		this.genealogy = genealogy;
 		this.dayTimeDiff = dayTimeDiff;
 	}
 	
 	/**
 	 * Handle.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the collection
 	 */
-	public Collection<GenealogyMetricValue> handle(T node) {
-		Collection<GenealogyMetricValue> result = new ArrayList<GenealogyMetricValue>(10);
+	public Collection<GenealogyMetricValue> handle(final T node) {
+		final Collection<GenealogyMetricValue> result = new ArrayList<GenealogyMetricValue>(10);
 		
 		this.parents_1.clear();
 		this.parents_2.clear();
@@ -131,14 +132,16 @@ public class UniversalTempParentsMetrics<T> {
 		this.parents_10.clear();
 		this.parents_14.clear();
 		
-		int[] longestPaths = longestPath(node, node, new HashSet<T>());
+		// int[] longestPaths = longestPath(node, node, new HashSet<T>());
+		// FIXME: this is a temp hack for untangling impact metrics
+		final int[] longestPaths = new int[] { 0, 0, 0, 0, 0 };
 		
 		this.parents_2.addAll(this.parents_1);
 		this.parents_5.addAll(this.parents_2);
 		this.parents_10.addAll(this.parents_5);
 		this.parents_14.addAll(this.parents_10);
 		
-		String nodeId = this.genealogy.getNodeId(node);
+		final String nodeId = this.genealogy.getNodeId(node);
 		
 		result.add(new GenealogyMetricValue(maxTempParentDepth1, nodeId, longestPaths[0]));
 		result.add(new GenealogyMetricValue(maxTempParentDepth2, nodeId, longestPaths[1]));
@@ -157,34 +160,37 @@ public class UniversalTempParentsMetrics<T> {
 	
 	/**
 	 * Longest path.
-	 *
-	 * @param originalNode the original node
-	 * @param node the node
-	 * @param seen the seen
+	 * 
+	 * @param originalNode
+	 *            the original node
+	 * @param node
+	 *            the node
+	 * @param seen
+	 *            the seen
 	 * @return the int[]
 	 */
-	private int[] longestPath(T originalNode,
-	                          T node,
-	                          Collection<T> seen) {
+	private int[] longestPath(final T originalNode,
+	                          final T node,
+	                          final Collection<T> seen) {
 		
-		int[] result = { 0, 0, 0, 0, 0 };
+		final int[] result = { 0, 0, 0, 0, 0 };
 		
-		int diff = this.dayTimeDiff.daysDiff(originalNode, node);
+		final int diff = this.dayTimeDiff.daysDiff(originalNode, node);
 		if (diff > 14) {
 			return result;
 		}
 		
-		String nodeId = this.genealogy.getNodeId(node);
+		final String nodeId = this.genealogy.getNodeId(node);
 		
-		int[] toAdd = { 0, 0, 0, 0, 0 };
+		final int[] toAdd = { 0, 0, 0, 0, 0 };
 		
-		for (T dependant : this.genealogy.getAllParents(node)) {
+		for (final T dependant : this.genealogy.getAllParents(node)) {
 			if (seen.contains(dependant)) {
 				continue;
 			}
-			Collection<T> seenCopy = new HashSet<T>(seen);
+			final Collection<T> seenCopy = new HashSet<T>(seen);
 			seenCopy.add(dependant);
-			int[] tmp = longestPath(originalNode, dependant, seenCopy);
+			final int[] tmp = longestPath(originalNode, dependant, seenCopy);
 			for (int i = 0; i < 5; ++i) {
 				if (tmp[i] > toAdd[i]) {
 					toAdd[i] = tmp[i];
