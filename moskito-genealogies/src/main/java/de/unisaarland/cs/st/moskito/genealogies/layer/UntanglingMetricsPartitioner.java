@@ -27,8 +27,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.kanuni.conditions.CollectionCondition;
-import net.ownhero.dev.kanuni.conditions.Condition;
 import de.unisaarland.cs.st.moskito.genealogies.PartitionGenerator;
 import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
 import de.unisaarland.cs.st.moskito.persistence.Criteria;
@@ -39,8 +37,10 @@ import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 public class UntanglingMetricsPartitioner implements
         PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> {
 	
-	Map<Long, Collection<JavaChangeOperation>>   partitions     = new HashMap<>();
-	Map<Collection<JavaChangeOperation>, String> partitionNames = new HashMap<>();
+	Map<Long, Collection<JavaChangeOperation>>                                 partitions     = new HashMap<>();
+	Map<Collection<JavaChangeOperation>, String>                               partitionNames = new HashMap<>();
+	
+	Map<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionCache = new HashMap<>();
 	
 	public UntanglingMetricsPartitioner(final File partitionFile, final CoreChangeGenealogy coreGenealogy) {
 		
@@ -110,56 +110,51 @@ public class UntanglingMetricsPartitioner implements
 				result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
 			}
 		}
-		for (final ChangeGenealogyLayerNode partition : result) {
-			Condition.check(!partition.isEmpty(), "All partitions must be not empty!");
-		}
 		return result;
 	}
 	
 	@Override
 	public Collection<ChangeGenealogyLayerNode> partition(final Collection<JavaChangeOperation> input) {
 		
-		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
-		
-		for (final JavaChangeOperation operation : input) {
-			if (!this.partitions.containsKey(operation.getId())) {
-				final RCSTransaction transaction = operation.getRevision().getTransaction();
-				if (!map.containsKey(transaction)) {
-					map.put(transaction, new HashSet<JavaChangeOperation>());
+		if (!this.partitionCache.containsKey(input)) {
+			final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+			
+			for (final JavaChangeOperation operation : input) {
+				if (!this.partitions.containsKey(operation.getId())) {
+					final RCSTransaction transaction = operation.getRevision().getTransaction();
+					if (!map.containsKey(transaction)) {
+						map.put(transaction, new HashSet<JavaChangeOperation>());
+					}
+					map.get(transaction).add(operation);
+				} else {
+					this.partitions.get(operation.getId()).add(operation);
 				}
-				map.get(transaction).add(operation);
-			} else {
-				this.partitions.get(operation.getId()).add(operation);
 			}
-		}
-		CollectionCondition.noneNull(this.partitions.values(), "Partitions must not be NULL!");
-		
-		final Set<Long> emptyPartitions = new HashSet<>();
-		for (final Long id : this.partitions.keySet()) {
-			if (this.partitions.get(id).isEmpty()) {
-				emptyPartitions.add(id);
+			
+			final Set<Long> emptyPartitions = new HashSet<>();
+			for (final Long id : this.partitions.keySet()) {
+				if (this.partitions.get(id).isEmpty()) {
+					emptyPartitions.add(id);
+				}
 			}
-		}
-		for (final Long id : emptyPartitions) {
-			this.partitions.remove(id);
-		}
-		
-		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
-		for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
-			if (!entry.getValue().isEmpty()) {
-				result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+			for (final Long id : emptyPartitions) {
+				this.partitions.remove(id);
 			}
-		}
-		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
-			if (!entry.getKey().isEmpty()) {
-				result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+			
+			final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
+			for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
+				if (!entry.getValue().isEmpty()) {
+					result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
+				}
 			}
+			for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
+				if (!entry.getKey().isEmpty()) {
+					result.add(new PartitionChangeGenealogyNode(entry.getValue(), entry.getKey()));
+				}
+			}
+			this.partitionCache.put(input, result);
 		}
-		
-		for (final ChangeGenealogyLayerNode partition : result) {
-			Condition.check(!partition.isEmpty(), "All partitions must be not empty!");
-		}
-		return result;
+		return this.partitionCache.get(input);
 	}
 	
 }
