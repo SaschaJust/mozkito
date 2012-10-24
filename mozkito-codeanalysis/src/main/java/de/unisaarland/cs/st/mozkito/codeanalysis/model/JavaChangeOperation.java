@@ -32,9 +32,9 @@ import org.jdom2.Element;
 
 import de.unisaarland.cs.st.mozkito.persistence.Annotated;
 import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.mozkito.rcs.elements.ChangeType;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.elements.ChangeType;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSRevision;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class JavaChangeOperation.

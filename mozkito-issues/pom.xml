@@ -7,9 +7,9 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>mozkito-bugs</artifactId>
+	<artifactId>mozkito-issues</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-bugs</name>
+	<name>mozkito-issues</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
@@ -18,17 +18,17 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-rcs</artifactId>
+			<artifactId>mozkito-versions</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-utils</artifactId>
+			<artifactId>mozkito-utilities</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-xml-bugzilla</artifactId>
+			<artifactId>moskito-xml-bugzilla</artifactId>
 			<version>4.0.4</version>
 		</dependency>
 		<dependency>

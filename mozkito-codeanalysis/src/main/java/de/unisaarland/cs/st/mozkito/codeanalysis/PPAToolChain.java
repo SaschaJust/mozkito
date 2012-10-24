@@ -41,9 +41,9 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementFactory;
 import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.mozkito.rcs.Repository;
 import de.unisaarland.cs.st.mozkito.settings.DatabaseOptions;
 import de.unisaarland.cs.st.mozkito.settings.RepositoryOptions;
+import de.unisaarland.cs.st.mozkito.versions.Repository;
 
 /**
  * The Class PPAToolChain.

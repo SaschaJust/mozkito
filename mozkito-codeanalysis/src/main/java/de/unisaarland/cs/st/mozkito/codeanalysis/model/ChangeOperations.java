@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.unisaarland.cs.st.mozkito.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.mozkito.versions.elements.ChangeType;
 
 /**
  * The Class ChangeOperations.

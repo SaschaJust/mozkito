@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-rcs</artifactId>
+			<artifactId>mozkito-versions</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

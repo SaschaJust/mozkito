@@ -24,13 +24,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>mozkito-mapping</artifactId>
+	<artifactId>mozkito-mappings</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-mapping</name>
+	<name>mozkito-mappings</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-rcs</artifactId>
+			<artifactId>mozkito-versions</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-bugs</artifactId>
+			<artifactId>mozkito-issues</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>

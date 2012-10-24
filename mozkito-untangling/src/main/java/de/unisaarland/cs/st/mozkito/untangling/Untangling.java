@@ -63,7 +63,6 @@ import de.unisaarland.cs.st.mozkito.persistence.Criteria;
 import de.unisaarland.cs.st.mozkito.persistence.PPAPersistenceUtil;
 import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.mozkito.untangling.aggregation.LinearRegressionAggregation;
-import de.unisaarland.cs.st.mozkito.untangling.aggregation.RandomForestAggregation;
 import de.unisaarland.cs.st.mozkito.untangling.aggregation.SVMAggregation;
 import de.unisaarland.cs.st.mozkito.untangling.aggregation.VarSumAggregation;
 import de.unisaarland.cs.st.mozkito.untangling.blob.ArtificialBlob;
@@ -97,7 +96,7 @@ public class Untangling {
 		SUM, /** The VARSUM. */
 		VARSUM, /** The LINEA r_ regression. */
 		LINEAR_REGRESSION, /** The SVM. */
-		SVM, RANDOM_FOREST;
+		SVM;
 		
 		/**
 		 * String values.
@@ -371,11 +370,6 @@ public class Untangling {
 				final SVMAggregation svmAggregator = SVMAggregation.createInstance(this, 1d);
 				svmAggregator.train(atomicChangeSets);
 				this.aggregator = svmAggregator;
-				break;
-			case RANDOM_FOREST:
-				final RandomForestAggregation rFAggregator = new RandomForestAggregation(this, 1d);
-				rFAggregator.train(atomicChangeSets);
-				this.aggregator = rFAggregator;
 				break;
 			default:
 				throw new UnrecoverableError("Unknown score aggregation mode found: "
@@ -714,11 +708,6 @@ public class Untangling {
 					final SVMAggregation svmAggregator = SVMAggregation.createInstance(this);
 					svmAggregator.train(changeSetsInBlobs);
 					this.aggregator = svmAggregator;
-					break;
-				case RANDOM_FOREST:
-					final RandomForestAggregation rFAggregator = new RandomForestAggregation(this);
-					rFAggregator.train(changeSetsInBlobs);
-					this.aggregator = rFAggregator;
 					break;
 				default:
 					throw new UnrecoverableError("Unknown score aggregation mode found: "

@@ -19,12 +19,12 @@ import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
 import de.unisaarland.cs.st.mozkito.persistence.Criteria;
 import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
 import de.unisaarland.cs.st.mozkito.persistence.RCSPersistenceUtil;
-import de.unisaarland.cs.st.mozkito.rcs.BranchFactory;
-import de.unisaarland.cs.st.mozkito.rcs.collections.TransactionSet;
-import de.unisaarland.cs.st.mozkito.rcs.collections.TransactionSet.TransactionSetOrder;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.BranchFactory;
+import de.unisaarland.cs.st.mozkito.versions.collections.TransactionSet;
+import de.unisaarland.cs.st.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSBranch;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSRevision;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

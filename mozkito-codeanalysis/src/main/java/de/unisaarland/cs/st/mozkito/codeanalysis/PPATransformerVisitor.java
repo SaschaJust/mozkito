@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 import de.unisaarland.cs.st.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

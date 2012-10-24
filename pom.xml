@@ -48,21 +48,20 @@
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>mozkito-utils</module>
+		<module>mozkito-utilities</module>
 		<module>mozkito-persistence</module>
-		<module>mozkito-rcs</module>
-		<module>mozkito-bugs</module>
-		<module>mozkito-bugs-importclassification</module>
+		<module>mozkito-versions</module>
+		<module>mozkito-issues</module>
+		<module>mozkito-issues-importclassification</module>
 		<module>mozkito-persons</module>
-		<module>mozkito-mapping</module>
-		<module>mozkito-mapping-export</module>
+		<module>mozkito-mappings</module>
 		<module>mozkito-infozilla</module>
 		<module>mozkito-genealogies</module>
 		<module>mozkito-genealogies-metrics</module>
-		<module>mozkito-ltc</module>
+		<module>mozkito-causeeffect</module>
 		<module>mozkito-untangling</module>
 		<module>mozkito-changecouplings</module>
-		<module>mozkito-ppa</module>
+		<module>mozkito-codeanalysis</module>
 		<module>mozkito-callgraph</module>
 		<module>mozkito-atomicchanges</module>
 	</modules>

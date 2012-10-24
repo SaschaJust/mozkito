@@ -20,23 +20,17 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElement;
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementFactory;
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementLocation;
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementLocationSet;
-import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaMethodDefinition;
 import de.unisaarland.cs.st.mozkito.persistence.Criteria;
 import de.unisaarland.cs.st.mozkito.persistence.model.Person;
-import de.unisaarland.cs.st.mozkito.rcs.BranchFactory;
-import de.unisaarland.cs.st.mozkito.rcs.elements.ChangeType;
-import de.unisaarland.cs.st.mozkito.rcs.elements.RCSFileManager;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSFile;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
 import de.unisaarland.cs.st.mozkito.testing.MoskitoTest;
 import de.unisaarland.cs.st.mozkito.testing.annotation.DatabaseSettings;
+import de.unisaarland.cs.st.mozkito.versions.BranchFactory;
+import de.unisaarland.cs.st.mozkito.versions.elements.ChangeType;
+import de.unisaarland.cs.st.mozkito.versions.elements.RCSFileManager;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSBranch;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSFile;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSRevision;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 public class OpenJPA_PPA_MozkitoTest extends MoskitoTest {
 	

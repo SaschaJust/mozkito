@@ -20,8 +20,8 @@ import net.ownhero.dev.kisa.Logger;
 import de.unisaarland.cs.st.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementFactory;
 import de.unisaarland.cs.st.mozkito.codeanalysis.utils.PPAUtils;
-import de.unisaarland.cs.st.mozkito.rcs.Repository;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.Repository;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class ChangeOperationGenerator.

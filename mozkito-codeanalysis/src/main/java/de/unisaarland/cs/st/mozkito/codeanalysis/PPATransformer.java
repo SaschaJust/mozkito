@@ -15,8 +15,8 @@ import de.unisaarland.cs.st.mozkito.codeanalysis.internal.visitors.ChangeOperati
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElementFactory;
 import de.unisaarland.cs.st.mozkito.codeanalysis.utils.PPAUtils;
-import de.unisaarland.cs.st.mozkito.rcs.Repository;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.Repository;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -29,8 +29,6 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
-		final JavaElementFactory elementFactory = factory;
-		
 		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
 			
 			private Iterator<JavaChangeOperation> iterator;
@@ -61,7 +59,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 							                                  {
 								                                  add(visitor);
 							                                  }
-						                                  }, elementFactory, packageFilter);
+						                                  }, factory, packageFilter);
 					} else {
 						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
 						                                       new HashSet<ChangeOperationVisitor>() {
@@ -71,7 +69,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 							                                       {
 								                                       add(visitor);
 							                                       }
-						                                       }, elementFactory, packageFilter);
+						                                       }, factory, packageFilter);
 					}
 					PPAPersister.available.release();
 					

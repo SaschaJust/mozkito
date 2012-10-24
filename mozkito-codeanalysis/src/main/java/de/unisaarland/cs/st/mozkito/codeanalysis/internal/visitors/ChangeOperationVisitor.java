@@ -13,7 +13,7 @@
 package de.unisaarland.cs.st.mozkito.codeanalysis.internal.visitors;
 
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Interface ChangeOperationVisitor.

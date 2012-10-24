@@ -7,13 +7,13 @@
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>mozkito-bugs-importclassification</artifactId>
+	<artifactId>mozkito-issues-importclassification</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-bugs-importclassification</name>
+	<name>mozkito-issues-importclassification</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>mozkito-bugs</artifactId>
+			<artifactId>mozkito-issues</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

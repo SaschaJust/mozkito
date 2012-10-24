@@ -37,10 +37,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaChangeOperation;
 import de.unisaarland.cs.st.mozkito.codeanalysis.model.JavaElement;
-import de.unisaarland.cs.st.mozkito.persistence.Criteria;
-import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision;
-import de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSRevision;
+import de.unisaarland.cs.st.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class PPAPersistenceUtil.

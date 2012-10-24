@@ -7,9 +7,9 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>mozkito-utils</artifactId>
+	<artifactId>mozkito-utilities</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-utils</name>
+	<name>mozkito-utilities</name>
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
