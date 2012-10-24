@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.mozkito.ppa.visitors;
+package org.mozkito.ppa.visitors;
 
 import java.util.HashMap;
 import java.util.HashSet;

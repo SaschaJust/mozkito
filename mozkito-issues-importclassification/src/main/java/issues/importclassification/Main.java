@@ -12,7 +12,7 @@
  ******************************************************************************/
 package issues.importclassification;
 
-import de.unisaarland.cs.st.mozkito.issues.importclassification.ClassificationImporter;
+import org.mozkito.issues.importclassification.ClassificationImporter;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

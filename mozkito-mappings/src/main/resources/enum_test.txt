@@ -1,13 +1,13 @@
 fixing NullPointerException in MantisTracker triggered by a) field changing from nothing to nothing (don't ask) and b) by wrong field name
 additionally
-1) added new test for Reposiotries. 2) fixed multiple bugs in Repsoitories 3) Fixed getFormerPath() method in SubversionRepository
+1) added new test for Reposiotries. 2) fixed multiple issues in Repsoitories 3) Fixed getFormerPath() method in SubversionRepository
     1) preparing essential changes in JavaChangeOperation
     2) preparing atomic changes in RCSTransaction
     3) adding dependencies for untangling module
 and did some other stuff. we also checked that
 i. everything is alright
 ii. everything works as expected
-iii. no bugs have been introduced
+iii. no issues have been introduced
 iv. our algorithm is sound
 and no matter what, there is some other enumeration.
 

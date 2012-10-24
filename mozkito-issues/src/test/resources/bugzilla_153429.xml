@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE bugzilla SYSTEM "https://bugs.eclipse.org/bugs/bugzilla.dtd">
+<!DOCTYPE bugzilla SYSTEM "https://issues.eclipse.org/issues/bugzilla.dtd">
 
 <bugzilla version="4.0.4"
-          urlbase="https://bugs.eclipse.org/bugs/"
+          urlbase="https://issues.eclipse.org/issues/"
           
           maintainer="webmaster@eclipse.org"
 >
@@ -85,7 +85,7 @@
     
     <cc>d_a_carver</cc>
     
-    <cc>eclipse-bugs</cc>
+    <cc>eclipse-issues</cc>
     
     <cc>elias</cc>
     
@@ -526,7 +526,7 @@ I&apos;m willing to </thetext>
           </long_desc>
           <long_desc isprivate="0">
             <commentid>1360733</commentid>
-            <who name="Eric Rizzo">eclipse-bugs</who>
+            <who name="Eric Rizzo">eclipse-issues</who>
             <bug_when>2008-10-29 16:05:11 -0400</bug_when>
             <thetext>Can we get a clarification on the status of this? It is still targeted for 3.3 but obviously that is no longer accurate. Furthering the confusion is the wiki page http://wiki.eclipse.org/ETF_JUnit4_Changes that makes it sounds as if these changes have already been applied (it makes no reference to this only being available in a patch).
 Please, please, please update the status of this bug report to reflect that either it is assigned and targeted for 3.5, resolved and present in 3.4, still NEW and in need of attention, or whatever the actual status is.</thetext>
@@ -560,7 +560,7 @@ Thanks!</thetext>
           </long_desc>
           <long_desc isprivate="0">
             <commentid>1373225</commentid>
-            <who name="Eric Rizzo">eclipse-bugs</who>
+            <who name="Eric Rizzo">eclipse-issues</who>
             <bug_when>2008-11-17 10:32:44 -0500</bug_when>
             <thetext>I&apos;m very surprised (and disappointed) that this issue is still open. JUnit4 has been released for almost 3 years now, and Eclipse has had IDE support for it for nearly that long. This is especially disconcerting because PDE happily allows the developer to write JUnit4 tests only to discover later that they can&apos;t be integrated into an automated headless build infrastructure. At that point the only option appears to be to spend time porting all those tests back to JUnit3 (and lose the features of JUnit4). This reminds me of the old VAJ problem of not supporting JDK 1.3 ...
 Do none of the Eclipse projects use JUnit4 tests? Really?</thetext>
@@ -1063,7 +1063,7 @@ Released for N20091126-2000.</thetext>
 
 It gives me great pleasure to close this bug after three years of sitting in my  bucket, months of test builds, and discussions with almost every committer on Eclipse/Equinox.
 
-Goodbye bug 153429.  It&apos;s time to for me to see other bugs.</thetext>
+Goodbye bug 153429.  It&apos;s time to for me to see other issues.</thetext>
           </long_desc>
           <long_desc isprivate="0">
             <commentid>1636215</commentid>
@@ -1076,7 +1076,7 @@ Goodbye bug 153429.  It&apos;s time to for me to see other bugs.</thetext>
             <who name="Helmut J. Haigermoser">helmut.haigermoser</who>
             <bug_when>2010-01-12 05:53:10 -0500</bug_when>
             <thetext>(In reply to comment #80)
-&gt; Goodbye bug 153429.  It&apos;s time to for me to see other bugs.
+&gt; Goodbye bug 153429.  It&apos;s time to for me to see other issues.
 
 Thanks for all the hard work you&apos;ve put into making this possible, Kim et all! :)
 

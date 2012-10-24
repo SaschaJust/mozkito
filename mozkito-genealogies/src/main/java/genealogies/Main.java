@@ -18,12 +18,13 @@
  */
 package genealogies;
 
+import org.mozkito.genealogies.GenealogyToolChain;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.mozkito.genealogies.GenealogyToolChain;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

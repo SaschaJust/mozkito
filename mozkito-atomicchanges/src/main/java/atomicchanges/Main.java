@@ -17,6 +17,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.versions.atomic.AtomicTransactionImporter;
+
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.InputFileArgument;
@@ -27,9 +31,6 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.mozkito.rcs.atomic.AtomicTransactionImporter;
-import de.unisaarland.cs.st.mozkito.settings.DatabaseOptions;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

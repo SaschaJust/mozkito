@@ -15,11 +15,12 @@
  */
 package untangling;
 
+import org.mozkito.untangling.Untangling;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.mozkito.untangling.Untangling;
 
 /**
  * The Class Main.

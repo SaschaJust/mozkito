@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<!DOCTYPE bugzilla SYSTEM "https://bugs.eclipse.org/bugs/bugzilla.dtd">
+<!DOCTYPE bugzilla SYSTEM "https://issues.eclipse.org/issues/bugzilla.dtd">
 
 <bugzilla version="4.0.4"
-          urlbase="https://bugs.eclipse.org/bugs/"
+          urlbase="https://issues.eclipse.org/issues/"
           
           maintainer="webmaster@eclipse.org"
 >

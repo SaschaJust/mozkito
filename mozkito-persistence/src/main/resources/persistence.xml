@@ -13,13 +13,13 @@
 	<persistence-unit name="persistence" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer
 		</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -37,16 +37,16 @@
 	<persistence-unit name="rcs" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -64,23 +64,23 @@
 	<persistence-unit name="bugs" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Comment</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.History</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Report</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.bugs.tracker.model.Comment</class>
+		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.bugs.tracker.model.History</class>
+		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
+		<class>org.mozkito.bugs.tracker.model.Report</class>
+		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -97,32 +97,32 @@
 	</persistence-unit>
 	<persistence-unit name="mapping" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Comment</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.History</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Report</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.EnhancedReport</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.Mapping</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.Class2Bugs</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.File2Bugs</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.FilteredMapping</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.Method2Bugs</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.model.MappingEngineFeature</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.mappable.model.MappableEntity</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.mappable.model.MappableReport</class>
-		<class>de.unisaarland.cs.st.mozkito.mapping.mappable.model.MappableTransaction</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.bugs.tracker.model.Comment</class>
+		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.bugs.tracker.model.History</class>
+		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
+		<class>org.mozkito.bugs.tracker.model.Report</class>
+		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.mapping.model.Mapping</class>
+		<class>org.mozkito.mapping.model.Class2Bugs</class>
+		<class>org.mozkito.mapping.model.File2Bugs</class>
+		<class>org.mozkito.mapping.model.FilteredMapping</class>
+		<class>org.mozkito.mapping.model.Method2Bugs</class>
+		<class>org.mozkito.mapping.model.MappingEngineFeature</class>
+		<class>org.mozkito.mapping.mappable.model.MappableEntity</class>
+		<class>org.mozkito.mapping.mappable.model.MappableReport</class>
+		<class>org.mozkito.mapping.mappable.model.MappableTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -142,29 +142,29 @@
 	<persistence-unit name="ppa" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Comment</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.History</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Report</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.EnhancedReport</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaElement</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaTypeDefinition</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaElementLocation</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaChangeOperation</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodCall</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodDefinition</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.bugs.tracker.model.Comment</class>
+		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.bugs.tracker.model.History</class>
+		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
+		<class>org.mozkito.bugs.tracker.model.Report</class>
+		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.ppa.model.JavaElement</class>
+		<class>org.mozkito.ppa.model.JavaTypeDefinition</class>
+		<class>org.mozkito.ppa.model.JavaElementLocation</class>
+		<class>org.mozkito.ppa.model.JavaChangeOperation</class>
+		<class>org.mozkito.ppa.model.JavaMethodCall</class>
+		<class>org.mozkito.ppa.model.JavaMethodDefinition</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -182,22 +182,22 @@
 	<persistence-unit name="untangling" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaElement</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaTypeDefinition</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaElementLocation</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaChangeOperation</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodCall</class>
-		<class>de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodDefinition</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.ppa.model.JavaElement</class>
+		<class>org.mozkito.ppa.model.JavaTypeDefinition</class>
+		<class>org.mozkito.ppa.model.JavaElementLocation</class>
+		<class>org.mozkito.ppa.model.JavaChangeOperation</class>
+		<class>org.mozkito.ppa.model.JavaMethodCall</class>
+		<class>org.mozkito.ppa.model.JavaMethodDefinition</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -215,23 +215,23 @@
 	<persistence-unit name="infozilla" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.DateTimeTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.EnumTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.Person</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonContainer</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.PersonTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSBranch</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSFile</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSRevision</class>
-		<class>de.unisaarland.cs.st.mozkito.rcs.model.RCSTransaction</class>
-		<class>de.unisaarland.cs.st.mozkito.persistence.model.StringTuple</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Comment</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.History</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.Report</class>
-		<class>de.unisaarland.cs.st.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.persistence.model.DateTimeTuple</class>
+		<class>org.mozkito.persistence.model.EnumTuple</class>
+		<class>org.mozkito.persistence.model.Person</class>
+		<class>org.mozkito.persistence.model.PersonContainer</class>
+		<class>org.mozkito.persistence.model.PersonTuple</class>
+		<class>org.mozkito.rcs.model.RCSBranch</class>
+		<class>org.mozkito.rcs.model.RCSFile</class>
+		<class>org.mozkito.rcs.model.RCSRevision</class>
+		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.persistence.model.StringTuple</class>
+		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.bugs.tracker.model.Comment</class>
+		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.bugs.tracker.model.History</class>
+		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
+		<class>org.mozkito.bugs.tracker.model.Report</class>
+		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>

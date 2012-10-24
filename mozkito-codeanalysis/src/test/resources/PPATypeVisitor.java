@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.unisaarland.cs.st.mozkito.ppa.visitors;
+package org.mozkito.ppa.visitors;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.joda.time.DateTime;
 
-import de.unisaarland.cs.st.mozkito.ppa.CompilationUnitException;
-import de.unisaarland.cs.st.mozkito.ppa.model.JavaClassDefinition;
-import de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodDefinition;
+import org.mozkito.ppa.CompilationUnitException;
+import org.mozkito.ppa.model.JavaClassDefinition;
+import org.mozkito.ppa.model.JavaMethodDefinition;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.ioda.specification.NoneNull;

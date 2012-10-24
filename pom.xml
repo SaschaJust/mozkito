@@ -4,7 +4,7 @@
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
-	<groupId>de.unisaarland.cs.st</groupId>
+	<groupId>org</groupId>
 	<artifactId>mozkito</artifactId>
 	<name>mozkito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
@@ -221,7 +221,7 @@
 						<haltOnFailure>false</haltOnFailure>
 						<regexes>
 							<regex>
-								<pattern>de.unisaarland.cs.st.mozkito.*</pattern>
+								<pattern>org.mozkito.*</pattern>
 								<branchRate>90</branchRate>
 								<lineRate>90</lineRate>
 							</regex>
