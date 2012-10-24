@@ -16,11 +16,11 @@ function compare()
     return 1
 }
 
-MAC_OS_ECLIPSE_PATH='/../../../../reposuite-ppa-product/bin/mac/eclipse/eclipse.app/Contents/MacOS/'
-MAC_OS_ECLIPSE_ZIP_PARENT_PATH='/../../../../reposuite-ppa-product/bin/mac/'
+MAC_OS_ECLIPSE_PATH='/../../../../reposuite-codeanalysis-product/bin/mac/eclipse/eclipse.app/Contents/MacOS/'
+MAC_OS_ECLIPSE_ZIP_PARENT_PATH='/../../../../reposuite-codeanalysis-product/bin/mac/'
 
-LINUX_OS_ECLIPSE_ZIP_PARENT_PATH='/../../../../reposuite-ppa-product/bin/linux/'
-LINUX_OS_ECLIPSE_PATH='/../../../../reposuite-ppa-product/bin/linux/eclipse/'
+LINUX_OS_ECLIPSE_ZIP_PARENT_PATH='/../../../../reposuite-codeanalysis-product/bin/linux/'
+LINUX_OS_ECLIPSE_PATH='/../../../../reposuite-codeanalysis-product/bin/linux/eclipse/'
 
 MAC_ARGS='-Dosgi.requiredJavaVersion=1.5 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -XX:MaxPermSize=256m -Xms40m -Xmx512m -Xdock:icon=../Resources/Eclipse.icns -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts'
 LINUX_ARGS=''
@@ -29,7 +29,7 @@ BASIC_VMARGS='-DdisableCrashEmail -Ddatabase.host=quentin.cs.uni-saarland.de -Dd
 
 t="/tmp/t"
 echo $0 > $t
-script_dir=`sed -e 's_reposuite-ppa-eclipse\\.sh__g' $t`
+script_dir=`sed -e 's_reposuite-codeanalysis-eclipse\\.sh__g' $t`
 
 if [[ ! $script_dir == /* ]]
 then
@@ -75,7 +75,7 @@ fi
 
 echo "TEST CASE 1 checking change operations for transaction f99a3ff4615653855c254874f3d4fe0d084f34d2 ... "
 cd $ECLIPSE_PATH
-VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/ppa.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2"
+VMARGS="-vmargs $BASIC_VMARGS -Drepository.uri=/tmp/reposuite_28_01_2011.git/ -Doutput.xml=/tmp/codeanalysis.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2"
 ./eclipse $VMARGS
 
 if [ $? -ne 0 ]
@@ -83,7 +83,7 @@ then
     clean_exit $?
 fi
 
-compare ppa_comp.xml /tmp/ppa.xml
+compare ppa_comp.xml /tmp/codeanalysis.xml
 
 if [ $? -ne 1 ]
 then
@@ -91,7 +91,7 @@ then
     clean_exit $?
 fi
 
-rm -rf /tmp/ppa.xml
+rm -rf /tmp/codeanalysis.xml
 
 # echo "TEST CASE 2 checking change operations for transaction dfd5e8d5eb594e29f507896a744d2bdabfc55cdf ... "
 # cd $ECLIPSE_PATH

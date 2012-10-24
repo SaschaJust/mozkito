@@ -27,12 +27,12 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.core.CoreChangeGenealogy;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsAggregateToolChain;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.GenealogyMetricsToolChain;
-import de.unisaarland.cs.st.moskito.genealogies.metrics.utils.MetricLevel;
-import de.unisaarland.cs.st.moskito.genealogies.settings.GenealogyOptions;
-import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.mozkito.genealogies.core.CoreChangeGenealogy;
+import de.unisaarland.cs.st.mozkito.genealogies.metrics.GenealogyMetricsAggregateToolChain;
+import de.unisaarland.cs.st.mozkito.genealogies.metrics.GenealogyMetricsToolChain;
+import de.unisaarland.cs.st.mozkito.genealogies.metrics.utils.MetricLevel;
+import de.unisaarland.cs.st.mozkito.genealogies.settings.GenealogyOptions;
+import de.unisaarland.cs.st.mozkito.settings.DatabaseOptions;
 
 /**
  * The Class Main.
@@ -56,7 +56,7 @@ public class Main {
 		try {
 			final Settings settings = new Settings();
 			
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "ppa");
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "codeanalysis");
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);
 			

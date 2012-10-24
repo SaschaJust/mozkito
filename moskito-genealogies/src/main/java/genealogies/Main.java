@@ -23,7 +23,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.genealogies.GenealogyToolChain;
+import de.unisaarland.cs.st.mozkito.genealogies.GenealogyToolChain;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>

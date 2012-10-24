@@ -17,7 +17,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.mapping.MappingChain;
+import de.unisaarland.cs.st.mozkito.mappings.MappingChain;
 
 /**
  * The Class Main.

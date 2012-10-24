@@ -3,32 +3,32 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>moskito</artifactId>
+		<artifactId>mozkito</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>moskito-bugs</artifactId>
+	<artifactId>mozkito-bugs</artifactId>
 	<packaging>jar</packaging>
-	<name>moskito-bugs</name>
+	<name>mozkito-bugs</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-persistence</artifactId>
+			<artifactId>mozkito-persistence</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-rcs</artifactId>
+			<artifactId>mozkito-rcs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-utils</artifactId>
+			<artifactId>mozkito-utils</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-xml-bugzilla</artifactId>
+			<artifactId>mozkito-xml-bugzilla</artifactId>
 			<version>4.0.4</version>
 		</dependency>
 		<dependency>

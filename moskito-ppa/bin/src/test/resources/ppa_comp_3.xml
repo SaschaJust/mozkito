@@ -7,7 +7,7 @@
         <JavaMethodCall>
           <fullQualifiedName>UNKNOWNP.UNKNOWN.getSize()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="UNKNOWNP.UNKNOWN.getSize()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="UNKNOWNP.UNKNOWN.getSize()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -19,7 +19,7 @@
         <JavaMethodCall>
           <fullQualifiedName>System.out.println(UNKNOWN)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -29,9 +29,9 @@
       <JavaElementLocation endline="32" id="0" position="789" startline="32">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodCall>
-          <fullQualifiedName>java.HashSet&lt;de.unisaarland.cs.st.moskito.utils.Integer&gt;.&lt;init&gt;()</fullQualifiedName>
+          <fullQualifiedName>java.HashSet&lt;de.unisaarland.cs.st.mozkito.utils.Integer&gt;.&lt;init&gt;()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet&lt;de.unisaarland.cs.st.moskito.utils.Integer&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet&lt;de.unisaarland.cs.st.mozkito.utils.Integer&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -41,17 +41,17 @@
       <JavaElementLocation endline="29" id="0" position="335" startline="17">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
           </parent>
           <children>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.FileReader.&lt;init&gt;(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.readLine()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.&lt;init&gt;(FileReader)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.IOException.printStackTrace()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.LinkedList&lt;de.unisaarland.cs.st.moskito.utils.String&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.List.add(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.FileReader.&lt;init&gt;(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.readLine()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.&lt;init&gt;(FileReader)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.IOException.printStackTrace()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.LinkedList&lt;de.unisaarland.cs.st.mozkito.utils.String&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.List.add(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </children>
         </JavaMethodDefinition>
       </JavaElementLocation>
@@ -62,7 +62,7 @@
         <JavaMethodCall>
           <fullQualifiedName>System.out.println(Delta)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(Delta)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(Delta)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -74,7 +74,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.List.add(String)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.List.add(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.List.add(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -84,12 +84,12 @@
       <JavaElementLocation endline="53" id="0" position="307" startline="15">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaClassDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.mozkito.utils.DiffUtils</fullQualifiedName>
           <parent/>
           <children>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
           </children>
         </JavaClassDefinition>
       </JavaElementLocation>
@@ -100,7 +100,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.HashSet.add(int)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet.add(int)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet.add(int)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -112,7 +112,7 @@
         <JavaMethodCall>
           <fullQualifiedName>difflib.DiffUtils.diff(List,List)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.DiffUtils.diff(List,List)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.DiffUtils.diff(List,List)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -124,7 +124,7 @@
         <JavaMethodCall>
           <fullQualifiedName>difflib.Chunk.getSize()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getSize()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getSize()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -136,7 +136,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.IOException.printStackTrace()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.IOException.printStackTrace()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.IOException.printStackTrace()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -146,15 +146,15 @@
       <JavaElementLocation endline="38" id="0" position="694" startline="31">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
           </parent>
           <children>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet.add(int)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getPosition()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getSize()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet&lt;de.unisaarland.cs.st.moskito.utils.Integer&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet.add(int)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getPosition()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getSize()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.HashSet&lt;de.unisaarland.cs.st.mozkito.utils.Integer&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
           </children>
         </JavaMethodDefinition>
       </JavaElementLocation>
@@ -163,18 +163,18 @@
       <JavaElementLocation endline="52" id="0" position="957" startline="40">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodDefinition>
-          <fullQualifiedName>de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])</fullQualifiedName>
+          <fullQualifiedName>de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils"/>
           </parent>
           <children>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.DiffUtils.diff(List,List)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="UNKNOWNP.UNKNOWN.getSize()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(Delta)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Patch.getDeltas()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Delta.getRevised()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.DiffUtils.diff(List,List)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="UNKNOWNP.UNKNOWN.getSize()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(Delta)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Patch.getDeltas()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Delta.getRevised()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </children>
         </JavaMethodDefinition>
       </JavaElementLocation>
@@ -185,7 +185,7 @@
         <JavaMethodCall>
           <fullQualifiedName>difflib.Delta.getRevised()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Delta.getRevised()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Delta.getRevised()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -197,7 +197,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.Object.fileToLines(String)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -209,7 +209,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.BufferedReader.readLine()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.readLine()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.readLine()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -219,9 +219,9 @@
       <JavaElementLocation endline="18" id="0" position="423" startline="18">
         <filePath>reposuite-utils/src/main/java/de/unisaarland/cs/st/reposuite/utils/DiffUtils.java</filePath>
         <JavaMethodCall>
-          <fullQualifiedName>java.LinkedList&lt;de.unisaarland.cs.st.moskito.utils.String&gt;.&lt;init&gt;()</fullQualifiedName>
+          <fullQualifiedName>java.LinkedList&lt;de.unisaarland.cs.st.mozkito.utils.String&gt;.&lt;init&gt;()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.LinkedList&lt;de.unisaarland.cs.st.moskito.utils.String&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.LinkedList&lt;de.unisaarland.cs.st.mozkito.utils.String&gt;.&lt;init&gt;()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -233,7 +233,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.FileReader.&lt;init&gt;(String)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.FileReader.&lt;init&gt;(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.FileReader.&lt;init&gt;(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -245,7 +245,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.BufferedReader.&lt;init&gt;(FileReader)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.&lt;init&gt;(FileReader)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.fileToLines(String)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.BufferedReader.&lt;init&gt;(FileReader)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.fileToLines(String)"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -257,7 +257,7 @@
         <JavaMethodCall>
           <fullQualifiedName>difflib.Patch.getDeltas()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Patch.getDeltas()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Patch.getDeltas()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -269,7 +269,7 @@
         <JavaMethodCall>
           <fullQualifiedName>java.Object.fileToLines(String)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="java.Object.fileToLines(String)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -281,7 +281,7 @@
         <JavaMethodCall>
           <fullQualifiedName>System.out.println(UNKNOWN)</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.main(String[])"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="System.out.println(UNKNOWN)" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.main(String[])"/>
           </parent>
           <children/>
         </JavaMethodCall>
@@ -293,7 +293,7 @@
         <JavaMethodCall>
           <fullQualifiedName>difflib.Chunk.getPosition()</fullQualifiedName>
           <parent>
-            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getPosition()" deleted="" parent="de.unisaarland.cs.st.moskito.utils.DiffUtils.getLineNumbers(Chunk)"/>
+            <JavaElementRelation added=" 0309f53f798d178aaf519333755c0f62500fcca9" child="difflib.Chunk.getPosition()" deleted="" parent="de.unisaarland.cs.st.mozkito.utils.DiffUtils.getLineNumbers(Chunk)"/>
           </parent>
           <children/>
         </JavaMethodCall>

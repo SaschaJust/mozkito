@@ -7,9 +7,9 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reposuite-ppa</artifactId>
+	<artifactId>reposuite-codeanalysis</artifactId>
 	<packaging>jar</packaging>
-	<name>reposuite-ppa</name>
+	<name>reposuite-codeanalysis</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>ca.mcgill.cs.swevo.ppa</groupId>
-			<artifactId>ppa</artifactId>
+			<artifactId>codeanalysis</artifactId>
 			<version>1.2.0</version>
 		</dependency>
 		<dependency>
@@ -78,12 +78,12 @@
 		</dependency>
 	</dependencies>
 	<properties>
-		<moduleName>ppa</moduleName>
+		<moduleName>codeanalysis</moduleName>
 	</properties>
 	<!-- <build> <plugins> <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId> 
-		<version>1.2</version> <executions> <execution> <id>cp-ppa-to-plugin</id> 
+		<version>1.2</version> <executions> <execution> <id>cp-codeanalysis-to-plugin</id> 
 		<phase>install</phase> <goals> <goal>exec</goal> </goals> <inherited>false</inherited> 
 		</execution> </executions> <configuration> <executable>cp</executable> <arguments> 
-		<argument>target/reposuite-ppa-0.1-SNAPSHOT.jar</argument> <argument>../ppa/reposuite-ppa-plugin/</argument> 
+		<argument>target/reposuite-codeanalysis-0.1-SNAPSHOT.jar</argument> <argument>../codeanalysis/reposuite-codeanalysis-plugin/</argument> 
 		</arguments> </configuration> </plugin> </plugins> </build> -->
 </project>

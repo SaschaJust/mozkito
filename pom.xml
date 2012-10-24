@@ -5,12 +5,12 @@
 		<maven>3.0</maven>
 	</prerequisites>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>moskito</artifactId>
-	<name>moskito</name>
+	<artifactId>mozkito</artifactId>
+	<name>mozkito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<url>http://www.st.cs.uni-saarland.de/moskito</url>
+	<url>http://www.st.cs.uni-saarland.de/mozkito</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
 		<developer>
@@ -39,32 +39,32 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/moskito</connection>
-		<developerConnection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/moskito</developerConnection>
-		<url>https://hg.st.cs.uni-saarland.de/hg/moskito</url>
+		<connection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/mozkito</connection>
+		<developerConnection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/mozkito</developerConnection>
+		<url>https://hg.st.cs.uni-saarland.de/hg/mozkito</url>
 	</scm>
 	<organization>
 		<name>Software Engineering Group at Saarland University</name>
 		<url>http://www.st.cs.uni-saarland.de/</url>
 	</organization>
 	<modules>
-		<module>moskito-utils</module>
-		<module>moskito-persistence</module>
-		<module>moskito-rcs</module>
-		<module>moskito-bugs</module>
-		<module>moskito-bugs-importclassification</module>
-		<module>moskito-persons</module>
-		<module>moskito-mapping</module>
-		<module>moskito-mapping-export</module>
-		<module>moskito-infozilla</module>
-		<module>moskito-genealogies</module>
-		<module>moskito-genealogies-metrics</module>
-		<module>moskito-ltc</module>
-		<module>moskito-untangling</module>
-		<module>moskito-changecouplings</module>
-		<module>moskito-ppa</module>
-		<module>moskito-callgraph</module>
-		<module>moskito-atomicchanges</module>
+		<module>mozkito-utils</module>
+		<module>mozkito-persistence</module>
+		<module>mozkito-rcs</module>
+		<module>mozkito-bugs</module>
+		<module>mozkito-bugs-importclassification</module>
+		<module>mozkito-persons</module>
+		<module>mozkito-mapping</module>
+		<module>mozkito-mapping-export</module>
+		<module>mozkito-infozilla</module>
+		<module>mozkito-genealogies</module>
+		<module>mozkito-genealogies-metrics</module>
+		<module>mozkito-ltc</module>
+		<module>mozkito-untangling</module>
+		<module>mozkito-changecouplings</module>
+		<module>mozkito-ppa</module>
+		<module>mozkito-callgraph</module>
+		<module>mozkito-atomicchanges</module>
 	</modules>
 	<dependencyManagement/>
 	<dependencies>
@@ -222,7 +222,7 @@
 						<haltOnFailure>false</haltOnFailure>
 						<regexes>
 							<regex>
-								<pattern>de.unisaarland.cs.st.moskito.*</pattern>
+								<pattern>de.unisaarland.cs.st.mozkito.*</pattern>
 								<branchRate>90</branchRate>
 								<lineRate>90</lineRate>
 							</regex>
@@ -284,7 +284,7 @@
 					<downloadJavadocs>true</downloadJavadocs>
 					<workspace>${basedir}</workspace>
 					<buildOutputDirectory>${basedir}/eclipse/</buildOutputDirectory>
-					<workspaceCodeStylesURL>file://${basedir}/settings/moskito-style.xml</workspaceCodeStylesURL>
+					<workspaceCodeStylesURL>file://${basedir}/settings/mozkito-style.xml</workspaceCodeStylesURL>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -378,7 +378,7 @@
 	</reporting>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<moduleName>moskito</moduleName>
+		<moduleName>mozkito</moduleName>
 	</properties>
 	<profiles>
 		<profile>

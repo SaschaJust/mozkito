@@ -3,21 +3,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>moskito</artifactId>
+		<artifactId>mozkito</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>moskito-ltc</artifactId>
+	<artifactId>mozkito-causeeffect</artifactId>
 	<packaging>jar</packaging>
-	<name>moskito-ltc</name>
+	<name>mozkito-causeeffect</name>
 	<properties>
-		<moduleName>ltc</moduleName>
+		<moduleName>causeeffect</moduleName>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-genealogies</artifactId>
+			<artifactId>mozkito-genealogies</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

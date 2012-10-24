@@ -3,17 +3,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>moskito</artifactId>
+		<artifactId>mozkito</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>moskito-bugs-importclassification</artifactId>
+	<artifactId>mozkito-bugs-importclassification</artifactId>
 	<packaging>jar</packaging>
-	<name>moskito-bugs-importclassification</name>
+	<name>mozkito-bugs-importclassification</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-bugs</artifactId>
+			<artifactId>mozkito-bugs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

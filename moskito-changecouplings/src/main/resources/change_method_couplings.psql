@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	
 	plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
 	plpy.execute("CREATE TABLE "+tablename+"TMP (tid character varying(40), fullqualifiedname text)")
-	plpy.execute("INSERT INTO "+tablename+"TMP (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
+	plpy.execute("INSERT INTO "+tablename+"TMP (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='de.unisaarland.cs.st.mozkito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
 	plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
 	plpy.execute("CREATE TABLE "+str(tablename)+" (premise text[], implication text, support integer, confidence float)")
 	

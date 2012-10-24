@@ -27,9 +27,9 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
-import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
-import de.unisaarland.cs.st.moskito.rcs.atomic.AtomicTransactionImporter;
-import de.unisaarland.cs.st.moskito.settings.DatabaseOptions;
+import de.unisaarland.cs.st.mozkito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.mozkito.rcs.atomic.AtomicTransactionImporter;
+import de.unisaarland.cs.st.mozkito.settings.DatabaseOptions;
 
 /**
  * @author Kim Herzig <herzig@cs.uni-saarland.de>

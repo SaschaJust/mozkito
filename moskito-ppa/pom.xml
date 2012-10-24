@@ -2,22 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>moskito</artifactId>
+		<artifactId>mozkito</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>moskito-ppa</artifactId>
+	<artifactId>mozkito-codeanalysis</artifactId>
 	<packaging>jar</packaging>
-	<name>moskito-ppa</name>
+	<name>mozkito-codeanalysis</name>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-rcs</artifactId>
+			<artifactId>mozkito-rcs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-utils</artifactId>
+			<artifactId>mozkito-utils</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -77,7 +77,7 @@
 		</dependency>
 	</dependencies>
 	<properties>
-		<moduleName>ppa</moduleName>
+		<moduleName>codeanalysis</moduleName>
 	</properties>
 	<build>
 		<plugins>
@@ -126,9 +126,9 @@
 		</plugins>
 	</build>
 	<!-- <build> <plugins> <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId> 
-		<version>1.2</version> <executions> <execution> <id>cp-ppa-to-plugin</id> 
+		<version>1.2</version> <executions> <execution> <id>cp-codeanalysis-to-plugin</id> 
 		<phase>install</phase> <goals> <goal>exec</goal> </goals> <inherited>false</inherited> 
 		</execution> </executions> <configuration> <executable>cp</executable> <arguments> 
-		<argument>target/moskito-ppa-0.1-SNAPSHOT.jar</argument> <argument>../ppa/moskito-ppa-plugin/</argument> 
+		<argument>target/mozkito-codeanalysis-0.1-SNAPSHOT.jar</argument> <argument>../codeanalysis/mozkito-codeanalysis-plugin/</argument> 
 		</arguments> </configuration> </plugin> </plugins> </build> -->
 </project>

@@ -3,31 +3,31 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>de.unisaarland.cs.st</groupId>
-		<artifactId>moskito</artifactId>
+		<artifactId>mozkito</artifactId>
 		<version>0.4-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.unisaarland.cs.st</groupId>
-	<artifactId>moskito-genealogies-metrics</artifactId>
+	<artifactId>mozkito-genealogies-metrics</artifactId>
 	<packaging>jar</packaging>
-	<name>moskito-genealogies-metrics</name>
+	<name>mozkito-genealogies-metrics</name>
 	<properties>
 		<moduleName>genealogies-metrics</moduleName>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-genealogies</artifactId>
+			<artifactId>mozkito-genealogies</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-bugs</artifactId>
+			<artifactId>mozkito-bugs</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unisaarland.cs.st</groupId>
-			<artifactId>moskito-persistence</artifactId>
+			<artifactId>mozkito-persistence</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
