@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
@@ -32,9 +33,14 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import serp.util.Strings;
 import au.com.bytecode.opencsv.CSVReader;
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
@@ -64,6 +70,9 @@ public class RegexEngine extends MappingEngine {
 		/** The score. */
 		private double score;
 		
+		/** The comment. */
+		private String comment;
+		
 		/**
 		 * Instantiates a new matcher.
 		 * 
@@ -73,12 +82,38 @@ public class RegexEngine extends MappingEngine {
 		 *            the pattern
 		 * @param options
 		 *            the options
+		 * @param comment
+		 *            the comment
 		 */
-		public Matcher(final String score, final String pattern, final String options) {
+		public Matcher(final String score, final String pattern, final String options, final String comment) {
 			setScore(Double.parseDouble(score));
-			setRegex(new Regex(pattern, !options.isEmpty() && options.equalsIgnoreCase("CASE_INSENSITIVE") //$NON-NLS-1$
-			        ? Pattern.CASE_INSENSITIVE
-			        : 0));
+			if (!options.isEmpty()) {
+				if (options.equalsIgnoreCase("CASE_INSENSITIVE")) { //$NON-NLS-1$
+					setRegex(new Regex(pattern, Pattern.CASE_INSENSITIVE));
+				} else {
+					throw new UnrecoverableError("Unsupported regular expression option: " + options); //$NON-NLS-1$
+				}
+			} else {
+				setRegex(new Regex(pattern));
+			}
+			setComment(comment);
+		}
+		
+		/**
+		 * Gets the comment.
+		 * 
+		 * @return the comment
+		 */
+		@SuppressWarnings ("unused")
+		public final String getComment() {
+			// PRECONDITIONS
+			
+			try {
+				return this.comment;
+			} finally {
+				// POSTCONDITIONS
+				Condition.notNull(this.comment, "Field '%s' in '%s'.", "comment", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		
 		/**
@@ -89,7 +124,7 @@ public class RegexEngine extends MappingEngine {
 		 * @return the regex
 		 */
 		public Regex getRegex(final String id) {
-			return new Regex(this.regex.getPattern().replace("##ID##", "" + id)); //$NON-NLS-1$ //$NON-NLS-2$
+			return new Regex(this.regex.getPattern().replaceAll("##ID##", id)); //$NON-NLS-1$ 
 		}
 		
 		/**
@@ -99,6 +134,25 @@ public class RegexEngine extends MappingEngine {
 		 */
 		public double getScore() {
 			return this.score;
+		}
+		
+		/**
+		 * Sets the comment.
+		 * 
+		 * @param comment
+		 *            the comment to set
+		 */
+		public final void setComment(final String comment) {
+			// PRECONDITIONS
+			Condition.notNull(comment, "Argument '%s' in '%s'.", "comment", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			try {
+				this.comment = comment;
+			} finally {
+				// POSTCONDITIONS
+				CompareCondition.equals(this.comment, comment,
+				                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+			}
 		}
 		
 		/**
@@ -143,7 +197,11 @@ public class RegexEngine extends MappingEngine {
 	 */
 	public static final class Options extends ArgumentSetOptions<RegexEngine, ArgumentSet<RegexEngine, Options>> {
 		
-		private URIArgument.Options configURIOption;
+		/** The config uri option. */
+		private URIArgument.Options    configURIOption;
+		
+		/** The unpad option. */
+		private StringArgument.Options unpadOption;
 		
 		/**
 		 * Instantiates a new options.
@@ -154,7 +212,8 @@ public class RegexEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, RegexEngine.class.getSimpleName(), "...", requirements);
+			super(argumentSet, RegexEngine.class.getSimpleName(), Messages.getString("RegexEngine.description"), //$NON-NLS-1$
+			      requirements);
 		}
 		
 		/*
@@ -167,7 +226,14 @@ public class RegexEngine extends MappingEngine {
 			
 			try {
 				final URIArgument configURIArgument = getSettings().getArgument(this.configURIOption);
-				return new RegexEngine(configURIArgument.getValue());
+				final RegexEngine engine = new RegexEngine(configURIArgument.getValue());
+				final StringArgument unpadArgument = getSettings().getArgument(this.unpadOption);
+				
+				if (unpadArgument.getValue() != null) {
+					engine.unpad = unpadArgument.getValue();
+				}
+				
+				return engine;
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -189,6 +255,12 @@ public class RegexEngine extends MappingEngine {
 				                                               Messages.getString("RegexEngine.configDescription"), //$NON-NLS-1$
 				                                               null, Requirement.required);
 				map.put(this.configURIOption.getName(), this.configURIOption);
+				
+				this.unpadOption = new StringArgument.Options(
+				                                              argumentSet,
+				                                              "unpad", Messages.getString("RegexEngine.unpadDescription"), null, Requirement.optional); //$NON-NLS-1$ //$NON-NLS-2$
+				map.put(this.unpadOption.getName(), this.unpadOption);
+				
 				return map;
 			} finally {
 				// POSTCONDITIONS
@@ -197,6 +269,9 @@ public class RegexEngine extends MappingEngine {
 		
 	}
 	
+	/** The unpad. */
+	public String               unpad;
+	
 	/*
 	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)" Pattern.CASE_INSENSITIVE 1.0
 	 * "fixing bug #({match}##ID##)" Pattern.CASE_INSENSITIVE
@@ -204,10 +279,14 @@ public class RegexEngine extends MappingEngine {
 	/** The matchers. */
 	private Collection<Matcher> matchers;
 	
+	/** The config uri. */
 	private URI                 configURI;
 	
 	/**
-	 * @param configURIArgument
+	 * Instantiates a new regex engine.
+	 * 
+	 * @param configURI
+	 *            the config uri
 	 */
 	private RegexEngine(@NotNull final URI configURI) {
 		// PRECONDITIONS
@@ -225,9 +304,17 @@ public class RegexEngine extends MappingEngine {
 			                                            ' ')) {
 				String[] line = null;
 				while ((line = reader.readNext()) != null) {
-					getMatchers().add(new Matcher(line[0], line[1], line.length > 2
-					                                                               ? line[2]
-					                                                               : "")); //$NON-NLS-1$
+					if (line.length < 2) {
+						throw new UnrecoverableError(String.format("Invalid regex config: %s", Strings.join(line, " "))); //$NON-NLS-1$//$NON-NLS-2$
+						
+					} else {
+						getMatchers().add(new Matcher(
+						                              line[0],
+						                              line[1],
+						                              line.length > 2
+						                                             ? line[2]
+						                                             : "", line.length > 3 ? Strings.join(ArrayUtils.subarray(line, 3, line.length), " ").replaceAll("^\\s*//\\s*", "") : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					}
 				}
 				
 				if (Logger.logDebug()) {
@@ -263,7 +350,7 @@ public class RegexEngine extends MappingEngine {
 	 */
 	@Override
 	public final String getDescription() {
-		return Messages.getString("RegexEngine.description") + ": " + (getConfigURI() != null ? getConfigURI().toString() : "not yet configured"); //$NON-NLS-1$ //$NON-NLS-2$
+		return Messages.getString("RegexEngine.description") + ": " + (getConfigURI() != null ? getConfigURI().toString() : "not yet configured"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**
@@ -293,18 +380,27 @@ public class RegexEngine extends MappingEngine {
 		}
 		
 		for (final Matcher matcher : this.matchers) {
-			final Regex regex = matcher.getRegex(element2.getId());
+			final String id = element2.getId();
+			
+			if (this.unpad != null) {
+				if (Logger.logDebug()) {
+					Logger.debug("Unpadding '%s' using [%s].", id, this.unpad); //$NON-NLS-1$
+				}
+				id.replaceAll("^[" + this.unpad + "]+", "[" + this.unpad + "]*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			
+			final Regex regex = matcher.getRegex(id);
 			
 			if (value < matcher.getScore()) {
-				
 				if (Logger.logDebug()) {
 					Logger.debug("Using regex '" + regex.getPattern() + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+				
 				if ((regex.find(element1.get(FieldKey.BODY).toString()) != null) && (matcher.getScore() > value)) {
 					value = matcher.getScore();
 					relevantString = regex.getGroup("match"); //$NON-NLS-1$
 					if (Logger.logDebug()) {
-						Logger.debug("Found match: %s", relevantString);
+						Logger.debug("Found match: %s", relevantString); //$NON-NLS-1$
 					}
 				}
 			}

@@ -12,8 +12,11 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.engines;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -22,14 +25,26 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableEntity;
+import de.unisaarland.cs.st.moskito.mapping.mappable.model.MappableTransaction;
 import de.unisaarland.cs.st.moskito.mapping.model.Relation;
 import de.unisaarland.cs.st.moskito.mapping.requirements.And;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Atom;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Expression;
 import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
+import de.unisaarland.cs.st.moskito.persistence.PPAPersistenceUtil;
+import de.unisaarland.cs.st.moskito.persistence.PersistenceUtil;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaChangeOperation;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaElement;
+import de.unisaarland.cs.st.moskito.ppa.model.JavaMethodDefinition;
+import de.unisaarland.cs.st.moskito.rcs.elements.ChangeType;
+import de.unisaarland.cs.st.moskito.rcs.model.RCSTransaction;
 
 /**
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set
@@ -38,13 +53,13 @@ import de.unisaarland.cs.st.moskito.mapping.requirements.Index;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-public class AuthorEqualityEngine extends MappingEngine {
+public class MethodModificationEngine extends MappingEngine {
 	
 	/**
 	 * The Class Options.
 	 */
 	public static final class Options extends
-	        ArgumentSetOptions<AuthorEqualityEngine, ArgumentSet<AuthorEqualityEngine, Options>> {
+	        ArgumentSetOptions<MethodModificationEngine, ArgumentSet<MethodModificationEngine, Options>> {
 		
 		/** The confidence option. */
 		private DoubleArgument.Options confidenceOption;
@@ -58,7 +73,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, AuthorEqualityEngine.class.getSimpleName(), "...", requirements); //$NON-NLS-1$
+			super(argumentSet, MethodModificationEngine.class.getSimpleName(), "...", requirements); //$NON-NLS-1$
 		}
 		
 		/*
@@ -66,12 +81,12 @@ public class AuthorEqualityEngine extends MappingEngine {
 		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 		 */
 		@Override
-		public AuthorEqualityEngine init() {
+		public MethodModificationEngine init() {
 			// PRECONDITIONS
 			
 			try {
 				final DoubleArgument confidenceArgument = getSettings().getArgument(this.confidenceOption);
-				return new AuthorEqualityEngine(confidenceArgument.getValue());
+				return new MethodModificationEngine(confidenceArgument.getValue());
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -89,12 +104,14 @@ public class AuthorEqualityEngine extends MappingEngine {
 			
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
+				
 				this.confidenceOption = new DoubleArgument.Options(
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
-				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
+				                                                   Messages.getString("MethodModificationEngine.confidenceDescription"), //$NON-NLS-1$
 				                                                   getDefaultConfidence(), Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
+				
 				return map;
 			} finally {
 				// POSTCONDITIONS
@@ -107,8 +124,8 @@ public class AuthorEqualityEngine extends MappingEngine {
 	private static final Double DEFAULT_CONFIDENCE = 0.2d;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
-	                                                                                                         
+	private static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
+	                                                                                                             
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -122,7 +139,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
-			                  AuthorEqualityEngine.class.getSimpleName());
+			                  MethodModificationEngine.class.getSimpleName());
 		}
 	}
 	
@@ -135,7 +152,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	public AuthorEqualityEngine(final double confidence) {
+	public MethodModificationEngine(final double confidence) {
 		// PRECONDITIONS
 		
 		try {
@@ -185,15 +202,42 @@ public class AuthorEqualityEngine extends MappingEngine {
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
 	                        final Relation score) {
+		int matches = 0;
+		final StringBuilder builder = new StringBuilder();
 		double localConfidence = 0d;
+		// TODO get real PersistenceUtil
+		final PersistenceUtil util = null;
+		final Set<String> subjects = new HashSet<>();
 		
-		// check if the values in the author fields are equal
-		if (from.get(FieldKey.AUTHOR).equals(to.get(FieldKey.AUTHOR))) {
-			localConfidence = getConfidence();
+		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(util,
+		                                                                                               ((MappableTransaction) from).getTransaction());
+		
+		for (final JavaChangeOperation operation : changeOperations) {
+			if (operation.getChangeType().equals(ChangeType.Modified)) {
+				
+				final JavaElement javaElement = operation.getChangedElementLocation().getElement();
+				if (javaElement instanceof JavaMethodDefinition) {
+					final String fullQualifiedName = javaElement.getFullQualifiedName();
+					subjects.add(fullQualifiedName);
+				}
+			}
 		}
 		
-		addFeature(score, localConfidence, FieldKey.AUTHOR.name(), from.get(FieldKey.AUTHOR),
-		           from.get(FieldKey.AUTHOR), FieldKey.AUTHOR.name(), to.get(FieldKey.AUTHOR), to.get(FieldKey.AUTHOR));
+		for (final String subject : subjects) {
+			final String bodyText = (String) to.get(FieldKey.BODY);
+			if (StringUtils.containsIgnoreCase(bodyText, subject)) {
+				++matches;
+				if (builder.length() > 0) {
+					builder.append(',');
+				}
+				builder.append(subject.toUpperCase());
+			}
+		}
+		
+		localConfidence = ((double) matches) / ((double) subjects.size());
+		
+		addFeature(score, localConfidence, "JAVA_CHANGE_OPERATION", "", //$NON-NLS-1$ //$NON-NLS-2$
+		           JavaUtils.collectionToString(subjects), FieldKey.BODY.name(), "", builder.toString()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -203,7 +247,7 @@ public class AuthorEqualityEngine extends MappingEngine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new And(new Atom(Index.FROM, FieldKey.AUTHOR), new Atom(Index.TO, FieldKey.AUTHOR));
+		return new And(new Atom(Index.FROM, RCSTransaction.class), new Atom(Index.TO, FieldKey.BODY));
 	}
 	
 }

@@ -12,8 +12,11 @@
  ******************************************************************************/
 package de.unisaarland.cs.st.moskito.mapping.mappable.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
@@ -27,6 +30,12 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import com.aliasi.sentences.MedlineSentenceModel;
+import com.aliasi.sentences.SentenceModel;
+import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
+import com.aliasi.tokenizer.Tokenizer;
+import com.aliasi.tokenizer.TokenizerFactory;
 
 import de.unisaarland.cs.st.moskito.mapping.mappable.FieldKey;
 import de.unisaarland.cs.st.moskito.rcs.model.RCSFile;
@@ -46,8 +55,58 @@ public class MappableTransaction extends MappableEntity {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3493346151115096823L;
 	
+	public static void main(final String[] args) {
+		final String text = "refactoring untangling to 1) bring it up-to-date to moskito, 2) to use dynamic settings. 3) Also fixed multiple issues.\n"
+		        + "    \n"
+		        + "    This change set is not tested. But Untangling didn't work before either. Was not yet adapted to moskito, was still on reposuite code base.";
+		
+		final List<String> sentences = new LinkedList<>();
+		
+		final List<String> tokenList = new ArrayList<String>();
+		final List<String> whiteList = new ArrayList<String>();
+		final Tokenizer tokenizer = TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
+		tokenizer.tokenize(tokenList, whiteList);
+		
+		final String[] tokens = new String[tokenList.size()];
+		final String[] whites = new String[whiteList.size()];
+		tokenList.toArray(tokens);
+		whiteList.toArray(whites);
+		final int[] sentenceBoundaries = SENTENCE_MODEL.boundaryIndices(tokens, whites);
+		
+		int sentStartTok = 0;
+		int sentEndTok = 0;
+		for (int i = 0; i < sentenceBoundaries.length; ++i) {
+			sentEndTok = sentenceBoundaries[i];
+			
+			final StringBuilder builder = new StringBuilder();
+			
+			for (int j = sentStartTok; j <= sentEndTok; j++) {
+				builder.append(tokens[j] + whites[j + 1]);
+			}
+			
+			sentStartTok = sentEndTok + 1;
+			
+			sentences.add(builder.toString().replaceAll("[\r\n]", " ")); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		
+		int i = 0;
+		for (final String sentence : sentences) {
+			System.err.print("Sentence " + ++i + ":   ");
+			System.err.println(sentence);
+		}
+		
+		// final Map<String, String> enumerations = Information.enumerations(text);
+		// for (final String key : enumerations.keySet()) {
+		// System.err.println("Enum " + key + ": ");
+		// System.err.println("   " + enumerations.get(key));
+		// }
+	}
+	
 	/** The transaction. */
-	private RCSTransaction    transaction;
+	private RCSTransaction        transaction;
+	static final TokenizerFactory TOKENIZER_FACTORY = IndoEuropeanTokenizerFactory.INSTANCE;
+	
+	static final SentenceModel    SENTENCE_MODEL    = new MedlineSentenceModel();
 	
 	/**
 	 * Instantiates a new mappable transaction.
@@ -169,6 +228,45 @@ public class MappableTransaction extends MappableEntity {
 	@Transient
 	public String getId() {
 		return getTransaction().getId();
+	}
+	
+	/**
+	 * Gets the sentences.
+	 * 
+	 * @return the sentences
+	 */
+	public List<String> getSentences() {
+		final String text = getTransaction().getMessage();
+		final List<String> sentences = new LinkedList<>();
+		
+		final List<String> tokenList = new ArrayList<String>();
+		final List<String> whiteList = new ArrayList<String>();
+		final Tokenizer tokenizer = TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
+		tokenizer.tokenize(tokenList, whiteList);
+		
+		final String[] tokens = new String[tokenList.size()];
+		final String[] whites = new String[whiteList.size()];
+		tokenList.toArray(tokens);
+		whiteList.toArray(whites);
+		final int[] sentenceBoundaries = SENTENCE_MODEL.boundaryIndices(tokens, whites);
+		
+		int sentStartTok = 0;
+		int sentEndTok = 0;
+		for (int i = 0; i < sentenceBoundaries.length; ++i) {
+			sentEndTok = sentenceBoundaries[i];
+			
+			final StringBuilder builder = new StringBuilder();
+			
+			for (int j = sentStartTok; j <= sentEndTok; j++) {
+				builder.append(tokens[j] + whites[j + 1]);
+			}
+			
+			sentStartTok = sentEndTok + 1;
+			
+			sentences.add(builder.toString().replaceAll("[\r\n]", " ")); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		
+		return sentences;
 	}
 	
 	/*

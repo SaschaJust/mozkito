@@ -101,9 +101,8 @@ public class ReportTypeEngine extends MappingEngine {
 				                                                   getDefaultConfidence(), Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				
-				this.typeOption = new EnumArgument.Options<Type>(
-				                                                 argumentSet,
-				                                                 "type",
+				this.typeOption = new EnumArgument.Options<Type>(argumentSet,
+				                                                 "type", //$NON-NLS-1$
 				                                                 Messages.getString("ReportTypeEngine.typeDescription"), //$NON-NLS-1$
 				                                                 getDefaultType(), Requirement.required);
 				map.put(this.typeOption.getName(), this.typeOption);

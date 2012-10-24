@@ -32,8 +32,10 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.compress.changes.ChangeSet;
+
 import de.unisaarland.cs.st.moskito.untangling.Untangling;
-import de.unisaarland.cs.st.moskito.untangling.blob.ChangeSet;
 
 /**
  * The Class SVMAggregation.
