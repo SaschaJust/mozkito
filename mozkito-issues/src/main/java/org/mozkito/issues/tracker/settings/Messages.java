@@ -20,21 +20,22 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Messages.
- *
+ * 
  * @author Kim Herzig <herzig@cs.uni-saarland.de>
  */
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String         BUNDLE_NAME     = "org.mozkito.bugs.tracker.settings.messages"; //$NON-NLS-1$
-	                                                                                                                     
+	private static final String         BUNDLE_NAME     = "org.mozkito.issues.tracker.settings.messages"; //$NON-NLS-1$
+	                                                                                                      
 	/** The Constant RESOURCE_BUNDLE. */
 	private static final ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
 	/**
 	 * Gets the string.
-	 *
-	 * @param key the key
+	 * 
+	 * @param key
+	 *            the key
 	 * @return the string
 	 */
 	public static String getString(final String key) {
