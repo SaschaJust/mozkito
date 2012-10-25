@@ -23,7 +23,7 @@
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -34,7 +34,7 @@
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
 		</properties>
 	</persistence-unit>
-	<persistence-unit name="rcs" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="versions" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
 		<class>org.mozkito.persistence.model.DateTimeTuple</class>
@@ -43,14 +43,14 @@
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -61,7 +61,7 @@
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
 		</properties>
 	</persistence-unit>
-	<persistence-unit name="bugs" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="issues" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
 		<class>org.mozkito.persistence.model.DateTimeTuple</class>
@@ -69,22 +69,22 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>org.mozkito.bugs.tracker.model.Comment</class>
-		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>org.mozkito.bugs.tracker.model.History</class>
-		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>org.mozkito.bugs.tracker.model.Report</class>
-		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.issues.tracker.model.Comment</class>
+		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.issues.tracker.model.History</class>
+		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
+		<class>org.mozkito.issues.tracker.model.Report</class>
+		<class>org.mozkito.issues.tracker.model.EnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -95,38 +95,38 @@
 			<property name="openjpa.ConnectionFactoryProperties" value="PrettyPrint=true, PrettyPrintLineLength=72, PrintParameters=True"/>
 		</properties>
 	</persistence-unit>
-	<persistence-unit name="mapping" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="mappings" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 		<class>org.mozkito.persistence.model.DateTimeTuple</class>
 		<class>org.mozkito.persistence.model.EnumTuple</class>
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>org.mozkito.bugs.tracker.model.Comment</class>
-		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>org.mozkito.bugs.tracker.model.History</class>
-		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>org.mozkito.bugs.tracker.model.Report</class>
-		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
-		<class>org.mozkito.mapping.model.Mapping</class>
-		<class>org.mozkito.mapping.model.Class2Bugs</class>
-		<class>org.mozkito.mapping.model.File2Bugs</class>
-		<class>org.mozkito.mapping.model.FilteredMapping</class>
-		<class>org.mozkito.mapping.model.Method2Bugs</class>
-		<class>org.mozkito.mapping.model.MappingEngineFeature</class>
-		<class>org.mozkito.mapping.mappable.model.MappableEntity</class>
-		<class>org.mozkito.mapping.mappable.model.MappableReport</class>
-		<class>org.mozkito.mapping.mappable.model.MappableTransaction</class>
+		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.issues.tracker.model.Comment</class>
+		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.issues.tracker.model.History</class>
+		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
+		<class>org.mozkito.issues.tracker.model.Report</class>
+		<class>org.mozkito.issues.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.mappings.model.mappings</class>
+		<class>org.mozkito.mappings.model.Class2issues</class>
+		<class>org.mozkito.mappings.model.File2issues</class>
+		<class>org.mozkito.mappings.model.Filteredmappings</class>
+		<class>org.mozkito.mappings.model.Method2issues</class>
+		<class>org.mozkito.mappings.model.mappingsEngineFeature</class>
+		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleEntity</class>
+		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleReport</class>
+		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<!--<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>-->
+			<!--<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>-->
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -139,7 +139,7 @@
 			<property name="openjpa.Compatibility" value="QuotedNumbersInQueries=true"/>
 		</properties>
 	</persistence-unit>
-	<persistence-unit name="ppa" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="codeanalysis" transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
 		</provider>
 		<class>org.mozkito.persistence.model.DateTimeTuple</class>
@@ -147,28 +147,28 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
-		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>org.mozkito.bugs.tracker.model.Comment</class>
-		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>org.mozkito.bugs.tracker.model.History</class>
-		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>org.mozkito.bugs.tracker.model.Report</class>
-		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.issues.tracker.model.Comment</class>
+		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.issues.tracker.model.History</class>
+		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
+		<class>org.mozkito.issues.tracker.model.Report</class>
+		<class>org.mozkito.issues.tracker.model.EnhancedReport</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.ppa.model.JavaElement</class>
-		<class>org.mozkito.ppa.model.JavaTypeDefinition</class>
-		<class>org.mozkito.ppa.model.JavaElementLocation</class>
-		<class>org.mozkito.ppa.model.JavaChangeOperation</class>
-		<class>org.mozkito.ppa.model.JavaMethodCall</class>
-		<class>org.mozkito.ppa.model.JavaMethodDefinition</class>
+		<class>org.mozkito.codeanalysis.model.JavaElement</class>
+		<class>org.mozkito.codeanalysis.model.JavaTypeDefinition</class>
+		<class>org.mozkito.codeanalysis.model.JavaElementLocation</class>
+		<class>org.mozkito.codeanalysis.model.JavaChangeOperation</class>
+		<class>org.mozkito.codeanalysis.model.JavaMethodCall</class>
+		<class>org.mozkito.codeanalysis.model.JavaMethodDefinition</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://grid1.st.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -187,21 +187,21 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.ppa.model.JavaElement</class>
-		<class>org.mozkito.ppa.model.JavaTypeDefinition</class>
-		<class>org.mozkito.ppa.model.JavaElementLocation</class>
-		<class>org.mozkito.ppa.model.JavaChangeOperation</class>
-		<class>org.mozkito.ppa.model.JavaMethodCall</class>
-		<class>org.mozkito.ppa.model.JavaMethodDefinition</class>
+		<class>org.mozkito.codeanalysis.model.JavaElement</class>
+		<class>org.mozkito.codeanalysis.model.JavaTypeDefinition</class>
+		<class>org.mozkito.codeanalysis.model.JavaElementLocation</class>
+		<class>org.mozkito.codeanalysis.model.JavaChangeOperation</class>
+		<class>org.mozkito.codeanalysis.model.JavaMethodCall</class>
+		<class>org.mozkito.codeanalysis.model.JavaMethodDefinition</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
@@ -220,22 +220,22 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.rcs.model.RCSBranch</class>
-		<class>org.mozkito.rcs.model.RCSFile</class>
-		<class>org.mozkito.rcs.model.RCSRevision</class>
-		<class>org.mozkito.rcs.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.versionsBranch</class>
+		<class>org.mozkito.versions.model.versionsFile</class>
+		<class>org.mozkito.versions.model.versionsRevision</class>
+		<class>org.mozkito.versions.model.versionsTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.bugs.tracker.model.AttachmentEntry</class>
-		<class>org.mozkito.bugs.tracker.model.Comment</class>
-		<class>org.mozkito.bugs.tracker.model.CommentPrimaryKey</class>
-		<class>org.mozkito.bugs.tracker.model.History</class>
-		<class>org.mozkito.bugs.tracker.model.HistoryElement</class>
-		<class>org.mozkito.bugs.tracker.model.Report</class>
-		<class>org.mozkito.bugs.tracker.model.EnhancedReport</class>
+		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
+		<class>org.mozkito.issues.tracker.model.Comment</class>
+		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
+		<class>org.mozkito.issues.tracker.model.History</class>
+		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
+		<class>org.mozkito.issues.tracker.model.Report</class>
+		<class>org.mozkito.issues.tracker.model.EnhancedReport</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<property name="openjpa.jdbc.SynchronizeMappings" value="validate"/>
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
