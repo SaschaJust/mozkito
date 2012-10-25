@@ -23,25 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.persistence.PPAPersistenceUtil;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.untangling.Untangling.ScoreCombinationMode;
-import org.mozkito.untangling.Untangling.UntanglingCollapse;
-import org.mozkito.untangling.blob.ArtificialBlobGenerator;
-import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
-import org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator;
-import org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
-import org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator;
-import org.mozkito.untangling.voters.CallGraphVoter;
-import org.mozkito.untangling.voters.ChangeCouplingVoter;
-import org.mozkito.untangling.voters.DataDependencyVoter;
-import org.mozkito.untangling.voters.TestImpactVoter;
-import org.mozkito.untangling.voters.TestImpactVoter.Factory;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
@@ -58,6 +39,25 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.PPAPersistenceUtil;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.untangling.Untangling.ScoreCombinationMode;
+import org.mozkito.untangling.Untangling.UntanglingCollapse;
+import org.mozkito.untangling.blob.ArtificialBlobGenerator;
+import org.mozkito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
+import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator;
+import org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
+import org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator;
+import org.mozkito.untangling.voters.CallGraphVoter;
+import org.mozkito.untangling.voters.ChangeCouplingVoter;
+import org.mozkito.untangling.voters.DataDependencyVoter;
+import org.mozkito.untangling.voters.TestImpactVoter;
+import org.mozkito.untangling.voters.TestImpactVoter.Factory;
+import org.mozkito.versions.model.RCSTransaction;
+
 /**
  * The Class UntanglingOptions.
  * 
@@ -67,84 +67,82 @@ public class UntanglingOptions extends
         ArgumentSetOptions<UntanglingControl, ArgumentSet<UntanglingControl, UntanglingOptions>> {
 	
 	/** The repository options. */
-	private RepositoryOptions                                                                             repositoryOptions;
+	private RepositoryOptions                                                             repositoryOptions;
 	
 	/** The atomic changes options. */
-	private ListArgument.Options                                                                          atomicChangesOptions;
+	private ListArgument.Options                                                          atomicChangesOptions;
 	
 	/** The use call graph options. */
-	private BooleanArgument.Options                                                                       useCallGraphOptions;
+	private BooleanArgument.Options                                                       useCallGraphOptions;
 	
 	/** The use change couplings options. */
-	private BooleanArgument.Options                                                                       useChangeCouplingsOptions;
+	private BooleanArgument.Options                                                       useChangeCouplingsOptions;
 	
 	/** The use data dependencies options. */
-	private BooleanArgument.Options                                                                       useDataDependenciesOptions;
+	private BooleanArgument.Options                                                       useDataDependenciesOptions;
 	
 	/** The use test impact options. */
-	private BooleanArgument.Options                                                                       useTestImpactOptions;
+	private BooleanArgument.Options                                                       useTestImpactOptions;
 	
 	/** The min blob size options. */
-	private LongArgument.Options                                                                          minBlobSizeOptions;
+	private LongArgument.Options                                                          minBlobSizeOptions;
 	
 	/** The max blob size options. */
-	private LongArgument.Options                                                                          maxBlobSizeOptions;
+	private LongArgument.Options                                                          maxBlobSizeOptions;
 	
 	/** The out options. */
-	private OutputFileArgument.Options                                                                    outOptions;
+	private OutputFileArgument.Options                                                    outOptions;
 	
 	/** The dry run options. */
-	private BooleanArgument.Options                                                                       dryRunOptions;
+	private BooleanArgument.Options                                                       dryRunOptions;
 	
 	/** The n options. */
-	private LongArgument.Options                                                                          nOptions;
+	private LongArgument.Options                                                          nOptions;
 	
 	/** The seed options. */
-	private LongArgument.Options                                                                          seedOptions;
+	private LongArgument.Options                                                          seedOptions;
 	
 	/** The collapse mode options. */
-	private EnumArgument.Options<UntanglingCollapse>                                                      collapseModeOptions;
+	private EnumArgument.Options<UntanglingCollapse>                                      collapseModeOptions;
 	
 	/** The score mode options. */
-	private EnumArgument.Options<ScoreCombinationMode>                                                    scoreModeOptions;
+	private EnumArgument.Options<ScoreCombinationMode>                                    scoreModeOptions;
 	
 	/** The generator strategy options. */
-	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy>                 generatorStrategyOptions;
+	private EnumArgument.Options<ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy> generatorStrategyOptions;
 	
 	/** The database options. */
-	private DatabaseOptions                                                                               databaseOptions;
+	private DatabaseOptions                                                               databaseOptions;
 	
 	/** The change coupling combine options. */
-	private org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator.Options    changeCouplingCombineOptions;
+	private org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator.Options     changeCouplingCombineOptions;
 	
 	/** The consecutive combine options. */
-	private org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator.Options consecutiveCombineOptions;
+	private org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator.Options  consecutiveCombineOptions;
 	
 	/** The blob window size options. */
-	private Options                                                                                       blobWindowSizeOptions;
+	private Options                                                                       blobWindowSizeOptions;
 	
 	/** The package distance combine options. */
-	private org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator.Options   packageDistanceCombineOptions;
+	private org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator.Options    packageDistanceCombineOptions;
 	
 	/** The call graph voter options. */
-	private org.mozkito.untangling.voters.CallGraphVoter.Options                         callGraphVoterOptions;
+	private org.mozkito.untangling.voters.CallGraphVoter.Options                          callGraphVoterOptions;
 	
 	/** The change coupling voter options. */
-	private org.mozkito.untangling.voters.ChangeCouplingVoter.Options                    changeCouplingVoterOptions;
+	private org.mozkito.untangling.voters.ChangeCouplingVoter.Options                     changeCouplingVoterOptions;
 	
 	/** The data dependency voter options. */
-	private org.mozkito.untangling.voters.DataDependencyVoter.Options                    dataDependencyVoterOptions;
+	private org.mozkito.untangling.voters.DataDependencyVoter.Options                     dataDependencyVoterOptions;
 	
 	/** The test impact voter options. */
-	private org.mozkito.untangling.voters.TestImpactVoter.Options                        testImpactVoterOptions;
+	private org.mozkito.untangling.voters.TestImpactVoter.Options                         testImpactVoterOptions;
 	
-	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                                      artificialBlobCacheOptions;
+	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                      artificialBlobCacheOptions;
 	
-	private net.ownhero.dev.hiari.settings.BooleanArgument.Options                                        precisionExperimentOptions;
+	private net.ownhero.dev.hiari.settings.BooleanArgument.Options                        precisionExperimentOptions;
 	
-	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      toUntangleOptions;
-	
-	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                                      serialModelOptions;
+	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                      toUntangleOptions;
 	
 	/**
 	 * Instantiates a new untangling options.
@@ -402,10 +400,6 @@ public class UntanglingOptions extends
 				                                                                null, Requirement.optional, true);
 				addOption(this.artificialBlobCacheOptions, map);
 			}
-			
-			this.serialModelOptions = new InputFileArgument.Options(set, "serialModel",
-			                                                        "File containing a serial training model", null,
-			                                                        Requirement.optional);
 			
 			this.toUntangleOptions = new InputFileArgument.Options(
 			                                                       set,

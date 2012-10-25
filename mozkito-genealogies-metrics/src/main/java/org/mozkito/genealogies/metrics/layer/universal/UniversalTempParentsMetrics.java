@@ -23,7 +23,6 @@ import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.metrics.DayTimeDiff;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 
-
 /**
  * The Class UniversalTempParentsMetrics.
  * 
@@ -133,9 +132,7 @@ public class UniversalTempParentsMetrics<T> {
 		this.parents_10.clear();
 		this.parents_14.clear();
 		
-		// int[] longestPaths = longestPath(node, node, new HashSet<T>());
-		// FIXME: this is a temp hack for untangling impact metrics
-		final int[] longestPaths = new int[] { 0, 0, 0, 0, 0 };
+		final int[] longestPaths = longestPath(node, node, new HashSet<T>());
 		
 		this.parents_2.addAll(this.parents_1);
 		this.parents_5.addAll(this.parents_2);
