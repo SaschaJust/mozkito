@@ -10,15 +10,13 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mozkito.persistence.OpenJPAUtil;
-import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  * 
  */
-@DatabaseSettings (unit = "rcs")
+@DatabaseSettings (unit = "versions")
 public class MoskitoDerivationTest_NetTest extends MozkitoTest {
 	
 	@BeforeClass
@@ -43,13 +41,13 @@ public class MoskitoDerivationTest_NetTest extends MozkitoTest {
 	
 	@Test
 	@Ignore
-	@DatabaseSettings (unit = "ppa", util = OpenJPAUtil.class)
+	@DatabaseSettings (unit = "codeanalysis", util = OpenJPAUtil.class)
 	public void testIgnore() {
 		// ignore
 	}
 	
 	@Test
-	// @DatabaseSettings (unit = "rcs", database = "moskito_xstream_may2011",
+	// @DatabaseSettings (unit = "versions", database = "moskito_xstream_may2011",
 	// options = ConnectOptions.VALIDATE)
 	public void testNoFail() {
 		// fail();

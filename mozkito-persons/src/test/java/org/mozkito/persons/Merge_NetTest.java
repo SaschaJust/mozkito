@@ -33,12 +33,10 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.persons.Persons;
 import org.mozkito.persons.processing.PersonManager;
 import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -54,7 +52,7 @@ public class Merge_NetTest extends MozkitoTest {
 	 */
 	@SuppressWarnings ("deprecation")
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testMergePerson() throws SettingsParseError, ArgumentRegistrationException {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();

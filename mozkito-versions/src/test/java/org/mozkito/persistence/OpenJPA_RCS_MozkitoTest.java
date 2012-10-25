@@ -32,8 +32,7 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
-
-@DatabaseSettings (unit = "rcs")
+@DatabaseSettings (unit = "versions")
 public class OpenJPA_RCS_MozkitoTest extends MozkitoTest {
 	
 	private BranchFactory branchFactory;

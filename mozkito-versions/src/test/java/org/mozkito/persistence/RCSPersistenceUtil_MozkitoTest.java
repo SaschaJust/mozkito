@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -19,7 +17,6 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class RCSPersistenceUtilTest.
@@ -61,8 +58,9 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the list
 	 */
 	private List<RCSTransaction> setup(final PersistenceUtil persistenceUtil) {
@@ -188,7 +186,7 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	 * Test branch asc.
 	 */
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testBranchASC() {
 		
 		final List<RCSTransaction> tList = setup(getPersistenceUtil());
@@ -230,7 +228,7 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	 * Test branch desc.
 	 */
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testBranchDESC() {
 		
 		final List<RCSTransaction> tList = setup(getPersistenceUtil());
@@ -272,7 +270,7 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	 * Test previous desc.
 	 */
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testPreviousDESC() {
 		
 		setup(getPersistenceUtil());
