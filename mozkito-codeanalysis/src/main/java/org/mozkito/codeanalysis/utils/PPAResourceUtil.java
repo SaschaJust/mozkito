@@ -57,7 +57,7 @@ public class PPAResourceUtil {
 		IFolder parentFolder = (IFolder) file.getParent();
 		file.delete(true, new NullProgressMonitor());
 		while (isEmpty(parentFolder) && !isSrcFolder(parentFolder)) {
-			IFolder tempFolder = (IFolder) parentFolder.getParent();
+			final IFolder tempFolder = (IFolder) parentFolder.getParent();
 			parentFolder.delete(true, new NullProgressMonitor());
 			parentFolder = tempFolder;
 		}
@@ -88,17 +88,17 @@ public class PPAResourceUtil {
 	                                       final String destFileName) throws CoreException, IOException {
 		IFile file = null;
 		
-		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
+		final IFolder srcFolder = project.getFolder("src");
+		final IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
 		if (!file.exists()) {
-			FileInputStream stream = new FileInputStream(srcFile);
-			file.create(stream, IFile.FORCE, new NullProgressMonitor());
+			final FileInputStream stream = new FileInputStream(srcFile);
+			file.create(stream, IResource.FORCE, new NullProgressMonitor());
 			stream.close();
 		} else {
-			FileInputStream stream = new FileInputStream(srcFile);
-			file.setContents(stream, IFile.FORCE, new NullProgressMonitor());
+			final FileInputStream stream = new FileInputStream(srcFile);
+			file.setContents(stream, IResource.FORCE, new NullProgressMonitor());
 			stream.close();
 		}
 		
@@ -134,19 +134,19 @@ public class PPAResourceUtil {
 	                                              final boolean isTypeBody) throws CoreException, IOException {
 		IFile file = null;
 		
-		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
+		final IFolder srcFolder = project.getFolder("src");
+		final IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
-		String content = isTypeBody
-		                           ? SnippetUtil.getTypeBody(getContent(srcFile))
-		                           : SnippetUtil.getMethodBody(getContent(srcFile));
-		InputStream iStream = new ByteArrayInputStream(content.getBytes());
+		final String content = isTypeBody
+		                                 ? SnippetUtil.getTypeBody(getContent(srcFile))
+		                                 : SnippetUtil.getMethodBody(getContent(srcFile));
+		final InputStream iStream = new ByteArrayInputStream(content.getBytes());
 		
 		if (!file.exists()) {
-			file.create(iStream, IFile.FORCE, new NullProgressMonitor());
+			file.create(iStream, IResource.FORCE, new NullProgressMonitor());
 		} else {
-			file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
+			file.setContents(iStream, IResource.FORCE, new NullProgressMonitor());
 		}
 		
 		return file;
@@ -181,19 +181,19 @@ public class PPAResourceUtil {
 	                                              final boolean isTypeBody) throws CoreException, IOException {
 		IFile file = null;
 		
-		IFolder srcFolder = project.getFolder("src");
-		IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
+		final IFolder srcFolder = project.getFolder("src");
+		final IFolder packageFolder = getCreatePackageFolder(srcFolder, PPABindingsUtil.getPackageArray(packageName));
 		
 		file = packageFolder.getFile(destFileName);
-		String newContent = isTypeBody
-		                              ? SnippetUtil.getTypeBody(snippetContent)
-		                              : SnippetUtil.getMethodBody(snippetContent);
-		InputStream iStream = new ByteArrayInputStream(newContent.getBytes());
+		final String newContent = isTypeBody
+		                                    ? SnippetUtil.getTypeBody(snippetContent)
+		                                    : SnippetUtil.getMethodBody(snippetContent);
+		final InputStream iStream = new ByteArrayInputStream(newContent.getBytes());
 		
 		if (!file.exists()) {
-			file.create(iStream, IFile.FORCE, new NullProgressMonitor());
+			file.create(iStream, IResource.FORCE, new NullProgressMonitor());
 		} else {
-			file.setContents(iStream, IFile.FORCE, new NullProgressMonitor());
+			file.setContents(iStream, IResource.FORCE, new NullProgressMonitor());
 		}
 		
 		return file;
@@ -211,9 +211,9 @@ public class PPAResourceUtil {
 	 *             If there were any IO related errors while reading the file.
 	 */
 	public static String getContent(final File file) throws IOException {
-		StringBuffer buffer = new StringBuffer();
+		final StringBuffer buffer = new StringBuffer();
 		
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		final BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = br.readLine();
 		
 		while (line != null) {
@@ -248,12 +248,12 @@ public class PPAResourceUtil {
 		IFolder finalFolder = srcFolder;
 		
 		if (packages != null) {
-			int size = packages.length;
+			final int size = packages.length;
 			for (int i = 0; i < size; i++) {
 				if (!ValidatorUtil.validateEmpty(packages[i], "packages", false)) {
 					break;
 				}
-				IFolder tempFolder = finalFolder.getFolder(packages[i]);
+				final IFolder tempFolder = finalFolder.getFolder(packages[i]);
 				if (!tempFolder.exists()) {
 					tempFolder.create(true, true, new NullProgressMonitor());
 				}
@@ -275,10 +275,10 @@ public class PPAResourceUtil {
 		boolean isEmpty = false;
 		try {
 			if ((folder != null) && folder.exists()) {
-				IResource[] members = folder.members();
+				final IResource[] members = folder.members();
 				isEmpty = (members == null) || (members.length == 0);
 			}
-		} catch (CoreException ce) {
+		} catch (final CoreException ce) {
 			logger.error("Error while checking if folder is empty.", ce);
 		}
 		
