@@ -43,10 +43,10 @@
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -69,10 +69,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
@@ -102,10 +102,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
@@ -147,10 +147,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
 		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
@@ -187,10 +187,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.codeanalysis.model.JavaElement</class>
 		<class>org.mozkito.codeanalysis.model.JavaTypeDefinition</class>
@@ -220,10 +220,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.versionsBranch</class>
-		<class>org.mozkito.versions.model.versionsFile</class>
-		<class>org.mozkito.versions.model.versionsRevision</class>
-		<class>org.mozkito.versions.model.versionsTransaction</class>
+		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.RCSFile</class>
+		<class>org.mozkito.versions.model.RCSRevision</class>
+		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
