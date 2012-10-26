@@ -23,11 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.model.Candidate;
-import org.mozkito.mappings.register.Node;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -47,6 +42,11 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.model.Candidate;
+import org.mozkito.mappings.register.Node;
+import org.mozkito.persistence.PersistenceUtil;
+
 /**
  * Selectors analyze a {@link MappableEntity} and find possible candidates that can be mapped to the entity, due to some
  * relation.
@@ -62,11 +62,11 @@ public abstract class Selector extends Node {
 	public static class Options extends
 	        ArgumentSetOptions<Set<Selector>, ArgumentSet<Set<Selector>, Options>> {
 		
-		/** The Constant TAG. */
-		static final String                                                                                   TAG             = "selectors";                                      //$NON-NLS-1$
-		                                                                                                                                                                           
 		/** The Constant DESCRIPTION. */
 		static final String                                                                                   DESCRIPTION     = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
+		                                                                                                                                                                           
+		/** The Constant TAG. */
+		static final String                                                                                   TAG             = "selectors";                                      //$NON-NLS-1$
 		                                                                                                                                                                           
 		/** The enabled selectors option. */
 		private SetArgument.Options                                                                           enabledSelectorsOption;
@@ -247,11 +247,11 @@ public abstract class Selector extends Node {
 		return new Selector.Options(set, Requirement.required);
 	}
 	
-	/** The settings. */
-	private ISettings settings;
-	
 	/** The options. */
 	private Options   options;
+	
+	/** The settings. */
+	private ISettings settings;
 	
 	/**
 	 * Gets the anchor.

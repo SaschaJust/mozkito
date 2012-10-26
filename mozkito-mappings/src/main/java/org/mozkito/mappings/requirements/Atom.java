@@ -41,11 +41,11 @@ public final class Atom extends Expression {
 	/** The idx. */
 	private final Index         idx;
 	
-	/** The type. */
-	private Class<?>            type;
-	
 	/** The keys. */
 	private final Set<FieldKey> keys = new HashSet<FieldKey>();
+	
+	/** The type. */
+	private Class<?>            type;
 	
 	/**
 	 * Instantiates a new atom.

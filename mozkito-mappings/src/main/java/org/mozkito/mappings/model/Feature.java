@@ -18,11 +18,11 @@ import java.util.Map;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.persistence.Annotated;
 
 /**
  * The Class MappingEngineFeature.
@@ -32,29 +32,29 @@ import net.ownhero.dev.kisa.Logger;
 @Embeddable
 public class Feature implements Annotated {
 	
+	/** The Constant cache. */
+	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
+	
 	/** The Constant serialVersionUID. */
 	private static final long                                        serialVersionUID = 4097360257338824107L;
 	
 	/** The confidence. */
 	private double                                                   confidence;
 	
+	/** The fq class name. */
+	private String                                                   fqClassName;
+	
 	/** The from field name. */
 	private String                                                   fromFieldName;
+	
+	/** The from substring. */
+	private String                                                   fromSubstring;
 	
 	/** The to field name. */
 	private String                                                   toFieldName;
 	
 	/** The to substring. */
 	private String                                                   toSubstring;
-	
-	/** The from substring. */
-	private String                                                   fromSubstring;
-	
-	/** The fq class name. */
-	private String                                                   fqClassName;
-	
-	/** The Constant cache. */
-	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
 	
 	/**
 	 * used by persistence provider only.

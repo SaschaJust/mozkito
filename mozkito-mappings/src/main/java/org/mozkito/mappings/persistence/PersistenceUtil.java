@@ -18,11 +18,11 @@ import java.util.Properties;
 
 import javax.persistence.Query;
 
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.Criteria;
-
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

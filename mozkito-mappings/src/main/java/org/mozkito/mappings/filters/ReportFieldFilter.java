@@ -16,6 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.EnhancedReport;
 import org.mozkito.issues.tracker.settings.Messages;
@@ -24,14 +32,6 @@ import org.mozkito.mappings.model.IComposite;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 /**
  * The Class ReportFieldFilter.
@@ -43,8 +43,8 @@ public class ReportFieldFilter extends Filter {
 	public static final class Options extends
 	        ArgumentSetOptions<ReportFieldFilter, ArgumentSet<ReportFieldFilter, Options>> {
 		
-		private static final String        TAG         = "reportField";
 		private static final String        DESCRIPTION = Messages.getString("ReportFieldFilter.optionSetDescription");
+		private static final String        TAG         = "reportField";
 		private EnumArgument.Options<Type> typeOption;
 		
 		/**

@@ -18,13 +18,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.model.Candidate;
-import org.mozkito.mappings.selectors.Selector;
-
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.model.Candidate;
+import org.mozkito.mappings.selectors.Selector;
 
 /**
  * A factory for creating Candidate objects.

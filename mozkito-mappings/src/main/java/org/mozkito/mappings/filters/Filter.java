@@ -22,11 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.register.Node;
-import org.mozkito.mappings.requirements.Expression;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -42,6 +37,11 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.register.Node;
+import org.mozkito.mappings.requirements.Expression;
+
 /**
  * The Class MappingFilter.
  * 
@@ -54,11 +54,11 @@ public abstract class Filter extends Node {
 	 */
 	public static final class Options extends ArgumentSetOptions<Set<Filter>, ArgumentSet<Set<Filter>, Options>> {
 		
-		/** The Constant TAG. */
-		private static final String                                                         TAG           = "filters";
-		
 		/** The Constant DESCRIPTION. */
 		private static final String                                                         DESCRIPTION   = "...";
+		
+		/** The Constant TAG. */
+		private static final String                                                         TAG           = "filters";
 		
 		/** The enabled filters option. */
 		private SetArgument.Options                                                         enabledFiltersOption;

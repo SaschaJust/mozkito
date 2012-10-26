@@ -15,6 +15,16 @@ package org.mozkito.mappings.engines;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.EnumArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
@@ -26,16 +36,6 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.requirements.Or;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.EnumArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * The Class ReportTypeEngine.
@@ -116,6 +116,15 @@ public class ReportTypeEngine extends MappingEngine {
 		
 	}
 	
+	/** The constant defaultConfidence. */
+	private static final Double DEAFULT_CONFIDENCE = 1d;
+	
+	/** The default type. */
+	private static final Type   DEFAULT_TYPE       = Type.BUG;
+	
+	/** The constant description. */
+	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
+	
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -132,7 +141,7 @@ public class ReportTypeEngine extends MappingEngine {
 			                  ReportTypeEngine.class.getSimpleName());
 		}
 	}
-	
+	                                                           
 	/**
 	 * Gets the default type.
 	 * 
@@ -150,20 +159,11 @@ public class ReportTypeEngine extends MappingEngine {
 		}
 	}
 	
-	/** The type. */
-	private Type                type;
-	
-	/** The constant description. */
-	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
-	                                                           
-	/** The constant defaultConfidence. */
-	private static final Double DEAFULT_CONFIDENCE = 1d;
-	
-	/** The default type. */
-	private static final Type   DEFAULT_TYPE       = Type.BUG;
-	
 	/** The confidence. */
 	private Double              confidence;
+	
+	/** The type. */
+	private Type                type;
 	
 	/**
 	 * @param value

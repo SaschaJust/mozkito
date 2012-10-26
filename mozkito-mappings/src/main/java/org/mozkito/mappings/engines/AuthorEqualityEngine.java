@@ -15,15 +15,6 @@ package org.mozkito.mappings.engines;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.requirements.And;
-import org.mozkito.mappings.requirements.Atom;
-import org.mozkito.mappings.requirements.Expression;
-import org.mozkito.mappings.requirements.Index;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DoubleArgument;
@@ -32,6 +23,15 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.requirements.And;
+import org.mozkito.mappings.requirements.Atom;
+import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.mappings.requirements.Index;
 
 /**
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set

@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.mappings.engines.MappingEngine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -34,10 +38,6 @@ import org.mozkito.mappings.strategies.MappingStrategy;
 import org.mozkito.mappings.training.MappingTrainer;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class MappingFinder.

@@ -16,12 +16,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.mozkito.mappings.filters.Filter;
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.filters.Filter;
+import org.mozkito.persistence.Annotated;
 
 /**
  * The Class Mapping.
@@ -33,11 +33,11 @@ public class Mapping implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2154624198669450359L;
 	
-	/** The filters. */
-	private final Set<Filter> filters          = new HashSet<>();
-	
 	/** The composite. */
 	private IComposite        composite;
+	
+	/** The filters. */
+	private final Set<Filter> filters          = new HashSet<>();
 	
 	/**
 	 * Instantiates a new mapping.

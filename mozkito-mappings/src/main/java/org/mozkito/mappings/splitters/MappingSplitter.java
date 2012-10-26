@@ -23,11 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.register.Node;
-import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -42,6 +37,11 @@ import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.register.Node;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistenceUtil;
+
 /**
  * The Class MappingSplitter.
  * 
@@ -55,11 +55,11 @@ public abstract class MappingSplitter extends Node {
 	public static class Options extends
 	        ArgumentSetOptions<Set<MappingSplitter>, ArgumentSet<Set<MappingSplitter>, Options>> {
 		
-		/** The Constant TAG. */
-		private static final String                                                                           TAG           = "filters";
-		
 		/** The Constant DESCRIPTION. */
 		private static final String                                                                           DESCRIPTION   = "...";
+		
+		/** The Constant TAG. */
+		private static final String                                                                           TAG           = "filters";
 		
 		/** The enabled splitters option. */
 		private SetArgument.Options                                                                           enabledSplittersOption;

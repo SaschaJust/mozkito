@@ -7,6 +7,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.PreProcessHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.mappings.elements.CandidateFactory;
 import org.mozkito.mappings.finder.MappingFinder;
 import org.mozkito.mappings.mappable.model.MappableReport;
@@ -15,13 +22,6 @@ import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PreProcessHook;
-import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Transformer;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class ReportFinder.

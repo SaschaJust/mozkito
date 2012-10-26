@@ -12,13 +12,13 @@
  ******************************************************************************/
 package mappings;
 
-import org.mozkito.mappings.MappingChain;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.MappingChain;
 
 /**
  * The Class Main.
@@ -46,7 +46,7 @@ public class Main {
 			scoring.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("Mappings.Main: All done. cerio!");
+				Logger.info("Mappings.Main: " + "All done. cerio!");
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {

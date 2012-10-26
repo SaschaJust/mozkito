@@ -22,10 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.register.Node;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -39,6 +35,10 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.register.Node;
 
 /**
  * 
@@ -65,11 +65,11 @@ public abstract class MappingStrategy extends Node {
 	public static class Options extends
 	        ArgumentSetOptions<Set<MappingStrategy>, ArgumentSet<Set<MappingStrategy>, Options>> {
 		
-		/** The Constant TAG. */
-		private static final String                                                                           TAG           = "strategies";   //$NON-NLS-1$
-		                                                                                                                                       
 		/** The Constant DESCRIPTION. */
 		private static final String                                                                           DESCRIPTION   = "...";
+		                                                                                                                                       
+		/** The Constant TAG. */
+		private static final String                                                                           TAG           = "strategies";   //$NON-NLS-1$
 		
 		/** The enabled strategies option. */
 		private SetArgument.Options                                                                           enabledStrategiesOption;

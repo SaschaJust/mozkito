@@ -12,13 +12,6 @@
  ******************************************************************************/
 package org.mozkito.mappings;
 
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.settings.MappingOptions;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -32,17 +25,24 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.settings.MappingOptions;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+
 /**
  * The Class MappingChain.
  */
 public class MappingChain extends Chain<Settings> {
 	
+	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	private DatabaseOptions                               databaseOptions;
+	private ArgumentSet<MappingFinder, MappingOptions>    mappingArguments;
+	private MappingOptions                                mappingOptions;
 	/** The thread pool. */
 	private final Pool                                    threadPool;
-	private DatabaseOptions                               databaseOptions;
-	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
-	private MappingOptions                                mappingOptions;
-	private ArgumentSet<MappingFinder, MappingOptions>    mappingArguments;
 	
 	/**
 	 * Instantiates a new mapping chain.

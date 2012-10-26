@@ -26,12 +26,12 @@ public enum Index {
 	/** the from entity. */
 	FROM,
 	
-	/** the to entity. */
-	TO,
-	
 	/** the one entity (in contrast to the 'OTHER' entity). */
 	ONE,
 	
 	/** the other entity (in contrast to the 'ONE' entity). */
-	OTHER;
+	OTHER,
+	
+	/** the to entity. */
+	TO;
 }

@@ -12,9 +12,6 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings;
 
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -22,6 +19,9 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.model.Relation;
+import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class MappingPersister.

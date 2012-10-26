@@ -13,15 +13,15 @@
 
 package org.mozkito.mappings;
 
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.strategies.MappingStrategy;
-
 import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.strategies.MappingStrategy;
 
 /**
  * The Class MappingStrategyProcessor.

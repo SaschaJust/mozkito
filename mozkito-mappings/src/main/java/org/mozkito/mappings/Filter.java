@@ -12,16 +12,16 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings;
 
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.model.Composite;
-import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.model.Mapping;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.model.Composite;
+import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Mapping;
 
 /**
  * The Class Filter.

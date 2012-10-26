@@ -6,13 +6,13 @@ package org.mozkito.mappings;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.mozkito.mappings.model.Composite;
-import org.mozkito.mappings.model.Mapping;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
+
+import org.mozkito.mappings.model.Composite;
+import org.mozkito.mappings.model.Mapping;
 
 /**
  * The Class CandidatesConverter.

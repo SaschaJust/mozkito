@@ -16,10 +16,10 @@ import java.util.Map;
 
 import javax.persistence.Transient;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+
+import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

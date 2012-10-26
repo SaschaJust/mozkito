@@ -46,8 +46,8 @@ public class AllReportSelector extends Selector {
 	public static final class Options extends
 	        ArgumentSetOptions<AllReportSelector, ArgumentSet<AllReportSelector, Options>> {
 		
-		private static final String                                   TAG         = "allReport";
 		private static final String                                   DESCRIPTION = "...";
+		private static final String                                   TAG         = "allReport";
 		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
 		
 		/**

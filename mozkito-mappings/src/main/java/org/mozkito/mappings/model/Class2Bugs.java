@@ -23,14 +23,14 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSFile;
-
-import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * The Class Class2Bugs.

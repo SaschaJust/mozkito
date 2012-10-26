@@ -65,14 +65,14 @@ public class RegexEngine extends MappingEngine {
 	 */
 	private class Matcher {
 		
+		/** The comment. */
+		private String comment;
+		
 		/** The regex. */
 		private Regex  regex;
 		
 		/** The score. */
 		private double score;
-		
-		/** The comment. */
-		private String comment;
 		
 		/**
 		 * Instantiates a new matcher.
@@ -270,8 +270,8 @@ public class RegexEngine extends MappingEngine {
 		
 	}
 	
-	/** The unpad. */
-	public String               unpad;
+	/** The config uri. */
+	private URI                 configURI;
 	
 	/*
 	 * Score, Pattern, Options e.g. 0.3 "({match}JAXEN-##ID##)" Pattern.CASE_INSENSITIVE 1.0
@@ -280,8 +280,8 @@ public class RegexEngine extends MappingEngine {
 	/** The matchers. */
 	private Collection<Matcher> matchers;
 	
-	/** The config uri. */
-	private URI                 configURI;
+	/** The unpad. */
+	public String               unpad;
 	
 	/**
 	 * Instantiates a new regex engine.

@@ -16,15 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import org.mozkito.mappings.model.Feature;
-import org.mozkito.mappings.model.IComposite;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
+import org.mozkito.mappings.model.Feature;
+import org.mozkito.mappings.model.IComposite;
 
 /**
  * The Class TotalAggreementStrategy.
@@ -36,8 +36,8 @@ public class TotalAggreementStrategy extends MappingStrategy {
 	public static final class Options extends
 	        ArgumentSetOptions<TotalAggreementStrategy, ArgumentSet<TotalAggreementStrategy, Options>> {
 		
-		private static final String TAG         = "totalAgreement";
 		private static final String DESCRIPTION = "...";
+		private static final String TAG         = "totalAgreement";
 		
 		/**
 		 * @param argumentSet

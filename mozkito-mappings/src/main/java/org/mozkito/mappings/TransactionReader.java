@@ -18,16 +18,16 @@ package org.mozkito.mappings;
 import java.util.Iterator;
 import java.util.List;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class TransactionReader.

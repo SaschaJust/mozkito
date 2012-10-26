@@ -17,12 +17,12 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
+import net.ownhero.dev.ioda.Tuple;
+
 import org.mozkito.mappings.finder.MappingFinder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.Annotated;
-
-import net.ownhero.dev.ioda.Tuple;
 
 /**
  * This class represents a potential mapping pair and thus encapsulates to {@link MappableEntity}s. {@link Candidate}s
@@ -39,11 +39,11 @@ public class Candidate implements Annotated {
 	/** the entity under subject. */
 	private final MappableEntity from;
 	
-	/** a potential target. */
-	private final MappableEntity to;
-	
 	/** The preselectors. */
 	private final Set<String>    selectors        = new HashSet<>();
+	
+	/** a potential target. */
+	private final MappableEntity to;
 	
 	/**
 	 * Instantiates a new candidate.

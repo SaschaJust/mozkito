@@ -24,16 +24,16 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * Class that wraps {@link Report} to be mapped.

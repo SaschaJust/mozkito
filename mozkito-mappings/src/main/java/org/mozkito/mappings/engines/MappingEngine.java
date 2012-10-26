@@ -24,13 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.register.Node;
-import org.mozkito.mappings.requirements.Expression;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -49,6 +42,14 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.register.Node;
+import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.settings.DatabaseOptions;
 
 /**
  * 
@@ -121,7 +122,9 @@ public abstract class MappingEngine extends Node {
 						        + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError(
+						                             String.format("Could not load engine '%s'. Does probably not exist. Aborting.",
+						                                           name));
 						
 					}
 					
@@ -305,8 +308,8 @@ public abstract class MappingEngine extends Node {
 	private ISettings settings;
 	
 	/**
-	 * Using this method, one can add features to a given {@link Relation}. The given score will be manipulated using the
-	 * values given. The values are automatically <code>null</code> checked and truncated if needed.
+	 * Using this method, one can add features to a given {@link Relation}. The given score will be manipulated using
+	 * the values given. The values are automatically <code>null</code> checked and truncated if needed.
 	 * 
 	 * @param score
 	 *            the {@link Relation} a new feature shall be added
@@ -357,6 +360,19 @@ public abstract class MappingEngine extends Node {
 		                                             : truncate(toFieldContent != null
 		                                                                              ? toFieldContent.toString()
 		                                                                              : UNKNOWN)), getClass());
+	}
+	
+	/**
+	 * Gets the persistence util.
+	 * 
+	 * @return the persistence util
+	 */
+	public org.mozkito.persistence.PersistenceUtil getPersistenceUtil() {
+		final ArgumentSet<?, ?> set = getSettings().getAnchor("database"); //$NON-NLS-1$
+		@SuppressWarnings ("unchecked")
+		final ArgumentSet<org.mozkito.persistence.PersistenceUtil, DatabaseOptions> databaseArgumentSet = (ArgumentSet<org.mozkito.persistence.PersistenceUtil, DatabaseOptions>) set;
+		final org.mozkito.persistence.PersistenceUtil persistenceUtil = databaseArgumentSet.getValue();
+		return persistenceUtil;
 	}
 	
 	/**

@@ -15,6 +15,16 @@ package org.mozkito.mappings.engines;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -27,16 +37,6 @@ import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.IOptions;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class CompletedOrderEngine.
@@ -63,7 +63,7 @@ public class CompletedOrderEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), "...", requirements);
+			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -108,11 +108,11 @@ public class CompletedOrderEngine extends MappingEngine {
 		
 	}
 	
-	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
-	                                                                                                         
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
+	                                                                                                         
+	/** The constant description. */
+	private static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
 	
 	/**
 	 * Gets the default confidence.
@@ -176,8 +176,8 @@ public class CompletedOrderEngine extends MappingEngine {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.mappable.MappableEntity, org.mozkito.mapping.model.Mapping)
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
+	 * org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public final void score(final MappableEntity from,
@@ -190,7 +190,7 @@ public class CompletedOrderEngine extends MappingEngine {
 		if ((report.getResolutionTimestamp() != null)
 		        && transaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
 			if (Logger.logDebug()) {
-				Logger.debug("Transaction was committed before report got marked as resolved.");
+				Logger.debug("Transaction was committed before report got marked as resolved."); //$NON-NLS-1$
 			}
 			localConfidence = getConfidence();
 		}

@@ -167,12 +167,12 @@ public class TimestampEngine extends MappingEngine {
 		
 	}
 	
-	/** The Constant description. */
-	private static final String                description     = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
-	                                                                                                                
 	/** The Constant defaultInterval. */
 	private static final Tuple<String, String> defaultInterval = new Tuple<String, String>("-0d 2h 0m 0s", //$NON-NLS-1$
 	                                                                                       "+1d 0h 0m 0s");        //$NON-NLS-1$
+	                                                                                                                
+	/** The Constant description. */
+	private static final String                description     = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
 	                                                                                                                
 	/**
 	 * Gets the defaultinterval.

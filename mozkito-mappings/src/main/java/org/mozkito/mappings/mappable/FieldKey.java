@@ -23,32 +23,14 @@ import org.mozkito.persistence.model.Person;
  */
 public enum FieldKey {
 	
-	/** the id of the MappableEntity (String). */
-	ID,
-	
-	/** the body text of the {@link MappableEntity} (String). */
-	BODY,
 	/**
 	 * the author of the {@link MappableEntity}, i.e. the one that initially created the original instance encapsulated
 	 * by this entity. (Person)
 	 */
 	AUTHOR,
-	/**
-	 * the timestamp of the {@link MappableEntity} that represents the point in time the original instance has been
-	 * created. (DateTime)
-	 */
-	CREATION_TIMESTAMP,
-	/**
-	 * the timestamp(s) of the {@link MappableEntity} that determines the time the original entity has been changed
-	 * (null if never modified). If requested without index, represents a collection of timestamps for all
-	 * modifications, a specific timestamp otherwise. ( <code>Collection<DateTime>/DateTime</code>)
-	 */
-	MODIFICATION_TIMESTAMP,
-	/**
-	 * the timestamp of the {@link MappableEntity} that determines when the original entity has been
-	 * closed/committed/became immutable/sent. (DateTime)
-	 */
-	CLOSED_TIMESTAMP,
+	
+	/** the body text of the {@link MappableEntity} (String). */
+	BODY,
 	/**
 	 * the person(s) that have done modifications to the original entity. If requested without index, represents a
 	 * {@link Collection} of {@link Person}s, a specific {@link Person} otherwise. Represents an empty
@@ -56,12 +38,13 @@ public enum FieldKey {
 	 * <code>Collection<Person>/Person</code>)
 	 */
 	CHANGER,
-	
+	/**
+	 * the timestamp of the {@link MappableEntity} that determines when the original entity has been
+	 * closed/committed/became immutable/sent. (DateTime)
+	 */
+	CLOSED_TIMESTAMP,
 	/** the person that closed/committed/sent the original entity. */
 	CLOSER,
-	
-	/** The PATH. @see FieldKey#FILE */
-	PATH,
 	/**
 	 * the comment(s)/reply(replies) to an encapsulated entity. If requested without index, represents a
 	 * {@link Collection} of corresponding data, a single data object otherwise. Represents an empty {@link Collection}/
@@ -69,16 +52,33 @@ public enum FieldKey {
 	 * <code>Collection<Comment>/Comment</code>)
 	 */
 	COMMENT,
+	/**
+	 * the timestamp of the {@link MappableEntity} that represents the point in time the original instance has been
+	 * created. (DateTime)
+	 */
+	CREATION_TIMESTAMP,
 	
 	/** The FILE. */
 	FILE,
 	
-	/** The TYPE. */
-	TYPE,
+	/** the id of the MappableEntity (String). */
+	ID,
+	/**
+	 * the timestamp(s) of the {@link MappableEntity} that determines the time the original entity has been changed
+	 * (null if never modified). If requested without index, represents a collection of timestamps for all
+	 * modifications, a specific timestamp otherwise. ( <code>Collection<DateTime>/DateTime</code>)
+	 */
+	MODIFICATION_TIMESTAMP,
+	
+	/** The PATH. @see FieldKey#FILE */
+	PATH,
+	
+	/** The RESOLUTIO n_ timestamp. */
+	RESOLUTION_TIMESTAMP,
 	
 	/** The SUMMARY. */
 	SUMMARY,
 	
-	/** The RESOLUTIO n_ timestamp. */
-	RESOLUTION_TIMESTAMP;
+	/** The TYPE. */
+	TYPE;
 }

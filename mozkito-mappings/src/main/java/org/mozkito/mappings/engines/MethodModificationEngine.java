@@ -26,6 +26,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,7 +46,6 @@ import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set
@@ -122,7 +122,7 @@ public class MethodModificationEngine extends MappingEngine {
 	}
 	
 	/** The constant defaultConfidence. */
-	private static final Double DEFAULT_CONFIDENCE = 0.2d;
+	private static final Double DEFAULT_CONFIDENCE = 1d;
 	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class MethodModificationEngine extends MappingEngine {
 	}
 	
 	/** The confidence. */
-	private Double confidence;
+	private Double confidence = DEFAULT_CONFIDENCE;
 	
 	/**
 	 * Instantiates a new author equality engine.
@@ -153,7 +153,7 @@ public class MethodModificationEngine extends MappingEngine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	public MethodModificationEngine(final double confidence) {
+	public MethodModificationEngine(@NotNull final double confidence) {
 		// PRECONDITIONS
 		
 		try {
@@ -168,7 +168,7 @@ public class MethodModificationEngine extends MappingEngine {
 	 * 
 	 * @return the confidence
 	 */
-	private final Double getConfidence() {
+	public final Double getConfidence() {
 		// PRECONDITIONS
 		
 		try {
@@ -200,17 +200,18 @@ public class MethodModificationEngine extends MappingEngine {
 	 *            the score
 	 */
 	@Override
-	public final void score(final MappableEntity from,
-	                        final MappableEntity to,
-	                        final Relation score) {
+	public final void score(@NotNull final MappableEntity from,
+	                        @NotNull final MappableEntity to,
+	                        @NotNull final Relation score) {
 		int matches = 0;
 		final StringBuilder builder = new StringBuilder();
 		double localConfidence = 0d;
 		// TODO get real PersistenceUtil
-		final PersistenceUtil util = null;
+		
+		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		final Set<String> subjects = new HashSet<>();
 		
-		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(util,
+		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
 		                                                                                               ((MappableTransaction) from).getTransaction());
 		
 		for (final JavaChangeOperation operation : changeOperations) {
@@ -226,6 +227,7 @@ public class MethodModificationEngine extends MappingEngine {
 		
 		for (final String subject : subjects) {
 			final String bodyText = (String) to.get(FieldKey.BODY);
+			
 			if (StringUtils.containsIgnoreCase(bodyText, subject)) {
 				++matches;
 				if (builder.length() > 0) {

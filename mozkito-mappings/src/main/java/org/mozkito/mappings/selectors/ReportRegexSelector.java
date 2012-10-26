@@ -52,8 +52,8 @@ public class ReportRegexSelector extends Selector {
 	public static final class Options extends
 	        ArgumentSetOptions<ReportRegexSelector, ArgumentSet<ReportRegexSelector, Options>> {
 		
-		private static final String                                   TAG         = "reportRegex";
 		private static final String                                   DESCRIPTION = "...";
+		private static final String                                   TAG         = "reportRegex";
 		private StringArgument.Options                                patternOption;
 		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
 		
@@ -122,9 +122,9 @@ public class ReportRegexSelector extends Selector {
 		
 	}
 	
+	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
-	private static final String DEFAULT_PATTERN = "(\\p{Digit}{2,})";
 	/** The pattern. */
 	private final String        pattern;
 	

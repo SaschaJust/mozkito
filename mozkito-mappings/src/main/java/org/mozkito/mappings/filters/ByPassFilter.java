@@ -16,17 +16,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.issues.tracker.settings.Messages;
-import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.requirements.ByPass;
-import org.mozkito.mappings.requirements.Expression;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
+import org.mozkito.issues.tracker.settings.Messages;
+import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.requirements.ByPass;
+import org.mozkito.mappings.requirements.Expression;
 
 /**
  * The Class ByPassFilter.
@@ -40,11 +40,11 @@ public class ByPassFilter extends Filter {
 	 */
 	public static final class Options extends ArgumentSetOptions<ByPassFilter, ArgumentSet<ByPassFilter, Options>> {
 		
-		/** The Constant TAG. */
-		private static final String TAG         = "byPass";                                               //$NON-NLS-1$
-		                                                                                                   
 		/** The Constant DESCRIPTION. */
 		private static final String DESCRIPTION = Messages.getString("ByPassFilter.optionSetDescription"); //$NON-NLS-1$
+		                                                                                                   
+		/** The Constant TAG. */
+		private static final String TAG         = "byPass";                                               //$NON-NLS-1$
 		                                                                                                   
 		/**
 		 * Instantiates a new options.

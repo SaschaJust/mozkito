@@ -15,14 +15,6 @@ package org.mozkito.mappings.engines;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.requirements.Atom;
-import org.mozkito.mappings.requirements.Expression;
-import org.mozkito.mappings.requirements.Index;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DoubleArgument;
@@ -31,6 +23,14 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.requirements.Atom;
+import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.mappings.requirements.Index;
 
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from' entity in the body text.
@@ -57,7 +57,7 @@ public class BackrefEngine extends MappingEngine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, BackrefEngine.class.getSimpleName(), "...", requirements);
+			super(argumentSet, BackrefEngine.class.getSimpleName(), DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -102,11 +102,11 @@ public class BackrefEngine extends MappingEngine {
 		
 	}
 	
-	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("BackrefEngine.description"); //$NON-NLS-1$
-	                                                                                                  
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
+	                                                                                                  
+	/** The constant description. */
+	private static final String DESCRIPTION        = Messages.getString("BackrefEngine.description"); //$NON-NLS-1$
 	
 	/**
 	 * Gets the default confidence.
@@ -173,8 +173,8 @@ public class BackrefEngine extends MappingEngine {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.mappable.MappableEntity, org.mozkito.mapping.model.Mapping)
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
+	 * org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public final void score(final MappableEntity element1,

@@ -17,17 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.engines.MappingEngine.Options;
-import org.mozkito.mappings.filters.Filter;
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.selectors.Selector;
-import org.mozkito.mappings.splitters.MappingSplitter;
-import org.mozkito.mappings.strategies.MappingStrategy;
-import org.mozkito.mappings.training.MappingTrainer;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -40,6 +29,17 @@ import net.ownhero.dev.kisa.Highlighter;
 import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.engines.MappingEngine.Options;
+import org.mozkito.mappings.filters.Filter;
+import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.selectors.Selector;
+import org.mozkito.mappings.splitters.MappingSplitter;
+import org.mozkito.mappings.strategies.MappingStrategy;
+import org.mozkito.mappings.training.MappingTrainer;
+import org.mozkito.versions.model.RCSTransaction;
+
 /**
  * The Class MappingArguments.
  * 
@@ -47,6 +47,9 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
 	
+	private static final String        DESCRIPTION = "TODO";
+	
+	public static final String         NAME        = "mapping";
 	static {
 		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
 			
@@ -59,29 +62,26 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		});
 	}
 	
-	private static final String        DESCRIPTION = "TODO";
-	public static final String         NAME        = "mapping";
+	private MappingEngine.Options      engineOptions;
 	
 	/** The engines. */
 	private final Set<MappingEngine>   engines     = new HashSet<MappingEngine>();
 	
-	/** The strategies. */
-	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
-	
 	/** The filters. */
 	private final Set<Filter>   filters     = new HashSet<Filter>();
+	
+	private Selector.Options    selectorOptions;
 	
 	/** The selectors. */
 	private final Set<Selector> selectors   = new HashSet<Selector>();
 	
+	private TupleArgument.Options      sourceOptions;
 	/** The splitters. */
 	private final Set<MappingSplitter> splitters   = new HashSet<MappingSplitter>();
-	
+	/** The strategies. */
+	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
 	/** The trainers. */
 	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
-	private MappingEngine.Options      engineOptions;
-	private TupleArgument.Options      sourceOptions;
-	private Selector.Options    selectorOptions;
 	
 	/**
 	 * @param argumentSet

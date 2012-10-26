@@ -25,15 +25,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.Annotated;
 
 /**
  * The Class Mapping.
@@ -46,10 +46,10 @@ public class Relation implements Annotated, IRelation {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8606759070008468513L;
 	
+	private Candidate         candidate;
+	
 	/** The features. */
 	private Queue<Feature>    features         = new LinkedBlockingQueue<Feature>();
-	
-	private Candidate         candidate;
 	
 	/**
 	 * Instantiates a new mapping.

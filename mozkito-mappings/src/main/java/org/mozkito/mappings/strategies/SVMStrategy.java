@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.mozkito.mappings.model.Feature;
-import org.mozkito.mappings.model.IComposite;
-
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -43,6 +40,10 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.FileCondition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.model.Feature;
+import org.mozkito.mappings.model.IComposite;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 /**
@@ -54,10 +55,10 @@ public class SVMStrategy extends MappingStrategy {
 	
 	public static final class Options extends ArgumentSetOptions<SVMStrategy, ArgumentSet<SVMStrategy, Options>> {
 		
-		private static final String       TAG         = "svm";
 		private static final String       DESCRIPTION = "...";
-		private InputFileArgument.Options positiveFileOption;
+		private static final String       TAG         = "svm";
 		private InputFileArgument.Options negativeFileOption;
+		private InputFileArgument.Options positiveFileOption;
 		
 		/**
 		 * @param argumentSet

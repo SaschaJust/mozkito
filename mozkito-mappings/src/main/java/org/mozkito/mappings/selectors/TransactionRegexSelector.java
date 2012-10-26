@@ -18,14 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -39,6 +31,14 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSTransaction;
+
 /**
  * The Class TransactionRegexSelector.
  * 
@@ -49,8 +49,8 @@ public class TransactionRegexSelector extends Selector {
 	public static final class Options extends
 	        ArgumentSetOptions<TransactionRegexSelector, ArgumentSet<TransactionRegexSelector, Options>> {
 		
-		private static final String    TAG         = "transactionRegex";
 		private static final String    DESCRIPTION = "...";
+		private static final String    TAG         = "transactionRegex";
 		private StringArgument.Options patternOption;
 		
 		/**
@@ -103,14 +103,14 @@ public class TransactionRegexSelector extends Selector {
 		
 	}
 	
-	/** The pattern. */
-	private final String        pattern;
+	/** The Constant DEFAULT_PATTERN. */
+	private static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";
 	
 	/** The Constant DESCRIPTION. */
 	private static final String DESCRIPTION     = "Looks up all regular matches of the specified pattern and returns possible (transaction) candidates from the database.";
 	
-	/** The Constant DEFAULT_PATTERN. */
-	private static final String DEFAULT_PATTERN = "(\\p{XDigit}{7,})";
+	/** The pattern. */
+	private final String        pattern;
 	
 	@Deprecated
 	/**

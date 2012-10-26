@@ -6,11 +6,6 @@ package org.mozkito.mappings;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.model.Mapping;
-import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -18,6 +13,11 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.model.Mapping;
+import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class ScoringSplitter.

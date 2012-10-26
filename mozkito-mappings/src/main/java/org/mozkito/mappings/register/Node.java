@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.mozkito.mappings.storages.MappingStorage;
 
-
 /**
  * The Class Node.
  */

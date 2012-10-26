@@ -52,9 +52,12 @@ import com.aliasi.tokenizer.TokenizerFactory;
 @DiscriminatorValue ("MAPPABLETRANSACTION")
 public class MappableTransaction extends MappableEntity {
 	
+	static final SentenceModel    SENTENCE_MODEL    = new MedlineSentenceModel();
+	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3493346151115096823L;
 	
+	static final TokenizerFactory TOKENIZER_FACTORY = IndoEuropeanTokenizerFactory.INSTANCE;
 	public static void main(final String[] args) {
 		final String text = "refactoring untangling to 1) bring it up-to-date to moskito, 2) to use dynamic settings. 3) Also fixed multiple issues.\n"
 		        + "    \n"
@@ -104,9 +107,6 @@ public class MappableTransaction extends MappableEntity {
 	
 	/** The transaction. */
 	private RCSTransaction        transaction;
-	static final TokenizerFactory TOKENIZER_FACTORY = IndoEuropeanTokenizerFactory.INSTANCE;
-	
-	static final SentenceModel    SENTENCE_MODEL    = new MedlineSentenceModel();
 	
 	/**
 	 * Instantiates a new mappable transaction.

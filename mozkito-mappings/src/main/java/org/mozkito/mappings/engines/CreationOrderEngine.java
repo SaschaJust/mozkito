@@ -107,11 +107,11 @@ public class CreationOrderEngine extends MappingEngine {
 		
 	}
 	
-	/** The constant description. */
-	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
-	                                                                                                        
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
+	                                                                                                        
+	/** The constant description. */
+	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
 	
 	/**
 	 * Gets the default confidence.

@@ -18,12 +18,12 @@ import java.util.Map;
 
 import javax.persistence.Transient;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
