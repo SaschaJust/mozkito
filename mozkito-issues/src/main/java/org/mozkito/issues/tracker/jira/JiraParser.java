@@ -70,7 +70,7 @@ import org.xml.sax.SAXException;
 /**
  * The Class JiraParser.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class JiraParser implements Parser {
 	

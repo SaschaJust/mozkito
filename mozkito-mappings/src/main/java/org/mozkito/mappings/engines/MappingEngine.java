@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
@@ -65,7 +66,7 @@ import net.ownhero.dev.kisa.Logger;
  * to the database (incl. the information what has been scored by each engine and what data was considered while
  * computing the score).
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public abstract class MappingEngine extends Node {

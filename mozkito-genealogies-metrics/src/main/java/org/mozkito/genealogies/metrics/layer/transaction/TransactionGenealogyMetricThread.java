@@ -30,7 +30,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 /**
  * The Class TransactionGenealogyMetricThread.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionGenealogyMetricThread extends Transformer<GenealogyTransactionNode, GenealogyMetricValue> {
 	

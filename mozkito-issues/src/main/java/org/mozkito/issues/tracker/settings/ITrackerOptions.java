@@ -19,7 +19,7 @@ import net.ownhero.dev.ioda.ProxyConfig;
 /**
  * The Interface ITrackerOptions.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface ITrackerOptions {
 	

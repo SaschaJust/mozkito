@@ -85,7 +85,7 @@ import difflib.InsertDelta;
 /**
  * The Class PPAUtils.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPAUtils {
 	

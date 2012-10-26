@@ -18,7 +18,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class PartitionChangeGenealogyNode extends ChangeGenealogyLayerNode {

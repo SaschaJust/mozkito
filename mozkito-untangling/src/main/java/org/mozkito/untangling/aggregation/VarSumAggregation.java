@@ -27,7 +27,7 @@ import org.mozkito.clustering.ScoreAggregation;
  * The Class VarSumAggregation.
  *
  * @param <T> the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class VarSumAggregation<T> extends ScoreAggregation<T> {
 	

@@ -31,7 +31,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 /**
  * The Class ReportPersistence_NetTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ReportPersistence_NetTest extends MozkitoTest {
 	

@@ -21,7 +21,7 @@ package org.mozkito.issues.tracker.elements;
 /**
  * The Enum Status.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum Status {
 	

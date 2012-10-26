@@ -31,7 +31,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 /**
  * The Class ByPassFilter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ByPassFilter extends Filter {
 	

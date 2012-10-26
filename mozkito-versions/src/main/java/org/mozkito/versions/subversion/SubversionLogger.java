@@ -25,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class SubversionLogger extends SVNDebugLogAdapter {

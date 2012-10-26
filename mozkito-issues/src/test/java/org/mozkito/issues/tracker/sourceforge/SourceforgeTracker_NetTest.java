@@ -33,7 +33,7 @@ import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
 /**
  * The Class SourceforgeTracker_NetTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SourceforgeTracker_NetTest {
 	

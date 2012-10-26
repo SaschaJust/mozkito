@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * The Class JavaStacktrace.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class JavaStacktrace extends Stacktrace {
 	

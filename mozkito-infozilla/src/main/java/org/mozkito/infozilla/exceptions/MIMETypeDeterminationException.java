@@ -18,7 +18,7 @@ package org.mozkito.infozilla.exceptions;
 /**
  * The Class MIMETypeDeterminationException.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MIMETypeDeterminationException extends Exception {
 	

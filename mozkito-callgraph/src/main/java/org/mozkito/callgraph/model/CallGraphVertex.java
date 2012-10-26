@@ -20,7 +20,7 @@ import java.io.Serializable;
 /**
  * The Class MinerCallGraphVertex.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class CallGraphVertex implements Serializable {
 	

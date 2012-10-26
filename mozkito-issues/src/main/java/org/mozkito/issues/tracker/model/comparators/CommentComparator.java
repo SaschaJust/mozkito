@@ -26,7 +26,7 @@ import org.mozkito.issues.tracker.model.Comment;
 /**
  * The Class CommentComparator.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class CommentComparator implements Comparator<Comment> {
 	

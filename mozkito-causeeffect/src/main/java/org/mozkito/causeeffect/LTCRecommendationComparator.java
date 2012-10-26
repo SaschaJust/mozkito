@@ -18,7 +18,7 @@ import org.mozkito.causeeffect.LTCRecommendation.ChangeProperty;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class LTCRecommendationComparator implements Comparator<LTCRecommendation> {

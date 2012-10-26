@@ -21,7 +21,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class GenealogyTransactionNode.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyTransactionNode {
 	

@@ -61,7 +61,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class UntanglingOptions.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UntanglingOptions extends
         ArgumentSetOptions<UntanglingControl, ArgumentSet<UntanglingControl, UntanglingOptions>> {

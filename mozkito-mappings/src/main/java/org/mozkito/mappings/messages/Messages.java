@@ -10,24 +10,25 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.mappings.engines;
+package org.mozkito.mappings.messages;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Messages.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
 	private static final String   BUNDLE_NAME     = "org.mozkito.mappings.engines.messages"; //$NON-NLS-1$
-	                                                                                                         
+	                                                                                         
 	/** The Constant RESOURCE_BUNDLE. */
 	private static ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
@@ -57,11 +58,14 @@ public class Messages {
 			return ResourceBundle.getBundle(BUNDLE_NAME, locale);
 		} catch (final MissingResourceException e) {
 			if (Logger.logWarn()) {
-				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.",
+				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.", //$NON-NLS-1$
 				                          locale));
 			}
-			
-			return ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
+			try {
+				return ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
+			} catch (final MissingResourceException ex) {
+				throw new UnrecoverableError("Could not load string table.", ex); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -69,5 +73,6 @@ public class Messages {
 	 * Instantiates a new messages.
 	 */
 	private Messages() {
+		// avoid instantiation
 	}
 }

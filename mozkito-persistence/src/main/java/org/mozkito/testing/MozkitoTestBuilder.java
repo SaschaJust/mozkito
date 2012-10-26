@@ -37,7 +37,7 @@ import org.mozkito.testing.MozkitoSuite.TestRun;
 
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public final class MozkitoTestBuilder extends Thread {

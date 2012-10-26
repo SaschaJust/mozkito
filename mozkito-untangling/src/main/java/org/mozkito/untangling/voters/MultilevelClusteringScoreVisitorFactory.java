@@ -17,7 +17,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public abstract class MultilevelClusteringScoreVisitorFactory<T extends MultilevelClusteringScoreVisitor<?>> {

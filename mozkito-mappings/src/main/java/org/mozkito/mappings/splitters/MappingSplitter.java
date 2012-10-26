@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.engines.Messages;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
@@ -45,7 +45,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class MappingSplitter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class MappingSplitter extends Node {
 	

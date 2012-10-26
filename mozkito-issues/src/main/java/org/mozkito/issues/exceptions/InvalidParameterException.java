@@ -21,7 +21,7 @@ package org.mozkito.issues.exceptions;
 /**
  * The Class InvalidParameterException.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InvalidParameterException extends Exception {
 	

@@ -28,7 +28,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class NonAmbigiousFullnameEngine extends MergingEngine {

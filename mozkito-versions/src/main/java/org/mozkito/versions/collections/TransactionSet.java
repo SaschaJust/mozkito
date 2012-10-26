@@ -18,14 +18,14 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class TransactionSet.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCSTransaction> {
 	
 	/**
 	 * The Enum TransactionSetOrder.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public enum TransactionSetOrder {
 		

@@ -35,7 +35,7 @@ import net.ownhero.dev.ioda.FileUtils;
 /**
  * The Class Class2Bugs.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 public class Class2Bugs implements Annotated {

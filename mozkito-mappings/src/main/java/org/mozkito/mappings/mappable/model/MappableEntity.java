@@ -43,7 +43,7 @@ import org.mozkito.persistence.Annotated;
  * Access to the internal data is used through access with {@link FieldKey}s. The corresponding data is mangled to fit
  * the proper format.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Entity

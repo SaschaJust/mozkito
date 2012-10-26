@@ -8,7 +8,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Interface IRevDependencyGraph.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface IRevDependencyGraph {
 	

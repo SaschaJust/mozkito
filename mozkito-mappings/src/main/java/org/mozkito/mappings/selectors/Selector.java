@@ -51,7 +51,7 @@ import net.ownhero.dev.kisa.Logger;
  * Selectors analyze a {@link MappableEntity} and find possible candidates that can be mapped to the entity, due to some
  * relation.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public abstract class Selector extends Node {

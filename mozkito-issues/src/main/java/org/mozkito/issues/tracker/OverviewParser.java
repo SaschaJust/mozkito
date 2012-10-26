@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * The Interface OverviewParser.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface OverviewParser {
 	

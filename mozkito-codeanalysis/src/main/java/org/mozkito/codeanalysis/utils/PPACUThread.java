@@ -32,7 +32,7 @@ import ca.mcgill.cs.swevo.ppa.PPAOptions;
 /**
  * The Class PPACUThread.
  * 
- * @author Kim Herzig <kim@cs.uni-saarland.de>
+ * @author Kim Herzig <kim@mozkito.org>
  */
 public class PPACUThread implements Runnable {
 	

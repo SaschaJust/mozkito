@@ -27,7 +27,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class MappingEngineFeature.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Embeddable
 public class Feature implements Annotated {

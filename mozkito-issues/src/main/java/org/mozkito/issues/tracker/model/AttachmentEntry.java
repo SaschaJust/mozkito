@@ -46,7 +46,7 @@ import org.mozkito.persistence.model.PersonContainer;
 /**
  * The Class AttachmentEntry.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 public class AttachmentEntry implements Annotated {

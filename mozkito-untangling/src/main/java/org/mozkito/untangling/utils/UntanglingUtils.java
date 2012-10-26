@@ -15,7 +15,7 @@ package org.mozkito.untangling.utils;
 /**
  * The Class UntanglingUtils.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UntanglingUtils {
 	

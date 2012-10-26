@@ -33,7 +33,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 /**
  * The Class GenealogyMetricThread.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, GenealogyMetricValue> {
 	

@@ -33,14 +33,14 @@ import edu.uci.ics.jung.graph.util.Pair;
  * Represents a ChangeGenealogy as a Jung2 graph. This graph cannot be modified. This class should only be used for
  * representation, drawing or algorithm purposes.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JungGenealogyGraph<T> implements DirectedGraph<T, JungGenealogyGraph.Edge<T>> {
 	
 	/**
 	 * The Class Edge.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public static class Edge<T> {
 		

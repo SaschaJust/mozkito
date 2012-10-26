@@ -56,7 +56,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * Works only for JavaMethodDefinitions so far.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	

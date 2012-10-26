@@ -42,7 +42,7 @@ import org.mozkito.persistence.model.Person;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class JiraParserLUCENE2222Test {

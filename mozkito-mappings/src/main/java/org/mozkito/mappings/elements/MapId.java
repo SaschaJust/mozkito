@@ -17,7 +17,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * This class is used by the {@link PersistenceUtil} only and serves as a composed key in the database.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class MapId {

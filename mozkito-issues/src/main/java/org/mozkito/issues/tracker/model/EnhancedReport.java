@@ -45,7 +45,7 @@ import org.mozkito.persistence.model.PersonContainer;
 /**
  * The Class Report.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 @Table (name = "enhancedreport")

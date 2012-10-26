@@ -43,7 +43,7 @@ import net.ownhero.dev.kisa.Logger;
  * {@link Tracker} is the super class all BTS classes have to extend. The {@link Tracker} handles all
  * mining/parsing/analyzing of a {@link Report}.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class Tracker {
 	

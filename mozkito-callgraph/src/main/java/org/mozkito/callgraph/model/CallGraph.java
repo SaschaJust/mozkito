@@ -37,7 +37,7 @@ import edu.uci.ics.jung.graph.util.Pair;
 /**
  * The Class MinerCallGraph.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implements
         DirectedGraph<MethodVertex, CallGraphEdge>, Serializable {

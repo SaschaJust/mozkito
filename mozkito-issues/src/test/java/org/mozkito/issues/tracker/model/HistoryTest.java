@@ -34,7 +34,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class HistoryTest.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class HistoryTest {
 	
@@ -59,7 +59,7 @@ public class HistoryTest {
 		this.report.setLastFetch(new DateTime());
 		this.report.setSummary("Some default summary");
 		this.report.setStatus(Status.CLOSED);
-		this.report.setSubmitter(new Person("just", "Sascha Just", "sascha.just@st.cs.uni-saarland.de"));
+		this.report.setSubmitter(new Person("just", "Sascha Just", "sascha.just@mozkito.org"));
 		this.report.addComment(new Comment(1, new Person("kim", "Kim Herzig", null),
 		                                   this.formatter.parseDateTime("2010-01-12 09:35:11"), "Some default comment"));
 		this.report.addComment(new Comment(2, new Person("just", "Sascha Just", null),
@@ -67,7 +67,7 @@ public class HistoryTest {
 		                                   "Some default comment 2"));
 		HistoryElement element = new HistoryElement(this.report.getId(), new Person("doe", "John Doe", "foo@bar.com"),
 		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
-		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@cs.uni-saarland.de"));
+		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@mozkito.org"));
 		element.addChangedValue("priority", new Report("0").getPriority(), Priority.HIGH);
 		element.addChangedValue("status", new Report("0").getStatus(), Status.NEW);
 		this.report.addHistoryElement(element);

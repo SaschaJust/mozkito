@@ -54,7 +54,7 @@ import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 /**
  * The Class ChangeGenealogyUtils.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ChangeGenealogyUtils {
 	

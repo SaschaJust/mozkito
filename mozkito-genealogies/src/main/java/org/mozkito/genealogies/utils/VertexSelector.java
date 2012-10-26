@@ -13,7 +13,7 @@
 package org.mozkito.genealogies.utils;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public interface VertexSelector<T> {

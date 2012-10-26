@@ -48,7 +48,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * The Class MantisOptions.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<ProxyConfig, ProxyOptions>> {
 	

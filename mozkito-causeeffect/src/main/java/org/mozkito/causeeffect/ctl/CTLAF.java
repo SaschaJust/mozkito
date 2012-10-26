@@ -86,7 +86,7 @@ public class CTLAF extends CTLComposedFormula {
 	/**
 	 * @param trueStates
 	 * @return
-	 * @author Kim Herzig <kim@cs.uni-saarland.de>
+	 * @author Kim Herzig <kim@mozkito.org>
 	 * @param <V>
 	 */
 	private <V> Set<State> getParentStates(KripkeStructure<V> kripkeStruct,

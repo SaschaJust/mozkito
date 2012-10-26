@@ -24,7 +24,7 @@ import net.ownhero.dev.regex.Regex;
 /**
  * The Class UnifiedDiff.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class UnifiedDiff extends Patch {
 	

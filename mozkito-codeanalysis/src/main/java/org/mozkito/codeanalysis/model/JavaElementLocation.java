@@ -43,7 +43,7 @@ import org.mozkito.persistence.Annotated;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
 public class JavaElementLocation implements Comparable<JavaElementLocation>, Annotated {
@@ -51,7 +51,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	/**
 	 * The Enum LineCover.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public static enum LineCover {
 		

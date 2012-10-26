@@ -16,7 +16,7 @@ package org.mozkito.causeeffect.ctl;
 import java.util.Collection;
 
 /**
- * @author Kim Herzig <kim@cs.uni-saarland.de>
+ * @author Kim Herzig <kim@mozkito.org>
  * 
  */
 public abstract class CTLComposedFormula extends CTLFormula {

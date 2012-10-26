@@ -32,7 +32,7 @@ import org.mozkito.genealogies.utils.OperationCollection;
 /**
  * The Class GenealogyNodePersister.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyNodePersister extends Transformer<OperationCollection, JavaChangeOperationProcessQueue> {
 	

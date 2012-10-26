@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
  * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
  * database.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class RepositoryPersister extends Sink<RCSTransaction> {

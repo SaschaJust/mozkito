@@ -43,7 +43,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class ChangeCouplingCombineOperator.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet> {
 	

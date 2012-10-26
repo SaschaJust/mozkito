@@ -20,7 +20,7 @@ import org.mozkito.infozilla.filters.InfozillaFilter;
 /**
  * The Class PatchFilter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class PatchFilter extends InfozillaFilter {
 	// stub

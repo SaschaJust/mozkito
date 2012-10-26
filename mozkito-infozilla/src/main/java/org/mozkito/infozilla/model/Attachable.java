@@ -20,7 +20,7 @@ import org.mozkito.infozilla.model.attachment.Attachment;
 /**
  * The Interface Attachable.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Attachable {
 	

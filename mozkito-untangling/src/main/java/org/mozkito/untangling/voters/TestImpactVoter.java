@@ -39,7 +39,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 /**
  * The Class TestImpactVoter.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	

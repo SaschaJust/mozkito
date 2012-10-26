@@ -25,7 +25,7 @@ import org.mozkito.persistence.Criteria;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class PersistenceUtil implements org.mozkito.persistence.PersistenceUtil {

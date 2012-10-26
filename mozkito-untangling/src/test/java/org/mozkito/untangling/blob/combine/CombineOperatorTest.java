@@ -28,14 +28,14 @@ import org.mozkito.untangling.utils.CollectionUtils;
 /**
  * The Class ArtificialBlobGeneratorTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CombineOperatorTest {
 	
 	/**
 	 * The Class TestObject.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private class TestObject {
 		
@@ -90,7 +90,7 @@ public class CombineOperatorTest {
 	/**
 	 * The Class TestObjectCombineOperator.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private class TestObjectCombineOperator implements CombineOperator<TestObject> {
 		

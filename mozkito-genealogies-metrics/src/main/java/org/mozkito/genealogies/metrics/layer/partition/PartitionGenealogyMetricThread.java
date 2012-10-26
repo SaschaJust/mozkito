@@ -30,7 +30,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 /**
  * The Class PartitionGenealogyMetricThread.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionGenealogyMetricThread extends Transformer<GenealogyPartitionNode, GenealogyMetricValue> {
 	

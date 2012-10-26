@@ -51,11 +51,11 @@ import difflib.Delta;
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
  * DarksRepository. Additionally it is mandatory to add a new enum constant in {@link RepositoryType}.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public abstract class Repository {
@@ -375,7 +375,7 @@ public abstract class Repository {
 	 * Gets the repository type.
 	 * 
 	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
-	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de> {@link Repository} for details.
+	 * @author Sascha Just <sascha.just@mozkito.org> {@link Repository} for details.
 	 */
 	public final RepositoryType getRepositoryType() {
 		return RepositoryType.valueOf(this.getClass()

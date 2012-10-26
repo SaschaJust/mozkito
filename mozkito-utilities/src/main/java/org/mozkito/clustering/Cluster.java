@@ -22,7 +22,7 @@ import net.ownhero.dev.ioda.Tuple;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Cluster<T> implements Comparable<Cluster<T>> {
 	

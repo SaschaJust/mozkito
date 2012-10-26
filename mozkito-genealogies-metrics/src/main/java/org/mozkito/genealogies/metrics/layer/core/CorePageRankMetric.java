@@ -28,7 +28,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
 /**
  * The Class CoreDependencyMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CorePageRankMetric extends GenealogyCoreMetric {
 	

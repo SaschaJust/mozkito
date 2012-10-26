@@ -65,7 +65,7 @@ import difflib.Patch;
 /**
  * The Class MercurialRepository.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MercurialRepository extends Repository {
 	

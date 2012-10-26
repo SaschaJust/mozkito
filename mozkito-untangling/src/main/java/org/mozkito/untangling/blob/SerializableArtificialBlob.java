@@ -20,7 +20,7 @@ import org.mozkito.persistence.PersistenceUtil;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class SerializableArtificialBlob implements Serializable {

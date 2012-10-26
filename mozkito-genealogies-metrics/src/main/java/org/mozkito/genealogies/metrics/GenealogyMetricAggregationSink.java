@@ -40,7 +40,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Class GenealogyMetricAggregationSink.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricAggregationSink extends Sink<GenealogyMetricValue> {
 	

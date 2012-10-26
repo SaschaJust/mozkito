@@ -31,7 +31,7 @@ import org.mozkito.issues.tracker.bugzilla.BugzillaOverviewParser;
 /**
  * The Class BugzillaOverviewParserTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class BugzillaOverviewParserTest {
 	

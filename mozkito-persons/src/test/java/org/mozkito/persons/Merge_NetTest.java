@@ -39,7 +39,7 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class Merge_NetTest extends MozkitoTest {
@@ -61,10 +61,10 @@ public class Merge_NetTest extends MozkitoTest {
 		list.size();
 		
 		final Person[] persons = new Person[] { new Person("just", null, null),
-		        new Person(null, null, "sascha.just@st.cs.uni-saarland.de"), new Person(null, "Sascha Just", null),
+		        new Person(null, null, "sascha.just@mozkito.org"), new Person(null, "Sascha Just", null),
 		        new Person("just", "Sascha Just", null),
-		        new Person(null, "Sascha Just", "sascha.just@st.cs.uni-saarland.de"),
-		        new Person("just", null, "sascha.just@st.cs.uni-saarland.de") };
+		        new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
+		        new Person("just", null, "sascha.just@mozkito.org") };
 		
 		RCSTransaction rcsTransaction = null;
 		
@@ -105,7 +105,7 @@ public class Merge_NetTest extends MozkitoTest {
 		assertEquals(1, person.getUsernames().size());
 		assertEquals("just", person.getUsernames().iterator().next());
 		assertEquals(1, person.getEmailAddresses().size());
-		assertEquals("sascha.just@st.cs.uni-saarland.de", person.getEmailAddresses().iterator().next());
+		assertEquals("sascha.just@mozkito.org", person.getEmailAddresses().iterator().next());
 		assertEquals(1, person.getFullnames().size());
 		assertEquals("Sascha Just", person.getFullnames().iterator().next());
 	}

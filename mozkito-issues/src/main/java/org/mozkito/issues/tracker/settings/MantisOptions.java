@@ -41,7 +41,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class MantisOptions.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, MantisOptions>> implements
         ITrackerOptions {

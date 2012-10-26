@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
 /**
  * The Class CoreDependencyMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreTempParentsMetrics extends GenealogyCoreMetric implements DayTimeDiff<JavaChangeOperation> {
 	

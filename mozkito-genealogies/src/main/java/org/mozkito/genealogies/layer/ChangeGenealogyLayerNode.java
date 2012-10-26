@@ -21,7 +21,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOperation> {

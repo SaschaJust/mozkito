@@ -41,7 +41,7 @@ import org.neo4j.kernel.Traversal;
 /**
  * The Class GitRevDependencyGraph.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 class GitRevDependencyGraph implements IRevDependencyGraph {
 	

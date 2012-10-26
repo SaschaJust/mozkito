@@ -18,7 +18,7 @@ package org.mozkito.versions;
 /**
  * Supported protocol types for repositories
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public enum ProtocolType {

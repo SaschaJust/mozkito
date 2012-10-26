@@ -37,7 +37,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class RepositoryToolchain extends Chain<Settings> {
 	

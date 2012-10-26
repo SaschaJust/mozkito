@@ -28,7 +28,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalInbreedMetrics;
 /**
  * The Class CoreDependencyMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreInbreedMetrics extends GenealogyCoreMetric {
 	

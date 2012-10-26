@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -36,7 +37,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set
  * explicitly, the default value is used.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class AuthorEqualityEngine extends MappingEngine {

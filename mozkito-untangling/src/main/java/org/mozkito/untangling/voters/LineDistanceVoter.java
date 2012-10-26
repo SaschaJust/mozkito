@@ -23,7 +23,7 @@ import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
  * 
  * Works only for JavaMethodDefinitions so far.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	

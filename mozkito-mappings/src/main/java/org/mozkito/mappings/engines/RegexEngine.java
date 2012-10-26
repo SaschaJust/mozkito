@@ -41,6 +41,7 @@ import net.ownhero.dev.regex.Regex;
 import org.apache.commons.lang.ArrayUtils;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
@@ -53,14 +54,14 @@ import au.com.bytecode.opencsv.CSVReader;
 /**
  * The Class RegexEngine.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class RegexEngine extends MappingEngine {
 	
 	/**
 	 * The Class Matcher.
 	 * 
-	 * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+	 * @author Sascha Just <sascha.just@mozkito.org>
 	 */
 	private class Matcher {
 		

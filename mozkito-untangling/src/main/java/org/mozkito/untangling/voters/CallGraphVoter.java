@@ -59,7 +59,7 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
  * 
  * Works only for JavaMethodDefinitions so far.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	

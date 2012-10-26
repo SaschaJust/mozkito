@@ -25,14 +25,14 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * The Class SourceforgeSummaryParser.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SourceforgeSummaryParser extends DefaultHandler {
 	
 	/**
 	 * The Enum SummaryParserMode.
 	 *
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private static enum SummaryParserMode {
 		

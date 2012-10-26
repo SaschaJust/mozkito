@@ -38,7 +38,7 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
 /**
  * The Class TestCallGraphs.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestCallGraphs {
 	

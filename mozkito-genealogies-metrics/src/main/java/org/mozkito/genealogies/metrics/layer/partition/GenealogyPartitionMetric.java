@@ -23,7 +23,7 @@ import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 /**
  * The Class GenealogyPartitionMetric.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class GenealogyPartitionMetric implements GenealogyMetric<GenealogyPartitionNode> {
 	

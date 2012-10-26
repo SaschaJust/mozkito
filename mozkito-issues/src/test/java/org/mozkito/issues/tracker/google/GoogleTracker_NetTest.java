@@ -32,7 +32,7 @@ import org.mozkito.issues.tracker.model.Report;
 /**
  * The Class GoogleTracker_NetTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GoogleTracker_NetTest {
 	

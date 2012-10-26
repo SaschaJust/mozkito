@@ -20,7 +20,7 @@ import org.mozkito.persistence.Annotated;
 /**
  * The Enum AttachmentType.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum AttachmentType implements Annotated {
 	

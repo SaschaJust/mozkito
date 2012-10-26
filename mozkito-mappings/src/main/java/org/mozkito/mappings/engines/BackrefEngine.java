@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
@@ -34,7 +35,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 /**
  * This engine scores if the 'to' entity contains a reference to the 'from' entity in the body text.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class BackrefEngine extends MappingEngine {

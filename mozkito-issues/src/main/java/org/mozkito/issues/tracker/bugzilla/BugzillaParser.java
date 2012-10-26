@@ -51,7 +51,7 @@ import org.mozkito.issues.tracker.elements.Status;
 /**
  * The Class BugzillaParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class BugzillaParser implements Parser {
 	

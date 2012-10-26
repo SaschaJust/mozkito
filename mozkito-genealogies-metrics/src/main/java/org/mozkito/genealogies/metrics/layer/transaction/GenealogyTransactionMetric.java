@@ -26,7 +26,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class GenealogyTransactionMetric.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class GenealogyTransactionMetric implements GenealogyMetric<GenealogyTransactionNode> {
 	

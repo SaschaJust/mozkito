@@ -32,7 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * A factory for creating Tracker objects.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TrackerFactory {
 	

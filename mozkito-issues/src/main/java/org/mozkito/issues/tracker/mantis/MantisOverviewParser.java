@@ -40,7 +40,7 @@ import org.mozkito.issues.tracker.ReportLink;
 /**
  * The Class MantisOverviewParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MantisOverviewParser implements OverviewParser {
 	

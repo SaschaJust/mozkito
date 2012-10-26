@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
  * The Class UniversalInbreedMetrics.
  *
  * @param <T> the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalInbreedMetrics<T> {
 	

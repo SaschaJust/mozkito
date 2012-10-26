@@ -61,14 +61,14 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class SourceForgeParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SourceforgeParser implements Parser {
 	
 	/**
 	 * The Class AttachmentHistoryEntry.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private class AttachmentHistoryEntry {
 		

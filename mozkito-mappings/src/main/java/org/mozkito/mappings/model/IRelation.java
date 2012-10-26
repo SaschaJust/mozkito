@@ -17,7 +17,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 /**
  * The Interface IMapping.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface IRelation extends Comparable<IRelation> {
 	

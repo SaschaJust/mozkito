@@ -41,7 +41,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class RepositoryOptions.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSet<Repository, RepositoryOptions>> {
 	

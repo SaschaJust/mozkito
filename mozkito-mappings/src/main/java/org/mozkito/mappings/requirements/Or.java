@@ -22,7 +22,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
  * The or expression evaluates to true if one or more of the inner expressions evaluate to true. Evaluates to false
  * otherwise.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class Or extends Expression {

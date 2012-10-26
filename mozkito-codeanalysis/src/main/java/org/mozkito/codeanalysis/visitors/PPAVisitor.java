@@ -24,7 +24,7 @@ import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 /**
  * The Interface PPAVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface PPAVisitor {
 	

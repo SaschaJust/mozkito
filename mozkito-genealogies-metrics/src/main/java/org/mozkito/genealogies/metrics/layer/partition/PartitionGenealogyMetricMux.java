@@ -25,7 +25,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 /**
  * The Class PartitionGenealogyMetricMux.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionGenealogyMetricMux extends Multiplexer<GenealogyPartitionNode> {
 	

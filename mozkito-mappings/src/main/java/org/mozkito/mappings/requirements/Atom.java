@@ -33,7 +33,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
  * given index matches the given type/class. If a/multiple {@link FieldKey}(s) is/are given, the check method is looking
  * up if the instance corresponding to the given index supports this type of field (determined by {@link FieldKey}).
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public final class Atom extends Expression {

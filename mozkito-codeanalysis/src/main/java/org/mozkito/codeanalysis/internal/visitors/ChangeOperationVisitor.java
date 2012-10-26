@@ -19,7 +19,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Interface ChangeOperationVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface ChangeOperationVisitor {
 	

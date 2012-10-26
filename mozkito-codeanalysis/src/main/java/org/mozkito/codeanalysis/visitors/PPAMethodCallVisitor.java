@@ -41,7 +41,7 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
  * The Class PPAMethodCallVisitor generated MethodCalls(Locations) for the given compilation unit. Instances must be
  * passed as visitors to the PPATypeVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPAMethodCallVisitor implements PPAVisitor {
 	

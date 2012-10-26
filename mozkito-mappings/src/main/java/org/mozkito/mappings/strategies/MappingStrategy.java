@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.engines.Messages;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.IComposite;
 import org.mozkito.mappings.register.Node;
 
@@ -54,7 +54,7 @@ import net.ownhero.dev.kisa.Logger;
  * machine train on already mapped and verified data. If a mapping has passed the strategy checks it is persisted in the
  * database.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public abstract class MappingStrategy extends Node {

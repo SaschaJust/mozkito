@@ -20,7 +20,7 @@ import java.util.HashMap;
 /**
  * A factory for creating Vertex objects.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class VertexFactory {
 	

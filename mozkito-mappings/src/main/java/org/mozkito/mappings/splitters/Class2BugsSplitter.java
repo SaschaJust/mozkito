@@ -21,7 +21,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Class Class2BugsSplitter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Class2BugsSplitter extends MappingSplitter {
 	

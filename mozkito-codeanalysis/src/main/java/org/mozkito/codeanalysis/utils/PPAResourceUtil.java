@@ -35,7 +35,7 @@ import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
 /**
  * The Class PPAResourceUtil.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPAResourceUtil {
 	

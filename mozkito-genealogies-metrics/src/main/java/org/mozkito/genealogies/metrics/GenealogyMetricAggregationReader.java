@@ -35,7 +35,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class GenealogyMetricAggregationReader.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValue> {
 	

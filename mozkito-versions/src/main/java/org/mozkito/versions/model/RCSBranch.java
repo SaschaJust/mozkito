@@ -39,7 +39,7 @@ import org.mozkito.persistence.Annotated;
 /**
  * The Class RCSBranch.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
 @Table (name = "rcsbranch")

@@ -27,7 +27,7 @@ import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 /**
  * The Class PartitionChangeSizeMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	

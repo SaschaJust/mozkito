@@ -28,7 +28,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalStructuralHolesM
 /**
  * The Class CoreDependencyMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreStructuralHolesMetrics extends GenealogyCoreMetric {
 	

@@ -39,7 +39,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class JiraHistoryParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JiraHistoryParser {
 	

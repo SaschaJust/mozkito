@@ -24,7 +24,7 @@ import org.mozkito.versions.model.RCSFile;
 /**
  * The Class SerialFileChangeCoupling.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SerialFileChangeCoupling implements Serializable {
 	

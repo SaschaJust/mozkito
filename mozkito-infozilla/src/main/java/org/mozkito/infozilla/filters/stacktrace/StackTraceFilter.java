@@ -23,7 +23,7 @@ import org.mozkito.infozilla.filters.InfozillaFilter;
 /**
  * The Class StackTraceFilter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class StackTraceFilter extends InfozillaFilter {
 	

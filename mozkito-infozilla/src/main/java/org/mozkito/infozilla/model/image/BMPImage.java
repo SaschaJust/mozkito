@@ -18,7 +18,7 @@ package org.mozkito.infozilla.model.image;
 /**
  * The Class BMPImage.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class BMPImage extends Image {
 	// stub

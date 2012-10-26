@@ -16,7 +16,7 @@
 package org.mozkito.exceptions;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class UnsupportedProtocolType extends Exception {

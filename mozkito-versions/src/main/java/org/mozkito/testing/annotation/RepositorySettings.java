@@ -14,7 +14,7 @@ import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
 
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Documented

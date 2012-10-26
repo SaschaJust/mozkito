@@ -33,7 +33,7 @@ import org.mozkito.issues.tracker.settings.TrackerOptions;
 import scala.actors.threadpool.Arrays;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class TrackerOptionsTest {

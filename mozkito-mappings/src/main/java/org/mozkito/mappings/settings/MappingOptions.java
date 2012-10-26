@@ -43,7 +43,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class MappingArguments.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
 	

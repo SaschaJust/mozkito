@@ -26,7 +26,7 @@ import org.mozkito.codeanalysis.model.JavaElementLocation;
 /**
  * The Class JavaElementLocations.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JavaElementLocations {
 	

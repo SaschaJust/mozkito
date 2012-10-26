@@ -25,7 +25,7 @@ import net.ownhero.dev.hiari.settings.Settings;
  * This class is a end point for the {@link RepositoryToolchain} tool chain in case no database connection is used. The
  * data received from the previous node is void sinked.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class RepositoryVoidSink extends Sink<RCSTransaction> {

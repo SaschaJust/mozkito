@@ -27,7 +27,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics
 /**
  * The Class UniversalTestTempDepthMetric.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalTestTempDepthMetric implements DayTimeDiff<String> {
 	

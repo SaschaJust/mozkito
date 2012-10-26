@@ -39,7 +39,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Class ReportRegexSelector.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class AllReportSelector extends Selector {
 	

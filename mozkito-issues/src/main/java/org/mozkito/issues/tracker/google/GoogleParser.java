@@ -62,7 +62,7 @@ import com.google.gdata.util.ServiceException;
 /**
  * The Class GoogleParser.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class GoogleParser implements Parser {
 	

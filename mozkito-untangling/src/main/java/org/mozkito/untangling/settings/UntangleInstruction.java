@@ -15,7 +15,7 @@ package org.mozkito.untangling.settings;
 import org.mozkito.untangling.blob.ChangeSet;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class UntangleInstruction {

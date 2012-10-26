@@ -15,7 +15,7 @@ package org.mozkito.untangling;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class UntanglingComparisonResult {

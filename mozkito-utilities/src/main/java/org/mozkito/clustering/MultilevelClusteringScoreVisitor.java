@@ -17,7 +17,7 @@ package org.mozkito.clustering;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface MultilevelClusteringScoreVisitor<T> {
 	

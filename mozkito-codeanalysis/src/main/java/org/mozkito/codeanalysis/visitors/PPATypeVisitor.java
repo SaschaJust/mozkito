@@ -49,7 +49,7 @@ import org.mozkito.codeanalysis.model.JavaTypeDefinition;
 /**
  * The Class PPATypeVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPATypeVisitor extends ASTVisitor {
 	

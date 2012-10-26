@@ -21,7 +21,7 @@ package org.mozkito.issues.exceptions;
 /**
  * The Class UnregisteredTrackerTypeException.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class UnregisteredTrackerTypeException extends Exception {
 	

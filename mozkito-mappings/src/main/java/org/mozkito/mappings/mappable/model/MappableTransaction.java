@@ -45,7 +45,7 @@ import com.aliasi.tokenizer.TokenizerFactory;
  * Class that wraps {@link RCSTransaction} to be mapped.
  * 
  * @see MappableEntity
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Entity

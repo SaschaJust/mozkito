@@ -32,7 +32,7 @@ import edu.uci.ics.jung.algorithms.scoring.PageRank;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalPageRankMetric<T> {
 	

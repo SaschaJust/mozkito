@@ -27,7 +27,7 @@ import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class SubversionAnnotationHandler implements ISVNAnnotateHandler {

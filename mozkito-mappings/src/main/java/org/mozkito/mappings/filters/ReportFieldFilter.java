@@ -36,7 +36,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 /**
  * The Class ReportFieldFilter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ReportFieldFilter extends Filter {
 	

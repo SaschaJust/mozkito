@@ -18,7 +18,7 @@ package org.mozkito.persistence;
 import java.io.Serializable;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public interface Annotated extends Serializable {

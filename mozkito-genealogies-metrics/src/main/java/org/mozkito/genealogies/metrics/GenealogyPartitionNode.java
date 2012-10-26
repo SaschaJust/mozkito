@@ -18,7 +18,7 @@ import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 /**
  * The Class GenealogyPartitionNode.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyPartitionNode {
 	

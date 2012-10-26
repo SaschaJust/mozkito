@@ -19,7 +19,7 @@ package org.mozkito.genealogies.metrics;
 /**
  * The Class GenealogyMetricValue.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricValue {
 	

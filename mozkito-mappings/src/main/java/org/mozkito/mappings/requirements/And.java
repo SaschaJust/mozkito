@@ -22,7 +22,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
  * The and expression evaluates to true if and only if both inner expressions evaluate to true. Evaluates to false
  * otherwise.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public final class And extends Expression {

@@ -25,7 +25,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Interface TextElement.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface TextElement {
 	

@@ -47,7 +47,7 @@ import org.mozkito.persistence.model.PersonContainer;
 /**
  * The Class Comment.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 @Table (name = "comment", uniqueConstraints = { @UniqueConstraint (columnNames = { "id", "bugreport_id" }) })

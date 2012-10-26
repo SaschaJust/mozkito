@@ -39,7 +39,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class JavaChangeOperation.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
 public class JavaChangeOperation implements Annotated {

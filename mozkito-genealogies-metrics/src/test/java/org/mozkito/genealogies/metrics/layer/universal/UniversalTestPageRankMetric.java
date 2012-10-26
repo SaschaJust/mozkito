@@ -26,7 +26,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
 /**
  * The Class UniversalTestPageRankMetric.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalTestPageRankMetric {
 	

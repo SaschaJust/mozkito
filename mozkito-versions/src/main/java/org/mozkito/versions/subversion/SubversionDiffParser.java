@@ -32,7 +32,7 @@ import difflib.DiffUtils;
 import difflib.Patch;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 class SubversionDiffParser implements ISVNDiffGenerator {

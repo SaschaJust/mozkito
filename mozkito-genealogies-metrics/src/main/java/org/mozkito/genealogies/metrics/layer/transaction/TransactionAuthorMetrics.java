@@ -32,7 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class TransactionAuthorMetrics.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 	

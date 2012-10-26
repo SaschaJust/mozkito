@@ -37,7 +37,7 @@ import de.unisaarland.cs.st.moskito.ppa.utils.PPAUtils;
 /**
  * This class controls all aspects of the application's execution.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Application implements IApplication {
 	

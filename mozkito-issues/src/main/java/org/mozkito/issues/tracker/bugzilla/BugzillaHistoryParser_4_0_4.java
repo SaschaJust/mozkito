@@ -39,7 +39,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class BugzillaHistoryParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	

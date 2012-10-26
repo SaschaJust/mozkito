@@ -26,7 +26,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class Filter.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Filter extends Transformer<Composite, Mapping> {
 	

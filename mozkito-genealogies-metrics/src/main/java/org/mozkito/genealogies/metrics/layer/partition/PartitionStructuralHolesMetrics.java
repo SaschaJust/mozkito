@@ -25,7 +25,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalStructuralHolesM
 /**
  * The Class PartitionStructuralHolesMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionStructuralHolesMetrics extends GenealogyPartitionMetric {
 	

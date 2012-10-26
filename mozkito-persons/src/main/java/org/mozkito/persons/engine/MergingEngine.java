@@ -45,7 +45,7 @@ import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.processing.PersonManager;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public abstract class MergingEngine implements SettingsProvider {

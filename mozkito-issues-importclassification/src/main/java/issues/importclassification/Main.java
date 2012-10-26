@@ -15,7 +15,7 @@ package issues.importclassification;
 import org.mozkito.issues.importclassification.ClassificationImporter;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class Main {

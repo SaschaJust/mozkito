@@ -39,7 +39,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class SVMAggregation.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SVMAggregation extends UntanglingScoreAggregation implements Serializable {
 	

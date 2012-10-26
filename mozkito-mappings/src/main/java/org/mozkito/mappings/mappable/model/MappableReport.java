@@ -39,7 +39,7 @@ import net.ownhero.dev.kisa.Logger;
  * Class that wraps {@link Report} to be mapped.
  * 
  * @see MappableEntity
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @Entity

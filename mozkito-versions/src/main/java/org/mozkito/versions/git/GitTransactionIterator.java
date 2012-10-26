@@ -24,7 +24,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class TransactionIterator.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GitTransactionIterator implements Iterator<String>, Iterable<String> {
 	

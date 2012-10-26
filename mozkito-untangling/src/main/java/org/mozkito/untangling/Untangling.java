@@ -81,14 +81,14 @@ import org.uncommons.maths.combinatorics.PermutationGenerator;
 /**
  * The Class Untangling.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Untangling {
 	
 	/**
 	 * The Enum ScoreCombinationMode.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public enum ScoreCombinationMode {
 		
@@ -115,7 +115,7 @@ public class Untangling {
 	/**
 	 * The Enum UntanglingCollapse.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public enum UntanglingCollapse {
 		

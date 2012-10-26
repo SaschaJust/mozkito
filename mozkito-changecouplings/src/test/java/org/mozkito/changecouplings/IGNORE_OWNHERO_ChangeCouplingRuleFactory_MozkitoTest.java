@@ -41,7 +41,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class ChangeCouplingRuleFactoryTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends MozkitoTest {
 	

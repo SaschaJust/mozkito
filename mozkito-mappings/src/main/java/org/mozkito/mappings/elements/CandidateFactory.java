@@ -33,7 +33,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  *            the generic type
  * @param <TO>
  *            the generic type
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class CandidateFactory<FROM, TO> {
 	

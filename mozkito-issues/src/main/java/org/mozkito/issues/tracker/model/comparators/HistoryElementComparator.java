@@ -26,7 +26,7 @@ import org.mozkito.issues.tracker.model.HistoryElement;
 /**
  * The Class HistoryElementComparator.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class HistoryElementComparator implements Comparator<HistoryElement> {
 	

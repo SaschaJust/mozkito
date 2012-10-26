@@ -15,7 +15,7 @@ package org.mozkito.codeanalysis.model;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  *
  */
 public class Messages extends NLS {

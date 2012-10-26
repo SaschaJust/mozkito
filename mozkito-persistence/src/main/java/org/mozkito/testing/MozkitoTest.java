@@ -46,7 +46,7 @@ import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @RunWith (MozkitoSuite.class)

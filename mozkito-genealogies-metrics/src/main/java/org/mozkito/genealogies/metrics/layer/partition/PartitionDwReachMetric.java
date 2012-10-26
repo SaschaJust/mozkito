@@ -28,7 +28,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 /**
  * The Class PartitionDwReachMetric.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 	

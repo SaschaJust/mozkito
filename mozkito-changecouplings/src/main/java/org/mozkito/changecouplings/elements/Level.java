@@ -18,7 +18,7 @@ package org.mozkito.changecouplings.elements;
 /**
  * The Enum Level.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public enum Level {
 	

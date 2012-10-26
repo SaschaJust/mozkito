@@ -47,7 +47,7 @@ import net.ownhero.dev.ioda.specification.NoneNull;
 /**
  * The Class PPATypeVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPATypeVisitor extends ASTVisitor {
 	

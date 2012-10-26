@@ -28,7 +28,7 @@ import edu.uci.ics.jung.graph.DirectedGraph;
  *
  * @param <V> the value type
  * @param <E> the element type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Tarjan<V, E> {
 	
@@ -36,7 +36,7 @@ public class Tarjan<V, E> {
 	 * The Class Node.
 	 *
 	 * @param <V> the value type
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private static class Node<V> {
 		

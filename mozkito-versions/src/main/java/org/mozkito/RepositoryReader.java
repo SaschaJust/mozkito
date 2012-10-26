@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class RepositoryReader extends Source<LogEntry> {

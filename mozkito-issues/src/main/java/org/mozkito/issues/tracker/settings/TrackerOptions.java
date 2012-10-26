@@ -41,7 +41,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 /**
  * The Class TrackerOptions.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, TrackerOptions>> {
 	

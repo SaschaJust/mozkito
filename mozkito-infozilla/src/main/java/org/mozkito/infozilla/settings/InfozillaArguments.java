@@ -33,7 +33,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 /**
  * The Class InfozillaArguments.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InfozillaArguments extends
         ArgumentSetOptions<InfozillaFilterChain, ArgumentSet<InfozillaFilterChain, InfozillaArguments>> {

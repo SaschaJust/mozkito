@@ -18,7 +18,7 @@ import org.mozkito.causeeffect.ctl.CTLFormula;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public abstract class CTLFormulaGenerator<T> {

@@ -23,7 +23,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 /**
  * The Class GenealogyMetricDemux.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricDemux extends Demultiplexer<GenealogyMetricValue> {
 	

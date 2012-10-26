@@ -34,7 +34,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, ArgumentSet<PersistenceUtil, DatabaseOptions>> {

@@ -27,7 +27,7 @@ import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
 /**
  * The Class PartitionTempParentsMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionTempParentsMetrics extends GenealogyPartitionMetric implements
         DayTimeDiff<ChangeGenealogyLayerNode> {

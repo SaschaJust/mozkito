@@ -28,7 +28,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 /**
  * The Class GenealogyMetricsAggregateToolChain.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricsAggregateToolChain extends Chain<Settings> {
 	

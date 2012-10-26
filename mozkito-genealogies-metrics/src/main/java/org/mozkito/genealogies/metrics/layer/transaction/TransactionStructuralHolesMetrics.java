@@ -29,7 +29,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class TransactionStructuralHolesMetrics.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionStructuralHolesMetrics extends GenealogyTransactionMetric {
 	

@@ -21,7 +21,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 /**
  * The not expression evaluates to true if the innerexpression evaluates to false. Evaluates to true otherwise.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class Not extends Expression {

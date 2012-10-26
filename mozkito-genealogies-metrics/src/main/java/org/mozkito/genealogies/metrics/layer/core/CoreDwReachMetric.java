@@ -31,7 +31,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 /**
  * The Class CoreDependencyMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreDwReachMetric extends GenealogyCoreMetric {
 	

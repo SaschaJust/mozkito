@@ -29,7 +29,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class TrackerReader.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TrackerReader extends Source<ReportLink> {
 	

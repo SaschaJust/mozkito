@@ -27,7 +27,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 /**
  * The Class UniversalTestDwReachMetric.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalTestDwReachMetric {
 	

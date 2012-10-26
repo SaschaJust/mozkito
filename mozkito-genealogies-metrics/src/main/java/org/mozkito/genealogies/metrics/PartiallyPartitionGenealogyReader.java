@@ -29,7 +29,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class PartitionGenealogyReader.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartitionNode> {
 	

@@ -29,7 +29,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 /**
  * The Class TotalAggreementStrategy.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TotalAggreementStrategy extends MappingStrategy {
 	

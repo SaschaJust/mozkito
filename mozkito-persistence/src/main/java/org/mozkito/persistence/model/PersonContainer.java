@@ -40,7 +40,7 @@ import org.mozkito.persistence.Intercepted;
 /**
  * The Class PersonContainer.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 public class PersonContainer implements Intercepted<Person>, Annotated {

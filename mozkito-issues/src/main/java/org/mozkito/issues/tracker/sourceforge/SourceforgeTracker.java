@@ -31,7 +31,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 /**
  * The Class SourceforgeTracker.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SourceforgeTracker extends Tracker {
 	

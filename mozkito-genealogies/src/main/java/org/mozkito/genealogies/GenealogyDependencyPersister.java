@@ -33,7 +33,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class GenealogyDependencyPersister.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProcessQueue> {
 	

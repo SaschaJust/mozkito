@@ -26,7 +26,7 @@ import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 /**
  * The Class Bzip2Archive.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Bzip2Archive extends Archive {
 	

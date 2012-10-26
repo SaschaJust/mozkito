@@ -51,7 +51,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class History.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 public class History implements Annotated {

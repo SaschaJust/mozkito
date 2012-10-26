@@ -24,7 +24,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetric;
 /**
  * The Class GenealogyCoreMetric.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class GenealogyCoreMetric implements GenealogyMetric<GenealogyCoreNode> {
 	

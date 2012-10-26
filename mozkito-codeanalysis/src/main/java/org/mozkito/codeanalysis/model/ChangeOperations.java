@@ -24,7 +24,7 @@ import org.mozkito.versions.elements.ChangeType;
 /**
  * The Class ChangeOperations.
  * 
- * @author Kim Herzig <kim@cs.uni-saarland.de>
+ * @author Kim Herzig <kim@mozkito.org>
  */
 public class ChangeOperations {
 	

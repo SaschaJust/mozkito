@@ -43,7 +43,7 @@ import org.mozkito.issues.tracker.settings.Messages;
 import scala.actors.threadpool.Arrays;
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class ProxyOptionsTest {

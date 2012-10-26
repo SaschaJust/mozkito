@@ -47,7 +47,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 /**
  * The Class TestChangeGenealogy.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	

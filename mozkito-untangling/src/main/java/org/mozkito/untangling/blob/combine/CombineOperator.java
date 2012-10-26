@@ -20,7 +20,7 @@ package org.mozkito.untangling.blob.combine;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface CombineOperator<T> {
 	

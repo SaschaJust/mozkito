@@ -54,7 +54,7 @@ import ca.mcgill.cs.swevo.ppa.PPAOptions;
 /**
  * The Class CallGraphToolChain.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CallGraphToolChain {
 	

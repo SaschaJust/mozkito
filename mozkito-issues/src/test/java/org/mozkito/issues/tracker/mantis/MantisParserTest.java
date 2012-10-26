@@ -50,7 +50,7 @@ import org.mozkito.persistence.model.PersonTuple;
 /**
  * The Class MantisParserTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MantisParserTest {
 	

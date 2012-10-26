@@ -26,7 +26,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class ReportFinder.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 	

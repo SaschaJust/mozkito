@@ -31,7 +31,7 @@ import org.mozkito.issues.tracker.jira.JiraTracker;
 /**
  * The Class JiraTracker_NetTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JiraTracker_NetTest {
 	

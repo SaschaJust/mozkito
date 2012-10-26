@@ -20,10 +20,10 @@ import java.io.Serializable;
 /**
  * The Class MinerCallGraphEdge.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class CallGraphEdge implements Serializable {

@@ -63,7 +63,7 @@ import difflib.Patch;
 /**
  * The Class GitRepository. This class is _not_ thread safe.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GitRepository extends Repository {
 	

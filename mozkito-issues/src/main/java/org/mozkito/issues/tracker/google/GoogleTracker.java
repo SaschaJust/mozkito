@@ -40,7 +40,7 @@ import com.google.gdata.util.ServiceException;
 /**
  * The Class GoogleTracker.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GoogleTracker extends Tracker {
 	

@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
 /**
  * The Class LogEntry.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class LogEntry {
 	

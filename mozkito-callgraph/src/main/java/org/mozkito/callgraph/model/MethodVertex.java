@@ -20,7 +20,7 @@ import java.io.Serializable;
 /**
  * The Class MethodVertex.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MethodVertex extends CallGraphVertex implements Serializable {
 	

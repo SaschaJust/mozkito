@@ -18,7 +18,7 @@ package org.mozkito.infozilla.model.image;
 /**
  * The Class PNGImage.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PNGImage extends Image {
 	

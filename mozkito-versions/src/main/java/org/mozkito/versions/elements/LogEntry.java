@@ -25,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class LogEntry.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LogEntry implements Comparable<LogEntry> {
 	

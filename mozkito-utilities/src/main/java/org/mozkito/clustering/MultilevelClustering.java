@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
  * 
  * @param <T>
  *            the generic type
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MultilevelClustering<T> {
 	
@@ -41,7 +41,7 @@ public class MultilevelClustering<T> {
 	 *            the key type
 	 * @param <M>
 	 *            the generic type
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	protected static class ComparableTuple<K, M> extends Tuple<Double, M> implements Comparable<Tuple<Double, M>> {
 		

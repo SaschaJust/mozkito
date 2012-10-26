@@ -22,7 +22,7 @@ import org.mozkito.issues.exceptions.InvalidParameterException;
 /**
  * The Class BugzillaTracker_4_0_4_Test.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class BugzillaTracker_4_0_4_NetTest {
 	

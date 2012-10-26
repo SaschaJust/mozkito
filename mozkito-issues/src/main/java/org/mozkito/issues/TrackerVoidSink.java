@@ -27,7 +27,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 /**
  * The Class TrackerVoidSink.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class TrackerVoidSink extends Sink<Report> {
 	

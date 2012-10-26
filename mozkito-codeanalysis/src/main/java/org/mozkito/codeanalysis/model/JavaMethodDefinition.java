@@ -34,7 +34,7 @@ import org.mozkito.persistence.Annotated;
 /**
  * The Class JavaMethodDefinition.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
 @DiscriminatorValue ("JAVAMETHODDEFINITION")

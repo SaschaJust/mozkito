@@ -30,7 +30,7 @@ import org.mozkito.issues.tracker.mantis.MantisOverviewParser;
 /**
  * The Class MantisOverviewParserTest.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class MantisOverviewParserTest {
 	

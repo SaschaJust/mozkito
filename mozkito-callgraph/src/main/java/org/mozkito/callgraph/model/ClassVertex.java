@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * The Class ClassVertex.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ClassVertex extends CallGraphVertex implements Serializable {
 	

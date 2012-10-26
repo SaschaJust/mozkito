@@ -13,7 +13,7 @@ import org.mozkito.persistence.OpenJPAUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 @DatabaseSettings (unit = "versions")

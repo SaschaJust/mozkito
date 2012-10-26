@@ -31,7 +31,7 @@ import org.mozkito.persistence.Annotated;
 /**
  * The Class JavaMethodCall.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
 @DiscriminatorValue ("JAVAMETHODCALL")

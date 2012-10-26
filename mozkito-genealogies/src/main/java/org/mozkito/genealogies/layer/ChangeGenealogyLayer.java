@@ -30,7 +30,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  *            The type of objects accepted as input arguments
  * @param <K>
  *            the type of objects method results will be based on
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGenealogyLayerNode> {
 	

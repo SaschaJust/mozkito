@@ -26,7 +26,7 @@ import org.mozkito.issues.tracker.model.Report;
 /**
  * The Class ReportComparator.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ReportComparator implements Comparator<Report> {
 	

@@ -18,7 +18,7 @@ package org.mozkito.infozilla.model;
 /**
  * The Interface Inlineable.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Inlineable {
 	

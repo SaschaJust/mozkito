@@ -30,7 +30,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class BlobTransaction.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ChangeSet implements Comparable<ChangeSet> {
 	

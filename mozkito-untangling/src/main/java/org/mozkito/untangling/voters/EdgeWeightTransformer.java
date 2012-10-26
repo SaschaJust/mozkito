@@ -22,7 +22,7 @@ import org.mozkito.callgraph.model.CallGraphEdge;
 /**
  * The Class EdgeWeightTransformer.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class EdgeWeightTransformer implements Transformer<CallGraphEdge, Double> {
 	

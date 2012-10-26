@@ -21,7 +21,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 /**
  * The Class GenealogyCoreNode.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyCoreNode {
 	

@@ -28,7 +28,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
  * The all expression evaluates to true if and only if all checks on the inner expressions evaluate to true. Evaluates
  * to false otherwise.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public final class All extends Expression {

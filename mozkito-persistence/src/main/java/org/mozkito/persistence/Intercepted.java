@@ -18,7 +18,7 @@ package org.mozkito.persistence;
 import java.util.Collection;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public interface Intercepted<T> {

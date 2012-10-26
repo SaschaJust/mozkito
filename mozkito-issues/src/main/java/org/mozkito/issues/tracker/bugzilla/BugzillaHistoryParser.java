@@ -25,7 +25,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Interface BugzillaHistoryParser.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public interface BugzillaHistoryParser {
 	

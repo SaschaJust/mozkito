@@ -31,7 +31,7 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class TransactionTempDepthMetrics.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionTempDepthMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
 	

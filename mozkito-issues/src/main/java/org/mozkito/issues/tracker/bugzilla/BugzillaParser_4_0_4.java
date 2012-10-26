@@ -55,7 +55,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class BugzillaParser.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class BugzillaParser_4_0_4 extends BugzillaParser {
 	

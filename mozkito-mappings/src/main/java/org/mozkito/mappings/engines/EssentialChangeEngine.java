@@ -16,7 +16,7 @@ package org.mozkito.mappings.engines;
 /**
  * The Class EssentialChangeEngine.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class EssentialChangeEngine /* extends MappingEngine */{
 	// stub

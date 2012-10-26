@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 /**
  * The Class Messages.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Messages {
 	

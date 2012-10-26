@@ -45,7 +45,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class TransactionChangeSizeMetrics.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	

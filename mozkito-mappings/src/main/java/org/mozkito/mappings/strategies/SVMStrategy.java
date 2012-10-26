@@ -48,7 +48,7 @@ import au.com.bytecode.opencsv.CSVReader;
 /**
  * The Class TotalAggreementStrategy.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SVMStrategy extends MappingStrategy {
 	

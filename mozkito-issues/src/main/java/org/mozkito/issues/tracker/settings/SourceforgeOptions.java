@@ -36,7 +36,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 /**
  * The Class SourceforgeOptions.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SourceforgeOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, SourceforgeOptions>> implements
         ITrackerOptions {

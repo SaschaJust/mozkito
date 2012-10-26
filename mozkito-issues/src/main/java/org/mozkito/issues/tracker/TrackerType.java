@@ -21,7 +21,7 @@ package org.mozkito.issues.tracker;
 /**
  * The Enum TrackerType.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum TrackerType {
 	

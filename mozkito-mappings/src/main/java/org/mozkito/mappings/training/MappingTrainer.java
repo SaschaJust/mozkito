@@ -17,7 +17,7 @@ import org.mozkito.mappings.register.Node;
 /**
  * The Class MappingTrainer.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class MappingTrainer extends Node {
 	

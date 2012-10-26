@@ -39,7 +39,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class LTCExperiment {

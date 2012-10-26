@@ -38,7 +38,7 @@ import org.mozkito.persistence.model.Person;
 /**
  * The Class BugzillaHistoryParser_4_0_4_Test.
  *
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class BugzillaHistoryParser_4_0_4_Test {
 	

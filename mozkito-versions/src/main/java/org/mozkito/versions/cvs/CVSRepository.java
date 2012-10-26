@@ -41,7 +41,7 @@ import net.ownhero.dev.kisa.Logger;
 import difflib.Delta;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class CVSRepository extends Repository {

@@ -45,7 +45,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * The Class JiraTracker.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JiraTracker extends Tracker implements OverviewParser {
 	

@@ -49,7 +49,7 @@ import weka.core.converters.ArffSaver;
 /**
  * The Class LinearRegressionAggregation.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	

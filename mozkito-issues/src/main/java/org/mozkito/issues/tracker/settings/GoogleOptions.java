@@ -35,7 +35,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 /**
  * The Class GoogleOptions.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tracker, GoogleOptions>> implements
         ITrackerOptions {

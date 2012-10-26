@@ -204,7 +204,7 @@ public class KripkeStructure<V> {
 	
 	/**
 	 * 
-	 * @author Kim Herzig <kim@cs.uni-saarland.de>
+	 * @author Kim Herzig <kim@mozkito.org>
 	 */
 	public void clear() {
 		for (final Set<CTLFormula> m : this.trueFormulas.values()) {

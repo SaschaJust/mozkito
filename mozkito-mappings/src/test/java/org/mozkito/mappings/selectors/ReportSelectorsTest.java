@@ -30,7 +30,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class ReportSelectorsTest {

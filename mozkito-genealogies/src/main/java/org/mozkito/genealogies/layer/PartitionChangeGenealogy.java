@@ -31,7 +31,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Class PartitionChangeGenealogy.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	

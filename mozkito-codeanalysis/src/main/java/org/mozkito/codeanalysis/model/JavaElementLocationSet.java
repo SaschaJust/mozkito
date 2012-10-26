@@ -24,7 +24,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
  * The Class JavaElementDefinitionCache. All instances extending JavaElement must be stored here. Careful! Instances
  * must be created new or fetched within the persister.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JavaElementLocationSet {
 	

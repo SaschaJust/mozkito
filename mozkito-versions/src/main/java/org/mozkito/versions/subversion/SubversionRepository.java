@@ -82,7 +82,7 @@ import difflib.Patch;
 /**
  * Subversion connector extending the {@link Repository} base class.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * @see Repository
  */
 public class SubversionRepository extends Repository {

@@ -38,14 +38,14 @@ import net.ownhero.dev.kisa.Logger;
 /**
  * The Class UntanglingScoreAggregation.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaChangeOperation> {
 	
 	/**
 	 * The Enum SampleType.
 	 * 
-	 * @author Kim Herzig <herzig@cs.uni-saarland.de>
+	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	public enum SampleType {
 		

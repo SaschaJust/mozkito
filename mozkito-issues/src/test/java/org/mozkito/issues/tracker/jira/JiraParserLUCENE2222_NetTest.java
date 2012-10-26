@@ -42,7 +42,7 @@ import org.mozkito.persistence.model.StringTuple;
 
 
 /**
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
 public class JiraParserLUCENE2222_NetTest {

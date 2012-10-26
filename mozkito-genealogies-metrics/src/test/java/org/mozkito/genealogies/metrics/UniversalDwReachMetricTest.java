@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.layer.universal.UniversalTestDwReachMetri
 /**
  * The Class UniversalDwReachMetricTest.
  *
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalDwReachMetricTest extends TestEnvironment {
 	

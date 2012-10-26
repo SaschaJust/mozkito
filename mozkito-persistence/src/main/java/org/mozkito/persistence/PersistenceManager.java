@@ -29,7 +29,7 @@ import net.ownhero.dev.andama.exceptions.InstantiationError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class PersistenceManager {

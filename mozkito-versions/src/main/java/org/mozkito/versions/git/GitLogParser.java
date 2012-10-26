@@ -33,7 +33,7 @@ import org.mozkito.versions.elements.LogEntry;
 /**
  * The Class GitLogParser.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 class GitLogParser {
 	

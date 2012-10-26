@@ -29,7 +29,7 @@ import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 /**
  * The Class PartitionAuthorMetrics.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 	

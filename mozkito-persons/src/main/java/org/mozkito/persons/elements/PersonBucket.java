@@ -26,7 +26,7 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
 public class PersonBucket {

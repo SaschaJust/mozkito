@@ -51,7 +51,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 /**
  * The Class ChangeGenealogy.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation> {
 	

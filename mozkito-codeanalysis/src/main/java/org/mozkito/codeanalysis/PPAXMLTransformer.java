@@ -48,7 +48,7 @@ import org.mozkito.persistence.PersistenceUtil;
 /**
  * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file (or prints the XML to stdout).
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	

@@ -56,7 +56,7 @@ import org.mozkito.persistence.model.StringTuple;
 /**
  * The Class HistoryElement.
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 @Table (name = "history_element")

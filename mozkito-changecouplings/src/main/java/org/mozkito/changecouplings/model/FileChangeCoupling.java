@@ -28,7 +28,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 /**
  * The Class FileChangeCoupling.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	

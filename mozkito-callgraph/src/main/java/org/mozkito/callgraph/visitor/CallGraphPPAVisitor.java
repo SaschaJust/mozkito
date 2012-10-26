@@ -43,7 +43,7 @@ import org.mozkito.codeanalysis.visitors.PPAVisitor;
 /**
  * The Class CallGraphPPAVisitor.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CallGraphPPAVisitor implements PPAVisitor {
 	

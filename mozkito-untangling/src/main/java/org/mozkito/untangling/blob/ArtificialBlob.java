@@ -36,7 +36,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class ArtificialBlob.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ArtificialBlob {
 	

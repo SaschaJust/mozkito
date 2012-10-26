@@ -34,7 +34,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 /**
  * The Class UntanglingControl.
  * 
- * @author Kim Herzig <herzig@cs.uni-saarland.de>
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UntanglingControl {
 	
