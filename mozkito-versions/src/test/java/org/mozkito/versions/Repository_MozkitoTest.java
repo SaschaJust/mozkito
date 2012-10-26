@@ -42,10 +42,6 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.RepositoryFactory;
-import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -254,7 +250,7 @@ public class Repository_MozkitoTest extends MozkitoTest {
 	 * Test diff.
 	 */
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testDiff() {
 		for (final Repository repository : repositories) {
 			final String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);

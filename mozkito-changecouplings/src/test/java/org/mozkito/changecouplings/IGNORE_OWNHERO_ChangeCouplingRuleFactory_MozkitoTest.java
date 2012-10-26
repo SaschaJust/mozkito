@@ -27,7 +27,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
@@ -38,7 +37,6 @@ import org.mozkito.versions.elements.RCSFileManager;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class ChangeCouplingRuleFactoryTest.
@@ -90,7 +88,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Mozkit
 	 * Test change couplings.
 	 */
 	@Test
-	@DatabaseSettings (unit = "rcs")
+	@DatabaseSettings (unit = "versions")
 	public void testChangeCouplings() {
 		
 		persistenceUtil.beginTransaction();

@@ -18,8 +18,6 @@ import java.net.URI;
 
 import org.junit.Test;
 import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
-
 
 /**
  * The Class BugzillaTracker_4_0_4_Test.
@@ -44,7 +42,7 @@ public class BugzillaTracker_4_0_4_NetTest {
 	public void testSetup() throws Exception {
 		this.tracker = new BugzillaTracker();
 		this.fetchURI = new URI(
-		                        "https://issues.eclipse.org/issues/buglist.cgi?priority=P1;classification=Eclipse;query_format=advanced;version=1.0;product=e4");
+		                        "https://bugs.eclipse.org/bugs/buglist.cgi?priority=P1;classification=Eclipse;query_format=advanced;version=1.0;product=e4");
 		try {
 			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", null);
 		} catch (final InvalidParameterException e) {

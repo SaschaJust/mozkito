@@ -44,3 +44,4 @@ moskito-bugs/pom.xml.versionsBackup
 */eclipse
 .DS_Store
 .svn
+mozkito-*/bin
