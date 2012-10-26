@@ -19,18 +19,17 @@ import org.junit.Test;
 import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
-
 @DatabaseSettings (database = "just_test", unit = "persistence")
 public class CreateAndDropDB_MozkitoTest extends MozkitoTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		System.out.println("before class");
+		System.out.println("before class"); //$NON-NLS-1$
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.out.println("after class");
+		System.out.println("after class"); //$NON-NLS-1$
 	}
 	
 	@Test

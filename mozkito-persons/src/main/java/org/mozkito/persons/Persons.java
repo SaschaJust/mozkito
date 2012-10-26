@@ -20,6 +20,7 @@ import java.util.Set;
 import org.mozkito.RepositoryToolchain;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.engine.MergingEngine;
+import org.mozkito.persons.engine.Messages;
 import org.mozkito.persons.processing.MergingProcessor;
 import org.mozkito.settings.DatabaseOptions;
 
@@ -107,7 +108,7 @@ public class Persons extends Chain<Settings> {
 		}
 		if (this.persistenceUtil == null) {
 			if (Logger.logError()) {
-				Logger.error("Database arguments are not set (required when merging persons).");
+				Logger.error(Messages.getString("Persons.Persons.noDatabaseArgs")); //$NON-NLS-1$
 			}
 			shutdown();
 		}

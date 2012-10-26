@@ -60,12 +60,12 @@ public class PersistenceManager {
 		}
 		
 		// FIXME determine default database other than postgres
-		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		                                                          password);
 		if (connection != null) {
 			final Statement statement = connection.createStatement();
 			if (statement != null) {
-				statement.executeUpdate("CREATE DATABASE " + database + ";");
+				statement.executeUpdate("CREATE DATABASE " + database + ";"); //$NON-NLS-1$
 				statement.close();
 			}
 			connection.close();
@@ -165,12 +165,12 @@ public class PersistenceManager {
 			throw new SQLException("Could not load JDBC driver " + driver, e);
 		}
 		
-		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user,
+		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		                                                          password);
 		if (connection != null) {
 			final Statement statement = connection.createStatement();
 			if (statement != null) {
-				statement.executeUpdate("DROP DATABASE " + database + ";");
+				statement.executeUpdate("DROP DATABASE " + database + ";"); //$NON-NLS-1$ //$NON-NLS-2$
 				statement.close();
 			}
 			connection.close();

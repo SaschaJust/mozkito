@@ -27,8 +27,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-
 
 public class DatabaseArguments_NetTest {
 	
@@ -36,16 +34,16 @@ public class DatabaseArguments_NetTest {
 	@Ignore
 	public void test() throws SettingsParseError {
 		
-		System.setProperty("database.name", "moskito_junit");
-		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de");
-		System.setProperty("database.user", "miner");
-		System.setProperty("database.password", "miner");
-		System.setProperty("database.options", "CREATE");
+		System.setProperty("database.name", "mozkito_junit"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.setProperty("database.host", "grid1.st.cs.uni-saarland.de"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.setProperty("database.user", "miner"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.setProperty("database.password", "miner"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.setProperty("database.options", "CREATE"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		final Settings settings = new Settings();
 		
 		try {
-			final DatabaseOptions dbArgs = new DatabaseOptions(settings.getRoot(), Requirement.required, "persistence");
+			final DatabaseOptions dbArgs = new DatabaseOptions(settings.getRoot(), Requirement.required, "persistence"); //$NON-NLS-1$
 			System.err.println(settings);
 			System.err.println(settings.getHelpString());
 			System.err.println(dbArgs);

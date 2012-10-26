@@ -18,14 +18,14 @@ package org.mozkito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.processing.PersonManager;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -37,10 +37,8 @@ public class UniqueUsernameEngine extends MergingEngine {
 	                                                                                                  
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persons.engine.MergingEngine#collides(de
-	 * .unisaarland.cs.st.moskito.persistence.model.Person,
-	 * org.mozkito.persistence.model.PersonContainer,
-	 * org.mozkito.persons.processing.PersonManager)
+	 * @see org.mozkito.persons.engine.MergingEngine#collides(de .unisaarland.cs.st.mozkito.persistence.model.Person,
+	 * org.mozkito.persistence.model.PersonContainer, org.mozkito.persons.processing.PersonManager)
 	 */
 	@Override
 	public List<PersonBucket> collides(final Person person,

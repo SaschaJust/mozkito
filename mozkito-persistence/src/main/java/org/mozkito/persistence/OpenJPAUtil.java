@@ -132,15 +132,15 @@ public class OpenJPAUtil implements PersistenceUtil {
 	public void createSessionFactory(final Properties properties) {
 		if (this.factory == null) {
 			if (this.type == null) {
-				final String url = (String) properties.get("openjpa.ConnectionURL");
+				final String url = (String) properties.get("openjpa.ConnectionURL"); //$NON-NLS-1$
 				if (url != null) {
-					this.type = url.split(":")[1];
+					this.type = url.split(":")[1]; //$NON-NLS-1$
 				} else {
-					this.type = "unknown";
+					this.type = "unknown"; //$NON-NLS-1$
 				}
 			}
 			
-			String unit = properties.getProperty("openjpa.persistence-unit");
+			String unit = properties.getProperty("openjpa.persistence-unit"); //$NON-NLS-1$
 			
 			if (unit == null) {
 				final StackTraceElement[] trace = Thread.currentThread().getStackTrace();
@@ -167,7 +167,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 				}
 			}
 			
-			properties.remove("openjpa.persistence-unit");
+			properties.remove("openjpa.persistence-unit"); //$NON-NLS-1$
 			
 			if (Logger.logInfo()) {
 				Logger.info("Requesting persistence-unit: " + unit);
@@ -176,7 +176,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			if (Logger.logDebug()) {
 				Logger.debug("Using options: ");
 				for (final Object property : properties.keySet()) {
-					Logger.debug(property + ": " + properties.getProperty((String) property));
+					Logger.debug(property + ": " + properties.getProperty((String) property)); //$NON-NLS-1$
 				}
 			}
 			this.factory = OpenJPAPersistence.createEntityManagerFactory(unit, null, properties);
@@ -210,30 +210,30 @@ public class OpenJPAUtil implements PersistenceUtil {
 	                                 final String driver,
 	                                 final String unit,
 	                                 final ConnectOptions options) {
-		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database;
+		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		final Properties properties = new Properties();
-		properties.put("openjpa.ConnectionURL", url);
+		properties.put("openjpa.ConnectionURL", url); //$NON-NLS-1$
 		switch (options) {
 			case VALIDATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "validate");
+				properties.put("openjpa.jdbc.SynchronizeMappings", "validate"); //$NON-NLS-1$ //$NON-NLS-2$
 				break;
 			case CREATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
 				break;
 			case DB_DROP_CREATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
 				// "buildSchema(SchemaAction='add,deleteTableContents')");
 				break;
 			default:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema");
+				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
 				break;
 		}
 		
-		properties.put("openjpa.ConnectionDriverName", driver);
-		properties.put("openjpa.ConnectionUserName", user);
-		properties.put("openjpa.ConnectionPassword", password);
-		properties.put("openjpa.persistence-unit", unit);
+		properties.put("openjpa.ConnectionDriverName", driver); //$NON-NLS-1$
+		properties.put("openjpa.ConnectionUserName", user); //$NON-NLS-1$
+		properties.put("openjpa.ConnectionPassword", password); //$NON-NLS-1$
+		properties.put("openjpa.persistence-unit", unit); //$NON-NLS-1$
 		this.type = type;
 		
 		createSessionFactory(properties);
@@ -241,8 +241,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#delete(de.
-	 * unisaarland.cs.st.reposuite.persistence.Annotated)
+	 * @see org.mozkito.persistence.PersistenceUtil#delete(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public synchronized void delete(final Annotated object) {
@@ -260,7 +259,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 			final OpenJPAEntityManager ojem = (OpenJPAEntityManager) this.entityManager;
 			final Connection conn = (Connection) ojem.getConnection();
 			final Statement statement = conn.createStatement();
-			if (queryString.trim().toLowerCase().startsWith("select")) {
+			if (queryString.trim().toLowerCase().startsWith("select")) { //$NON-NLS-1$
 				statement.execute(queryString);
 			} else {
 				statement.executeUpdate(queryString);
@@ -292,8 +291,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#exmerge(de
-	 * .unisaarland.cs.st.reposuite.persistence.Annotated)
+	 * @see org.mozkito.persistence.PersistenceUtil#exmerge(de .unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public synchronized void exmerge(final Annotated object) {
@@ -328,13 +326,13 @@ public class OpenJPAUtil implements PersistenceUtil {
 			}
 		}
 		
-		final Regex regex = new Regex(".*password.*|.*username.*", Pattern.CASE_INSENSITIVE);
+		final Regex regex = new Regex(".*password.*|.*username.*", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 		for (final String key : properties.keySet()) {
 			if (regex.matches(key)) {
-				properties.put(key, ((String) properties.get(key)).replaceAll(".", "*"));
+				properties.put(key, ((String) properties.get(key)).replaceAll(".", "*")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
-			builder.append(String.format("%-" + max + "s : %s", key, properties.get(key)));
+			builder.append(String.format("%-" + max + "s : %s", key, properties.get(key))); //$NON-NLS-1$ //$NON-NLS-2$
 			builder.append(FileUtils.lineSeparator);
 		}
 		
@@ -362,8 +360,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#load(de.
-	 * unisaarland.cs.st.reposuite.persistence.Criteria, int)
+	 * @see org.mozkito.persistence.PersistenceUtil#load(de. unisaarland.cs.st.reposuite.persistence.Criteria, int)
 	 */
 	@Override
 	public <T> List<T> load(final Criteria<T> criteria,
@@ -382,7 +379,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 		// determine id column
 		for (final Method m : clazz.getDeclaredMethods()) {
 			// found
-			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) {
+			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) { //$NON-NLS-1$
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
 				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					final Criteria<T> criteria = createCriteria(clazz);
@@ -419,8 +416,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#save(de.
-	 * unisaarland.cs.st.reposuite.persistence.Annotated)
+	 * @see org.mozkito.persistence.PersistenceUtil#save(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public synchronized void save(final Annotated object) {
@@ -429,8 +425,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#saveOrUpdate
-	 * (org.mozkito.persistence.Annotated)
+	 * @see org.mozkito.persistence.PersistenceUtil#saveOrUpdate (org.mozkito.persistence.Annotated)
 	 */
 	@Override
 	public synchronized void saveOrUpdate(final Annotated object) {
@@ -454,8 +449,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.PersistenceUtil#update(de.
-	 * unisaarland.cs.st.reposuite.persistence.Annotated)
+	 * @see org.mozkito.persistence.PersistenceUtil#update(de. unisaarland.cs.st.reposuite.persistence.Annotated)
 	 */
 	@Override
 	public synchronized void update(final Annotated object) {
@@ -469,25 +463,25 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 */
 	private Class<?> wrap(final Class<?> returnType) {
 		if (returnType.isPrimitive()) {
-			if (returnType.getCanonicalName().equals("long")) {
+			if (returnType.getCanonicalName().equals("long")) { //$NON-NLS-1$
 				return Long.class;
 			}
-			if (returnType.getCanonicalName().equals("char")) {
+			if (returnType.getCanonicalName().equals("char")) { //$NON-NLS-1$
 				return Character.class;
 			}
-			if (returnType.getCanonicalName().equals("int")) {
+			if (returnType.getCanonicalName().equals("int")) { //$NON-NLS-1$
 				return Integer.class;
 			}
-			if (returnType.getCanonicalName().equals("double")) {
+			if (returnType.getCanonicalName().equals("double")) { //$NON-NLS-1$
 				return Double.class;
 			}
-			if (returnType.getCanonicalName().equals("short")) {
+			if (returnType.getCanonicalName().equals("short")) { //$NON-NLS-1$
 				return Short.class;
 			}
-			if (returnType.getCanonicalName().equals("byte")) {
+			if (returnType.getCanonicalName().equals("byte")) { //$NON-NLS-1$
 				return Byte.class;
 			}
-			if (returnType.getCanonicalName().equals("float")) {
+			if (returnType.getCanonicalName().equals("float")) { //$NON-NLS-1$
 				return Float.class;
 			}
 		}

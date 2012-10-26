@@ -24,11 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.persistence.model.Person;
-import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.persons.elements.PersonBucket;
-import org.mozkito.persons.processing.PersonManager;
-
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -43,6 +38,11 @@ import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.model.Person;
+import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.elements.PersonBucket;
+import org.mozkito.persons.processing.PersonManager;
 
 /**
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
@@ -87,7 +87,7 @@ public abstract class MergingEngine implements SettingsProvider {
 					@SuppressWarnings ("unchecked")
 					final Class<? extends MergingEngine> clazz = (Class<? extends MergingEngine>) Class.forName(MergingEngine.class.getPackage()
 					                                                                                                               .getName()
-					        + "." + name);
+					        + "." + name); //$NON-NLS-1$
 					final MergingEngine instance = clazz.newInstance();
 					instance.init();
 					set.add(instance);
