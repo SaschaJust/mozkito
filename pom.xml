@@ -4,19 +4,19 @@
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
-	<groupId>org</groupId>
+	<groupId>org.mozkito</groupId>
 	<artifactId>mozkito</artifactId>
 	<name>mozkito</name>
 	<description>Data Mining and Analyzation for Various Repositories</description>
 	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<url>http://www.st.cs.uni-saarland.de/mozkito</url>
+	<url>http://mozkito.org</url>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
 		<developer>
 			<id>kim</id>
 			<name>Kim Herzig</name>
-			<email>kim@cs.uni-saarland.de</email>
+			<email>kim@mozkito.org</email>
 			<url>http://www.st.cs.uni-saarland.de/~kim/</url>
 			<organization>Software Engineering Group at Saarland University</organization>
 			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
@@ -28,7 +28,7 @@
 		<developer>
 			<id>just</id>
 			<name>Sascha Just</name>
-			<email>sascha.just@st.cs.uni-saarland.de</email>
+			<email>sascha.just@mozkito.org</email>
 			<url>http://www.st.cs.uni-saarland.de/~just</url>
 			<organization>Software Engineering Group at Saarland University</organization>
 			<organizationUrl>http://www.st.cs.uni-saarland.de/</organizationUrl>
@@ -39,9 +39,9 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/mozkito</connection>
-		<developerConnection>scm:hg:https://hg.st.cs.uni-saarland.de/hg/mozkito</developerConnection>
-		<url>https://hg.st.cs.uni-saarland.de/hg/mozkito</url>
+		<connection>scm:git:https://git.own-hero.net/mozkito</connection>
+		<developerConnection>scm:git:https://git.own-hero.net/mozkito</developerConnection>
+		<url>https://mozkito.org</url>
 	</scm>
 	<organization>
 		<name>Software Engineering Group at Saarland University</name>
