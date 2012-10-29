@@ -319,7 +319,7 @@ public class Regex {
 			for (int i = 1; i < this.matcher.groupCount(); ++i) {
 				if (this.matcher.group(i) != null) {
 					this.match.add(new Group(this.pattern.toString(), text, this.matcher.group(i), i,
-					                         this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+					                         this.pattern.getGroupName(i), this.matcher.start(i), this.matcher.end(i)));
 				}
 			}
 		}
@@ -352,7 +352,7 @@ public class Regex {
 			for (int i = 1; i < matchResult.groupCount(); ++i) {
 				if (matchResult.group(i) != null) {
 					match.add(new Group(this.pattern.toString(), text, matchResult.group(i), i,
-					                    this.pattern.getGroupName(i), this.matcher.start(), this.matcher.end()));
+					                    this.pattern.getGroupName(i), this.matcher.start(i), this.matcher.end(i)));
 				}
 			}
 			this.multiMatch.add(match);
