@@ -101,9 +101,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			final DirectoryArgument cacheDirArgument = getSettings().getArgument(this.cacheDirOptions);
 			
 			if (!required()) {
-				if (!(((hostArgument.getValue() != null) && (portArgument.getValue() != null)) || ((cacheDirArgument.getValue() != null) && (internalArgument.getValue() != null)))) {
-					return null;
-				}
+				return null;
 			}
 			
 			if (internalArgument.getValue()) {
@@ -267,7 +265,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			this.portOptions = new PortArgument.Options(
 			                                            set,
 			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), 8584, //$NON-NLS-1$ //$NON-NLS-2$
-			                                            Requirement.required, true);
+			                                            Requirement.equals(this.internalOptions, false), true);
 			req(this.portOptions, map);
 			
 			this.usernameOptions = new StringArgument.Options(
