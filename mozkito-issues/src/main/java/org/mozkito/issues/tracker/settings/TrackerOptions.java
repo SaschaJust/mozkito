@@ -19,9 +19,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.TrackerType;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
@@ -37,6 +34,9 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.TrackerType;
 
 /**
  * The Class TrackerOptions.
