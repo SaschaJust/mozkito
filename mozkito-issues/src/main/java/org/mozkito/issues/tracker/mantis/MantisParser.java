@@ -43,9 +43,10 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.jdom.IllegalDataException;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.IllegalDataException;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -64,7 +65,6 @@ import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class MantisParser.
@@ -374,9 +374,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Tracker#createDocument(org.mozkito.bugs.tracker.RawReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Tracker#createDocument(org.mozkito.bugs.tracker.RawReport )
 	 */
 	/**
 	 * Creates the document.
@@ -389,8 +387,9 @@ public class MantisParser implements Parser {
 		final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 		
 		try {
-			final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-			final org.jdom.Document document = saxBuilder.build(reader);
+			final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+			                                                                      "org.ccil.cowan.tagsoup.Parser"));
+			final org.jdom2.Document document = saxBuilder.build(reader);
 			reader.close();
 			
 			return new XmlReport(rawReport, document);
@@ -1018,8 +1017,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -1036,9 +1034,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	
 	@Override
@@ -1246,8 +1242,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
@@ -1262,8 +1257,7 @@ public class MantisParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {

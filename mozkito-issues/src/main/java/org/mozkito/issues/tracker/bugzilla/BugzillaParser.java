@@ -34,9 +34,10 @@ import noNamespace.BugzillaDocument;
 import noNamespace.BugzillaDocument.Bugzilla;
 
 import org.apache.xmlbeans.XmlException;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
@@ -46,7 +47,6 @@ import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
-
 
 /**
  * The Class BugzillaParser.
@@ -227,8 +227,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Tracker#checkRAW(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.RawReport)
+	 * @see org.mozkito.bugs.tracker.Tracker#checkRAW(de.unisaarland .cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	/**
 	 * Check raw.
@@ -250,8 +249,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Tracker#checkXML(de.unisaarland
-	 * .cs.st.reposuite.bugs.tracker.XmlReport)
+	 * @see org.mozkito.bugs.tracker.Tracker#checkXML(de.unisaarland .cs.st.reposuite.bugs.tracker.XmlReport)
 	 */
 	/**
 	 * Check xml.
@@ -278,8 +276,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.Tracker#createDocument(de
-	 * .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
+	 * @see org.mozkito.bugs.tracker.Tracker#createDocument(de .unisaarland.cs.st.reposuite.bugs.tracker.RawReport)
 	 */
 	/**
 	 * Creates the document.
@@ -291,7 +288,10 @@ public abstract class BugzillaParser implements Parser {
 	protected XmlReport createDocument(@NotNull final RawContent rawContent) {
 		final BufferedReader reader = new BufferedReader(new StringReader(rawContent.getContent()));
 		try {
-			final SAXBuilder saxBuilder = new SAXBuilder("org.apache.xerces.parsers.SAXParser");
+			
+			final SAXBuilder saxBuilder = new SAXBuilder(
+			                                             new XMLReaderSAX2Factory(false,
+			                                                                      "org.apache.xerces.parsers.SAXParser"));
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			saxBuilder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			final Document document = saxBuilder.build(reader);
@@ -369,8 +369,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	@NoneNull
@@ -385,8 +384,7 @@ public abstract class BugzillaParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
 	@Override
 	public final boolean setURI(final ReportLink reportLink) {
