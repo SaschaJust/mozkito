@@ -15,9 +15,9 @@ package org.mozkito.changecouplings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +35,6 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * A factory for creating ChangeCouplingRule objects.
@@ -190,14 +188,13 @@ public class ChangeCouplingRuleFactory {
 				
 				String premiseStr = row[0].toString();
 				premiseStr = premiseStr.substring(1, premiseStr.length() - 1);
-				try (StringReader sReader = new StringReader(premiseStr);
-				        final CSVReader csvReader = new CSVReader(sReader, ',', '"');) {
-					final String[] premises = csvReader.readNext();
-					result.add(new MethodChangeCoupling(premises, row[1].toString(), support, confidence,
-					                                    persistenceUtil));
-				} catch (final IOException e) {
-					//
+				
+				final List<String> premiseList = new ArrayList<>(premiseStr.split(",").length);
+				for (final String s : premiseStr.split(",")) {
+					premiseList.add(s.replaceAll("\"", ""));
 				}
+				result.add(new MethodChangeCoupling(premiseList.toArray(new String[premiseList.size()]),
+				                                    row[1].toString(), support, confidence, persistenceUtil));
 			}
 		}
 		
