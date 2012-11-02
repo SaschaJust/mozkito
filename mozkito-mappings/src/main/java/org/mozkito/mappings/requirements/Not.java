@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * The not expression evaluates to true if the innerexpression evaluates to false. Evaluates to true otherwise.
  * 
@@ -62,8 +61,8 @@ public class Not extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
-	 * java.lang.Class, org.mozkito.mapping.requirements.Index)
+	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class, java.lang.Class,
+	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
 	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
@@ -94,6 +93,6 @@ public class Not extends Expression {
 	 */
 	@Override
 	public String toString() {
-		return "!" + this.expression.toString();
+		return "!" + this.expression.toString(); //$NON-NLS-1$
 	}
 }

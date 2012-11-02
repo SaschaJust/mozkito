@@ -31,7 +31,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
 
@@ -101,7 +101,7 @@ public class Relation implements Annotated, IRelation {
 	                       @NotNull @NotEmpty final String reportFieldName,
 	                       @NotNull @NotEmpty final String reportFieldContent,
 	                       @NotNull @NotEmpty final String reportSubstring,
-	                       @NotNull final Class<? extends MappingEngine> mappingEngine) {
+	                       @NotNull final Class<? extends Engine> mappingEngine) {
 		getFeatures().add(new Feature(confidence, transactionFieldName, transactionSubstring, reportFieldName,
 		                              reportSubstring, mappingEngine));
 	}
@@ -187,11 +187,11 @@ public class Relation implements Annotated, IRelation {
 	/**
 	 * Gets the scoring engines.
 	 * 
-	 * @return a set of {@link MappingEngine} classes that were used for this scoring
+	 * @return a set of {@link Engine} classes that were used for this scoring
 	 */
 	@Transient
-	public Set<Class<? extends MappingEngine>> getScoringEngines() {
-		final HashSet<Class<? extends MappingEngine>> engines = new HashSet<Class<? extends MappingEngine>>();
+	public Set<Class<? extends Engine>> getScoringEngines() {
+		final HashSet<Class<? extends Engine>> engines = new HashSet<Class<? extends Engine>>();
 		
 		for (final Feature feature : getFeatures()) {
 			engines.add(feature.getEngine());

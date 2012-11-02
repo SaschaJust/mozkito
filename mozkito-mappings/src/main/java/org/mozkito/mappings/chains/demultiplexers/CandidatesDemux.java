@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.demultiplexers;
 
 import net.ownhero.dev.andama.threads.Demultiplexer;
 import net.ownhero.dev.andama.threads.Group;

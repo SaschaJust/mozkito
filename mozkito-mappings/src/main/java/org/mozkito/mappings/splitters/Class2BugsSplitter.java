@@ -23,7 +23,7 @@ import org.mozkito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Class2BugsSplitter extends MappingSplitter {
+public class Class2BugsSplitter extends Splitter {
 	
 	/*
 	 * (non-Javadoc)

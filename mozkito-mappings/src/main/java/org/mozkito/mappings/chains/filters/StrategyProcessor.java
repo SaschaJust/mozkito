@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.filters;
 
 import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
@@ -19,16 +19,16 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.IComposite;
-import org.mozkito.mappings.strategies.MappingStrategy;
+import org.mozkito.mappings.strategies.Strategy;
 
 /**
  * The Class MappingStrategyProcessor.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MappingStrategyProcessor extends Filter<IComposite> {
+public class StrategyProcessor extends Filter<IComposite> {
 	
 	/**
 	 * Instantiates a new mapping strategy processor.
@@ -42,15 +42,15 @@ public class MappingStrategyProcessor extends Filter<IComposite> {
 	 * @param strategy
 	 *            the strategy
 	 */
-	public MappingStrategyProcessor(final Group threadGroup, final Settings settings, final MappingFinder finder,
-	        final MappingStrategy strategy) {
+	public StrategyProcessor(final Group threadGroup, final Settings settings, final Finder finder,
+	        final Strategy strategy) {
 		super(threadGroup, settings, false);
 		new ProcessHook<IComposite, IComposite>(this) {
 			
 			@Override
 			public void process() {
 				final IComposite inputData = getInputData();
-				final IComposite mapping = finder.map(strategy, inputData);
+				final IComposite mapping = finder.rate(strategy, inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);

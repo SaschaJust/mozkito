@@ -54,7 +54,7 @@ import org.mozkito.versions.model.RCSTransaction;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class MethodModificationEngine extends MappingEngine {
+public class MethodModificationEngine extends Engine {
 	
 	/**
 	 * The Class Options.

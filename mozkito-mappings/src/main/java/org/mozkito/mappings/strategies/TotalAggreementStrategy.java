@@ -31,7 +31,7 @@ import org.mozkito.mappings.model.IComposite;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TotalAggreementStrategy extends MappingStrategy {
+public class TotalAggreementStrategy extends Strategy {
 	
 	public static final class Options extends
 	        ArgumentSetOptions<TotalAggreementStrategy, ArgumentSet<TotalAggreementStrategy, Options>> {

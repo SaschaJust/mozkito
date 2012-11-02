@@ -40,7 +40,7 @@ import org.mozkito.mappings.requirements.Index;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class AuthorEqualityEngine extends MappingEngine {
+public class AuthorEqualityEngine extends Engine {
 	
 	/**
 	 * The Class Options.

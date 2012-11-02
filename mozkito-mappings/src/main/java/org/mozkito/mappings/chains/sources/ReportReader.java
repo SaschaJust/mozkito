@@ -13,7 +13,7 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.sources;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +26,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 
@@ -70,7 +71,7 @@ public class ReportReader extends Source<Report> {
 					final Report report = ReportReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
-						Logger.info("Providing " + report);
+						Logger.info(Messages.getString("ReportReader.providing", report)); //$NON-NLS-1$
 					}
 					
 					providePartialOutputData(report);

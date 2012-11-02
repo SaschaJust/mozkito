@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.mappings.storages.MappingStorage;
+import org.mozkito.mappings.storages.Storage;
 
 /**
  * The Class Node.
@@ -26,7 +26,7 @@ import org.mozkito.mappings.storages.MappingStorage;
 public abstract class Node {
 	
 	/** The storages. */
-	private final Map<Class<? extends MappingStorage>, MappingStorage> storages = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<Class<? extends Storage>, Storage> storages = new HashMap<Class<? extends Storage>, Storage>();
 	
 	/**
 	 * Gets the description.
@@ -54,7 +54,7 @@ public abstract class Node {
 	 * @return the storage
 	 */
 	@SuppressWarnings ("unchecked")
-	public final <T extends MappingStorage> T getStorage(final Class<T> key) {
+	public final <T extends Storage> T getStorage(final Class<T> key) {
 		return (T) this.storages.get(key);
 	}
 	
@@ -64,7 +64,7 @@ public abstract class Node {
 	 * @param storage
 	 *            the storage
 	 */
-	public void provideStorage(final MappingStorage storage) {
+	public void provideStorage(final Storage storage) {
 		this.storages.put(storage.getClass(), storage);
 	}
 	
@@ -74,8 +74,8 @@ public abstract class Node {
 	 * @param storages
 	 *            the storages
 	 */
-	public final void provideStorages(final Set<? extends MappingStorage> mappingStorages) {
-		for (final MappingStorage storage : mappingStorages) {
+	public final void provideStorages(final Set<? extends Storage> mappingStorages) {
+		for (final Storage storage : mappingStorages) {
 			this.storages.put(storage.getClass(), storage);
 		}
 	}
@@ -89,8 +89,8 @@ public abstract class Node {
 	 * 
 	 * @return the set< class<? extends mapping storage>>
 	 */
-	public Set<Class<? extends MappingStorage>> storageDependency() {
-		return new HashSet<Class<? extends MappingStorage>>();
+	public Set<Class<? extends Storage>> storageDependency() {
+		return new HashSet<Class<? extends Storage>>();
 	}
 	
 }

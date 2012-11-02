@@ -23,7 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.IComposite;
@@ -32,10 +32,10 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.selectors.Selector;
-import org.mozkito.mappings.splitters.MappingSplitter;
-import org.mozkito.mappings.storages.MappingStorage;
-import org.mozkito.mappings.strategies.MappingStrategy;
-import org.mozkito.mappings.training.MappingTrainer;
+import org.mozkito.mappings.splitters.Splitter;
+import org.mozkito.mappings.storages.Storage;
+import org.mozkito.mappings.strategies.Strategy;
+import org.mozkito.mappings.training.Trainer;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 
@@ -44,33 +44,33 @@ import org.mozkito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MappingFinder {
+public class Finder {
 	
 	/** The engines. */
-	private final Map<String, MappingEngine>                             engines    = new HashMap<String, MappingEngine>();
+	private final Map<String, Engine>                      engines    = new HashMap<String, Engine>();
 	
 	/** The filters. */
-	private final Map<Class<? extends Filter>, Filter>                   filters    = new HashMap<Class<? extends Filter>, Filter>();
+	private final Map<Class<? extends Filter>, Filter>     filters    = new HashMap<Class<? extends Filter>, Filter>();
 	
 	/** The selectors. */
-	private final Map<Class<? extends Selector>, Selector>               selectors  = new HashMap<Class<? extends Selector>, Selector>();
+	private final Map<Class<? extends Selector>, Selector> selectors  = new HashMap<Class<? extends Selector>, Selector>();
 	
 	/** The splitters. */
-	private final Map<Class<? extends MappingSplitter>, MappingSplitter> splitters  = new HashMap<Class<? extends MappingSplitter>, MappingSplitter>();
+	private final Map<Class<? extends Splitter>, Splitter> splitters  = new HashMap<Class<? extends Splitter>, Splitter>();
 	
 	/** The storages. */
-	private final Map<Class<? extends MappingStorage>, MappingStorage>   storages   = new HashMap<Class<? extends MappingStorage>, MappingStorage>();
+	private final Map<Class<? extends Storage>, Storage>   storages   = new HashMap<Class<? extends Storage>, Storage>();
 	
 	/** The strategies. */
-	private final Map<String, MappingStrategy>                           strategies = new HashMap<String, MappingStrategy>();
+	private final Map<String, Strategy>                    strategies = new HashMap<String, Strategy>();
 	
 	/** The trainers. */
-	private final Map<Class<? extends MappingTrainer>, MappingTrainer>   trainers   = new HashMap<Class<? extends MappingTrainer>, MappingTrainer>();
+	private final Map<Class<? extends Trainer>, Trainer>   trainers   = new HashMap<Class<? extends Trainer>, Trainer>();
 	
 	/**
 	 * Instantiates a new mapping finder.
 	 */
-	public MappingFinder() {
+	public Finder() {
 		
 	}
 	
@@ -80,7 +80,7 @@ public class MappingFinder {
 	 * @param engine
 	 *            the engine
 	 */
-	public void addEngine(final MappingEngine engine) {
+	public void addEngine(final Engine engine) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available engines.", engine.getHandle());
 		}
@@ -127,7 +127,7 @@ public class MappingFinder {
 	 * @param splitter
 	 *            the splitter
 	 */
-	public void addSplitter(final MappingSplitter splitter) {
+	public void addSplitter(final Splitter splitter) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available splitters.", splitter.getHandle());
 		}
@@ -142,7 +142,7 @@ public class MappingFinder {
 	 * @param storage
 	 *            the storage
 	 */
-	public void addStorage(final MappingStorage storage) {
+	public void addStorage(final Storage storage) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available storages.", storage.getHandle());
 		}
@@ -157,7 +157,7 @@ public class MappingFinder {
 	 * @param strategy
 	 *            the strategy
 	 */
-	public void addStrategy(final MappingStrategy strategy) {
+	public void addStrategy(final Strategy strategy) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available strategies.", strategy.getHandle());
 		}
@@ -172,7 +172,7 @@ public class MappingFinder {
 	 * @param trainer
 	 *            the trainer
 	 */
-	public void addTrainer(final MappingTrainer trainer) {
+	public void addTrainer(final Trainer trainer) {
 		if (Logger.logInfo()) {
 			Logger.info("Adding '%s' to available trainers.", trainer.getHandle());
 		}
@@ -188,15 +188,9 @@ public class MappingFinder {
 	 *            the mapping
 	 * @return the filtered mapping
 	 */
-	public Mapping filter(final IComposite composite) {
-		final Set<Filter> triggeringFilters = new HashSet<Filter>();
-		
-		for (final Filter filter : this.filters.values()) {
-			filter.filter(composite, triggeringFilters);
-		}
-		
-		final Mapping filteredMapping = new Mapping(composite, triggeringFilters);
-		return filteredMapping;
+	public Mapping filter(final Filter filter,
+	                      final Mapping mapping) {
+		return filter.filter(mapping);
 	}
 	
 	/**
@@ -296,7 +290,7 @@ public class MappingFinder {
 	/**
 	 * @return the engines
 	 */
-	public final Map<String, MappingEngine> getEngines() {
+	public final Map<String, Engine> getEngines() {
 		// PRECONDITIONS
 		
 		try {
@@ -338,7 +332,7 @@ public class MappingFinder {
 	/**
 	 * @return the splitters
 	 */
-	public final Map<Class<? extends MappingSplitter>, MappingSplitter> getSplitters() {
+	public final Map<Class<? extends Splitter>, Splitter> getSplitters() {
 		// PRECONDITIONS
 		
 		try {
@@ -352,7 +346,7 @@ public class MappingFinder {
 	/**
 	 * @return the storages
 	 */
-	public final Map<Class<? extends MappingStorage>, MappingStorage> getStorages() {
+	public final Map<Class<? extends Storage>, Storage> getStorages() {
 		// PRECONDITIONS
 		
 		try {
@@ -366,7 +360,7 @@ public class MappingFinder {
 	/**
 	 * @return the strategies
 	 */
-	public final Map<String, MappingStrategy> getStrategies() {
+	public final Map<String, Strategy> getStrategies() {
 		// PRECONDITIONS
 		
 		try {
@@ -380,7 +374,7 @@ public class MappingFinder {
 	/**
 	 * @return the trainers
 	 */
-	public final Map<Class<? extends MappingTrainer>, MappingTrainer> getTrainers() {
+	public final Map<Class<? extends Trainer>, Trainer> getTrainers() {
 		// PRECONDITIONS
 		
 		try {
@@ -398,30 +392,9 @@ public class MappingFinder {
 	 *            the persistence util
 	 */
 	public void loadData(final PersistenceUtil persistenceUtil) {
-		for (final Class<? extends MappingStorage> key : this.storages.keySet()) {
+		for (final Class<? extends Storage> key : this.storages.keySet()) {
 			this.storages.get(key).loadData(persistenceUtil);
 		}
-	}
-	
-	/**
-	 * Map.
-	 * 
-	 * @param strategy
-	 *            the strategy
-	 * @param composite
-	 *            the mapping
-	 * @return the mapping
-	 */
-	public IComposite map(final MappingStrategy strategy,
-	                      final IComposite composite) {
-		if (Logger.logDebug()) {
-			Logger.debug("Mapping with strategy: " + strategy.getHandle());
-		}
-		
-		strategy.map(composite);
-		
-		return composite;
-		
 	}
 	
 	/**
@@ -431,10 +404,10 @@ public class MappingFinder {
 	 *            the accessor
 	 */
 	private void provideStorages(final Node accessor) {
-		for (final Class<? extends MappingStorage> key : accessor.storageDependency()) {
+		for (final Class<? extends Storage> key : accessor.storageDependency()) {
 			if (!this.storages.keySet().contains(key)) {
 				try {
-					final MappingStorage storage = key.newInstance();
+					final Storage storage = key.newInstance();
 					this.storages.put(key, storage);
 				} catch (final InstantiationException e) {
 					throw new UnrecoverableError(e.getMessage(), e);
@@ -448,6 +421,27 @@ public class MappingFinder {
 	}
 	
 	/**
+	 * Map.
+	 * 
+	 * @param strategy
+	 *            the strategy
+	 * @param composite
+	 *            the mapping
+	 * @return the mapping
+	 */
+	public IComposite rate(final Strategy strategy,
+	                       final IComposite composite) {
+		if (Logger.logDebug()) {
+			Logger.debug("Mapping with strategy: " + strategy.getHandle());
+		}
+		
+		strategy.map(composite);
+		
+		return composite;
+		
+	}
+	
+	/**
 	 * Score.
 	 * 
 	 * @param engine
@@ -458,7 +452,7 @@ public class MappingFinder {
 	 *            the element2
 	 * @return the computed scoring for transaction/report relation
 	 */
-	public Relation score(final MappingEngine engine,
+	public Relation score(final Engine engine,
 	                      final Relation score) {
 		
 		if (Logger.logDebug()) {
@@ -501,8 +495,8 @@ public class MappingFinder {
 	                             final PersistenceUtil util) {
 		final LinkedList<Annotated> list = new LinkedList<Annotated>();
 		
-		for (final Class<? extends MappingSplitter> key : this.splitters.keySet()) {
-			final MappingSplitter splitter = this.splitters.get(key);
+		for (final Class<? extends Splitter> key : this.splitters.keySet()) {
+			final Splitter splitter = this.splitters.get(key);
 			
 			list.addAll(splitter.process(util));
 		}

@@ -14,7 +14,6 @@ package org.mozkito.mappings.filters;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -28,7 +27,7 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.EnhancedReport;
 import org.mozkito.issues.tracker.settings.Messages;
 import org.mozkito.mappings.mappable.FieldKey;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
@@ -120,16 +119,21 @@ public class ReportFieldFilter extends Filter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.filters.MappingFilter#filter(de
-	 * .unisaarland.cs.st.reposuite.mapping.model.PersistentMapping, java.util.Set)
+	 * @see org.mozkito.mappings.filters.Filter#filter(org.mozkito.mappings.model.Mapping)
 	 */
 	@Override
-	public Set<? extends Filter> filter(final IComposite composite,
-	                                    final Set<Filter> triggeringFilters) {
-		if (composite.getTo().get(FieldKey.TYPE).equals(this.type)) {
-			triggeringFilters.add(this);
+	public Mapping filter(final Mapping mapping) {
+		// PRECONDITIONS
+		
+		try {
+			if (!mapping.getComposite().getTo().get(FieldKey.TYPE).equals(this.type)) {
+				mapping.addFilter(this);
+			}
+			// TODO Auto-generated method stub
+			return null;
+		} finally {
+			// POSTCONDITIONS
 		}
-		return triggeringFilters;
 	}
 	
 	/*

@@ -10,26 +10,26 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.mappings.storages;
+package org.mozkito.mappings.training;
 
 import org.mozkito.mappings.register.Node;
-import org.mozkito.persistence.PersistenceUtil;
-
 
 /**
- * The Class MappingStorage.
+ * The Class MappingTrainer.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class MappingStorage extends Node {
+public abstract class Trainer extends Node {
 	
 	/**
-	 * Load data.
-	 * 
-	 * @param util
-	 *            the util
+	 * Instantiates a new mapping trainer.
 	 */
-	public void loadData(final PersistenceUtil util) { // stub
+	public Trainer() {
+		
 	}
 	
+	/**
+	 * Train.
+	 */
+	public abstract void train();
 }

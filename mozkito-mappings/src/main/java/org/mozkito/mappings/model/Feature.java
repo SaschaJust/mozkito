@@ -21,7 +21,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.engines.MappingEngine;
+import org.mozkito.mappings.engines.Engine;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -33,7 +33,7 @@ import org.mozkito.persistence.Annotated;
 public class Feature implements Annotated {
 	
 	/** The Constant cache. */
-	private static final Map<String, Class<? extends MappingEngine>> cache            = new HashMap<String, Class<? extends MappingEngine>>();
+	private static final Map<String, Class<? extends Engine>> cache            = new HashMap<String, Class<? extends Engine>>();
 	
 	/** The Constant serialVersionUID. */
 	private static final long                                        serialVersionUID = 4097360257338824107L;
@@ -79,7 +79,7 @@ public class Feature implements Annotated {
 	 *            the mapping engine
 	 */
 	Feature(final double confidence, final String fromFieldName, final String fromSubstring, final String toFieldName,
-	        final String toSubstring, final Class<? extends MappingEngine> mappingEngine) {
+	        final String toSubstring, final Class<? extends Engine> mappingEngine) {
 		setConfidence(confidence);
 		setFromFieldName(fromFieldName);
 		setFromSubstring(fromSubstring);
@@ -107,13 +107,13 @@ public class Feature implements Annotated {
 	 * @return the engine
 	 */
 	@Transient
-	public Class<? extends MappingEngine> getEngine() {
+	public Class<? extends Engine> getEngine() {
 		try {
 			if (cache.containsKey(getFqClassName())) {
 				return cache.get(getFqClassName());
 			} else {
 				@SuppressWarnings ("unchecked")
-				final Class<MappingEngine> engineClass = (Class<MappingEngine>) Class.forName(getFqClassName());
+				final Class<Engine> engineClass = (Class<Engine>) Class.forName(getFqClassName());
 				cache.put(getFqClassName(), engineClass);
 				return engineClass;
 			}

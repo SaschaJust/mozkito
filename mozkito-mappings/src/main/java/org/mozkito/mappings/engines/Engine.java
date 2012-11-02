@@ -57,34 +57,33 @@ import org.mozkito.settings.DatabaseOptions;
  * positive/negative according to the criterion under suspect.
  * 
  * Generating feature vectors for the candidates is a task that is accomplished by the scoring node. In the scoring
- * step, reposuite uses all enabled engines to compute a vector consisting of confidence values. Every engine may have
- * its own configuration options that are required to execute reposuite as soon as the engine is enabled. If the engine
+ * step, mozkito uses all enabled engines to compute a vector consisting of confidence values. Every engine may have its
+ * own configuration options that are required to execute mozkito as soon as the engine is enabled. If the engine
  * depends on certain storages, further configuration dependencies might be pulled in. An engine takes a candidate pair
  * an checks for certain criteria and scores accordingly. Engines can score in three ways: positive, if they consider a
  * pair a valid mapping, negative if they consider the pair to be a false positive or 0 if they can't decide on any of
  * that. A criterion of an engine should be as atomic as possible, that means an engine shouldn't check for multiple
  * criteria at a time. After all engines have been execute on one candidate pair, the resulting feature vector is stored
- * to the database (incl. the information what has been scored by each engine and what data was considered while
+ * to the database (including the information what has been scored by each engine and what data was considered while
  * computing the score).
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public abstract class MappingEngine extends Node {
+public abstract class Engine extends Node {
 	
 	/**
 	 * The Class Options.
 	 */
-	public static class Options extends
-	        ArgumentSetOptions<Set<MappingEngine>, ArgumentSet<Set<MappingEngine>, Options>> {
+	public static class Options extends ArgumentSetOptions<Set<Engine>, ArgumentSet<Set<Engine>, Options>> {
 		
 		/** The Constant tag. */
-		static final String                                                                               tag           = "engines";      //$NON-NLS-1$
-		                                                                                                                                   
+		static final String                                                                 tag           = "engines";      //$NON-NLS-1$
+		                                                                                                                     
 		/** The engines option. */
-		private SetArgument.Options                                                                       enabledEnginesOption;
+		private SetArgument.Options                                                         enabledEnginesOption;
 		
-		private final Map<Class<? extends MappingEngine>, ArgumentSetOptions<? extends MappingEngine, ?>> engineOptions = new HashMap<>();
+		private final Map<Class<? extends Engine>, ArgumentSetOptions<? extends Engine, ?>> engineOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -104,22 +103,19 @@ public abstract class MappingEngine extends Node {
 		 */
 		@SuppressWarnings ({ "rawtypes", "unchecked" })
 		@Override
-		public Set<MappingEngine> init() {
+		public Set<Engine> init() {
 			// PRECONDITIONS
-			final Set<MappingEngine> set = new HashSet<MappingEngine>();
+			final Set<Engine> set = new HashSet<Engine>();
 			
 			try {
 				
 				final SetArgument argument = getSettings().getArgument(this.enabledEnginesOption);
-				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
-					Class<? extends MappingEngine> clazz;
+					Class<? extends Engine> clazz;
 					try {
-						clazz = (Class<? extends MappingEngine>) Class.forName(MappingEngine.class.getPackage()
-						                                                                          .getName()
-						        + '.'
+						clazz = (Class<? extends Engine>) Class.forName(Engine.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
 						throw new UnrecoverableError(
@@ -128,7 +124,7 @@ public abstract class MappingEngine extends Node {
 						
 					}
 					
-					final ArgumentSetOptions<? extends MappingEngine, ?> options = this.engineOptions.get(clazz);
+					final ArgumentSetOptions<? extends Engine, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn("Engine '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
@@ -137,7 +133,7 @@ public abstract class MappingEngine extends Node {
 						}
 						
 					} else {
-						final ArgumentSet<? extends MappingEngine, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						final ArgumentSet<? extends Engine, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
 						set.add(argumentSet.getValue());
 					}
 				}
@@ -165,15 +161,15 @@ public abstract class MappingEngine extends Node {
 				
 				try {
 					// first off, find all implemented engines
-					final Collection<Class<? extends MappingEngine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                   MappingEngine.class,
-					                                                                                                   Modifier.ABSTRACT
-					                                                                                                           | Modifier.INTERFACE
-					                                                                                                           | Modifier.PRIVATE
-					                                                                                                           | Modifier.PROTECTED);
+					final Collection<Class<? extends Engine>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                            Engine.class,
+					                                                                                            Modifier.ABSTRACT
+					                                                                                                    | Modifier.INTERFACE
+					                                                                                                    | Modifier.PRIVATE
+					                                                                                                    | Modifier.PROTECTED);
 					
 					// first compute the default value for the engine enabler option, i.e., all implemented engines
-					for (final Class<? extends MappingEngine> engineClass : collection) {
+					for (final Class<? extends Engine> engineClass : collection) {
 						defaultSet.add(engineClass.getSimpleName());
 					}
 					
@@ -184,10 +180,10 @@ public abstract class MappingEngine extends Node {
 					                                                    defaultSet, Requirement.required);
 					
 					// iterate over the engine classes to process dependencies
-					for (final Class<? extends MappingEngine> engineClass : collection) {
+					for (final Class<? extends Engine> engineClass : collection) {
 						// loading of engines is in the responsibility of the direct parent class, thus we only process
 						// mapping classes of direct extensions of MappingEngine
-						if (engineClass.getSuperclass() == MappingEngine.class) {
+						if (engineClass.getSuperclass() == Engine.class) {
 							// MappingEngines have to encapsulate their initializer/options. fetch them first.
 							final Class<?>[] declaredClasses = engineClass.getDeclaredClasses();
 							
@@ -198,14 +194,14 @@ public abstract class MappingEngine extends Node {
 									
 									// fetch constructor of the options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingEngine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingEngine, ?>>) engineOptionClass.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                                       Requirement.class);
+									final Constructor<ArgumentSetOptions<? extends Engine, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Engine, ?>>) engineOptionClass.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                         Requirement.class);
 									
 									// instantiate the options and set to required if enabledEnginesOptions contains the
 									// simple classname of the engine under suspect, i.e., c.getSimpleName()
-									final ArgumentSetOptions<? extends MappingEngine, ?> engineOption = constructor.newInstance(set,
-									                                                                                            Requirement.contains(this.enabledEnginesOption,
-									                                                                                                                 engineClass.getSimpleName()));
+									final ArgumentSetOptions<? extends Engine, ?> engineOption = constructor.newInstance(set,
+									                                                                                     Requirement.contains(this.enabledEnginesOption,
+									                                                                                                          engineClass.getSimpleName()));
 									System.out.println(engineOption
 									        + " is "
 									        + (Requirement.contains(this.enabledEnginesOption,
@@ -225,7 +221,7 @@ public abstract class MappingEngine extends Node {
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            engineClass.getSimpleName(), MappingEngine.class.getSimpleName(),
+								            engineClass.getSimpleName(), Engine.class.getSimpleName(),
 								            engineClass.getSuperclass().getSimpleName());
 							}
 						}
@@ -284,7 +280,7 @@ public abstract class MappingEngine extends Node {
 	 */
 	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
 		
-		return new MappingEngine.Options(set, Requirement.required);
+		return new Engine.Options(set, Requirement.required);
 	}
 	
 	/**

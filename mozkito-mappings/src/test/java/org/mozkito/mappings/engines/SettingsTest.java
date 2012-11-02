@@ -13,11 +13,6 @@
 package org.mozkito.mappings.engines;
 
 import static org.junit.Assert.fail;
-
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.settings.MappingOptions;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -26,6 +21,9 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.settings.MappingOptions;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -46,14 +44,14 @@ public class SettingsTest {
 		
 		if (settings != null) {
 			try {
-				final ArgumentSet<MappingFinder, MappingOptions> argumentSet = ArgumentSetFactory.create(new MappingOptions(
+				final ArgumentSet<Finder, MappingOptions> argumentSet = ArgumentSetFactory.create(new MappingOptions(
 				                                                                                                            settings.getRoot(),
 				                                                                                                            Requirement.required));
 				System.err.println(settings.getHelpString());
 				System.err.println(settings.toString());
-				final MappingFinder finder = argumentSet.getValue();
+				final Finder finder = argumentSet.getValue();
 				
-				for (final MappingEngine engine : finder.getEngines().values()) {
+				for (final Engine engine : finder.getEngines().values()) {
 					System.err.println(String.format("%s\t%s", engine.getHandle(), engine.getDescription()));
 				}
 			} catch (final SettingsParseError | ArgumentSetRegistrationException | ArgumentRegistrationException e) {

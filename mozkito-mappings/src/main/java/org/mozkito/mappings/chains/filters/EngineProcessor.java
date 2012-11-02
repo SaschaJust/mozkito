@@ -10,75 +10,56 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.filters;
 
+import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
-import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.engines.Engine;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Relation;
-import org.mozkito.persistence.PersistenceUtil;
 
 /**
- * The Class MappingPersister.
+ * The Class MappingEngineProcessor.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MappingPersister extends Sink<Relation> {
-	
-	/** The i. */
-	private Integer i = 0;
+public class EngineProcessor extends Filter<Relation> {
 	
 	/**
-	 * Instantiates a new mapping persister.
+	 * Instantiates a new mapping engine processor.
 	 * 
 	 * @param threadGroup
 	 *            the thread group
 	 * @param settings
 	 *            the settings
-	 * @param persistenceUtil
-	 *            the persistence util
+	 * @param finder
+	 *            the finder
+	 * @param engine
+	 *            the engine
 	 */
-	public MappingPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
+	public EngineProcessor(final Group threadGroup, final Settings settings, final Finder finder,
+	        final Engine engine) {
 		super(threadGroup, settings, false);
-		
-		new PreExecutionHook<Relation, Relation>(this) {
-			
-			@Override
-			public void preExecution() {
-				persistenceUtil.beginTransaction();
-			}
-		};
 		
 		new ProcessHook<Relation, Relation>(this) {
 			
 			@Override
 			public void process() {
-				final Relation score = getInputData();
+				final Relation candidate = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Storing " + score);
+					Logger.debug("[%s] Processing mapping for '%s' -> '%s'.", engine.getHandle(),
+					             candidate.getFrom(), candidate.getTo());
 				}
 				
-				if ((++MappingPersister.this.i % 50) == 0) {
-					persistenceUtil.commitTransaction();
-					persistenceUtil.beginTransaction();
-				}
+				final Relation score = finder.score(engine, candidate);
 				
-				persistenceUtil.save(score);
-			}
-		};
-		
-		new PostExecutionHook<Relation, Relation>(this) {
-			
-			@Override
-			public void postExecution() {
-				persistenceUtil.commitTransaction();
-				persistenceUtil.shutdown();
+				provideOutputData(score);
+				
 			}
 		};
 	}

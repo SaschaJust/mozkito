@@ -1,5 +1,5 @@
-/***********************************************************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,29 +9,28 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- **********************************************************************************************************************/
-package org.mozkito.mappings;
+ ******************************************************************************/
 
+package org.mozkito.mappings.chains.filters;
+
+import net.ownhero.dev.andama.threads.Filter;
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.finder.MappingFinder;
-import org.mozkito.mappings.model.Composite;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Mapping;
 
 /**
- * The Class Filter.
+ * The Class MappingStrategyProcessor.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Filter extends Transformer<Composite, Mapping> {
+public class FilterProcessor extends Filter<Mapping> {
 	
 	/**
-	 * Instantiates a new filter.
+	 * Instantiates a new mapping strategy processor.
 	 * 
 	 * @param threadGroup
 	 *            the thread group
@@ -39,15 +38,18 @@ public class Filter extends Transformer<Composite, Mapping> {
 	 *            the settings
 	 * @param finder
 	 *            the finder
+	 * @param strategy
+	 *            the strategy
 	 */
-	public Filter(final Group threadGroup, final Settings settings, final MappingFinder finder) {
+	public FilterProcessor(final Group threadGroup, final Settings settings, final Finder finder,
+	        final org.mozkito.mappings.filters.Filter filter) {
 		super(threadGroup, settings, false);
-		new ProcessHook<Composite, Mapping>(this) {
+		new ProcessHook<Mapping, Mapping>(this) {
 			
 			@Override
 			public void process() {
-				final IComposite inputData = getInputData();
-				final Mapping mapping = finder.filter(inputData);
+				final Mapping inputData = getInputData();
+				final Mapping mapping = finder.filter(filter, inputData);
 				if (mapping != null) {
 					if (Logger.logInfo()) {
 						Logger.info("Providing for store operation: " + mapping);
@@ -55,12 +57,11 @@ public class Filter extends Transformer<Composite, Mapping> {
 					setOutputData(mapping);
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + mapping + " due to non-positive score (" + inputData + ").");
+						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
 					}
 					skipOutputData(mapping);
 				}
 			}
 		};
 	}
-	
 }

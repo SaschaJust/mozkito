@@ -47,13 +47,13 @@ import org.mozkito.persistence.PersistenceUtil;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public abstract class MappingSplitter extends Node {
+public abstract class Splitter extends Node {
 	
 	/**
 	 * The Class Options.
 	 */
 	public static class Options extends
-	        ArgumentSetOptions<Set<MappingSplitter>, ArgumentSet<Set<MappingSplitter>, Options>> {
+	        ArgumentSetOptions<Set<Splitter>, ArgumentSet<Set<Splitter>, Options>> {
 		
 		/** The Constant DESCRIPTION. */
 		private static final String                                                                           DESCRIPTION   = "...";
@@ -65,7 +65,7 @@ public abstract class MappingSplitter extends Node {
 		private SetArgument.Options                                                                           enabledSplittersOption;
 		
 		/** The engine options. */
-		private final Map<Class<? extends MappingSplitter>, ArgumentSetOptions<? extends MappingSplitter, ?>> engineOptions = new HashMap<>();
+		private final Map<Class<? extends Splitter>, ArgumentSetOptions<? extends Splitter, ?>> engineOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -85,9 +85,9 @@ public abstract class MappingSplitter extends Node {
 		 */
 		@SuppressWarnings ({ "unchecked", "rawtypes" })
 		@Override
-		public Set<MappingSplitter> init() {
+		public Set<Splitter> init() {
 			// PRECONDITIONS
-			final Set<MappingSplitter> set = new HashSet<MappingSplitter>();
+			final Set<Splitter> set = new HashSet<Splitter>();
 			
 			try {
 				
@@ -96,9 +96,9 @@ public abstract class MappingSplitter extends Node {
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
-					Class<? extends MappingSplitter> clazz;
+					Class<? extends Splitter> clazz;
 					try {
-						clazz = (Class<? extends MappingSplitter>) Class.forName(MappingSplitter.class.getPackage()
+						clazz = (Class<? extends Splitter>) Class.forName(Splitter.class.getPackage()
 						                                                                              .getName()
 						        + '.'
 						        + name);
@@ -107,7 +107,7 @@ public abstract class MappingSplitter extends Node {
 						
 					}
 					
-					final ArgumentSetOptions<? extends MappingSplitter, ?> options = this.engineOptions.get(clazz);
+					final ArgumentSetOptions<? extends Splitter, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn("Splitter '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
@@ -116,7 +116,7 @@ public abstract class MappingSplitter extends Node {
 						}
 						
 					} else {
-						final ArgumentSet<? extends MappingSplitter, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						final ArgumentSet<? extends Splitter, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
 						set.add(argumentSet.getValue());
 					}
 				}
@@ -143,22 +143,22 @@ public abstract class MappingSplitter extends Node {
 				final HashSet<String> defaultSet = new HashSet<String>();
 				
 				try {
-					final Collection<Class<? extends MappingSplitter>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     MappingSplitter.class,
+					final Collection<Class<? extends Splitter>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                                     Splitter.class,
 					                                                                                                     Modifier.ABSTRACT
 					                                                                                                             | Modifier.INTERFACE
 					                                                                                                             | Modifier.PRIVATE
 					                                                                                                             | Modifier.PROTECTED);
-					for (final Class<? extends MappingSplitter> c : collection) {
-						if (c.getSuperclass() == MappingSplitter.class) {
+					for (final Class<? extends Splitter> c : collection) {
+						if (c.getSuperclass() == Splitter.class) {
 							final Class<?>[] declaredClasses = c.getDeclaredClasses();
 							for (final Class<?> dC : declaredClasses) {
 								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
 									// found options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingSplitter, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingSplitter, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
+									final Constructor<ArgumentSetOptions<? extends Splitter, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Splitter, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
 									                                                                                                                                                                            Requirement.class);
-									final ArgumentSetOptions<? extends MappingSplitter, ?> instance = constructor.newInstance(set,
+									final ArgumentSetOptions<? extends Splitter, ?> instance = constructor.newInstance(set,
 									                                                                                          Requirement.required);
 									this.engineOptions.put(c, instance);
 									map.put(instance.getName(), instance);
@@ -167,7 +167,7 @@ public abstract class MappingSplitter extends Node {
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), MappingSplitter.class.getSimpleName(), c.getSuperclass()
+								            c.getSimpleName(), Splitter.class.getSimpleName(), c.getSuperclass()
 								                                                                       .getSimpleName());
 							}
 						}
@@ -205,7 +205,7 @@ public abstract class MappingSplitter extends Node {
 	 */
 	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
 		
-		return new MappingSplitter.Options(set, Requirement.required);
+		return new Splitter.Options(set, Requirement.required);
 	}
 	
 	/*

@@ -38,7 +38,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.mappings.requirements.Expression;
 
@@ -230,8 +230,7 @@ public abstract class Filter extends Node {
 	 * @return the set<? extends mapping filter>
 	 */
 	@NoneNull
-	public abstract Set<? extends Filter> filter(final IComposite composite,
-	                                             Set<Filter> triggeringFilters);
+	public abstract Mapping filter(final Mapping mapping);
 	
 	public abstract Expression supported();
 	

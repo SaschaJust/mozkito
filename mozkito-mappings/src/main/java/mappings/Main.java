@@ -18,7 +18,8 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.MappingChain;
+import org.mozkito.mappings.chains.MappingChain;
+import org.mozkito.mappings.messages.Messages;
 
 /**
  * The Class Main.
@@ -46,7 +47,7 @@ public class Main {
 			scoring.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("Mappings.Main: " + "All done. cerio!");
+				Logger.info(Messages.getString("Main.done")); //$NON-NLS-1$
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {

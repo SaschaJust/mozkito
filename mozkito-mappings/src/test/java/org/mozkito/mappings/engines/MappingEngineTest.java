@@ -10,7 +10,6 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-
 package org.mozkito.mappings.engines;
 
 import static org.junit.Assert.assertEquals;
@@ -50,11 +49,7 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.AuthorEqualityEngine;
-import org.mozkito.mappings.engines.BackrefEngine;
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.engines.TimestampEngine;
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
@@ -67,7 +62,6 @@ import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class MappingEngineTest.
@@ -166,7 +160,7 @@ public class MappingEngineTest {
 	static final String               chainName = "test";
 	
 	/** The engines. */
-	private Collection<MappingEngine> engines;
+	private Collection<Engine> engines;
 	
 	private MappingOptions            mappingOptions;
 	
@@ -188,8 +182,8 @@ public class MappingEngineTest {
 		
 		this.settings = new Settings();
 		this.mappingOptions = new MappingOptions(this.settings.getRoot(), Requirement.required);
-		final ArgumentSet<MappingFinder, MappingOptions> mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
-		final MappingFinder mappingFinder = mappingArguments.getValue();
+		final ArgumentSet<Finder, MappingOptions> mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
+		final Finder mappingFinder = mappingArguments.getValue();
 		this.engines = mappingFinder.getEngines().values();
 		
 		score = new Relation(new Candidate(new Tuple(mappableReport, mappableTransaction), null));
@@ -200,7 +194,7 @@ public class MappingEngineTest {
 	 */
 	@Test
 	public void testBackrefEngine() {
-		for (final MappingEngine mEngine : this.engines) {
+		for (final Engine mEngine : this.engines) {
 			if (mEngine.getHandle().equals(BackrefEngine.class.getSimpleName())) {
 				final BackrefEngine engine = new BackrefEngine(1.0d);
 				System.err.println(this.settings.toString());
@@ -258,7 +252,7 @@ public class MappingEngineTest {
 		new MappableTransaction();
 		new MappableReport();
 		
-		final Map<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>> map = new HashMap<MappingEngine, List<Tuple<MappableEntity, MappableEntity>>>() {
+		final Map<Engine, List<Tuple<MappableEntity, MappableEntity>>> map = new HashMap<Engine, List<Tuple<MappableEntity, MappableEntity>>>() {
 			
 			{
 				put(new AuthorEqualityEngine(1d), new LinkedList<Tuple<MappableEntity, MappableEntity>>() {
@@ -288,7 +282,7 @@ public class MappingEngineTest {
 			}
 		};
 		
-		for (final MappingEngine engine : map.keySet()) {
+		for (final Engine engine : map.keySet()) {
 			System.out.println("Checking engine support for: " + engine.getHandle() + " with " + map.get(engine).size()
 			        + " combinations.");
 			final Expression supported = engine.supported();

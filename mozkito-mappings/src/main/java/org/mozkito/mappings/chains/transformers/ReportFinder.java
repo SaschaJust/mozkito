@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.transformers;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -15,27 +15,27 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.elements.CandidateFactory;
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * The Class ReportFinder.
+ * The Class TransactionFinder.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 	
-	/** The candidate factory. */
 	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
 	                                                                                                                    MappableTransaction.class);
 	
 	/**
-	 * Instantiates a new report finder.
+	 * Instantiates a new transaction finder.
 	 * 
 	 * @param threadGroup
 	 *            the thread group
@@ -43,11 +43,11 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 	 *            the settings
 	 * @param finder
 	 *            the finder
-	 * @param persistenceUtil
-	 *            the persistence util
+	 * @param util
+	 *            the util
 	 */
-	public ReportFinder(final Group threadGroup, final Settings settings, final MappingFinder finder,
-	        final PersistenceUtil persistenceUtil) {
+	public ReportFinder(final Group threadGroup, final Settings settings, final Finder finder,
+	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
 		final Set<Candidate> candidates = new HashSet<>();
@@ -57,25 +57,25 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			@Override
 			public void preProcess() {
 				if (candidates.isEmpty()) {
-					final MappableTransaction mapTransaction = new MappableTransaction(getInputData());
-					final Map<MappableReport, Set<Selector>> reportCandidates = finder.getCandidates(mapTransaction,
-					                                                                                 MappableReport.class,
-					                                                                                 persistenceUtil);
+					final MappableTransaction mappableTransaction = new MappableTransaction(getInputData());
+					final Map<MappableReport, Set<Selector>> transactionCandidates = finder.getCandidates(mappableTransaction,
+					                                                                                      MappableReport.class,
+					                                                                                      util);
 					
 					if (Logger.logInfo()) {
-						Logger.info("Processing '%s'->%s with '%s' candidates.", mapTransaction.getHandle(),
-						            mapTransaction.toString(), reportCandidates.size());
+						Logger.info(Messages.getString("ReportFinder.processing", mappableTransaction.getHandle(), //$NON-NLS-1$
+						                               mappableTransaction.toString(), transactionCandidates.size()));
 					}
 					
-					for (final MappableReport mapReport : reportCandidates.keySet()) {
-						if (ReportFinder.this.candidateFactory.isKnown(mapReport, mapTransaction)) {
+					for (final MappableReport mappableReport : transactionCandidates.keySet()) {
+						if (ReportFinder.this.candidateFactory.isKnown(mappableTransaction, mappableReport)) {
 							if (Logger.logInfo()) {
-								Logger.info("Skipping candidate '%s'<->'%s'. Already processed.");
+								Logger.info(Messages.getString("ReportFinder.skipping", mappableTransaction, mappableReport)); //$NON-NLS-1$
 							}
 						} else {
-							candidates.add(ReportFinder.this.candidateFactory.getCandidate(mapReport,
-							                                                               mapTransaction,
-							                                                               reportCandidates.get(mapTransaction)));
+							candidates.add(ReportFinder.this.candidateFactory.getCandidate(mappableTransaction,
+							                                                               mappableReport,
+							                                                               transactionCandidates.get(mappableReport)));
 						}
 						
 					}
@@ -92,16 +92,18 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 					candidates.remove(candidate);
 					
 					if (Logger.logDebug()) {
-						Logger.debug("Providing candidate '%s'.", candidate);
+						Logger.debug(Messages.getString("ReportFinder.providing", candidate)); //$NON-NLS-1$
 					}
+					
 					providePartialOutputData(candidate);
+					
 					if (candidates.isEmpty()) {
 						setCompleted();
 					}
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Skipping candidate analysis of '%s' due to the lag of pre-selected candidates.",
-						             getInputData());
+						Logger.debug(Messages.getString("ReportFinder.noMatches", //$NON-NLS-1$
+						                                getInputData()));
 					}
 					skipData();
 				}

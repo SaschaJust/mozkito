@@ -54,7 +54,7 @@ import org.mozkito.persistence.model.EnumTuple;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TimestampEngine extends MappingEngine {
+public class TimestampEngine extends Engine {
 	
 	/**
 	 * The Class Options.
@@ -329,9 +329,9 @@ public class TimestampEngine extends MappingEngine {
 			if (Logger.logDebug()) {
 				Logger.debug("Scoring with confidence: %s", value);
 			}
-			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), MappingEngine.getUnknown(),
-			           MappingEngine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), MappingEngine.getUnknown(),
-			           MappingEngine.getUnknown());
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), Engine.getUnknown(),
+			           Engine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), Engine.getUnknown(),
+			           Engine.getUnknown());
 		}
 	}
 	

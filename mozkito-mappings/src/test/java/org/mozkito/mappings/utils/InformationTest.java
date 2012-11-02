@@ -25,8 +25,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mozkito.mappings.utils.Information;
-
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -41,7 +39,7 @@ public class InformationTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		final InputStream stream = InformationTest.class.getResourceAsStream("/enum_test.txt"); //$NON-NLS-1$
+		final InputStream stream = InformationTest.class.getResourceAsStream("/org/mozkito/mappings/enum_test.txt"); //$NON-NLS-1$
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		
 		final StringBuilder builder = new StringBuilder();

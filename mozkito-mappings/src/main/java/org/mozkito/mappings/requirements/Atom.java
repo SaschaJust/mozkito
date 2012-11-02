@@ -25,7 +25,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * The atom expression evaluates to true if the given criteria are met. Evaluates to false otherwise.
  * 
@@ -192,8 +191,8 @@ public final class Atom extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
-	 * java.lang.Class, org.mozkito.mapping.requirements.Index)
+	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class, java.lang.Class,
+	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
 	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
@@ -245,9 +244,9 @@ public final class Atom extends Expression {
 	@Override
 	public String toString() {
 		if (this.type != null) {
-			return "(" + this.idx.name() + "<type> = " + this.type.getSimpleName() + ")";
+			return "(" + this.idx.name() + "<type> = " + this.type.getSimpleName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			return "(" + this.idx.name() + "<fields> ⊇ " + JavaUtils.collectionToString(this.keys) + ")";
+			return "(" + this.idx.name() + "<fields> ⊇ " + JavaUtils.collectionToString(this.keys) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 }

@@ -43,6 +43,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.persistence.PersistenceUtil;
@@ -59,17 +60,16 @@ public abstract class Selector extends Node {
 	/**
 	 * The Class Options.
 	 */
-	public static class Options extends
-	        ArgumentSetOptions<Set<Selector>, ArgumentSet<Set<Selector>, Options>> {
+	public static class Options extends ArgumentSetOptions<Set<Selector>, ArgumentSet<Set<Selector>, Options>> {
 		
 		/** The Constant DESCRIPTION. */
-		static final String                                                                                   DESCRIPTION     = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
-		                                                                                                                                                                           
+		static final String                                                                     DESCRIPTION     = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
+		                                                                                                                                                             
 		/** The Constant TAG. */
-		static final String                                                                                   TAG             = "selectors";                                      //$NON-NLS-1$
-		                                                                                                                                                                           
+		static final String                                                                     TAG             = "selectors";                                      //$NON-NLS-1$
+		                                                                                                                                                             
 		/** The enabled selectors option. */
-		private SetArgument.Options                                                                           enabledSelectorsOption;
+		private SetArgument.Options                                                             enabledSelectorsOption;
 		
 		/** The selector options. */
 		private final Map<Class<? extends Selector>, ArgumentSetOptions<? extends Selector, ?>> selectorOptions = new HashMap<>();
@@ -108,9 +108,7 @@ public abstract class Selector extends Node {
 					
 					Class<? extends Selector> clazz;
 					try {
-						clazz = (Class<? extends Selector>) Class.forName(Selector.class.getPackage()
-						                                                                              .getName()
-						        + '.'
+						clazz = (Class<? extends Selector>) Class.forName(Selector.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
 						throw new UnrecoverableError("Could not load selector '%s'. Does probably not exist. Aborting.");
@@ -159,11 +157,11 @@ public abstract class Selector extends Node {
 				try {
 					// first off, find all implemented selectors
 					final Collection<Class<? extends Selector>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     Selector.class,
-					                                                                                                     Modifier.ABSTRACT
-					                                                                                                             | Modifier.INTERFACE
-					                                                                                                             | Modifier.PRIVATE
-					                                                                                                             | Modifier.PROTECTED);
+					                                                                                              Selector.class,
+					                                                                                              Modifier.ABSTRACT
+					                                                                                                      | Modifier.INTERFACE
+					                                                                                                      | Modifier.PRIVATE
+					                                                                                                      | Modifier.PROTECTED);
 					
 					// first compute the default value for the selector enabler option, i.e., all implemented selectors
 					for (final Class<? extends Selector> selectorClass : collection) {
@@ -193,14 +191,14 @@ public abstract class Selector extends Node {
 									// fetch constructor of the options
 									@SuppressWarnings ("unchecked")
 									final Constructor<ArgumentSetOptions<? extends Selector, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Selector, ?>>) selectorOptionClass.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                                             Requirement.class);
+									                                                                                                                                                                               Requirement.class);
 									
 									// instantiate the options and set to required if enabledSelectorsOptions contains
 									// the
 									// simple classname of the selector under suspect, i.e., c.getSimpleName()
 									final ArgumentSetOptions<? extends Selector, ?> selectorOption = constructor.newInstance(set,
-									                                                                                                Requirement.contains(this.enabledSelectorsOption,
-									                                                                                                                     selectorClass.getSimpleName()));
+									                                                                                         Requirement.contains(this.enabledSelectorsOption,
+									                                                                                                              selectorClass.getSimpleName()));
 									
 									if (Logger.logDebug()) {
 										Logger.debug("Adding new mapping selectors dependency '%s' with list activator '%s'",

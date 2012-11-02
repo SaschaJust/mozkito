@@ -23,8 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
-import org.mozkito.mappings.selectors.ReportRegexSelector;
-import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 

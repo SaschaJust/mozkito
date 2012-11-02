@@ -64,6 +64,19 @@ public class Mapping implements Annotated {
 	}
 	
 	/**
+	 * @param reportFieldFilter
+	 */
+	public void addFilter(final Filter filter) {
+		// PRECONDITIONS
+		
+		try {
+			getFilters().add(filter);
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
 	 * @return the composite
 	 */
 	public final IComposite getComposite() {

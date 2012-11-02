@@ -23,7 +23,6 @@ import net.ownhero.dev.ioda.JavaUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * The all expression evaluates to true if and only if all checks on the inner expressions evaluate to true. Evaluates
  * to false otherwise.
@@ -75,8 +74,8 @@ public final class All extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
-	 * java.lang.Class, org.mozkito.mapping.requirements.Index)
+	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class, java.lang.Class,
+	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
 	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
@@ -104,7 +103,7 @@ public final class All extends Expression {
 	 */
 	@Override
 	public String toString() {
-		return "(∀ [true] : " + JavaUtils.collectionToString(this.expressions) + ")";
+		return "(∀ [true] : " + JavaUtils.collectionToString(this.expressions) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

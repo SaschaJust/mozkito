@@ -10,11 +10,12 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
+import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -25,10 +26,24 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.chains.converters.CandidatesConverter;
+import org.mozkito.mappings.chains.converters.CompositeConverter;
+import org.mozkito.mappings.chains.converters.RelationsConverter;
+import org.mozkito.mappings.chains.demultiplexers.CandidatesDemux;
+import org.mozkito.mappings.chains.filters.EngineProcessor;
+import org.mozkito.mappings.chains.filters.FilterProcessor;
+import org.mozkito.mappings.chains.filters.StrategyProcessor;
+import org.mozkito.mappings.chains.sinks.Persister;
+import org.mozkito.mappings.chains.sources.ReportReader;
+import org.mozkito.mappings.chains.sources.TransactionReader;
+import org.mozkito.mappings.chains.transformers.ReportFinder;
+import org.mozkito.mappings.chains.transformers.TransactionFinder;
+import org.mozkito.mappings.engines.Engine;
+import org.mozkito.mappings.filters.Filter;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
+import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 
@@ -39,7 +54,7 @@ public class MappingChain extends Chain<Settings> {
 	
 	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
 	private DatabaseOptions                               databaseOptions;
-	private ArgumentSet<MappingFinder, MappingOptions>    mappingArguments;
+	private ArgumentSet<Finder, MappingOptions>           mappingArguments;
 	private MappingOptions                                mappingOptions;
 	/** The thread pool. */
 	private final Pool                                    threadPool;
@@ -73,11 +88,11 @@ public class MappingChain extends Chain<Settings> {
 	 */
 	@Override
 	public void setup() {
-		final MappingFinder finder = this.mappingArguments.getValue();
+		final Finder finder = this.mappingArguments.getValue();
 		
 		if (finder == null) {
 			if (Logger.logError()) {
-				Logger.error("MappingFinder initialization failed. Aborting...");
+				Logger.error("Finder initialization failed. Aborting...");
 			}
 			shutdown();
 			return;
@@ -89,45 +104,52 @@ public class MappingChain extends Chain<Settings> {
 		if (persistenceUtil != null) {
 			
 			finder.loadData(persistenceUtil);
-			new ReportReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-			new TransactionFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
-			new TransactionReader(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
-			new ReportFinder(this.threadPool.getThreadGroup(), getSettings(), finder, persistenceUtil);
-			new CandidatesDemux(this.threadPool.getThreadGroup(), getSettings());
-			new CandidatesConverter(this.threadPool.getThreadGroup(), getSettings());
-			// new ScoringMappingFilter(this.threadPool.getThreadGroup(),
-			// getSettings(), finder);
-			// new ScoringFilterMux(this.threadPool.getThreadGroup(),
-			// getSettings());
-			// new ScoringMappingMux(this.threadPool.getThreadGroup(),
-			// getSettings());
-			for (final MappingEngine engine : finder.getEngines().values()) {
+			final Group group = this.threadPool.getThreadGroup();
+			
+			// load sources
+			new ReportReader(group, getSettings(), persistenceUtil);
+			new TransactionReader(group, getSettings(), persistenceUtil);
+			
+			// load transformers that produce candidates
+			new TransactionFinder(group, getSettings(), finder, persistenceUtil);
+			new ReportFinder(group, getSettings(), finder, persistenceUtil);
+			
+			// demux the candidates into one stream
+			new CandidatesDemux(group, getSettings());
+			
+			// convert the candidates into Relations
+			new CandidatesConverter(group, getSettings());
+			
+			// create the filter nodes for the engines
+			for (final Engine engine : finder.getEngines().values()) {
 				if (Logger.logInfo()) {
 					Logger.info("Creating node for engine '%s'.", engine);
 				}
-				new MappingEngineProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, engine);
+				new EngineProcessor(group, getSettings(), finder, engine);
 			}
 			
-			// for (final MappingStrategy strategy : finder.getStrategies().values()) {
-			// new MappingStrategyProcessor(this.threadPool.getThreadGroup(), getSettings(), finder, strategy);
-			// }
-			// new ScoringPersister(this.threadPool.getThreadGroup(),
-			// getSettings(), persistenceUtil);
-			// ScoringSplitter splitter = new
-			// ScoringSplitter(this.threadPool.getThreadGroup(),
-			// getSettings(), finder,
-			// persistenceUtil);
-			// ScoringFilterPersister persister = new
-			// ScoringFilterPersister(this.threadPool.getThreadGroup(),
-			// getSettings(), persistenceUtil);
-			new MappingPersister(this.threadPool.getThreadGroup(), getSettings(), persistenceUtil);
+			// convert the Relations into Composites
+			new RelationsConverter(group, getSettings());
 			
+			// create the filter nodes for the strategies
+			for (final Strategy strategy : finder.getStrategies().values()) {
+				new StrategyProcessor(group, getSettings(), finder, strategy);
+			}
+			
+			// convert the Composites into Mappings
+			new CompositeConverter(group, getSettings());
+			
+			// create the filter nodes for the filters
+			for (final Filter filter : finder.getFilters().values()) {
+				new FilterProcessor(group, getSettings(), finder, filter);
+			}
+			
+			// save the results in the database
+			new Persister(group, getSettings(), persistenceUtil);
 		} else {
 			if (Logger.logError()) {
 				Logger.error("Database arguments not valid. Aborting...");
 			}
-			// shutdown();
-			// return;
 		}
 		
 		// final IRCThread t = new IRCThread("mapping");

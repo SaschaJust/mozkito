@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.converters;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 
-import org.mozkito.mappings.model.Candidate;
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Relation;
 
 /**
@@ -16,7 +16,7 @@ import org.mozkito.mappings.model.Relation;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CandidatesConverter extends Transformer<Candidate, Relation> {
+public class RelationsConverter extends Transformer<Relation, Composite> {
 	
 	/**
 	 * Instantiates a new candidates converter.
@@ -26,15 +26,15 @@ public class CandidatesConverter extends Transformer<Candidate, Relation> {
 	 * @param settings
 	 *            the settings
 	 */
-	public CandidatesConverter(final Group threadGroup, final Settings settings) {
+	public RelationsConverter(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<Candidate, Relation>(this) {
+		new ProcessHook<Relation, Composite>(this) {
 			
 			@Override
 			public void process() {
-				final Candidate data = getInputData();
-				provideOutputData(new Relation(data));
+				final Relation data = getInputData();
+				provideOutputData(new Composite(data));
 			}
 		};
 	}

@@ -27,8 +27,8 @@ import net.ownhero.dev.kisa.Logger;
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String   BUNDLE_NAME     = "org.mozkito.mappings.engines.messages"; //$NON-NLS-1$
-	                                                                                         
+	private static final String   BUNDLE_NAME     = "org.mozkito.mappings.messages"; //$NON-NLS-1$
+	                                                                                 
 	/** The Constant RESOURCE_BUNDLE. */
 	private static ResourceBundle RESOURCE_BUNDLE = loadBundle();
 	
@@ -39,9 +39,19 @@ public class Messages {
 	 *            the key
 	 * @return the string
 	 */
-	public static String getString(final String key) {
+	public static String getString(final String key,
+	                               final Object... args) {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			final String resource = RESOURCE_BUNDLE.getString(key);
+			final String[] split = resource.split("%s"); //$NON-NLS-1$
+			
+			assert (args.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + args.length; //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if (split.length > 1) {
+				return String.format(resource, args);
+			} else {
+				return resource;
+			}
 		} catch (final MissingResourceException e) {
 			return '!' + key + '!';
 		}

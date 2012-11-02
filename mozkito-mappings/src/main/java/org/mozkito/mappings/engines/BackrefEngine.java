@@ -38,7 +38,7 @@ import org.mozkito.mappings.requirements.Index;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class BackrefEngine extends MappingEngine {
+public class BackrefEngine extends Engine {
 	
 	/**
 	 * The Class Options.

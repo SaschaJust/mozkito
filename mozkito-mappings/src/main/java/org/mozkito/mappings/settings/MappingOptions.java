@@ -30,14 +30,14 @@ import net.ownhero.dev.kisa.LogLevel;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.MappingEngine;
-import org.mozkito.mappings.engines.MappingEngine.Options;
+import org.mozkito.mappings.engines.Engine;
+import org.mozkito.mappings.engines.Engine.Options;
 import org.mozkito.mappings.filters.Filter;
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.selectors.Selector;
-import org.mozkito.mappings.splitters.MappingSplitter;
-import org.mozkito.mappings.strategies.MappingStrategy;
-import org.mozkito.mappings.training.MappingTrainer;
+import org.mozkito.mappings.splitters.Splitter;
+import org.mozkito.mappings.strategies.Strategy;
+import org.mozkito.mappings.training.Trainer;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -45,7 +45,7 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSet<MappingFinder, MappingOptions>> {
+public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finder, MappingOptions>> {
 	
 	private static final String        DESCRIPTION = "TODO";
 	
@@ -62,10 +62,10 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 		});
 	}
 	
-	private MappingEngine.Options      engineOptions;
+	private Engine.Options      engineOptions;
 	
 	/** The engines. */
-	private final Set<MappingEngine>   engines     = new HashSet<MappingEngine>();
+	private final Set<Engine>   engines     = new HashSet<Engine>();
 	
 	/** The filters. */
 	private final Set<Filter>   filters     = new HashSet<Filter>();
@@ -77,11 +77,11 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	
 	private TupleArgument.Options      sourceOptions;
 	/** The splitters. */
-	private final Set<MappingSplitter> splitters   = new HashSet<MappingSplitter>();
+	private final Set<Splitter> splitters   = new HashSet<Splitter>();
 	/** The strategies. */
-	private final Set<MappingStrategy> strategies  = new HashSet<MappingStrategy>();
+	private final Set<Strategy> strategies  = new HashSet<Strategy>();
 	/** The trainers. */
-	private final Set<MappingTrainer>  trainers    = new HashSet<MappingTrainer>();
+	private final Set<Trainer>  trainers    = new HashSet<Trainer>();
 	
 	/**
 	 * @param argumentSet
@@ -98,7 +98,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the engines
 	 */
-	public Set<MappingEngine> getEngines() {
+	public Set<Engine> getEngines() {
 		return this.engines;
 	}
 	
@@ -125,7 +125,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the splitters
 	 */
-	public final Set<MappingSplitter> getSplitters() {
+	public final Set<Splitter> getSplitters() {
 		return this.splitters;
 	}
 	
@@ -134,7 +134,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the strategies
 	 */
-	public Set<MappingStrategy> getStrategies() {
+	public Set<Strategy> getStrategies() {
 		return this.strategies;
 	}
 	
@@ -143,7 +143,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * 
 	 * @return the trainers
 	 */
-	public final Set<MappingTrainer> getTrainers() {
+	public final Set<Trainer> getTrainers() {
 		return this.trainers;
 	}
 	
@@ -157,16 +157,16 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 	 * @return true, if successful
 	 */
 	@Override
-	public MappingFinder init() {
-		final MappingFinder finder = new MappingFinder();
+	public Finder init() {
+		final Finder finder = new Finder();
 		
-		final ArgumentSet<Set<MappingEngine>, Options> engineArgument = getSettings().getArgumentSet(this.engineOptions);
+		final ArgumentSet<Set<Engine>, Options> engineArgument = getSettings().getArgumentSet(this.engineOptions);
 		
-		for (final MappingEngine engine : engineArgument.getValue()) {
+		for (final Engine engine : engineArgument.getValue()) {
 			finder.addEngine(engine);
 		}
 		
-		for (final MappingStrategy strategy : this.strategies) {
+		for (final Strategy strategy : this.strategies) {
 			finder.addStrategy(strategy);
 		}
 		
@@ -179,11 +179,11 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			finder.addSelector(selector);
 		}
 		
-		for (final MappingSplitter splitter : this.splitters) {
+		for (final Splitter splitter : this.splitters) {
 			finder.addSplitter(splitter);
 		}
 		
-		for (final MappingTrainer trainer : this.trainers) {
+		for (final Trainer trainer : this.trainers) {
 			finder.addTrainer(trainer);
 		}
 		
@@ -212,7 +212,7 @@ public class MappingOptions extends ArgumentSetOptions<MappingFinder, ArgumentSe
 			                                               Requirement.required);
 			map.put(this.sourceOptions.getName(), this.sourceOptions);
 			
-			this.engineOptions = MappingEngine.getOptions(set);
+			this.engineOptions = Engine.getOptions(set);
 			map.put(this.engineOptions.getName(), this.engineOptions);
 			
 			this.selectorOptions = Selector.getOptions(set);

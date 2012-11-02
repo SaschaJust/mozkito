@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * The and expression evaluates to true if and only if both inner expressions evaluate to true. Evaluates to false
  * otherwise.
@@ -79,8 +78,8 @@ public final class And extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class,
-	 * java.lang.Class, org.mozkito.mapping.requirements.Index)
+	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause (java.lang.Class, java.lang.Class,
+	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
 	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,
@@ -117,6 +116,6 @@ public final class And extends Expression {
 	 */
 	@Override
 	public String toString() {
-		return "(" + this.expression1.toString() + " && " + this.expression2.toString() + ")";
+		return "(" + this.expression1.toString() + " && " + this.expression2.toString() + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

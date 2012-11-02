@@ -42,7 +42,7 @@ import org.mozkito.mappings.requirements.Or;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReportTypeEngine extends MappingEngine {
+public class ReportTypeEngine extends Engine {
 	
 	/**
 	 * The Class Options.

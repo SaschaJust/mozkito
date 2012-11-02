@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.transformers;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -16,9 +16,10 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.elements.CandidateFactory;
-import org.mozkito.mappings.finder.MappingFinder;
+import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.PersistenceUtil;
@@ -45,7 +46,7 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 	 * @param util
 	 *            the util
 	 */
-	public TransactionFinder(final Group threadGroup, final Settings settings, final MappingFinder finder,
+	public TransactionFinder(final Group threadGroup, final Settings settings, final Finder finder,
 	        final PersistenceUtil util) {
 		super(threadGroup, settings, true);
 		
@@ -62,14 +63,14 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					                                                                                           util);
 					
 					if (Logger.logInfo()) {
-						Logger.info("Processing '%s'->%s with '%s' candidates.", mapReport.getHandle(),
-						            mapReport.toString(), transactionCandidates.size());
+						Logger.info(Messages.getString("TransactionFinder.processing", mapReport.getHandle(), //$NON-NLS-1$
+						                               mapReport.toString(), transactionCandidates.size()));
 					}
 					
 					for (final MappableTransaction mapTransaction : transactionCandidates.keySet()) {
 						if (TransactionFinder.this.candidateFactory.isKnown(mapReport, mapTransaction)) {
 							if (Logger.logInfo()) {
-								Logger.info("Skipping candidate '%s'<->'%s'. Already processed.");
+								Logger.info(Messages.getString("TransactionFinder.skipping", mapReport, mapTransaction)); //$NON-NLS-1$
 							}
 						} else {
 							candidates.add(TransactionFinder.this.candidateFactory.getCandidate(mapReport,
@@ -91,16 +92,18 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					candidates.remove(candidate);
 					
 					if (Logger.logDebug()) {
-						Logger.debug("Providing candidate '%s'.", candidate);
+						Logger.debug(Messages.getString("TransactionFinder.providing", candidate)); //$NON-NLS-1$
 					}
+					
 					providePartialOutputData(candidate);
+					
 					if (candidates.isEmpty()) {
 						setCompleted();
 					}
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Skipping candidate analysis of '%s' due to the lag of pre-selected candidates.",
-						             getInputData());
+						Logger.debug(Messages.getString("TransactionFinder.noMatches", //$NON-NLS-1$
+						                                getInputData()));
 					}
 					skipData();
 				}

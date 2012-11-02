@@ -28,6 +28,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
+import org.jsoup.Jsoup;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
@@ -76,8 +77,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
+	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey)
 	 */
 	@Override
 	@Transient
@@ -125,8 +125,8 @@ public class MappableReport extends MappableEntity implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey, int)
+	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey,
+	 * int)
 	 */
 	@Override
 	@Transient
@@ -229,7 +229,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 			builder.append(comment.getMessage()).append(FileUtils.lineSeparator);;
 		}
 		
-		return builder.toString();
+		return Jsoup.parse(builder.toString()).text();
 	}
 	
 	/**

@@ -42,7 +42,7 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class CreationOrderEngine extends MappingEngine {
+public class CreationOrderEngine extends Engine {
 	
 	/**
 	 * The Class Options.

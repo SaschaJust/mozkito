@@ -56,7 +56,7 @@ import au.com.bytecode.opencsv.CSVReader;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class RegexEngine extends MappingEngine {
+public class RegexEngine extends Engine {
 	
 	/**
 	 * The Class Matcher.

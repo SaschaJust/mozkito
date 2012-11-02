@@ -13,31 +13,35 @@
 /**
  * 
  */
-package org.mozkito.mappings;
+package org.mozkito.mappings.chains.sources;
+
+import java.util.Iterator;
+import java.util.List;
 
 import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.mappings.model.Mapping;
+import org.mozkito.mappings.messages.Messages;
+import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * The Class ScoringFilterPersister.
+ * The Class TransactionReader.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ScoringFilterPersister extends Sink<Mapping> {
+public class TransactionReader extends Source<RCSTransaction> {
 	
-	/** The i. */
-	private Integer i = 0;
+	/** The iterator. */
+	private Iterator<RCSTransaction> iterator;
 	
 	/**
-	 * Instantiates a new scoring filter persister.
+	 * Instantiates a new transaction reader.
 	 * 
 	 * @param threadGroup
 	 *            the thread group
@@ -46,43 +50,34 @@ public class ScoringFilterPersister extends Sink<Mapping> {
 	 * @param persistenceUtil
 	 *            the persistence util
 	 */
-	public ScoringFilterPersister(final Group threadGroup, final Settings settings,
-	        final PersistenceUtil persistenceUtil) {
+	public TransactionReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<Mapping, Mapping>(this) {
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				persistenceUtil.beginTransaction();
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final List<RCSTransaction> list = persistenceUtil.load(criteria);
+				TransactionReader.this.iterator = list.iterator();
 			}
 		};
 		
-		new ProcessHook<Mapping, Mapping>(this) {
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
-				final Mapping score = getInputData();
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Storing " + score);
+				if (TransactionReader.this.iterator.hasNext()) {
+					final RCSTransaction transaction = TransactionReader.this.iterator.next();
+					
+					if (Logger.logInfo()) {
+						Logger.info(Messages.getString("ReportReader.providing", transaction)); //$NON-NLS-1$
+					}
+					
+					providePartialOutputData(transaction);
+				} else {
+					provideOutputData(null, true);
 				}
-				
-				if ((++ScoringFilterPersister.this.i % 50) == 0) {
-					persistenceUtil.commitTransaction();
-					persistenceUtil.beginTransaction();
-				}
-				
-				persistenceUtil.save(score);
-			}
-		};
-		
-		new PostExecutionHook<Mapping, Mapping>(this) {
-			
-			@Override
-			public void postExecution() {
-				persistenceUtil.commitTransaction();
-				persistenceUtil.shutdown();
 			}
 		};
 	}

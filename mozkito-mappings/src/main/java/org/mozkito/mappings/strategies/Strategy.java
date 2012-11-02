@@ -57,13 +57,13 @@ import org.mozkito.mappings.register.Node;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public abstract class MappingStrategy extends Node {
+public abstract class Strategy extends Node {
 	
 	/**
 	 * The Class Options.
 	 */
 	public static class Options extends
-	        ArgumentSetOptions<Set<MappingStrategy>, ArgumentSet<Set<MappingStrategy>, Options>> {
+	        ArgumentSetOptions<Set<Strategy>, ArgumentSet<Set<Strategy>, Options>> {
 		
 		/** The Constant DESCRIPTION. */
 		private static final String                                                                           DESCRIPTION   = "...";
@@ -75,7 +75,7 @@ public abstract class MappingStrategy extends Node {
 		private SetArgument.Options                                                                           enabledStrategiesOption;
 		
 		/** The engine options. */
-		private final Map<Class<? extends MappingStrategy>, ArgumentSetOptions<? extends MappingStrategy, ?>> engineOptions = new HashMap<>();
+		private final Map<Class<? extends Strategy>, ArgumentSetOptions<? extends Strategy, ?>> engineOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -95,9 +95,9 @@ public abstract class MappingStrategy extends Node {
 		 */
 		@SuppressWarnings ({ "unchecked", "rawtypes" })
 		@Override
-		public Set<MappingStrategy> init() {
+		public Set<Strategy> init() {
 			// PRECONDITIONS
-			final Set<MappingStrategy> set = new HashSet<>();
+			final Set<Strategy> set = new HashSet<>();
 			
 			try {
 				
@@ -106,9 +106,9 @@ public abstract class MappingStrategy extends Node {
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
-					Class<? extends MappingStrategy> clazz;
+					Class<? extends Strategy> clazz;
 					try {
-						clazz = (Class<? extends MappingStrategy>) Class.forName(MappingStrategy.class.getPackage()
+						clazz = (Class<? extends Strategy>) Class.forName(Strategy.class.getPackage()
 						                                                                              .getName()
 						        + '.'
 						        + name);
@@ -117,7 +117,7 @@ public abstract class MappingStrategy extends Node {
 						
 					}
 					
-					final ArgumentSetOptions<? extends MappingStrategy, ?> options = this.engineOptions.get(clazz);
+					final ArgumentSetOptions<? extends Strategy, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn("Engine '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
@@ -126,7 +126,7 @@ public abstract class MappingStrategy extends Node {
 						}
 						
 					} else {
-						final ArgumentSet<? extends MappingStrategy, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
+						final ArgumentSet<? extends Strategy, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
 						set.add(argumentSet.getValue());
 					}
 				}
@@ -153,22 +153,22 @@ public abstract class MappingStrategy extends Node {
 				final HashSet<String> defaultSet = new HashSet<String>();
 				
 				try {
-					final Collection<Class<? extends MappingStrategy>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     MappingStrategy.class,
+					final Collection<Class<? extends Strategy>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
+					                                                                                                     Strategy.class,
 					                                                                                                     Modifier.ABSTRACT
 					                                                                                                             | Modifier.INTERFACE
 					                                                                                                             | Modifier.PRIVATE
 					                                                                                                             | Modifier.PROTECTED);
-					for (final Class<? extends MappingStrategy> c : collection) {
-						if (c.getSuperclass() == MappingStrategy.class) {
+					for (final Class<? extends Strategy> c : collection) {
+						if (c.getSuperclass() == Strategy.class) {
 							final Class<?>[] declaredClasses = c.getDeclaredClasses();
 							for (final Class<?> dC : declaredClasses) {
 								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
 									// found options
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends MappingStrategy, ?>> constructor = (Constructor<ArgumentSetOptions<? extends MappingStrategy, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
+									final Constructor<ArgumentSetOptions<? extends Strategy, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Strategy, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
 									                                                                                                                                                                            Requirement.class);
-									final ArgumentSetOptions<? extends MappingStrategy, ?> instance = constructor.newInstance(set,
+									final ArgumentSetOptions<? extends Strategy, ?> instance = constructor.newInstance(set,
 									                                                                                          Requirement.required);
 									this.engineOptions.put(c, instance);
 									map.put(instance.getName(), instance);
@@ -177,7 +177,7 @@ public abstract class MappingStrategy extends Node {
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), MappingStrategy.class.getSimpleName(), c.getSuperclass()
+								            c.getSimpleName(), Strategy.class.getSimpleName(), c.getSuperclass()
 								                                                                       .getSimpleName());
 							}
 						}
@@ -214,7 +214,7 @@ public abstract class MappingStrategy extends Node {
 	 * @return the options
 	 */
 	public static final Options getOptions(@NotNull final ArgumentSet<?, ?> set) {
-		return new MappingStrategy.Options(set, Requirement.required);
+		return new Strategy.Options(set, Requirement.required);
 	}
 	
 	/**
