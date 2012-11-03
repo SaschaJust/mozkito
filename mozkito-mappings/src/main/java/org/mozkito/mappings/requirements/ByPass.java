@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
@@ -44,8 +43,8 @@ public class ByPass extends Expression {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause(java.lang.Class,
-	 * java.lang.Class, org.mozkito.mapping.requirements.Index)
+	 * @see org.mozkito.mapping.requirements.Expression#getFailureCause(java.lang.Class, java.lang.Class,
+	 * org.mozkito.mapping.requirements.Index)
 	 */
 	@Override
 	public List<Expression> getFailureCause(final Class<? extends MappableEntity> target1,

@@ -52,17 +52,16 @@ public abstract class Splitter extends Node {
 	/**
 	 * The Class Options.
 	 */
-	public static class Options extends
-	        ArgumentSetOptions<Set<Splitter>, ArgumentSet<Set<Splitter>, Options>> {
+	public static class Options extends ArgumentSetOptions<Set<Splitter>, ArgumentSet<Set<Splitter>, Options>> {
 		
 		/** The Constant DESCRIPTION. */
-		private static final String                                                                           DESCRIPTION   = "...";
+		private static final String                                                             DESCRIPTION   = "...";
 		
 		/** The Constant TAG. */
-		private static final String                                                                           TAG           = "filters";
+		private static final String                                                             TAG           = "filters";
 		
 		/** The enabled splitters option. */
-		private SetArgument.Options                                                                           enabledSplittersOption;
+		private SetArgument.Options                                                             enabledSplittersOption;
 		
 		/** The engine options. */
 		private final Map<Class<? extends Splitter>, ArgumentSetOptions<? extends Splitter, ?>> engineOptions = new HashMap<>();
@@ -76,7 +75,7 @@ public abstract class Splitter extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -98,9 +97,7 @@ public abstract class Splitter extends Node {
 				for (final String name : value) {
 					Class<? extends Splitter> clazz;
 					try {
-						clazz = (Class<? extends Splitter>) Class.forName(Splitter.class.getPackage()
-						                                                                              .getName()
-						        + '.'
+						clazz = (Class<? extends Splitter>) Class.forName(Splitter.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
 						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
@@ -144,11 +141,11 @@ public abstract class Splitter extends Node {
 				
 				try {
 					final Collection<Class<? extends Splitter>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     Splitter.class,
-					                                                                                                     Modifier.ABSTRACT
-					                                                                                                             | Modifier.INTERFACE
-					                                                                                                             | Modifier.PRIVATE
-					                                                                                                             | Modifier.PROTECTED);
+					                                                                                              Splitter.class,
+					                                                                                              Modifier.ABSTRACT
+					                                                                                                      | Modifier.INTERFACE
+					                                                                                                      | Modifier.PRIVATE
+					                                                                                                      | Modifier.PROTECTED);
 					for (final Class<? extends Splitter> c : collection) {
 						if (c.getSuperclass() == Splitter.class) {
 							final Class<?>[] declaredClasses = c.getDeclaredClasses();
@@ -157,9 +154,9 @@ public abstract class Splitter extends Node {
 									// found options
 									@SuppressWarnings ("unchecked")
 									final Constructor<ArgumentSetOptions<? extends Splitter, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Splitter, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                            Requirement.class);
+									                                                                                                                                                              Requirement.class);
 									final ArgumentSetOptions<? extends Splitter, ?> instance = constructor.newInstance(set,
-									                                                                                          Requirement.required);
+									                                                                                   Requirement.required);
 									this.engineOptions.put(c, instance);
 									map.put(instance.getName(), instance);
 								}
@@ -168,7 +165,7 @@ public abstract class Splitter extends Node {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
 								            c.getSimpleName(), Splitter.class.getSimpleName(), c.getSuperclass()
-								                                                                       .getSimpleName());
+								                                                                .getSimpleName());
 							}
 						}
 						

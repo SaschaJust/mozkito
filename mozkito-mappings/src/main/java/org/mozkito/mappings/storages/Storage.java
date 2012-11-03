@@ -15,7 +15,6 @@ package org.mozkito.mappings.storages;
 import org.mozkito.mappings.register.Node;
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class MappingStorage.
  * 

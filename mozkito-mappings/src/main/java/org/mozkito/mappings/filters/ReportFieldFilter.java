@@ -53,7 +53,7 @@ public class ReportFieldFilter extends Filter {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -89,7 +89,8 @@ public class ReportFieldFilter extends Filter {
 				                                                 argumentSet,
 				                                                 "type",
 				                                                 Messages.getString("ReportFieldFilter.typeDescription"),
-				                                                 getDefaultType(), Requirement.required);
+				                                                 ReportFieldFilter.getDefaultType(),
+				                                                 Requirement.required);
 				map.put(this.typeOption.getName(), this.typeOption);
 				return map;
 			} finally {
@@ -142,7 +143,7 @@ public class ReportFieldFilter extends Filter {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return ReportFieldFilter.DESCRIPTION;
 	}
 	
 	/*

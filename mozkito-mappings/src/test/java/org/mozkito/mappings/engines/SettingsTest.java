@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.mozkito.mappings.engines;
 
-import static org.junit.Assert.fail;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -22,6 +21,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.junit.Assert;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.settings.MappingOptions;
 
@@ -39,14 +39,14 @@ public class SettingsTest {
 			if (Logger.logError()) {
 				Logger.error(e1);
 			}
-			fail();
+			Assert.fail();
 		}
 		
 		if (settings != null) {
 			try {
 				final ArgumentSet<Finder, MappingOptions> argumentSet = ArgumentSetFactory.create(new MappingOptions(
-				                                                                                                            settings.getRoot(),
-				                                                                                                            Requirement.required));
+				                                                                                                     settings.getRoot(),
+				                                                                                                     Requirement.required));
 				System.err.println(settings.getHelpString());
 				System.err.println(settings.toString());
 				final Finder finder = argumentSet.getValue();
@@ -60,7 +60,7 @@ public class SettingsTest {
 				}
 				System.err.println(settings.toString());
 				System.err.println(settings.getHelpString());
-				fail();
+				Assert.fail();
 			}
 		}
 		

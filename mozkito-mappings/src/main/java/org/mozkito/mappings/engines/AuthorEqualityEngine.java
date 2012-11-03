@@ -95,7 +95,8 @@ public class AuthorEqualityEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   AuthorEqualityEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				return map;
 			} finally {
@@ -120,10 +121,10 @@ public class AuthorEqualityEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_CONFIDENCE;
+			return AuthorEqualityEngine.DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(AuthorEqualityEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
 			                  AuthorEqualityEngine.class.getSimpleName());
 		}
 	}
@@ -170,7 +171,7 @@ public class AuthorEqualityEngine extends Engine {
 	 */
 	@Override
 	public final String getDescription() {
-		return DESCRIPTION;
+		return AuthorEqualityEngine.DESCRIPTION;
 	}
 	
 	/**

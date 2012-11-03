@@ -57,7 +57,7 @@ public class BackrefEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, BackrefEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, BackrefEngine.class.getSimpleName(), BackrefEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -92,7 +92,8 @@ public class BackrefEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("BackrefEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   BackrefEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				return map;
 			} finally {
@@ -104,10 +105,10 @@ public class BackrefEngine extends Engine {
 	
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
-	                                                                                                  
+	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("BackrefEngine.description"); //$NON-NLS-1$
-	
+	                                                                                                  
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -117,10 +118,10 @@ public class BackrefEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_CONFIDENCE;
+			return BackrefEngine.DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(BackrefEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
 			                  BackrefEngine.class.getSimpleName());
 		}
 	}
@@ -167,7 +168,7 @@ public class BackrefEngine extends Engine {
 	 */
 	@Override
 	public final String getDescription() {
-		return DESCRIPTION;
+		return BackrefEngine.DESCRIPTION;
 	}
 	
 	/*

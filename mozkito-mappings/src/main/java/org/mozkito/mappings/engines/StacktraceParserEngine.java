@@ -3,7 +3,6 @@
  */
 package org.mozkito.mappings.engines;
 
-
 /**
  * The Class StacktraceParserEngine.
  * 

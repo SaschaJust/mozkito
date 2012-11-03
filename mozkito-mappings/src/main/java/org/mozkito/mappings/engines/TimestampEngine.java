@@ -48,7 +48,6 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.persistence.model.EnumTuple;
 
-
 /**
  * The Class TimestampEngine.
  * 
@@ -157,7 +156,8 @@ public class TimestampEngine extends Engine {
 				                                                argumentSet,
 				                                                "interval", //$NON-NLS-1$
 				                                                Messages.getString("TimestampEngine.intervalDescription"), //$NON-NLS-1$
-				                                                getDefaultinterval(), Requirement.required);
+				                                                TimestampEngine.getDefaultinterval(),
+				                                                Requirement.required);
 				map.put(this.intervalOption.getName(), this.intervalOption);
 				return map;
 			} finally {
@@ -183,10 +183,10 @@ public class TimestampEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return defaultInterval;
+			return TimestampEngine.defaultInterval;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(defaultInterval, "Field '%s' in '%s'.", "defaultInterval", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(TimestampEngine.defaultInterval, "Field '%s' in '%s'.", "defaultInterval", //$NON-NLS-1$ //$NON-NLS-2$
 			                  TimestampEngine.class.getSimpleName());
 		}
 	}
@@ -213,7 +213,7 @@ public class TimestampEngine extends Engine {
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return TimestampEngine.description;
 	}
 	
 	/**
@@ -235,8 +235,8 @@ public class TimestampEngine extends Engine {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.mappable.MappableEntity, org.mozkito.mapping.model.Mapping)
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
+	 * org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
@@ -329,9 +329,8 @@ public class TimestampEngine extends Engine {
 			if (Logger.logDebug()) {
 				Logger.debug("Scoring with confidence: %s", value);
 			}
-			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), Engine.getUnknown(),
-			           Engine.getUnknown(), FieldKey.RESOLUTION_TIMESTAMP.name(), Engine.getUnknown(),
-			           Engine.getUnknown());
+			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), Engine.getUnknown(), Engine.getUnknown(),
+			           FieldKey.RESOLUTION_TIMESTAMP.name(), Engine.getUnknown(), Engine.getUnknown());
 		}
 	}
 	

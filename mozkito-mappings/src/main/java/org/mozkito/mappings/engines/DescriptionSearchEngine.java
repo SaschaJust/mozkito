@@ -51,7 +51,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return DescriptionSearchEngine.description;
 	}
 	
 	/*

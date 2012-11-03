@@ -63,7 +63,8 @@ public class CompletedOrderEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, CompletedOrderEngine.class.getSimpleName(), CompletedOrderEngine.DESCRIPTION,
+			      requirements);
 		}
 		
 		/*
@@ -98,7 +99,8 @@ public class CompletedOrderEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("CompletedOrderEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   CompletedOrderEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				return map;
 			} finally {
@@ -110,10 +112,10 @@ public class CompletedOrderEngine extends Engine {
 	
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
-	                                                                                                         
+	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("CompletedOrderEngine.description"); //$NON-NLS-1$
-	
+	                                                                                                         
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -123,10 +125,10 @@ public class CompletedOrderEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_CONFIDENCE;
+			return CompletedOrderEngine.DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(CompletedOrderEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
 			                  CompletedOrderEngine.class.getSimpleName());
 		}
 	}
@@ -170,7 +172,7 @@ public class CompletedOrderEngine extends Engine {
 	 */
 	@Override
 	public final String getDescription() {
-		return DESCRIPTION;
+		return CompletedOrderEngine.DESCRIPTION;
 	}
 	
 	/*

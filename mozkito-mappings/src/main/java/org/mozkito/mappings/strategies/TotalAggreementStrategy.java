@@ -46,7 +46,7 @@ public class TotalAggreementStrategy extends Strategy {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -88,8 +88,7 @@ public class TotalAggreementStrategy extends Strategy {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.strategies.MappingStrategy#map
-	 * (org.mozkito.mapping.model.RCSBugMapping)
+	 * @see org.mozkito.mapping.strategies.MappingStrategy#map (org.mozkito.mapping.model.RCSBugMapping)
 	 */
 	@Override
 	public IComposite map(final IComposite composite) {

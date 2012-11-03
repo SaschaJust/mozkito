@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.mozkito.mappings.utils;
 
-import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +21,7 @@ import java.util.Map;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,7 +48,7 @@ public class InformationTest {
 			builder.append(line).append(FileUtils.lineSeparator);
 		}
 		
-		text = builder.toString();
+		InformationTest.text = builder.toString();
 		reader.close();
 		stream.close();
 	}
@@ -67,7 +66,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testEnumerations() {
-		final List<Map<String, String>> enumerations = Information.enumerations(text);
+		final List<Map<String, String>> enumerations = Information.enumerations(InformationTest.text);
 		int i = 0;
 		
 		for (final Map<String, String> map : enumerations) {
@@ -79,7 +78,7 @@ public class InformationTest {
 				System.err.println(String.format("Item %3s - Bullet: %s - Text: %s", ++j, bullet, map.get(bullet)));
 			}
 		}
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -87,7 +86,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testHyperlinks() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -95,7 +94,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testItemizations() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testLanguage() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -111,7 +110,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testLineCount() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -119,7 +118,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testSentenceCount() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -127,7 +126,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testSentences() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -135,7 +134,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testTopics() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 	
 	/**
@@ -143,6 +142,6 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testWordCount() {
-		fail("Not yet implemented");
+		Assert.fail("Not yet implemented");
 	}
 }

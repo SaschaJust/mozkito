@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.model.Person;
 
-
 /**
  * The Enum FieldKey.
  */

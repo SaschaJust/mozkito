@@ -12,9 +12,6 @@
  ******************************************************************************/
 package org.mozkito.mappings.engines;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +35,7 @@ import net.ownhero.dev.ioda.Tuple;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,42 +86,42 @@ public class MappingEngineTest {
 	 */
 	@BeforeClass
 	public static void setupClass() {
-		report = new Report("84698384"); // T E S T
-		mappableReport = new MappableReport(report);
+		MappingEngineTest.report = new Report("84698384"); // T E S T
+		MappingEngineTest.mappableReport = new MappableReport(MappingEngineTest.report);
 		
 		final Person author = new Person("author", "Au Thor", "author@unit.test");
 		final Person developer = new Person("developer", "Devel Loper", "developer@unit.test");
 		
-		report.setSubmitter(author);
-		report.setResolver(developer);
-		report.setAssignedTo(developer);
+		MappingEngineTest.report.setSubmitter(author);
+		MappingEngineTest.report.setResolver(developer);
+		MappingEngineTest.report.setAssignedTo(developer);
 		
-		report.setCategory("Core");
-		report.setComponent("Network Connector");
-		report.setDescription(""); // TODO
-		report.setPriority(Priority.HIGH);
-		report.setProduct("UNIT TEST");
-		report.setResolution(Resolution.RESOLVED);
-		report.setSeverity(Severity.MAJOR);
-		report.setStatus(Status.CLOSED);
-		report.setSubject("Network parser crashes when reading unexpected EOF.");
-		report.setSummary(""); // TODO
-		report.setType(Type.BUG);
-		report.setVersion("0.2");
+		MappingEngineTest.report.setCategory("Core");
+		MappingEngineTest.report.setComponent("Network Connector");
+		MappingEngineTest.report.setDescription(""); // TODO
+		MappingEngineTest.report.setPriority(Priority.HIGH);
+		MappingEngineTest.report.setProduct("UNIT TEST");
+		MappingEngineTest.report.setResolution(Resolution.RESOLVED);
+		MappingEngineTest.report.setSeverity(Severity.MAJOR);
+		MappingEngineTest.report.setStatus(Status.CLOSED);
+		MappingEngineTest.report.setSubject("Network parser crashes when reading unexpected EOF.");
+		MappingEngineTest.report.setSummary(""); // TODO
+		MappingEngineTest.report.setType(Type.BUG);
+		MappingEngineTest.report.setVersion("0.2");
 		
 		// 2012/01/02 04:37:19
-		report.setCreationTimestamp(new DateTime(2012, 01, 02, 4, 37, 19, 0));
+		MappingEngineTest.report.setCreationTimestamp(new DateTime(2012, 01, 02, 4, 37, 19, 0));
 		// 2012/01/16 19:56:35
-		report.setResolutionTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
+		MappingEngineTest.report.setResolutionTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		
 		final Comment comment1 = new Comment(1, developer, new DateTime(2012, 01, 03, 13, 37, 52, 0), "");
 		final Comment comment2 = new Comment(2, author, new DateTime(2012, 01, 05, 3, 44, 29, 0), "");
 		final Comment comment3 = new Comment(3, developer, new DateTime(2012, 01, 07, 23, 2, 31, 0),
 		                                     "Fixed in rev 673fdbf2f792c8c81fd9d398194cc0eb1dab8938.");
 		
-		report.addComment(comment1);
-		report.addComment(comment2);
-		report.addComment(comment3);
+		MappingEngineTest.report.addComment(comment1);
+		MappingEngineTest.report.addComment(comment2);
+		MappingEngineTest.report.addComment(comment3);
 		
 		final HistoryElement element1 = new HistoryElement("84698384", developer, new DateTime(2012, 01, 03, 13, 37,
 		                                                                                       52, 0));
@@ -131,7 +129,7 @@ public class MappingEngineTest {
 		element1.addChangedValue("Priority", Priority.NORMAL, Priority.HIGH);
 		element1.addChangedValue("Severity", Severity.NORMAL, Severity.MAJOR);
 		element1.addChangedValue("AssignedTo", null, developer);
-		report.addHistoryElement(element1);
+		MappingEngineTest.report.addHistoryElement(element1);
 		
 		final HistoryElement element2 = new HistoryElement("84698384", developer, new DateTime(2012, 01, 16, 19, 56,
 		                                                                                       35, 0));
@@ -139,30 +137,31 @@ public class MappingEngineTest {
 		element2.addChangedValue("ResolutionTimestamp", null, new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		element2.addChangedValue("Resolution", Resolution.UNKNOWN, Resolution.RESOLVED);
 		element2.addChangedValue("Resolver", null, developer);
-		report.addHistoryElement(element2);
+		MappingEngineTest.report.addHistoryElement(element2);
 		
-		report.setLastUpdateTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
+		MappingEngineTest.report.setLastUpdateTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		
-		transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
-		                                               "Fixing bug 84698384.",
-		                                               new DateTime(2012, 01, 16, 19, 32, 12, 0), developer,
-		                                               "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
-		mappableTransaction = new MappableTransaction(transaction);
+		MappingEngineTest.transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
+		                                                                 "Fixing bug 84698384.",
+		                                                                 new DateTime(2012, 01, 16, 19, 32, 12, 0),
+		                                                                 developer,
+		                                                                 "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
+		MappingEngineTest.mappableTransaction = new MappableTransaction(MappingEngineTest.transaction);
 	}
 	
 	/** The arguments. */
-	MappingOptions                    arguments;
+	MappingOptions             arguments;
 	
 	/** The settings. */
-	Settings                          settings;
+	Settings                   settings;
 	
 	/** The Constant chainName. */
-	static final String               chainName = "test";
+	static final String        chainName = "test";
 	
 	/** The engines. */
 	private Collection<Engine> engines;
 	
-	private MappingOptions            mappingOptions;
+	private MappingOptions     mappingOptions;
 	
 	/**
 	 * Setup.
@@ -176,8 +175,8 @@ public class MappingEngineTest {
 	@Before
 	public void setup() throws ArgumentRegistrationException, SettingsParseError, ArgumentSetRegistrationException {
 		final Properties properties = System.getProperties();
-		properties.put(chainName + ".engines", "BackrefEngine");
-		properties.put(chainName + ".engine.backref.confidence", "1.0");
+		properties.put(MappingEngineTest.chainName + ".engines", "BackrefEngine");
+		properties.put(MappingEngineTest.chainName + ".engine.backref.confidence", "1.0");
 		System.setProperties(properties);
 		
 		this.settings = new Settings();
@@ -186,7 +185,8 @@ public class MappingEngineTest {
 		final Finder mappingFinder = mappingArguments.getValue();
 		this.engines = mappingFinder.getEngines().values();
 		
-		score = new Relation(new Candidate(new Tuple(mappableReport, mappableTransaction), null));
+		MappingEngineTest.score = new Relation(new Candidate(new Tuple(MappingEngineTest.mappableReport,
+		                                                               MappingEngineTest.mappableTransaction), null));
 	}
 	
 	/**
@@ -199,8 +199,9 @@ public class MappingEngineTest {
 				final BackrefEngine engine = new BackrefEngine(1.0d);
 				System.err.println(this.settings.toString());
 				
-				engine.score(mappableReport, mappableTransaction, score);
-				Feature feature = score.getFeatures().iterator().next();
+				engine.score(MappingEngineTest.mappableReport, MappingEngineTest.mappableTransaction,
+				             MappingEngineTest.score);
+				Feature feature = MappingEngineTest.score.getFeatures().iterator().next();
 				double confidence = feature.getConfidence();
 				System.err.println(confidence);
 				System.err.println(engine.getConfidence());
@@ -208,13 +209,18 @@ public class MappingEngineTest {
 				System.err.println(feature.getReportSubstring());
 				System.err.println(feature.getTransactionFieldName());
 				System.err.println(feature.getTransactionSubstring());
-				assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence, 0.0001);
+				Assert.assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence,
+				                    0.0001);
 				
-				score = new Relation(new Candidate(new Tuple<MappableTransaction, MappableReport>(mappableTransaction,
-				                                                                                  mappableReport),
-				                                   new HashSet<Selector>()));
-				engine.score(mappableTransaction, mappableReport, score);
-				feature = score.getFeatures().iterator().next();
+				MappingEngineTest.score = new Relation(
+				                                       new Candidate(
+				                                                     new Tuple<MappableTransaction, MappableReport>(
+				                                                                                                    MappingEngineTest.mappableTransaction,
+				                                                                                                    MappingEngineTest.mappableReport),
+				                                                     new HashSet<Selector>()));
+				engine.score(MappingEngineTest.mappableTransaction, MappingEngineTest.mappableReport,
+				             MappingEngineTest.score);
+				feature = MappingEngineTest.score.getFeatures().iterator().next();
 				confidence = feature.getConfidence();
 				System.err.println(confidence);
 				System.err.println(engine.getConfidence());
@@ -222,7 +228,8 @@ public class MappingEngineTest {
 				System.err.println(feature.getReportSubstring());
 				System.err.println(feature.getTransactionFieldName());
 				System.err.println(feature.getTransactionSubstring());
-				assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence, 0.0001);
+				Assert.assertEquals("Confidence differes from expected (match).", engine.getConfidence(), confidence,
+				                    0.0001);
 			}
 		}
 	}
@@ -246,7 +253,7 @@ public class MappingEngineTest {
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 		
 		new MappableTransaction();
@@ -269,13 +276,15 @@ public class MappingEngineTest {
 						
 					}
 				});
-				put(new TimestampEngine(new Interval(transaction.getTimestamp().getMillis() - (1000 * 3600),
-				                                     transaction.getTimestamp().getMillis() + (1000 * 3600))),
+				put(new TimestampEngine(new Interval(MappingEngineTest.transaction.getTimestamp().getMillis()
+				            - (1000 * 3600), MappingEngineTest.transaction.getTimestamp().getMillis() + (1000 * 3600))),
 				    new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
 					    
 					    {
-						    add(new Tuple<MappableEntity, MappableEntity>(new MappableTransaction(transaction),
-						                                                  new MappableReport(report)));
+						    add(new Tuple<MappableEntity, MappableEntity>(
+						                                                  new MappableTransaction(
+						                                                                          MappingEngineTest.transaction),
+						                                                  new MappableReport(MappingEngineTest.report)));
 					    }
 				    });
 				
@@ -320,7 +329,7 @@ public class MappingEngineTest {
 			}
 		}
 		if (failed > 0) {
-			fail(("Test had " + failed + " errors."));
+			Assert.fail(("Test had " + failed + " errors."));
 		}
 	}
 }

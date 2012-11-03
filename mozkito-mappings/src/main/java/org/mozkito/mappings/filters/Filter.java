@@ -75,7 +75,7 @@ public abstract class Filter extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 			// PRECONDITIONS
 			
 			try {

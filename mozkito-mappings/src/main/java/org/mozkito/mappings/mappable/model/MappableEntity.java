@@ -35,7 +35,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.persistence.Annotated;
 
-
 /**
  * Superclass that is used to wrap around classes that shall be mapped. Since inheritance based annotations do not work
  * on interfaces we can't simply use {@link Annotated} here.

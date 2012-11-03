@@ -235,13 +235,13 @@ public class Information {
 	public static final List<Map<String, String>> enumerations(final String text) {
 		final String theString = text;
 		
-		findAlphaEnumSpots(text);
+		Information.findAlphaEnumSpots(text);
 		new LinkedList<>();
 		new LinkedList<>();
 		
-		new Regex(NUMBER_ENUM_BULLET, REFlags.IGNORE_CASE);
-		new Regex(ROMAN_ENUM_BULLET, REFlags.IGNORE_CASE);
-		final Regex regex = new Regex(ENUMERATION_PATTERN);
+		new Regex(Information.NUMBER_ENUM_BULLET, REFlags.IGNORE_CASE);
+		new Regex(Information.ROMAN_ENUM_BULLET, REFlags.IGNORE_CASE);
+		final Regex regex = new Regex(Information.ENUMERATION_PATTERN);
 		
 		regex.find(theString);
 		
@@ -290,6 +290,11 @@ public class Information {
 		// determine the bounds. This should be implemented manually by some rather sophisticated algorithm.
 		return new LinkedList<Map<String, String>>() {
 			
+			/**
+             * 
+             */
+			private static final long serialVersionUID = -8570545344090890106L;
+			
 			{
 				add(new HashMap<String, String>());
 			}
@@ -306,7 +311,7 @@ public class Information {
 	private static final List<Map<String, Integer>> findAlphaEnumSpots(final String text) {
 		
 		final List<Map<String, Integer>> list = new LinkedList<>();
-		final Regex alphaBulletRegex = new Regex(ALPHA_ENUM_BULLET, REFlags.IGNORE_CASE);
+		final Regex alphaBulletRegex = new Regex(Information.ALPHA_ENUM_BULLET, REFlags.IGNORE_CASE);
 		
 		final Map<String, Integer> currentMap = new HashMap<>();
 		
@@ -330,14 +335,15 @@ public class Information {
 					final int toPosition = currentStart;
 					
 					for (int bulletChar = lastBullet + 1; bulletChar < currentBullet; ++bulletChar) {
-						final Integer intermediatePosition = lookupRelaxedAlphaEnum(text, fromPosition, toPosition,
-						                                                            (char) bulletChar);
+						final Integer intermediatePosition = Information.lookupRelaxedAlphaEnum(text, fromPosition,
+						                                                                        toPosition,
+						                                                                        (char) bulletChar);
 						if (intermediatePosition != null) {
 							currentMap.put("" + currentBullet, intermediatePosition); //$NON-NLS-1$
 						} else {
 							// did not find the actual enum bullet with relaxed search
 							// TODO what to do now?
-							lookaheadAlphaEnum(currentBullet, multiMatch, i + 1);
+							Information.lookaheadAlphaEnum(currentBullet, multiMatch, i + 1);
 						}
 					}
 				} else {
@@ -372,7 +378,7 @@ public class Information {
 	 * @return the list
 	 */
 	public static final List<URL> hyperlinks(final String text) {
-		final Regex regex = new Regex(URL_PATTERN);
+		final Regex regex = new Regex(Information.URL_PATTERN);
 		
 		final MultiMatch multiMatch = regex.findAll(text);
 		
@@ -397,6 +403,11 @@ public class Information {
 	 */
 	public static final List<Tuple<String, List<String>>> itemizations(final String text) {
 		return new ArrayList(1) {
+			
+			/**
+             * 
+             */
+			private static final long serialVersionUID = 436023900027930138L;
 			
 			{
 				add(new Tuple("-", new LinkedList<>()));}};//$NON-NLS-1$
@@ -487,7 +498,7 @@ public class Information {
 		
 		try {
 			final String subString = text.substring(fromPosition, toPosition);
-			final Regex regex = new Regex(ALPHA_ENUM_RELAXED_PATTERN, REFlags.IGNORE_CASE);
+			final Regex regex = new Regex(Information.ALPHA_ENUM_RELAXED_PATTERN, REFlags.IGNORE_CASE);
 			
 			final MultiMatch multiMatch = regex.findAll(subString);
 			
@@ -513,7 +524,7 @@ public class Information {
 		strings.add("Clem Hill (1877–1945) was an Australian cricketer who played 49 Test matches as a specialist batsman between 1896 and 1912. He captained the Australian team in ten Tests, winning five and losing five. A prolific run scorer, Hill scored 3,412 runs in Test cricket—a world record at the time of his retirement—at an average of 39.21 per innings, including seven centuries. In 1902, Hill was the first batsman to make 1,000 Test runs in a calendar year, a feat that would not be repeated for 45 years. His innings of 365 scored against New South Wales for South Australia in 1900–01 was a Sheffield Shield record for 27 years. His Test cricket career ended in controversy after he was involved in a brawl with cricket administrator and fellow Test selector Peter McAlister in 1912. He was one of the \"Big Six\", a group of leading Australian cricketers who boycotted the 1912 Triangular Tournament in England when the players were stripped of the right to appoint the tour manager. The boycott effectively ended his Test career. After retiring from cricket, Hill worked in the horse racing industry as a stipendiary steward and later as a handicapper for races including the Caulfield Cup.");
 		strings.add("The rings of Uranus were discovered on March 10, 1977, by James L. Elliot, Edward W. Dunham, and Douglas J. Mink. Two additional rings were discovered in 1986 by the Voyager 2 spacecraft, and two outer rings were found in 2003–2005 by the Hubble Space Telescope. A number of faint dust bands and incomplete arcs may exist between the main rings. The rings are extremely dark—the Bond albedo of the rings' particles does not exceed 2%. They are likely composed of water ice with the addition of some dark radiation-processed organics. The majority of Uranus's rings are opaque and only a few kilometres wide. The ring system contains little dust overall; it consists mostly of large bodies 0.2–20 m in diameter. The relative lack of dust in the ring system is due to aerodynamic drag from the extended Uranian exosphere—corona. The rings of Uranus are thought to be relatively young, at not more than 600 million years. The mechanism that confines the narrow rings is not well understood. The Uranian ring system probably originated from the collisional fragmentation of a number of moons that once existed around the planet. After colliding, the moons broke up into numerous particles, which survived as narrow and optically dense rings only in strictly confined zones of maximum stability.");
 		
-		final ParallelTopicModel topics = topics(strings.iterator());
+		final ParallelTopicModel topics = Information.topics(strings.iterator());
 		System.err.println(topics.getNumTopics());
 	}
 	
@@ -529,7 +540,7 @@ public class Information {
 	 * @return the int
 	 */
 	public static final int sentenceCount(final String text) {
-		return sentences(text).size();
+		return Information.sentences(text).size();
 	}
 	
 	/**
@@ -545,14 +556,14 @@ public class Information {
 		
 		final List<String> tokenList = new ArrayList<String>();
 		final List<String> whiteList = new ArrayList<String>();
-		final Tokenizer tokenizer = TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
+		final Tokenizer tokenizer = Information.TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
 		tokenizer.tokenize(tokenList, whiteList);
 		
 		final String[] tokens = new String[tokenList.size()];
 		final String[] whites = new String[whiteList.size()];
 		tokenList.toArray(tokens);
 		whiteList.toArray(whites);
-		final int[] sentenceBoundaries = SENTENCE_MODEL.boundaryIndices(tokens, whites);
+		final int[] sentenceBoundaries = Information.SENTENCE_MODEL.boundaryIndices(tokens, whites);
 		
 		int sentStartTok = 0;
 		int sentEndTok = 0;

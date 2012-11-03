@@ -35,7 +35,6 @@ import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class ReportRegexSelector.
  * 
@@ -57,7 +56,7 @@ public class AllReportSelector extends Selector {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -133,7 +132,7 @@ public class AllReportSelector extends Selector {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return AllReportSelector.DESCRIPTION;
 	}
 	
 	/*

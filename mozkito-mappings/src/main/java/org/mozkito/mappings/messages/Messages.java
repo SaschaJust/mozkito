@@ -30,7 +30,7 @@ public class Messages {
 	private static final String   BUNDLE_NAME     = "org.mozkito.mappings.messages"; //$NON-NLS-1$
 	                                                                                 
 	/** The Constant RESOURCE_BUNDLE. */
-	private static ResourceBundle RESOURCE_BUNDLE = loadBundle();
+	private static ResourceBundle RESOURCE_BUNDLE = Messages.loadBundle();
 	
 	/**
 	 * Gets the string.
@@ -42,7 +42,7 @@ public class Messages {
 	public static String getString(final String key,
 	                               final Object... args) {
 		try {
-			final String resource = RESOURCE_BUNDLE.getString(key);
+			final String resource = Messages.RESOURCE_BUNDLE.getString(key);
 			final String[] split = resource.split("%s"); //$NON-NLS-1$
 			
 			assert (args.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + args.length; //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,14 +65,14 @@ public class Messages {
 	private static ResourceBundle loadBundle() {
 		final Locale locale = Locale.getDefault();
 		try {
-			return ResourceBundle.getBundle(BUNDLE_NAME, locale);
+			return ResourceBundle.getBundle(Messages.BUNDLE_NAME, locale);
 		} catch (final MissingResourceException e) {
 			if (Logger.logWarn()) {
 				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.", //$NON-NLS-1$
 				                          locale));
 			}
 			try {
-				return ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
+				return ResourceBundle.getBundle(Messages.BUNDLE_NAME, Locale.US);
 			} catch (final MissingResourceException ex) {
 				throw new UnrecoverableError("Could not load string table.", ex); //$NON-NLS-1$
 			}

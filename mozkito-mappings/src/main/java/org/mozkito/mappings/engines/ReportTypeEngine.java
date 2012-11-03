@@ -100,13 +100,16 @@ public class ReportTypeEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   ReportTypeEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				
-				this.typeOption = new EnumArgument.Options<Type>(argumentSet,
+				this.typeOption = new EnumArgument.Options<Type>(
+				                                                 argumentSet,
 				                                                 "type", //$NON-NLS-1$
 				                                                 Messages.getString("ReportTypeEngine.typeDescription"), //$NON-NLS-1$
-				                                                 getDefaultType(), Requirement.required);
+				                                                 ReportTypeEngine.getDefaultType(),
+				                                                 Requirement.required);
 				map.put(this.typeOption.getName(), this.typeOption);
 				return map;
 			} finally {
@@ -124,7 +127,7 @@ public class ReportTypeEngine extends Engine {
 	
 	/** The constant description. */
 	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
-	
+	                                                           
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -134,14 +137,14 @@ public class ReportTypeEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEAFULT_CONFIDENCE;
+			return ReportTypeEngine.DEAFULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEAFULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(ReportTypeEngine.DEAFULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
 			                  ReportTypeEngine.class.getSimpleName());
 		}
 	}
-	                                                           
+	
 	/**
 	 * Gets the default type.
 	 * 
@@ -151,19 +154,19 @@ public class ReportTypeEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_TYPE;
+			return ReportTypeEngine.DEFAULT_TYPE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_TYPE,
+			Condition.notNull(ReportTypeEngine.DEFAULT_TYPE,
 			                  "Field '%s' in '%s'.", "defaultType", ReportTypeEngine.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/** The confidence. */
-	private Double              confidence;
+	private Double confidence;
 	
 	/** The type. */
-	private Type                type;
+	private Type   type;
 	
 	/**
 	 * @param value
@@ -203,7 +206,7 @@ public class ReportTypeEngine extends Engine {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return ReportTypeEngine.DESCRIPTION;
 	}
 	
 	/**
@@ -218,8 +221,8 @@ public class ReportTypeEngine extends Engine {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.mappable.MappableEntity, org.mozkito.mapping.model.Mapping)
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
+	 * org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity element1,
@@ -228,16 +231,18 @@ public class ReportTypeEngine extends Engine {
 		if (element1 instanceof MappableReport) {
 			if (element1.get(FieldKey.TYPE) == getType()) {
 				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element1.get(FieldKey.TYPE).toString(),
-				           element1.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
+				           element1.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
+				           Engine.getUnknown());
 			}
 		} else if (element2 instanceof MappableReport) {
 			if (element2.get(FieldKey.TYPE) == getType()) {
 				addFeature(score, getConfidence(), FieldKey.TYPE.name(), element2.get(FieldKey.TYPE).toString(),
-				           element2.get(FieldKey.TYPE).toString(), getUnused(), getUnknown(), getUnknown());
+				           element2.get(FieldKey.TYPE).toString(), Engine.getUnused(), Engine.getUnknown(),
+				           Engine.getUnknown());
 			}
 		} else {
-			addFeature(score, -getConfidence(), getUnused(), getUnknown(), getUnknown(), getUnused(), getUnknown(),
-			           getUnknown());
+			addFeature(score, -getConfidence(), Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown(),
+			           Engine.getUnused(), Engine.getUnknown(), Engine.getUnknown());
 		}
 		
 	}

@@ -8,7 +8,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class MappableTransaction_.
  */

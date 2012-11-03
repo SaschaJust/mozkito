@@ -12,20 +12,17 @@
  ******************************************************************************/
 package org.mozkito.mappings.selectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -57,10 +54,10 @@ public class ReportSelectorsTest {
 		final List<MappableReport> targets = selector.parse(this.mTransaction, MappableReport.class, this.util);
 		
 		// check number of candidates
-		assertEquals("", 4, targets.size());
+		Assert.assertEquals("", 4, targets.size());
 		
 		// check for specific report
-		assertTrue("", CollectionUtils.find(targets, new Predicate() {
+		Assert.assertTrue("", CollectionUtils.find(targets, new Predicate() {
 			
 			@Override
 			public boolean evaluate(final Object object) {

@@ -100,11 +100,11 @@ public class CandidateFactory<FROM, TO> {
 			}
 		};
 		
-		if (!factories.containsKey(set)) {
-			factories.put(set, new CandidateFactory<ONE, OTHER>());
+		if (!CandidateFactory.factories.containsKey(set)) {
+			CandidateFactory.factories.put(set, new CandidateFactory<ONE, OTHER>());
 		}
 		
-		return (CandidateFactory<ONE, OTHER>) factories.get(set);
+		return (CandidateFactory<ONE, OTHER>) CandidateFactory.factories.get(set);
 	}
 	
 	/** The candidates. */

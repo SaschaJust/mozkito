@@ -60,7 +60,7 @@ public class TransactionRegexSelector extends Selector {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -92,7 +92,8 @@ public class TransactionRegexSelector extends Selector {
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
 				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
-				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
+				                                                "Pattern of report ids to scan for.",
+				                                                TransactionRegexSelector.DEFAULT_PATTERN,
 				                                                Requirement.required);
 				map.put(this.patternOption.getName(), this.patternOption);
 				return map;
@@ -120,7 +121,7 @@ public class TransactionRegexSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
-			this.pattern = DEFAULT_PATTERN;
+			this.pattern = TransactionRegexSelector.DEFAULT_PATTERN;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -148,10 +149,11 @@ public class TransactionRegexSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_PATTERN;
+			return TransactionRegexSelector.DEFAULT_PATTERN;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_PATTERN, "Field '%s' in '%s'.", "DEFAULT_PATTERN", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(TransactionRegexSelector.DEFAULT_PATTERN,
+			                  "Field '%s' in '%s'.", "DEFAULT_PATTERN", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -165,10 +167,11 @@ public class TransactionRegexSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return TransactionRegexSelector.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DESCRIPTION, "Field '%s' in '%s'.", "DESCRIPTION", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(TransactionRegexSelector.DESCRIPTION,
+			                  "Field '%s' in '%s'.", "DESCRIPTION", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

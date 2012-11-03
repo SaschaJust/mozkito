@@ -36,7 +36,6 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class CreationOrderEngine.
  * 
@@ -97,7 +96,8 @@ public class CreationOrderEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("AuthorEqualityEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   CreationOrderEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				return map;
 			} finally {
@@ -109,10 +109,10 @@ public class CreationOrderEngine extends Engine {
 	
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 1d;
-	                                                                                                        
+	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("CreationOrderEngine.description"); //$NON-NLS-1$
-	
+	                                                                                                        
 	/**
 	 * Gets the default confidence.
 	 * 
@@ -122,10 +122,10 @@ public class CreationOrderEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_CONFIDENCE;
+			return CreationOrderEngine.DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(CreationOrderEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "defaultConfidence", //$NON-NLS-1$ //$NON-NLS-2$
 			                  CreationOrderEngine.class.getSimpleName());
 		}
 	}
@@ -169,14 +169,14 @@ public class CreationOrderEngine extends Engine {
 	 */
 	@Override
 	public final String getDescription() {
-		return DESCRIPTION;
+		return CreationOrderEngine.DESCRIPTION;
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.engines.MappingEngine#score(de
-	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity,
-	 * org.mozkito.mapping.mappable.MappableEntity, org.mozkito.mapping.model.Mapping)
+	 * .unisaarland.cs.st.reposuite.mapping.mappable.MappableEntity, org.mozkito.mapping.mappable.MappableEntity,
+	 * org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public void score(final MappableEntity from,

@@ -8,7 +8,6 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.issues.tracker.model.Report;
 
-
 /**
  * The Class MappableReport_.
  */

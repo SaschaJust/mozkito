@@ -13,7 +13,6 @@
  ******************************************************************************/
 package org.mozkito.mappings.training;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 

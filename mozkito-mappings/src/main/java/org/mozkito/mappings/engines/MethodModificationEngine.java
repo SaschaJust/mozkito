@@ -110,7 +110,8 @@ public class MethodModificationEngine extends Engine {
 				                                                   argumentSet,
 				                                                   "confidence", //$NON-NLS-1$
 				                                                   Messages.getString("MethodModificationEngine.confidenceDescription"), //$NON-NLS-1$
-				                                                   getDefaultConfidence(), Requirement.required);
+				                                                   MethodModificationEngine.getDefaultConfidence(),
+				                                                   Requirement.required);
 				map.put(this.confidenceOption.getName(), this.confidenceOption);
 				
 				return map;
@@ -136,16 +137,16 @@ public class MethodModificationEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DEFAULT_CONFIDENCE;
+			return MethodModificationEngine.DEFAULT_CONFIDENCE;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(MethodModificationEngine.DEFAULT_CONFIDENCE, "Field '%s' in '%s'.", "DEFAULT_CONFIDENCE", //$NON-NLS-1$ //$NON-NLS-2$
 			                  MethodModificationEngine.class.getSimpleName());
 		}
 	}
 	
 	/** The confidence. */
-	private Double confidence = DEFAULT_CONFIDENCE;
+	private Double confidence = MethodModificationEngine.DEFAULT_CONFIDENCE;
 	
 	/**
 	 * Instantiates a new author equality engine.
@@ -186,7 +187,7 @@ public class MethodModificationEngine extends Engine {
 	 */
 	@Override
 	public final String getDescription() {
-		return DESCRIPTION;
+		return MethodModificationEngine.DESCRIPTION;
 	}
 	
 	/**

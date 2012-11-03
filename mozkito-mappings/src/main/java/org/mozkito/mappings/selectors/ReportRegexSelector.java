@@ -41,7 +41,6 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class ReportRegexSelector.
  * 
@@ -64,7 +63,7 @@ public class ReportRegexSelector extends Selector {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -103,7 +102,8 @@ public class ReportRegexSelector extends Selector {
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
 				this.patternOption = new StringArgument.Options(argumentSet, "pattern",
-				                                                "Pattern of report ids to scan for.", DEFAULT_PATTERN,
+				                                                "Pattern of report ids to scan for.",
+				                                                ReportRegexSelector.DEFAULT_PATTERN,
 				                                                Requirement.required);
 				map.put(this.patternOption.getName(), this.patternOption);
 				
@@ -132,7 +132,7 @@ public class ReportRegexSelector extends Selector {
 	
 	@Deprecated
 	public ReportRegexSelector() {
-		this.pattern = DEFAULT_PATTERN;
+		this.pattern = ReportRegexSelector.DEFAULT_PATTERN;
 	}
 	
 	/**
@@ -156,7 +156,7 @@ public class ReportRegexSelector extends Selector {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return ReportRegexSelector.DESCRIPTION;
 	}
 	
 	/**

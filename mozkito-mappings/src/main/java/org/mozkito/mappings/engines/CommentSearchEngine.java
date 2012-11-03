@@ -50,7 +50,7 @@ public class CommentSearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return description;
+		return CommentSearchEngine.description;
 	}
 	
 	/*

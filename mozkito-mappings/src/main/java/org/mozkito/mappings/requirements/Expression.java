@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
-
 /**
  * The superclass of all {@link Expression}s that are used to express the support of an engine for specific instances
  * of.

@@ -47,9 +47,9 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finder, MappingOptions>> {
 	
-	private static final String        DESCRIPTION = "TODO";
+	private static final String   DESCRIPTION = "TODO";
 	
-	public static final String         NAME        = "mapping";
+	public static final String    NAME        = "mapping";
 	static {
 		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
 			
@@ -62,26 +62,26 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 		});
 	}
 	
-	private Engine.Options      engineOptions;
+	private Engine.Options        engineOptions;
 	
 	/** The engines. */
-	private final Set<Engine>   engines     = new HashSet<Engine>();
+	private final Set<Engine>     engines     = new HashSet<Engine>();
 	
 	/** The filters. */
-	private final Set<Filter>   filters     = new HashSet<Filter>();
+	private final Set<Filter>     filters     = new HashSet<Filter>();
 	
-	private Selector.Options    selectorOptions;
+	private Selector.Options      selectorOptions;
 	
 	/** The selectors. */
-	private final Set<Selector> selectors   = new HashSet<Selector>();
+	private final Set<Selector>   selectors   = new HashSet<Selector>();
 	
-	private TupleArgument.Options      sourceOptions;
+	private TupleArgument.Options sourceOptions;
 	/** The splitters. */
-	private final Set<Splitter> splitters   = new HashSet<Splitter>();
+	private final Set<Splitter>   splitters   = new HashSet<Splitter>();
 	/** The strategies. */
-	private final Set<Strategy> strategies  = new HashSet<Strategy>();
+	private final Set<Strategy>   strategies  = new HashSet<Strategy>();
 	/** The trainers. */
-	private final Set<Trainer>  trainers    = new HashSet<Trainer>();
+	private final Set<Trainer>    trainers    = new HashSet<Trainer>();
 	
 	/**
 	 * @param argumentSet
@@ -90,7 +90,7 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	 * @param requirements
 	 */
 	public MappingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-		super(argumentSet, NAME, DESCRIPTION, requirements);
+		super(argumentSet, MappingOptions.NAME, MappingOptions.DESCRIPTION, requirements);
 	}
 	
 	/**

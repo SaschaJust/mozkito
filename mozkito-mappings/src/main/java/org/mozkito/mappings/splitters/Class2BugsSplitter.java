@@ -17,7 +17,6 @@ import java.util.List;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class Class2BugsSplitter.
  * 
@@ -37,9 +36,7 @@ public class Class2BugsSplitter extends Splitter {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.mapping.splitters.MappingSplitter#process(org.mozkito.persistence
-	 * .PersistenceUtil)
+	 * @see org.mozkito.mapping.splitters.MappingSplitter#process(org.mozkito.persistence .PersistenceUtil)
 	 */
 	@Override
 	public List<Annotated> process(final PersistenceUtil util) {

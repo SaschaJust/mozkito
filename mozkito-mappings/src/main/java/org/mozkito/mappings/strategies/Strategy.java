@@ -62,17 +62,16 @@ public abstract class Strategy extends Node {
 	/**
 	 * The Class Options.
 	 */
-	public static class Options extends
-	        ArgumentSetOptions<Set<Strategy>, ArgumentSet<Set<Strategy>, Options>> {
+	public static class Options extends ArgumentSetOptions<Set<Strategy>, ArgumentSet<Set<Strategy>, Options>> {
 		
 		/** The Constant DESCRIPTION. */
-		private static final String                                                                           DESCRIPTION   = "...";
-		                                                                                                                                       
-		/** The Constant TAG. */
-		private static final String                                                                           TAG           = "strategies";   //$NON-NLS-1$
+		private static final String                                                             DESCRIPTION   = "...";
 		
+		/** The Constant TAG. */
+		private static final String                                                             TAG           = "strategies";   //$NON-NLS-1$
+		                                                                                                                         
 		/** The enabled strategies option. */
-		private SetArgument.Options                                                                           enabledStrategiesOption;
+		private SetArgument.Options                                                             enabledStrategiesOption;
 		
 		/** The engine options. */
 		private final Map<Class<? extends Strategy>, ArgumentSetOptions<? extends Strategy, ?>> engineOptions = new HashMap<>();
@@ -86,7 +85,7 @@ public abstract class Strategy extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -108,9 +107,7 @@ public abstract class Strategy extends Node {
 				for (final String name : value) {
 					Class<? extends Strategy> clazz;
 					try {
-						clazz = (Class<? extends Strategy>) Class.forName(Strategy.class.getPackage()
-						                                                                              .getName()
-						        + '.'
+						clazz = (Class<? extends Strategy>) Class.forName(Strategy.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
 						throw new UnrecoverableError("Could not load strategy '%s'. Does probably not exist. Aborting.");
@@ -154,11 +151,11 @@ public abstract class Strategy extends Node {
 				
 				try {
 					final Collection<Class<? extends Strategy>> collection = ClassFinder.getClassesExtendingClass(getClass().getPackage(),
-					                                                                                                     Strategy.class,
-					                                                                                                     Modifier.ABSTRACT
-					                                                                                                             | Modifier.INTERFACE
-					                                                                                                             | Modifier.PRIVATE
-					                                                                                                             | Modifier.PROTECTED);
+					                                                                                              Strategy.class,
+					                                                                                              Modifier.ABSTRACT
+					                                                                                                      | Modifier.INTERFACE
+					                                                                                                      | Modifier.PRIVATE
+					                                                                                                      | Modifier.PROTECTED);
 					for (final Class<? extends Strategy> c : collection) {
 						if (c.getSuperclass() == Strategy.class) {
 							final Class<?>[] declaredClasses = c.getDeclaredClasses();
@@ -167,9 +164,9 @@ public abstract class Strategy extends Node {
 									// found options
 									@SuppressWarnings ("unchecked")
 									final Constructor<ArgumentSetOptions<? extends Strategy, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Strategy, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                                            Requirement.class);
+									                                                                                                                                                              Requirement.class);
 									final ArgumentSetOptions<? extends Strategy, ?> instance = constructor.newInstance(set,
-									                                                                                          Requirement.required);
+									                                                                                   Requirement.required);
 									this.engineOptions.put(c, instance);
 									map.put(instance.getName(), instance);
 								}
@@ -178,7 +175,7 @@ public abstract class Strategy extends Node {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
 								            c.getSimpleName(), Strategy.class.getSimpleName(), c.getSuperclass()
-								                                                                       .getSimpleName());
+								                                                                .getSimpleName());
 							}
 						}
 						

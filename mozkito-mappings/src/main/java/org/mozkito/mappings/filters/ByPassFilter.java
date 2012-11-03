@@ -54,7 +54,7 @@ public class ByPassFilter extends Filter {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -115,7 +115,7 @@ public class ByPassFilter extends Filter {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return ByPassFilter.DESCRIPTION;
 	}
 	
 	/*

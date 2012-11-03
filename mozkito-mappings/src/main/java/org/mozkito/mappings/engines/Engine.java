@@ -12,8 +12,6 @@
  ********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
-import static net.ownhero.dev.ioda.StringUtils.truncate;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +33,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.StringUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
@@ -94,7 +93,7 @@ public abstract class Engine extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, tag, "...", requirements); //$NON-NLS-1$
+			super(argumentSet, Options.tag, "...", requirements); //$NON-NLS-1$
 		}
 		
 		/*
@@ -259,7 +258,7 @@ public abstract class Engine extends Node {
 	 * @return the defaultNegative
 	 */
 	public static String getDefaultNegative() {
-		return DEFAULT_NEGATIVE;
+		return Engine.DEFAULT_NEGATIVE;
 	}
 	
 	/**
@@ -268,7 +267,7 @@ public abstract class Engine extends Node {
 	 * @return the defaultPositive
 	 */
 	public static String getDefaultPositive() {
-		return DEFAULT_POSITIVE;
+		return Engine.DEFAULT_POSITIVE;
 	}
 	
 	/**
@@ -289,7 +288,7 @@ public abstract class Engine extends Node {
 	 * @return the unknown
 	 */
 	public static String getUnknown() {
-		return UNKNOWN;
+		return Engine.UNKNOWN;
 	}
 	
 	/**
@@ -298,7 +297,7 @@ public abstract class Engine extends Node {
 	 * @return the unused
 	 */
 	public static String getUnused() {
-		return UNUSED;
+		return Engine.UNUSED;
 	}
 	
 	private ISettings settings;
@@ -334,28 +333,30 @@ public abstract class Engine extends Node {
 	                             @NotNull @NotEmpty final String toFieldName,
 	                             final Object toFieldContent,
 	                             final Object toSubstring) {
-		score.addFeature(confidence, truncate(fromFieldName != null
+		score.addFeature(confidence,
+		                 StringUtils.truncate(fromFieldName != null
 		                                                           ? fromFieldName
-		                                                           : UNUSED),
-		                 truncate(fromFieldContent != null
-		                                                  ? fromFieldContent.toString()
-		                                                  : UNKNOWN),
-		                 truncate(fromSubstring != null
-		                                               ? fromSubstring.toString()
-		                                               : truncate(fromFieldContent != null
-		                                                                                  ? fromFieldContent.toString()
-		                                                                                  : UNKNOWN)),
-		                 truncate(toFieldName != null
-		                                             ? toFieldName
-		                                             : UNUSED),
-		                 truncate(toFieldContent != null
-		                                                ? toFieldContent.toString()
-		                                                : UNKNOWN),
-		                 truncate(toSubstring != null
-		                                             ? toSubstring.toString()
-		                                             : truncate(toFieldContent != null
-		                                                                              ? toFieldContent.toString()
-		                                                                              : UNKNOWN)), getClass());
+		                                                           : Engine.UNUSED),
+		                 StringUtils.truncate(fromFieldContent != null
+		                                                              ? fromFieldContent.toString()
+		                                                              : Engine.UNKNOWN),
+		                 StringUtils.truncate(fromSubstring != null
+		                                                           ? fromSubstring.toString()
+		                                                           : StringUtils.truncate(fromFieldContent != null
+		                                                                                                          ? fromFieldContent.toString()
+		                                                                                                          : Engine.UNKNOWN)),
+		                 StringUtils.truncate(toFieldName != null
+		                                                         ? toFieldName
+		                                                         : Engine.UNUSED),
+		                 StringUtils.truncate(toFieldContent != null
+		                                                            ? toFieldContent.toString()
+		                                                            : Engine.UNKNOWN),
+		                 StringUtils.truncate(toSubstring != null
+		                                                         ? toSubstring.toString()
+		                                                         : StringUtils.truncate(toFieldContent != null
+		                                                                                                      ? toFieldContent.toString()
+		                                                                                                      : Engine.UNKNOWN)),
+		                 getClass());
 	}
 	
 	/**

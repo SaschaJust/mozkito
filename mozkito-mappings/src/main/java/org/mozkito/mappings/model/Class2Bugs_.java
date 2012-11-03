@@ -10,7 +10,6 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.versions.model.RCSFile;
 
-
 /**
  * The Class Class2Bugs_.
  */

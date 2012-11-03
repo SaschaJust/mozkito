@@ -52,7 +52,7 @@ public abstract class SearchEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, "...", requirements); //$NON-NLS-1$
+			super(argumentSet, Options.TAG, "...", requirements); //$NON-NLS-1$
 		}
 		
 		/*

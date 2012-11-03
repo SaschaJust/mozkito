@@ -87,8 +87,8 @@ public class Feature implements Annotated {
 		setToSubstring(toSubstring);
 		setFqClassName(mappingEngine.getSimpleName());
 		
-		if (!cache.containsKey(getFqClassName())) {
-			cache.put(getFqClassName(), mappingEngine);
+		if (!Feature.cache.containsKey(getFqClassName())) {
+			Feature.cache.put(getFqClassName(), mappingEngine);
 		}
 	}
 	
@@ -109,12 +109,12 @@ public class Feature implements Annotated {
 	@Transient
 	public Class<? extends Engine> getEngine() {
 		try {
-			if (cache.containsKey(getFqClassName())) {
-				return cache.get(getFqClassName());
+			if (Feature.cache.containsKey(getFqClassName())) {
+				return Feature.cache.get(getFqClassName());
 			} else {
 				@SuppressWarnings ("unchecked")
 				final Class<Engine> engineClass = (Class<Engine>) Class.forName(getFqClassName());
-				cache.put(getFqClassName(), engineClass);
+				Feature.cache.put(getFqClassName(), engineClass);
 				return engineClass;
 			}
 		} catch (final ClassNotFoundException e) {
