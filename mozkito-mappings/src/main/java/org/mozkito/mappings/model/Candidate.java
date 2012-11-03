@@ -32,7 +32,7 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class Candidate implements Annotated, ICandidate {
+public class Candidate implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 1464864624834219097L;
@@ -41,7 +41,7 @@ public class Candidate implements Annotated, ICandidate {
 	private final MappableEntity from;
 	
 	/** The preselectors. */
-	private final Set<String>    selectors        = new HashSet<>();
+	private final Set<String>    selectors        = new HashSet<String>();
 	
 	/** a potential target. */
 	private final MappableEntity to;
@@ -68,7 +68,6 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#addSelector(org.mozkito.mappings.selectors.Selector)
 	 */
-	@Override
 	@Transient
 	public boolean addSelector(final Selector selector) {
 		return this.selectors.add(selector.getHandle());
@@ -113,7 +112,6 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass1()
 	 */
-	@Override
 	public String getClass1() {
 		// PRECONDITIONS
 		
@@ -128,7 +126,6 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass2()
 	 */
-	@Override
 	public String getClass2() {
 		// PRECONDITIONS
 		
@@ -143,7 +140,6 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
 	 */
-	@Override
 	@Id
 	public final MappableEntity getFrom() {
 		return this.from;
@@ -153,7 +149,6 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getTo()
 	 */
-	@Override
 	@Id
 	public final MappableEntity getTo() {
 		return this.to;

@@ -30,7 +30,7 @@ import org.mozkito.persistence.Annotated;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Composite implements Annotated, IComposite {
+public class Composite implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 4247288063693897409L;
@@ -63,7 +63,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
 	 */
-	@Override
 	@Transient
 	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
 	                        final Boolean valid) {
@@ -74,7 +73,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IComposite#getClass1()
 	 */
-	@Override
 	@Transient
 	public String getClass1() {
 		// PRECONDITIONS
@@ -90,7 +88,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IComposite#getClass2()
 	 */
-	@Override
 	@Transient
 	public String getClass2() {
 		// PRECONDITIONS
@@ -106,7 +103,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getFrom()
 	 */
-	@Override
 	@Transient
 	public final MappableEntity getFrom() {
 		return getRelation().getFrom();
@@ -116,7 +112,7 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getHandle()
 	 */
-	@Override
+	@Transient
 	public final String getHandle() {
 		// PRECONDITIONS
 		
@@ -151,7 +147,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getRelation()
 	 */
-	@Override
 	public final Relation getRelation() {
 		return this.relation;
 	}
@@ -160,7 +155,7 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getStrategies()
 	 */
-	@Override
+	
 	public final Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
@@ -169,7 +164,6 @@ public class Composite implements Annotated, IComposite {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getTo()
 	 */
-	@Override
 	@Transient
 	public final MappableEntity getTo() {
 		return getRelation().getTo();

@@ -30,16 +30,16 @@ import org.mozkito.persistence.Annotated;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Mapping implements Annotated, IMapping {
+public class Mapping implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2154624198669450359L;
 	
 	/** The composite. */
-	private IComposite        composite;
+	private Composite         composite;
 	
 	/** The filters. */
-	private final Set<Filter> filters          = new HashSet<>();
+	private final Set<Filter> filters          = new HashSet<Filter>();
 	
 	/**
 	 * Instantiates a new mapping.
@@ -55,7 +55,7 @@ public class Mapping implements Annotated, IMapping {
 	 * @param composite
 	 *            the composite
 	 */
-	public Mapping(@NotNull final IComposite composite) {
+	public Mapping(@NotNull final Composite composite) {
 		// PRECONDITIONS
 		Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -89,7 +89,6 @@ public class Mapping implements Annotated, IMapping {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getClass1()
 	 */
-	@Override
 	@Transient
 	public String getClass1() {
 		// PRECONDITIONS
@@ -105,7 +104,6 @@ public class Mapping implements Annotated, IMapping {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getClass2()
 	 */
-	@Override
 	@Transient
 	public String getClass2() {
 		// PRECONDITIONS
@@ -122,8 +120,7 @@ public class Mapping implements Annotated, IMapping {
 	 * 
 	 * @return the composite
 	 */
-	@Override
-	public final IComposite getComposite() {
+	public final Composite getComposite() {
 		// PRECONDITIONS
 		
 		try {
@@ -154,7 +151,6 @@ public class Mapping implements Annotated, IMapping {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getFrom()
 	 */
-	@Override
 	@Transient
 	public MappableEntity getFrom() {
 		// PRECONDITIONS
@@ -171,6 +167,7 @@ public class Mapping implements Annotated, IMapping {
 	 * 
 	 * @return the simple name of the class.
 	 */
+	@Transient
 	public final String getHandle() {
 		// PRECONDITIONS
 		
@@ -205,7 +202,6 @@ public class Mapping implements Annotated, IMapping {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getTo()
 	 */
-	@Override
 	@Transient
 	public MappableEntity getTo() {
 		// PRECONDITIONS

@@ -27,8 +27,8 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Feature;
-import org.mozkito.mappings.model.IComposite;
 import org.mozkito.mappings.training.LibSVMTrainer;
 
 /**
@@ -106,7 +106,7 @@ public class SVMStrategy extends Strategy {
 	 * @see org.mozkito.mapping.strategies.MappingStrategy#map (org.mozkito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public IComposite map(final IComposite composite) {
+	public Composite map(final Composite composite) {
 		double value = 0;
 		if (this.model == null) {
 			final LibSVMTrainer trainer = new LibSVMTrainer();

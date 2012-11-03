@@ -37,7 +37,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.register.Node;
 
 /**
@@ -221,6 +221,6 @@ public abstract class Strategy extends Node {
 	 *            the mapping
 	 * @return the i mapping
 	 */
-	public abstract IComposite map(IComposite composite);
+	public abstract Composite map(Composite composite);
 	
 }

@@ -26,7 +26,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.register.Node;
@@ -429,8 +429,8 @@ public class Finder {
 	 *            the mapping
 	 * @return the mapping
 	 */
-	public IComposite rate(final Strategy strategy,
-	                       final IComposite composite) {
+	public Composite rate(final Strategy strategy,
+	                      final Composite composite) {
 		if (Logger.logDebug()) {
 			Logger.debug("Mapping with strategy: " + strategy.getHandle());
 		}

@@ -23,8 +23,8 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Feature;
-import org.mozkito.mappings.model.IComposite;
 
 /**
  * The Class TotalAggreementStrategy.
@@ -91,7 +91,7 @@ public class TotalAggreementStrategy extends Strategy {
 	 * @see org.mozkito.mapping.strategies.MappingStrategy#map (org.mozkito.mapping.model.RCSBugMapping)
 	 */
 	@Override
-	public IComposite map(final IComposite composite) {
+	public Composite map(final Composite composite) {
 		int value = 0;
 		
 		final Queue<Feature> features = composite.getRelation().getFeatures();

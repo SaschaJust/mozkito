@@ -41,12 +41,12 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-public class Relation implements Annotated, IRelation {
+public class Relation implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8606759070008468513L;
 	
-	private ICandidate        candidate;
+	private Candidate         candidate;
 	
 	/** The features. */
 	private Queue<Feature>    features         = new LinkedBlockingQueue<Feature>();
@@ -69,7 +69,7 @@ public class Relation implements Annotated, IRelation {
 	 * @param element2
 	 *            the element2
 	 */
-	public Relation(final ICandidate candidate) {
+	public Relation(final Candidate candidate) {
 		this.candidate = candidate;
 	}
 	
@@ -110,12 +110,7 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.model.IMapping#compareTo(org.mozkito.mapping.model.Mapping)
-	 */
-	@Override
-	public int compareTo(final IRelation arg0) {
+	public int compareTo(final Relation arg0) {
 		return Double.compare(getTotalConfidence(), arg0.getTotalConfidence());
 	}
 	
@@ -139,10 +134,9 @@ public class Relation implements Annotated, IRelation {
 	// return null;
 	// }
 	//
-	@Override
 	@Id
 	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-	public ICandidate getCandidate() {
+	public Candidate getCandidate() {
 		return this.candidate;
 	}
 	
@@ -150,7 +144,6 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getClass1()
 	 */
-	@Override
 	@Transient
 	public String getClass1() {
 		return getCandidate().getClass1();
@@ -160,7 +153,6 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getClass2()
 	 */
-	@Override
 	@Transient
 	public String getClass2() {
 		return getCandidate().getClass2();
@@ -196,7 +188,6 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getElement1()
 	 */
-	@Override
 	@Transient
 	public MappableEntity getFrom() {
 		return getCandidate().getFrom();
@@ -206,7 +197,6 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getElement2()
 	 */
-	@Override
 	@Transient
 	public MappableEntity getTo() {
 		return getCandidate().getTo();
@@ -216,7 +206,6 @@ public class Relation implements Annotated, IRelation {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getTotalConfidence()
 	 */
-	@Override
 	@Transient
 	public double getTotalConfidence() {
 		// PRECONDITIONS
@@ -242,7 +231,7 @@ public class Relation implements Annotated, IRelation {
 	 * @param candidate
 	 *            the candidate to set
 	 */
-	public final void setCandidate(final ICandidate candidate) {
+	public final void setCandidate(final Candidate candidate) {
 		this.candidate = candidate;
 		
 	}

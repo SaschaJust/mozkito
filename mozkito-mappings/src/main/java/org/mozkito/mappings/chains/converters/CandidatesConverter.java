@@ -9,7 +9,6 @@ import net.ownhero.dev.andama.threads.Transformer;
 import net.ownhero.dev.hiari.settings.Settings;
 
 import org.mozkito.mappings.model.Candidate;
-import org.mozkito.mappings.model.ICandidate;
 import org.mozkito.mappings.model.Relation;
 
 /**
@@ -34,7 +33,7 @@ public class CandidatesConverter extends Transformer<Candidate, Relation> {
 			
 			@Override
 			public void process() {
-				final ICandidate data = getInputData();
+				final Candidate data = getInputData();
 				provideOutputData(new Relation(data));
 			}
 		};

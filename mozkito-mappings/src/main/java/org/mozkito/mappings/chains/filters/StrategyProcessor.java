@@ -21,7 +21,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.mappings.model.IComposite;
+import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.strategies.Strategy;
 
 /**
@@ -29,7 +29,7 @@ import org.mozkito.mappings.strategies.Strategy;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class StrategyProcessor extends Filter<IComposite> {
+public class StrategyProcessor extends Filter<Composite> {
 	
 	/**
 	 * Instantiates a new mapping strategy processor.
@@ -46,11 +46,11 @@ public class StrategyProcessor extends Filter<IComposite> {
 	public StrategyProcessor(final Group threadGroup, final Settings settings, final Finder finder,
 	        final Strategy strategy) {
 		super(threadGroup, settings, false);
-		new ProcessHook<IComposite, IComposite>(this) {
+		new ProcessHook<Composite, Composite>(this) {
 			
 			@Override
 			public void process() {
-				final IComposite composite = getInputData();
+				final Composite composite = getInputData();
 				
 				if (Logger.logDebug()) {
 					Logger.debug(Messages.getString("StrategyProcessor.processing", strategy.getHandle(), //$NON-NLS-1$
