@@ -16,11 +16,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import javax.persistence.Transient;
+
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.filters.Filter;
+import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -28,7 +30,7 @@ import org.mozkito.persistence.Annotated;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class Mapping implements Annotated {
+public class Mapping implements Annotated, IMapping {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -2154624198669450359L;
@@ -41,31 +43,38 @@ public class Mapping implements Annotated {
 	
 	/**
 	 * Instantiates a new mapping.
+	 */
+	@Deprecated
+	public Mapping() {
+		// for OpenJPA only.
+	}
+	
+	/**
+	 * Instantiates a new mapping.
 	 * 
 	 * @param composite
 	 *            the composite
-	 * @param triggeringFilters
-	 *            the triggering filters
 	 */
-	public Mapping(@NotNull final IComposite composite, @NotNull final Set<Filter> triggeringFilters) {
+	public Mapping(@NotNull final IComposite composite) {
 		// PRECONDITIONS
 		Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			this.composite = composite;
-			this.filters.clear();
-			this.filters.addAll(triggeringFilters);
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(this.composite, "Field '%s' in '%s'.", "this.composite", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-			CollectionCondition.notEmpty(this.filters, "Field '%s' in '%s'.", "filters", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
-	 * @param reportFieldFilter
+	 * Adds the filter.
+	 * 
+	 * @param filter
+	 *            the filter
 	 */
+	@Transient
 	public void addFilter(final Filter filter) {
 		// PRECONDITIONS
 		
@@ -76,9 +85,44 @@ public class Mapping implements Annotated {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IMapping#getClass1()
+	 */
+	@Override
+	@Transient
+	public String getClass1() {
+		// PRECONDITIONS
+		
+		try {
+			return getComposite().getClass1();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IMapping#getClass2()
+	 */
+	@Override
+	@Transient
+	public String getClass2() {
+		// PRECONDITIONS
+		
+		try {
+			return getComposite().getClass2();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
+	 * Gets the composite.
+	 * 
 	 * @return the composite
 	 */
+	@Override
 	public final IComposite getComposite() {
 		// PRECONDITIONS
 		
@@ -86,11 +130,13 @@ public class Mapping implements Annotated {
 			return this.composite;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.composite, "Field '%s' in '%s'.", "composite", getClass().getSimpleName());
+			Condition.notNull(this.composite, "Field '%s' in '%s'.", "composite", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the filters.
+	 * 
 	 * @return the filters
 	 */
 	public final Set<Filter> getFilters() {
@@ -100,7 +146,23 @@ public class Mapping implements Annotated {
 			return this.filters;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName());
+			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IMapping#getFrom()
+	 */
+	@Override
+	@Transient
+	public MappableEntity getFrom() {
+		// PRECONDITIONS
+		
+		try {
+			return getComposite().getFrom();
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 	
@@ -136,6 +198,22 @@ public class Mapping implements Annotated {
 			// POSTCONDITIONS
 			Condition.notNull(builder,
 			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IMapping#getTo()
+	 */
+	@Override
+	@Transient
+	public MappableEntity getTo() {
+		// PRECONDITIONS
+		
+		try {
+			return getComposite().getTo();
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 }

@@ -12,7 +12,11 @@
  ******************************************************************************/
 package org.mozkito.mappings.chains;
 
+import java.util.LinkedList;
+
 import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.andama.messages.ErrorEvent;
+import net.ownhero.dev.andama.messages.StartupEvent;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.threads.Group;
@@ -41,6 +45,7 @@ import org.mozkito.mappings.chains.transformers.TransactionFinder;
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.mappings.strategies.Strategy;
@@ -70,7 +75,6 @@ public class MappingChain extends Chain<Settings> {
 		try {
 			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
 			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
-			
 			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
 			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
 		} catch (final ArgumentRegistrationException e) {
@@ -80,6 +84,43 @@ public class MappingChain extends Chain<Settings> {
 		} catch (final SettingsParseError e) {
 			throw new Shutdown(e.getMessage(), e);
 		}
+		
+		Condition.notNull(this.threadPool, "Field '%s' in '%s'.", "threadPool", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getHandle() {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 	
 	/*
@@ -88,20 +129,33 @@ public class MappingChain extends Chain<Settings> {
 	 */
 	@Override
 	public void setup() {
-		final Finder finder = this.mappingArguments.getValue();
+		// PRECONDITIONS
+		Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		Condition.notNull(this.mappingArguments, "Field '%s' in '%s'.", "mappingArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (finder == null) {
-			if (Logger.logError()) {
-				Logger.error("Finder initialization failed. Aborting...");
+		try {
+			final Finder finder = this.mappingArguments.getValue();
+			
+			if (finder == null) {
+				getEventBus().fireEvent(new ErrorEvent(Messages.getString("MappingChain.finderInit"))); //$NON-NLS-1$
+				System.err.println(getSettings().getHelpString());
+				shutdown();
+				return;
 			}
-			shutdown();
-			return;
-		}
-		Condition.notNull(finder, "Local variable '%s' in '%s'.", "finder", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
-		
-		if (persistenceUtil != null) {
+			
+			Condition.notNull(finder, "Local variable '%s' in '%s'.", "finder", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			final PersistenceUtil persistenceUtil = this.databaseArguments.getValue();
+			
+			if (persistenceUtil == null) {
+				getEventBus().fireEvent(new ErrorEvent(Messages.getString("MappingChain.dbInit"))); //$NON-NLS-1$
+				System.err.println(getSettings().getHelpString());
+				shutdown();
+				return;
+			}
+			
+			Condition.notNull(persistenceUtil,
+			                  "Local variable '%s' in '%s:'.", "persistenceUtil", getHandle(), "setup()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			finder.loadData(persistenceUtil);
 			final Group group = this.threadPool.getThreadGroup();
@@ -114,7 +168,7 @@ public class MappingChain extends Chain<Settings> {
 			new TransactionFinder(group, getSettings(), finder, persistenceUtil);
 			new ReportFinder(group, getSettings(), finder, persistenceUtil);
 			
-			// demux the candidates into one stream
+			// demultiplex the candidates into one stream
 			new CandidatesDemux(group, getSettings());
 			
 			// convert the candidates into Relations
@@ -123,7 +177,7 @@ public class MappingChain extends Chain<Settings> {
 			// create the filter nodes for the engines
 			for (final Engine engine : finder.getEngines().values()) {
 				if (Logger.logInfo()) {
-					Logger.info("Creating node for engine '%s'.", engine);
+					Logger.info(Messages.getString("MappingChain.nodeCreate", engine)); //$NON-NLS-1$
 				}
 				new EngineProcessor(group, getSettings(), finder, engine);
 			}
@@ -133,6 +187,9 @@ public class MappingChain extends Chain<Settings> {
 			
 			// create the filter nodes for the strategies
 			for (final Strategy strategy : finder.getStrategies().values()) {
+				if (Logger.logInfo()) {
+					Logger.info(Messages.getString("MappingChain.nodeCreate", strategy)); //$NON-NLS-1$
+				}
 				new StrategyProcessor(group, getSettings(), finder, strategy);
 			}
 			
@@ -141,20 +198,21 @@ public class MappingChain extends Chain<Settings> {
 			
 			// create the filter nodes for the filters
 			for (final Filter filter : finder.getFilters().values()) {
+				if (Logger.logInfo()) {
+					Logger.info(Messages.getString("MappingChain.nodeCreate", filter)); //$NON-NLS-1$
+				}
 				new FilterProcessor(group, getSettings(), finder, filter);
 			}
 			
 			// save the results in the database
 			new Persister(group, getSettings(), persistenceUtil);
-		} else {
-			if (Logger.logError()) {
-				Logger.error("Database arguments not valid. Aborting...");
-			}
+			
+			// final IRCThread t = new IRCThread("mapping");
+			// t.start();
+			//
+			getEventBus().fireEvent(new StartupEvent(Messages.getString("MappingChain.started", getName()))); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
 		}
-		
-		// final IRCThread t = new IRCThread("mapping");
-		// t.start();
-		//
-		// getEventBus().fireEvent(new StartupEvent("Started " + getName() + " toolchain."));
 	}
 }

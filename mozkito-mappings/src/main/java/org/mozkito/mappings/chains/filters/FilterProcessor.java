@@ -20,6 +20,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 
 /**
@@ -48,19 +49,14 @@ public class FilterProcessor extends Filter<Mapping> {
 			
 			@Override
 			public void process() {
-				final Mapping inputData = getInputData();
-				final Mapping mapping = finder.filter(filter, inputData);
-				if (mapping != null) {
-					if (Logger.logInfo()) {
-						Logger.info("Providing for store operation: " + mapping);
-					}
-					setOutputData(mapping);
-				} else {
-					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
-					}
-					skipOutputData(mapping);
+				final Mapping mapping = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug(Messages.getString("StrategyProcessor.processing", filter.getHandle(), //$NON-NLS-1$
+					                                mapping.getFrom(), mapping.getTo()));
 				}
+				provideOutputData(finder.filter(filter, mapping));
+				
 			}
 		};
 	}

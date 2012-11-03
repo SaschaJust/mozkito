@@ -46,7 +46,7 @@ public class Relation implements Annotated, IRelation {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8606759070008468513L;
 	
-	private Candidate         candidate;
+	private ICandidate        candidate;
 	
 	/** The features. */
 	private Queue<Feature>    features         = new LinkedBlockingQueue<Feature>();
@@ -58,7 +58,7 @@ public class Relation implements Annotated, IRelation {
 	 */
 	@Deprecated
 	public Relation() {
-		
+		// for OpenJPA only
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class Relation implements Annotated, IRelation {
 	 * @param element2
 	 *            the element2
 	 */
-	public Relation(final Candidate candidate) {
+	public Relation(final ICandidate candidate) {
 		this.candidate = candidate;
 	}
 	
@@ -112,8 +112,7 @@ public class Relation implements Annotated, IRelation {
 	 */
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.mapping.model.IMapping#compareTo(org.mozkito.mapping.model.Mapping)
+	 * @see org.mozkito.mapping.model.IMapping#compareTo(org.mozkito.mapping.model.Mapping)
 	 */
 	@Override
 	public int compareTo(final IRelation arg0) {
@@ -143,7 +142,7 @@ public class Relation implements Annotated, IRelation {
 	@Override
 	@Id
 	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-	public Candidate getCandidate() {
+	public ICandidate getCandidate() {
 		return this.candidate;
 	}
 	
@@ -152,8 +151,9 @@ public class Relation implements Annotated, IRelation {
 	 * @see org.mozkito.mapping.model.IMapping#getClass1()
 	 */
 	@Override
+	@Transient
 	public String getClass1() {
-		return getCandidate().getFrom().getBaseType().getCanonicalName();
+		return getCandidate().getClass1();
 	}
 	
 	/*
@@ -161,8 +161,25 @@ public class Relation implements Annotated, IRelation {
 	 * @see org.mozkito.mapping.model.IMapping#getClass2()
 	 */
 	@Override
+	@Transient
 	public String getClass2() {
-		return getCandidate().getTo().getBaseType().getCanonicalName();
+		return getCandidate().getClass2();
+	}
+	
+	/**
+	 * Gets the scoring engines.
+	 * 
+	 * @return a set of {@link Engine} classes that were used for this scoring
+	 */
+	@Transient
+	public Set<Class<? extends Engine>> getEngines() {
+		final HashSet<Class<? extends Engine>> engines = new HashSet<Class<? extends Engine>>();
+		
+		for (final Feature feature : getFeatures()) {
+			engines.add(feature.getEngine());
+		}
+		
+		return engines;
 	}
 	
 	/**
@@ -180,24 +197,9 @@ public class Relation implements Annotated, IRelation {
 	 * @see org.mozkito.mapping.model.IMapping#getElement1()
 	 */
 	@Override
+	@Transient
 	public MappableEntity getFrom() {
 		return getCandidate().getFrom();
-	}
-	
-	/**
-	 * Gets the scoring engines.
-	 * 
-	 * @return a set of {@link Engine} classes that were used for this scoring
-	 */
-	@Transient
-	public Set<Class<? extends Engine>> getScoringEngines() {
-		final HashSet<Class<? extends Engine>> engines = new HashSet<Class<? extends Engine>>();
-		
-		for (final Feature feature : getFeatures()) {
-			engines.add(feature.getEngine());
-		}
-		
-		return engines;
 	}
 	
 	/*
@@ -205,6 +207,7 @@ public class Relation implements Annotated, IRelation {
 	 * @see org.mozkito.mapping.model.IMapping#getElement2()
 	 */
 	@Override
+	@Transient
 	public MappableEntity getTo() {
 		return getCandidate().getTo();
 	}
@@ -239,7 +242,7 @@ public class Relation implements Annotated, IRelation {
 	 * @param candidate
 	 *            the candidate to set
 	 */
-	public final void setCandidate(final Candidate candidate) {
+	public final void setCandidate(final ICandidate candidate) {
 		this.candidate = candidate;
 		
 	}

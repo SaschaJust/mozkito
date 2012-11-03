@@ -12,6 +12,7 @@
  *****************************************************************************/
 package org.mozkito.mappings.model;
 
+import java.beans.Transient;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class Candidate implements Annotated {
+public class Candidate implements Annotated, ICandidate {
 	
 	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 1464864624834219097L;
@@ -63,13 +64,12 @@ public class Candidate implements Annotated {
 		}
 	}
 	
-	/**
-	 * Adds the selector.
-	 * 
-	 * @param selector
-	 *            the selector
-	 * @return true, if successful
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#addSelector(org.mozkito.mappings.selectors.Selector)
 	 */
+	@Override
+	@Transient
 	public boolean addSelector(final Selector selector) {
 		return this.selectors.add(selector.getHandle());
 	}
@@ -79,6 +79,7 @@ public class Candidate implements Annotated {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
+	@Transient
 	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
@@ -107,21 +108,51 @@ public class Candidate implements Annotated {
 		return true;
 	}
 	
-	/**
-	 * Gets the from.
-	 * 
-	 * @return the from entity
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getClass1()
 	 */
+	@Override
+	public String getClass1() {
+		// PRECONDITIONS
+		
+		try {
+			return getFrom().getBaseType().getCanonicalName();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getClass2()
+	 */
+	@Override
+	public String getClass2() {
+		// PRECONDITIONS
+		
+		try {
+			return getTo().getBaseType().getCanonicalName();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
+	 */
+	@Override
 	@Id
 	public final MappableEntity getFrom() {
 		return this.from;
 	}
 	
-	/**
-	 * Gets the to.
-	 * 
-	 * @return the to entity
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getTo()
 	 */
+	@Override
 	@Id
 	public final MappableEntity getTo() {
 		return this.to;
@@ -132,6 +163,7 @@ public class Candidate implements Annotated {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
+	@Transient
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -150,6 +182,12 @@ public class Candidate implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "Candidate [from=" + this.from + ", to=" + this.to + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("Candidate [from="); //$NON-NLS-1$
+		stringBuilder.append(this.from);
+		stringBuilder.append(", to="); //$NON-NLS-1$
+		stringBuilder.append(this.to);
+		stringBuilder.append("]"); //$NON-NLS-1$
+		return stringBuilder.toString();
 	}
 }

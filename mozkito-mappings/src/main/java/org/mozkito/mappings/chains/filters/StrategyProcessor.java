@@ -20,6 +20,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.IComposite;
 import org.mozkito.mappings.strategies.Strategy;
 
@@ -49,19 +50,14 @@ public class StrategyProcessor extends Filter<IComposite> {
 			
 			@Override
 			public void process() {
-				final IComposite inputData = getInputData();
-				final IComposite mapping = finder.rate(strategy, inputData);
-				if (mapping != null) {
-					if (Logger.logInfo()) {
-						Logger.info("Providing for store operation: " + mapping);
-					}
-					setOutputData(mapping);
-				} else {
-					if (Logger.logDebug()) {
-						Logger.debug("Discarding " + mapping + " due to non-positive score (" + getInputData() + ").");
-					}
-					skipOutputData(mapping);
+				final IComposite composite = getInputData();
+				
+				if (Logger.logDebug()) {
+					Logger.debug(Messages.getString("StrategyProcessor.processing", strategy.getHandle(), //$NON-NLS-1$
+					                                composite.getFrom(), composite.getTo()));
 				}
+				
+				provideOutputData(finder.rate(strategy, composite));
 			}
 		};
 	}

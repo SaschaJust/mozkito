@@ -26,49 +26,98 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.persistence.Annotated;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class Composite.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Composite implements Annotated, IComposite {
 	
+	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 4247288063693897409L;
+	
+	/** The relation. */
 	private Relation             relation;
+	
+	/** The strategies. */
 	private Map<String, Boolean> strategies       = new HashMap<>();
 	
 	/**
-     * 
-     */
-	public Composite() {
+	 * Instantiates a new composite.
+	 */
+	@SuppressWarnings ("unused")
+	private Composite() {
 		this.relation = null;
 	}
 	
+	/**
+	 * Instantiates a new composite.
+	 * 
+	 * @param relation
+	 *            the relation
+	 */
 	public Composite(final Relation relation) {
 		this.relation = relation;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
+	 */
 	@Override
-    @Transient
+	@Transient
 	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
 	                        final Boolean valid) {
 		getStrategies().put(strategyName, valid);
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#getFrom()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IComposite#getClass1()
+	 */
 	@Override
-    public final MappableEntity getFrom() {
+	@Transient
+	public String getClass1() {
+		// PRECONDITIONS
+		
+		try {
+			return getRelation().getClass1();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.IComposite#getClass2()
+	 */
+	@Override
+	@Transient
+	public String getClass2() {
+		// PRECONDITIONS
+		
+		try {
+			return getRelation().getClass2();
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getFrom()
+	 */
+	@Override
+	@Transient
+	public final MappableEntity getFrom() {
 		return getRelation().getFrom();
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#getHandle()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getHandle()
+	 */
 	@Override
-    public final String getHandle() {
+	public final String getHandle() {
 		// PRECONDITIONS
 		
 		final StringBuilder builder = new StringBuilder();
@@ -98,31 +147,37 @@ public class Composite implements Annotated, IComposite {
 		}
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#getRelation()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getRelation()
+	 */
 	@Override
-    public final Relation getRelation() {
+	public final Relation getRelation() {
 		return this.relation;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#getStrategies()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getStrategies()
+	 */
 	@Override
-    public final Map<String, Boolean> getStrategies() {
+	public final Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.mozkito.mapping.model.IComposite#getTo()
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mapping.model.IComposite#getTo()
+	 */
 	@Override
-    public final MappableEntity getTo() {
+	@Transient
+	public final MappableEntity getTo() {
 		return getRelation().getTo();
 	}
 	
 	/**
+	 * Sets the relation.
+	 * 
 	 * @param relation
 	 *            the relation to set
 	 */
@@ -131,6 +186,8 @@ public class Composite implements Annotated, IComposite {
 	}
 	
 	/**
+	 * Sets the strategies.
+	 * 
 	 * @param strategies
 	 *            the strategies to set
 	 */

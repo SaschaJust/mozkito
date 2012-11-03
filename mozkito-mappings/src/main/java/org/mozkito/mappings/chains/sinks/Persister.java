@@ -20,6 +20,7 @@ import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.persistence.PersistenceUtil;
 
@@ -61,7 +62,7 @@ public class Persister extends Sink<Mapping> {
 				final Mapping mapping = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Storing " + mapping);
+					Logger.debug(Messages.getString("Persister.storing", mapping)); //$NON-NLS-1$
 				}
 				
 				if ((++Persister.this.i % 50) == 0) {

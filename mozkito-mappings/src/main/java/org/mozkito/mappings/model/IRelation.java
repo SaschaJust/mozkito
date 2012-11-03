@@ -33,7 +33,7 @@ public interface IRelation extends Comparable<IRelation> {
 	 * 
 	 * @return the candidate
 	 */
-	Candidate getCandidate();
+	ICandidate getCandidate();
 	
 	/**
 	 * Gets the class1.

@@ -1,5 +1,4 @@
 /*******************************************************************************
- * 
  * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -11,43 +10,48 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.mappings.training;
+package org.mozkito.mappings.model;
 
+import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class MalletTrainer extends Trainer {
+public interface IMapping {
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.register.Node#getDescription()
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
 	 */
-	@Override
-	public String getDescription() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	String getClass1();
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.training.Trainer#train()
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
 	 */
-	@Override
-	public void train() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
+	String getClass2();
+	
+	/**
+	 * Gets the candidate.
+	 * 
+	 * @return the candidate
+	 */
+	IComposite getComposite();
+	
+	/**
+	 * Gets the element1.
+	 * 
+	 * @return the element1
+	 */
+	MappableEntity getFrom();
+	
+	/**
+	 * Gets the element2.
+	 * 
+	 * @return the element2
+	 */
+	MappableEntity getTo();
 }

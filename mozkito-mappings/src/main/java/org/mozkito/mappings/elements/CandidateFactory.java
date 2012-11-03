@@ -24,6 +24,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Candidate;
+import org.mozkito.mappings.model.ICandidate;
 import org.mozkito.mappings.selectors.Selector;
 
 /**
@@ -121,7 +122,7 @@ public class CandidateFactory<FROM, TO> {
 	 *            the selector
 	 * @return the candidate
 	 */
-	public final Candidate getCandidate(final @NotNull MappableEntity one,
+	public final ICandidate getCandidate(final @NotNull MappableEntity one,
 	                                    @NotNull final MappableEntity other,
 	                                    final Set<Selector> selectors) {
 		@SuppressWarnings ("serial")

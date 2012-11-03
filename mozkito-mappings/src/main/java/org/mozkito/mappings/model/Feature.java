@@ -36,25 +36,25 @@ public class Feature implements Annotated {
 	private static final Map<String, Class<? extends Engine>> cache            = new HashMap<String, Class<? extends Engine>>();
 	
 	/** The Constant serialVersionUID. */
-	private static final long                                        serialVersionUID = 4097360257338824107L;
+	private static final long                                 serialVersionUID = 4097360257338824107L;
 	
 	/** The confidence. */
-	private double                                                   confidence;
+	private double                                            confidence;
 	
 	/** The fq class name. */
-	private String                                                   fqClassName;
+	private String                                            fqClassName;
 	
 	/** The from field name. */
-	private String                                                   fromFieldName;
+	private String                                            fromFieldName;
 	
 	/** The from substring. */
-	private String                                                   fromSubstring;
+	private String                                            fromSubstring;
 	
 	/** The to field name. */
-	private String                                                   toFieldName;
+	private String                                            toFieldName;
 	
 	/** The to substring. */
-	private String                                                   toSubstring;
+	private String                                            toSubstring;
 	
 	/**
 	 * used by persistence provider only.
@@ -118,7 +118,6 @@ public class Feature implements Annotated {
 				return engineClass;
 			}
 		} catch (final ClassNotFoundException e) {
-			
 			if (Logger.logError()) {
 				Logger.error(e, "Cannot find MappingEngine '%s'.", getFqClassName());
 			}

@@ -14,16 +14,15 @@ package org.mozkito.mappings.model;
 
 import java.util.Map;
 
-import javax.persistence.Transient;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
 
 /**
+ * The Interface IComposite.
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
- *
  */
 public interface IComposite {
 	
@@ -35,10 +34,28 @@ public interface IComposite {
 	 * @param valid
 	 *            the valid
 	 */
-	@Transient
-	public abstract void addStrategy(@NotNull @NotEmptyString final String strategyName,
-	                                 final Boolean valid);
+	void addStrategy(@NotNull @NotEmptyString final String strategyName,
+	                 final Boolean valid);
 	
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
+	 */
+	String getClass1();
+	
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
+	 */
+	String getClass2();
+	
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
 	public abstract MappableEntity getFrom();
 	
 	/**
@@ -49,15 +66,24 @@ public interface IComposite {
 	public abstract String getHandle();
 	
 	/**
+	 * Gets the relation.
+	 * 
 	 * @return the relation
 	 */
 	public abstract Relation getRelation();
 	
 	/**
+	 * Gets the strategies.
+	 * 
 	 * @return the strategies
 	 */
 	public abstract Map<String, Boolean> getStrategies();
 	
+	/**
+	 * Gets the to.
+	 * 
+	 * @return the to
+	 */
 	public abstract MappableEntity getTo();
 	
 }

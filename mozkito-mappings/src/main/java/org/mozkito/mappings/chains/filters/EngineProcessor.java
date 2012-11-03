@@ -20,6 +20,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 
 /**
@@ -32,7 +33,7 @@ public class EngineProcessor extends Filter<Relation> {
 	/**
 	 * Instantiates a new mapping engine processor.
 	 * 
-	 * @param threadGroup
+	 * @param group
 	 *            the thread group
 	 * @param settings
 	 *            the settings
@@ -41,25 +42,21 @@ public class EngineProcessor extends Filter<Relation> {
 	 * @param engine
 	 *            the engine
 	 */
-	public EngineProcessor(final Group threadGroup, final Settings settings, final Finder finder,
-	        final Engine engine) {
-		super(threadGroup, settings, false);
+	public EngineProcessor(final Group group, final Settings settings, final Finder finder, final Engine engine) {
+		super(group, settings, false);
 		
 		new ProcessHook<Relation, Relation>(this) {
 			
 			@Override
 			public void process() {
-				final Relation candidate = getInputData();
+				final Relation relation = getInputData();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("[%s] Processing mapping for '%s' -> '%s'.", engine.getHandle(),
-					             candidate.getFrom(), candidate.getTo());
+					Logger.debug(Messages.getString("EngineProcessor.processing", engine.getHandle(), //$NON-NLS-1$
+					                                relation.getFrom(), relation.getTo()));
 				}
 				
-				final Relation score = finder.score(engine, candidate);
-				
-				provideOutputData(score);
-				
+				provideOutputData(finder.score(engine, relation));
 			}
 		};
 	}
