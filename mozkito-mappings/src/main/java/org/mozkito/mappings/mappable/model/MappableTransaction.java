@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.mozkito.mappings.mappable.model;
 
-import java.beans.Transient;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +20,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;

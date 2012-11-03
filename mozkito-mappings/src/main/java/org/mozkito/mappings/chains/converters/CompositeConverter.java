@@ -3,9 +3,6 @@
  */
 package org.mozkito.mappings.chains.converters;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Transformer;
@@ -37,8 +34,7 @@ public class CompositeConverter extends Transformer<Composite, Mapping> {
 			@Override
 			public void process() {
 				final Composite data = getInputData();
-				final Set<org.mozkito.mappings.filters.Filter> filters = new HashSet<org.mozkito.mappings.filters.Filter>();
-				provideOutputData(new Mapping(data, filters));
+				provideOutputData(new Mapping(data));
 			}
 		};
 	}

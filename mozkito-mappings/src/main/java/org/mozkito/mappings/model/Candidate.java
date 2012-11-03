@@ -12,11 +12,11 @@
  *****************************************************************************/
 package org.mozkito.mappings.model;
 
-import java.beans.Transient;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
 
@@ -78,6 +78,7 @@ public class Candidate implements Annotated, ICandidate {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	
 	@Override
 	@Transient
 	public boolean equals(final Object obj) {
