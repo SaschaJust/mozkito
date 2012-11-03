@@ -45,6 +45,7 @@ import org.mozkito.persistence.model.Person;
 
 import com.google.gdata.client.projecthosting.IssuesQuery;
 import com.google.gdata.client.projecthosting.ProjectHostingService;
+import com.google.gdata.data.HtmlTextConstruct;
 import com.google.gdata.data.TextConstruct;
 import com.google.gdata.data.TextContent;
 import com.google.gdata.data.projecthosting.BlockedOn;
@@ -57,7 +58,6 @@ import com.google.gdata.data.projecthosting.Label;
 import com.google.gdata.data.projecthosting.Owner;
 import com.google.gdata.data.projecthosting.Updates;
 import com.google.gdata.util.ServiceException;
-
 
 /**
  * The Class GoogleParser.
@@ -336,8 +336,13 @@ public class GoogleParser implements Parser {
 							final DateTime timestamp = new DateTime(published.getValue(),
 							                                        DateTimeZone.forOffsetHours(published.getTzShift()));
 							
-							this.comments.add(new Comment(i + startIndex, author, timestamp, entry.getContent()
-							                                                                      .getLang()));
+							String commentText = "";
+							final TextContent textContent = (TextContent) entry.getContent();
+							if ((textContent != null) && (textContent.getContent() != null)) {
+								final HtmlTextConstruct textConstruct = (HtmlTextConstruct) textContent.getContent();
+								commentText = textConstruct.getPlainText();
+							}
+							this.comments.add(new Comment(i + startIndex, author, timestamp, commentText));
 							
 							if (entry.hasUpdates()) {
 								final Updates updates = entry.getUpdates();
@@ -841,8 +846,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -880,9 +884,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	
 	/*
@@ -997,8 +999,7 @@ public class GoogleParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {

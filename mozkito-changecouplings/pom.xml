@@ -19,10 +19,5 @@
 			<artifactId>mozkito-codeanalysis</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
-		</dependency>
 	</dependencies>
 </project>

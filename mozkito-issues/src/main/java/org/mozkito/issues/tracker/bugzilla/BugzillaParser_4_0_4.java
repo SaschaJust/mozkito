@@ -37,7 +37,7 @@ import noNamespace.LongDescDocument.LongDesc;
 import noNamespace.ReporterDocument.Reporter;
 import noNamespace.WhoDocument.Who;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.joda.time.DateTime;
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
@@ -50,7 +50,6 @@ import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class BugzillaParser.
@@ -516,8 +515,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	@Override
@@ -533,9 +531,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	
 	@Override

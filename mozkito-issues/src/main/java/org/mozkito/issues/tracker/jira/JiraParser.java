@@ -44,8 +44,9 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
@@ -65,7 +66,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 /**
  * The Class JiraParser.
@@ -267,8 +267,9 @@ public class JiraParser implements Parser {
 			final BufferedReader reader = new BufferedReader(new StringReader(rawReport.getContent()));
 			
 			try {
-				final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
-				final org.jdom.Document document = saxBuilder.build(reader);
+				final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+				                                                                      "org.ccil.cowan.tagsoup.Parser"));
+				final org.jdom2.Document document = saxBuilder.build(reader);
 				reader.close();
 				
 				return new XmlReport(rawReport, document);
@@ -677,8 +678,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	
 	/*
@@ -722,9 +722,7 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	
 	/*
@@ -905,13 +903,11 @@ public class JiraParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {

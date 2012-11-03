@@ -24,7 +24,7 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import org.jdom.Namespace;
+import org.jdom2.Namespace;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,7 +34,6 @@ import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class BugzillaHistoryParser.

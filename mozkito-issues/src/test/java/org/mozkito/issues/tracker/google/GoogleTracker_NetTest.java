@@ -25,9 +25,8 @@ import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.google.GoogleTracker;
+import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.Report;
-
 
 /**
  * The Class GoogleTracker_NetTest.
@@ -75,6 +74,12 @@ public class GoogleTracker_NetTest {
 			assertEquals("DevPlugin", report.getCategory());
 			
 			assertEquals(60, report.getComments().size());
+			for (final Comment comment : report.getComments()) {
+				assert (comment.getAuthor() != null);
+				assertEquals(report, comment.getBugReport());
+				assert (comment.getMessage() != null);
+				assert (comment.getTimestamp() != null);
+			}
 			
 			assertEquals(null, report.getComponent());
 			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z", dateTimeHistoryFormatRegex)

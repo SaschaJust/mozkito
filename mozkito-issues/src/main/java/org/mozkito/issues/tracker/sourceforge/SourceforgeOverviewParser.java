@@ -29,18 +29,18 @@ import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
 
 /**
  * The Class SourceforgeOverviewParser.
@@ -68,8 +68,9 @@ public class SourceforgeOverviewParser implements OverviewParser {
 	
 	/**
 	 * Instantiates a new sourceforge overview parser.
-	 *
-	 * @param tracker the tracker
+	 * 
+	 * @param tracker
+	 *            the tracker
 	 */
 	public SourceforgeOverviewParser(final SourceforgeTracker tracker) {
 		// PRECONDITIONS
@@ -133,7 +134,8 @@ public class SourceforgeOverviewParser implements OverviewParser {
 					break;
 				}
 				
-				final SAXBuilder saxBuilder = new SAXBuilder("org.ccil.cowan.tagsoup.Parser");
+				final SAXBuilder saxBuilder = new SAXBuilder(new XMLReaderSAX2Factory(false,
+				                                                                      "org.ccil.cowan.tagsoup.Parser"));
 				try {
 					final Document document = saxBuilder.build(new StringReader(html));
 					final XMLOutputter outp = new XMLOutputter();

@@ -100,6 +100,10 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			final StringArgument passwordArgument = getSettings().getArgument(this.passwordOptions);
 			final DirectoryArgument cacheDirArgument = getSettings().getArgument(this.cacheDirOptions);
 			
+			if (!required()) {
+				return null;
+			}
+			
 			if (internalArgument.getValue()) {
 				// use internal proxy
 				if ((hostArgument.getValue() != null) && !hostArgument.getValue().equalsIgnoreCase("localhost")
@@ -237,7 +241,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			final Map<String, IOptions<?, ?>> map = new HashMap<String, IOptions<?, ?>>();
 			
 			this.internalOptions = new BooleanArgument.Options(set, "internal", "Use internal proxy (recommended).",
-			                                                   true, Requirement.required);
+			                                                   false, Requirement.required);
 			req(this.internalOptions, map);
 			
 			this.hostOptions = new HostArgument.Options(set, "host", //$NON-NLS-1$
@@ -261,7 +265,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			this.portOptions = new PortArgument.Options(
 			                                            set,
 			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), 8584, //$NON-NLS-1$ //$NON-NLS-2$
-			                                            Requirement.required, true);
+			                                            Requirement.equals(this.internalOptions, false), true);
 			req(this.portOptions, map);
 			
 			this.usernameOptions = new StringArgument.Options(

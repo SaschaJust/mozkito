@@ -19,9 +19,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.TrackerType;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.BooleanArgument;
@@ -37,6 +34,10 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.TrackerType;
 
 /**
  * The Class TrackerOptions.
@@ -236,8 +237,16 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                   Requirement.required);
 			req(this.useProxyOptions, map);
 			
+			if (Logger.logAlways()) {
+				Logger.always("Requirement.equals(this.useProxyOptions, true) ? required: "
+				        + Requirement.equals(this.useProxyOptions, true).equals(Requirement.required));
+				Logger.always("this.useProxyOptions = " + System.getProperty(this.useProxyOptions.getName()));
+			}
+			
 			this.proxyOptions = new ProxyOptions(set, Requirement.equals(this.useProxyOptions, true));
-			req(this.proxyOptions, map);
+			if (this.proxyOptions.required()) {
+				req(this.proxyOptions, map);
+			}
 			
 			// tracker alternatives
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,
