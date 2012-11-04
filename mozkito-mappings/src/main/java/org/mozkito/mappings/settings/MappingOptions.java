@@ -57,7 +57,7 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			public boolean matches(final String message,
 			                       final LogLevel level,
 			                       final String prefix) {
-				return message.matches("Adding new mapping engines dependency.*");
+				return message.matches("Found no persistent.*"); //$NON-NLS-1$
 			}
 		});
 	}
