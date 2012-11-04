@@ -56,7 +56,6 @@ import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
-import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.model.RCSTransaction;
@@ -186,7 +185,7 @@ public class MappingEngineTest {
 		this.engines = mappingFinder.getEngines().values();
 		
 		MappingEngineTest.score = new Relation(new Candidate(new Tuple(MappingEngineTest.mappableReport,
-		                                                               MappingEngineTest.mappableTransaction), null));
+		                                                               MappingEngineTest.mappableTransaction)));
 	}
 	
 	/**
@@ -216,8 +215,7 @@ public class MappingEngineTest {
 				                                       new Candidate(
 				                                                     new Tuple<MappableTransaction, MappableReport>(
 				                                                                                                    MappingEngineTest.mappableTransaction,
-				                                                                                                    MappingEngineTest.mappableReport),
-				                                                     new HashSet<Selector>()));
+				                                                                                                    MappingEngineTest.mappableReport)));
 				engine.score(MappingEngineTest.mappableTransaction, MappingEngineTest.mappableReport,
 				             MappingEngineTest.score);
 				feature = MappingEngineTest.score.getFeatures().iterator().next();

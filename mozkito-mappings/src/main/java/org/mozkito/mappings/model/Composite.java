@@ -19,10 +19,10 @@ import java.util.Map;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -64,9 +64,10 @@ public class Composite implements Annotated {
 	 * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
 	 */
 	@Transient
-	public void addStrategy(@NotNull @NotEmptyString final String strategyName,
+	public void addStrategy(@NotNull final Strategy strategy,
 	                        final Boolean valid) {
-		getStrategies().put(strategyName, valid);
+		assert !getStrategies().containsKey(strategy.getHandle());
+		getStrategies().put(strategy.getHandle(), valid);
 	}
 	
 	/*

@@ -105,11 +105,11 @@ public class TotalAggreementStrategy extends Strategy {
 		}
 		
 		if (value > 0) {
-			composite.addStrategy(getHandle(), true);
+			composite.addStrategy(this, true);
 		} else if (value < 0) {
-			composite.addStrategy(getHandle(), false);
+			composite.addStrategy(this, false);
 		} else {
-			composite.addStrategy(getHandle(), null);
+			composite.addStrategy(this, null);
 		}
 		
 		return composite;

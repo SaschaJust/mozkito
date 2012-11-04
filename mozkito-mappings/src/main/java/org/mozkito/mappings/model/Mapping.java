@@ -12,13 +12,14 @@
  ******************************************************************************/
 package org.mozkito.mappings.model;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.Map;
 
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.filters.Filter;
@@ -33,13 +34,13 @@ import org.mozkito.persistence.Annotated;
 public class Mapping implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -2154624198669450359L;
+	private static final long          serialVersionUID = -2154624198669450359L;
 	
 	/** The composite. */
-	private Composite         composite;
+	private Composite                  composite;
 	
 	/** The filters. */
-	private final Set<Filter> filters          = new HashSet<Filter>();
+	private final Map<String, Boolean> filters          = new HashMap<>();
 	
 	/**
 	 * Instantiates a new mapping.
@@ -75,11 +76,13 @@ public class Mapping implements Annotated {
 	 *            the filter
 	 */
 	@Transient
-	public void addFilter(final Filter filter) {
+	public Mapping addFilter(final Filter filter,
+	                         final boolean value) {
 		// PRECONDITIONS
 		
 		try {
-			getFilters().add(filter);
+			getFilters().put(filter.getHandle(), value);
+			return this;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -132,11 +135,9 @@ public class Mapping implements Annotated {
 	}
 	
 	/**
-	 * Gets the filters.
-	 * 
 	 * @return the filters
 	 */
-	public final Set<Filter> getFilters() {
+	public final Map<String, Boolean> getFilters() {
 		// PRECONDITIONS
 		
 		try {
@@ -210,6 +211,23 @@ public class Mapping implements Annotated {
 			return getComposite().getTo();
 		} finally {
 			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * @param composite
+	 *            the composite to set
+	 */
+	public final void setComposite(final Composite composite) {
+		// PRECONDITIONS
+		Condition.notNull(composite, "Argument '%s' in '%s'.", "composite", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.composite = composite;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.composite, composite,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
 	}
 }

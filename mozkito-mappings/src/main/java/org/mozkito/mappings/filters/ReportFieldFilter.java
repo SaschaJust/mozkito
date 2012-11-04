@@ -128,10 +128,12 @@ public class ReportFieldFilter extends Filter {
 		
 		try {
 			if (!mapping.getComposite().getTo().get(FieldKey.TYPE).equals(this.type)) {
-				mapping.addFilter(this);
+				mapping.addFilter(this, true);
+			} else {
+				mapping.addFilter(this, false);
 			}
-			// TODO Auto-generated method stub
-			return null;
+			
+			return mapping;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -5,7 +5,6 @@
 package org.mozkito.mappings.model;
 
 import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 /**
@@ -17,20 +16,9 @@ import javax.persistence.metamodel.SingularAttribute;
 public class Relation_ {
 	
 	/** The class1. */
-	public static volatile SingularAttribute<Relation, String>     class1;
-	
-	/** The class2. */
-	public static volatile SingularAttribute<Relation, String>     class2;
+	public static volatile SingularAttribute<Relation, Candidate> candidate;
 	
 	/** The features. */
-	public static volatile CollectionAttribute<Relation, Feature>  features;
+	public static volatile CollectionAttribute<Relation, Feature> features;
 	
-	/** The from id. */
-	public static volatile SingularAttribute<Relation, String>     fromId;
-	
-	/** The strategies. */
-	public static volatile MapAttribute<Relation, String, Boolean> strategies;
-	
-	/** The to id. */
-	public static volatile SingularAttribute<Relation, String>     toId;
 }

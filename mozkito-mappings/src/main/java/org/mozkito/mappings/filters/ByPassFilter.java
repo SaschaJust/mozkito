@@ -103,7 +103,7 @@ public class ByPassFilter extends Filter {
 		// PRECONDITIONS
 		
 		try {
-			return mapping;
+			return mapping.addFilter(this, false);
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -67,6 +67,8 @@ public class Finder {
 	/** The trainers. */
 	private final Map<Class<? extends Trainer>, Trainer>   trainers   = new HashMap<Class<? extends Trainer>, Trainer>();
 	
+	private Set<Selector>                                  activeSelectors;
+	
 	/**
 	 * Instantiates a new mapping finder.
 	 */
@@ -206,9 +208,9 @@ public class Finder {
 	 *            the to clazz
 	 * @return the list
 	 */
-	private <K, V> List<Selector> findSelectors(final Class<K> fromClazz,
-	                                            final Class<V> toClazz) {
-		final List<Selector> list = new LinkedList<Selector>();
+	private <K, V> Set<Selector> findSelectors(final Class<K> fromClazz,
+	                                           final Class<V> toClazz) {
+		final Set<Selector> list = new HashSet<Selector>();
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Looking up selector for '%s'<->'%s'.", fromClazz.getSimpleName(), toClazz.getSimpleName());
@@ -242,6 +244,35 @@ public class Finder {
 	}
 	
 	/**
+	 * Gets the active selectors.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param <U>
+	 *            the generic type
+	 * @param mappableSource
+	 *            the mappable source
+	 * @param mappableTarget
+	 *            the mappable target
+	 * @return the active selectors
+	 */
+	public <T extends MappableEntity, U extends MappableEntity> Set<Selector> getActiveSelectors(final Class<T> mappableSource,
+	                                                                                             final Class<U> mappableTarget) {
+		if (this.activeSelectors == null) {
+			try {
+				final Class<?> sourceBaseType = mappableSource.newInstance().getBaseType();
+				final Class<?> targetBaseType = mappableTarget.newInstance().getBaseType();
+				this.activeSelectors = findSelectors(sourceBaseType, targetBaseType);
+				return this.activeSelectors;
+			} catch (final Exception e) {
+				throw new UnrecoverableError(e);
+			}
+		} else {
+			return this.activeSelectors;
+		}
+	}
+	
+	/**
 	 * Gets the candidates.
 	 * 
 	 * @param <T>
@@ -260,8 +291,8 @@ public class Finder {
 		final Map<T, Set<Selector>> candidates = new HashMap<>();
 		
 		try {
-			final List<Selector> activeSelectors = findSelectors(source.getBaseType(),
-			                                                     ((MappableEntity) targetClass.newInstance()).getBaseType());
+			final Set<Selector> activeSelectors = findSelectors(source.getBaseType(),
+			                                                    ((MappableEntity) targetClass.newInstance()).getBaseType());
 			
 			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {

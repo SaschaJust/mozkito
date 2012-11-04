@@ -111,19 +111,19 @@ public class CandidateFactory<FROM, TO> {
 	private final Map<Set<String>, Candidate> candidates = new HashMap<>();
 	
 	/**
-	 * Gets the candidate.
+	 * Adds the.
 	 * 
 	 * @param one
 	 *            the one
 	 * @param other
 	 *            the other
-	 * @param selectors
-	 *            the selector
+	 * @param votingSelectors
+	 *            the selectors
 	 * @return the candidate
 	 */
-	public final Candidate getCandidate(final @NotNull MappableEntity one,
-	                                    @NotNull final MappableEntity other,
-	                                    final Set<Selector> selectors) {
+	public final Candidate add(final @NotNull MappableEntity one,
+	                           @NotNull final MappableEntity other,
+	                           final Set<Selector> votingSelectors) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -134,10 +134,12 @@ public class CandidateFactory<FROM, TO> {
 		};
 		
 		if (!this.candidates.containsKey(set)) {
-			this.candidates.put(set, new Candidate(new Tuple<MappableEntity, MappableEntity>(one, other), selectors));
+			final Candidate candidate = new Candidate(new Tuple<MappableEntity, MappableEntity>(one, other));
+			candidate.addSelectors(votingSelectors);
+			return this.candidates.put(set, candidate);
+		} else {
+			return this.candidates.get(set);
 		}
-		
-		return this.candidates.get(set);
 	}
 	
 	/**
@@ -149,8 +151,8 @@ public class CandidateFactory<FROM, TO> {
 	 *            the other
 	 * @return true, if is known
 	 */
-	public final boolean isKnown(final @NotNull MappableEntity one,
-	                             @NotNull final MappableEntity other) {
+	public final boolean contains(final @NotNull MappableEntity one,
+	                              @NotNull final MappableEntity other) {
 		@SuppressWarnings ("serial")
 		final HashSet<String> set = new HashSet<String>() {
 			
@@ -161,6 +163,33 @@ public class CandidateFactory<FROM, TO> {
 		};
 		
 		return this.candidates.containsKey(set);
+	}
+	
+	/**
+	 * Gets the candidate.
+	 * 
+	 * @param one
+	 *            the one
+	 * @param other
+	 *            the other
+	 * @return the candidate
+	 */
+	public final Candidate get(final @NotNull MappableEntity one,
+	                           @NotNull final MappableEntity other) {
+		@SuppressWarnings ("serial")
+		final HashSet<String> set = new HashSet<String>() {
+			
+			{
+				add(one.getId());
+				add(other.getId());
+			}
+		};
+		
+		if (!this.candidates.containsKey(set)) {
+			return this.candidates.get(set);
+		} else {
+			return null;
+		}
 	}
 	
 }

@@ -58,24 +58,25 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			public void preProcess() {
 				if (candidates.isEmpty()) {
 					final MappableTransaction mappableTransaction = new MappableTransaction(getInputData());
-					final Map<MappableReport, Set<Selector>> transactionCandidates = finder.getCandidates(mappableTransaction,
-					                                                                                      MappableReport.class,
-					                                                                                      util);
+					final Map<MappableReport, Set<Selector>> reportCandidates = finder.getCandidates(mappableTransaction,
+					                                                                                 MappableReport.class,
+					                                                                                 util);
 					
 					if (Logger.logInfo()) {
 						Logger.info(Messages.getString("ReportFinder.processing", mappableTransaction.getHandle(), //$NON-NLS-1$
-						                               mappableTransaction.toString(), transactionCandidates.size()));
+						                               mappableTransaction.toString(), reportCandidates.size()));
 					}
 					
-					for (final MappableReport mappableReport : transactionCandidates.keySet()) {
-						if (ReportFinder.this.candidateFactory.isKnown(mappableTransaction, mappableReport)) {
+					for (final MappableReport mappableReport : reportCandidates.keySet()) {
+						if (ReportFinder.this.candidateFactory.contains(mappableTransaction, mappableReport)) {
 							if (Logger.logInfo()) {
 								Logger.info(Messages.getString("ReportFinder.skipping", mappableTransaction, mappableReport)); //$NON-NLS-1$
 							}
+							ReportFinder.this.candidateFactory.get(mappableTransaction, mappableReport)
+							                                  .addSelectors(reportCandidates.get(mappableReport));
 						} else {
-							candidates.add(ReportFinder.this.candidateFactory.getCandidate(mappableTransaction,
-							                                                               mappableReport,
-							                                                               transactionCandidates.get(mappableReport)));
+							candidates.add(ReportFinder.this.candidateFactory.add(mappableTransaction, mappableReport,
+							                                                      reportCandidates.get(mappableReport)));
 						}
 						
 					}
@@ -110,5 +111,4 @@ public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 			}
 		};
 	}
-	
 }

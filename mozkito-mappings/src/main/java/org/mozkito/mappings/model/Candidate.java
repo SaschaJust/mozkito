@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -41,7 +42,7 @@ public class Candidate implements Annotated {
 	private final MappableEntity from;
 	
 	/** The preselectors. */
-	private final Set<String>    selectors        = new HashSet<String>();
+	private final Set<String>    selectors  = new HashSet<String>();
 	
 	/** a potential target. */
 	private final MappableEntity to;
@@ -51,17 +52,12 @@ public class Candidate implements Annotated {
 	 * 
 	 * @param candidatePair
 	 *            a {@link Tuple} representing the pair (from/to)
-	 * @param selectors
+	 * @param activeSelectors
 	 *            the selectors
 	 */
-	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair,
-	        final Set<Selector> selectors) {
+	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair) {
 		this.from = candidatePair.getFirst();
 		this.to = candidatePair.getSecond();
-		
-		for (final Selector selector : selectors) {
-			this.selectors.add(selector.getHandle());
-		}
 	}
 	
 	/*
@@ -73,10 +69,20 @@ public class Candidate implements Annotated {
 		return this.selectors.add(selector.getHandle());
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @param selectors
 	 */
+	public void addSelectors(final Set<Selector> selectors) {
+		// PRECONDITIONS
+		
+		try {
+			for (final Selector selector : selectors) {
+				addSelector(selector);
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	@Override
 	@Transient
@@ -152,6 +158,21 @@ public class Candidate implements Annotated {
 	@Id
 	public final MappableEntity getTo() {
 		return this.to;
+	}
+	
+	/**
+	 * @return the votingSelectors
+	 */
+	public final Set<String> getSelectors() {
+		// PRECONDITIONS
+		
+		try {
+			return this.selectors;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "votingSelectors", //$NON-NLS-1$ //$NON-NLS-2$
+			                  getClass().getSimpleName());
+		}
 	}
 	
 	/*

@@ -68,14 +68,16 @@ public class TransactionFinder extends Transformer<Report, Candidate> {
 					}
 					
 					for (final MappableTransaction mapTransaction : transactionCandidates.keySet()) {
-						if (TransactionFinder.this.candidateFactory.isKnown(mapReport, mapTransaction)) {
+						if (TransactionFinder.this.candidateFactory.contains(mapReport, mapTransaction)) {
 							if (Logger.logInfo()) {
 								Logger.info(Messages.getString("TransactionFinder.skipping", mapReport, mapTransaction)); //$NON-NLS-1$
 							}
+							TransactionFinder.this.candidateFactory.get(mapReport, mapTransaction)
+							                                       .addSelectors(transactionCandidates.get(mapTransaction));
 						} else {
-							candidates.add(TransactionFinder.this.candidateFactory.getCandidate(mapReport,
-							                                                                    mapTransaction,
-							                                                                    transactionCandidates.get(mapTransaction)));
+							candidates.add(TransactionFinder.this.candidateFactory.add(mapReport,
+							                                                           mapTransaction,
+							                                                           transactionCandidates.get(mapTransaction)));
 						}
 						
 					}
