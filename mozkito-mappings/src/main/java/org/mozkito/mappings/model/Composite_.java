@@ -20,6 +20,9 @@ import javax.persistence.metamodel.SingularAttribute;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.model.Composite.class)
+@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
+                             date = "Wed Jan 18 19:05:50 CET 2012")
 public class Composite_ {
 	
 	/** The relation. */

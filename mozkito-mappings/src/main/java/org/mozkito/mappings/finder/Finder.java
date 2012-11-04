@@ -26,6 +26,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.model.Relation;
@@ -47,7 +48,7 @@ import org.mozkito.persistence.PersistenceUtil;
 public class Finder {
 	
 	/** The engines. */
-	private final Map<String, Engine>                      engines    = new HashMap<String, Engine>();
+	private final Map<Class<? extends Engine>, Engine>     engines    = new HashMap<Class<? extends Engine>, Engine>();
 	
 	/** The filters. */
 	private final Map<Class<? extends Filter>, Filter>     filters    = new HashMap<Class<? extends Filter>, Filter>();
@@ -62,18 +63,19 @@ public class Finder {
 	private final Map<Class<? extends Storage>, Storage>   storages   = new HashMap<Class<? extends Storage>, Storage>();
 	
 	/** The strategies. */
-	private final Map<String, Strategy>                    strategies = new HashMap<String, Strategy>();
+	private final Map<Class<? extends Strategy>, Strategy> strategies = new HashMap<Class<? extends Strategy>, Strategy>();
 	
 	/** The trainers. */
 	private final Map<Class<? extends Trainer>, Trainer>   trainers   = new HashMap<Class<? extends Trainer>, Trainer>();
 	
+	/** The active selectors. */
 	private Set<Selector>                                  activeSelectors;
 	
 	/**
 	 * Instantiates a new mapping finder.
 	 */
 	public Finder() {
-		
+		// default
 	}
 	
 	/**
@@ -84,10 +86,10 @@ public class Finder {
 	 */
 	public void addEngine(final Engine engine) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available engines.", engine.getHandle());
+			Logger.info(Messages.getString("Finder.addingEngine", engine.getHandle())); //$NON-NLS-1$
 		}
 		
-		this.engines.put(engine.getClass().getCanonicalName(), engine);
+		this.engines.put(engine.getClass(), engine);
 		
 		provideStorages(engine);
 	}
@@ -100,7 +102,7 @@ public class Finder {
 	 */
 	public void addFilter(final Filter filter) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available filters.", filter.getHandle());
+			Logger.info(Messages.getString("Finder.addingFilter", filter.getHandle())); //$NON-NLS-1$
 		}
 		
 		this.filters.put(filter.getClass(), filter);
@@ -116,7 +118,7 @@ public class Finder {
 	 */
 	public void addSelector(final Selector selector) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available selectors.", selector.getHandle());
+			Logger.info(Messages.getString("Finder.addingSelector", selector.getHandle())); //$NON-NLS-1$
 		}
 		
 		this.selectors.put(selector.getClass(), selector);
@@ -131,7 +133,7 @@ public class Finder {
 	 */
 	public void addSplitter(final Splitter splitter) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available splitters.", splitter.getHandle());
+			Logger.info(Messages.getString("Finder.addingSplitter", splitter.getHandle())); //$NON-NLS-1$
 		}
 		
 		this.splitters.put(splitter.getClass(), splitter);
@@ -146,7 +148,7 @@ public class Finder {
 	 */
 	public void addStorage(final Storage storage) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available storages.", storage.getHandle());
+			Logger.info(Messages.getString("Finder.addingStorage", storage.getHandle())); //$NON-NLS-1$
 		}
 		
 		this.storages.put(storage.getClass(), storage);
@@ -161,10 +163,10 @@ public class Finder {
 	 */
 	public void addStrategy(final Strategy strategy) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available strategies.", strategy.getHandle());
+			Logger.info(Messages.getString("Finder.addingStrategy", strategy.getHandle())); //$NON-NLS-1$
 		}
 		
-		this.strategies.put(strategy.getClass().getCanonicalName(), strategy);
+		this.strategies.put(strategy.getClass(), strategy);
 		provideStorages(strategy);
 	}
 	
@@ -176,7 +178,7 @@ public class Finder {
 	 */
 	public void addTrainer(final Trainer trainer) {
 		if (Logger.logInfo()) {
-			Logger.info("Adding '%s' to available trainers.", trainer.getHandle());
+			Logger.info(Messages.getString("Finder.addingTrainer", trainer.getHandle())); //$NON-NLS-1$
 		}
 		
 		this.trainers.put(trainer.getClass(), trainer);
@@ -186,7 +188,9 @@ public class Finder {
 	/**
 	 * Filter.
 	 * 
-	 * @param composite
+	 * @param filter
+	 *            the filter
+	 * @param mapping
 	 *            the mapping
 	 * @return the filtered mapping
 	 */
@@ -296,8 +300,8 @@ public class Finder {
 			
 			for (final Selector selector : activeSelectors) {
 				if (Logger.logDebug()) {
-					Logger.debug("Using selector '%s' on '%s' with target type '%s'.", selector.getHandle(),
-					             source.getHandle(), targetClass);
+					Logger.debug(Messages.getString("Finder.selectorUse", selector.getHandle(), //$NON-NLS-1$
+					                                source.getHandle(), targetClass));
 				}
 				
 				final List<T> parsingResults = selector.parse(source, targetClass, util);
@@ -319,20 +323,24 @@ public class Finder {
 	}
 	
 	/**
+	 * Gets the engines.
+	 * 
 	 * @return the engines
 	 */
-	public final Map<String, Engine> getEngines() {
+	public final Map<Class<? extends Engine>, Engine> getEngines() {
 		// PRECONDITIONS
 		
 		try {
 			return this.engines;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.engines, "Field '%s' in '%s'.", "engines", getClass().getSimpleName());
+			Condition.notNull(this.engines, "Field '%s' in '%s'.", "engines", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the filters.
+	 * 
 	 * @return the filters
 	 */
 	public final Map<Class<? extends Filter>, Filter> getFilters() {
@@ -342,11 +350,13 @@ public class Finder {
 			return this.filters;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName());
+			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the selectors.
+	 * 
 	 * @return the selectors
 	 */
 	public final Map<Class<? extends Selector>, Selector> getSelectors() {
@@ -356,11 +366,13 @@ public class Finder {
 			return this.selectors;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "selectors", getClass().getSimpleName());
+			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "selectors", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the splitters.
+	 * 
 	 * @return the splitters
 	 */
 	public final Map<Class<? extends Splitter>, Splitter> getSplitters() {
@@ -370,11 +382,13 @@ public class Finder {
 			return this.splitters;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.splitters, "Field '%s' in '%s'.", "splitters", getClass().getSimpleName());
+			Condition.notNull(this.splitters, "Field '%s' in '%s'.", "splitters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the storages.
+	 * 
 	 * @return the storages
 	 */
 	public final Map<Class<? extends Storage>, Storage> getStorages() {
@@ -384,25 +398,29 @@ public class Finder {
 			return this.storages;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.storages, "Field '%s' in '%s'.", "storages", getClass().getSimpleName());
+			Condition.notNull(this.storages, "Field '%s' in '%s'.", "storages", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the strategies.
+	 * 
 	 * @return the strategies
 	 */
-	public final Map<String, Strategy> getStrategies() {
+	public final Map<Class<? extends Strategy>, Strategy> getStrategies() {
 		// PRECONDITIONS
 		
 		try {
 			return this.strategies;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.strategies, "Field '%s' in '%s'.", "strategies", getClass().getSimpleName());
+			Condition.notNull(this.strategies, "Field '%s' in '%s'.", "strategies", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
 	/**
+	 * Gets the trainers.
+	 * 
 	 * @return the trainers
 	 */
 	public final Map<Class<? extends Trainer>, Trainer> getTrainers() {
@@ -412,7 +430,7 @@ public class Finder {
 			return this.trainers;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.trainers, "Field '%s' in '%s'.", "trainers", getClass().getSimpleName());
+			Condition.notNull(this.trainers, "Field '%s' in '%s'.", "trainers", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -463,7 +481,7 @@ public class Finder {
 	public Composite rate(final Strategy strategy,
 	                      final Composite composite) {
 		if (Logger.logDebug()) {
-			Logger.debug("Mapping with strategy: " + strategy.getHandle());
+			Logger.debug(Messages.getString("Finder.strategyUse", strategy.getHandle(), composite)); //$NON-NLS-1$
 		}
 		
 		strategy.map(composite);
@@ -477,17 +495,15 @@ public class Finder {
 	 * 
 	 * @param engine
 	 *            the engine
-	 * @param element1
-	 *            the element1
-	 * @param element2
-	 *            the element2
+	 * @param relation
+	 *            the score
 	 * @return the computed scoring for transaction/report relation
 	 */
 	public Relation score(final Engine engine,
-	                      final Relation score) {
+	                      final Relation relation) {
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Scoring with engine: " + engine.getHandle());
+			Logger.debug(Messages.getString("Finder.engineUse", engine.getHandle(), relation)); //$NON-NLS-1$
 		}
 		
 		final Expression expression = engine.supported();
@@ -496,21 +512,21 @@ public class Finder {
 			        + " returns NULL when asked for supported fields.");
 		}
 		
-		final MappableEntity element1 = score.getFrom();
-		final MappableEntity element2 = score.getTo();
+		final MappableEntity element1 = relation.getFrom();
+		final MappableEntity element2 = relation.getTo();
 		
 		final int check = expression.check(element1.getClass(), element2.getClass());
 		
 		if (check > 0) {
-			engine.score(element1, element2, score);
+			engine.score(element1, element2, relation);
 		} else if (check < 0) {
-			engine.score(element2, element1, score);
+			engine.score(element2, element1, relation);
 		} else if (Logger.logInfo()) {
 			Logger.info("Skipping engine " + engine.getHandle() + " due to type incompatibility: "
 			        + expression.toString());
 		}
 		
-		return score;
+		return relation;
 	}
 	
 	/**

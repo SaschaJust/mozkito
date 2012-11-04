@@ -44,25 +44,26 @@ public class File2Bugs implements Annotated {
 	private static final long serialVersionUID = -5780165055568852588L;
 	
 	static {
-		PersistenceManager.registerNativeQuery("postgresql",
-		                                       "files2bugsarray",
-		                                       "SELECT changedfile_id AS file_id, array_length(issues, 1) AS bug_count, issues AS bug_ids           "
-		                                               + "FROM (                                                                                "
-		                                               + "SELECT changedfile_id, ARRAY(                                                         "
-		                                               + "	SELECT reportid                                                                     "
-		                                               + "	FROM rcsrevision AS revisions                                                       "
-		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 "
-		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           "
-		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   "
-		                                               + ") AS issues                                                                             "
-		                                               + "FROM rcsrevision AS A                                                                 "
-		                                               + "ORDER BY changedfile_id                                                               "
-		                                               + ") innerquery                                                                          "
-		                                               + "WHERE array_length(issues, 1) > 0                                                       "
-		                                               + "GROUP BY file_id, issues;                                                               ");
-		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid "
-		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping "
-		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id");
+		PersistenceManager.registerNativeQuery("postgresql", //$NON-NLS-1$
+		                                       "files2bugsarray", //$NON-NLS-1$
+		                                       "SELECT changedfile_id AS file_id, array_length(issues, 1) AS bug_count, issues AS bug_ids           " //$NON-NLS-1$
+		                                               + "FROM (                                                                                " //$NON-NLS-1$
+		                                               + "SELECT changedfile_id, ARRAY(                                                         " //$NON-NLS-1$
+		                                               + "	SELECT reportid                                                                     " //$NON-NLS-1$
+		                                               + "	FROM rcsrevision AS revisions                                                       " //$NON-NLS-1$
+		                                               + "	INNER JOIN rcsbugmapping AS mapping                                                 " //$NON-NLS-1$
+		                                               + "		ON (revisions.transaction_id = mapping.transactionid)                           " //$NON-NLS-1$
+		                                               + "	WHERE revisions.changedfile_id = A.changedfile_id                                   " //$NON-NLS-1$
+		                                               + ") AS issues                                                                             " //$NON-NLS-1$
+		                                               + "FROM rcsrevision AS A                                                                 " //$NON-NLS-1$
+		                                               + "ORDER BY changedfile_id                                                               " //$NON-NLS-1$
+		                                               + ") innerquery                                                                          " //$NON-NLS-1$
+		                                               + "WHERE array_length(issues, 1) > 0                                                       " //$NON-NLS-1$
+		                                               + "GROUP BY file_id, issues;                                                               "); //$NON-NLS-1$
+		
+		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid " //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping " //$NON-NLS-1$//$NON-NLS-2$
+		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class File2Bugs implements Annotated {
 		
 		@SuppressWarnings ("unchecked")
 		final List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util,
-		                                                                                              "files2bugs"));
+		                                                                                              "files2bugs")); //$NON-NLS-1$
 		Criteria<RCSFile> fileCriteria;
 		Criteria<Report> reportCriteria;
 		long fileid = -1, tmp = -1, bugid = -1;
@@ -95,11 +96,11 @@ public class File2Bugs implements Annotated {
 				}
 				
 				fileid = tmp;
-				fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid);
+				fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid); //$NON-NLS-1$
 				file = util.load(fileCriteria).iterator().next();
 			}
 			
-			reportCriteria = util.createCriteria(Report.class).eq("id", bugid);
+			reportCriteria = util.createCriteria(Report.class).eq("id", bugid); //$NON-NLS-1$
 			reports.addAll(util.load(reportCriteria));
 		}
 		
@@ -223,12 +224,12 @@ public class File2Bugs implements Annotated {
 	 */
 	public String toCSV() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(getFile().getLatestPath()).append(",");
-		builder.append(getReports().size()).append(",");
+		builder.append(getFile().getLatestPath()).append(","); //$NON-NLS-1$
+		builder.append(getReports().size()).append(","); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();
 		for (final Report report : getReports()) {
 			if (b.length() > 0) {
-				b.append(" ");
+				b.append(" "); //$NON-NLS-1$
 			}
 			b.append(report.getId());
 		}
@@ -243,18 +244,18 @@ public class File2Bugs implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("RCSFile2Bugs [file=");
+		builder.append("RCSFile2Bugs [file="); //$NON-NLS-1$
 		builder.append(getFile().getGeneratedId());
-		builder.append(", reports=");
+		builder.append(", reports="); //$NON-NLS-1$
 		final StringBuilder b = new StringBuilder();
 		for (final Report report : getReports()) {
 			if (b.length() > 0) {
-				b.append(",");
+				b.append(","); //$NON-NLS-1$
 			}
 			b.append(report.getId());
 		}
 		builder.append(b);
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

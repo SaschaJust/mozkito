@@ -231,9 +231,9 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("MappableTransaction [transaction=");
-		builder.append(this.transaction);
-		builder.append("]");
+		builder.append("MappableTransaction [transaction="); //$NON-NLS-1$
+		builder.append(getTransaction());
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 }

@@ -13,15 +13,18 @@
 package org.mozkito.mappings.model;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.engines.Engine;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -41,7 +44,7 @@ public class Feature implements Annotated {
 	/** The confidence. */
 	private double                                            confidence;
 	
-	/** The fq class name. */
+	/** The full qualified class name. */
 	private String                                            fqClassName;
 	
 	/** The from field name. */
@@ -119,12 +122,12 @@ public class Feature implements Annotated {
 			}
 		} catch (final ClassNotFoundException e) {
 			if (Logger.logError()) {
-				Logger.error(e, "Cannot find MappingEngine '%s'.", getFqClassName());
+				Logger.error(e, Messages.getString("Feature.engineNotFound", getFqClassName())); //$NON-NLS-1$
 			}
 			throw new ClassLoadingError(e, getFqClassName());
 		} catch (final ClassCastException e) {
 			if (Logger.logError()) {
-				Logger.error(e, "Found corresponding class, but not of type MappingEngine '%s'.", getFqClassName());
+				Logger.error(e, Messages.getString("Feature.classNotEngine", getFqClassName())); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -137,6 +140,41 @@ public class Feature implements Annotated {
 	 */
 	public String getFqClassName() {
 		return this.fqClassName;
+	}
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getHandle() {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 	
 	/**
@@ -242,19 +280,20 @@ public class Feature implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("MappingEngineFeature [confidence=");
+		builder.append(getHandle());
+		builder.append(" [confidence="); //$NON-NLS-1$
 		builder.append(this.confidence);
-		builder.append(", fromFieldName=");
+		builder.append(", fromFieldName="); //$NON-NLS-1$
 		builder.append(this.fromFieldName);
-		builder.append(", toFieldName=");
+		builder.append(", toFieldName="); //$NON-NLS-1$
 		builder.append(this.toFieldName);
-		builder.append(", toSubstring=");
+		builder.append(", toSubstring="); //$NON-NLS-1$
 		builder.append(this.toSubstring);
-		builder.append(", fromSubstring=");
+		builder.append(", fromSubstring="); //$NON-NLS-1$
 		builder.append(this.fromSubstring);
-		builder.append(", fqClassName=");
+		builder.append(", fqClassName="); //$NON-NLS-1$
 		builder.append(this.fqClassName);
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

@@ -271,9 +271,9 @@ public class MappableReport extends MappableEntity implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("MappableReport [report=");
-		builder.append(this.report);
-		builder.append("]");
+		builder.append("MappableReport [report="); //$NON-NLS-1$
+		builder.append(getReport());
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 }

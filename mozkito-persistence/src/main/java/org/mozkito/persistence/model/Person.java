@@ -38,7 +38,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.mozkito.persistence.Annotated;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
@@ -108,7 +107,7 @@ public class Person implements Annotated {
 	 */
 	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
-		                "Creating a person with only (null) values makes no sense.");
+		                "Creating a person with only (null) values makes no sense."); //$NON-NLS-1$
 		addUsername(username);
 		addFullname(fullname);
 		addEmail(email);
@@ -212,25 +211,25 @@ public class Person implements Annotated {
 			return false;
 		}
 		final Person other = (Person) obj;
-		if (this.emailAddresses == null) {
-			if (other.emailAddresses != null) {
+		if (getEmailAddresses() == null) {
+			if (other.getEmailAddresses() != null) {
 				return false;
 			}
-		} else if (!this.emailAddresses.equals(other.emailAddresses)) {
+		} else if (!getEmailAddresses().equals(other.getEmailAddresses())) {
 			return false;
 		}
-		if (this.fullnames == null) {
-			if (other.fullnames != null) {
+		if (getFullnames() == null) {
+			if (other.getFullnames() != null) {
 				return false;
 			}
-		} else if (!this.fullnames.equals(other.fullnames)) {
+		} else if (!getFullnames().equals(other.getFullnames())) {
 			return false;
 		}
-		if (this.usernames == null) {
-			if (other.usernames != null) {
+		if (getUsernames() == null) {
+			if (other.getUsernames() != null) {
 				return false;
 			}
-		} else if (!this.usernames.equals(other.usernames)) {
+		} else if (!getUsernames().equals(other.getUsernames())) {
 			return false;
 		}
 		return true;
@@ -279,19 +278,19 @@ public class Person implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.emailAddresses == null)
+		result = (prime * result) + ((getEmailAddresses() == null)
 		                                                          ? 0
-		                                                          : this.emailAddresses.hashCode());
-		result = (prime * result) + ((this.fullnames == null)
+		                                                          : getEmailAddresses().hashCode());
+		result = (prime * result) + ((getFullnames() == null)
 		                                                     ? 0
-		                                                     : this.fullnames.hashCode());
-		result = (prime * result) + ((this.usernames == null)
+		                                                     : getFullnames().hashCode());
+		result = (prime * result) + ((getUsernames() == null)
 		                                                     ? 0
-		                                                     : this.usernames.hashCode());
+		                                                     : getUsernames().hashCode());
 		return result;
-	}	
+	}
 	
-        /**
+	/**
 	 * @param person
 	 * @return
 	 */
@@ -347,17 +346,18 @@ public class Person implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Person [generatedId=");
+		builder.append(getHandle());
+		builder.append(" [generatedId="); //$NON-NLS-1$
 		builder.append(getGeneratedId());
-		builder.append(", usernames=");
+		builder.append(", usernames="); //$NON-NLS-1$
 		builder.append(getUsernames());
-		builder.append(", emailAddresses=");
+		builder.append(", emailAddresses="); //$NON-NLS-1$
 		builder.append(getEmailAddresses());
-		builder.append(", fullnames=");
+		builder.append(", fullnames="); //$NON-NLS-1$
 		builder.append(getFullnames());
-		builder.append(", hashcode=");
+		builder.append(", hashcode="); //$NON-NLS-1$
 		builder.append(hashCode());
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

@@ -13,17 +13,16 @@
 package org.mozkito.mappings.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.finder.Finder;
@@ -42,16 +41,24 @@ import org.mozkito.persistence.Annotated;
 public class Candidate implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long    serialVersionUID = 1464864624834219097L;
+	private static final long serialVersionUID = 1464864624834219097L;
 	
 	/** the entity under subject. */
-	private final MappableEntity from;
+	private MappableEntity    from;
 	
 	/** The preselectors. */
-	private final Set<String>    selectors        = new HashSet<String>();
+	private Set<String>       selectors        = new HashSet<String>();
 	
 	/** a potential target. */
-	private final MappableEntity to;
+	private MappableEntity    to;
+	
+	/**
+	 * Instantiates a new candidate.
+	 */
+	@Deprecated
+	public Candidate() {
+		// for OpenJPA only
+	}
 	
 	/**
 	 * Instantiates a new candidate.
@@ -156,15 +163,49 @@ public class Candidate implements Annotated {
 	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
 	 */
 	@Id
-	@OneToMany (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final MappableEntity getFrom() {
 		return this.from;
 	}
 	
 	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getHandle() {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+	
+	/**
 	 * @return the votingSelectors
 	 */
-	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	@ElementCollection
 	public final Set<String> getSelectors() {
 		// PRECONDITIONS
 		
@@ -182,7 +223,6 @@ public class Candidate implements Annotated {
 	 * @see org.mozkito.mappings.model.ICandidate#getTo()
 	 */
 	@Id
-	@OneToMany (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final MappableEntity getTo() {
 		return this.to;
 	}
@@ -205,18 +245,70 @@ public class Candidate implements Annotated {
 		return result;
 	}
 	
+	/**
+	 * @param from
+	 *            the from to set
+	 */
+	public void setFrom(final MappableEntity from) {
+		// PRECONDITIONS
+		Condition.notNull(from, "Argument '%s' in '%s'.", "from", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.from = from;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.from, from,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * @param selectors
+	 *            the selectors to set
+	 */
+	public void setSelectors(final Set<String> selectors) {
+		// PRECONDITIONS
+		Condition.notNull(selectors, "Argument '%s' in '%s'.", "selectors", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.selectors = selectors;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.selectors, selectors,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * @param to
+	 *            the to to set
+	 */
+	public void setTo(final MappableEntity to) {
+		// PRECONDITIONS
+		Condition.notNull(to, "Argument '%s' in '%s'.", "to", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.to = to;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.to, to,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("Candidate [from="); //$NON-NLS-1$
-		stringBuilder.append(this.from);
-		stringBuilder.append(", to="); //$NON-NLS-1$
-		stringBuilder.append(this.to);
-		stringBuilder.append("]"); //$NON-NLS-1$
-		return stringBuilder.toString();
+		final StringBuilder builder = new StringBuilder();
+		builder.append(getHandle());
+		builder.append(" [from="); //$NON-NLS-1$
+		builder.append(this.from);
+		builder.append(", to="); //$NON-NLS-1$
+		builder.append(this.to);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

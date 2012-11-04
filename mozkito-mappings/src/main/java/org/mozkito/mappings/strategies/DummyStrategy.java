@@ -39,7 +39,7 @@ public class DummyStrategy extends Strategy {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, DummyStrategy.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -76,8 +76,9 @@ public class DummyStrategy extends Strategy {
 		
 	}
 	
-	private final static String DESCRIPTION = "...";
-	
+	private final static String TAG         = "dummy";                               //$NON-NLS-1$
+	private final static String DESCRIPTION = "Dummy strategy for testing purposes."; //$NON-NLS-1$
+	                                                                                  
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()

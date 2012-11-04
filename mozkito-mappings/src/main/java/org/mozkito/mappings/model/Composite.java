@@ -16,13 +16,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -164,7 +162,6 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getStrategies()
 	 */
-	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
@@ -196,5 +193,21 @@ public class Composite implements Annotated {
 	 */
 	public final void setStrategies(final Map<String, Boolean> strategies) {
 		this.strategies = strategies;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(getHandle());
+		builder.append(" [relation="); //$NON-NLS-1$
+		builder.append(this.relation);
+		builder.append(", strategies="); //$NON-NLS-1$
+		builder.append(JavaUtils.mapToString(this.strategies));
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

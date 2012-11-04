@@ -18,7 +18,6 @@ import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Basic;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -57,9 +56,6 @@ public abstract class MappableEntity implements Annotated {
 	
 	/** The generated id. */
 	private long              generatedId;
-	
-	/** The test. */
-	private int               test;
 	
 	/*
 	 * (non-Javadoc)
@@ -224,17 +220,6 @@ public abstract class MappableEntity implements Annotated {
 	}
 	
 	/**
-	 * Gets the test.
-	 * 
-	 * @return the test
-	 */
-	@Basic
-	@Access (AccessType.PROPERTY)
-	public int getTest() {
-		return this.test;
-	}
-	
-	/**
 	 * Gets the text.
 	 * 
 	 * @return A composition of all text fields
@@ -263,16 +248,6 @@ public abstract class MappableEntity implements Annotated {
 	 */
 	public final void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
-	}
-	
-	/**
-	 * Sets the test.
-	 * 
-	 * @param test
-	 *            the new test
-	 */
-	public void setTest(final int test) {
-		this.test = test;
 	}
 	
 	/**

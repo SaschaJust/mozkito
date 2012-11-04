@@ -19,6 +19,9 @@ import javax.persistence.metamodel.SingularAttribute;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.model.Mapping.class)
+@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
+                             date = "Wed Jan 18 19:05:50 CET 2012")
 public class Mapping_ {
 	
 	public static volatile SingularAttribute<Mapping, Composite>  composite;

@@ -35,7 +35,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.mozkito.persistence.Annotated;
 
-
 /**
  * The Class RCSBranch.
  * 
@@ -58,8 +57,8 @@ public class RCSBranch implements Annotated {
 	private Set<String>       mergedIn           = new HashSet<String>();
 	
 	/** The Constant MASTER_BRANCH_NAME. */
-	public static String      MASTER_BRANCH_NAME = "master";
-	
+	public static String      MASTER_BRANCH_NAME = "master";             //$NON-NLS-1$
+	                                                                      
 	public static void setMasterBranchName(final String name) {
 		MASTER_BRANCH_NAME = name;
 	}
@@ -90,7 +89,7 @@ public class RCSBranch implements Annotated {
 	@Transient
 	@NoneNull
 	public void addMergedIn(final String mergedIn) {
-		this.mergedIn.add(mergedIn);
+		getMergedIn().add(mergedIn);
 	}
 	
 	/**

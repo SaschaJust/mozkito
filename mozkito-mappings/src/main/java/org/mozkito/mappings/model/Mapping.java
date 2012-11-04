@@ -17,8 +17,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -36,13 +38,13 @@ import org.mozkito.persistence.Annotated;
 public class Mapping implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long          serialVersionUID = -2154624198669450359L;
+	private static final long    serialVersionUID = -2154624198669450359L;
 	
 	/** The composite. */
-	private Composite                  composite;
+	private Composite            composite;
 	
 	/** The filters. */
-	private final Map<String, Boolean> filters          = new HashMap<>();
+	private Map<String, Boolean> filters          = new HashMap<>();
 	
 	/**
 	 * Instantiates a new mapping.
@@ -125,6 +127,7 @@ public class Mapping implements Annotated {
 	 * 
 	 * @return the composite
 	 */
+	@Id
 	public final Composite getComposite() {
 		// PRECONDITIONS
 		
@@ -220,7 +223,7 @@ public class Mapping implements Annotated {
 	 * @param composite
 	 *            the composite to set
 	 */
-	public final void setComposite(final Composite composite) {
+	public void setComposite(final Composite composite) {
 		// PRECONDITIONS
 		Condition.notNull(composite, "Argument '%s' in '%s'.", "composite", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -231,5 +234,38 @@ public class Mapping implements Annotated {
 			CompareCondition.equals(this.composite, composite,
 			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * @param filters
+	 *            the filters to set
+	 */
+	public void setFilters(final Map<String, Boolean> filters) {
+		// PRECONDITIONS
+		Condition.notNull(filters, "Argument '%s' in '%s'.", "filters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.filters = filters;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.filters, filters,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(getHandle());
+		builder.append(" [composite="); //$NON-NLS-1$
+		builder.append(this.composite);
+		builder.append(", filters="); //$NON-NLS-1$
+		builder.append(JavaUtils.mapToString(this.filters));
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }

@@ -76,7 +76,6 @@
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
-		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
 		<class>org.mozkito.issues.tracker.model.History</class>
 		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
 		<class>org.mozkito.issues.tracker.model.Report</class>
@@ -109,7 +108,6 @@
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
-		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
 		<class>org.mozkito.issues.tracker.model.History</class>
 		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
 		<class>org.mozkito.issues.tracker.model.Report</class>
@@ -126,7 +124,7 @@
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
 			<!--<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>-->
-			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://quentin.cs.uni-saarland.de/reposuiteTest"/>
+			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://grid1.st.cs.uni-saarland.de/mozkitoTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
 			<property name="openjpa.ConnectionUserName" value="miner"/>
@@ -152,7 +150,6 @@
 		<class>org.mozkito.versions.model.RCSTransaction</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
-		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
 		<class>org.mozkito.issues.tracker.model.History</class>
 		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
 		<class>org.mozkito.issues.tracker.model.Report</class>
@@ -226,7 +223,6 @@
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
-		<class>org.mozkito.issues.tracker.model.CommentPrimaryKey</class>
 		<class>org.mozkito.issues.tracker.model.History</class>
 		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
 		<class>org.mozkito.issues.tracker.model.Report</class>

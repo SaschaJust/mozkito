@@ -137,7 +137,7 @@ public class MappingChain extends Chain<Settings> {
 		// PRECONDITIONS
 		Condition.notNull(this.databaseArguments, "Field '%s' in '%s'.", "databaseArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		Condition.notNull(this.mappingArguments, "Field '%s' in '%s'.", "mappingArguments", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
+		Logger.updateClassLevels();
 		try {
 			final Finder finder = this.mappingArguments.getValue();
 			
@@ -213,7 +213,8 @@ public class MappingChain extends Chain<Settings> {
 			new Persister(group, getSettings(), persistenceUtil);
 			
 			final List<INode<?, ?>> nodes = group.getThreads();
-			for (final INode node : nodes) {
+			
+			for (final INode<?, ?> node : nodes) {
 				if (Logger.logDebug()) {
 					Logger.debug(node.toString());
 				}

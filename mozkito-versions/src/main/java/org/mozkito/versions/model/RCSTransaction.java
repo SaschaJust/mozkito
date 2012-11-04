@@ -52,7 +52,6 @@ import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 
-
 /**
  * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object
  * to database. The attached {@link RCSFile} will not be saved cascaded due to {@link RevisionPrimaryKey}.
@@ -63,9 +62,7 @@ import org.mozkito.persistence.model.PersonContainer;
 @Table (name = "rcstransaction")
 public class RCSTransaction implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7619009648634901112L;
 	
 	/**
@@ -79,6 +76,8 @@ public class RCSTransaction implements Annotated {
 	 *            the timestamp
 	 * @param author
 	 *            the author
+	 * @param originalId
+	 *            the original id
 	 * @return the rCS transaction
 	 */
 	public static RCSTransaction createTransaction(@NotNull final String id,
@@ -100,17 +99,40 @@ public class RCSTransaction implements Annotated {
 		return RCSTransaction.class.getSimpleName();
 	}
 	
+	/** The persons. */
 	private PersonContainer         persons       = new PersonContainer();
+	
+	/** The id. */
 	private String                  id;
+	
+	/** The message. */
 	private String                  message;
+	
+	/** The children. */
 	private Set<RCSTransaction>     children      = new HashSet<RCSTransaction>();
+	
+	/** The branch parent. */
 	private RCSTransaction          branchParent  = null;
+	
+	/** The merge parent. */
 	private RCSTransaction          mergeParent   = null;
+	
+	/** The revisions. */
 	private Collection<RCSRevision> revisions     = new LinkedList<RCSRevision>();
+	
+	/** The java timestamp. */
 	private DateTime                javaTimestamp;
+	
+	/** The tags. */
 	private Set<String>             tags          = new HashSet<String>();
+	
+	/** The original id. */
 	private String                  originalId;
+	
+	/** The atomic. */
 	private boolean                 atomic        = false;
+	
+	/** The branch indices. */
 	private Map<String, Long>       branchIndices = new HashMap<String, Long>();
 	
 	/**
@@ -130,8 +152,8 @@ public class RCSTransaction implements Annotated {
 	 *            the timestamp
 	 * @param author
 	 *            the author
-	 * @param previousRcsTransaction
-	 *            the previous rcs transaction
+	 * @param originalId
+	 *            the original id
 	 */
 	protected RCSTransaction(@NotNull final String id, @NotNull final String message,
 	        @NotNull final DateTime timestamp, @NotNull final Person author, final String originalId) {
@@ -150,6 +172,7 @@ public class RCSTransaction implements Annotated {
 	 * 
 	 * @param tagNames
 	 *            the tag names
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addAllTags(final Collection<String> tagNames) {
@@ -160,22 +183,35 @@ public class RCSTransaction implements Annotated {
 		return ret;
 	}
 	
+	/**
+	 * Adds the branch.
+	 * 
+	 * @param branch
+	 *            the branch
+	 * @param index
+	 *            the index
+	 * @return true, if successful
+	 */
 	@Transient
 	public boolean addBranch(final RCSBranch branch,
 	                         final Long index) {
-		if (this.branchIndices.containsKey(branch.getName())) {
+		if (getBranchIndices().containsKey(branch.getName())) {
 			return false;
 		}
-		this.branchIndices.put(branch.getName(), index);
+		getBranchIndices().put(branch.getName(), index);
 		return true;
 	}
 	
 	/**
+	 * Adds the child.
+	 * 
 	 * @param rcsTransaction
+	 *            the rcs transaction
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addChild(final RCSTransaction rcsTransaction) {
-		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this);
+		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
 		boolean ret = false;
 		
 		if (!getChildren().contains(rcsTransaction)) {
@@ -207,6 +243,7 @@ public class RCSTransaction implements Annotated {
 	 * 
 	 * @param tagName
 	 *            the tag name
+	 * @return true, if successful
 	 */
 	@Transient
 	public boolean addTag(@NotNull final String tagName) {
@@ -218,13 +255,22 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the author.
+	 * 
+	 * @return the author
 	 */
 	@Transient
 	public Person getAuthor() {
-		return getPersons() != null ? getPersons().get("author") : new Person("unknown",null,null);
+		return getPersons() != null
+		                           ? getPersons().get("author") //$NON-NLS-1$
+		                           : new Person("unknown", null, null); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Gets the branch indices.
+	 * 
+	 * @return the branch indices
+	 */
 	@ElementCollection
 	public Map<String, Long> getBranchIndices() {
 		// PRECONDITIONS
@@ -253,8 +299,9 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
-	 * @param branch
-	 * @return
+	 * Gets the branch parent.
+	 * 
+	 * @return the branch parent
 	 */
 	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public RCSTransaction getBranchParent() {
@@ -276,13 +323,17 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
+	 * Gets the children.
+	 * 
 	 * @return the children
 	 */
 	// @Transient
 	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<RCSTransaction> getChildren() {
-		return this.children != null ? this.children : new HashSet<RCSTransaction>();
+		return this.children != null
+		                            ? this.children
+		                            : new HashSet<RCSTransaction>();
 	}
 	
 	/**
@@ -310,6 +361,11 @@ public class RCSTransaction implements Annotated {
 		                             : null;
 	}
 	
+	/**
+	 * Gets the merge parent.
+	 * 
+	 * @return the merge parent
+	 */
 	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	public RCSTransaction getMergeParent() {
 		// PRECONDITIONS
@@ -332,13 +388,17 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
-	 * @return
+	 * Gets the original id.
+	 * 
+	 * @return the original id
 	 */
 	public String getOriginalId() {
 		return this.originalId;
 	}
 	
 	/**
+	 * Gets the persons.
+	 * 
 	 * @return the persons
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
@@ -370,10 +430,14 @@ public class RCSTransaction implements Annotated {
 	 */
 	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
 	public Collection<RCSRevision> getRevisions() {
-		return this.revisions != null ? this.revisions : new HashSet<RCSRevision>();
+		return this.revisions != null
+		                             ? this.revisions
+		                             : new HashSet<RCSRevision>();
 	}
 	
 	/**
+	 * Gets the tags.
+	 * 
 	 * @return the tag
 	 */
 	@ElementCollection
@@ -391,23 +455,43 @@ public class RCSTransaction implements Annotated {
 		return this.javaTimestamp;
 	}
 	
+	/**
+	 * Checks if is atomic.
+	 * 
+	 * @return true, if is atomic
+	 */
 	@Column (columnDefinition = "boolean default 'FALSE'")
 	public boolean isAtomic() {
 		return this.atomic;
 	}
 	
+	/**
+	 * Sets the atomic.
+	 * 
+	 * @param atomic
+	 *            the new atomic
+	 */
 	public void setAtomic(final boolean atomic) {
 		this.atomic = atomic;
 	}
 	
 	/**
+	 * Sets the author.
+	 * 
 	 * @param author
+	 *            the new author
 	 */
 	@Transient
 	public void setAuthor(final Person author) {
-		getPersons().add("author", author);
+		getPersons().add("author", author); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Sets the branch indices.
+	 * 
+	 * @param branchIndices
+	 *            the branch indices
+	 */
 	public void setBranchIndices(final Map<String, Long> branchIndices) {
 		// PRECONDITIONS
 		try {
@@ -417,6 +501,12 @@ public class RCSTransaction implements Annotated {
 		}
 	}
 	
+	/**
+	 * Sets the branch parent.
+	 * 
+	 * @param branchParent
+	 *            the new branch parent
+	 */
 	public void setBranchParent(final RCSTransaction branchParent) {
 		// PRECONDITIONS
 		try {
@@ -427,6 +517,8 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
+	 * Sets the children.
+	 * 
 	 * @param children
 	 *            the children to set
 	 */
@@ -456,6 +548,12 @@ public class RCSTransaction implements Annotated {
 		                                 : null;
 	}
 	
+	/**
+	 * Sets the merge parent.
+	 * 
+	 * @param mergeParent
+	 *            the new merge parent
+	 */
 	public void setMergeParent(final RCSTransaction mergeParent) {
 		// PRECONDITIONS
 		try {
@@ -476,13 +574,18 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
+	 * Sets the original id.
+	 * 
 	 * @param originalId
+	 *            the new original id
 	 */
 	protected void setOriginalId(final String originalId) {
 		this.originalId = originalId;
 	}
 	
 	/**
+	 * Sets the persons.
+	 * 
 	 * @param persons
 	 *            the persons to set
 	 */
@@ -501,7 +604,10 @@ public class RCSTransaction implements Annotated {
 	}
 	
 	/**
+	 * Sets the tags.
+	 * 
 	 * @param tagName
+	 *            the new tags
 	 */
 	public void setTags(final Set<String> tagName) {
 		this.tags = tagName;
@@ -525,44 +631,45 @@ public class RCSTransaction implements Annotated {
 	public String toString() {
 		
 		final StringBuilder string = new StringBuilder();
-		string.append("RCSTransaction [id=");
+		string.append(getHandle());
+		string.append(" [id="); //$NON-NLS-1$
 		string.append(getId());
-		string.append(", message=");
+		string.append(", message="); //$NON-NLS-1$
 		string.append(StringEscapeUtils.escapeJava(getMessage()));
-		string.append(", timestamp=");
+		string.append(", timestamp="); //$NON-NLS-1$
 		string.append(getTimestamp());
-		string.append(", originalid=");
+		string.append(", originalid="); //$NON-NLS-1$
 		string.append(getOriginalId());
-		string.append(", revisionCount=");
+		string.append(", revisionCount="); //$NON-NLS-1$
 		string.append(getRevisions().size());
-		string.append(", author=");
+		string.append(", author="); //$NON-NLS-1$
 		string.append(getAuthor());
-		string.append(", branchParents=");
-		if (this.branchParent == null) {
-			string.append("null");
+		string.append(", branchParents="); //$NON-NLS-1$
+		if (getBranchParent() == null) {
+			string.append("null"); //$NON-NLS-1$
 		} else {
-			string.append(this.branchParent.getId());
+			string.append(getBranchParent().getId());
 		}
-		string.append(", mergeParents=");
-		if (this.mergeParent == null) {
-			string.append("null");
+		string.append(", mergeParents="); //$NON-NLS-1$
+		if (getMergeParent() == null) {
+			string.append("null"); //$NON-NLS-1$
 		} else {
-			string.append(this.mergeParent.getId());
+			string.append(getMergeParent().getId());
 		}
-		string.append(", children=");
-		string.append("[");
+		string.append(", children="); //$NON-NLS-1$
+		string.append("["); //$NON-NLS-1$
 		final StringBuilder builder2 = new StringBuilder();
 		
 		for (final RCSTransaction transaction : getChildren()) {
 			if (builder2.length() > 0) {
-				builder2.append(", ");
+				builder2.append(", "); //$NON-NLS-1$
 			}
 			builder2.append(transaction.getId());
 		}
 		string.append(builder2.toString());
-		string.append("]");
+		string.append("]"); //$NON-NLS-1$
 		
-		string.append("]");
+		string.append("]"); //$NON-NLS-1$
 		return string.toString();
 	}
 }

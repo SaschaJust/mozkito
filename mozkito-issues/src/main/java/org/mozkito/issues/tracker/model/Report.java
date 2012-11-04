@@ -66,7 +66,6 @@ import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 
-
 /**
  * The Class Report.
  * 
@@ -236,7 +235,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public boolean addKeyword(final String keyword) {
-		return this.keywords.add(keyword);
+		return getKeywords().add(keyword);
 	}
 	
 	/**
@@ -248,7 +247,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public boolean addSibling(@NotNull final String sibling) {
-		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling.");
+		Condition.notNull(getSiblings(), "The sibling handler must not be null when adding a sibling."); //$NON-NLS-1$
 		final SortedSet<String> siblings = getSiblings();
 		final boolean ret = siblings.add(sibling);
 		setSiblings(siblings);
@@ -293,9 +292,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Override
 	public int compareTo(final Report o) {
-		final int comp = Integer.valueOf(this.id.length()).compareTo(Integer.valueOf(o.id.length()));
+		final int comp = Integer.valueOf(getId().length()).compareTo(Integer.valueOf(o.getId().length()));
 		if (comp == 0) {
-			return this.id.compareTo(o.id);
+			return getId().compareTo(o.getId());
 		}
 		return comp;
 	}
@@ -329,7 +328,9 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Transient
 	public Person getAssignedTo() {
-		return getPersonContainer() != null ? getPersonContainer().get("assignedTo") : null;
+		return getPersonContainer() != null
+		                                   ? getPersonContainer().get("assignedTo")
+		                                   : null;
 	}
 	
 	/**
@@ -609,7 +610,9 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@Transient
 	public Person getResolver() {
-		return getPersonContainer() != null ? getPersonContainer().get("resolver") : null;
+		return getPersonContainer() != null
+		                                   ? getPersonContainer().get("resolver")
+		                                   : null;
 	}
 	
 	/**
@@ -678,7 +681,9 @@ public class Report implements Annotated, Comparable<Report> {
 	// @ManyToOne (cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Transient
 	public Person getSubmitter() {
-		return getPersonContainer() != null ? getPersonContainer().get("submitter") : null;
+		return getPersonContainer() != null
+		                                   ? getPersonContainer().get("submitter")
+		                                   : null;
 	}
 	
 	/**
@@ -717,9 +722,9 @@ public class Report implements Annotated, Comparable<Report> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.id == null)
+		result = (prime * result) + ((getId() == null)
 		                                              ? 0
-		                                              : this.id.hashCode());
+		                                              : getId().hashCode());
 		return result;
 	}
 	
@@ -730,7 +735,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the assignedTo to set
 	 */
 	public void setAssignedTo(final Person assignedTo) {
-		getPersonContainer().add("assignedTo", assignedTo);
+		getPersonContainer().add("assignedTo", assignedTo); //$NON-NLS-1$
 	}
 	
 	/**
@@ -821,7 +826,7 @@ public class Report implements Annotated, Comparable<Report> {
 	                     final Object fieldValue) {
 		final String lowerFieldName = fieldName.toLowerCase();
 		final Method[] methods = this.getClass().getDeclaredMethods();
-		final String getter = "set" + lowerFieldName;
+		final String getter = "set" + lowerFieldName; //$NON-NLS-1$
 		
 		for (final Method method : methods) {
 			if (method.getName().equalsIgnoreCase(getter) && (method.getParameterTypes().length == 1)
@@ -892,7 +897,7 @@ public class Report implements Annotated, Comparable<Report> {
 		} finally {
 			// POSTCONDITIONS
 			CompareCondition.equals(this.keywords, keywords,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
 	}
 	
@@ -1012,7 +1017,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the resolver to set
 	 */
 	public void setResolver(final Person resolver) {
-		getPersonContainer().add("resolver", resolver);
+		getPersonContainer().add("resolver", resolver); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1077,7 +1082,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the submitter to set
 	 */
 	public void setSubmitter(final Person submitter) {
-		getPersonContainer().add("submitter", submitter);
+		getPersonContainer().add("submitter", submitter); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1166,7 +1171,7 @@ public class Report implements Annotated, Comparable<Report> {
 		} catch (final UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
-		return "BugReport [id="
+		return "Report [id="
 		        + getId()
 		        + ", assignedTo="
 		        + getAssignedTo()
