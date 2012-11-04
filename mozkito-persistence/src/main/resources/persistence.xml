@@ -123,7 +123,7 @@
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
-			<!--<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>-->
+			<property name="openjpa.jdbc.Synchronizemappingss" value="validate"/>
 			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://grid1.st.cs.uni-saarland.de/mozkitoTest"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionPassword" value="miner"/>
