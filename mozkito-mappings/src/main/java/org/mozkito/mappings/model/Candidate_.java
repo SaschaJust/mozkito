@@ -36,4 +36,7 @@ public class Candidate_ {
 	/** The voting selectors. */
 	public static volatile SetAttribute<Candidate, String>              selectors;
 	
+	/** The generated id. */
+	public static volatile SingularAttribute<Candidate, Long>           generatedId;
+	
 }

@@ -18,7 +18,10 @@ import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
@@ -51,6 +54,8 @@ public class Candidate implements Annotated {
 	
 	/** a potential target. */
 	private MappableEntity    to;
+	
+	private long              generatedId;
 	
 	/**
 	 * Instantiates a new candidate.
@@ -162,9 +167,15 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
 	 */
-	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final MappableEntity getFrom() {
 		return this.from;
+	}
+	
+	@Id
+	@GeneratedValue
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**
@@ -222,7 +233,7 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getTo()
 	 */
-	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final MappableEntity getTo() {
 		return this.to;
 	}
@@ -303,6 +314,7 @@ public class Candidate implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
+		
 		builder.append(getHandle());
 		builder.append(" [from="); //$NON-NLS-1$
 		builder.append(this.from);
