@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -31,6 +32,7 @@ import org.mozkito.persistence.Annotated;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
+@Entity
 public class Mapping implements Annotated {
 	
 	/** The Constant serialVersionUID. */

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -117,9 +118,9 @@ public abstract class Engine extends Node {
 						clazz = (Class<? extends Engine>) Class.forName(Engine.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError(
-						                             String.format("Could not load engine '%s'. Does probably not exist. Aborting.",
-						                                           name));
+						throw new Shutdown(
+						                   String.format("Could not load engine '%s'. Does probably not exist. Aborting.",
+						                                 name));
 						
 					}
 					
@@ -186,9 +187,11 @@ public abstract class Engine extends Node {
 							// MappingEngines have to encapsulate their initializer/options. fetch them first.
 							final Class<?>[] declaredClasses = engineClass.getDeclaredClasses();
 							
+							boolean foundOptionClass = false;
 							for (final Class<?> engineOptionClass : declaredClasses) {
 								// check if we found the options to initialize the engine under suspect
 								if (ArgumentSetOptions.class.isAssignableFrom(engineOptionClass)) {
+									foundOptionClass = true;
 									// found options
 									
 									// fetch constructor of the options
@@ -201,21 +204,22 @@ public abstract class Engine extends Node {
 									final ArgumentSetOptions<? extends Engine, ?> engineOption = constructor.newInstance(set,
 									                                                                                     Requirement.contains(this.enabledEnginesOption,
 									                                                                                                          engineClass.getSimpleName()));
-									System.out.println(engineOption
-									        + " is "
-									        + (Requirement.contains(this.enabledEnginesOption,
-									                                engineClass.getSimpleName()).check()
-									                                                                    ? "required"
-									                                                                    : "unrequired"));
-									
 									if (Logger.logDebug()) {
 										Logger.debug("Adding new mapping engines dependency '%s' with list activator '%s'",
 										             engineOption.getTag(), this.enabledEnginesOption.getTag());
 									}
 									
 									this.engineOptions.put(engineClass, engineOption);
-									map.put(engineOption.getName(), engineOption);
+									if (engineOption.required()) {
+										map.put(engineOption.getName(), engineOption);
+									}
 								}
+							}
+							
+							if (!foundOptionClass) {
+								throw new Shutdown(
+								                   String.format("The class '%s' does not have an internal configurator class.",
+								                                 engineClass.getSimpleName()));
 							}
 						} else {
 							if (Logger.logInfo()) {

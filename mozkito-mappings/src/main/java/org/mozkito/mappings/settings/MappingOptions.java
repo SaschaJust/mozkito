@@ -47,9 +47,9 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finder, MappingOptions>> {
 	
-	private static final String   DESCRIPTION = "TODO";
+	private static final String                         DESCRIPTION = "TODO";
 	
-	public static final String    NAME        = "mapping";
+	public static final String                          NAME        = "mappings";             //$NON-NLS-1$
 	static {
 		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
 			
@@ -62,26 +62,30 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 		});
 	}
 	
-	private Engine.Options        engineOptions;
+	private Engine.Options                              engineOptions;
 	
 	/** The engines. */
-	private final Set<Engine>     engines     = new HashSet<Engine>();
+	private final Set<Engine>                           engines     = new HashSet<Engine>();
 	
 	/** The filters. */
-	private final Set<Filter>     filters     = new HashSet<Filter>();
+	private final Set<Filter>                           filters     = new HashSet<Filter>();
 	
-	private Selector.Options      selectorOptions;
+	private Selector.Options                            selectorOptions;
 	
 	/** The selectors. */
-	private final Set<Selector>   selectors   = new HashSet<Selector>();
+	private final Set<Selector>                         selectors   = new HashSet<Selector>();
 	
-	private TupleArgument.Options sourceOptions;
+	private TupleArgument.Options                       sourceOptions;
 	/** The splitters. */
-	private final Set<Splitter>   splitters   = new HashSet<Splitter>();
+	private final Set<Splitter>                         splitters   = new HashSet<Splitter>();
 	/** The strategies. */
-	private final Set<Strategy>   strategies  = new HashSet<Strategy>();
+	private final Set<Strategy>                         strategies  = new HashSet<Strategy>();
 	/** The trainers. */
-	private final Set<Trainer>    trainers    = new HashSet<Trainer>();
+	private final Set<Trainer>                          trainers    = new HashSet<Trainer>();
+	
+	private Strategy.Options                            strategyOptions;
+	
+	private org.mozkito.mappings.filters.Filter.Options filterOptions;
 	
 	/**
 	 * @param argumentSet
@@ -160,31 +164,28 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	public Finder init() {
 		final Finder finder = new Finder();
 		
+		final ArgumentSet<Set<Selector>, Selector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
+		
+		for (final Selector selector : selectorArgument.getValue()) {
+			finder.addSelector(selector);
+		}
+		
 		final ArgumentSet<Set<Engine>, Options> engineArgument = getSettings().getArgumentSet(this.engineOptions);
 		
 		for (final Engine engine : engineArgument.getValue()) {
 			finder.addEngine(engine);
 		}
 		
-		for (final Strategy strategy : this.strategies) {
+		final ArgumentSet<Set<Strategy>, Strategy.Options> strategyArgument = getSettings().getArgumentSet(this.strategyOptions);
+		
+		for (final Strategy strategy : strategyArgument.getValue()) {
 			finder.addStrategy(strategy);
 		}
 		
-		for (final Filter filter : this.filters) {
+		final ArgumentSet<Set<Filter>, Filter.Options> filterArgument = getSettings().getArgumentSet(this.filterOptions);
+		
+		for (final Filter filter : filterArgument.getValue()) {
 			finder.addFilter(filter);
-		}
-		
-		final ArgumentSet<Set<Selector>, Selector.Options> selectorArgument = getSettings().getArgumentSet(this.selectorOptions);
-		for (final Selector selector : selectorArgument.getValue()) {
-			finder.addSelector(selector);
-		}
-		
-		for (final Splitter splitter : this.splitters) {
-			finder.addSplitter(splitter);
-		}
-		
-		for (final Trainer trainer : this.trainers) {
-			finder.addTrainer(trainer);
 		}
 		
 		return finder;
@@ -212,11 +213,17 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			                                               Requirement.required);
 			map.put(this.sourceOptions.getName(), this.sourceOptions);
 			
+			this.selectorOptions = Selector.getOptions(set);
+			map.put(this.selectorOptions.getName(), this.selectorOptions);
+			
 			this.engineOptions = Engine.getOptions(set);
 			map.put(this.engineOptions.getName(), this.engineOptions);
 			
-			this.selectorOptions = Selector.getOptions(set);
-			map.put(this.selectorOptions.getName(), this.selectorOptions);
+			this.strategyOptions = Strategy.getOptions(set);
+			map.put(this.strategyOptions.getName(), this.strategyOptions);
+			
+			this.filterOptions = Filter.getOptions(set);
+			map.put(this.filterOptions.getName(), this.filterOptions);
 			
 			return map;
 		} finally {

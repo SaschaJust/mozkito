@@ -131,6 +131,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public void createSessionFactory(final Properties properties) {
 		if (this.factory == null) {
+			
 			if (this.type == null) {
 				final String url = (String) properties.get("openjpa.ConnectionURL"); //$NON-NLS-1$
 				if (url != null) {

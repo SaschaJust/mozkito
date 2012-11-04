@@ -33,10 +33,7 @@ public class Candidate_ {
 	/** The to. */
 	public static volatile SingularAttribute<Candidate, MappableEntity> to;
 	
-	/** The active selectors. */
-	public static volatile SetAttribute<Candidate, String>              activeSelectors;
-	
 	/** The voting selectors. */
-	public static volatile SetAttribute<Candidate, String>              votingSelectors;
+	public static volatile SetAttribute<Candidate, String>              selectors;
 	
 }

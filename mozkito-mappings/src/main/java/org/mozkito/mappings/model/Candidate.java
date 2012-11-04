@@ -15,7 +15,12 @@ package org.mozkito.mappings.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
@@ -33,6 +38,7 @@ import org.mozkito.persistence.Annotated;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
+@Entity
 public class Candidate implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -42,7 +48,7 @@ public class Candidate implements Annotated {
 	private final MappableEntity from;
 	
 	/** The preselectors. */
-	private final Set<String>    selectors  = new HashSet<String>();
+	private final Set<String>    selectors        = new HashSet<String>();
 	
 	/** a potential target. */
 	private final MappableEntity to;
@@ -72,6 +78,7 @@ public class Candidate implements Annotated {
 	/**
 	 * @param selectors
 	 */
+	@Transient
 	public void addSelectors(final Set<Selector> selectors) {
 		// PRECONDITIONS
 		
@@ -118,6 +125,7 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass1()
 	 */
+	@Transient
 	public String getClass1() {
 		// PRECONDITIONS
 		
@@ -132,6 +140,7 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass2()
 	 */
+	@Transient
 	public String getClass2() {
 		// PRECONDITIONS
 		
@@ -147,22 +156,15 @@ public class Candidate implements Annotated {
 	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
 	 */
 	@Id
+	@OneToMany (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final MappableEntity getFrom() {
 		return this.from;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.ICandidate#getTo()
-	 */
-	@Id
-	public final MappableEntity getTo() {
-		return this.to;
 	}
 	
 	/**
 	 * @return the votingSelectors
 	 */
+	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final Set<String> getSelectors() {
 		// PRECONDITIONS
 		
@@ -173,6 +175,16 @@ public class Candidate implements Annotated {
 			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "votingSelectors", //$NON-NLS-1$ //$NON-NLS-2$
 			                  getClass().getSimpleName());
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.mappings.model.ICandidate#getTo()
+	 */
+	@Id
+	@OneToMany (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	public final MappableEntity getTo() {
+		return this.to;
 	}
 	
 	/*

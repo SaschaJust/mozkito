@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IArgumentSetOptions;
@@ -101,7 +102,6 @@ public abstract class Strategy extends Node {
 			try {
 				
 				final SetArgument argument = getSettings().getArgument(this.enabledStrategiesOption);
-				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {
@@ -110,7 +110,9 @@ public abstract class Strategy extends Node {
 						clazz = (Class<? extends Strategy>) Class.forName(Strategy.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load strategy '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError(
+						                             String.format("Could not load strategy '%s'. Does probably not exist. Aborting.",
+						                                           name));
 						
 					}
 					
@@ -156,42 +158,68 @@ public abstract class Strategy extends Node {
 					                                                                                                      | Modifier.INTERFACE
 					                                                                                                      | Modifier.PRIVATE
 					                                                                                                      | Modifier.PROTECTED);
-					for (final Class<? extends Strategy> c : collection) {
-						if (c.getSuperclass() == Strategy.class) {
-							final Class<?>[] declaredClasses = c.getDeclaredClasses();
-							for (final Class<?> dC : declaredClasses) {
-								if (ArgumentSetOptions.class.isAssignableFrom(dC)) {
-									// found options
+					
+					// first compute the default value for the strategy enabler option, i.e., all implemented strategies
+					for (final Class<? extends Strategy> strategyClass : collection) {
+						defaultSet.add(strategyClass.getSimpleName());
+					}
+					
+					// now create the enabler for the strategies
+					this.enabledStrategiesOption = new SetArgument.Options(
+					                                                       set,
+					                                                       "enabled", Messages.getString("MappingStrategy.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+					                                                       defaultSet, Requirement.required);
+					
+					// iterate over the strategy classes to process dependencies
+					for (final Class<? extends Strategy> strategyClass : collection) {
+						
+						if (strategyClass.getSuperclass() == Strategy.class) {
+							
+							final Class<?>[] declaredClasses = strategyClass.getDeclaredClasses();
+							
+							boolean foundOptionClass = false;
+							for (final Class<?> strategyOptionClass : declaredClasses) {
+								
+								if (ArgumentSetOptions.class.isAssignableFrom(strategyOptionClass)) {
+									foundOptionClass = true;
+									//
 									@SuppressWarnings ("unchecked")
-									final Constructor<ArgumentSetOptions<? extends Strategy, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Strategy, ?>>) dC.getDeclaredConstructor(ArgumentSet.class,
-									                                                                                                                                                              Requirement.class);
-									final ArgumentSetOptions<? extends Strategy, ?> instance = constructor.newInstance(set,
-									                                                                                   Requirement.required);
-									this.engineOptions.put(c, instance);
-									map.put(instance.getName(), instance);
+									final Constructor<ArgumentSetOptions<? extends Strategy, ?>> constructor = (Constructor<ArgumentSetOptions<? extends Strategy, ?>>) strategyOptionClass.getDeclaredConstructor(ArgumentSet.class,
+									                                                                                                                                                                               Requirement.class);
+									
+									final ArgumentSetOptions<? extends Strategy, ?> strategyOption = constructor.newInstance(set,
+									                                                                                         Requirement.required);
+									
+									if (Logger.logDebug()) {
+										Logger.debug("Adding new mapping strategies dependency '%s' with list activator '%s'",
+										             strategyOption.getTag(), this.enabledStrategiesOption.getTag());
+									}
+									
+									this.engineOptions.put(strategyClass, strategyOption);
+									if (strategyOption.required()) {
+										map.put(strategyOption.getName(), strategyOption);
+									}
 								}
+							}
+							
+							if (!foundOptionClass) {
+								throw new Shutdown(
+								                   String.format("The class '%s' does not have an internal configurator class.",
+								                                 strategyClass.getSimpleName()));
 							}
 						} else {
 							if (Logger.logInfo()) {
 								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), Strategy.class.getSimpleName(), c.getSuperclass()
-								                                                                .getSimpleName());
+								            strategyClass.getSimpleName(), Strategy.class.getSimpleName(),
+								            strategyClass.getSuperclass().getSimpleName());
 							}
 						}
-						
-						defaultSet.add(c.getSimpleName());
-						
 					}
 				} catch (final ClassNotFoundException | WrongClassSearchMethodException | IOException
 				        | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				        | NoSuchMethodException | SecurityException | InstantiationException e) {
 					throw new UnrecoverableError(e);
 				}
-				
-				this.enabledStrategiesOption = new SetArgument.Options(
-				                                                       set,
-				                                                       "enabled", Messages.getString("MappingStrategy.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
-				                                                       defaultSet, Requirement.required);
 				
 				map.put(this.enabledStrategiesOption.getName(), this.enabledStrategiesOption);
 				

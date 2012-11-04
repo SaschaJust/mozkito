@@ -13,6 +13,7 @@
 package org.mozkito.mappings.chains;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.messages.ErrorEvent;
@@ -20,6 +21,7 @@ import net.ownhero.dev.andama.messages.StartupEvent;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.INode;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
@@ -69,19 +71,22 @@ public class MappingChain extends Chain<Settings> {
 	 * 
 	 */
 	public MappingChain(final Settings settings) {
-		super(settings, "mapping"); //$NON-NLS-1$
+		super(settings, "mappings"); //$NON-NLS-1$
 		this.threadPool = new Pool(Relation.class.getSimpleName(), this);
 		
 		try {
-			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, "mapping");//$NON-NLS-1$
+			this.databaseOptions = new DatabaseOptions(getSettings().getRoot(), Requirement.required, getName());
 			this.databaseArguments = ArgumentSetFactory.create(this.databaseOptions);
 			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
 			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
 		} catch (final ArgumentRegistrationException e) {
+			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
+			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
+			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
@@ -206,6 +211,13 @@ public class MappingChain extends Chain<Settings> {
 			
 			// save the results in the database
 			new Persister(group, getSettings(), persistenceUtil);
+			
+			final List<INode<?, ?>> nodes = group.getThreads();
+			for (final INode node : nodes) {
+				if (Logger.logDebug()) {
+					Logger.debug(node.toString());
+				}
+			}
 			
 			// final IRCThread t = new IRCThread("mapping");
 			// t.start();

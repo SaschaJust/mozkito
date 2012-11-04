@@ -12,6 +12,16 @@
  ******************************************************************************/
 package org.mozkito.mappings.engines;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Expression;
@@ -22,6 +32,55 @@ import org.mozkito.mappings.requirements.Expression;
  */
 public class ReportModelEngine extends Engine {
 	
+	public static final class Options extends
+	        ArgumentSetOptions<ReportModelEngine, ArgumentSet<ReportModelEngine, Options>> {
+		
+		/**
+		 * @param argumentSet
+		 * @param name
+		 * @param description
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, ReportModelEngine.class.getSimpleName(), DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public ReportModelEngine init() {
+			// PRECONDITIONS
+			
+			try {
+				return new ReportModelEngine();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<String, IOptions<?, ?>>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
+	private static final String DESCRIPTION = "...";
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()
@@ -31,8 +90,7 @@ public class ReportModelEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			return null;
+			return DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

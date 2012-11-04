@@ -30,9 +30,9 @@ import org.mozkito.mappings.requirements.Expression;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class PatchEngine extends Engine {
+public class DummyEngine extends Engine {
 	
-	public static final class Options extends ArgumentSetOptions<PatchEngine, ArgumentSet<PatchEngine, Options>> {
+	public static final class Options extends ArgumentSetOptions<DummyEngine, ArgumentSet<DummyEngine, Options>> {
 		
 		/**
 		 * @param argumentSet
@@ -41,7 +41,7 @@ public class PatchEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, PatchEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, DummyEngine.class.getSimpleName(), DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -49,11 +49,11 @@ public class PatchEngine extends Engine {
 		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 		 */
 		@Override
-		public PatchEngine init() {
+		public DummyEngine init() {
 			// PRECONDITIONS
 			
 			try {
-				return new PatchEngine();
+				return new DummyEngine();
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -78,7 +78,7 @@ public class PatchEngine extends Engine {
 		
 	}
 	
-	private static final String DESCRIPTION = "...";
+	private final static String DESCRIPTION = "...";
 	
 	/*
 	 * (non-Javadoc)
@@ -97,7 +97,7 @@ public class PatchEngine extends Engine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
+	 * @see org.mozkito.mappings.engines.Engine#score(org.mozkito.mappings.mappable.model.MappableEntity,
 	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class PatchEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			addFeature(score, 1.0d, "DUMMY", "DUMMY", "DUMMY", "DUMMY", "DUMMY", "DUMMY"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -115,7 +115,7 @@ public class PatchEngine extends Engine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#supported()
+	 * @see org.mozkito.mappings.engines.Engine#supported()
 	 */
 	@Override
 	public Expression supported() {

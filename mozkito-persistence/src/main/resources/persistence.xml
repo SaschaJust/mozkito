@@ -114,15 +114,14 @@
 		<class>org.mozkito.issues.tracker.model.HistoryElement</class>
 		<class>org.mozkito.issues.tracker.model.Report</class>
 		<class>org.mozkito.issues.tracker.model.EnhancedReport</class>
-		<class>org.mozkito.mappings.model.mappings</class>
-		<class>org.mozkito.mappings.model.Class2issues</class>
-		<class>org.mozkito.mappings.model.File2issues</class>
-		<class>org.mozkito.mappings.model.Filteredmappings</class>
-		<class>org.mozkito.mappings.model.Method2issues</class>
-		<class>org.mozkito.mappings.model.mappingsEngineFeature</class>
-		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleEntity</class>
-		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleReport</class>
-		<class>org.mozkito.mappings.macodeanalysisble.model.MacodeanalysisbleTransaction</class>
+		<class>org.mozkito.mappings.model.Mapping</class>
+		<class>org.mozkito.mappings.model.Relation</class>
+		<class>org.mozkito.mappings.model.Composite</class>
+		<class>org.mozkito.mappings.model.Candidate</class>
+		<class>org.mozkito.mappings.model.Feature</class>
+		<class>org.mozkito.mappings.mappable.model.MappableEntity</class>
+		<class>org.mozkito.mappings.mappable.model.MappableReport</class>
+		<class>org.mozkito.mappings.mappable.model.MappableTransaction</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>

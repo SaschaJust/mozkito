@@ -69,7 +69,7 @@ public abstract class Node {
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(builder,
-			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	

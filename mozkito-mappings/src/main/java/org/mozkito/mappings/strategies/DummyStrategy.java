@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.mappings.engines;
+package org.mozkito.mappings.strategies;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +22,15 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
-import org.mozkito.mappings.mappable.model.MappableEntity;
-import org.mozkito.mappings.model.Relation;
-import org.mozkito.mappings.requirements.Expression;
+import org.mozkito.mappings.model.Composite;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class PatchEngine extends Engine {
+public class DummyStrategy extends Strategy {
 	
-	public static final class Options extends ArgumentSetOptions<PatchEngine, ArgumentSet<PatchEngine, Options>> {
+	public static final class Options extends ArgumentSetOptions<DummyStrategy, ArgumentSet<DummyStrategy, Options>> {
 		
 		/**
 		 * @param argumentSet
@@ -41,7 +39,7 @@ public class PatchEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, PatchEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, DummyStrategy.class.getSimpleName(), DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -49,11 +47,11 @@ public class PatchEngine extends Engine {
 		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
 		 */
 		@Override
-		public PatchEngine init() {
+		public DummyStrategy init() {
 			// PRECONDITIONS
 			
 			try {
-				return new PatchEngine();
+				return new DummyStrategy();
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -78,7 +76,7 @@ public class PatchEngine extends Engine {
 		
 	}
 	
-	private static final String DESCRIPTION = "...";
+	private final static String DESCRIPTION = "...";
 	
 	/*
 	 * (non-Javadoc)
@@ -97,35 +95,17 @@ public class PatchEngine extends Engine {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#score(org.mozkito.mappings.mappable.model.MappableEntity,
-	 * org.mozkito.mappings.mappable.model.MappableEntity, org.mozkito.mappings.model.Relation)
+	 * @see org.mozkito.mappings.strategies.Strategy#map(org.mozkito.mappings.model.Composite)
 	 */
 	@Override
-	public void score(final MappableEntity from,
-	                  final MappableEntity to,
-	                  final Relation score) {
+	public Composite map(final Composite composite) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
+			return composite.addStrategy(this, true);
 		} finally {
 			// POSTCONDITIONS
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.engines.MappingEngine#supported()
-	 */
-	@Override
-	public Expression supported() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO Auto-generated method stub
-			return null;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
 }

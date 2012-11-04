@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -30,6 +35,7 @@ import org.mozkito.persistence.Annotated;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
+@Entity
 public class Composite implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -64,10 +70,11 @@ public class Composite implements Annotated {
 	 * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
 	 */
 	@Transient
-	public void addStrategy(@NotNull final Strategy strategy,
-	                        final Boolean valid) {
+	public Composite addStrategy(@NotNull final Strategy strategy,
+	                             final Boolean valid) {
 		assert !getStrategies().containsKey(strategy.getHandle());
 		getStrategies().put(strategy.getHandle(), valid);
+		return this;
 	}
 	
 	/*
@@ -148,6 +155,7 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getRelation()
 	 */
+	@Id
 	public final Relation getRelation() {
 		return this.relation;
 	}
@@ -156,7 +164,7 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getStrategies()
 	 */
-	
+	@ManyToOne (fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
 	public final Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
