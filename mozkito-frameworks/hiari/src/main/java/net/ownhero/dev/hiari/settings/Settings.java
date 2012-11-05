@@ -216,7 +216,7 @@ public class Settings implements ISettings {
 	private BooleanArgument                               noDefaultValueArg;
 	
 	/** The disable crash arg. */
-	private BooleanArgument                               disableCrashArg;
+	private BooleanArgument                               enableCrashArg;
 	
 	/** The settings arg. */
 	private URIArgument                                   settingsArg;
@@ -346,11 +346,11 @@ public class Settings implements ISettings {
 			                                                                            denyDefaultValuesTag,
 			                                                                            "Ignore default values!",
 			                                                                            false, Requirement.optional));
-			this.disableCrashArg = ArgumentFactory.create(new BooleanArgument.Options(
-			                                                                          getRoot(),
-			                                                                          "disableCrashEmail",
-			                                                                          "If set to `true` no crash emails will be send!",
-			                                                                          null, Requirement.optional));
+			this.enableCrashArg = ArgumentFactory.create(new BooleanArgument.Options(
+			                                                                         getRoot(),
+			                                                                         "enableCrashEmail",
+			                                                                         "If set to `true` crash emails will be send!",
+			                                                                         false, Requirement.optional));
 			this.mailArguments = ArgumentSetFactory.create(new MailOptions(getRoot(), Requirement.required));
 			this.loggerArgs = ArgumentSetFactory.create(new LoggerOptions(getRoot(), Requirement.required));
 		} catch (final ArgumentRegistrationException e) {
@@ -518,8 +518,8 @@ public class Settings implements ISettings {
 	 * 
 	 * @return the disableCrashArg
 	 */
-	public final BooleanArgument getDisableCrashArg() {
-		return this.disableCrashArg;
+	public final BooleanArgument getEnableCrashArg() {
+		return this.enableCrashArg;
 	}
 	
 	/*
@@ -656,8 +656,8 @@ public class Settings implements ISettings {
 	 * @see net.ownhero.dev.andama.settings.ISettings#isCrashEmailDisabled()
 	 */
 	@Override
-	public final boolean isCrashEmailDisabled() {
-		return this.disableCrashArg.getValue();
+	public final boolean isCrashEmailEnabled() {
+		return this.enableCrashArg.getValue();
 	}
 	
 	/**

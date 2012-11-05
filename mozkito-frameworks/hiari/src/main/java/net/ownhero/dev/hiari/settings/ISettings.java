@@ -189,7 +189,7 @@ public interface ISettings {
 	 * 
 	 * @return true, if is crash email disabled
 	 */
-	boolean isCrashEmailDisabled();
+	boolean isCrashEmailEnabled();
 	
 	/**
 	 * Load by class.
