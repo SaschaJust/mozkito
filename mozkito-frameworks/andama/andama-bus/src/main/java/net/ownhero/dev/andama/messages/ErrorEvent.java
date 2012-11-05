@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -13,20 +13,26 @@
 package net.ownhero.dev.andama.messages;
 
 /**
- * The Class StartupEvent.
+ * @author Sascha Just <sascha.just@mozkito.org>
  * 
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class StartupEvent extends Event {
+public class ErrorEvent extends Event {
 	
 	/**
-	 * Instantiates a new startup event.
-	 * 
 	 * @param message
-	 *            the message
+	 * @param type
+	 * @param level
 	 */
-	public StartupEvent(final String message) {
-		super(message, EventType.STARTUP, AccessLevel.PUBLIC);
+	public ErrorEvent(final String message) {
+		super(message, EventType.ERROR, AccessLevel.INTERNAL);
+	}
+	
+	/**
+	 * @param message
+	 * @param level
+	 */
+	public ErrorEvent(final String message, final AccessLevel level) {
+		super(message, EventType.ERROR, AccessLevel.INTERNAL);
 	}
 	
 }

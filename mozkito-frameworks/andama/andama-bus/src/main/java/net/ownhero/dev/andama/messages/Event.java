@@ -175,18 +175,39 @@ public abstract class Event implements IEvent {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see net.ownhero.dev.andama.messages.IEvent#getHandle()
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
 	 */
 	@Override
-	public String getHandle() {
+	public final String getHandle() {
 		// PRECONDITIONS
 		
+		final StringBuilder builder = new StringBuilder();
+		
 		try {
-			return getClass().getSimpleName();
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
 		} finally {
 			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	

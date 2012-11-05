@@ -305,7 +305,7 @@ public class CrashHandler extends ThreadGroup {
 	 *            the report to be send
 	 */
 	private void sendReport(final String report) {
-		if (this.application.getSettings().isCrashEmailDisabled()) {
+		if (this.application.getSettings().isCrashEmailEnabled()) {
 			try {
 				final Properties mailProps = this.application.getSettings().getMailArguments().getValue();
 				
