@@ -266,30 +266,4 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 		
 	}
 	
-	/**
-	 * Test previous desc.
-	 */
-	@Test
-	@DatabaseSettings (unit = "versions")
-	public void testPreviousDESC() {
-		
-		setup(getPersistenceUtil());
-		final RCSTransaction t = getPersistenceUtil().loadById(this.t_9f6f10.getId(), RCSTransaction.class);
-		
-		@SuppressWarnings ("deprecation")
-		final Iterator<RCSTransaction> iterator = RCSPersistenceUtil.getPreviousTransactions(getPersistenceUtil(), t,
-		                                                                                     TransactionSetOrder.DESC)
-		                                                            .iterator();
-		
-		assertTrue(iterator.hasNext());
-		assertEquals(this.t_6bfee3, iterator.next());
-		assertTrue(iterator.hasNext());
-		assertEquals(this.t_45702d, iterator.next());
-		assertTrue(iterator.hasNext());
-		assertEquals(this.t_9c7c6d, iterator.next());
-		assertTrue(iterator.hasNext());
-		assertEquals(this.t_d52295, iterator.next());
-		assertFalse(iterator.hasNext());
-		
-	}
 }
