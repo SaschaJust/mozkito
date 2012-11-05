@@ -17,11 +17,15 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -44,6 +48,8 @@ public class Composite implements Annotated {
 	
 	/** The strategies. */
 	private Map<String, Boolean> strategies       = new HashMap<>();
+	
+	private long                 generatedId;
 	
 	/**
 	 * Instantiates a new composite.
@@ -114,6 +120,15 @@ public class Composite implements Annotated {
 		return getRelation().getFrom();
 	}
 	
+	/**
+	 * @return the generatedId
+	 */
+	@Id
+	@GeneratedValue
+	public long getGeneratedId() {
+		return this.generatedId;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getHandle()
@@ -153,7 +168,7 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getRelation()
 	 */
-	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final Relation getRelation() {
 		return this.relation;
 	}
@@ -173,6 +188,23 @@ public class Composite implements Annotated {
 	@Transient
 	public final MappableEntity getTo() {
 		return getRelation().getTo();
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	public void setGeneratedId(final long generatedId) {
+		// PRECONDITIONS
+		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
+		
+		try {
+			this.generatedId = generatedId;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.generatedId, generatedId,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/**

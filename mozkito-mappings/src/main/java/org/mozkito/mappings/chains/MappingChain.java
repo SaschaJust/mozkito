@@ -59,9 +59,16 @@ import org.mozkito.settings.DatabaseOptions;
  */
 public class MappingChain extends Chain<Settings> {
 	
+	/** The database arguments. */
 	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
+	
+	/** The database options. */
 	private DatabaseOptions                               databaseOptions;
+	
+	/** The mapping arguments. */
 	private ArgumentSet<Finder, MappingOptions>           mappingArguments;
+	
+	/** The mapping options. */
 	private MappingOptions                                mappingOptions;
 	/** The thread pool. */
 	private final Pool                                    threadPool;
@@ -69,6 +76,8 @@ public class MappingChain extends Chain<Settings> {
 	/**
 	 * Instantiates a new mapping chain.
 	 * 
+	 * @param settings
+	 *            the settings
 	 */
 	public MappingChain(final Settings settings) {
 		super(settings, "mappings"); //$NON-NLS-1$

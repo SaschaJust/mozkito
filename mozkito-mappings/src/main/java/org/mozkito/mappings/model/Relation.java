@@ -21,7 +21,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -49,6 +51,7 @@ public class Relation implements Annotated {
 	
 	/** The features. */
 	private Queue<Feature>    features         = new LinkedBlockingQueue<Feature>();
+	private long              generatedId;
 	
 	/**
 	 * Instantiates a new mapping.
@@ -133,7 +136,7 @@ public class Relation implements Annotated {
 	// return null;
 	// }
 	//
-	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public Candidate getCandidate() {
 		return this.candidate;
 	}
@@ -192,10 +195,20 @@ public class Relation implements Annotated {
 	}
 	
 	/**
+	 * @return the generatedId
+	 */
+	@Id
+	@GeneratedValue
+	public long getGeneratedId() {
+		return this.generatedId;
+	}
+	
+	/**
 	 * Gets the simple name of the class.
 	 * 
 	 * @return the simple name of the class.
 	 */
+	@Transient
 	public final String getHandle() {
 		// PRECONDITIONS
 		
@@ -277,6 +290,23 @@ public class Relation implements Annotated {
 	 */
 	public void setFeatures(final Queue<Feature> features) {
 		this.features = features;
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	public void setGeneratedId(final long generatedId) {
+		// PRECONDITIONS
+		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
+		
+		try {
+			this.generatedId = generatedId;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.generatedId, generatedId,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
 	}
 	
 	/*

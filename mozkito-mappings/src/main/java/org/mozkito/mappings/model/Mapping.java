@@ -17,7 +17,10 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -45,6 +48,8 @@ public class Mapping implements Annotated {
 	
 	/** The filters. */
 	private Map<String, Boolean> filters          = new HashMap<>();
+	
+	private long                 generatedId;
 	
 	/**
 	 * Instantiates a new mapping.
@@ -127,16 +132,9 @@ public class Mapping implements Annotated {
 	 * 
 	 * @return the composite
 	 */
-	@Id
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final Composite getComposite() {
-		// PRECONDITIONS
-		
-		try {
-			return this.composite;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.composite, "Field '%s' in '%s'.", "composite", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		return this.composite;
 	}
 	
 	/**
@@ -166,6 +164,15 @@ public class Mapping implements Annotated {
 		} finally {
 			// POSTCONDITIONS
 		}
+	}
+	
+	/**
+	 * @return the generatedId
+	 */
+	@Id
+	@GeneratedValue
+	public long getGeneratedId() {
+		return this.generatedId;
 	}
 	
 	/**
@@ -250,6 +257,23 @@ public class Mapping implements Annotated {
 			// POSTCONDITIONS
 			CompareCondition.equals(this.filters, filters,
 			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	public void setGeneratedId(final long generatedId) {
+		// PRECONDITIONS
+		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
+		
+		try {
+			this.generatedId = generatedId;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.generatedId, generatedId,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
 		}
 	}
 	

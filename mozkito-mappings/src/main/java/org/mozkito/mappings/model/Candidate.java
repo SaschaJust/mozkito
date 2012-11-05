@@ -55,6 +55,7 @@ public class Candidate implements Annotated {
 	/** a potential target. */
 	private MappableEntity    to;
 	
+	/** The generated id. */
 	private long              generatedId;
 	
 	/**
@@ -70,8 +71,6 @@ public class Candidate implements Annotated {
 	 * 
 	 * @param candidatePair
 	 *            a {@link Tuple} representing the pair (from/to)
-	 * @param activeSelectors
-	 *            the selectors
 	 */
 	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair) {
 		this.from = candidatePair.getFirst();
@@ -82,13 +81,23 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#addSelector(org.mozkito.mappings.selectors.Selector)
 	 */
+	/**
+	 * Adds the selector.
+	 * 
+	 * @param selector
+	 *            the selector
+	 * @return true, if successful
+	 */
 	@Transient
 	public boolean addSelector(final Selector selector) {
 		return this.selectors.add(selector.getHandle());
 	}
 	
 	/**
+	 * Adds the selectors.
+	 * 
 	 * @param selectors
+	 *            the selectors
 	 */
 	@Transient
 	public void addSelectors(final Set<Selector> selectors) {
@@ -103,6 +112,10 @@ public class Candidate implements Annotated {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	@Transient
 	public boolean equals(final Object obj) {
@@ -137,6 +150,11 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass1()
 	 */
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
+	 */
 	@Transient
 	public String getClass1() {
 		// PRECONDITIONS
@@ -151,6 +169,11 @@ public class Candidate implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getClass2()
+	 */
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
 	 */
 	@Transient
 	public String getClass2() {
@@ -167,11 +190,21 @@ public class Candidate implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getFrom()
 	 */
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
 	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final MappableEntity getFrom() {
 		return this.from;
 	}
 	
+	/**
+	 * Gets the generated id.
+	 * 
+	 * @return the generated id
+	 */
 	@Id
 	@GeneratedValue
 	public long getGeneratedId() {
@@ -183,6 +216,7 @@ public class Candidate implements Annotated {
 	 * 
 	 * @return the simple name of the class.
 	 */
+	@Transient
 	public final String getHandle() {
 		// PRECONDITIONS
 		
@@ -214,6 +248,8 @@ public class Candidate implements Annotated {
 	}
 	
 	/**
+	 * Gets the selectors.
+	 * 
 	 * @return the votingSelectors
 	 */
 	@ElementCollection
@@ -232,6 +268,11 @@ public class Candidate implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.ICandidate#getTo()
+	 */
+	/**
+	 * Gets the to.
+	 * 
+	 * @return the to
 	 */
 	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
 	public final MappableEntity getTo() {
@@ -257,6 +298,8 @@ public class Candidate implements Annotated {
 	}
 	
 	/**
+	 * Sets the from.
+	 * 
 	 * @param from
 	 *            the from to set
 	 */
@@ -274,6 +317,27 @@ public class Candidate implements Annotated {
 	}
 	
 	/**
+	 * Sets the generated id.
+	 * 
+	 * @param generatedId
+	 *            the generatedId to set
+	 */
+	public void setGeneratedId(final long generatedId) {
+		// PRECONDITIONS
+		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
+		
+		try {
+			this.generatedId = generatedId;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.generatedId, generatedId,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+		}
+	}
+	
+	/**
+	 * Sets the selectors.
+	 * 
 	 * @param selectors
 	 *            the selectors to set
 	 */
@@ -291,6 +355,8 @@ public class Candidate implements Annotated {
 	}
 	
 	/**
+	 * Sets the to.
+	 * 
 	 * @param to
 	 *            the to to set
 	 */
