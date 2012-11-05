@@ -19,15 +19,15 @@ import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.mozkito.mappings.elements.CandidateId;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.selectors.Selector;
@@ -41,6 +41,7 @@ import org.mozkito.persistence.Annotated;
  * 
  */
 @Entity
+@IdClass (CandidateId.class)
 public class Candidate implements Annotated {
 	
 	/** The Constant serialVersionUID. */
@@ -54,9 +55,6 @@ public class Candidate implements Annotated {
 	
 	/** a potential target. */
 	private MappableEntity    to;
-	
-	/** The generated id. */
-	private long              generatedId;
 	
 	/**
 	 * Instantiates a new candidate.
@@ -129,18 +127,18 @@ public class Candidate implements Annotated {
 			return false;
 		}
 		final Candidate other = (Candidate) obj;
-		if (this.from == null) {
-			if (other.from != null) {
+		if (getFrom() == null) {
+			if (other.getFrom() != null) {
 				return false;
 			}
-		} else if (!this.from.equals(other.from)) {
+		} else if (!getFrom().equals(other.getFrom())) {
 			return false;
 		}
-		if (this.to == null) {
-			if (other.to != null) {
+		if (getTo() == null) {
+			if (other.getTo() != null) {
 				return false;
 			}
-		} else if (!this.to.equals(other.to)) {
+		} else if (!getTo().equals(other.getTo())) {
 			return false;
 		}
 		return true;
@@ -195,20 +193,10 @@ public class Candidate implements Annotated {
 	 * 
 	 * @return the from
 	 */
-	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
-	public final MappableEntity getFrom() {
-		return this.from;
-	}
-	
-	/**
-	 * Gets the generated id.
-	 * 
-	 * @return the generated id
-	 */
 	@Id
-	@GeneratedValue
-	public long getGeneratedId() {
-		return this.generatedId;
+	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
+	public MappableEntity getFrom() {
+		return this.from;
 	}
 	
 	/**
@@ -253,29 +241,20 @@ public class Candidate implements Annotated {
 	 * @return the votingSelectors
 	 */
 	@ElementCollection
-	public final Set<String> getSelectors() {
-		// PRECONDITIONS
+	public Set<String> getSelectors() {
 		
-		try {
-			return this.selectors;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.selectors, "Field '%s' in '%s'.", "votingSelectors", //$NON-NLS-1$ //$NON-NLS-2$
-			                  getClass().getSimpleName());
-		}
+		return this.selectors;
+		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mappings.model.ICandidate#getTo()
-	 */
 	/**
 	 * Gets the to.
 	 * 
 	 * @return the to
 	 */
+	@Id
 	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
-	public final MappableEntity getTo() {
+	public MappableEntity getTo() {
 		return this.to;
 	}
 	
@@ -288,12 +267,12 @@ public class Candidate implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.from == null)
+		result = (prime * result) + ((getFrom() == null)
 		                                                ? 0
-		                                                : this.from.hashCode());
-		result = (prime * result) + ((this.to == null)
+		                                                : getFrom().hashCode());
+		result = (prime * result) + ((getTo() == null)
 		                                              ? 0
-		                                              : this.to.hashCode());
+		                                              : getTo().hashCode());
 		return result;
 	}
 	
@@ -304,35 +283,8 @@ public class Candidate implements Annotated {
 	 *            the from to set
 	 */
 	public void setFrom(final MappableEntity from) {
-		// PRECONDITIONS
-		Condition.notNull(from, "Argument '%s' in '%s'.", "from", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		this.from = from;
 		
-		try {
-			this.from = from;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.from, from,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Sets the generated id.
-	 * 
-	 * @param generatedId
-	 *            the generatedId to set
-	 */
-	public void setGeneratedId(final long generatedId) {
-		// PRECONDITIONS
-		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
-		
-		try {
-			this.generatedId = generatedId;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.generatedId, generatedId,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
 	}
 	
 	/**
@@ -342,16 +294,9 @@ public class Candidate implements Annotated {
 	 *            the selectors to set
 	 */
 	public void setSelectors(final Set<String> selectors) {
-		// PRECONDITIONS
-		Condition.notNull(selectors, "Argument '%s' in '%s'.", "selectors", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		try {
-			this.selectors = selectors;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.selectors, selectors,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
+		this.selectors = selectors;
+		
 	}
 	
 	/**
@@ -361,16 +306,8 @@ public class Candidate implements Annotated {
 	 *            the to to set
 	 */
 	public void setTo(final MappableEntity to) {
-		// PRECONDITIONS
-		Condition.notNull(to, "Argument '%s' in '%s'.", "to", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		this.to = to;
 		
-		try {
-			this.to = to;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.to, to,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
 	}
 	
 	/*
@@ -383,9 +320,9 @@ public class Candidate implements Annotated {
 		
 		builder.append(getHandle());
 		builder.append(" [from="); //$NON-NLS-1$
-		builder.append(this.from);
+		builder.append(getFrom());
 		builder.append(", to="); //$NON-NLS-1$
-		builder.append(this.to);
+		builder.append(getTo());
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}

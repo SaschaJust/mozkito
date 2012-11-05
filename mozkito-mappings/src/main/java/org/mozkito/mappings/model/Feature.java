@@ -62,6 +62,7 @@ public class Feature implements Annotated {
 	/**
 	 * used by persistence provider only.
 	 */
+	@Deprecated
 	Feature() {
 	}
 	

@@ -16,16 +16,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -49,8 +48,6 @@ public class Composite implements Annotated {
 	/** The strategies. */
 	private Map<String, Boolean> strategies       = new HashMap<>();
 	
-	private long                 generatedId;
-	
 	/**
 	 * Instantiates a new composite.
 	 */
@@ -73,6 +70,15 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#addStrategy(java.lang.String, java.lang.Boolean)
 	 */
+	/**
+	 * Adds the strategy.
+	 * 
+	 * @param strategy
+	 *            the strategy
+	 * @param valid
+	 *            the valid
+	 * @return the composite
+	 */
 	@Transient
 	public Composite addStrategy(@NotNull final Strategy strategy,
 	                             final Boolean valid) {
@@ -83,7 +89,38 @@ public class Composite implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Composite other = (Composite) obj;
+		if (this.relation == null) {
+			if (other.relation != null) {
+				return false;
+			}
+		} else if (!this.relation.equals(other.relation)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IComposite#getClass1()
+	 */
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
 	 */
 	@Transient
 	public String getClass1() {
@@ -100,6 +137,11 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IComposite#getClass2()
 	 */
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
+	 */
 	@Transient
 	public String getClass2() {
 		// PRECONDITIONS
@@ -115,23 +157,24 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getFrom()
 	 */
-	@Transient
-	public final MappableEntity getFrom() {
-		return getRelation().getFrom();
-	}
-	
 	/**
-	 * @return the generatedId
+	 * Gets the from.
+	 * 
+	 * @return the from
 	 */
-	@Id
-	@GeneratedValue
-	public long getGeneratedId() {
-		return this.generatedId;
+	@Transient
+	public MappableEntity getFrom() {
+		return getRelation().getFrom();
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getHandle()
+	 */
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
 	 */
 	@Transient
 	public final String getHandle() {
@@ -168,8 +211,14 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getRelation()
 	 */
+	/**
+	 * Gets the relation.
+	 * 
+	 * @return the relation
+	 */
+	@Id
 	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
-	public final Relation getRelation() {
+	public Relation getRelation() {
 		return this.relation;
 	}
 	
@@ -177,7 +226,13 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getStrategies()
 	 */
-	public final Map<String, Boolean> getStrategies() {
+	/**
+	 * Gets the strategies.
+	 * 
+	 * @return the strategies
+	 */
+	@ElementCollection
+	public Map<String, Boolean> getStrategies() {
 		return this.strategies;
 	}
 	
@@ -185,26 +240,28 @@ public class Composite implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IComposite#getTo()
 	 */
+	/**
+	 * Gets the to.
+	 * 
+	 * @return the to
+	 */
 	@Transient
-	public final MappableEntity getTo() {
+	public MappableEntity getTo() {
 		return getRelation().getTo();
 	}
 	
-	/**
-	 * @param generatedId
-	 *            the generatedId to set
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
-	public void setGeneratedId(final long generatedId) {
-		// PRECONDITIONS
-		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
-		
-		try {
-			this.generatedId = generatedId;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.generatedId, generatedId,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.relation == null)
+		                                                    ? 0
+		                                                    : this.relation.hashCode());
+		return result;
 	}
 	
 	/**
@@ -213,7 +270,7 @@ public class Composite implements Annotated {
 	 * @param relation
 	 *            the relation to set
 	 */
-	public final void setRelation(final Relation relation) {
+	public void setRelation(final Relation relation) {
 		this.relation = relation;
 	}
 	
@@ -223,7 +280,7 @@ public class Composite implements Annotated {
 	 * @param strategies
 	 *            the strategies to set
 	 */
-	public final void setStrategies(final Map<String, Boolean> strategies) {
+	public void setStrategies(final Map<String, Boolean> strategies) {
 		this.strategies = strategies;
 	}
 	

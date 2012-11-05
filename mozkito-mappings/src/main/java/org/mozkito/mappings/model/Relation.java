@@ -21,9 +21,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -47,11 +46,11 @@ public class Relation implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8606759070008468513L;
 	
+	/** The candidate. */
 	private Candidate         candidate;
 	
 	/** The features. */
 	private Queue<Feature>    features         = new LinkedBlockingQueue<Feature>();
-	private long              generatedId;
 	
 	/**
 	 * Instantiates a new mapping.
@@ -66,10 +65,8 @@ public class Relation implements Annotated {
 	/**
 	 * Instantiates a new mapping.
 	 * 
-	 * @param element1
-	 *            the element1
-	 * @param element2
-	 *            the element2
+	 * @param candidate
+	 *            the candidate
 	 */
 	public Relation(final Candidate candidate) {
 		this.candidate = candidate;
@@ -112,8 +109,41 @@ public class Relation implements Annotated {
 	 * (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	/**
+	 * Compare to.
+	 * 
+	 * @param arg0
+	 *            the arg0
+	 * @return the int
+	 */
 	public int compareTo(final Relation arg0) {
 		return Double.compare(getTotalConfidence(), arg0.getTotalConfidence());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Relation other = (Relation) obj;
+		if (this.candidate == null) {
+			if (other.candidate != null) {
+				return false;
+			}
+		} else if (!this.candidate.equals(other.candidate)) {
+			return false;
+		}
+		return true;
 	}
 	
 	// /**
@@ -136,7 +166,13 @@ public class Relation implements Annotated {
 	// return null;
 	// }
 	//
-	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
+	/**
+	 * Gets the candidate.
+	 * 
+	 * @return the candidate
+	 */
+	@Id
+	@OneToOne (fetch = FetchType.EAGER, cascade = {})
 	public Candidate getCandidate() {
 		return this.candidate;
 	}
@@ -144,6 +180,11 @@ public class Relation implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getClass1()
+	 */
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
 	 */
 	@Transient
 	public String getClass1() {
@@ -153,6 +194,11 @@ public class Relation implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getClass2()
+	 */
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
 	 */
 	@Transient
 	public String getClass2() {
@@ -189,18 +235,14 @@ public class Relation implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getElement1()
 	 */
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
 	@Transient
 	public MappableEntity getFrom() {
 		return getCandidate().getFrom();
-	}
-	
-	/**
-	 * @return the generatedId
-	 */
-	@Id
-	@GeneratedValue
-	public long getGeneratedId() {
-		return this.generatedId;
 	}
 	
 	/**
@@ -243,6 +285,11 @@ public class Relation implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getElement2()
 	 */
+	/**
+	 * Gets the to.
+	 * 
+	 * @return the to
+	 */
 	@Transient
 	public MappableEntity getTo() {
 		return getCandidate().getTo();
@@ -251,6 +298,11 @@ public class Relation implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.model.IMapping#getTotalConfidence()
+	 */
+	/**
+	 * Gets the total confidence.
+	 * 
+	 * @return the total confidence
 	 */
 	@Transient
 	public double getTotalConfidence() {
@@ -273,7 +325,23 @@ public class Relation implements Annotated {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.candidate == null)
+		                                                     ? 0
+		                                                     : this.candidate.hashCode());
+		return result;
+	}
+	
 	/**
+	 * Sets the candidate.
+	 * 
 	 * @param candidate
 	 *            the candidate to set
 	 */
@@ -290,23 +358,6 @@ public class Relation implements Annotated {
 	 */
 	public void setFeatures(final Queue<Feature> features) {
 		this.features = features;
-	}
-	
-	/**
-	 * @param generatedId
-	 *            the generatedId to set
-	 */
-	public void setGeneratedId(final long generatedId) {
-		// PRECONDITIONS
-		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
-		
-		try {
-			this.generatedId = generatedId;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.generatedId, generatedId,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
 	}
 	
 	/*

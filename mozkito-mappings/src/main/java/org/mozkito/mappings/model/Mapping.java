@@ -16,16 +16,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.mozkito.mappings.filters.Filter;
@@ -48,8 +47,6 @@ public class Mapping implements Annotated {
 	
 	/** The filters. */
 	private Map<String, Boolean> filters          = new HashMap<>();
-	
-	private long                 generatedId;
 	
 	/**
 	 * Instantiates a new mapping.
@@ -83,6 +80,9 @@ public class Mapping implements Annotated {
 	 * 
 	 * @param filter
 	 *            the filter
+	 * @param value
+	 *            the value
+	 * @return the mapping
 	 */
 	@Transient
 	public Mapping addFilter(final Filter filter,
@@ -99,7 +99,38 @@ public class Mapping implements Annotated {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Mapping other = (Mapping) obj;
+		if (this.composite == null) {
+			if (other.composite != null) {
+				return false;
+			}
+		} else if (!this.composite.equals(other.composite)) {
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getClass1()
+	 */
+	/**
+	 * Gets the class1.
+	 * 
+	 * @return the class1
 	 */
 	@Transient
 	public String getClass1() {
@@ -115,6 +146,11 @@ public class Mapping implements Annotated {
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getClass2()
+	 */
+	/**
+	 * Gets the class2.
+	 * 
+	 * @return the class2
 	 */
 	@Transient
 	public String getClass2() {
@@ -132,15 +168,19 @@ public class Mapping implements Annotated {
 	 * 
 	 * @return the composite
 	 */
+	@Id
 	@ManyToOne (fetch = FetchType.EAGER, cascade = {})
-	public final Composite getComposite() {
+	public Composite getComposite() {
 		return this.composite;
 	}
 	
 	/**
+	 * Gets the filters.
+	 * 
 	 * @return the filters
 	 */
-	public final Map<String, Boolean> getFilters() {
+	@ElementCollection
+	public Map<String, Boolean> getFilters() {
 		// PRECONDITIONS
 		
 		try {
@@ -155,6 +195,11 @@ public class Mapping implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getFrom()
 	 */
+	/**
+	 * Gets the from.
+	 * 
+	 * @return the from
+	 */
 	@Transient
 	public MappableEntity getFrom() {
 		// PRECONDITIONS
@@ -164,15 +209,6 @@ public class Mapping implements Annotated {
 		} finally {
 			// POSTCONDITIONS
 		}
-	}
-	
-	/**
-	 * @return the generatedId
-	 */
-	@Id
-	@GeneratedValue
-	public long getGeneratedId() {
-		return this.generatedId;
 	}
 	
 	/**
@@ -215,6 +251,11 @@ public class Mapping implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.model.IMapping#getTo()
 	 */
+	/**
+	 * Gets the to.
+	 * 
+	 * @return the to
+	 */
 	@Transient
 	public MappableEntity getTo() {
 		// PRECONDITIONS
@@ -226,55 +267,42 @@ public class Mapping implements Annotated {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((this.composite == null)
+		                                                     ? 0
+		                                                     : this.composite.hashCode());
+		return result;
+	}
+	
 	/**
+	 * Sets the composite.
+	 * 
 	 * @param composite
 	 *            the composite to set
 	 */
 	public void setComposite(final Composite composite) {
-		// PRECONDITIONS
-		Condition.notNull(composite, "Argument '%s' in '%s'.", "composite", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		try {
-			this.composite = composite;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.composite, composite,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
+		this.composite = composite;
+		
 	}
 	
 	/**
+	 * Sets the filters.
+	 * 
 	 * @param filters
 	 *            the filters to set
 	 */
 	public void setFilters(final Map<String, Boolean> filters) {
-		// PRECONDITIONS
-		Condition.notNull(filters, "Argument '%s' in '%s'.", "filters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		try {
-			this.filters = filters;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.filters, filters,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * @param generatedId
-	 *            the generatedId to set
-	 */
-	public void setGeneratedId(final long generatedId) {
-		// PRECONDITIONS
-		Condition.notNull(generatedId, "Argument '%s' in '%s'.", "generatedId", getClass().getSimpleName());
+		this.filters = filters;
 		
-		try {
-			this.generatedId = generatedId;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.generatedId, generatedId,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
-		}
 	}
 	
 	/*
@@ -286,7 +314,7 @@ public class Mapping implements Annotated {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(getHandle());
 		builder.append(" [composite="); //$NON-NLS-1$
-		builder.append(this.composite);
+		builder.append(getComposite());
 		builder.append(", filters="); //$NON-NLS-1$
 		builder.append(JavaUtils.mapToString(this.filters));
 		builder.append("]"); //$NON-NLS-1$

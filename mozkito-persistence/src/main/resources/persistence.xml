@@ -117,6 +117,7 @@
 		<class>org.mozkito.mappings.model.Composite</class>
 		<class>org.mozkito.mappings.model.Candidate</class>
 		<class>org.mozkito.mappings.model.Feature</class>
+		<class>org.mozkito.mappings.model.Pair</class>
 		<class>org.mozkito.mappings.mappable.model.MappableEntity</class>
 		<class>org.mozkito.mappings.mappable.model.MappableReport</class>
 		<class>org.mozkito.mappings.mappable.model.MappableTransaction</class>
