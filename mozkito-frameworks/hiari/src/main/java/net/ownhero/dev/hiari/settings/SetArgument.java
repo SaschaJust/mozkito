@@ -135,8 +135,10 @@ public class SetArgument extends Argument<HashSet<String>, SetArgument.Options> 
 		try {
 			this.delimiter = options.getDelimiter();
 			setStringValue(options.getDefaultValue() != null
-			                                                ? StringUtils.join(options.getDefaultValue(),
-			                                                                   this.delimiter)
+			                                                ? (!options.getDefaultValue().isEmpty())
+			                                                                                        ? StringUtils.join(options.getDefaultValue(),
+			                                                                                                           this.delimiter)
+			                                                                                        : "[]"
 			                                                : null);
 		} finally {
 			Condition.notNull(this.delimiter, "The delimiter in %s must not be null.", getHandle());
@@ -163,12 +165,15 @@ public class SetArgument extends Argument<HashSet<String>, SetArgument.Options> 
 					if (Logger.logWarn()) {
 						Logger.warn("Optional argument is not set: %s", getTag());
 					}
-					setCachedValue(null);
+					setCachedValue(getDefaultValue());
 					ret = true;
 				}
 			} else {
 				final HashSet<String> result = new HashSet<String>();
-				
+				if (getStringValue().equals("[]")) {
+					setCachedValue(result);
+					return true;
+				}
 				for (final String s : getStringValue().split(this.delimiter)) {
 					result.add(s.trim());
 				}
