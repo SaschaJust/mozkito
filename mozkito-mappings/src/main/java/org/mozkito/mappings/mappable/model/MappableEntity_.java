@@ -15,8 +15,5 @@ import javax.persistence.metamodel.SingularAttribute;
 public class MappableEntity_ {
 	
 	/** The generated id. */
-	public static volatile SingularAttribute<MappableEntity, Long>    generatedId;
-	
-	/** The test. */
-	public static volatile SingularAttribute<MappableEntity, Integer> test;
+	public static volatile SingularAttribute<MappableEntity, Long> generatedId;
 }

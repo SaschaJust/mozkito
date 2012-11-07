@@ -42,7 +42,7 @@ public class ReportModelEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ReportModelEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, ReportModelEngine.class.getSimpleName(), ReportModelEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -90,7 +90,7 @@ public class ReportModelEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return ReportModelEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

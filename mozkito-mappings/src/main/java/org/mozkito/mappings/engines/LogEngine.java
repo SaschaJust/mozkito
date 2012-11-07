@@ -42,7 +42,7 @@ public class LogEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, LogEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, LogEngine.class.getSimpleName(), LogEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -90,7 +90,7 @@ public class LogEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return LogEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

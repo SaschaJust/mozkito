@@ -11,7 +11,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.model.Candidate.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Nov 05 13:24:42 CET 2012")
+                             date = "Mon Nov 05 13:27:42 CET 2012")
 public class Candidate_ {
 	
 	public static volatile SingularAttribute<Candidate, MappableEntity> from;

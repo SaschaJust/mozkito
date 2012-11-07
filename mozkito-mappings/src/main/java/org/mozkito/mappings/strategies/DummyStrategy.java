@@ -39,7 +39,7 @@ public class DummyStrategy extends Strategy {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, DummyStrategy.TAG, DummyStrategy.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -88,7 +88,7 @@ public class DummyStrategy extends Strategy {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return DummyStrategy.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -71,8 +71,8 @@ public class Candidate implements Annotated {
 	 *            a {@link Tuple} representing the pair (from/to)
 	 */
 	public Candidate(final Tuple<? extends MappableEntity, ? extends MappableEntity> candidatePair) {
-		this.from = candidatePair.getFirst();
-		this.to = candidatePair.getSecond();
+		setFrom(candidatePair.getFirst());
+		setTo(candidatePair.getSecond());
 	}
 	
 	/*
@@ -88,7 +88,7 @@ public class Candidate implements Annotated {
 	 */
 	@Transient
 	public boolean addSelector(final Selector selector) {
-		return this.selectors.add(selector.getHandle());
+		return getSelectors().add(selector.getHandle());
 	}
 	
 	/**

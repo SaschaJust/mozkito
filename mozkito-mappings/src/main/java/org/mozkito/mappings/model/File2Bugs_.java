@@ -12,7 +12,7 @@ import org.mozkito.versions.model.RCSFile;
 
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.model.File2Bugs.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Nov 05 13:24:42 CET 2012")
+                             date = "Mon Nov 05 13:27:42 CET 2012")
 public class File2Bugs_ {
 	
 	public static volatile SingularAttribute<File2Bugs, RCSFile> file;

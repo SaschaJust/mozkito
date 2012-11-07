@@ -113,11 +113,11 @@ public class Mapping implements Annotated {
 			return false;
 		}
 		final Mapping other = (Mapping) obj;
-		if (this.composite == null) {
-			if (other.composite != null) {
+		if (getComposite() == null) {
+			if (other.getComposite() != null) {
 				return false;
 			}
-		} else if (!this.composite.equals(other.composite)) {
+		} else if (!getComposite().equals(other.getComposite())) {
 			return false;
 		}
 		return true;
@@ -181,14 +181,7 @@ public class Mapping implements Annotated {
 	 */
 	@ElementCollection
 	public Map<String, Boolean> getFilters() {
-		// PRECONDITIONS
-		
-		try {
-			return this.filters;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.filters, "Field '%s' in '%s'.", "filters", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		return this.filters;
 	}
 	
 	/*
@@ -275,9 +268,9 @@ public class Mapping implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.composite == null)
+		result = (prime * result) + ((getComposite() == null)
 		                                                     ? 0
-		                                                     : this.composite.hashCode());
+		                                                     : getComposite().hashCode());
 		return result;
 	}
 	
@@ -316,7 +309,7 @@ public class Mapping implements Annotated {
 		builder.append(" [composite="); //$NON-NLS-1$
 		builder.append(getComposite());
 		builder.append(", filters="); //$NON-NLS-1$
-		builder.append(JavaUtils.mapToString(this.filters));
+		builder.append(JavaUtils.mapToString(getFilters()));
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}

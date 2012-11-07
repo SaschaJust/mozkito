@@ -9,7 +9,7 @@ import javax.persistence.metamodel.SingularAttribute;
 
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.mappings.model.Relation.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Nov 05 13:24:42 CET 2012")
+                             date = "Mon Nov 05 13:27:42 CET 2012")
 public class Relation_ {
 	
 	public static volatile SingularAttribute<Relation, Candidate> candidate;

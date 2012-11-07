@@ -13,6 +13,7 @@
 package org.mozkito.mappings.mappable.model;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.mappings.mappable.FieldKey;
@@ -192,8 +194,34 @@ public abstract class MappableEntity implements Annotated {
 	 * @return the handle
 	 */
 	@Transient
-	public String getHandle() {
-		return this.getClass().getSimpleName();
+	public final String getHandle() {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> clazz = getClass();
+			list.add(clazz);
+			
+			while ((clazz = clazz.getEnclosingClass()) != null) {
+				list.addFirst(clazz);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder,
+			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 	
 	/**

@@ -42,7 +42,7 @@ public class TopicMatchEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TopicMatchEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, TopicMatchEngine.class.getSimpleName(), TopicMatchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -90,7 +90,7 @@ public class TopicMatchEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return TopicMatchEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -283,17 +283,17 @@ public class Feature implements Annotated {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(getHandle());
 		builder.append(" [confidence="); //$NON-NLS-1$
-		builder.append(this.confidence);
+		builder.append(getConfidence());
 		builder.append(", fromFieldName="); //$NON-NLS-1$
-		builder.append(this.fromFieldName);
+		builder.append(getTransactionFieldName());
 		builder.append(", toFieldName="); //$NON-NLS-1$
-		builder.append(this.toFieldName);
+		builder.append(getReportFieldName());
 		builder.append(", toSubstring="); //$NON-NLS-1$
-		builder.append(this.toSubstring);
+		builder.append(getReportSubstring());
 		builder.append(", fromSubstring="); //$NON-NLS-1$
-		builder.append(this.fromSubstring);
+		builder.append(getTransactionSubstring());
 		builder.append(", fqClassName="); //$NON-NLS-1$
-		builder.append(this.fqClassName);
+		builder.append(getFqClassName());
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}

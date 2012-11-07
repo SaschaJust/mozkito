@@ -42,7 +42,7 @@ public class CodeFragmentsEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CodeFragmentsEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, CodeFragmentsEngine.class.getSimpleName(), CodeFragmentsEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -90,7 +90,7 @@ public class CodeFragmentsEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return CodeFragmentsEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

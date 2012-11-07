@@ -41,7 +41,7 @@ public class DummyEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, DummyEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, DummyEngine.class.getSimpleName(), DummyEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -89,7 +89,7 @@ public class DummyEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return DummyEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

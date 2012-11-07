@@ -41,7 +41,7 @@ public class PatchEngine extends Engine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, PatchEngine.class.getSimpleName(), DESCRIPTION, requirements);
+			super(argumentSet, PatchEngine.class.getSimpleName(), PatchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -89,7 +89,7 @@ public class PatchEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return PatchEngine.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

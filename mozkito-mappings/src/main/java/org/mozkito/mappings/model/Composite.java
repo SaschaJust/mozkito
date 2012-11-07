@@ -51,9 +51,9 @@ public class Composite implements Annotated {
 	/**
 	 * Instantiates a new composite.
 	 */
-	@SuppressWarnings ("unused")
-	private Composite() {
-		this.relation = null;
+	@Deprecated
+	public Composite() {
+		// openjpa
 	}
 	
 	/**
@@ -103,11 +103,11 @@ public class Composite implements Annotated {
 			return false;
 		}
 		final Composite other = (Composite) obj;
-		if (this.relation == null) {
-			if (other.relation != null) {
+		if (getRelation() == null) {
+			if (other.getRelation() != null) {
 				return false;
 			}
-		} else if (!this.relation.equals(other.relation)) {
+		} else if (!getRelation().equals(other.getRelation())) {
 			return false;
 		}
 		return true;
@@ -167,10 +167,6 @@ public class Composite implements Annotated {
 		return getRelation().getFrom();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.model.IComposite#getHandle()
-	 */
 	/**
 	 * Gets the handle.
 	 * 
@@ -258,9 +254,9 @@ public class Composite implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.relation == null)
+		result = (prime * result) + ((getRelation() == null)
 		                                                    ? 0
-		                                                    : this.relation.hashCode());
+		                                                    : getRelation().hashCode());
 		return result;
 	}
 	
@@ -293,9 +289,9 @@ public class Composite implements Annotated {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(getHandle());
 		builder.append(" [relation="); //$NON-NLS-1$
-		builder.append(this.relation);
+		builder.append(getRelation());
 		builder.append(", strategies="); //$NON-NLS-1$
-		builder.append(JavaUtils.mapToString(this.strategies));
+		builder.append(JavaUtils.mapToString(getStrategies()));
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}

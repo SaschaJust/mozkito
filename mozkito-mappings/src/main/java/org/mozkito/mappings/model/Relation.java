@@ -136,11 +136,11 @@ public class Relation implements Annotated {
 			return false;
 		}
 		final Relation other = (Relation) obj;
-		if (this.candidate == null) {
-			if (other.candidate != null) {
+		if (getCandidate() == null) {
+			if (other.getCandidate() != null) {
 				return false;
 			}
-		} else if (!this.candidate.equals(other.candidate)) {
+		} else if (!getCandidate().equals(other.getCandidate())) {
 			return false;
 		}
 		return true;
@@ -333,9 +333,9 @@ public class Relation implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.candidate == null)
+		result = (prime * result) + ((getCandidate() == null)
 		                                                     ? 0
-		                                                     : this.candidate.hashCode());
+		                                                     : getCandidate().hashCode());
 		return result;
 	}
 	
