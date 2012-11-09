@@ -44,7 +44,6 @@ import org.mozkito.testing.annotation.MozkitoSuiteAnnotation;
 import org.mozkito.testing.annotation.MozkitoTestAnnotation;
 import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 
-
 public class MozkitoSuite extends BlockJUnit4ClassRunner {
 	
 	static class TestResult {
@@ -266,11 +265,17 @@ public class MozkitoSuite extends BlockJUnit4ClassRunner {
 			
 			while ((this.parallel != null) && (builders.size() >= this.parallel)) {
 				boolean found = false;
+				final LinkedList<MozkitoTestBuilder> toRemove = new LinkedList<>();
+				
 				for (final MozkitoTestBuilder b : builders) {
 					if (!builder.isAlive()) {
 						found = true;
-						builders.remove(b);
+						toRemove.add(b);
 					}
+				}
+				
+				for (final MozkitoTestBuilder b : toRemove) {
+					builders.remove(b);
 				}
 				
 				if (!found) {
