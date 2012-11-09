@@ -379,8 +379,6 @@ public abstract class MozkitoTest {
 					        + annotation.toString(), e);
 				}
 			}
-			
-			getPersistenceUtil().shutdown();
 		}
 	}
 	
