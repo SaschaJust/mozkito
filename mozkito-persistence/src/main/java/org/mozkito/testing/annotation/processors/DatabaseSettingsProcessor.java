@@ -17,6 +17,8 @@ import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceManager;
@@ -24,14 +26,11 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
-import net.ownhero.dev.kisa.Logger;
-
 public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.testing.annotation.processors.
-	 * MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
+	 * @see org.mozkito.testing.annotation.processors. MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
 	 */
 	@Override
 	public void setup(final Class<?> aClass,
@@ -76,12 +75,20 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			}
 			
 			try {
+				if (Logger.logAlways()) {
+					Logger.always("Dropping database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
+					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
+				}
 				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
 				                                databaseDriver);
 			} catch (final SQLException ignore) {
 				// ignore
 			}
 			try {
+				if (Logger.logAlways()) {
+					Logger.always("Creating database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
+					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
+				}
 				PersistenceManager.createDatabase(databaseHost, dbName, databaseUsername, databasePassword,
 				                                  databaseType, databaseDriver);
 			} catch (final SQLException e) {
