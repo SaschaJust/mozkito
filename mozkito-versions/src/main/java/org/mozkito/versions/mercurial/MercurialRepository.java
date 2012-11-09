@@ -481,7 +481,7 @@ public class MercurialRepository extends Repository {
 		Condition.notNull(pathName, "Cannot get former path name for null path");
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r",
-		        revision, "--template", "{file_copies%filecopy}" }, this.cloneDir, null, null);
+		        revision, "--template", "{file_copies}" }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
@@ -762,11 +762,11 @@ public class MercurialRepository extends Repository {
 		
 		File localCloneDir = null;
 		if (tmpDir == null) {
-			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir("moskito_hg_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		} else {
-			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_hg_clone_",
 			
 			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
 		}
