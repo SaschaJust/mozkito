@@ -325,7 +325,12 @@ public class Repository_MozkitoTest extends MozkitoTest {
 			final String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
 			                                                                                               3),
 			                                                           "dir_b/file_2_dir_a");
-			assertEquals("dir_a/file_2_dir_a", formerPathName);
+			try {
+				assertEquals("dir_a/file_2_dir_a", formerPathName);
+			} catch (final AssertionError e) {
+				fail(String.format("Failed for repository '%s'. Expected '%s' but got '%s'.", repository.getHandle(),
+				                   "dir_a/file_2_dir_a", formerPathName));
+			}
 		}
 	}
 	
