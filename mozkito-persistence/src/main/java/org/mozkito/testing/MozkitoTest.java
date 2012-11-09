@@ -44,7 +44,6 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.MozkitoTestAnnotation;
 import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
@@ -380,6 +379,8 @@ public abstract class MozkitoTest {
 					        + annotation.toString(), e);
 				}
 			}
+			
+			getPersistenceUtil().shutdown();
 		}
 	}
 	
