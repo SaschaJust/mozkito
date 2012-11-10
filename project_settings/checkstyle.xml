@@ -56,4 +56,7 @@
     <property name="charset" value="UTF-8"/>
   </module>
   <module name="NewlineAtEndOfFile"/>
+  <module name="SuppressionFilter">
+    <property name="file" value="/Users/just/Development/moskito/project_settings/checkstyle_suppressions.xml"/>
+  </module>
 </module>
