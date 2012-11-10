@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -22,7 +22,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
-import org.mozkito.issues.tracker.model.Report;
+
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
@@ -40,7 +40,9 @@ import org.mozkito.mappings.storages.LuceneStorage;
 public class DescriptionSearchEngine extends SearchEngine {
 	
 	/** The Constant description. */
-	private static final String description = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	                                                                                                 
+	private static final String TAG         = "report";                                             //$NON-NLS-1$
 	                                                                                                 
 	/** The parser. */
 	private QueryParser         parser      = null;
@@ -51,7 +53,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return DescriptionSearchEngine.description;
+		return DescriptionSearchEngine.DESCRIPTION;
 	}
 	
 	/*
@@ -64,7 +66,7 @@ public class DescriptionSearchEngine extends SearchEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Relation score) {
-		CompareCondition.equals(to.getBaseType(), Report.class, "The target type has to be a report, but is %s.", //$NON-NLS-1$
+		CompareCondition.equals(to.getBaseType(), TAG, "The target type has to be a report, but is %s.", //$NON-NLS-1$
 		                        to.getBaseType());
 		double confidence = 0d;
 		String toContent = null;

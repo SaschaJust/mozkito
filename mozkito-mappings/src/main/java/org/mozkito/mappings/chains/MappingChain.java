@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,10 +9,9 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.chains;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
@@ -29,6 +28,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -107,39 +107,13 @@ public class MappingChain extends Chain<Settings> {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public final String getHandle() {
-		// PRECONDITIONS
-		
-		final StringBuilder builder = new StringBuilder();
-		
-		try {
-			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
-			Class<?> clazz = getClass();
-			list.add(clazz);
-			
-			while ((clazz = clazz.getEnclosingClass()) != null) {
-				list.addFirst(clazz);
-			}
-			
-			for (final Class<?> c : list) {
-				if (builder.length() > 0) {
-					builder.append('.');
-				}
-				
-				builder.append(c.getSimpleName());
-			}
-			
-			return builder.toString();
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(builder,
-			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+	public String getHandle() {
+		return JavaUtils.getHandle(this);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.toolchain.RepoSuiteToolchain#setup()
+	 * @see net.ownhero.dev.andama.model.Chain#setup()
 	 */
 	@Override
 	public void setup() {

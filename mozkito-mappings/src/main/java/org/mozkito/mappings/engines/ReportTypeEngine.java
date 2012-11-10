@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class ReportTypeEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, ReportTypeEngine.class.getSimpleName(), "...", requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -126,14 +126,17 @@ public class ReportTypeEngine extends Engine {
 	private static final Type   DEFAULT_TYPE       = Type.BUG;
 	
 	/** The constant description. */
-	private static final String DESCRIPTION        = "";      //$NON-NLS-1$
-	                                                           
+	private static final String DESCRIPTION        = Messages.getString("ReportTypeEngine.description"); //$NON-NLS-1$
+	                                                                                                     
+	/** The Constant TAG. */
+	private static final String TAG                = "reportType";                                      //$NON-NLS-1$
+	                                                                                                     
 	/**
 	 * Gets the default confidence.
 	 * 
 	 * @return the defaultconfidence
 	 */
-	private static final Double getDefaultConfidence() {
+	private static Double getDefaultConfidence() {
 		// PRECONDITIONS
 		
 		try {
@@ -150,7 +153,7 @@ public class ReportTypeEngine extends Engine {
 	 * 
 	 * @return the defaultType
 	 */
-	private static final Type getDefaultType() {
+	private static Type getDefaultType() {
 		// PRECONDITIONS
 		
 		try {
@@ -169,8 +172,8 @@ public class ReportTypeEngine extends Engine {
 	private Type   type;
 	
 	/**
-	 * @param value
-	 * @param value2
+	 * @param confidence
+	 * @param type
 	 */
 	public ReportTypeEngine(final Double confidence, final Type type) {
 		// PRECONDITIONS
@@ -188,7 +191,7 @@ public class ReportTypeEngine extends Engine {
 	 * 
 	 * @return the confidence
 	 */
-	private final Double getConfidence() {
+	private Double getConfidence() {
 		// PRECONDITIONS
 		
 		try {

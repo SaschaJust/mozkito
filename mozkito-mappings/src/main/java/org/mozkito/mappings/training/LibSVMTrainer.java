@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.training;
 
 import java.io.BufferedReader;
@@ -27,6 +27,7 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import au.com.bytecode.opencsv.CSVReader;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -35,15 +36,18 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.mappings.strategies.SVMStrategy;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class LibSVMTrainer.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class LibSVMTrainer extends Trainer {
 	
-	private svm_model model;
+	/** The model. */
+	private svm_model        model;
+	
+	/** The Constant MIN_TOKENS. */
+	private static final int MIN_TOKENS = 3;
 	
 	/*
 	 * (non-Javadoc)
@@ -62,7 +66,9 @@ public class LibSVMTrainer extends Trainer {
 	}
 	
 	/**
-	 * @return
+	 * Gets the lib svm model.
+	 * 
+	 * @return the lib svm model
 	 */
 	public svm_model getLibSVMModel() {
 		// PRECONDITIONS
@@ -74,9 +80,19 @@ public class LibSVMTrainer extends Trainer {
 		}
 	}
 	
-	private final void learnValues(final svm_problem problem,
-	                               final Map<Tuple<String, String>, List<Double>> map,
-	                               final double confidence) {
+	/**
+	 * Learn values.
+	 * 
+	 * @param problem
+	 *            the problem
+	 * @param map
+	 *            the map
+	 * @param confidence
+	 *            the confidence
+	 */
+	private void learnValues(final svm_problem problem,
+	                         final Map<Tuple<String, String>, List<Double>> map,
+	                         final double confidence) {
 		int i = 0;
 		for (final Tuple<String, String> relation : map.keySet()) {
 			final List<Double> vector = map.get(relation);
@@ -89,8 +105,17 @@ public class LibSVMTrainer extends Trainer {
 		}
 	}
 	
-	private final Map<Tuple<String, String>, List<Double>> readFile(final File file,
-	                                                                final int vectorLength) {
+	/**
+	 * Read file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param vectorLength
+	 *            the vector length
+	 * @return the map
+	 */
+	private Map<Tuple<String, String>, List<Double>> readFile(final File file,
+	                                                          final int vectorLength) {
 		final Map<Tuple<String, String>, List<Double>> map = new HashMap<>();
 		
 		try (final CSVReader reader = new CSVReader(
@@ -101,7 +126,7 @@ public class LibSVMTrainer extends Trainer {
 			int entry = 0;
 			while ((line = reader.readNext()) != null) {
 				++entry;
-				if (line.length < 3) {
+				if (line.length < MIN_TOKENS) {
 					if (Logger.logError()) {
 						Logger.error("There has to be at least one confidence value in addition to 2 IDs, but got: %s", JavaUtils.arrayToString(line)); //$NON-NLS-1$
 					}
@@ -143,6 +168,15 @@ public class LibSVMTrainer extends Trainer {
 		}
 	}
 	
+	/**
+	 * Train.
+	 * 
+	 * @param positiveInput
+	 *            the positive input
+	 * @param negativeInput
+	 *            the negative input
+	 * @return the svm_model
+	 */
 	public svm_model train(final File positiveInput,
 	                       final File negativeInput) {
 		// PRECONDITIONS

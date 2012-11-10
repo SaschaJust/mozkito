@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.io.BufferedReader;
@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import au.com.bytecode.opencsv.CSVReader;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -39,6 +40,7 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.lang.ArrayUtils;
+
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
@@ -49,7 +51,6 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 
 import serp.util.Strings;
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * The Class RegexEngine.
@@ -89,7 +90,7 @@ public class RegexEngine extends Engine {
 		public Matcher(final String score, final String pattern, final String options, final String comment) {
 			setScore(Double.parseDouble(score));
 			if (!options.isEmpty()) {
-				if (options.equalsIgnoreCase("CASE_INSENSITIVE")) { //$NON-NLS-1$
+				if ("CASE_INSENSITIVE".equalsIgnoreCase(options)) { //$NON-NLS-1$
 					setRegex(new Regex(pattern, Pattern.CASE_INSENSITIVE));
 				} else {
 					throw new UnrecoverableError("Unsupported regular expression option: " + options); //$NON-NLS-1$
@@ -294,6 +295,7 @@ public class RegexEngine extends Engine {
 		
 		try {
 			this.configURI = configURI;
+			final int maxFields = 3;
 			
 			setMatchers(new LinkedList<RegexEngine.Matcher>());
 			
@@ -314,7 +316,7 @@ public class RegexEngine extends Engine {
 						                              line[1],
 						                              line.length > 2
 						                                             ? line[2]
-						                                             : "", line.length > 3 ? Strings.join(ArrayUtils.subarray(line, 3, line.length), " ").replaceAll("^\\s*//\\s*", "") : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+						                                             : "", line.length > maxFields ? Strings.join(ArrayUtils.subarray(line, maxFields, line.length), " ").replaceAll("^\\s*//\\s*", "") : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					}
 				}
 				
@@ -334,7 +336,7 @@ public class RegexEngine extends Engine {
 	 * 
 	 * @return the config
 	 */
-	private final URI getConfigURI() {
+	private URI getConfigURI() {
 		// PRECONDITIONS
 		
 		try {
@@ -359,7 +361,7 @@ public class RegexEngine extends Engine {
 	 * 
 	 * @return the matchers
 	 */
-	private final Collection<Matcher> getMatchers() {
+	private Collection<Matcher> getMatchers() {
 		return this.matchers;
 	}
 	
@@ -417,7 +419,7 @@ public class RegexEngine extends Engine {
 	 * @param matchers
 	 *            the matchers to set
 	 */
-	private final void setMatchers(final Collection<Matcher> matchers) {
+	private void setMatchers(final Collection<Matcher> matchers) {
 		this.matchers = matchers;
 	}
 	

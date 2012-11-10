@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
+
 package org.mozkito.mappings.engines;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
@@ -61,6 +63,7 @@ public class TimestampEngine extends Engine {
 	public static final class Options extends
 	        ArgumentSetOptions<TimestampEngine, ArgumentSet<TimestampEngine, Options>> {
 		
+		/** The interval option. */
 		private net.ownhero.dev.hiari.settings.TupleArgument.Options intervalOption;
 		
 		/**
@@ -72,7 +75,7 @@ public class TimestampEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TimestampEngine.class.getSimpleName(), "...", requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -102,7 +105,7 @@ public class TimestampEngine extends Engine {
 					Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
-				return new TimestampEngine(new Interval(start * 1000, end * 1000));
+				return new TimestampEngine(new Interval(start * MS_IN_SECONDS, end * MS_IN_SECONDS));
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -127,9 +130,9 @@ public class TimestampEngine extends Engine {
 				                   Messages.getString("TimestampEngine.invalidInterval") + string + " " + Messages.getString("TimestampEngine.usingRegex") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				                           + regex.getPattern());
 			} else {
-				value += Integer.parseInt(regex.getGroup("days")) * 24 * 60 * 60; //$NON-NLS-1$
-				value += Integer.parseInt(regex.getGroup("hours")) * 60 * 60; //$NON-NLS-1$
-				value += Integer.parseInt(regex.getGroup("minutes")) * 60; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("days")) * SECONDS_IN_DAYS; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("hours")) * SECONDS_IN_HOURS; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("minutes")) * SECONDS_IN_MINUTES; //$NON-NLS-1$
 				value += Integer.parseInt(regex.getGroup("seconds")); //$NON-NLS-1$
 			}
 			
@@ -167,26 +170,41 @@ public class TimestampEngine extends Engine {
 		
 	}
 	
+	/** The Constant MS_IN_SECONDS. */
+	private static final int                   MS_IN_SECONDS      = 1000;
+	
+	/** The Constant SECONDS_IN_MINUTES. */
+	private static final int                   SECONDS_IN_MINUTES = 60;
+	
+	/** The Constant SECONDS_IN_HOURS. */
+	private static final int                   SECONDS_IN_HOURS   = 60 * SECONDS_IN_MINUTES;
+	
+	/** The Constant SECONDS_IN_DAYS. */
+	private static final int                   SECONDS_IN_DAYS    = 24 * SECONDS_IN_HOURS;
+	
 	/** The Constant defaultInterval. */
-	private static final Tuple<String, String> defaultInterval = new Tuple<String, String>("-0d 2h 0m 0s", //$NON-NLS-1$
-	                                                                                       "+1d 0h 0m 0s");        //$NON-NLS-1$
-	                                                                                                                
+	private static final Tuple<String, String> DEFAULT_INTERVAL   = new Tuple<String, String>("-0d 2h 0m 0s", //$NON-NLS-1$
+	                                                                                          "+1d 0h 0m 0s");        //$NON-NLS-1$
+	                                                                                                                   
 	/** The Constant description. */
-	private static final String                description     = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
-	                                                                                                                
+	private static final String                DESCRIPTION        = Messages.getString("TimestampEngine.description"); //$NON-NLS-1$
+	                                                                                                                   
+	/** The Constant TAG. */
+	private static final String                TAG                = "timestamp";                                      //$NON-NLS-1$
+	                                                                                                                   
 	/**
 	 * Gets the defaultinterval.
 	 * 
 	 * @return the defaultinterval
 	 */
-	private static final Tuple<String, String> getDefaultinterval() {
+	private static Tuple<String, String> getDefaultinterval() {
 		// PRECONDITIONS
 		
 		try {
-			return TimestampEngine.defaultInterval;
+			return TimestampEngine.DEFAULT_INTERVAL;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(TimestampEngine.defaultInterval, "Field '%s' in '%s'.", "defaultInterval", //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(TimestampEngine.DEFAULT_INTERVAL, "Field '%s' in '%s'.", "defaultInterval", //$NON-NLS-1$ //$NON-NLS-2$
 			                  TimestampEngine.class.getSimpleName());
 		}
 	}
@@ -195,7 +213,10 @@ public class TimestampEngine extends Engine {
 	private Interval interval;
 	
 	/**
+	 * Instantiates a new timestamp engine.
+	 * 
 	 * @param interval
+	 *            the interval
 	 */
 	public TimestampEngine(final Interval interval) {
 		// PRECONDITIONS
@@ -213,7 +234,7 @@ public class TimestampEngine extends Engine {
 	 */
 	@Override
 	public String getDescription() {
-		return TimestampEngine.description;
+		return TimestampEngine.DESCRIPTION;
 	}
 	
 	/**
@@ -221,7 +242,7 @@ public class TimestampEngine extends Engine {
 	 * 
 	 * @return the interval
 	 */
-	private final Interval getInterval() {
+	private Interval getInterval() {
 		// PRECONDITIONS
 		
 		try {

@@ -13,3 +13,5 @@ herzig
 apache
 util
 preselectors
+stopwords
+javadoc

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.model;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import org.mozkito.persistence.Annotated;
 public class Feature implements Annotated {
 	
 	/** The Constant cache. */
-	private static final Map<String, Class<? extends Engine>> cache            = new HashMap<String, Class<? extends Engine>>();
+	private static final Map<String, Class<? extends Engine>> ENGINE_LOOKUP_TABLE            = new HashMap<String, Class<? extends Engine>>();
 	
 	/** The Constant serialVersionUID. */
 	private static final long                                 serialVersionUID = 4097360257338824107L;
@@ -61,6 +61,8 @@ public class Feature implements Annotated {
 	
 	/**
 	 * used by persistence provider only.
+	 * 
+	 * @deprecated should be used by persistence provider only
 	 */
 	@Deprecated
 	Feature() {
@@ -91,8 +93,8 @@ public class Feature implements Annotated {
 		setToSubstring(toSubstring);
 		setFqClassName(mappingEngine.getSimpleName());
 		
-		if (!Feature.cache.containsKey(getFqClassName())) {
-			Feature.cache.put(getFqClassName(), mappingEngine);
+		if (!Feature.ENGINE_LOOKUP_TABLE.containsKey(getFqClassName())) {
+			Feature.ENGINE_LOOKUP_TABLE.put(getFqClassName(), mappingEngine);
 		}
 	}
 	
@@ -113,12 +115,12 @@ public class Feature implements Annotated {
 	@Transient
 	public Class<? extends Engine> getEngine() {
 		try {
-			if (Feature.cache.containsKey(getFqClassName())) {
-				return Feature.cache.get(getFqClassName());
+			if (Feature.ENGINE_LOOKUP_TABLE.containsKey(getFqClassName())) {
+				return Feature.ENGINE_LOOKUP_TABLE.get(getFqClassName());
 			} else {
 				@SuppressWarnings ("unchecked")
 				final Class<Engine> engineClass = (Class<Engine>) Class.forName(getFqClassName());
-				Feature.cache.put(getFqClassName(), engineClass);
+				Feature.ENGINE_LOOKUP_TABLE.put(getFqClassName(), engineClass);
 				return engineClass;
 			}
 		} catch (final ClassNotFoundException e) {

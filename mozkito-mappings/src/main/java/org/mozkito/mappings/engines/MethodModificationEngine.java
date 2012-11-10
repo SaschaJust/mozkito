@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.util.Collection;
@@ -30,6 +30,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
@@ -74,7 +75,7 @@ public class MethodModificationEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, MethodModificationEngine.class.getSimpleName(), "...", requirements); //$NON-NLS-1$
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -127,13 +128,14 @@ public class MethodModificationEngine extends Engine {
 	
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("MethodModificationEngine.description"); //$NON-NLS-1$
+	private static final String TAG                = "methodModification";                                      //$NON-NLS-1$
 	                                                                                                             
 	/**
 	 * Gets the default confidence.
 	 * 
 	 * @return the defaultConfidences
 	 */
-	private static final Double getDefaultConfidence() {
+	private static Double getDefaultConfidence() {
 		// PRECONDITIONS
 		
 		try {

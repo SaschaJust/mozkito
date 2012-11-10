@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,10 +9,19 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.apache.lucene.document.Document;
@@ -21,6 +30,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
+
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -38,11 +48,71 @@ import org.mozkito.mappings.storages.LuceneStorage;
  */
 public class CommentSearchEngine extends SearchEngine {
 	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<CommentSearchEngine, ArgumentSet<CommentSearchEngine, Options>> {
+		
+		/**
+		 * @param argumentSet
+		 * @param requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public CommentSearchEngine init() {
+			// PRECONDITIONS
+			
+			try {
+				return new CommentSearchEngine();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
 	/** The Constant description. */
-	private static final String description = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	private static final String TAG         = "comment";                                            //$NON-NLS-1$
 	                                                                                                 
 	/** The parser. */
 	private QueryParser         parser      = null;
+	private static final int    TOP_X       = 1000;
+	
+	CommentSearchEngine() {
+		// PRECONDITIONS
+		
+		try {
+			// should only be used when created through settings or for testing purposes
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -50,7 +120,7 @@ public class CommentSearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return CommentSearchEngine.description;
+		return CommentSearchEngine.DESCRIPTION;
 	}
 	
 	/*
@@ -82,7 +152,7 @@ public class CommentSearchEngine extends SearchEngine {
 				final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
 				
 				if (indexSearcher != null) {
-					final ScoreDoc[] hits = indexSearcher.search(query, null, 1000).scoreDocs;
+					final ScoreDoc[] hits = indexSearcher.search(query, null, TOP_X).scoreDocs;
 					// Iterate through the results:
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = luceneStorage.getIsearcherReports().doc(hit.doc);

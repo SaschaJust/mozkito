@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.selectors;
 
 import java.io.IOException;
@@ -62,12 +62,6 @@ public abstract class Selector extends Node {
 	 */
 	public static class Options extends ArgumentSetOptions<Set<Selector>, ArgumentSet<Set<Selector>, Options>> {
 		
-		/** The Constant DESCRIPTION. */
-		static final String                                                                     DESCRIPTION     = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
-		                                                                                                                                                             
-		/** The Constant TAG. */
-		static final String                                                                     TAG             = "selectors";                                      //$NON-NLS-1$
-		                                                                                                                                                             
 		/** The enabled selectors option. */
 		private SetArgument.Options                                                             enabledSelectorsOption;
 		
@@ -83,7 +77,7 @@ public abstract class Selector extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -103,7 +97,7 @@ public abstract class Selector extends Node {
 				
 				for (final String name : value) {
 					if (Logger.logDebug()) {
-						Logger.debug("Processing selector enabler '%s'.", name);
+						Logger.debug("Processing selector enabler '%s'.", name); //$NON-NLS-1$
 					}
 					
 					Class<? extends Selector> clazz;
@@ -127,7 +121,7 @@ public abstract class Selector extends Node {
 						final ArgumentSet<? extends Selector, ?> argumentSet = getSettings().getArgumentSet((IArgumentSetOptions) options);
 						final Selector selector = argumentSet.getValue();
 						if (Logger.logDebug()) {
-							Logger.debug("Adding configured selector '%s'.", selector);
+							Logger.debug("Adding configured selector '%s'.", selector); //$NON-NLS-1$
 						}
 						set.add(selector);
 					}
@@ -201,7 +195,7 @@ public abstract class Selector extends Node {
 									                                                                                                              selectorClass.getSimpleName()));
 									
 									if (Logger.logDebug()) {
-										Logger.debug("Adding new mapping selectors dependency '%s' with list activator '%s'",
+										Logger.debug("Adding new mapping selectors dependency '%s' with list activator '%s'", //$NON-NLS-1$
 										             selectorOption.getTag(), this.enabledSelectorsOption.getTag());
 									}
 									
@@ -233,6 +227,12 @@ public abstract class Selector extends Node {
 		
 	}
 	
+	/** The Constant DESCRIPTION. */
+	static final String DESCRIPTION = Messages.getString("MappingSelector.description"); //$NON-NLS-1$
+	                                                                                     
+	/** The Constant TAG. */
+	static final String TAG         = "selectors";                                      //$NON-NLS-1$
+	                                                                                     
 	/**
 	 * Gets the options.
 	 * 
@@ -267,7 +267,7 @@ public abstract class Selector extends Node {
 	protected final ArgumentSet<?, ?> getAnchor(@NotNull final ISettings settings) throws SettingsParseError,
 	                                                                              ArgumentSetRegistrationException,
 	                                                                              ArgumentRegistrationException {
-		ArgumentSet<?, ?> anchor = settings.getAnchor(Selector.Options.TAG);
+		ArgumentSet<?, ?> anchor = settings.getAnchor(Selector.TAG);
 		
 		if (anchor == null) {
 			if (this.options == null) {

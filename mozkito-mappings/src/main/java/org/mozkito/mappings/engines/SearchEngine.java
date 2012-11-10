@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.util.ArrayList;
@@ -33,26 +33,32 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
+
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.utils.Information;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class SearchEngine.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class SearchEngine extends Engine {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static class Options extends ArgumentSetOptions<Set<SearchEngine>, ArgumentSet<Set<SearchEngine>, Options>> {
 		
-		static final String TAG = "search"; //$NON-NLS-1$
-		                                    
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, "...", requirements); //$NON-NLS-1$
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -91,6 +97,16 @@ public abstract class SearchEngine extends Engine {
 		
 	}
 	
+	/** The Constant TAG. */
+	private static final String TAG             = "search";                                      //$NON-NLS-1$
+	                                                                                              
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION     = Messages.getString("SearchEngine.description"); //$NON-NLS-1$
+	                                                                                              
+	private static final int    MIN_QUERY_CHARS = 8;
+	
+	private static final int    MAX_QUERY_CHARS = 255;
+	
 	/**
 	 * Builds the query.
 	 * 
@@ -107,7 +123,7 @@ public abstract class SearchEngine extends Engine {
 		// replace all non-alphanumeric characters by spaces
 		String modifiedQuery = queryString.replaceAll("[^a-zA-Z0-9]", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (modifiedQuery.replaceAll("[^a-zA-Z0-9]", "").length() < 8) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (modifiedQuery.replaceAll("[^a-zA-Z0-9]", "").length() < MIN_QUERY_CHARS) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		
@@ -163,7 +179,7 @@ public abstract class SearchEngine extends Engine {
 					j += token.length();
 					
 					// do not build queries with >255 characters
-					if (j > 255) {
+					if (j > MAX_QUERY_CHARS) {
 						break ENOUGH;
 					}
 					
@@ -195,7 +211,9 @@ public abstract class SearchEngine extends Engine {
 	}
 	
 	/**
-	 * @return
+	 * Gets the min tokens.
+	 * 
+	 * @return the min tokens
 	 */
 	private int getMinTokens() {
 		// PRECONDITIONS

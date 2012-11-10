@@ -1,4 +1,4 @@
-/*********************************************************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ********************************************************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.io.IOException;
@@ -77,9 +77,6 @@ public abstract class Engine extends Node {
 	 */
 	public static class Options extends ArgumentSetOptions<Set<Engine>, ArgumentSet<Set<Engine>, Options>> {
 		
-		/** The Constant tag. */
-		static final String                                                                 tag           = "engines";      //$NON-NLS-1$
-		                                                                                                                     
 		/** The engines option. */
 		private SetArgument.Options                                                         enabledEnginesOption;
 		
@@ -94,7 +91,7 @@ public abstract class Engine extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.tag, "...", requirements); //$NON-NLS-1$
+			super(argumentSet, Engine.TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -244,6 +241,11 @@ public abstract class Engine extends Node {
 		}
 	}
 	
+	/** The Constant tag. */
+	private static final String TAG              = "engines";                                  //$NON-NLS-1$
+	                                                                                            
+	private static final String DESCRIPTION      = Messages.getString("Engine.description");   //$NON-NLS-1$
+	                                                                                            
 	/** The Constant defaultNegative. */
 	private static final String DEFAULT_NEGATIVE = "-1";                                       //$NON-NLS-1$
 	                                                                                            

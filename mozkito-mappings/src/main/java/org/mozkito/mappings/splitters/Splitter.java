@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -54,12 +54,6 @@ public abstract class Splitter extends Node {
 	 */
 	public static class Options extends ArgumentSetOptions<Set<Splitter>, ArgumentSet<Set<Splitter>, Options>> {
 		
-		/** The Constant DESCRIPTION. */
-		private static final String                                                             DESCRIPTION   = "...";
-		
-		/** The Constant TAG. */
-		private static final String                                                             TAG           = "filters";
-		
 		/** The enabled splitters option. */
 		private SetArgument.Options                                                             enabledSplittersOption;
 		
@@ -75,7 +69,7 @@ public abstract class Splitter extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -193,6 +187,11 @@ public abstract class Splitter extends Node {
 		
 	}
 	
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = "...";
+	/** The Constant TAG. */
+	private static final String TAG         = "splitters"; //$NON-NLS-1$
+	                                                       
 	/**
 	 * Gets the options.
 	 * 

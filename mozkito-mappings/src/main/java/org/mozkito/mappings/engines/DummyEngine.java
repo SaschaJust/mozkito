@@ -27,18 +27,24 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Expression;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class DummyEngine.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class DummyEngine extends Engine {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends ArgumentSetOptions<DummyEngine, ArgumentSet<DummyEngine, Options>> {
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, DummyEngine.class.getSimpleName(), DummyEngine.DESCRIPTION, requirements);
@@ -78,8 +84,9 @@ public class DummyEngine extends Engine {
 		
 	}
 	
-	private final static String DESCRIPTION = "...";
-	
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = "DUMMY"; //$NON-NLS-1$
+	                                                   
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mappings.register.Node#getDescription()

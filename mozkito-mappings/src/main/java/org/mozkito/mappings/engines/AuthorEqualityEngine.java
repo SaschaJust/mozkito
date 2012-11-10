@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.util.HashMap;
@@ -60,7 +60,7 @@ public class AuthorEqualityEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, AuthorEqualityEngine.class.getSimpleName(), "...", requirements); //$NON-NLS-1$
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -109,6 +109,8 @@ public class AuthorEqualityEngine extends Engine {
 	/** The constant defaultConfidence. */
 	private static final Double DEFAULT_CONFIDENCE = 0.2d;
 	
+	private static final String TAG                = "author";                                              //$NON-NLS-1$
+	                                                                                                         
 	/** The constant description. */
 	private static final String DESCRIPTION        = Messages.getString("AuthorEqualityEngine.description"); //$NON-NLS-1$
 	                                                                                                         
@@ -117,7 +119,7 @@ public class AuthorEqualityEngine extends Engine {
 	 * 
 	 * @return the defaultConfidences
 	 */
-	private static final Double getDefaultConfidence() {
+	private static Double getDefaultConfidence() {
 		// PRECONDITIONS
 		
 		try {
@@ -138,7 +140,7 @@ public class AuthorEqualityEngine extends Engine {
 	 * @param confidence
 	 *            the confidence
 	 */
-	public AuthorEqualityEngine(final double confidence) {
+	AuthorEqualityEngine(final double confidence) {
 		// PRECONDITIONS
 		
 		try {
@@ -153,7 +155,7 @@ public class AuthorEqualityEngine extends Engine {
 	 * 
 	 * @return the confidence
 	 */
-	private final Double getConfidence() {
+	private Double getConfidence() {
 		// PRECONDITIONS
 		
 		try {

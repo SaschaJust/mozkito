@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -31,8 +31,11 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class Persister extends Sink<Mapping> {
 	
+	/** The Constant PERSIST_COUNT_THRESHOLD. */
+	private static final int PERSIST_COUNT_THRESHOLD = 50;
+	
 	/** The i. */
-	private Integer i = 0;
+	private Integer          i                       = 0;
 	
 	/**
 	 * Instantiates a new mapping persister.
@@ -65,7 +68,7 @@ public class Persister extends Sink<Mapping> {
 					Logger.debug(Messages.getString("Persister.storing", mapping)); //$NON-NLS-1$
 				}
 				
-				if ((++Persister.this.i % 50) == 0) {
+				if ((++Persister.this.i % PERSIST_COUNT_THRESHOLD) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}

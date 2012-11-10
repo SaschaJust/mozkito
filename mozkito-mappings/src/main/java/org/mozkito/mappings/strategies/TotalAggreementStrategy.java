@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.strategies;
 
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Composite;
 import org.mozkito.mappings.model.Feature;
 
@@ -33,20 +34,22 @@ import org.mozkito.mappings.model.Feature;
  */
 public class TotalAggreementStrategy extends Strategy {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends
 	        ArgumentSetOptions<TotalAggreementStrategy, ArgumentSet<TotalAggreementStrategy, Options>> {
 		
-		private static final String DESCRIPTION = "...";
-		private static final String TAG         = "totalAgreement";
-		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -77,13 +80,18 @@ public class TotalAggreementStrategy extends Strategy {
 		
 	}
 	
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = Messages.getString("TotalAggreementStrategy.description"); //$NON-NLS-1$
+	/** The Constant TAG. */
+	private static final String TAG         = "totalAgreement";                                         //$NON-NLS-1$
+	                                                                                                     
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.mapping.strategies.MappingStrategy# getDescription()
 	 */
 	@Override
 	public String getDescription() {
-		return "Maps positive/negative iff all engines agree on that";
+		return DESCRIPTION;
 	}
 	
 	/*

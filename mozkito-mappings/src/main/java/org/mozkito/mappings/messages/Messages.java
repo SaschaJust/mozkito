@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.messages;
 
 import java.util.Locale;
@@ -37,18 +37,20 @@ public class Messages {
 	 * 
 	 * @param key
 	 *            the key
+	 * @param arguments
+	 *            the arguments
 	 * @return the string
 	 */
 	public static String getString(final String key,
-	                               final Object... args) {
+	                               final Object... arguments) {
 		try {
 			final String resource = Messages.RESOURCE_BUNDLE.getString(key);
 			final String[] split = resource.split("%s"); //$NON-NLS-1$
 			
-			assert (args.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + args.length; //$NON-NLS-1$ //$NON-NLS-2$
+			assert (arguments.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + arguments.length; //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (split.length > 1) {
-				return String.format(resource, args);
+				return String.format(resource, arguments);
 			} else {
 				return resource;
 			}

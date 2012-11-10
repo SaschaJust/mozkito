@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.selectors;
 
 import java.util.HashMap;
@@ -29,9 +29,11 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 
@@ -42,21 +44,25 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class AllReportSelector extends Selector {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends
 	        ArgumentSetOptions<AllReportSelector, ArgumentSet<AllReportSelector, Options>> {
 		
-		private static final String                                   DESCRIPTION = "...";
-		private static final String                                   TAG         = "allReport";
+		/** The tag option. */
 		private net.ownhero.dev.hiari.settings.StringArgument.Options tagOption;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -94,10 +100,8 @@ public class AllReportSelector extends Selector {
 			try {
 				final Map<String, IOptions<?, ?>> map = new HashMap<>();
 				
-				this.tagOption = new StringArgument.Options(
-				                                            argumentSet,
-				                                            "tag",
-				                                            "Format string like 'XSTR-%s' that determines how the match from the regex should be used when querying the database.",
+				this.tagOption = new StringArgument.Options(argumentSet, "tag", //$NON-NLS-1$
+				                                            Messages.getString("AllReportSelector.optionTag"), //$NON-NLS-1$
 				                                            null, Requirement.optional);
 				map.put(this.tagOption.getName(), this.tagOption);
 				
@@ -110,20 +114,21 @@ public class AllReportSelector extends Selector {
 	}
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = "Looks up all regular matches of the specified pattern and returns possible (report) candidates from the database.";
-	
+	private static final String DESCRIPTION = Messages.getString("AllReportSelector.description"); //$NON-NLS-1$
+	                                                                                               
+	/** The Constant TAG. */
+	private static final String TAG         = "allReport";                                        //$NON-NLS-1$
+	                                                                                               
+	/** The tag format. */
 	private String              tagFormat   = null;
 	
 	/**
-	 * @param value
+	 * Instantiates a new all report selector.
+	 * 
+	 * @deprecated default constructor should only be called by the active {@link PersistenceUtil}
 	 */
+	@Deprecated
 	public AllReportSelector() {
-		// PRECONDITIONS
-		
-		try {
-		} finally {
-			// POSTCONDITIONS
-		}
 	}
 	
 	/*
@@ -160,19 +165,21 @@ public class AllReportSelector extends Selector {
 	}
 	
 	/**
+	 * Sets the tag format.
+	 * 
 	 * @param tagFormat
 	 *            the tagFormat to set
 	 */
 	final void setTagFormat(final String tagFormat) {
 		// PRECONDITIONS
-		Condition.notNull(tagFormat, "Argument '%s' in '%s'.", "tagFormat", getClass().getSimpleName());
+		Condition.notNull(tagFormat, "Argument '%s' in '%s'.", "tagFormat", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		try {
 			this.tagFormat = tagFormat;
 		} finally {
 			// POSTCONDITIONS
 			CompareCondition.equals(this.tagFormat, tagFormat,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter.");
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
 	}
 	

@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,10 +9,19 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
@@ -20,6 +29,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.util.Version;
+
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
@@ -31,16 +41,81 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.LuceneStorage;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class SummarySearchEngine.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SummarySearchEngine extends SearchEngine {
 	
+	/**
+	 * The Class Options.
+	 */
+	public static class Options extends
+	        ArgumentSetOptions<SummarySearchEngine, ArgumentSet<SummarySearchEngine, Options>> {
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public SummarySearchEngine init() {
+			// PRECONDITIONS
+			
+			try {
+				return new SummarySearchEngine();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
+	
 	/** The Constant description. */
-	private static final String description = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	private static final String DESCRIPTION = Messages.getString("SummarySearchEngine.description"); //$NON-NLS-1$
+	                                                                                                 
+	/** The Constant TAG. */
+	private static final String TAG         = "summary";                                            //$NON-NLS-1$
 	                                                                                                 
 	/** The parser. */
 	private QueryParser         parser      = null;
+	
+	private final int           TOP_X_HITS  = 1000;
+	
+	/**
+	 * Instantiates a new summary search engine.
+	 */
+	SummarySearchEngine() {
+		// should only be called by settings or for testing purposes.
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -48,7 +123,7 @@ public class SummarySearchEngine extends SearchEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return SummarySearchEngine.description;
+		return SummarySearchEngine.DESCRIPTION;
 	}
 	
 	/*
@@ -76,7 +151,7 @@ public class SummarySearchEngine extends SearchEngine {
 				final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
 				
 				if (indexSearcher != null) {
-					final ScoreDoc[] hits = indexSearcher.search(query, null, 1000).scoreDocs;
+					final ScoreDoc[] hits = indexSearcher.search(query, null, this.TOP_X_HITS).scoreDocs;
 					// Iterate through the results:
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = luceneStorage.getIsearcherReports().doc(hit.doc);

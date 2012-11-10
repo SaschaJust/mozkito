@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.utils;
 
 import java.io.File;
@@ -29,16 +29,6 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import jregex.REFlags;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kisa.Logger;
-import net.ownhero.dev.regex.Group;
-import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.MultiMatch;
-import net.ownhero.dev.regex.Regex;
 import cc.mallet.pipe.CharSequence2TokenSequence;
 import cc.mallet.pipe.CharSequenceLowercase;
 import cc.mallet.pipe.Pipe;
@@ -60,6 +50,17 @@ import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.IOUtils;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Group;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
+
 /**
  * The Class Information.
  * 
@@ -78,13 +79,20 @@ public class Information {
 		GERMAN;
 	}
 	
+	/**
+	 * The Class StringInstanceIterator.
+	 */
 	private static final class StringInstanceIterator implements Iterator<Instance> {
 		
+		/** The iterator. */
 		private Iterator<String> iterator;
 		
 		/**
-         * 
-         */
+		 * Instantiates a new string instance iterator.
+		 * 
+		 * @param stringIterator
+		 *            the string iterator
+		 */
 		public StringInstanceIterator(final Iterator<String> stringIterator) {
 			// PRECONDITIONS
 			
@@ -154,10 +162,10 @@ public class Information {
 	 * X) and X ) X. X.) X] (X) and ( X ) [X] {X} X:
 	 */
 	/** The Constant ALPHA_ENUM_BULLET. */
-	private static final String   ALPHA_ENUM_BULLET          = "({BULLET}[a-zA-Z] ?\\)|[a-zA-Z]\\.|[a-zA-Z]\\.\\)|[a-zA-Z]\\]|\\( ?[a-zA-Z] ?\\)|\\[ ?[a-zA-Z] ?\\]|\\{ ?[a-zA-Z] ?\\}|[a-zA-Z]: )";
-	
+	private static final String   ALPHA_ENUM_BULLET          = "({BULLET}[a-zA-Z] ?\\)|[a-zA-Z]\\.|[a-zA-Z]\\.\\)|[a-zA-Z]\\]|\\( ?[a-zA-Z] ?\\)|\\[ ?[a-zA-Z] ?\\]|\\{ ?[a-zA-Z] ?\\}|[a-zA-Z]: )";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              //$NON-NLS-1$
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 	/** The Constant ALPHA_ENUM_RELAXED_PATTERN. */
-	private static final String   ALPHA_ENUM_RELAXED_PATTERN = "({BULLET}(?:%s0|%s>))";
+	private static final String   ALPHA_ENUM_RELAXED_PATTERN = "({BULLET}(?:%s0|%s>))";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //$NON-NLS-1$
 	/*
 	 * enums start: - either at the beginning of a line or - after a whitespace enums end: - end of string - next bullet
 	 * - empty line if previous enum items were not separated by empty lines - line with different indentation then the
@@ -204,8 +212,10 @@ public class Information {
 	/** The Constant ROMAN_ENUM_BULLET. */
 	private static final String   ROMAN_ENUM_BULLET          = "(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx) ?\\)|(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx)\\.|(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx)\\.\\)|(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx)\\]|\\( ?(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx) ?\\)|\\[ ?(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx) ?\\]|\\{ ?(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx) ?\\}|(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xviiii|xx): ";
 	
+	/** The Constant SENTENCE_MODEL. */
 	static final SentenceModel    SENTENCE_MODEL             = new MedlineSentenceModel();
 	
+	/** The Constant TOKENIZER_FACTORY. */
 	static final TokenizerFactory TOKENIZER_FACTORY          = IndoEuropeanTokenizerFactory.INSTANCE;
 	
 	/** The Constant URL_PATTERN. */
@@ -402,7 +412,7 @@ public class Information {
 	 * @return the tuple
 	 */
 	public static final List<Tuple<String, List<String>>> itemizations(final String text) {
-		return new ArrayList(1) {
+		return new ArrayList<Tuple<String, List<String>>>(1) {
 			
 			/**
              * 
@@ -410,7 +420,7 @@ public class Information {
 			private static final long serialVersionUID = 436023900027930138L;
 			
 			{
-				add(new Tuple("-", new LinkedList<>()));}};//$NON-NLS-1$
+				add(new Tuple<String, List<String>>("-", new LinkedList<String>()));}};//$NON-NLS-1$
 	}
 	
 	/**
@@ -518,6 +528,12 @@ public class Information {
 		}
 	}
 	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(final String[] args) {
 		final ArrayList<String> strings = new ArrayList<>(3);
 		strings.add("Richard Hawes (1797–1877) was a United States Representative from Kentucky and the second Confederate Governor of Kentucky. Originally a Whig, Hawes became a Democrat following the dissolution of the Whig party in the 1850s. At the outbreak of the American Civil War, Hawes was a supporter of Kentucky's doctrine of armed neutrality. When the Commonwealth's neutrality was breached in September 1861, Hawes fled to Virginia and enlisted as a brigade commissary under Confederate general Humphrey Marshall. He was elected Confederate governor of the Commonwealth following the late George W. Johnson's death at the Battle of Shiloh. Hawes and the Confederate government traveled with Braxton Bragg's Army of Tennessee, and when Bragg invaded Kentucky in October 1862, he captured Frankfort and held an inauguration ceremony for Hawes. The ceremony was interrupted, however, by forces under Union general Don Carlos Buell, and the Confederates were driven from the Commonwealth following the Battle of Perryville. Hawes relocated to Virginia, where he continued to lobby President Jefferson Davis to attempt another invasion of Kentucky. Following the war, he returned to his home in Paris, Kentucky, swore an oath of allegiance to the Union, and was allowed to return to his law practice.");
@@ -528,6 +544,13 @@ public class Information {
 		System.err.println(topics.getNumTopics());
 	}
 	
+	/**
+	 * Removes the stopwords.
+	 * 
+	 * @param words
+	 *            the words
+	 * @return the string[]
+	 */
 	public static final String[] removeStopwords(final String[] words) {
 		return new String[0];
 	}
@@ -567,8 +590,8 @@ public class Information {
 		
 		int sentStartTok = 0;
 		int sentEndTok = 0;
-		for (int i = 0; i < sentenceBoundaries.length; ++i) {
-			sentEndTok = sentenceBoundaries[i];
+		for (final int sentenceBoundarie : sentenceBoundaries) {
+			sentEndTok = sentenceBoundarie;
 			
 			final StringBuilder builder = new StringBuilder();
 			
@@ -584,10 +607,24 @@ public class Information {
 		return sentences;
 	}
 	
+	/**
+	 * Stem.
+	 * 
+	 * @param tokens
+	 *            the tokens
+	 * @return the string[]
+	 */
 	public static final String[] stem(final String[] tokens) {
 		return new String[0];
 	}
 	
+	/**
+	 * Tokenize.
+	 * 
+	 * @param text
+	 *            the text
+	 * @return the string[]
+	 */
 	public static final String[] tokenize(final String text) {
 		return new String[0];
 	}

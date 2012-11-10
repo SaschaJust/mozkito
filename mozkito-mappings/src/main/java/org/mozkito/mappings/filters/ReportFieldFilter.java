@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.filters;
 
 import java.util.HashMap;
@@ -39,21 +39,25 @@ import org.mozkito.mappings.requirements.Index;
  */
 public class ReportFieldFilter extends Filter {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends
 	        ArgumentSetOptions<ReportFieldFilter, ArgumentSet<ReportFieldFilter, Options>> {
 		
-		private static final String        DESCRIPTION = Messages.getString("ReportFieldFilter.optionSetDescription");
-		private static final String        TAG         = "reportField";
+		/** The type option. */
 		private EnumArgument.Options<Type> typeOption;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -87,8 +91,8 @@ public class ReportFieldFilter extends Filter {
 				
 				this.typeOption = new EnumArgument.Options<Type>(
 				                                                 argumentSet,
-				                                                 "type",
-				                                                 Messages.getString("ReportFieldFilter.typeDescription"),
+				                                                 "type", //$NON-NLS-1$
+				                                                 Messages.getString("ReportFieldFilter.typeDescription"), //$NON-NLS-1$
 				                                                 ReportFieldFilter.getDefaultType(),
 				                                                 Requirement.required);
 				map.put(this.typeOption.getName(), this.typeOption);
@@ -100,19 +104,29 @@ public class ReportFieldFilter extends Filter {
 		
 	}
 	
-	private static final String DESCRIPTION = "Requires certain field values on reports to be mapped";
-	
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = Messages.getString("ReportFieldFilter.optionSetDescription"); //$NON-NLS-1$
+	                                                                                                        
+	/** The Constant TAG. */
+	private static final String TAG         = "reportField";                                               //$NON-NLS-1$
+	                                                                                                        
 	/**
-	 * @return
+	 * Gets the default type.
+	 * 
+	 * @return the default type
 	 */
 	public static final Type getDefaultType() {
 		return Type.BUG;
 	}
 	
+	/** The type. */
 	private final Type type;
 	
 	/**
+	 * Instantiates a new report field filter.
+	 * 
 	 * @param type
+	 *            the type
 	 */
 	public ReportFieldFilter(final Type type) {
 		this.type = type;

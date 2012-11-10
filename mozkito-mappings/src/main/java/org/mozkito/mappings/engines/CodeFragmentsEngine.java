@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just - mozkito.org
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
 import java.util.HashMap;
@@ -23,26 +23,33 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.mappings.mappable.model.MappableEntity;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.requirements.Expression;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class CodeFragmentsEngine.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class CodeFragmentsEngine extends Engine {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static final class Options extends
 	        ArgumentSetOptions<CodeFragmentsEngine, ArgumentSet<CodeFragmentsEngine, Options>> {
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, CodeFragmentsEngine.class.getSimpleName(), CodeFragmentsEngine.DESCRIPTION, requirements);
+			super(argumentSet, TAG, CodeFragmentsEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -79,7 +86,18 @@ public class CodeFragmentsEngine extends Engine {
 		
 	}
 	
-	private static final String DESCRIPTION = "...";
+	/** The Constant TAG. */
+	private static final String TAG         = "codefragments";                                      //$NON-NLS-1$
+	                                                                                                 
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = Messages.getString("CodeFragmentsEngine.description"); //$NON-NLS-1$
+	                                                                                                 
+	/**
+	 * Instantiates a new code fragments engine.
+	 */
+	CodeFragmentsEngine() {
+		// should only be used by settings or for testing purposes
+	}
 	
 	/*
 	 * (non-Javadoc)

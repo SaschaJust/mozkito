@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.settings;
 
 import java.util.HashMap;
@@ -34,6 +34,7 @@ import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.engines.Engine.Options;
 import org.mozkito.mappings.filters.Filter;
 import org.mozkito.mappings.finder.Finder;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.splitters.Splitter;
 import org.mozkito.mappings.strategies.Strategy;
@@ -47,9 +48,12 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finder, MappingOptions>> {
 	
-	private static final String                         DESCRIPTION = "TODO";
-	
-	public static final String                          NAME        = "mappings";             //$NON-NLS-1$
+	/** The Constant DESCRIPTION. */
+	private static final String                         DESCRIPTION = Messages.getString("MappingOptions.description"); //$NON-NLS-1$
+	                                                                                                                    
+	/** The Constant NAME. */
+	public static final String                          TAG         = "mappings";                                      //$NON-NLS-1$
+	                                                                                                                    
 	static {
 		Logger.addHighlighter(new Highlighter(LogLevel.ERROR, LogLevel.DEBUG) {
 			
@@ -62,6 +66,7 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 		});
 	}
 	
+	/** The engine options. */
 	private Engine.Options                              engineOptions;
 	
 	/** The engines. */
@@ -70,11 +75,13 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	/** The filters. */
 	private final Set<Filter>                           filters     = new HashSet<Filter>();
 	
+	/** The selector options. */
 	private Selector.Options                            selectorOptions;
 	
 	/** The selectors. */
 	private final Set<Selector>                         selectors   = new HashSet<Selector>();
 	
+	/** The source options. */
 	private TupleArgument.Options                       sourceOptions;
 	/** The splitters. */
 	private final Set<Splitter>                         splitters   = new HashSet<Splitter>();
@@ -83,18 +90,22 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 	/** The trainers. */
 	private final Set<Trainer>                          trainers    = new HashSet<Trainer>();
 	
+	/** The strategy options. */
 	private Strategy.Options                            strategyOptions;
 	
+	/** The filter options. */
 	private org.mozkito.mappings.filters.Filter.Options filterOptions;
 	
 	/**
+	 * Instantiates a new mapping options.
+	 * 
 	 * @param argumentSet
-	 * @param name
-	 * @param description
+	 *            the argument set
 	 * @param requirements
+	 *            the requirements
 	 */
 	public MappingOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-		super(argumentSet, MappingOptions.NAME, MappingOptions.DESCRIPTION, requirements);
+		super(argumentSet, MappingOptions.TAG, MappingOptions.DESCRIPTION, requirements);
 	}
 	
 	/**
@@ -205,8 +216,8 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			
 			this.sourceOptions = new TupleArgument.Options(
 			                                               set,
-			                                               "sourceTypes",
-			                                               "Determines what kind of stuff you want to map. E.g. =RCSTransaction,Report",
+			                                               "sourceTypes", //$NON-NLS-1$
+			                                               Messages.getString("optionSourceTypes"), //$NON-NLS-1$
 			                                               new Tuple<String, String>(
 			                                                                         RCSTransaction.class.getSimpleName(),
 			                                                                         Report.class.getSimpleName()),

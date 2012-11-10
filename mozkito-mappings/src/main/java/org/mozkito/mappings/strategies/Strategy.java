@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.mappings.strategies;
 
 import java.io.IOException;
@@ -65,12 +65,6 @@ public abstract class Strategy extends Node {
 	 */
 	public static class Options extends ArgumentSetOptions<Set<Strategy>, ArgumentSet<Set<Strategy>, Options>> {
 		
-		/** The Constant DESCRIPTION. */
-		private static final String                                                             DESCRIPTION   = "...";
-		
-		/** The Constant TAG. */
-		private static final String                                                             TAG           = "strategies";   //$NON-NLS-1$
-		                                                                                                                         
 		/** The enabled strategies option. */
 		private SetArgument.Options                                                             enabledStrategiesOption;
 		
@@ -86,7 +80,7 @@ public abstract class Strategy extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
+			super(argumentSet, TAG, DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -231,6 +225,11 @@ public abstract class Strategy extends Node {
 		
 	}
 	
+	/** The Constant DESCRIPTION. */
+	private static final String DESCRIPTION = "...";
+	/** The Constant TAG. */
+	private static final String TAG         = "strategies"; //$NON-NLS-1$
+	                                                        
 	/**
 	 * Gets the options.
 	 * 
@@ -245,8 +244,8 @@ public abstract class Strategy extends Node {
 	/**
 	 * Map.
 	 * 
-	 * @param mapping
-	 *            the mapping
+	 * @param composite
+	 *            the composite
 	 * @return the i mapping
 	 */
 	public abstract Composite map(Composite composite);
