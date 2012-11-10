@@ -1,0 +1,8 @@
+#Organize Import Order
+#Sat Nov 10 14:44:40 CET 2012
+5=org.mozkito
+4=de.unisaarland.cs.st
+3=org
+2=com
+1=javax
+0=java

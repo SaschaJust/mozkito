@@ -1,21 +1,30 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java" deleted="false" description="Moskito debug logging" enabled="true" name="mkdebug">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logDebug()) {
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java" deleted="false" description="inserts getHandle() method" enabled="true" name="handle">${:import(net.ownhero.dev.ioda.JavaUtils)}/**
+* Gets the simple name of the class.
+* 
+* @return the simple name of the class.
+*/
+public String getHandle() {
+	return JavaUtils.getHandle(this);
+}
+
+</template><template autoinsert="true" context="java" deleted="false" description="kisa always logging" enabled="true" name="kalways">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logAlways()) {
+        Logger.always(${word_selection}${cursor});
+}</template><template autoinsert="true" context="java" deleted="false" description="kisa debug logging" enabled="true" name="kdebug">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logDebug()) {
         Logger.debug(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito error logging" enabled="true" name="mkerror">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logError()) {
+}</template><template autoinsert="true" context="java" deleted="false" description="kisa error logging" enabled="true" name="kerror">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logError()) {
         Logger.error(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito info logging" enabled="true" name="mkinfo">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logInfo()) {
+}</template><template autoinsert="true" context="java" deleted="false" description="Adds a new highlighter to the kisa logger." enabled="true" name="khighlight">${:import(net.ownhero.dev.kisa.Logger,net.ownhero.dev.kisa.Highlighter,net.ownhero.dev.kisa.LogLevel)}Logger.addHighlighter(new Highlighter(LogLevel.${minLevel:var(net.ownhero.dev.kisa.LogLevel)}, LogLevel.${maxLevel:var(net.ownhero.dev.kisa.LogLevel)}) {
+	@Override
+	public boolean matches(final String message,
+	                       final LogLevel level,
+	                       final String prefix) {
+		return message.matches("${word_selection}${}${cursor}"); //$$NON-NLS-1$$
+	}
+});
+</template><template autoinsert="true" context="java" deleted="false" description="kisa info logging" enabled="true" name="kinfo">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logInfo()) {
         Logger.info(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito trace logging" enabled="true" name="mktrace">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logTrace()) {
+}</template><template autoinsert="true" context="java" deleted="false" description="kisa trace logging" enabled="true" name="ktrace">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logTrace()) {
         Logger.trace(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito warn logging" enabled="true" name="mkwarn">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logWarn()) {
+}</template><template autoinsert="true" context="java" deleted="false" description="kisa warn logging" enabled="true" name="kwarn">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logWarn()) {
         Logger.warn(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Postcondition NotNull" enabled="true" name="pcnotnull">${:import(net.ownhero.dev.kanuni.conditions.Condition)}Condition.notNull(${field}${cursor}, "Field '%s' in '%s'.", "${field}", getHandle()); //$$NON-NLS-1$$ //$$NON-NLS-2$$</template><template autoinsert="true" context="java" deleted="false" description="Postcondition parameter NotNull" enabled="true" name="pcparnotnull">${:import(net.ownhero.dev.kanuni.conditions.Condition)}Condition.notNull(${localVar}${cursor}, "Parameter '%s' in '%s:%s'.", "${param}", getHandle(), "${localVar}"); //$$NON-NLS-1$$ //$$NON-NLS-2$$</template><template autoinsert="true" context="java" deleted="false" description="Postcondition Variable NotNull" enabled="true" name="pcvarnotnull">${:import(net.ownhero.dev.kanuni.conditions.Condition)}Condition.notNull(${localVar}${cursor}, "Local variable '%s' in '%s:%s'.", "${localVar}", getHandle(), "${enclosing_method}"); //$$NON-NLS-1$$ //$$NON-NLS-2$$</template><template autoinsert="true" context="java" deleted="false" description="Moskito debug logging" enabled="true" name="rsdebug">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logDebug()) {
-        Logger.debug(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito error logging" enabled="true" name="rserror">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logError()) {
-        Logger.error(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito info logging" enabled="true" name="rsinfo">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logInfo()) {
-        Logger.info(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito trace logging" enabled="true" name="rstrace">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logTrace()) {
-        Logger.trace(${word_selection}${cursor});
-}</template><template autoinsert="true" context="java" deleted="false" description="Moskito warn logging" enabled="true" name="rswarn">${:import(net.ownhero.dev.kisa.Logger)}if (Logger.logWarn()) {
-        Logger.warn(${word_selection}${cursor});
-}</template></templates>
+}</template><template autoinsert="true" context="java" deleted="false" description="Postcondition NotNull" enabled="true" name="pcnotnull">${:import(net.ownhero.dev.kanuni.conditions.Condition)}Condition.notNull(${field}${cursor}, "Field '%s' in '%s'.", "${field}", getHandle()); //$$NON-NLS-1$$ //$$NON-NLS-2$$</template></templates>
