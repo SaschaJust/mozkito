@@ -69,7 +69,7 @@ public abstract class Strategy extends Node {
 		private SetArgument.Options                                                             enabledStrategiesOption;
 		
 		/** The engine options. */
-		private final Map<Class<? extends Strategy>, ArgumentSetOptions<? extends Strategy, ?>> engineOptions = new HashMap<>();
+		private final Map<Class<? extends Strategy>, ArgumentSetOptions<? extends Strategy, ?>> strategyOptions = new HashMap<>();
 		
 		/**
 		 * Instantiates a new options.
@@ -108,7 +108,7 @@ public abstract class Strategy extends Node {
 						
 					}
 					
-					final ArgumentSetOptions<? extends Strategy, ?> options = this.engineOptions.get(clazz);
+					final ArgumentSetOptions<? extends Strategy, ?> options = this.strategyOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
 							Logger.warn(Messages.getString("Strategy.laggingConfigClass", //$NON-NLS-1$
@@ -182,14 +182,15 @@ public abstract class Strategy extends Node {
 									                                                                                                                                                                               Requirement.class);
 									
 									final ArgumentSetOptions<? extends Strategy, ?> strategyOption = constructor.newInstance(set,
-									                                                                                         Requirement.required);
+									                                                                                         Requirement.contains(this.enabledStrategiesOption,
+									                                                                                                              strategyClass.getSimpleName()));
 									
 									if (Logger.logDebug()) {
 										Logger.debug("Adding new mapping strategies dependency '%s' with list activator '%s'", //$NON-NLS-1$
 										             strategyOption.getTag(), this.enabledStrategiesOption.getTag());
 									}
 									
-									this.engineOptions.put(strategyClass, strategyOption);
+									this.strategyOptions.put(strategyClass, strategyOption);
 									if (strategyOption.required()) {
 										map.put(strategyOption.getName(), strategyOption);
 									}
