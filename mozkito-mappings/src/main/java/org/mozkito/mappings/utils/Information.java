@@ -731,7 +731,7 @@ public class Information {
 				
 				// Create a new instance named "test instance" with empty target and source fields.
 				final InstanceList testing = new InstanceList(instances.getPipe());
-				testing.addThruPipe(new Instance(topicZeroText.toString(), null, "test instance", null));
+				testing.addThruPipe(new Instance(topicZeroText.toString(), null, "test instance", null)); //$NON-NLS-1$
 				
 				final TopicInferencer inferencer = model.getInferencer();
 				final double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);

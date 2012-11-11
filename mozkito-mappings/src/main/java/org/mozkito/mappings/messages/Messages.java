@@ -45,7 +45,7 @@ public class Messages {
 	                               final Object... arguments) {
 		try {
 			final String resource = Messages.RESOURCE_BUNDLE.getString(key);
-			final String[] split = resource.split("%s"); //$NON-NLS-1$
+			final String[] split = resource.split("^%s|[^%]%s"); //$NON-NLS-1$
 			
 			assert (arguments.length + 1) == split.length : "Given number of %s in the resource differs from the actual arguments: " + (split.length - 1) + " vs " + arguments.length; //$NON-NLS-1$ //$NON-NLS-2$
 			

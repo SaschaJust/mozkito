@@ -115,8 +115,7 @@ public abstract class Engine extends Node {
 						clazz = (Class<? extends Engine>) Class.forName(Engine.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new Shutdown(
-						                   String.format(Messages.getString("Engine.loadingFailure"), //$NON-NLS-1$
+						throw new Shutdown(String.format(Messages.getString("Engine.loadingFailure"), //$NON-NLS-1$
 						                                 name));
 						
 					}
@@ -202,8 +201,9 @@ public abstract class Engine extends Node {
 									                                                                                     Requirement.contains(this.enabledEnginesOption,
 									                                                                                                          engineClass.getSimpleName()));
 									if (Logger.logDebug()) {
-										Logger.debug(Messages.getString("Engine.addingEngineDependency"), //$NON-NLS-1$
-										             engineOption.getTag(), this.enabledEnginesOption.getTag());
+										Logger.debug(Messages.getString("Engine.addingEngineDependency", //$NON-NLS-1$
+										                                engineOption.getTag(),
+										                                this.enabledEnginesOption.getTag()));
 									}
 									
 									this.engineOptions.put(engineClass, engineOption);
@@ -214,15 +214,15 @@ public abstract class Engine extends Node {
 							}
 							
 							if (!foundOptionClass) {
-								throw new Shutdown(
-								                   String.format(Messages.getString("Engine.noInternalConfigurator"), //$NON-NLS-1$
+								throw new Shutdown(String.format(Messages.getString("Engine.noInternalConfigurator"), //$NON-NLS-1$
 								                                 engineClass.getSimpleName()));
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info(Messages.getString("Engine.noDirectExtension"), //$NON-NLS-1$
-								            engineClass.getSimpleName(), Engine.class.getSimpleName(),
-								            engineClass.getSuperclass().getSimpleName());
+								Logger.info(Messages.getString("Engine.noDirectExtension", //$NON-NLS-1$
+								                               engineClass.getSimpleName(),
+								                               Engine.class.getSimpleName(),
+								                               engineClass.getSuperclass().getSimpleName()));
 							}
 						}
 					}
