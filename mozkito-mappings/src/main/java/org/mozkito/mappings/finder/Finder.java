@@ -217,28 +217,28 @@ public class Finder {
 		final Set<Selector> list = new HashSet<Selector>();
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Looking up selector for '%s'<->'%s'.", fromClazz.getSimpleName(), toClazz.getSimpleName());
+			Logger.debug("Looking up selector for '%s'<->'%s'.", fromClazz.getSimpleName(), toClazz.getSimpleName()); //$NON-NLS-1$
 		}
 		for (final Class<? extends Selector> klass : this.selectors.keySet()) {
 			try {
 				if (Logger.logDebug()) {
-					Logger.debug("Checking for compatibility: '%s'", klass.getSimpleName());
+					Logger.debug("Checking for compatibility: '%s'", klass.getSimpleName()); //$NON-NLS-1$
 				}
 				if (klass.newInstance().supports(fromClazz, toClazz)) {
 					if (Logger.logDebug()) {
-						Logger.debug("Adding selector '%s for '%s'<->'%s'.", klass.getSimpleName(),
+						Logger.debug("Adding selector '%s for '%s'<->'%s'.", klass.getSimpleName(), //$NON-NLS-1$
 						             fromClazz.getSimpleName(), toClazz.getSimpleName());
 					}
 					list.add(this.selectors.get(klass));
 				} else {
 					if (Logger.logDebug()) {
-						Logger.debug("Selector '%s' does not support '%s'<->'%s'.", klass.getSimpleName(),
+						Logger.debug("Selector '%s' does not support '%s'<->'%s'.", klass.getSimpleName(), //$NON-NLS-1$
 						             fromClazz.getSimpleName(), toClazz.getSimpleName());
 					}
 				}
 			} catch (final Exception e) {
 				if (Logger.logWarn()) {
-					Logger.warn("Omitting selector due to instantiation error: " + klass.getSimpleName() + " / "
+					Logger.warn(Messages.getString("Finder.omittingSelector") + klass.getSimpleName() + " / " //$NON-NLS-1$ //$NON-NLS-2$
 					        + e.getMessage());
 				}
 			}
@@ -507,9 +507,9 @@ public class Finder {
 		}
 		
 		final Expression expression = engine.supported();
+		
 		if (expression == null) {
-			throw new UnrecoverableError("Engine: " + engine.getHandle()
-			        + " returns NULL when asked for supported fields.");
+			throw new UnrecoverableError(Messages.getString("Finder.noSupportedFields", engine.getHandle())); //$NON-NLS-1$
 		}
 		
 		final MappableEntity element1 = relation.getFrom();
@@ -522,8 +522,7 @@ public class Finder {
 		} else if (check < 0) {
 			engine.score(element2, element1, relation);
 		} else if (Logger.logInfo()) {
-			Logger.info("Skipping engine " + engine.getHandle() + " due to type incompatibility: "
-			        + expression.toString());
+			Logger.info(Messages.getString("Finder.skippingEngine", engine.getHandle(), expression)); //$NON-NLS-1$ 
 		}
 		
 		return relation;

@@ -270,15 +270,15 @@ public class TimestampEngine extends Engine {
 		final DateTime element2ResolutionTimestamp = ((DateTime) element2.get(FieldKey.RESOLUTION_TIMESTAMP));
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Creation FROM:%s, Creation TO:%s, Resolution TO:%s", element1Timestamp,
+			Logger.debug("Creation FROM:%s, Creation TO:%s, Resolution TO:%s", element1Timestamp, //$NON-NLS-1$
 			             element2CreationTimestamp, element2ResolutionTimestamp);
 		}
 		
 		if ((element1Timestamp != null) && (element2CreationTimestamp != null) && (element2ResolutionTimestamp != null)) {
 			
-			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression.");
+			ClassCondition.instance(element2, MappableReport.class, "Required due to 'supported()' expression."); //$NON-NLS-1$
 			final Report report = ((MappableReport) element2).getReport();
-			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$
+			Condition.notNull(report, "Local variable '%s' in '%s:%s'.", "report", getHandle(), "score"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			final Interval localInterval = new Interval(element1Timestamp.plus(getInterval().getStartMillis()),
 			                                            element1Timestamp.plus(getInterval().getEndMillis()));
@@ -286,14 +286,14 @@ public class TimestampEngine extends Engine {
 			if (element2CreationTimestamp.isBefore(element1Timestamp) && (element2ResolutionTimestamp != null)) {
 				// report got created before transaction
 				if (Logger.logDebug()) {
-					Logger.debug("report got created before transaction");
+					Logger.debug(Messages.getString("TimestampEngine.createdBeforeTransaction")); //$NON-NLS-1$
 				}
 				final History history = report.getHistory().get(Resolution.class.getSimpleName().toLowerCase());
 				
 				if (!history.isEmpty()) {
 					for (final HistoryElement element : history.getElements()) {
 						if (Logger.logDebug()) {
-							Logger.debug("Checking history element: %s", element);
+							Logger.debug(Messages.getString("TimestampEngine.checkingHistoryElement"), element); //$NON-NLS-1$
 						}
 						final EnumTuple tuple = element.getChangedEnumValues().get(Resolution.class.getSimpleName()
 						                                                                           .toLowerCase());
@@ -301,18 +301,19 @@ public class TimestampEngine extends Engine {
 						final Enum<Resolution> val = (Enum<Resolution>) tuple.getNewValue();
 						if ((val != null) && val.equals(Resolution.RESOLVED)) {
 							if (Logger.logDebug()) {
-								Logger.debug("This element set solved flag.");
+								Logger.debug(Messages.getString("TimestampEngine.elementResolved")); //$NON-NLS-1$
 							}
 							if (localInterval.contains(element.getTimestamp())) {
 								value = 1;
 								if (Logger.logDebug()) {
-									Logger.debug("Resolution is within specified interval, value: %s", value);
+									Logger.debug(Messages.getString("TimestampEngine.resolutionWithinInterval"), value); //$NON-NLS-1$
 								}
 							} else if (element.getTimestamp().isAfter(element1Timestamp)) {
 								value = Math.max(value,
-								                 1.0d / (1.0d + ((element.getTimestamp().getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+								                 1.0d / (1.0d + ((element.getTimestamp().getMillis() - element1Timestamp.getMillis())
+								                         / MS_IN_SECONDS / SECONDS_IN_DAYS)));
 								if (Logger.logDebug()) {
-									Logger.debug("Resolution is later than specified, value: %s", value);
+									Logger.debug(Messages.getString("TimestampEngine.resolutionBehindWindow"), value); //$NON-NLS-1$
 								}
 							}
 						}
@@ -322,33 +323,34 @@ public class TimestampEngine extends Engine {
 					if (localInterval.contains(element2ResolutionTimestamp)) {
 						value = 1;
 						if (Logger.logDebug()) {
-							Logger.debug("Resolution is within specified interval, value: %s", value);
+							Logger.debug("Resolution is within specified interval, value: %s", value); //$NON-NLS-1$
 						}
 					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
 						value = Math.max(value,
-						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis()) / 1000d / 3600d / 24d)));
+						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis())
+						                         / MS_IN_SECONDS / SECONDS_IN_DAYS)));
 						if (Logger.logDebug()) {
-							Logger.debug("Resolution is later than specified, value: %s", value);
+							Logger.debug("Resolution is later than specified, value: %s", value); //$NON-NLS-1$
 						}
 					}
 				}
 				
 			} else {
 				if (Logger.logDebug()) {
-					Logger.debug("Report got created after transaction");
+					Logger.debug(Messages.getString("TimestampEngine.reportAfterTransaction")); //$NON-NLS-1$
 				}
 				value = -1;
 			}
 			
 			if (Logger.logDebug()) {
-				Logger.debug("Scoring with confidence: %s", value);
+				Logger.debug(Messages.getString("TimestampEngine.scoring"), value); //$NON-NLS-1$
 			}
 			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), element1Timestamp.toString(),
 			           element1Timestamp.toString(), FieldKey.RESOLUTION_TIMESTAMP.name(),
 			           element2ResolutionTimestamp.toString(), element2ResolutionTimestamp.toString());
 		} else {
 			if (Logger.logDebug()) {
-				Logger.debug("Scoring with confidence: %s", value);
+				Logger.debug(Messages.getString("TimestampEngine.scoring", value)); //$NON-NLS-1$
 			}
 			addFeature(score, value, FieldKey.CREATION_TIMESTAMP.name(), Engine.getUnknown(), Engine.getUnknown(),
 			           FieldKey.RESOLUTION_TIMESTAMP.name(), Engine.getUnknown(), Engine.getUnknown());

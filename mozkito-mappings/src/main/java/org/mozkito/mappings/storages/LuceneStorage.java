@@ -14,8 +14,15 @@ package org.mozkito.mappings.storages;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
+import net.ownhero.dev.hiari.settings.IOptions;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -30,12 +37,15 @@ import org.apache.lucene.util.Version;
 
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class LuceneStorage.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 /**
  * The Class LuceneStorage.
@@ -43,6 +53,57 @@ import org.mozkito.persistence.PersistenceUtil;
  * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class LuceneStorage extends Storage {
+	
+	/**
+	 * The Class Options.
+	 */
+	public static final class Options extends ArgumentSetOptions<LuceneStorage, ArgumentSet<LuceneStorage, Options>> {
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
+			super(argumentSet, TAG, DESCRIPTION, requirements);
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see net.ownhero.dev.hiari.settings.ArgumentSetOptions#init()
+		 */
+		@Override
+		public LuceneStorage init() {
+			// PRECONDITIONS
+			
+			try {
+				return new LuceneStorage();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * net.ownhero.dev.hiari.settings.ArgumentSetOptions#requirements(net.ownhero.dev.hiari.settings.ArgumentSet)
+		 */
+		@Override
+		public Map<String, IOptions<?, ?>> requirements(final ArgumentSet<?, ?> argumentSet) throws ArgumentRegistrationException,
+		                                                                                    SettingsParseError {
+			// PRECONDITIONS
+			
+			try {
+				return new HashMap<>();
+			} finally {
+				// POSTCONDITIONS
+			}
+		}
+		
+	}
 	
 	/** The analyzer. */
 	private Analyzer                        analyzer         = null;
@@ -59,6 +120,12 @@ public class LuceneStorage extends Storage {
 	/** The isearcher reports. */
 	private IndexSearcher                   isearcherReports = null;
 	
+	/** The Constant DESCRIPTION. */
+	private static final String             DESCRIPTION      = Messages.getString("LuceneStorage.description"); //$NON-NLS-1$
+	                                                                                                            
+	/** The Constant TAG. */
+	private static final String             TAG              = "lucene";                                       //$NON-NLS-1$
+	                                                                                                            
 	/**
 	 * Instantiates a new lucene storage.
 	 */
@@ -74,13 +141,16 @@ public class LuceneStorage extends Storage {
 	 */
 	private void addReportDocument(final Report report) {
 		final Document doc = new Document();
-		doc.add(new Field("summary", report.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field("description", report.getDescription(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field("bugid", "" + report.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field(FieldKey.SUMMARY.name(), report.getSummary(), Field.Store.YES, Field.Index.ANALYZED));
+		doc.add(new Field(FieldKey.DESCRIPTION.name(), report.getDescription(), Field.Store.YES, Field.Index.ANALYZED));
+		doc.add(new Field(FieldKey.ID.name(), report.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
 		for (final Comment comment : report.getComments()) {
-			doc.add(new Field("comment", "" + comment.getMessage(), Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field(FieldKey.COMMENT.name(), comment.getMessage(), Field.Store.YES, Field.Index.ANALYZED));
 		}
+		
 		this.reportDocuments.put(report.getId(), doc);
+		
 		try {
 			this.iwriterReports.addDocument(doc);
 		} catch (final Exception e) {
@@ -103,7 +173,7 @@ public class LuceneStorage extends Storage {
 	 */
 	@Override
 	public String getDescription() {
-		return "Manages the lucene search engine data objects (required by several engines).";
+		return DESCRIPTION;
 	}
 	
 	/**
@@ -160,7 +230,7 @@ public class LuceneStorage extends Storage {
 			throw new UnrecoverableError(e);
 		} finally {
 			try {
-				this.isearcherReports = new IndexSearcher(IndexReader.open(this.reportDirectory, true));
+				this.isearcherReports = new IndexSearcher(IndexReader.open(this.reportDirectory));
 			} catch (final Exception e) {
 				throw new UnrecoverableError(e);
 			}

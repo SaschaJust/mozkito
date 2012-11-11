@@ -83,10 +83,10 @@ public class DummyStrategy extends Strategy {
 	}
 	
 	/** The Constant TAG. */
-	private final static String TAG         = "dummy";                               //$NON-NLS-1$
+	private static final String TAG         = "dummy";                               //$NON-NLS-1$
 	                                                                                  
 	/** The Constant DESCRIPTION. */
-	private final static String DESCRIPTION = "Dummy strategy for testing purposes."; //$NON-NLS-1$
+	private static final String DESCRIPTION = "Dummy strategy for testing purposes."; //$NON-NLS-1$
 	                                                                                  
 	/*
 	 * (non-Javadoc)

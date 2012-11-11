@@ -318,7 +318,7 @@ public class Information {
 	 *            the text
 	 * @return the list
 	 */
-	private static final List<Map<String, Integer>> findAlphaEnumSpots(final String text) {
+	private static List<Map<String, Integer>> findAlphaEnumSpots(final String text) {
 		
 		final List<Map<String, Integer>> list = new LinkedList<>();
 		final Regex alphaBulletRegex = new Regex(Information.ALPHA_ENUM_BULLET, REFlags.IGNORE_CASE);
@@ -690,7 +690,7 @@ public class Information {
 				
 				Formatter out = new Formatter(new StringBuilder(), Locale.US);
 				for (int position = 0; position < tokens.getLength(); position++) {
-					out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)),
+					out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), //$NON-NLS-1$
 					           topics.getIndexAtPosition(position));
 				}
 				System.out.println(out);
@@ -707,11 +707,11 @@ public class Information {
 					final Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
 					
 					out = new Formatter(new StringBuilder(), Locale.US);
-					out.format("%d\t%.3f\t", topic, topicDistribution[topic]);
+					out.format("%d\t%.3f\t", topic, topicDistribution[topic]); //$NON-NLS-1$
 					int rank = 0;
 					while (iterator.hasNext() && (rank < 5)) {
 						final IDSorter idCountPair = iterator.next();
-						out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()),
+						out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()), //$NON-NLS-1$
 						           idCountPair.getWeight());
 						rank++;
 					}
@@ -725,7 +725,7 @@ public class Information {
 				int rank = 0;
 				while (iterator.hasNext() && (rank < 5)) {
 					final IDSorter idCountPair = iterator.next();
-					topicZeroText.append(dataAlphabet.lookupObject(idCountPair.getID()) + " ");
+					topicZeroText.append(dataAlphabet.lookupObject(idCountPair.getID()) + " "); //$NON-NLS-1$
 					rank++;
 				}
 				
@@ -735,7 +735,7 @@ public class Information {
 				
 				final TopicInferencer inferencer = model.getInferencer();
 				final double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
-				System.out.println("0\t" + testProbabilities[0]);
+				System.out.println("0\t" + testProbabilities[0]); //$NON-NLS-1$
 				
 				return model;
 			} catch (final IOException e) {

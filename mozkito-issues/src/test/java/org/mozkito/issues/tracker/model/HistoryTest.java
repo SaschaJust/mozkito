@@ -16,20 +16,18 @@
 package org.mozkito.issues.tracker.model;
 
 import static org.junit.Assert.assertEquals;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class HistoryTest.
@@ -37,6 +35,10 @@ import org.mozkito.persistence.model.Person;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class HistoryTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/** The report. */
 	private Report                  report;

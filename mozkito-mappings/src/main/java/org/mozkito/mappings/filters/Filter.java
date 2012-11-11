@@ -94,14 +94,14 @@ public abstract class Filter extends Node {
 						clazz = (Class<? extends Filter>) Class.forName(Filter.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError(Messages.getString("Filter.loadingFailure")); //$NON-NLS-1$
 						
 					}
 					
 					final ArgumentSetOptions<? extends Filter, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
-							Logger.warn("Filter '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
+							Logger.warn(Messages.getString("Filter.laggingConfigClass"), //$NON-NLS-1$
 							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
 							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
 						}
@@ -157,7 +157,7 @@ public abstract class Filter extends Node {
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
+								Logger.info(Messages.getString("Filter.noDirectExtension"), //$NON-NLS-1$
 								            c.getSimpleName(), Filter.class.getSimpleName(), c.getSuperclass()
 								                                                              .getSimpleName());
 							}
@@ -174,7 +174,7 @@ public abstract class Filter extends Node {
 				
 				this.enabledFiltersOption = new SetArgument.Options(
 				                                                    set,
-				                                                    "enabled", Messages.getString("MappingFilter.enabledDescription"), //$NON-NLS-1$ //$NON-NLS-2$
+				                                                    "enabled", Messages.getString("Filter.optionEnabled"), //$NON-NLS-1$ //$NON-NLS-2$
 				                                                    defaultSet, Requirement.required);
 				
 				map.put(this.enabledFiltersOption.getName(), this.enabledFiltersOption);

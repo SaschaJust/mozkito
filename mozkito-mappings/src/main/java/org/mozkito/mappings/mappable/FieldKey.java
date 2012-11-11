@@ -79,5 +79,8 @@ public enum FieldKey {
 	SUMMARY,
 	
 	/** The TYPE. */
-	TYPE;
+	TYPE,
+	
+	/** The DESCRIPTION */
+	DESCRIPTION;
 }

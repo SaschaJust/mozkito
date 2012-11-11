@@ -43,12 +43,12 @@ import org.mozkito.mappings.register.Node;
 
 /**
  * 
- * A strategy determines the way reposuite decides whether a mapping is valid or not. In a TotalAgreement strategy all
+ * A strategy determines the way mozkito decides whether a mapping is valid or not. In a TotalAgreement strategy all
  * engines have to agree on a valid mapping.
  * 
- * Reposuite relies on a strategy to be used when computing the actual mappings. In this step, reposuite fetches all
+ * Mozkito relies on a strategy to be used when computing the actual mappings. In this step, mozkito fetches all
  * MapScores from the previous step from the persistence provider and evaluates the feature vector according to the
- * selected strategy. E.g. if a TotalConfidence strategy is used, reposuite will only consider mappings as valid, if and
+ * selected strategy. E.g. if a TotalConfidence strategy is used, mozkito will only consider mappings as valid, if and
  * only if the total confidence (the sum of all individual scores from the engines) yields a positive result. In a veto
  * strategies, all mappings that have at least one negative value in the feature vector are dropped. Certain strategies
  * rely on storages. E.g. the SVM strategy uses a model that has been build beforehand by having a support vector
@@ -104,18 +104,18 @@ public abstract class Strategy extends Node {
 						clazz = (Class<? extends Strategy>) Class.forName(Strategy.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError(
-						                             String.format("Could not load strategy '%s'. Does probably not exist. Aborting.",
-						                                           name));
+						throw new UnrecoverableError(Messages.getString("Strategy.loadingFailure", name)); //$NON-NLS-1$
 						
 					}
 					
 					final ArgumentSetOptions<? extends Strategy, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
-							Logger.warn("Engine '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
-							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
-							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
+							Logger.warn(Messages.getString("Strategy.laggingConfigClass", //$NON-NLS-1$
+							                               clazz.getSimpleName(),
+							                               ArgumentSetOptions.class.getSimpleName(),
+							                               clazz.getSimpleName(), ArgumentSet.class.getSimpleName(),
+							                               clazz.getSimpleName()));
 						}
 						
 					} else {
@@ -185,7 +185,7 @@ public abstract class Strategy extends Node {
 									                                                                                         Requirement.required);
 									
 									if (Logger.logDebug()) {
-										Logger.debug("Adding new mapping strategies dependency '%s' with list activator '%s'",
+										Logger.debug("Adding new mapping strategies dependency '%s' with list activator '%s'", //$NON-NLS-1$
 										             strategyOption.getTag(), this.enabledStrategiesOption.getTag());
 									}
 									
@@ -197,15 +197,15 @@ public abstract class Strategy extends Node {
 							}
 							
 							if (!foundOptionClass) {
-								throw new Shutdown(
-								                   String.format("The class '%s' does not have an internal configurator class.",
-								                                 strategyClass.getSimpleName()));
+								throw new Shutdown(Messages.getString("Strategy.noInternalConfigurator", //$NON-NLS-1$
+								                                      strategyClass.getSimpleName()));
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            strategyClass.getSimpleName(), Strategy.class.getSimpleName(),
-								            strategyClass.getSuperclass().getSimpleName());
+								Logger.info(Messages.getString("Strategy.noDirectExtension", //$NON-NLS-1$
+								                               strategyClass.getSimpleName(),
+								                               Strategy.class.getSimpleName(),
+								                               strategyClass.getSuperclass().getSimpleName()));
 							}
 						}
 					}
@@ -226,10 +226,10 @@ public abstract class Strategy extends Node {
 	}
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = "...";
+	private static final String DESCRIPTION = Messages.getString("Strategy.description"); //$NON-NLS-1$
 	/** The Constant TAG. */
-	private static final String TAG         = "strategies"; //$NON-NLS-1$
-	                                                        
+	private static final String TAG         = "strategies";                              //$NON-NLS-1$
+	                                                                                      
 	/**
 	 * Gets the options.
 	 * 

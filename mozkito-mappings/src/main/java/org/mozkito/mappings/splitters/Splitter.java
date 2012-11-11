@@ -94,16 +94,18 @@ public abstract class Splitter extends Node {
 						clazz = (Class<? extends Splitter>) Class.forName(Splitter.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load engine '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError(Messages.getString("Splitter.loadingFailure", getHandle())); //$NON-NLS-1$
 						
 					}
 					
 					final ArgumentSetOptions<? extends Splitter, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
-							Logger.warn("Splitter '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
-							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
-							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
+							Logger.warn(Messages.getString("Splitter.laggingConfigClass", //$NON-NLS-1$
+							                               clazz.getSimpleName(),
+							                               ArgumentSetOptions.class.getSimpleName(),
+							                               clazz.getSimpleName(), ArgumentSet.class.getSimpleName(),
+							                               clazz.getSimpleName()));
 						}
 						
 					} else {
@@ -157,9 +159,9 @@ public abstract class Splitter extends Node {
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            c.getSimpleName(), Splitter.class.getSimpleName(), c.getSuperclass()
-								                                                                .getSimpleName());
+								Logger.info(Messages.getString("Splitter.noDirectExtension", //$NON-NLS-1$
+								                               c.getSimpleName(), Splitter.class.getSimpleName(),
+								                               c.getSuperclass().getSimpleName()));
 							}
 						}
 						
@@ -188,10 +190,11 @@ public abstract class Splitter extends Node {
 	}
 	
 	/** The Constant DESCRIPTION. */
-	private static final String DESCRIPTION = "...";
+	private static final String DESCRIPTION = Messages.getString("Splitter.description"); //$NON-NLS-1$
+	                                                                                      
 	/** The Constant TAG. */
-	private static final String TAG         = "splitters"; //$NON-NLS-1$
-	                                                       
+	private static final String TAG         = "splitters";                               //$NON-NLS-1$
+	                                                                                      
 	/**
 	 * Gets the options.
 	 * 

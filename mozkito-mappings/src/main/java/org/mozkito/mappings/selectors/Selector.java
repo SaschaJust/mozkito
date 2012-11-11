@@ -105,16 +105,18 @@ public abstract class Selector extends Node {
 						clazz = (Class<? extends Selector>) Class.forName(Selector.class.getPackage().getName() + '.'
 						        + name);
 					} catch (final ClassNotFoundException e) {
-						throw new UnrecoverableError("Could not load selector '%s'. Does probably not exist. Aborting.");
+						throw new UnrecoverableError(Messages.getString("loadingFailure", getHandle())); //$NON-NLS-1$
 						
 					}
 					
 					final ArgumentSetOptions<? extends Selector, ?> options = this.selectorOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
-							Logger.warn("Selector '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
-							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
-							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
+							Logger.warn(Messages.getString("Selector.laggingConfigClass", //$NON-NLS-1$
+							                               clazz.getSimpleName(),
+							                               ArgumentSetOptions.class.getSimpleName(),
+							                               clazz.getSimpleName(), ArgumentSet.class.getSimpleName(),
+							                               clazz.getSimpleName()));
 						}
 						
 					} else {
@@ -205,9 +207,10 @@ public abstract class Selector extends Node {
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
-								            selectorClass.getSimpleName(), Selector.class.getSimpleName(),
-								            selectorClass.getSuperclass().getSimpleName());
+								Logger.info(Messages.getString("Selector.noDirectExtension", //$NON-NLS-1$
+								                               selectorClass.getSimpleName(),
+								                               Selector.class.getSimpleName(),
+								                               selectorClass.getSuperclass().getSimpleName()));
 							}
 						}
 					}

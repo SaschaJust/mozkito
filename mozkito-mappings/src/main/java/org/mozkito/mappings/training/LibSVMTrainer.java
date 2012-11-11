@@ -34,6 +34,7 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.FileCondition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.strategies.SVMStrategy;
 
 /**
@@ -200,7 +201,7 @@ public class LibSVMTrainer extends Trainer {
 			if ((line = reader.readNext()) != null) {
 				vectorLength = line.length - 2;
 				if (vectorLength < 1) {
-					throw new UnrecoverableError(String.format("Invalid vector size: %s", vectorLength));
+					throw new UnrecoverableError(Messages.getString("LibSVMTrainer.invalidVectorSize", vectorLength)); //$NON-NLS-1$
 				}
 				
 			}

@@ -299,16 +299,19 @@ public class RegexEngine extends Engine {
 			
 			setMatchers(new LinkedList<RegexEngine.Matcher>());
 			
-			try (final CSVReader reader = new CSVReader(
-			                                            new BufferedReader(
-			                                                               new InputStreamReader(
-			                                                                                     getConfigURI().toURL()
-			                                                                                                   .openStream())),
-			                                            ' ')) {
+			CSVReader reader = null;
+			try {
+				reader = new CSVReader(new BufferedReader(new InputStreamReader(getConfigURI().toURL().openStream())),
+				                       ' ');
 				String[] line = null;
 				while ((line = reader.readNext()) != null) {
 					if (line.length < 2) {
-						throw new UnrecoverableError(String.format("Invalid regex config: %s", Strings.join(line, " "))); //$NON-NLS-1$//$NON-NLS-2$
+						try {
+							reader.close();
+						} catch (final IOException e) {
+							// ignore
+						}
+						throw new UnrecoverableError(Messages.getString("invalidRegexConfig", Strings.join(line, " "))); //$NON-NLS-1$//$NON-NLS-2$
 						
 					} else {
 						getMatchers().add(new Matcher(
@@ -321,9 +324,18 @@ public class RegexEngine extends Engine {
 				}
 				
 				if (Logger.logDebug()) {
-					Logger.debug(Messages.getString("RegexEngine.loadedPatterns") + JavaUtils.collectionToString(getMatchers())); //$NON-NLS-1$
+					Logger.debug(Messages.getString("RegexEngine.loadedPatterns", JavaUtils.collectionToString(getMatchers()))); //$NON-NLS-1$
 				}
+				
+				reader.close();
 			} catch (final IOException e) {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (final IOException e2) {
+					// ignore
+				}
 				throw new UnrecoverableError(e);
 			}
 		} finally {

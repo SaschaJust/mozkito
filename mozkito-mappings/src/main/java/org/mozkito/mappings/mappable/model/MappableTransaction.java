@@ -22,6 +22,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
@@ -29,6 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -107,8 +109,10 @@ public class MappableTransaction extends MappableEntity {
 			case MODIFICATION_TIMESTAMP:
 				return getTransaction().getTimestamp();
 			default:
-				return null;
+				break;
 		}
+		
+		throw new UnrecoverableError(Messages.getString("MappableEntity.unsupportedFieldKey", getHandle(), key.name())); //$NON-NLS-1$
 	}
 	
 	/*
@@ -126,7 +130,7 @@ public class MappableTransaction extends MappableEntity {
 				return getFile(index);
 			default:
 				if (Logger.logWarn()) {
-					Logger.warn("Field " + key.name() + " is not indexable on " + getHandle() + ".");
+					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getHandle())); //$NON-NLS-1$
 				}
 				return get(key);
 		}
@@ -207,7 +211,6 @@ public class MappableTransaction extends MappableEntity {
 	@SuppressWarnings ("serial")
 	@Override
 	public Set<FieldKey> supported() {
-		
 		return new HashSet<FieldKey>() {
 			
 			{

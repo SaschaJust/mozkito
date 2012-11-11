@@ -34,6 +34,7 @@ import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.mappings.mappable.FieldKey;
+import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 
@@ -121,13 +122,12 @@ public class MappableReport extends MappableEntity implements Annotated {
 				break;
 		}
 		
-		throw new UnrecoverableError(getClass().getSimpleName() + " does not support field key: " + key.name());
+		throw new UnrecoverableError(Messages.getString("MappableEntity.unsupportedFieldKey", getHandle(), key.name())); //$NON-NLS-1$
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.mapping.mappable.MappableEntity#get(de .unisaarland.cs.st.reposuite.mapping.mappable.FieldKey,
-	 * int)
+	 * @see org.mozkito.mappings.mappable.model.MappableEntity#get(org.mozkito.mappings.mappable.FieldKey, int)
 	 */
 	@Override
 	@Transient
@@ -167,7 +167,7 @@ public class MappableReport extends MappableEntity implements Annotated {
 				return person;
 			default:
 				if (Logger.logWarn()) {
-					Logger.warn("Field " + key.name() + " is not indexable on " + getHandle() + ".");
+					Logger.warn(Messages.getString("MappableEntity.notIndexable", key.name(), getHandle())); //$NON-NLS-1$
 				}
 				return get(key);
 		}

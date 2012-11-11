@@ -116,7 +116,7 @@ public abstract class Engine extends Node {
 						        + name);
 					} catch (final ClassNotFoundException e) {
 						throw new Shutdown(
-						                   String.format("Could not load engine '%s'. Does probably not exist. Aborting.",
+						                   String.format(Messages.getString("Engine.loadingFailure"), //$NON-NLS-1$
 						                                 name));
 						
 					}
@@ -124,7 +124,7 @@ public abstract class Engine extends Node {
 					final ArgumentSetOptions<? extends Engine, ?> options = this.engineOptions.get(clazz);
 					if (options == null) {
 						if (Logger.logWarn()) {
-							Logger.warn("Engine '%s' is lagging a configuration class. Make sure there is an internal class 'public static final Options extends %s<%s, %s<%s, Options>>' ",
+							Logger.warn(Messages.getString("Engine.laggingConfigClass"), //$NON-NLS-1$
 							            clazz.getSimpleName(), ArgumentSetOptions.class.getSimpleName(),
 							            clazz.getSimpleName(), ArgumentSet.class.getSimpleName(), clazz.getSimpleName());
 						}
@@ -202,7 +202,7 @@ public abstract class Engine extends Node {
 									                                                                                     Requirement.contains(this.enabledEnginesOption,
 									                                                                                                          engineClass.getSimpleName()));
 									if (Logger.logDebug()) {
-										Logger.debug("Adding new mapping engines dependency '%s' with list activator '%s'",
+										Logger.debug(Messages.getString("Engine.addingEngineDependency"), //$NON-NLS-1$
 										             engineOption.getTag(), this.enabledEnginesOption.getTag());
 									}
 									
@@ -215,12 +215,12 @@ public abstract class Engine extends Node {
 							
 							if (!foundOptionClass) {
 								throw new Shutdown(
-								                   String.format("The class '%s' does not have an internal configurator class.",
+								                   String.format(Messages.getString("Engine.noInternalConfigurator"), //$NON-NLS-1$
 								                                 engineClass.getSimpleName()));
 							}
 						} else {
 							if (Logger.logInfo()) {
-								Logger.info("The class '%s' is not a direct extension of '%s' and has to be loaded by its parent '%s'.",
+								Logger.info(Messages.getString("Engine.noDirectExtension"), //$NON-NLS-1$
 								            engineClass.getSimpleName(), Engine.class.getSimpleName(),
 								            engineClass.getSuperclass().getSimpleName());
 							}
@@ -279,7 +279,7 @@ public abstract class Engine extends Node {
 	/**
 	 * Gets the options.
 	 * 
-	 * @param settings
+	 * @param set
 	 *            the settings
 	 * @return the options
 	 */
