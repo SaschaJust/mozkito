@@ -4,5 +4,6 @@
 	<suppress checks=".*" files="src/test/.*"/>
 	<suppress checks=".*" files="src/main/resources/.*"/>
 	<suppress checks=".*" files=".*\.txt"/>
+	<suppress checks=".*" files=".*\.class"/>
 	<suppress checks=".*" files=".*\.properties"/>
 </suppressions>

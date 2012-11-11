@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.mozkito</groupId>
 		<artifactId>mozkito</artifactId>
@@ -131,39 +130,6 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			    <plugin>
-			          <groupId>org.apache.maven.plugins</groupId>
-				        <artifactId>maven-surefire-plugin</artifactId>
-					      <configuration>
-					      	<enableAssertions>true</enableAssertions>
-					              <forkMode>pertest</forkMode>
-						              <argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar</argLine>
-							              <workingDirectory>${basedir}/target</workingDirectory>
-								            </configuration>
-									        </plugin>
- <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-dependency-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>copy</id>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>copy</goal>
-          </goals>
-          <configuration>
-            <artifactItems>
-              <artifactItem>
-                <groupId>net.ownhero.dev</groupId>
-                <artifactId>kanuni-agent</artifactId>
-                <version>0.2</version>
-                <outputDirectory>${project.build.directory}</outputDirectory>
-              </artifactItem>
-            </artifactItems>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
 		</plugins>
 	</build>
 	<properties>
