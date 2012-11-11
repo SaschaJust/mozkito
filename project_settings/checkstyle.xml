@@ -52,11 +52,11 @@
   </module>
   <module name="Header">
     <property name="severity" value="warning"/>
-    <property name="headerFile" value="/Users/just/Development/moskito/project_settings/header.txt"/>
+    <property name="header" value="/***********************************************************************************************************************\n * Copyright 2011 Kim Herzig, Sascha Just\n * \n * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file except in compliance with\n * the License. You may obtain a copy of the License at\n * \n * http://www.apache.org/licenses/LICENSE-2.0\n * \n * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on\n * an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the\n * specific language governing permissions and limitations under the License.\n **********************************************************************************************************************/\n"/>
     <property name="charset" value="UTF-8"/>
   </module>
   <module name="NewlineAtEndOfFile"/>
   <module name="SuppressionFilter">
-    <property name="file" value="/Users/just/Development/moskito/project_settings/checkstyle_suppressions.xml"/>
+    <property name="file" value="http://users.own-hero.net/~methos/dropbox/checkstyle_suppressions.xml"/>
   </module>
 </module>
