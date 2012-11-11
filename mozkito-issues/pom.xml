@@ -131,6 +131,39 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			    <plugin>
+			          <groupId>org.apache.maven.plugins</groupId>
+				        <artifactId>maven-surefire-plugin</artifactId>
+					      <configuration>
+					      	<enableAssertions>true</enableAssertions>
+					              <forkMode>pertest</forkMode>
+						              <argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar</argLine>
+							              <workingDirectory>${basedir}/target</workingDirectory>
+								            </configuration>
+									        </plugin>
+ <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>copy</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>copy</goal>
+          </goals>
+          <configuration>
+            <artifactItems>
+              <artifactItem>
+                <groupId>net.ownhero.dev</groupId>
+                <artifactId>kanuni-agent</artifactId>
+                <version>0.2</version>
+                <outputDirectory>${project.build.directory}</outputDirectory>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
 		</plugins>
 	</build>
 	<properties>
