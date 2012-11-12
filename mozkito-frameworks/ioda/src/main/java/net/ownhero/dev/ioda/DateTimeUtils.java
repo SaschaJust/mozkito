@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.compare.GreaterInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Group;
@@ -235,7 +234,7 @@ public class DateTimeUtils {
 	 *            the abbreviation
 	 * @return the offset to UTC in +/-#### format
 	 */
-	public static final String timeZoneAbbreviationToUTCOffset(@NotNull @GreaterInt (ref = 2) final String timezone) {
+	public static final String timeZoneAbbreviationToUTCOffset(@NotNull final String timezone) {
 		
 		return timezones.get(timezone);
 	}
