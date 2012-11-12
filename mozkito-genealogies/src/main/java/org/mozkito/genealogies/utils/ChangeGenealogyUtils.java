@@ -50,7 +50,6 @@ import com.tinkerpop.blueprints.pgm.Graph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
-
 /**
  * The Class ChangeGenealogyUtils.
  * 
@@ -115,8 +114,7 @@ public class ChangeGenealogyUtils {
 		try {
 			zipFile = new File(zipURL.toURI());
 		} catch (final URISyntaxException e1) {
-			e1.printStackTrace();
-			return null;
+			throw new UnrecoverableError(e1);
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Unzipping " + zipFile.getAbsolutePath() + " to " + baseDir.getAbsolutePath());
@@ -127,15 +125,8 @@ public class ChangeGenealogyUtils {
 		Repository repository = null;
 		try {
 			repository = RepositoryFactory.getRepositoryHandler(RepositoryType.GIT).newInstance();
-		} catch (final InstantiationException e1) {
-			e1.printStackTrace();
-			return null;
-		} catch (final IllegalAccessException e1) {
-			e1.printStackTrace();
-			return null;
-		} catch (final UnregisteredRepositoryTypeException e1) {
-			e1.printStackTrace();
-			return null;
+		} catch (final InstantiationException | IllegalAccessException | UnregisteredRepositoryTypeException e1) {
+			throw new UnrecoverableError(e1);
 		}
 		
 		final URL url = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git");
@@ -143,17 +134,13 @@ public class ChangeGenealogyUtils {
 		try {
 			urlFile = new File(url.toURI());
 		} catch (final URISyntaxException e1) {
-			e1.printStackTrace();
-			return null;
+			throw new UnrecoverableError(e1);
 		}
 		
 		try {
 			repository.setup(urlFile.toURI(), branchFactory, null, "master");
 		} catch (final Exception e) {
-			if (Logger.logError()) {
-				Logger.error(e.getMessage());
-			}
-			return null;
+			throw new UnrecoverableError(e);
 		}
 		
 		// unzip the database dump
@@ -296,20 +283,17 @@ public class ChangeGenealogyUtils {
 		}
 		
 		if (transactionMap.size() != 10) {
-			System.err.println("The imported database dump must contain exactly 10 transaction entries but was "
-			        + transactionMap.size());
-			
-			return null;
+			throw new UnrecoverableError(
+			                             "The imported database dump must contain exactly 10 transaction entries but was "
+			                                     + transactionMap.size());
 		}
 		
 		final CoreChangeGenealogy changeGenealogy = ChangeGenealogyUtils.readFromDB(tmpGraphDBFile,
 		                                                                            branchFactory.getPersistenceUtil());
 		
 		if (changeGenealogy == null) {
-			if (Logger.logError()) {
-				Logger.error("Could not generate test change genealogy environment. Reading the CoreChangeGenealogy failed!");
-			}
-			return null;
+			throw new UnrecoverableError(
+			                             "Could not generate test change genealogy environment. Reading the CoreChangeGenealogy failed!");
 		}
 		
 		for (final Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
