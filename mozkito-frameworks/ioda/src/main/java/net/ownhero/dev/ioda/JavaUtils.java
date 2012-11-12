@@ -6,23 +6,28 @@ package net.ownhero.dev.ioda;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
+
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class JavaUtils.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
-public class JavaUtils {
+public final class JavaUtils {
 	
+	/** The Constant HEX_CHAR_TABLE. */
 	private static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
 	        (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd',
 	        (byte) 'e', (byte) 'f'            };
 	
 	/**
-	 * Returns true if any of the submitted objects is null
+	 * Returns true if any of the submitted objects is null.
 	 * 
 	 * @param objects
 	 *            array of objects to be tested for being null
@@ -40,16 +45,15 @@ public class JavaUtils {
 	/**
 	 * Returns a string representing the array with its contents. The representation starts with a '[' followed by a
 	 * comma separated list of entries, followed by a ']'. Internally, the array is converted to a list and processed by
-	 * {@link JavaUtils#collectionToString(Collection)}.
-	 * 
-	 * Note that this method may be called recursively, if the entries are or contain arrays as well. If an entry is a
-	 * <code>Collection</code>, a <code>Map</code> or an <code>Array</code>, the according
-	 * <code>collectionToString()</code>, <code>mapToString()</code> or <code>arrayToString()</code> method is called.
-	 * Otherwise, we call the <code>toString()</code> method of the object.
 	 * 
 	 * @param array
 	 *            the array you request the string representation for
-	 * @return the string representation of the array
+	 * @return the string representation of the array {@link JavaUtils#collectionToString(Collection)}.
+	 * 
+	 *         Note that this method may be called recursively, if the entries are or contain arrays as well. If an
+	 *         entry is a <code>Collection</code>, a <code>Map</code> or an <code>Array</code>, the according
+	 *         <code>collectionToString()</code>, <code>mapToString()</code> or <code>arrayToString()</code> method is
+	 *         called. Otherwise, we call the <code>toString()</code> method of the object.
 	 */
 	public static String arrayToString(final Object[] array) {
 		return collectionToString(Arrays.asList(array));
@@ -77,15 +81,14 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * Internal method used by {@link JavaUtils#collectionToString(Collection)},
-	 * {@link JavaUtils#arrayToString(Object[])} and {@link JavaUtils#mapToString(Map)}. Checks the entries to implement
-	 * {@link Collection} or {@link Map} or be of type array. In this case the according methods in {@link JavaUtils}
-	 * are called to get their String representations. Otherwise, the objects <code>toString()</code> method is called.
+	 * Internal method used by {@link JavaUtils#collectionToString(Collection)},.
 	 * 
 	 * @param object
 	 *            the object that shall be represented as a String
-	 * @return the string representation of the object
-	 * 
+	 * @return the string representation of the object {@link JavaUtils#arrayToString(Object[])} and
+	 *         {@link JavaUtils#mapToString(Map)}. Checks the entries to implement {@link Collection} or {@link Map} or
+	 *         be of type array. In this case the according methods in {@link JavaUtils} are called to get their String
+	 *         representations. Otherwise, the objects <code>toString()</code> method is called.
 	 */
 	private static String checkDescent(final Object object) {
 		if (object == null) {
@@ -153,8 +156,11 @@ public class JavaUtils {
 	}
 	
 	/**
+	 * Enum to array.
+	 * 
 	 * @param e
-	 * @return
+	 *            the e
+	 * @return the string[]
 	 */
 	public static String[] enumToArray(final Enum<?> e) {
 		final String[] retval = new String[e.getDeclaringClass().getEnumConstants().length];
@@ -166,8 +172,11 @@ public class JavaUtils {
 	}
 	
 	/**
+	 * Enum to string.
+	 * 
 	 * @param e
-	 * @return
+	 *            the e
+	 * @return the string
 	 */
 	public static String enumToString(final Enum<?> e) {
 		final Object[] enumConstants = e.getDeclaringClass().getEnumConstants();
@@ -175,8 +184,11 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * @return
+	 * Gets the calling class.
+	 * 
+	 * @return the calling class
 	 * @throws ClassNotFoundException
+	 *             the class not found exception
 	 */
 	public static Class<?> getCallingClass() throws ClassNotFoundException {
 		final Throwable throwable = new Throwable();
@@ -187,7 +199,56 @@ public class JavaUtils {
 	}
 	
 	/**
-	 * @return
+	 * Gets the handle.
+	 * 
+	 * @param clazz
+	 *            the clazz
+	 * @return the handle
+	 */
+	public static final String getHandle(final Class<?> clazz) {
+		// PRECONDITIONS
+		
+		final StringBuilder builder = new StringBuilder();
+		
+		try {
+			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
+			Class<?> tmpClass = clazz;
+			list.add(tmpClass);
+			
+			while ((tmpClass = tmpClass.getEnclosingClass()) != null) {
+				list.addFirst(tmpClass);
+			}
+			
+			for (final Class<?> c : list) {
+				if (builder.length() > 0) {
+					builder.append('.');
+				}
+				
+				builder.append(c.getSimpleName());
+			}
+			
+			return builder.toString();
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(builder, "Local variable '%s' in '%s:%s'.", "builder", JavaUtils.class, "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+	
+	/**
+	 * Gets the handle.
+	 * 
+	 * @param o
+	 *            the o
+	 * @return the handle
+	 */
+	public static final String getHandle(final Object o) {
+		return getHandle(o.getClass());
+	}
+	
+	/**
+	 * Gets the this method name.
+	 * 
+	 * @return the this method name
 	 */
 	public static String getThisMethodName() {
 		final Throwable throwable = new Throwable();
@@ -198,8 +259,11 @@ public class JavaUtils {
 	}
 	
 	/**
+	 * Map to string.
+	 * 
 	 * @param map
-	 * @return
+	 *            the map
+	 * @return the string
 	 */
 	public static String mapToString(final Map<?, ?> map) {
 		final StringBuilder builder = new StringBuilder();
@@ -225,12 +289,26 @@ public class JavaUtils {
 		return builder.toString();
 	}
 	
+	/**
+	 * To hex string.
+	 * 
+	 * @param b
+	 *            the b
+	 * @return the string
+	 */
 	public static final String toHexString(final byte b) {
 		return "0x" + (b < 16
 		                     ? '0'
 		                     : "") + Integer.toHexString(b);
 	}
 	
+	/**
+	 * To hex string.
+	 * 
+	 * @param array
+	 *            the array
+	 * @return the string
+	 */
 	public static String toHexString(final byte[] array) {
 		final StringBuilder builder = new StringBuilder();
 		
@@ -242,12 +320,5 @@ public class JavaUtils {
 		}
 		
 		return builder.toString();
-	}
-	
-	/**
-	 * @return the simple class name
-	 */
-	public String getHandle() {
-		return this.getClass().getSimpleName();
 	}
 }
