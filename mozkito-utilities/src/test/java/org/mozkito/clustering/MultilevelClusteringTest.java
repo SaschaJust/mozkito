@@ -241,57 +241,6 @@ public class MultilevelClusteringTest {
 		
 	}
 	
-	@Test
-	public void minTest() {
-		
-		final Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
-		final List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(
-		                                                                                                                   1);
-		final MultilevelClusteringScoreVisitor<Integer> visitor = new MultilevelClusteringScoreVisitor<Integer>() {
-			
-			@Override
-			public void close() {
-				return;
-			}
-			
-			@Override
-			public double getMaxPossibleScore() {
-				return Integer.MAX_VALUE;
-			}
-			
-			@Override
-			public double getScore(final Integer t1,
-			                       final Integer t2) {
-				return t1 + t2;
-			}
-		};
-		l.add(visitor);
-		
-		final SumAggregation<Integer> aggregator = new SumAggregation<Integer>();
-		final MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, aggregator,
-		                                                                           new MinCollapseVisitor<Integer>());
-		
-		final Set<Set<Integer>> clusters = mp.getPartitions(3);
-		assertEquals(3, clusters.size());
-		
-		final Set<Integer> s1 = new HashSet<>();
-		s1.add(1);
-		s1.add(2);
-		s1.add(3);
-		s1.add(4);
-		
-		final Set<Integer> s2 = new HashSet<>();
-		s2.add(5);
-		
-		final Set<Integer> s3 = new HashSet<>();
-		s3.add(6);
-		
-		assertTrue(clusters.contains(s1));
-		assertTrue(clusters.contains(s2));
-		assertTrue(clusters.contains(s3));
-		
-	}
-	
 	@Before
 	public void setUp() {
 		this.visitor = new TestScoreVisitor();
