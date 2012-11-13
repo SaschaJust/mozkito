@@ -103,11 +103,11 @@
 			<artifactId>surefire-junit4</artifactId>
 			<version>2.12</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.6.0.201210061924</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	<repositories>
 		<repository>
@@ -412,9 +412,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<moduleName>mozkito</moduleName>
 		<!-- Tells Sonar to run the unit tests -->
-		<sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+		<!-- <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis> -->
 		<!-- Tells Sonar to use JaCoCo as the code coverage tool -->
-		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<!-- <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin> -->
 	</properties>
 	<profiles>
 		<profile>
