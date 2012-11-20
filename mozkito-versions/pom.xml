@@ -89,36 +89,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>coverage</id>
-			<activation>
-				<property>
-					<name>coverage</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<configuration>
-							<destFile>${project.basedir}/../target/jacoco-ut.exec</destFile>
-						</configuration>
-						<executions>
-							<execution>
-								<id>post-test</id>
-								<configuration>
-									<skip>true</skip>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<properties>
 		<moduleName>rcs</moduleName>
 	</properties>
