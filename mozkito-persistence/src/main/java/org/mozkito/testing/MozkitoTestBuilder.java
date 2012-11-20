@@ -114,10 +114,6 @@ public final class MozkitoTestBuilder extends Thread {
 		final List<String> commandList = new LinkedList<>();
 		commandList.add(this.javaBin);
 		
-		for (final Object property : System.getProperties().keySet()) {
-			commandList.add(String.format("-D%s=%s", property, System.getProperty((String) property)));
-		}
-		
 		final String nameOfRunningVM = ManagementFactory.getRuntimeMXBean().getName();
 		final int p = nameOfRunningVM.indexOf('@');
 		final String pid = nameOfRunningVM.substring(0, p);
@@ -131,7 +127,13 @@ public final class MozkitoTestBuilder extends Thread {
 		}
 		if (!sun_jvm_args.isEmpty()) {
 			commandList.add(sun_jvm_args);
+			System.err.println(sun_jvm_args);
 		}
+		
+		for (final Object property : System.getProperties().keySet()) {
+			commandList.add(String.format("-D%s=%s", property, System.getProperty((String) property)));
+		}
+		
 		commandList.add("-cp");
 		commandList.add(this.classPath);
 		commandList.add(MozkitoTest.class.getCanonicalName());
