@@ -383,7 +383,9 @@
 		<moduleName>mozkito</moduleName>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
+		<jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</jacoco.reportPath>
+		<jacoco.itReportPath>${coverage.reports.dir}/jacoco-it.exec</jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 	</properties>
 	<profiles>
@@ -587,6 +589,7 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<configuration>
+							<destFile>${jacoco.reportPath}</destFile>
 							<!-- <includes>org.mozkito.*</includes> -->
 						</configuration>
 						<executions>
