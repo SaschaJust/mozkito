@@ -587,7 +587,7 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<configuration>
-							<includes>org.mozkito.*</includes>
+							<!-- <includes>org.mozkito.*</includes> -->
 						</configuration>
 						<executions>
 							<execution>
