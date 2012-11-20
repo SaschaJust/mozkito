@@ -383,7 +383,7 @@
 		<moduleName>mozkito</moduleName>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
-		<coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
+		<coverage.reports.dir>${basedir}/../target/coverage-reports</coverage.reports.dir>
 		<jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</jacoco.reportPath>
 		<jacoco.itReportPath>${coverage.reports.dir}/jacoco-it.exec</jacoco.itReportPath>
 		<jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</jacoco.agent.path>
