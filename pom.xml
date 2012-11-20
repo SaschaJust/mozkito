@@ -385,7 +385,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<coverage.reports.dir>${basedir}/../target/coverage-reports</coverage.reports.dir>
 		<sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
-		<sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.itReportPath>
 		<sonar.jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</sonar.jacoco.agent.path>
 		<sonar.language>java</sonar.language>
 	</properties>
