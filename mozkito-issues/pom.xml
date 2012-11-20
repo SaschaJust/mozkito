@@ -91,7 +91,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>openjpa-maven-plugin</artifactId>
-				<version>1.2</version>
+				<version>2.2.0.1</version>
 				<configuration>
 					<includes>**/model/*.class</includes>
 					<addDefaultConstructor>true</addDefaultConstructor>
