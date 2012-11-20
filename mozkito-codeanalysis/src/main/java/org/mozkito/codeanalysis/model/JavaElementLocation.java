@@ -37,7 +37,6 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
 
-
 /**
  * The Class JavaElementLocation.
  * 
@@ -83,7 +82,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 *            the element
 	 * @return the java element location if successful. Returns <code>null</code> otherwise.
 	 */
-	public static JavaElementLocation fromXMLRepresentation(final Element element) {
+	public static JavaElementLocation fromXMLRepresentation(final Element element,
+	                                                        final JavaElementFactory elementFactory) {
 		
 		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
 			if (Logger.logWarn()) {
@@ -191,7 +191,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		
 		Element elementChild = element.getChild(JavaTypeDefinition.JAVA_CLASS_DEFINITION);
 		if (elementChild != null) {
-			javaElement = JavaTypeDefinition.fromXMLRepresentation(elementChild);
+			javaElement = JavaTypeDefinition.fromXMLRepresentation(elementChild, elementFactory);
 		} else {
 			elementChild = element.getChild(JavaMethodDefinition.JAVA_METHOD_DEFINITION);
 			if (elementChild != null) {

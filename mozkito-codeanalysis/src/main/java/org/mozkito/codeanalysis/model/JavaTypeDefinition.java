@@ -25,12 +25,11 @@ import javax.persistence.Transient;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
-import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom2.Element;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.persistence.Annotated;
-
 
 /**
  * The Class JavaClassDefinition.
@@ -43,6 +42,9 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
 	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";
 	public static final String JAVA_CLASS_DEFINITION = "JavaClassDefinition";
+	public static final String JAVA_CLASS_ANONYMOUS  = "anonymous";
+	public static final String JAVA_CLASS_INTERFACE  = "interface";
+	public static final String JAVA_CLASS_PARENT     = "parent";
 	
 	/** The Constant serialVersionUID. */
 	private static final long  serialVersionUID      = 945704236316941413L;
@@ -54,25 +56,47 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 *            the element
 	 * @return the java class definition is successful, <code>null</code> otherwise.
 	 */
-	public static JavaTypeDefinition fromXMLRepresentation(final Element element) {
+	public static JavaTypeDefinition fromXMLRepresentation(final Element element,
+	                                                       final JavaElementFactory factory) {
 		
 		if (!element.getName().equals(JAVA_CLASS_DEFINITION)) {
-			if (Logger.logWarn()) {
-				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
-			}
-			return null;
+			throw new UnrecoverableError(String.format("Unrecognized root element <%s>. Returning null.",
+			                                           element.getName()));
+			
 		}
 		
 		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
-		if (nameElement == null) {
-			if (Logger.logWarn()) {
-				Logger.warn("Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
-			}
-			return null;
-		}
+		Condition.notNull(nameElement, "Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
+		
 		final String name = nameElement.getText();
 		
-		return new JavaTypeDefinition(name);
+		final Element anonElement = element.getChild(JAVA_CLASS_ANONYMOUS);
+		Condition.notNull(anonElement, "Could not extract JavaClassDefinfition.anonymous.");
+		
+		final Boolean anonymous = Boolean.valueOf(anonElement.getText());
+		
+		final Element interfaceElement = element.getChild(JAVA_CLASS_INTERFACE);
+		Condition.notNull(interfaceElement, "Could not extract JavaClassDefinfition.interface.");
+		
+		final Boolean isInterface = Boolean.valueOf(interfaceElement.getText());
+		
+		final Element parentElement = element.getChild(JAVA_CLASS_PARENT);
+		if (parentElement != null) {
+			final JavaTypeDefinition parent = JavaTypeDefinition.fromXMLRepresentation(parentElement.getChild(JAVA_CLASS_DEFINITION),
+			                                                                           factory);
+			if (anonymous) {
+				return factory.getAnonymousClassDefinition(parent, name);
+			}
+		}
+		
+		net.ownhero.dev.kanuni.conditions.Condition.check(!anonymous,
+		                                                  "Anonymous classes MUST have a parent! XML file contained no parent of anonymous class.");
+		
+		if (isInterface) {
+			return factory.getInterfaceDefinition(name);
+		}
+		
+		return factory.getClassDefinition(name);
 	}
 	
 	/** The super class name. */
@@ -200,8 +224,19 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
 		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element anonElement = new Element(JAVA_CLASS_ANONYMOUS);
+		final Element interfaceElement = new Element(JAVA_CLASS_INTERFACE);
+		final Element parentElement = new Element(JAVA_CLASS_PARENT);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
+		anonElement.setText(String.valueOf(isAnonymClass()));
+		thisElement.addContent(anonElement);
+		interfaceElement.setText(String.valueOf(isInterface()));
+		thisElement.addContent(interfaceElement);
+		if (getParent() != null) {
+			parentElement.addContent(getParent().getXMLRepresentation());
+			thisElement.addContent(parentElement);
+		}
 		return thisElement;
 	}
 	

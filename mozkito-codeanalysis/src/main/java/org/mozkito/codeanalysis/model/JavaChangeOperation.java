@@ -35,7 +35,6 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class JavaChangeOperation.
  * 
@@ -57,7 +56,8 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the java change operation if successfull. Otherwise returns <node>null</code>
 	 */
 	public static JavaChangeOperation fromXMLRepresentation(final Element element,
-	                                                        final PersistenceUtil persistenceUtil) {
+	                                                        final PersistenceUtil persistenceUtil,
+	                                                        final JavaElementFactory elementFactory) {
 		
 		ChangeType changeType = null;
 		RCSRevision revision = null;
@@ -78,7 +78,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		final Element javaElementChild = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
 		
-		location = JavaElementLocation.fromXMLRepresentation(javaElementChild);
+		location = JavaElementLocation.fromXMLRepresentation(javaElementChild, elementFactory);
 		
 		if (location == null) {
 			if (Logger.logWarn()) {

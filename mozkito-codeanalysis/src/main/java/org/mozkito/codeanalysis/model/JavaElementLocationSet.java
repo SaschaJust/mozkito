@@ -15,10 +15,10 @@ package org.mozkito.codeanalysis.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mozkito.codeanalysis.utils.JavaElementLocations;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.mozkito.codeanalysis.utils.JavaElementLocations;
 
 /**
  * The Class JavaElementDefinitionCache. All instances extending JavaElement must be stored here. Careful! Instances
@@ -100,8 +100,7 @@ public class JavaElementLocationSet {
 	                                              @NotNegative final int endLine,
 	                                              @NotNegative final int position,
 	                                              @NotNegative final int bodyStartLine) {
-		final JavaTypeDefinition definition = this.elementFactory.getClassDefinition(fullQualifiedName,
-		                                                                             fullQualifiedName);
+		final JavaTypeDefinition definition = this.elementFactory.getClassDefinition(fullQualifiedName);
 		final JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, position,
 		                                                             bodyStartLine, file);
 		this.classDefLocations.add(location);
@@ -123,8 +122,7 @@ public class JavaElementLocationSet {
 	                                                  final int endLine,
 	                                                  final int startPosition,
 	                                                  final int bodyStartLine) {
-		final JavaTypeDefinition definition = this.elementFactory.getInterfaceDefinition(fullQualifiedName,
-		                                                                                 fullQualifiedName);
+		final JavaTypeDefinition definition = this.elementFactory.getInterfaceDefinition(fullQualifiedName);
 		final JavaElementLocation location = new JavaElementLocation(definition, startLine, endLine, startPosition,
 		                                                             bodyStartLine, relativeFilePath);
 		this.classDefLocations.add(location);

@@ -42,8 +42,8 @@ import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.persistence.PersistenceUtil;
-
 
 /**
  * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file (or prints the XML to stdout).
@@ -67,8 +67,11 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 		
 		final List<Element> children = element.getChildren();
 		
+		final JavaElementFactory elementFactory = new JavaElementFactory();
+		
 		for (final Element child : children) {
-			final JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child, persistenceUtil);
+			final JavaChangeOperation operation = JavaChangeOperation.fromXMLRepresentation(child, persistenceUtil,
+			                                                                                elementFactory);
 			if (operation != null) {
 				result.add(operation);
 			}
