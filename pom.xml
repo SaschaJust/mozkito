@@ -382,10 +382,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<moduleName>mozkito</moduleName>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
 		<coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
 		<jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</jacoco.reportPath>
 		<jacoco.itReportPath>${coverage.reports.dir}/jacoco-it.exec</jacoco.itReportPath>
+		<jacoco.agent.path>${basedir}/target/org.jacoco.agent-0.6.0.201210061924-runtime.jar</jacoco.agent.path>
 		<sonar.language>java</sonar.language>
 	</properties>
 	<profiles>
@@ -589,7 +590,7 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<configuration>
-							<destFile>${jacoco.reportPath}</destFile>
+							<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
 							<!-- <includes>org.mozkito.*</includes> -->
 						</configuration>
 						<executions>
@@ -607,6 +608,44 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>net.ownhero.dev</groupId>
+											<artifactId>kanuni-agent</artifactId>
+											<version>0.2</version>
+											<outputDirectory>${project.build.directory}</outputDirectory>
+										</artifactItem>
+										<artifactItem>
+											<groupId>org.jacoco</groupId>
+											<artifactId>org.jacoco.agent</artifactId>
+											<version>0.6.0.201210061924</version>
+											<classifier>runtime</classifier>
+											<outputDirectory>${project.build.directory}</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${surefire.version}</version>
+						<configuration>
+							<argLine>-javaagent:${jacoco.agent.path}=destfile=${jacoco.reportPath}</argLine>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
