@@ -33,9 +33,9 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.apache.openjpa.persistence.jdbc.Index;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Intercepted;
-
 
 /**
  * The Class PersonContainer.
@@ -93,7 +93,9 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 	@Override
 	@Transient
 	public Person get(final String id) {
-		return getMap() != null ? getMap().get(id.toLowerCase()) : null;
+		return getMap() != null
+		                       ? getMap().get(id.toLowerCase())
+		                       : null;
 	}
 	
 	/**

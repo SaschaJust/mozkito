@@ -14,11 +14,10 @@ package org.mozkito.mappings.register;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.ioda.JavaUtils;
 
 import org.mozkito.mappings.storages.Storage;
 
@@ -43,33 +42,7 @@ public abstract class Node {
 	 * @return the simple name of the class.
 	 */
 	public final String getHandle() {
-		// PRECONDITIONS
-		
-		final StringBuilder builder = new StringBuilder();
-		
-		try {
-			final LinkedList<Class<?>> list = new LinkedList<Class<?>>();
-			Class<?> clazz = getClass();
-			list.add(clazz);
-			
-			while ((clazz = clazz.getEnclosingClass()) != null) {
-				list.addFirst(clazz);
-			}
-			
-			for (final Class<?> c : list) {
-				if (builder.length() > 0) {
-					builder.append('.');
-				}
-				
-				builder.append(c.getSimpleName());
-			}
-			
-			return builder.toString();
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(builder,
-			                  "Local variable '%s' in '%s:%s'.", "builder", getClass().getSimpleName(), "getHandle"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
+		return JavaUtils.getHandle(this);
 	}
 	
 	/**
