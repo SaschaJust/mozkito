@@ -45,3 +45,6 @@ moskito-bugs/pom.xml.versionsBackup
 .DS_Store
 .svn
 mozkito-*/bin
+**/jacoco.exec
+/mozkito-untangling/src/main/java/org/mozkito/untangling/msr2013/
+/project_settings/checkstyle_kim.xml

@@ -69,7 +69,8 @@ public class HistoryTest {
 		                                   "Some default comment 2"));
 		HistoryElement element = new HistoryElement(this.report.getId(), new Person("doe", "John Doe", "foo@bar.com"),
 		                                            this.formatter.parseDateTime("2010-01-11 21:12:23"));
-		element.addChangedValue("assignedTo", null, new Person("kim", "Kim Herzig", "herzig@mozkito.org"));
+		element.addChangedValue("assignedTo", new Person("", null, null), new Person("kim", "Kim Herzig",
+		                                                                             "herzig@mozkito.org"));
 		element.addChangedValue("priority", new Report("0").getPriority(), Priority.HIGH);
 		element.addChangedValue("status", new Report("0").getStatus(), Status.NEW);
 		this.report.addHistoryElement(element);

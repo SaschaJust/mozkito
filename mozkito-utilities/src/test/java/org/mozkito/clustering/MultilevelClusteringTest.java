@@ -24,13 +24,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.clustering.Cluster;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringCollapseVisitor;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.clustering.SumAggregation;
 import org.mozkito.clustering.MultilevelClustering.ComparableTuple;
-
 
 public class MultilevelClusteringTest {
 	
@@ -193,6 +187,57 @@ public class MultilevelClusteringTest {
 		final ComparableTuple<Double, Integer> t2 = new ComparableTuple<Double, Integer>(2d, 0);
 		
 		assert (t1.compareTo(t2) > 0);
+		
+	}
+	
+	@Test
+	public void maxTest() {
+		
+		final Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
+		final List<MultilevelClusteringScoreVisitor<Integer>> l = new ArrayList<MultilevelClusteringScoreVisitor<Integer>>(
+		                                                                                                                   1);
+		final MultilevelClusteringScoreVisitor<Integer> visitor = new MultilevelClusteringScoreVisitor<Integer>() {
+			
+			@Override
+			public void close() {
+				return;
+			}
+			
+			@Override
+			public double getMaxPossibleScore() {
+				return Integer.MAX_VALUE;
+			}
+			
+			@Override
+			public double getScore(final Integer t1,
+			                       final Integer t2) {
+				return t1 + t2;
+			}
+		};
+		l.add(visitor);
+		
+		final SumAggregation<Integer> aggregator = new SumAggregation<Integer>();
+		final MultilevelClustering<Integer> mp = new MultilevelClustering<Integer>(nodes, l, aggregator,
+		                                                                           new MaxCollapseVisitor<Integer>());
+		
+		final Set<Set<Integer>> clusters = mp.getPartitions(3);
+		assertEquals(3, clusters.size());
+		
+		final Set<Integer> s1 = new HashSet<>();
+		s1.add(6);
+		s1.add(5);
+		s1.add(4);
+		s1.add(3);
+		
+		final Set<Integer> s2 = new HashSet<>();
+		s2.add(2);
+		
+		final Set<Integer> s3 = new HashSet<>();
+		s3.add(1);
+		
+		assertTrue(clusters.contains(s1));
+		assertTrue(clusters.contains(s2));
+		assertTrue(clusters.contains(s3));
 		
 	}
 	

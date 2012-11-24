@@ -34,7 +34,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
 
-
 /**
  * The Class JavaElement.
  * 
@@ -56,7 +55,7 @@ public abstract class JavaElement implements Annotated {
 		Condition.check(fullQualifiedName.indexOf(".") < fullQualifiedName.indexOf("("),
 		                "Full qualified method name must contain a '.' before '(' character");
 		String result = fullQualifiedName.substring(0, fullQualifiedName.indexOf("("));
-		result = result.substring(result.lastIndexOf("."));
+		result = result.substring(result.lastIndexOf(".") + 1);
 		return result;
 	}
 	
@@ -151,8 +150,14 @@ public abstract class JavaElement implements Annotated {
 	@Transient
 	public String getPackageName() {
 		final int index = getFullQualifiedName().lastIndexOf(".");
+		final int bracketIndex = getFullQualifiedName().lastIndexOf("(");
 		if (index > 0) {
-			return getFullQualifiedName().substring(index);
+			if (bracketIndex > 0) {
+				String substring = getFullQualifiedName().substring(0, bracketIndex);
+				substring = substring.substring(0, substring.lastIndexOf("."));
+				return getFullQualifiedName().substring(0, substring.lastIndexOf("."));
+			}
+			return getFullQualifiedName().substring(0, index);
 		}
 		return "";
 	}

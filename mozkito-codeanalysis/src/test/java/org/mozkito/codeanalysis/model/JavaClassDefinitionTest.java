@@ -16,17 +16,15 @@ import static org.junit.Assert.assertEquals;
 
 import org.jdom2.Element;
 import org.junit.Test;
-import org.mozkito.codeanalysis.model.JavaTypeDefinition;
-
 
 public class JavaClassDefinitionTest {
 	
 	@Test
 	public void testXML() {
-		
+		final JavaElementFactory elementFactory = new JavaElementFactory();
 		final JavaTypeDefinition orgDef = new JavaTypeDefinition(JavaTypeDefinition.class.getName());
 		final Element xmlRepresentation = orgDef.getXMLRepresentation();
-		final JavaTypeDefinition xmlDef = JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation);
+		final JavaTypeDefinition xmlDef = JavaTypeDefinition.fromXMLRepresentation(xmlRepresentation, elementFactory);
 		assertEquals(orgDef, xmlDef);
 	}
 }

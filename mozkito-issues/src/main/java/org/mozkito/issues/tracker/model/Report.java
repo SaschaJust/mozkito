@@ -280,9 +280,15 @@ public class Report implements Annotated, Comparable<Report> {
 		report.setSummary(getSummary());
 		report.setComponent(getComponent());
 		report.setProduct(getProduct());
-		report.setAssignedTo(getAssignedTo());
-		report.setResolver(getResolver());
-		report.setSubmitter(getSubmitter());
+		if (getAssignedTo() != null) {
+			report.setAssignedTo(getAssignedTo());
+		}
+		if (getResolver() != null) {
+			report.setResolver(getResolver());
+		}
+		if (getSubmitter() != null) {
+			report.setSubmitter(getSubmitter());
+		}
 		return report;
 	}
 	

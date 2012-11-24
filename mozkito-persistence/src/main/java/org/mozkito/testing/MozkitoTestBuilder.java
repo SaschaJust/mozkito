@@ -18,8 +18,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -35,6 +37,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.mozkito.testing.MozkitoSuite.TestResult;
 import org.mozkito.testing.MozkitoSuite.TestRun;
 
+import com.sun.tools.attach.VirtualMachine;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -110,9 +113,27 @@ public final class MozkitoTestBuilder extends Thread {
 		
 		final List<String> commandList = new LinkedList<>();
 		commandList.add(this.javaBin);
+		
+		final String nameOfRunningVM = ManagementFactory.getRuntimeMXBean().getName();
+		final int p = nameOfRunningVM.indexOf('@');
+		final String pid = nameOfRunningVM.substring(0, p);
+		String sun_jvm_args = "";
+		try {
+			final VirtualMachine vm = VirtualMachine.attach(pid);
+			final Properties agentProperties = vm.getAgentProperties();
+			sun_jvm_args = agentProperties.getProperty("sun.jvm.args");
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+		if (!sun_jvm_args.isEmpty()) {
+			commandList.add(sun_jvm_args);
+			System.err.println(sun_jvm_args);
+		}
+		
 		for (final Object property : System.getProperties().keySet()) {
 			commandList.add(String.format("-D%s=%s", property, System.getProperty((String) property)));
 		}
+		
 		commandList.add("-cp");
 		commandList.add(this.classPath);
 		commandList.add(MozkitoTest.class.getCanonicalName());

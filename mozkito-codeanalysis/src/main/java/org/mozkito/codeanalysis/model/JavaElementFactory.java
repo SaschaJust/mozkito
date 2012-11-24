@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.PersistenceUtil;
 
 public class JavaElementFactory {
 	
@@ -111,8 +111,7 @@ public class JavaElementFactory {
 	 *            the package name
 	 * @return the class definition
 	 */
-	public JavaTypeDefinition getClassDefinition(@NotNull final String fullQualifiedName,
-	                                             @NotNull final String file) {
+	public JavaTypeDefinition getClassDefinition(@NotNull final String fullQualifiedName) {
 		
 		JavaTypeDefinition def = null;
 		if (!this.classDefs.containsKey(fullQualifiedName)) {
@@ -129,8 +128,7 @@ public class JavaElementFactory {
 	 * @param fullQualifiedName2
 	 * @return
 	 */
-	public JavaTypeDefinition getInterfaceDefinition(final String fullQualifiedName,
-	                                                 final String fullQualifiedName2) {
+	public JavaTypeDefinition getInterfaceDefinition(final String fullQualifiedName) {
 		JavaTypeDefinition def = null;
 		if (!this.classDefs.containsKey(fullQualifiedName)) {
 			def = new JavaTypeDefinition(fullQualifiedName, true);
