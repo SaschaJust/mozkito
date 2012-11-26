@@ -415,8 +415,12 @@ public class RCSTransaction implements Annotated {
 	 */
 	@Transient
 	public RCSRevision getRevisionForPath(final String path) {
+		String comparePath = path;
+		if (path.startsWith("/")) {
+			comparePath = path.substring(1);
+		}
 		for (final RCSRevision revision : getRevisions()) {
-			if (revision.getChangedFile().equals(path)) {
+			if (revision.getChangedFile().getPath(this).equals(comparePath)) {
 				return revision;
 			}
 		}
