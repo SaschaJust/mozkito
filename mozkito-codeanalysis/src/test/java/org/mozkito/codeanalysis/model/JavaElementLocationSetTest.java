@@ -1,6 +1,7 @@
 package org.mozkito.codeanalysis.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -123,6 +124,89 @@ public class JavaElementLocationSetTest {
 		assertEquals(1, methodDefsByFile.get("org/mozkito/codeanalysis/model/TestClass.java").size());
 		assertTrue(methodDefsByFile.get("org/mozkito/codeanalysis/model/TestClass.java")
 		                           .contains(methodDefinitionLocation));
+	}
+	
+	@Test
+	public void testJavaElementLocations() {
+		final JavaElementLocationSet set = new JavaElementLocationSet(new JavaElementFactory());
 		
+		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");
+		
+		final JavaElementLocation anonymousClassLocation = set.addAnonymousClassDefinition(javaType,
+		                                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
+		                                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
+		                                                                                   20, 23, 43674, 20);
+		
+		final JavaElementLocation classLocation = set.addClassDefinition("org.mozkito.codeanalysis.model.TestClass",
+		                                                                 "org/mozkito/codeanalysis/model/TestClass.java",
+		                                                                 10, 200, 463, 11);
+		
+		final JavaElementLocation methodDefinitionLocation = set.addMethodDefinition("org.mozkito.codeanalysis.model.TestClass",
+		                                                                             "test",
+		                                                                             new ArrayList<String>(0),
+		                                                                             "org/mozkito/codeanalysis/model/TestClass.java",
+		                                                                             34, 56, 7854, 34, true);
+		
+		final JavaElementLocation methodDefinitionLocation2 = set.addMethodDefinition("org.mozkito.codeanalysis.model.TestClass",
+		                                                                              "test",
+		                                                                              new ArrayList<String>(0),
+		                                                                              "org/mozkito/codeanalysis/model/TestClass3.java",
+		                                                                              34, 56, 7854, 34, true);
+		
+		final JavaElementLocation methodCallLocation = set.addMethodCall("org.mozkito.codeanalysis.model.TestClass",
+		                                                                 "test",
+		                                                                 new ArrayList<String>(0),
+		                                                                 "org/mozkito/codeanalysis/model/TestClass.java",
+		                                                                 methodDefinitionLocation.getElement(), 34, 56,
+		                                                                 7854);
+		
+		final JavaElementLocation methodCall2Location = set.addMethodCall("org.mozkito.codeanalysis.model.TestClass",
+		                                                                  "test",
+		                                                                  new ArrayList<String>(0),
+		                                                                  "org/mozkito/codeanalysis/model/TestClass2.java",
+		                                                                  methodDefinitionLocation.getElement(), 34,
+		                                                                  56, 7854);
+		final JavaElementLocations javaElementLocations = new JavaElementLocations();
+		
+		assertTrue(javaElementLocations.addClassDef(anonymousClassLocation));
+		assertTrue(javaElementLocations.addClassDef(classLocation));
+		assertFalse(javaElementLocations.addClassDef(classLocation));
+		assertFalse(javaElementLocations.addClassDef(methodCallLocation));
+		assertFalse(javaElementLocations.addClassDef(methodDefinitionLocation));
+		
+		assertTrue(javaElementLocations.addMethodCall(methodCallLocation));
+		assertTrue(javaElementLocations.addMethodCall(methodCall2Location));
+		assertFalse(javaElementLocations.addMethodCall(methodCallLocation));
+		assertFalse(javaElementLocations.addMethodCall(methodDefinitionLocation));
+		assertFalse(javaElementLocations.addMethodCall(classLocation));
+		
+		assertTrue(javaElementLocations.addMethodDef(methodDefinitionLocation));
+		assertTrue(javaElementLocations.addMethodDef(methodDefinitionLocation2));
+		assertFalse(javaElementLocations.addMethodDef(methodDefinitionLocation));
+		assertFalse(javaElementLocations.addMethodDef(classLocation));
+		assertFalse(javaElementLocations.addMethodDef(methodCallLocation));
+		
+		assertTrue(javaElementLocations.containsFilePath("org/mozkito/codeanalysis/model/TestClass.java"));
+		assertTrue(javaElementLocations.containsFilePath("org/mozkito/codeanalysis/model/TestClass.java"));
+		assertTrue(javaElementLocations.containsFilePath("org/mozkito/codeanalysis/model/TestClass2.java"));
+		assertTrue(javaElementLocations.containsFilePath("org/mozkito/codeanalysis/model/TestClass3.java"));
+		assertFalse(javaElementLocations.containsFilePath("org/mozkito/codeanalysis/model/TestClass"));
+		
+		final Collection<JavaElementLocation> defs = javaElementLocations.getDefs();
+		assertEquals(4, defs.size());
+		assertTrue(defs.contains(anonymousClassLocation));
+		assertTrue(defs.contains(classLocation));
+		assertTrue(defs.contains(methodDefinitionLocation));
+		assertTrue(defs.contains(methodDefinitionLocation2));
+		
+		assertEquals(3, javaElementLocations.getDefs("org/mozkito/codeanalysis/model/TestClass.java").size());
+		assertEquals(0, javaElementLocations.getDefs("org/mozkito/codeanalysis/model/TestClass2.java").size());
+		assertEquals(1, javaElementLocations.getDefs("org/mozkito/codeanalysis/model/TestClass3.java").size());
+		
+		final Map<String, Collection<JavaElementLocation>> defsByFile = javaElementLocations.getDefsByFile();
+		assertEquals(2, defsByFile.size());
+		assertTrue(defsByFile.containsKey("org/mozkito/codeanalysis/model/TestClass.java"));
+		assertFalse(defsByFile.containsKey("org/mozkito/codeanalysis/model/TestClass2.java"));
+		assertTrue(defsByFile.containsKey("org/mozkito/codeanalysis/model/TestClass3.java"));
 	}
 }

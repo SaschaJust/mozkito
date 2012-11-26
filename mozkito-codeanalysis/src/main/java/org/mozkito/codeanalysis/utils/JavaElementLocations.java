@@ -20,8 +20,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.mozkito.codeanalysis.model.JavaElementLocation;
+import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.codeanalysis.model.JavaElementLocation;
+import org.mozkito.codeanalysis.model.JavaMethodCall;
+import org.mozkito.codeanalysis.model.JavaMethodDefinition;
+import org.mozkito.codeanalysis.model.JavaTypeDefinition;
 
 /**
  * The Class JavaElementLocations.
@@ -55,7 +59,7 @@ public class JavaElementLocations {
 	 */
 	public boolean addAllClassDefs(final Collection<JavaElementLocation> classDef) {
 		boolean result = true;
-		for (JavaElementLocation e : classDef) {
+		for (final JavaElementLocation e : classDef) {
 			if (!this.classDefs.containsKey(e.getFilePath())) {
 				this.classDefs.put(e.getFilePath(), new TreeSet<JavaElementLocation>());
 			}
@@ -73,7 +77,7 @@ public class JavaElementLocations {
 	 */
 	public boolean addAllMethodCalls(final Collection<JavaElementLocation> methodCall) {
 		boolean result = true;
-		for (JavaElementLocation e : methodCall) {
+		for (final JavaElementLocation e : methodCall) {
 			if (!this.methodCalls.containsKey(e.getFilePath())) {
 				this.methodCalls.put(e.getFilePath(), new TreeSet<JavaElementLocation>());
 			}
@@ -91,7 +95,7 @@ public class JavaElementLocations {
 	 */
 	public boolean addAllMethodDefs(final Collection<JavaElementLocation> methodDef) {
 		boolean result = true;
-		for (JavaElementLocation e : methodDef) {
+		for (final JavaElementLocation e : methodDef) {
 			if (!this.methodDefs.containsKey(e.getFilePath())) {
 				this.methodDefs.put(e.getFilePath(), new TreeSet<JavaElementLocation>());
 			}
@@ -108,6 +112,13 @@ public class JavaElementLocations {
 	 * @return true, if successful
 	 */
 	public boolean addClassDef(final JavaElementLocation classDef) {
+		if (!classDef.getElement().getElementType().equals(JavaTypeDefinition.class.getCanonicalName())) {
+			if (Logger.logWarn()) {
+				Logger.warn("You can only add %s as JavaMethodDefinitions. But argument was: %s.",
+				            JavaTypeDefinition.class.getCanonicalName(), classDef.getElement().getElementType());
+			}
+			return false;
+		}
 		if (!this.classDefs.containsKey(classDef.getFilePath())) {
 			this.classDefs.put(classDef.getFilePath(), new TreeSet<JavaElementLocation>());
 		}
@@ -122,6 +133,13 @@ public class JavaElementLocations {
 	 * @return true, if successful
 	 */
 	public boolean addMethodCall(final JavaElementLocation methodCall) {
+		if (!methodCall.getElement().getElementType().equals(JavaMethodCall.class.getCanonicalName())) {
+			if (Logger.logWarn()) {
+				Logger.warn("You can only add %s as JavaMethodCalls. But argument was: %s.",
+				            JavaMethodCall.class.getCanonicalName(), methodCall.getElement().getElementType());
+			}
+			return false;
+		}
 		if (!this.methodCalls.containsKey(methodCall.getFilePath())) {
 			this.methodCalls.put(methodCall.getFilePath(), new TreeSet<JavaElementLocation>());
 		}
@@ -136,6 +154,13 @@ public class JavaElementLocations {
 	 * @return true, if successful
 	 */
 	public boolean addMethodDef(final JavaElementLocation methodDef) {
+		if (!methodDef.getElement().getElementType().equals(JavaMethodDefinition.class.getCanonicalName())) {
+			if (Logger.logWarn()) {
+				Logger.warn("You can only add %s as JavaMethodDefinitions. But argument was: %s.",
+				            JavaMethodDefinition.class.getCanonicalName(), methodDef.getElement().getElementType());
+			}
+			return false;
+		}
 		if (!this.methodDefs.containsKey(methodDef.getFilePath())) {
 			this.methodDefs.put(methodDef.getFilePath(), new TreeSet<JavaElementLocation>());
 		}
@@ -166,8 +191,8 @@ public class JavaElementLocations {
 	 * @return the class defs
 	 */
 	public Collection<JavaElementLocation> getClassDefs() {
-		Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
-		for (TreeSet<JavaElementLocation> e : this.classDefs.values()) {
+		final Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		for (final TreeSet<JavaElementLocation> e : this.classDefs.values()) {
 			result.addAll(e);
 		}
 		return result;
@@ -203,11 +228,11 @@ public class JavaElementLocations {
 	 * @return the defs
 	 */
 	public Collection<JavaElementLocation> getDefs() {
-		Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
-		for (String filePath : this.methodDefs.keySet()) {
+		final Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		for (final String filePath : this.methodDefs.keySet()) {
 			result.addAll(this.methodDefs.get(filePath));
 		}
-		for (String filePath : this.classDefs.keySet()) {
+		for (final String filePath : this.classDefs.keySet()) {
 			result.addAll(this.classDefs.get(filePath));
 		}
 		return result;
@@ -221,7 +246,7 @@ public class JavaElementLocations {
 	 * @return the defs
 	 */
 	public Collection<JavaElementLocation> getDefs(final String filePath) {
-		Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		final Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
 		if (this.methodDefs.containsKey(filePath)) {
 			result.addAll(this.methodDefs.get(filePath));
 		}
@@ -237,14 +262,14 @@ public class JavaElementLocations {
 	 * @return the defs by file
 	 */
 	public Map<String, Collection<JavaElementLocation>> getDefsByFile() {
-		Map<String, Collection<JavaElementLocation>> map = new HashMap<String, Collection<JavaElementLocation>>();
-		for (String filePath : this.methodDefs.keySet()) {
+		final Map<String, Collection<JavaElementLocation>> map = new HashMap<String, Collection<JavaElementLocation>>();
+		for (final String filePath : this.methodDefs.keySet()) {
 			if (!map.containsKey(filePath)) {
 				map.put(filePath, new HashSet<JavaElementLocation>());
 			}
 			map.get(filePath).addAll(this.methodDefs.get(filePath));
 		}
-		for (String filePath : this.classDefs.keySet()) {
+		for (final String filePath : this.classDefs.keySet()) {
 			if (!map.containsKey(filePath)) {
 				map.put(filePath, new HashSet<JavaElementLocation>());
 			}
@@ -259,14 +284,14 @@ public class JavaElementLocations {
 	 * @return the elements
 	 */
 	public Collection<JavaElementLocation> getElements() {
-		Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
-		for (String filePath : this.methodDefs.keySet()) {
+		final Collection<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		for (final String filePath : this.methodDefs.keySet()) {
 			result.addAll(this.methodDefs.get(filePath));
 		}
-		for (String filePath : this.classDefs.keySet()) {
+		for (final String filePath : this.classDefs.keySet()) {
 			result.addAll(this.classDefs.get(filePath));
 		}
-		for (String filePath : this.methodCalls.keySet()) {
+		for (final String filePath : this.methodCalls.keySet()) {
 			result.addAll(this.methodCalls.get(filePath));
 		}
 		return result;
@@ -280,7 +305,7 @@ public class JavaElementLocations {
 	 * @return the elements
 	 */
 	public Collection<JavaElementLocation> getElements(final String filePath) {
-		Collection<JavaElementLocation> result = new LinkedList<JavaElementLocation>();
+		final Collection<JavaElementLocation> result = new LinkedList<JavaElementLocation>();
 		if (this.methodDefs.containsKey(filePath)) {
 			result.addAll(this.methodDefs.get(filePath));
 		}
@@ -299,20 +324,20 @@ public class JavaElementLocations {
 	 * @return the elements by file
 	 */
 	public Map<String, Collection<JavaElementLocation>> getElementsByFile() {
-		Map<String, Collection<JavaElementLocation>> map = new HashMap<String, Collection<JavaElementLocation>>();
-		for (String filePath : this.methodDefs.keySet()) {
+		final Map<String, Collection<JavaElementLocation>> map = new HashMap<String, Collection<JavaElementLocation>>();
+		for (final String filePath : this.methodDefs.keySet()) {
 			if (!map.containsKey(filePath)) {
 				map.put(filePath, new HashSet<JavaElementLocation>());
 			}
 			map.get(filePath).addAll(this.methodDefs.get(filePath));
 		}
-		for (String filePath : this.classDefs.keySet()) {
+		for (final String filePath : this.classDefs.keySet()) {
 			if (!map.containsKey(filePath)) {
 				map.put(filePath, new HashSet<JavaElementLocation>());
 			}
 			map.get(filePath).addAll(this.classDefs.get(filePath));
 		}
-		for (String filePath : this.methodCalls.keySet()) {
+		for (final String filePath : this.methodCalls.keySet()) {
 			if (!map.containsKey(filePath)) {
 				map.put(filePath, new HashSet<JavaElementLocation>());
 			}
@@ -327,8 +352,8 @@ public class JavaElementLocations {
 	 * @return the method calls
 	 */
 	public Collection<JavaElementLocation> getMethodCalls() {
-		Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
-		for (TreeSet<JavaElementLocation> e : this.methodCalls.values()) {
+		final Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		for (final TreeSet<JavaElementLocation> e : this.methodCalls.values()) {
 			result.addAll(e);
 		}
 		return result;
@@ -364,8 +389,8 @@ public class JavaElementLocations {
 	 * @return the method defs
 	 */
 	public Collection<JavaElementLocation> getMethodDefs() {
-		Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
-		for (TreeSet<JavaElementLocation> e : this.methodDefs.values()) {
+		final Set<JavaElementLocation> result = new HashSet<JavaElementLocation>();
+		for (final TreeSet<JavaElementLocation> e : this.methodDefs.values()) {
 			result.addAll(e);
 		}
 		return result;
