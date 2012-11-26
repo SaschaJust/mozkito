@@ -22,14 +22,12 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
-
 
 /**
  * The Class JavaMethodDefinition.
@@ -124,7 +122,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	}
 	
 	@NoneNull
-	public static String getSignatureString(@NotEmpty final List<String> signature) {
+	public static String getSignatureString(final List<String> signature) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("("); //$NON-NLS-1$
 		if (!signature.isEmpty()) {
