@@ -46,14 +46,12 @@ public class OpenJPA_RCS_MozkitoTest extends MozkitoTest {
 	public void testRCSBranch() {
 		
 		final RCSBranch branch = new RCSBranch("testBranch");
-		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
-		                                                                         "committed begin",
+		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000", "committed begin",
 		                                                                         new DateTime(),
 		                                                                         new Person("just", "Sascha Just",
 		                                                                                    "sascha.just@mozkito.org"),
 		                                                                         "000000000000000");
-		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
-		                                                                       "committed end",
+		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde", "committed end",
 		                                                                       new DateTime(),
 		                                                                       new Person("just", "Sascha Just",
 		                                                                                  "sascha.just@mozkito.org"),

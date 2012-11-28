@@ -50,11 +50,11 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	@DatabaseSettings (unit = "versions")
 	public void testFormerPathRegex() {
 		final String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
-		final Match found = MercurialRepository.formerPathRegex.find(line);
-		assertTrue(MercurialRepository.formerPathRegex.matches(line));
+		final Match found = MercurialRepository.FORMER_PATH_REGEX.find(line);
+		assertTrue(MercurialRepository.FORMER_PATH_REGEX.matches(line));
 		assertEquals(1, found.getGroupCount());
 		assertEquals("reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java",
-		             MercurialRepository.formerPathRegex.getGroup("result"));
+		             MercurialRepository.FORMER_PATH_REGEX.getGroup("result"));
 	}
 	
 	/**
@@ -63,11 +63,11 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	@Test
 	@DatabaseSettings (unit = "versions")
 	public void testPlaineName() {
-		Regex.analyzePattern(MercurialRepository.authorRegex.getPattern());
-		final Match found = MercurialRepository.authorRegex.find("just");
+		Regex.analyzePattern(MercurialRepository.AUTHOR_REGEX.getPattern());
+		final Match found = MercurialRepository.AUTHOR_REGEX.find("just");
 		assertTrue(found.hasGroups());
-		assertTrue(MercurialRepository.authorRegex.getGroup("plain") != null);
-		assertEquals("just", MercurialRepository.authorRegex.getGroup("plain"));
+		assertTrue(MercurialRepository.AUTHOR_REGEX.getGroup("plain") != null);
+		assertEquals("just", MercurialRepository.AUTHOR_REGEX.getGroup("plain"));
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: 	<name>reposuite-fixindchanges</name>");
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: </project>");
 		
-		final Regex regex = MercurialRepository.regex;
+		final Regex regex = MercurialRepository.REGEX;
 		
 		int lineCounter = 0;
 		for (final String s : lines) {

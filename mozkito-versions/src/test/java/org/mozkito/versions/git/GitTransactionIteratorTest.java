@@ -33,10 +33,8 @@ import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.git.GitRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 public class GitTransactionIteratorTest {
 	
@@ -164,6 +162,8 @@ public class GitTransactionIteratorTest {
 	public void testMasterBranch() {
 		final Iterator<String> transactions = repo.getRevDependencyGraph()
 		                                          .getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		assertTrue(transactions.hasNext());
+		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", transactions.next());
 		assertTrue(transactions.hasNext());
 		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", transactions.next());
 		assertTrue(transactions.hasNext());
