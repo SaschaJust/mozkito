@@ -69,11 +69,9 @@ public class GitTransactionIteratorTest {
 		
 		while (log.hasNext()) {
 			final LogEntry logEntry = log.next();
-			final RCSTransaction rcsTransaction = RCSTransaction.createTransaction(logEntry.getRevision(),
-			                                                                       logEntry.getMessage(),
-			                                                                       logEntry.getDateTime(),
-			                                                                       logEntry.getAuthor(),
-			                                                                       logEntry.getOriginalId());
+			final RCSTransaction rcsTransaction = new RCSTransaction(logEntry.getRevision(), logEntry.getMessage(),
+			                                                         logEntry.getDateTime(), logEntry.getAuthor(),
+			                                                         logEntry.getOriginalId());
 			transactionMap.put(logEntry.getRevision(), rcsTransaction);
 		}
 		

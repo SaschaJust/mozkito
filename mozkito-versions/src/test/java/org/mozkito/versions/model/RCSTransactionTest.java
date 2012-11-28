@@ -1,6 +1,9 @@
 package org.mozkito.versions.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -8,6 +11,20 @@ import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 
 public class RCSTransactionTest {
+	
+	@Test
+	public void testGetChangedFiles() {
+		final Person person = new Person("kim", "", "");
+		
+		final RCSTransaction t_0 = new RCSTransaction("0", "", new DateTime(), person, "");
+		final RCSFile file = new RCSFile("public.java", t_0);
+		new RCSRevision(t_0, file, ChangeType.Added);
+		
+		final Collection<RCSFile> changedFiles = t_0.getChangedFiles();
+		assertEquals(1, changedFiles.size());
+		assertTrue(changedFiles.contains(file));
+		
+	}
 	
 	@Test
 	public void testGetRevisionForPath() {
@@ -65,4 +82,5 @@ public class RCSTransactionTest {
 		assertEquals(revision, t_3.getRevisionForPath("moreHidden.java"));
 		assertEquals(revision, t_3.getRevisionForPath("/moreHidden.java"));
 	}
+	
 }
