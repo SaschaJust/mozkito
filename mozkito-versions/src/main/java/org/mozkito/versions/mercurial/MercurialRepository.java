@@ -69,16 +69,24 @@ import difflib.Patch;
  */
 public class MercurialRepository extends Repository {
 	
-	protected static final Regex             authorRegex          = new Regex(
-	                                                                          "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	private static final int                 HG_MODIFIED_PATHS_INDEX  = 5;
 	
-	protected static final DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	private static final int                 HG_DELETED_PATHS_INDEX   = 4;
+	
+	private static final int                 HG_ADDED_PATHS_INDEX     = 3;
+	
+	private static final int                 HG_MAX_LINE_PARTS_LENGTH = 7;
+	
+	protected static final Regex             AUTHOR_REGEX             = new Regex(
+	                                                                              "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	
+	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT  = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
-	protected static final Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
-	protected static final String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
-	protected static final Regex             regex                = new Regex(MercurialRepository.pattern);
+	protected static final Regex             FORMER_PATH_REGEX        = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static final String            PATTERN                  = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static final Regex             REGEX                    = new Regex(MercurialRepository.PATTERN);
 	
 	/**
 	 * Pre-filters log lines. Mercurial cannot replace newlines in the log messages. This method replaces newlines
@@ -95,7 +103,7 @@ public class MercurialRepository extends Repository {
 		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < lines.size(); ++i) {
 			final String line = lines.get(i);
-			if (line.endsWith("<br/>") && (lines.get(i + 1).split("\\+~\\+").length < 7)) {
+			if (line.endsWith("<br/>") && (lines.get(i + 1).split("\\+~\\+").length < HG_MAX_LINE_PARTS_LENGTH)) {
 				stringBuilder.append(line);
 			} else {
 				if (stringBuilder.length() > 0) {
@@ -173,21 +181,21 @@ public class MercurialRepository extends Repository {
 		final HashMap<String, String> hashCache = new HashMap<String, String>();
 		
 		for (final String line : lines) {
-			if (!MercurialRepository.regex.matchesFull(line)) {
+			if (!MercurialRepository.REGEX.matchesFull(line)) {
 				if (Logger.logError()) {
 					Logger.error("Found line in annotation that cannot be parsed. Abort");
 				}
 				return null;
 			}
-			final String author = MercurialRepository.regex.getGroup("author");
-			final String shortHash = MercurialRepository.regex.getGroup("hash");
-			final String date = MercurialRepository.regex.getGroup("date");
+			final String author = MercurialRepository.REGEX.getGroup("author");
+			final String shortHash = MercurialRepository.REGEX.getGroup("hash");
+			final String date = MercurialRepository.REGEX.getGroup("date");
 			
 			DateTime timestamp;
-			timestamp = MercurialRepository.hgAnnotateDateFormat.parseDateTime(date);
+			timestamp = MercurialRepository.HG_ANNOTATE_DATE_FORMAT.parseDateTime(date);
 			
-			final String file = MercurialRepository.regex.getGroup("file");
-			final String codeLine = MercurialRepository.regex.getGroup("codeline");
+			final String file = MercurialRepository.REGEX.getGroup("file");
+			final String codeLine = MercurialRepository.REGEX.getGroup("codeline");
 			
 			if (!hashCache.containsKey(shortHash)) {
 				boolean found = false;
@@ -228,7 +236,7 @@ public class MercurialRepository extends Repository {
 			return;
 		}
 		for (final String line : response.getSecond()) {
-			if (line.trim().equals("")) {
+			if (line.trim().isEmpty()) {
 				continue;
 			}
 			this.hashes.add(line.trim().replaceAll("'", ""));
@@ -406,39 +414,39 @@ public class MercurialRepository extends Repository {
 		}
 		final String line = lines.get(0);
 		final String[] lineParts = line.split("\\+~\\+");
-		if (lineParts.length < 7) {
+		if (lineParts.length < HG_MAX_LINE_PARTS_LENGTH) {
 			if (Logger.logError()) {
 				Logger.error("hg log could not be parsed. Too less columns in logfile.");
 				return null;
 			}
 		}
-		if (lineParts.length > 7) {
+		if (lineParts.length > HG_MAX_LINE_PARTS_LENGTH) {
 			final StringBuilder s = new StringBuilder();
-			s.append(lineParts[6]);
-			for (int i = 7; i < lineParts.length; ++i) {
+			s.append(lineParts[HG_MAX_LINE_PARTS_LENGTH - 1]);
+			for (int i = HG_MAX_LINE_PARTS_LENGTH; i < lineParts.length; ++i) {
 				s.append(":");
 				s.append(lineParts[i]);
 			}
-			lineParts[6] = s.toString();
+			lineParts[HG_MAX_LINE_PARTS_LENGTH - 1] = s.toString();
 		}
-		final String[] addedPaths = lineParts[3].split(";");
-		final String[] deletedPaths = lineParts[4].split(";");
-		final String[] modifiedPaths = lineParts[5].split(";");
+		final String[] addedPaths = lineParts[HG_ADDED_PATHS_INDEX].split(";");
+		final String[] deletedPaths = lineParts[HG_DELETED_PATHS_INDEX].split(";");
+		final String[] modifiedPaths = lineParts[HG_MODIFIED_PATHS_INDEX].split(";");
 		
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		
 		for (final String addedPath : addedPaths) {
-			if (!addedPath.trim().equals("")) {
+			if (!addedPath.trim().isEmpty()) {
 				result.put("/" + addedPath, ChangeType.Added);
 			}
 		}
 		for (final String deletedPath : deletedPaths) {
-			if (!deletedPath.trim().equals("")) {
+			if (!deletedPath.trim().isEmpty()) {
 				result.put("/" + deletedPath, ChangeType.Deleted);
 			}
 		}
 		for (final String modifiedPath : modifiedPaths) {
-			if (!modifiedPath.trim().equals("")) {
+			if (!modifiedPath.trim().isEmpty()) {
 				result.put("/" + modifiedPath, ChangeType.Modified);
 			}
 		}
@@ -488,8 +496,8 @@ public class MercurialRepository extends Repository {
 		String result = null;
 		for (final String line : response.getSecond()) {
 			if (line.trim().startsWith(pathName)) {
-				MercurialRepository.formerPathRegex.find(line);
-				result = MercurialRepository.formerPathRegex.getGroup("result").trim();
+				MercurialRepository.FORMER_PATH_REGEX.find(line);
+				result = MercurialRepository.FORMER_PATH_REGEX.getGroup("result").trim();
 				break;
 			}
 		}
@@ -671,20 +679,20 @@ public class MercurialRepository extends Repository {
 		
 		for (final String line : lines) {
 			final String[] lineParts = line.split("\\+~\\+");
-			if (lineParts.length < 7) {
+			if (lineParts.length < HG_MAX_LINE_PARTS_LENGTH) {
 				if (Logger.logError()) {
 					Logger.error("hg log could not be parsed. Too less columns in logfile.");
 					return null;
 				}
 			}
-			if (lineParts.length > 7) {
+			if (lineParts.length > HG_MAX_LINE_PARTS_LENGTH) {
 				final StringBuilder s = new StringBuilder();
-				s.append(lineParts[6]);
-				for (int i = 7; i < lineParts.length; ++i) {
+				s.append(lineParts[HG_MAX_LINE_PARTS_LENGTH - 1]);
+				for (int i = HG_MAX_LINE_PARTS_LENGTH; i < lineParts.length; ++i) {
 					s.append(":");
 					s.append(lineParts[i]);
 				}
-				lineParts[6] = s.toString();
+				lineParts[HG_MAX_LINE_PARTS_LENGTH - 1] = s.toString();
 			}
 			final String revID = lineParts[0];
 			final String authorString = lineParts[1];
@@ -693,20 +701,20 @@ public class MercurialRepository extends Repository {
 			String authorUsername = null;
 			String authorEmail = null;
 			
-			MercurialRepository.authorRegex.find(authorString);
-			MercurialRepository.authorRegex.getGroupNames();
+			MercurialRepository.AUTHOR_REGEX.find(authorString);
+			MercurialRepository.AUTHOR_REGEX.getGroupNames();
 			
-			if (MercurialRepository.authorRegex.getGroup("plain") != null) {
-				authorUsername = MercurialRepository.authorRegex.getGroup("plain").trim();
-			} else if ((MercurialRepository.authorRegex.getGroup("lastname") != null)
-			        && (MercurialRepository.authorRegex.getGroup("name") != null)) {
-				authorFullname = MercurialRepository.authorRegex.getGroup("name").trim() + " "
-				        + MercurialRepository.authorRegex.getGroup("lastname").trim();
-			} else if (MercurialRepository.authorRegex.getGroup("name") != null) {
-				authorUsername = MercurialRepository.authorRegex.getGroup("name").trim();
+			if (MercurialRepository.AUTHOR_REGEX.getGroup("plain") != null) {
+				authorUsername = MercurialRepository.AUTHOR_REGEX.getGroup("plain").trim();
+			} else if ((MercurialRepository.AUTHOR_REGEX.getGroup("lastname") != null)
+			        && (MercurialRepository.AUTHOR_REGEX.getGroup("name") != null)) {
+				authorFullname = MercurialRepository.AUTHOR_REGEX.getGroup("name").trim() + " "
+				        + MercurialRepository.AUTHOR_REGEX.getGroup("lastname").trim();
+			} else if (MercurialRepository.AUTHOR_REGEX.getGroup("name") != null) {
+				authorUsername = MercurialRepository.AUTHOR_REGEX.getGroup("name").trim();
 			}
-			if (MercurialRepository.authorRegex.getGroup("email") != null) {
-				authorEmail = MercurialRepository.authorRegex.getGroup("email").trim();
+			if (MercurialRepository.AUTHOR_REGEX.getGroup("email") != null) {
+				authorEmail = MercurialRepository.AUTHOR_REGEX.getGroup("email").trim();
 			}
 			final Person author = new Person(authorUsername, authorFullname, authorEmail);
 			
@@ -720,7 +728,11 @@ public class MercurialRepository extends Repository {
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);
 			}
-			result.add(new LogEntry(revID, previous, author, lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator),
+			result.add(new LogEntry(
+			                        revID,
+			                        previous,
+			                        author,
+			                        lineParts[HG_MAX_LINE_PARTS_LENGTH - 1].replaceAll("<br/>", FileUtils.lineSeparator),
 			                        date, ""));
 		}
 		return result;

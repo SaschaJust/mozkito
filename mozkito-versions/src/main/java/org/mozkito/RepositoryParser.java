@@ -19,6 +19,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Transformer;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -26,13 +33,6 @@ import org.mozkito.versions.elements.RCSFileManager;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Transformer;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced
@@ -69,11 +69,9 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 					        + data.getRevision() + ")");
 				}
 				
-				final RCSTransaction rcsTransaction = RCSTransaction.createTransaction(data.getRevision(),
-				                                                                       data.getMessage(),
-				                                                                       data.getDateTime(),
-				                                                                       data.getAuthor(),
-				                                                                       data.getOriginalId());
+				final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
+				                                                         data.getDateTime(), data.getAuthor(),
+				                                                         data.getOriginalId());
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {

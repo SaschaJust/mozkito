@@ -17,10 +17,10 @@ package org.mozkito.versions.subversion;
 
 import java.util.logging.Level;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.tmatesoft.svn.util.SVNDebugLogAdapter;
 import org.tmatesoft.svn.util.SVNLogType;
-
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper
@@ -30,16 +30,18 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class SubversionLogger extends SVNDebugLogAdapter {
 	
+	private static final int SVN_MAGIC_LOG_NUMBER = 4;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.tmatesoft.svn.util.ISVNDebugLog#log(org.tmatesoft.svn.util.SVNLogType , java.lang.String, byte[])
 	 */
 	@Override
-	public void log(SVNLogType logType,
-	                String message,
-	                byte[] data) {
+	public void log(final SVNLogType logType,
+	                final String message,
+	                final byte[] data) {
 		if (Logger.logTrace()) {
-			Logger.trace(message, 4);
+			Logger.trace(message, SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 	
@@ -49,11 +51,11 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 * java.util.logging.Level)
 	 */
 	@Override
-	public void log(SVNLogType logType,
-	                String message,
-	                Level logLevel) {
+	public void log(final SVNLogType logType,
+	                final String message,
+	                final Level logLevel) {
 		if (Logger.logTrace()) {
-			Logger.trace(message, 4);
+			Logger.trace(message, SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 	
@@ -63,11 +65,11 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	 * java.util.logging.Level)
 	 */
 	@Override
-	public void log(SVNLogType logType,
-	                Throwable th,
-	                Level logLevel) {
+	public void log(final SVNLogType logType,
+	                final Throwable th,
+	                final Level logLevel) {
 		if (Logger.logTrace()) {
-			Logger.trace(th.getMessage(), 4);
+			Logger.trace(th.getMessage(), SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 }

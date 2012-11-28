@@ -67,11 +67,13 @@ import difflib.Patch;
  */
 public class GitRepository extends Repository {
 	
+	private static final int                 GIT_HASH_LENGTH   = 40;
+	
 	/** The current revision. */
-	private String                           currentRevision = null;
+	private String                           currentRevision   = null;
 	
 	/** The charset. */
-	protected static Charset                 charset         = Charset.defaultCharset();
+	protected static Charset                 charset           = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
@@ -79,23 +81,23 @@ public class GitRepository extends Repository {
 	}
 	
 	/** The Constant dtf. */
-	protected static final DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static final DateTimeFormatter DTF               = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 	
 	/** The Constant regex. */
-	protected static final Regex             regex           = new Regex(
-	                                                                     ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	protected static final Regex             REGEX             = new Regex(
+	                                                                       ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
 	
 	/** The Constant formerPathRegex. */
-	protected static final Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	protected static final Regex             FORMER_PATH_REGEX = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
 	
 	/** The clone dir. */
 	private File                             cloneDir;
 	
 	/** The transaction i ds. */
-	private List<String>                     transactionIDs  = new LinkedList<String>();
+	private List<String>                     transactionIDs    = new LinkedList<String>();
 	
 	/** The log cache. */
-	private final HashMap<String, LogEntry>  logCache        = new HashMap<String, LogEntry>();
+	private final HashMap<String, LogEntry>  logCache          = new HashMap<String, LogEntry>();
 	
 	/** The branch factory. */
 	private BranchFactory                    branchFactory;
@@ -129,8 +131,8 @@ public class GitRepository extends Repository {
 		}
 		
 		for (final String line : response.getSecond()) {
-			String sha = line.substring(0, 40);
-			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, 40)))) {
+			String sha = line.substring(0, GIT_HASH_LENGTH);
+			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, GIT_HASH_LENGTH)))) {
 				sha = firstRev;
 			}
 			
@@ -143,10 +145,10 @@ public class GitRepository extends Repository {
 			DateTime date = new DateTime();
 			
 			String lineContent = "<unkown>";
-			if (regex.matchesFull(line)) {
-				author = regex.getGroup("author");
-				date = new DateTime(dtf.parseDateTime(regex.getGroup("date")));
-				lineContent = regex.getGroup("codeline");
+			if (REGEX.matchesFull(line)) {
+				author = REGEX.getGroup("author");
+				date = new DateTime(DTF.parseDateTime(REGEX.getGroup("date")));
+				lineContent = REGEX.getGroup("codeline");
 			} else {
 				
 				throw new UnrecoverableError("Could not extract author and date info from log entry for revision `"
@@ -355,7 +357,7 @@ public class GitRepository extends Repository {
 			                                     + revision);
 		}
 		final String removed = lines.remove(0);
-		if ((!revision.toUpperCase().equals("HEAD")) && (!removed.trim().equals(revision))) {
+		if ((!"HEAD".equals(revision.toUpperCase())) && (!removed.trim().equals(revision))) {
 			
 			throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
 			        + revision + "`: wrong revision outputed. Abort parsing.");
@@ -363,7 +365,7 @@ public class GitRepository extends Repository {
 		}
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
-			if (line.trim().equals("")) {
+			if (line.trim().isEmpty()) {
 				// found the end of the log entry.
 				break;
 			}
@@ -378,15 +380,15 @@ public class GitRepository extends Repository {
 			}
 			final String type = lineParts[0];
 			final String path = "/" + lineParts[1];
-			if (type.equals("A")) {
+			if ("A".equals(type)) {
 				result.put(path, ChangeType.Added);
-			} else if (type.equals("C")) {
+			} else if ("C".equals(type)) {
 				result.put(path, ChangeType.Modified);
-			} else if (type.equals("D")) {
+			} else if ("D".equals(type)) {
 				result.put(path, ChangeType.Deleted);
-			} else if (type.equals("M")) {
+			} else if ("M".equals(type)) {
 				result.put(path, ChangeType.Modified);
-			} else if (type.equals("U")) {
+			} else if ("U".equals(type)) {
 				result.put(path, ChangeType.Modified);
 			}
 		}
@@ -437,14 +439,14 @@ public class GitRepository extends Repository {
 		}
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
-				final Match found = formerPathRegex.find(line);
+				final Match found = FORMER_PATH_REGEX.find(line);
 				if (!found.hasGroups()) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");
 					}
 					return null;
 				}
-				return formerPathRegex.getGroup("result");
+				return FORMER_PATH_REGEX.getGroup("result");
 			}
 		}
 		return null;
@@ -480,24 +482,6 @@ public class GitRepository extends Repository {
 		                                                                      GitRepository.charset);
 		if (response.getFirst() != 0) {
 			throw new UnrecoverableError("Could not get ls-remote.");
-		}
-		return response.getSecond();
-	}
-	
-	/**
-	 * Gets the merges.
-	 * 
-	 * @return the merges
-	 */
-	public List<String> getMerges() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		                                                                              "--branches", "--remotes",
-		                                                                              "--parents", "--merges" },
-		                                                                      this.cloneDir, null,
-		                                                                      new HashMap<String, String>(),
-		                                                                      GitRepository.charset);
-		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not get rev-list --merges.");
 		}
 		return response.getSecond();
 	}
@@ -570,8 +554,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.
-	 * PersistenceUtil)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence. PersistenceUtil)
 	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
@@ -627,7 +610,8 @@ public class GitRepository extends Repository {
 	 */
 	@Override
 	public String getTransactionId(@Positive ("Cannot get transaction id for revision number smaller than zero.") final long index) {
-		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:'%H'", "--reverse" };
+		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "--topo-order",
+		        "--reverse" };
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
@@ -657,7 +641,7 @@ public class GitRepository extends Repository {
 	public List<LogEntry> log(@MinLength (min = 1) final String fromRevision,
 	                          @MinLength (min = 1) final String toRevision) {
 		String toRev = toRevision;
-		if (toRevision.equals("HEAD")) {
+		if ("HEAD".equals(toRevision)) {
 			toRev = getHEADRevisionId();
 		}
 		final int fromIndex = this.transactionIDs.indexOf(fromRevision);

@@ -18,16 +18,16 @@ package org.mozkito;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class GraphBuilder.
@@ -36,7 +36,8 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class GraphBuilder implements Runnable {
 	
-	private static int                commitLimit = 15;
+	/** The Constant COMMIT_LIMIT. */
+	private static final int          COMMIT_LIMIT = 15;
 	
 	/** The counter. */
 	private final IRevDependencyGraph revDepGraph;
@@ -114,7 +115,7 @@ public class GraphBuilder implements Runnable {
 				this.persistenceUtil.saveOrUpdate(branch);
 			}
 			this.persistenceUtil.saveOrUpdate(rcsTransaction);
-			if ((++counter % commitLimit) == 0) {
+			if ((++counter % COMMIT_LIMIT) == 0) {
 				this.persistenceUtil.commitTransaction();
 				this.persistenceUtil.beginTransaction();
 			}
@@ -151,7 +152,7 @@ public class GraphBuilder implements Runnable {
 					final RCSBranch branch = this.persistenceUtil.loadById(branchName, RCSBranch.class);
 					branch.addMergedIn(hash);
 					this.persistenceUtil.saveOrUpdate(branch);
-					if ((++counter % commitLimit) == 0) {
+					if ((++counter % COMMIT_LIMIT) == 0) {
 						this.persistenceUtil.commitTransaction();
 						this.persistenceUtil.beginTransaction();
 					}
@@ -193,7 +194,7 @@ public class GraphBuilder implements Runnable {
 					        + transaction.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
-				if ((index % commitLimit) == 0) {
+				if ((index % COMMIT_LIMIT) == 0) {
 					this.persistenceUtil.commitTransaction();
 					this.persistenceUtil.beginTransaction();
 				}

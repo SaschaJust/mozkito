@@ -18,12 +18,12 @@ package org.mozkito.versions.elements;
 import java.util.Iterator;
 import java.util.List;
 
-import org.mozkito.versions.Repository;
-
 import net.ownhero.dev.kanuni.annotations.compare.NotEqualsInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.versions.Repository;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -45,13 +45,13 @@ public class LogIterator implements Iterator<LogEntry> {
 	        @NotEqualsInt (ref = 0) final int cacheSize) {
 		if (startRevision == null) {
 			this.startRevision = repository.getFirstRevisionId();
-		} else if (startRevision.equals("HEAD")) {
+		} else if ("HEAD".equals(startRevision)) {
 			this.startRevision = repository.getHEADRevisionId();
 		} else {
 			this.startRevision = startRevision;
 		}
 		
-		if ((endRevision == null) || (endRevision.equals("HEAD"))) {
+		if ((endRevision == null) || ("HEAD".equals(endRevision))) {
 			this.endRevision = repository.getHEADRevisionId();
 		} else {
 			this.endRevision = endRevision;

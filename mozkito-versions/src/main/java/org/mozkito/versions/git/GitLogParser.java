@@ -29,7 +29,6 @@ import org.joda.time.DateTime;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.LogEntry;
 
-
 /**
  * The Class GitLogParser.
  * 
@@ -94,7 +93,7 @@ class GitLogParser {
 					username = match.getGroup("username").getMatch().trim();
 				} else {
 					fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
-					if (fullname.equals("")) {
+					if (fullname.isEmpty()) {
 						fullname = null;
 					}
 				}
@@ -113,7 +112,7 @@ class GitLogParser {
 			}
 			authorString = usernameRegex.removeAll(authorString);
 			fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
-			if (fullname.equals("")) {
+			if (fullname.isEmpty()) {
 				fullname = null;
 			}
 		}

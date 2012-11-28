@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package org.mozkito.versions.collections;
 
 import java.util.Collection;
@@ -14,9 +26,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
- * The Class TransactionSet.
+ * The Class TransactionSet is a sorted set of transactions. All transactions in such a set must share at least one
+ * common branch. Transactions not sharing a commong branch are not comparable.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
@@ -61,7 +73,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 */
 	@Override
 	@NoneNull
-	public boolean add(final RCSTransaction e) throws ClassCastException {
+	public boolean add(final RCSTransaction e) {
 		// PRECONDITIONS
 		
 		try {

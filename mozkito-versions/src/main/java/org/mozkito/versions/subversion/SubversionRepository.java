@@ -403,6 +403,8 @@ public class SubversionRepository extends Repository {
 								return copyPath
 								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
 							}
+						default:
+							break;
 					}
 					
 				}

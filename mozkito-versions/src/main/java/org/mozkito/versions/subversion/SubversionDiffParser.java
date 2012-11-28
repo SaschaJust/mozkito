@@ -21,11 +21,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
+
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.wc.ISVNDiffGenerator;
 
-import net.ownhero.dev.ioda.FileUtils;
 import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -41,9 +42,9 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @param chunk
 	 * @return
 	 */
-	public static HashSet<Integer> getLineNumbers(Chunk chunk) {
-		HashSet<Integer> result = new HashSet<Integer>();
-		int startPos = chunk.getPosition();
+	public static HashSet<Integer> getLineNumbers(final Chunk chunk) {
+		final HashSet<Integer> result = new HashSet<Integer>();
+		final int startPos = chunk.getPosition();
 		for (int i = 0; i < chunk.getSize(); ++i) {
 			result.add(startPos + i + 1);
 		}
@@ -54,8 +55,8 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @param lines
 	 * @return
 	 */
-	public static String linesToString(List<String> lines) {
-		StringBuilder sbuilder = new StringBuilder();
+	public static String linesToString(final List<String> lines) {
+		final StringBuilder sbuilder = new StringBuilder();
 		for (int i = 0; i < lines.size(); ++i) {
 			sbuilder.append(lines.get(i));
 			sbuilder.append("\n");
@@ -88,9 +89,9 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * java.lang.String)
 	 */
 	@Override
-	public void displayAddedDirectory(String arg0,
-	                                  String arg1,
-	                                  String arg2) throws SVNException {
+	public void displayAddedDirectory(final String arg0,
+	                                  final String arg1,
+	                                  final String arg2) throws SVNException {
 		// Auto-generated method stub
 		
 	}
@@ -101,9 +102,9 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * java.lang.String)
 	 */
 	@Override
-	public void displayDeletedDirectory(String arg0,
-	                                    String arg1,
-	                                    String arg2) throws SVNException {
+	public void displayDeletedDirectory(final String arg0,
+	                                    final String arg1,
+	                                    final String arg2) throws SVNException {
 		// Auto-generated method stub
 		
 	}
@@ -114,22 +115,22 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.io.OutputStream)
 	 */
 	@Override
-	public void displayFileDiff(String path,
-	                            File file1,
-	                            File file2,
-	                            String rev1,
-	                            String rev2,
-	                            String mimeType1,
-	                            String mimeType2,
-	                            OutputStream result) throws SVNException {
+	public void displayFileDiff(final String path,
+	                            final File file1,
+	                            final File file2,
+	                            final String rev1,
+	                            final String rev2,
+	                            final String mimeType1,
+	                            final String mimeType2,
+	                            final OutputStream result) throws SVNException {
 		
 		if ((file1 == null) || (file2 == null)) {
 			return;
 		}
-		List<String> original = FileUtils.fileToLines(file1);
-		List<String> revised = FileUtils.fileToLines(file2);
-		Patch patch = DiffUtils.diff(original, revised);
-		Iterator<Delta> deltaIter = patch.getDeltas().iterator();
+		final List<String> original = FileUtils.fileToLines(file1);
+		final List<String> revised = FileUtils.fileToLines(file2);
+		final Patch patch = DiffUtils.diff(original, revised);
+		final Iterator<Delta> deltaIter = patch.getDeltas().iterator();
 		while (deltaIter.hasNext()) {
 			this.deltas.add(deltaIter.next());
 		}
@@ -142,10 +143,10 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * org.tmatesoft.svn.core.SVNProperties, org.tmatesoft.svn.core.SVNProperties, java.io.OutputStream)
 	 */
 	@Override
-	public void displayPropDiff(String arg0,
-	                            SVNProperties arg1,
-	                            SVNProperties arg2,
-	                            OutputStream arg3) throws SVNException {
+	public void displayPropDiff(final String arg0,
+	                            final SVNProperties arg1,
+	                            final SVNProperties arg2,
+	                            final OutputStream arg3) throws SVNException {
 		// Auto-generated method stub
 		
 	}
@@ -182,8 +183,8 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#init(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void init(String arg0,
-	                 String arg1) {
+	public void init(final String arg0,
+	                 final String arg1) {
 		// Auto-generated method stub
 		
 	}
@@ -243,7 +244,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setBasePath(java.io.File)
 	 */
 	@Override
-	public void setBasePath(File arg0) {
+	public void setBasePath(final File arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -253,7 +254,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffAdded(boolean)
 	 */
 	@Override
-	public void setDiffAdded(boolean arg0) {
+	public void setDiffAdded(final boolean arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -263,7 +264,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffCopied(boolean)
 	 */
 	@Override
-	public void setDiffCopied(boolean arg0) {
+	public void setDiffCopied(final boolean arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -273,7 +274,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffDeleted(boolean)
 	 */
 	@Override
-	public void setDiffDeleted(boolean arg0) {
+	public void setDiffDeleted(final boolean arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -283,7 +284,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setDiffUnversioned(boolean)
 	 */
 	@Override
-	public void setDiffUnversioned(boolean arg0) {
+	public void setDiffUnversioned(final boolean arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -293,7 +294,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setEncoding(java.lang.String)
 	 */
 	@Override
-	public void setEncoding(String arg0) {
+	public void setEncoding(final String arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -303,7 +304,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setEOL(byte[])
 	 */
 	@Override
-	public void setEOL(byte[] arg0) {
+	public void setEOL(final byte[] arg0) {
 		// Auto-generated method stub
 		
 	}
@@ -313,7 +314,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @see org.tmatesoft.svn.core.wc.ISVNDiffGenerator#setForcedBinaryDiff(boolean)
 	 */
 	@Override
-	public void setForcedBinaryDiff(boolean arg0) {
+	public void setForcedBinaryDiff(final boolean arg0) {
 		// Auto-generated method stub
 		
 	}

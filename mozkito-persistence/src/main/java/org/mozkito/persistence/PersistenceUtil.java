@@ -26,62 +26,62 @@ import javax.persistence.Query;
  */
 public interface PersistenceUtil {
 	
-	public boolean activeTransaction();
+	boolean activeTransaction();
 	
-	public void beginTransaction();
+	void beginTransaction();
 	
-	public void commitTransaction();
+	void commitTransaction();
 	
-	public <T> Criteria<T> createCriteria(final Class<T> clazz);
+	<T> Criteria<T> createCriteria(final Class<T> clazz);
 	
-	public <T> Query createNativeQuery(String query,
-	                                   Class<T> clazz);
+	<T> Query createNativeQuery(String query,
+	                            Class<T> clazz);
 	
-	public Query createQuery(final String query);
+	Query createQuery(final String query);
 	
-	public void createSessionFactory(final Properties properties);
+	void createSessionFactory(final Properties properties);
 	
-	public void createSessionFactory(final String host,
-	                                 final String database,
-	                                 final String user,
-	                                 final String password,
-	                                 final String type,
-	                                 final String driver,
-	                                 final String unit,
-	                                 final ConnectOptions options);
+	void createSessionFactory(final String host,
+	                          final String database,
+	                          final String user,
+	                          final String password,
+	                          final String type,
+	                          final String driver,
+	                          final String unit,
+	                          final ConnectOptions options);
 	
-	public void delete(final Annotated object);
+	void delete(final Annotated object);
 	
-	public void executeNativeQuery(final String query);
+	void executeNativeQuery(final String query);
 	
 	@SuppressWarnings ("rawtypes")
-	public List executeNativeSelectQuery(final String queryString);
+	List executeNativeSelectQuery(final String queryString);
 	
-	public void executeQuery(final String query);
+	void executeQuery(final String query);
 	
-	public void exmerge(final Annotated object);
+	void exmerge(final Annotated object);
 	
-	public void flush();
+	void flush();
 	
-	public String getToolInformation();
+	String getToolInformation();
 	
-	public String getType();
+	String getType();
 	
-	public <T> List<T> load(final Criteria<T> criteria);
+	<T> List<T> load(final Criteria<T> criteria);
 	
-	public <T> List<T> load(final Criteria<T> criteria,
-	                        int sizeLimit);
+	<T> List<T> load(final Criteria<T> criteria,
+	                 int sizeLimit);
 	
-	public <T extends Annotated> T loadById(final Object id,
-	                                        Class<T> clazz);
+	<T extends Annotated> T loadById(final Object id,
+	                                 Class<T> clazz);
 	
-	public void rollbackTransaction();
+	void rollbackTransaction();
 	
-	public void save(final Annotated object);
+	void save(final Annotated object);
 	
-	public void saveOrUpdate(final Annotated object);
+	void saveOrUpdate(final Annotated object);
 	
-	public void shutdown();
+	void shutdown();
 	
-	public void update(final Annotated object);
+	void update(final Annotated object);
 }

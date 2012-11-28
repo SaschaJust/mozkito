@@ -15,9 +15,6 @@
  */
 package org.mozkito;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -25,6 +22,9 @@ import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
@@ -35,7 +35,8 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class RepositoryPersister extends Sink<RCSTransaction> {
 	
-	Integer i = 0;
+	private static final int COMMIT_CACHE = 100;
+	Integer                  counter      = 0;
 	
 	/**
 	 * @see RepoSuiteSinkThread
@@ -63,7 +64,7 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 					Logger.debug("Storing " + data);
 				}
 				
-				if (((RepositoryPersister.this.i = RepositoryPersister.this.i + 1) % 100) == 0) {
+				if (((RepositoryPersister.this.counter = RepositoryPersister.this.counter + 1) % COMMIT_CACHE) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}
