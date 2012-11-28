@@ -36,8 +36,8 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.URIUtils;
 import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -609,7 +609,7 @@ public class GitRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getTransactionId(long)
 	 */
 	@Override
-	public String getTransactionId(@Positive ("Cannot get transaction id for revision number smaller than zero.") final long index) {
+	public String getTransactionId(@NotNegative ("Cannot get transaction id for revision number smaller than zero.") final long index) {
 		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "--topo-order",
 		        "--reverse" };
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
