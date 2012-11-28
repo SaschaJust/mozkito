@@ -44,7 +44,7 @@ public class GitRepositoryTest {
 	@Before
 	public void setup() {
 		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-		assert (zipURL != null);
+		assertTrue(zipURL != null);
 		try {
 			final File bareDir = new File(
 			                              (new URL(zipURL.toString()
@@ -70,27 +70,27 @@ public class GitRepositoryTest {
 		
 		assertEquals(3, annotate.size());
 		AnnotationEntry line0 = annotate.get(0);
-		assert (line0 != null);
+		assertTrue(line0 != null);
 		assertFalse(line0.hasAlternativePath());
-		assert (line0.getAlternativeFilePath() == null);
+		assertTrue(line0.getAlternativeFilePath() == null);
 		assertEquals("changing 3", line0.getLine());
 		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", line0.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2010-11-22 20:30:52 +0100").isEqual(line0.getTimestamp()));
 		assertEquals("Kim Herzig", line0.getUsername());
 		
 		final AnnotationEntry line1 = annotate.get(1);
-		assert (line1 != null);
+		assertTrue(line1 != null);
 		assertFalse(line1.hasAlternativePath());
-		assert (line1.getAlternativeFilePath() == null);
+		assertTrue(line1.getAlternativeFilePath() == null);
 		assertEquals("changing 3", line0.getLine());
 		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", line1.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line1.getTimestamp()));
 		assertEquals("Kim Herzig", line1.getUsername());
 		
 		final AnnotationEntry line2 = annotate.get(2);
-		assert (line2 != null);
+		assertTrue(line2 != null);
 		assertFalse(line2.hasAlternativePath());
-		assert (line2.getAlternativeFilePath() == null);
+		assertTrue(line2.getAlternativeFilePath() == null);
 		assertEquals("changing 3", line2.getLine());
 		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", line2.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line2.getTimestamp()));
@@ -98,9 +98,9 @@ public class GitRepositoryTest {
 		
 		annotate = this.repo.annotate("3_renamed.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285");
 		line0 = annotate.get(0);
-		assert (line0 != null);
+		assertTrue(line0 != null);
 		assertTrue(line0.hasAlternativePath());
-		assert (line0.getAlternativeFilePath() == "3.txt");
+		assertEquals("3.txt", line0.getAlternativeFilePath());
 		assertEquals("changing 3", line0.getLine());
 		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", line0.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2010-11-22 20:30:52 +0100").isEqual(line0.getTimestamp()));
@@ -122,8 +122,8 @@ public class GitRepositoryTest {
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb");
-		assert (file != null);
-		assert (file.exists());
+		assertTrue(file != null);
+		assertTrue(file.exists());
 	}
 	
 	@Test
