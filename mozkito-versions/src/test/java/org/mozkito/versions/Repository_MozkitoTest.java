@@ -216,6 +216,8 @@ public class Repository_MozkitoTest extends MozkitoTest {
 			if (Logger.logDebug()) {
 				Logger.debug("Child entries of checkout path: " + JavaUtils.arrayToString(checkoutPath.list()));
 			}
+			assertTrue(checkoutPath.exists());
+			assertTrue(checkoutPath.isDirectory());
 			
 			final File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
 			final File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
