@@ -17,14 +17,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.RepositoryFactory;
-import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.cvs.CVSRepository;
 import org.mozkito.versions.git.GitRepository;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.subversion.SubversionRepository;
-
 
 public class RepositoryFactoryTest {
 	
@@ -37,8 +32,6 @@ public class RepositoryFactoryTest {
 			assertEquals(GitRepository.class, repositoryHandler);
 			repositoryHandler = RepositoryFactory.getRepositoryHandler(RepositoryType.MERCURIAL);
 			assertEquals(MercurialRepository.class, repositoryHandler);
-			repositoryHandler = RepositoryFactory.getRepositoryHandler(RepositoryType.CVS);
-			assertEquals(CVSRepository.class, repositoryHandler);
 			
 		} catch (final UnregisteredRepositoryTypeException e) {
 			fail(e.getMessage());

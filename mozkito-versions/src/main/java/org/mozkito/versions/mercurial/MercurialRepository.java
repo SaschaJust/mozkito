@@ -623,7 +623,7 @@ public class MercurialRepository extends Repository {
 	@Override
 	public String getTransactionId(@NotNegative final long index) {
 		
-		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
+		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template={node}\\n" };
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;

@@ -88,7 +88,8 @@ public abstract class Repository {
 	 *            the relative repository path
 	 * @param revision
 	 *            the revision
-	 * @return The file handle to the checked out, corresponding file or directory.
+	 * @return The file handle to the checked out, corresponding file or directory. Null if no such file exists or if
+	 *         the file could not be checked out.
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
 	                                  String revision);
@@ -120,7 +121,7 @@ public abstract class Repository {
 	 * 
 	 * @param revision
 	 *            the revision to be analyzed
-	 * @return the changed paths
+	 * @return A map associating the changed paths with a ChangeType. Returns Null if an error occurrs.
 	 */
 	public abstract Map<String, ChangeType> getChangedPaths(String revision);
 	

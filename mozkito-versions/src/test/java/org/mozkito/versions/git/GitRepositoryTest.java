@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
@@ -46,18 +46,14 @@ public class GitRepositoryTest {
 		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
 		assertTrue(zipURL != null);
 		try {
-			final File bareDir = new File(
-			                              (new URL(zipURL.toString()
-			                                             .substring(0,
-			                                                        zipURL.toString()
-			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-			FileUtils.unzip(new File(zipURL.toURI()), bareDir);
-			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
+			final File tmpDir = FileUtils.createRandomDir("mozkito", "testGit", FileShutdownAction.DELETE);
+			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
+			if ((!tmpDir.exists()) || (!tmpDir.isDirectory())) {
 				fail();
 			}
 			final BranchFactory branchFactory = new BranchFactory(null);
 			this.repo = new GitRepository();
-			this.repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
+			this.repo.setup(new URI("file://" + tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
 			                branchFactory, null, "master");
 		} catch (final Exception e) {
 			fail();
@@ -110,13 +106,7 @@ public class GitRepositoryTest {
 	
 	@Test
 	public void testCheckoutPathFail() {
-		try {
-			this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285");
-			fail();
-		} catch (final UnrecoverableError e1) {
-			
-		}
-		
+		assertTrue(this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285") == null);
 	}
 	
 	@Test
@@ -170,6 +160,16 @@ public class GitRepositoryTest {
 		
 		formerPathName = this.repo.getFormerPathName("96a9f105774b50f1fa3361212c4d12ae057a4285", "1.txt");
 		assertTrue(formerPathName == null);
+	}
+	
+	@Test
+	public void testGetLog() {
+		// TODO write this test
+	}
+	
+	@Test
+	public void testGetRelativeTransactionId() {
+		// TODO write this test
 	}
 	
 	@Test

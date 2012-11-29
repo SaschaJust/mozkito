@@ -184,7 +184,10 @@ public class GitRepository extends Repository {
 		}
 		final File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			throw new UnrecoverableError("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
+			if (Logger.logError()) {
+				Logger.error("Could not get requested path using command `git checkout %s`. Abort.", revision);
+			}
+			return null;
 		}
 		return result;
 	}
@@ -358,10 +361,11 @@ public class GitRepository extends Repository {
 		}
 		final String removed = lines.remove(0);
 		if ((!"HEAD".equals(revision.toUpperCase())) && (!removed.trim().equals(revision))) {
-			
-			throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
-			        + revision + "`: wrong revision outputed. Abort parsing.");
-			
+			if (Logger.logError()) {
+				Logger.error("Error while parsing GIT log to unveil changed paths for revision `%s`: wrong revision outputed. Abort parsing.",
+				             revision);
+			}
+			return null;
 		}
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
@@ -372,11 +376,12 @@ public class GitRepository extends Repository {
 			line = line.replaceAll("\\s+", " ");
 			final String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				
-				throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
-				        + revision + "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator
-				        + "Line:" + line);
-				
+				if (Logger.logError()) {
+					Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
+					        + "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
+					        + line);
+				}
+				return null;
 			}
 			final String type = lineParts[0];
 			final String path = "/" + lineParts[1];
