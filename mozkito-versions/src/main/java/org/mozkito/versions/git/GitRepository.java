@@ -278,14 +278,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 	}
 	
 	@Override
-	public Tuple<Integer, List<String>> executeLog(final String revision) {
+	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) @NotNull final String revision) {
 		return gitLog(revision);
 	}
 	
 	@Override
 	@NoneNull
-	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 40) final String fromRevision,
-	                                               @MinLength (min = 40) final String toRevision) {
+	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) final String fromRevision,
+	                                               @MinLength (min = 4) final String toRevision) {
 		final StringBuilder revisionSelectionBuilder = new StringBuilder();
 		revisionSelectionBuilder.append(fromRevision);
 		revisionSelectionBuilder.append("^..");
@@ -667,7 +667,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return this.cloneDir;
 	}
 	
-	private Tuple<Integer, List<String>> gitLog(final String revisionSelection) {
+	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) {
 		if (Logger.logDebug()) {
 			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order %s.",
 			             revisionSelection);

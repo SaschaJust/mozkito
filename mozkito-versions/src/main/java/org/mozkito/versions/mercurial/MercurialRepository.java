@@ -41,6 +41,7 @@ import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
@@ -313,13 +314,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	}
 	
 	@Override
-	public Tuple<Integer, List<String>> executeLog(final String revision) {
+	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String revision) {
 		return hgLog(revision);
 	}
 	
 	@Override
-	public Tuple<Integer, List<String>> executeLog(final String fromRevision,
-	                                               final String toRevision) {
+	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String fromRevision,
+	                                               @NotNull @MinLength (min = 1) final String toRevision) {
 		final StringBuilder revisionSelectionBuilder = new StringBuilder();
 		revisionSelectionBuilder.append(fromRevision);
 		revisionSelectionBuilder.append("::");
@@ -637,7 +638,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return this.cloneDir;
 	}
 	
-	private Tuple<Integer, List<String>> hgLog(final String revisionSelection) {
+	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) {
 		return CommandExecutor.execute("hg", new String[] { "log", "--style", "minerlog", "-r", revisionSelection },
 		                               this.cloneDir, null, null);
 		
