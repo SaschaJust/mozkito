@@ -9,6 +9,7 @@ import org.mozkito.versions.git.GitLogParserTest;
 import org.mozkito.versions.git.GitRepositoryTest;
 import org.mozkito.versions.git.GitRevDependencyGraphTest;
 import org.mozkito.versions.git.GitTransactionIteratorTest;
+import org.mozkito.versions.mercurial.MercurialLogParserTest;
 import org.mozkito.versions.mercurial.MercurialRepositoryTest;
 import org.mozkito.versions.model.RCSFileTest;
 import org.mozkito.versions.model.RCSTransactionTest;
@@ -16,7 +17,7 @@ import org.mozkito.versions.model.RCSTransactionTest;
 @RunWith (Suite.class)
 @SuiteClasses ({ RepositoryFactoryTest.class, TransactionSetTest.class, GitLogParserTest.class,
         GitRepositoryTest.class, GitRevDependencyGraphTest.class, GitTransactionIteratorTest.class, RCSFileTest.class,
-        RCSTransactionTest.class, MercurialRepositoryTest.class })
+        RCSTransactionTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class })
 public class AllTests {
 	
 }
