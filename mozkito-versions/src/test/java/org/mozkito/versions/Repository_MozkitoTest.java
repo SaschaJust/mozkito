@@ -241,7 +241,7 @@ public class Repository_MozkitoTest extends MozkitoTest {
 			final File f = repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD());
 			assertTrue(f != null);
 			assertTrue(f.exists());
-			assertTrue(f.isDirectory());
+			assertTrue(f.isFile());
 		}
 	}
 	
