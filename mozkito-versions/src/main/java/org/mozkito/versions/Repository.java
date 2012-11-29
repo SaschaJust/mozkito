@@ -265,6 +265,16 @@ public abstract class Repository {
 	public abstract String getTransactionId(long index);
 	
 	/**
+	 * Method to retrieve the index of a transaction id within the topological order.
+	 * getTransactionId(getTransactionIndex("abc")).equals("abc")
+	 * 
+	 * @param transactionId
+	 *            the transaction id
+	 * @return the transaction index; return -1 if the transactionId does not exist
+	 */
+	public abstract long getTransactionIndex(String transactionId);
+	
+	/**
 	 * Gets the uri.
 	 * 
 	 * @return the uri

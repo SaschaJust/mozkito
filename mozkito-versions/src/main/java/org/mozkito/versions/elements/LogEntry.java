@@ -12,15 +12,13 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
-import java.util.Set;
-
+import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.mozkito.persistence.model.Person;
-
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class LogEntry.
@@ -29,13 +27,12 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class LogEntry implements Comparable<LogEntry> {
 	
-	protected Person      author;
-	protected DateTime    commitDate;
-	protected String      message;
-	protected LogEntry    previous;
-	protected String      revision;
-	protected Set<String> mergedBranches;
-	protected String      originalId;
+	protected Person   author;
+	protected DateTime commitDate;
+	protected String   message;
+	protected LogEntry previous;
+	protected String   revision;
+	protected String   originalId;
 	
 	/**
 	 * Instantiates a new log entry.
@@ -56,6 +53,10 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.revision = revision;
 		this.author = author;
 		this.message = message;
+		if (this.message.endsWith(FileUtils.lineSeparator)) {
+			this.message = this.message.substring(0, this.message.length() - 1);
+		}
+		
 		this.previous = previous;
 		this.commitDate = dateTime;
 		this.originalId = originalId;
@@ -97,13 +98,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 	
 	/**
-	 * @return the mergedBranches
-	 */
-	public Set<String> getMergedBranches() {
-		return this.mergedBranches;
-	}
-	
-	/**
 	 * Gets the message.
 	 * 
 	 * @return the message
@@ -126,14 +120,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	public String getRevision() {
 		return this.revision;
-	}
-	
-	/**
-	 * @param mergedBranches
-	 *            the mergedBranches to set
-	 */
-	public void setMergedBranches(final Set<String> mergedBranches) {
-		this.mergedBranches = mergedBranches;
 	}
 	
 	/*

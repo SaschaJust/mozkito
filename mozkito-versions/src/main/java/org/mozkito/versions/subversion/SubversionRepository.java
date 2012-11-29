@@ -510,6 +510,12 @@ public class SubversionRepository extends Repository {
 	}
 	
 	@Override
+	public long getTransactionIndex(final String transactionId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
 	public File getWokingCopyLocation() {
 		return this.workingDirectory;
 	}

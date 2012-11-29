@@ -15,16 +15,22 @@ import java.util.Map;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 
 public class MercurialRepositoryTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	private static final String _67635fe9efeb2fd3751df9ea67650c71e59e3df1 = "2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9";
 	private static final String _E52DEF97EBC1F78C9286B1E7C36783AA67604439 = "caac84e3edc88a6f3ec2b71bbcd6ad78445ef985";
@@ -36,6 +42,11 @@ public class MercurialRepositoryTest {
 	private static final String _D9A5542FE1B5A755502320BA38FDF180011B40DF = "d9a5542fe1b5a755502320ba38fdf180011b40df";
 	private static final String _9BE561B3657E2B1DA2B09D675DDDD5F45C47F57C = "e17ec8036b3bf49667ec1bb7fe474e65451a98b0";
 	private static final String _376ADC0F9371129A76766F8030F2E576165358C1 = "ffaaa326e3b8cd68c2396b21eb49b26a1cb3835c";
+	private static final String _98D5C40EF3C14503A472BA4133AE3529C7578E30 = "8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da";
+	private static final String _AE94D7FA81437CBBD723049E3951F9DAAA62A7C0 = "c601aab93720e3062c7335f970ccfafcae9d1822";
+	private static final String _8273C1E51992A4D7A1DA012DBB416864C2749A7F = "2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a";
+	private static final String _927478915F2D8FB9135EB33D21CB8491C0E655BE = "df6bde3bc282ec4815e98877e150a6881efc059e";
+	private static final String _1AC6AAA05EB6D55939B20E70EC818BB413417757 = "ef28e5ceba3b2d8d30999c4fea4301771802d550";
 	private MercurialRepository repo;
 	
 	@Before
@@ -165,7 +176,44 @@ public class MercurialRepositoryTest {
 	
 	@Test
 	public void testGetLog() {
-		// TODO write this test
+		final List<LogEntry> log = this.repo.log(_98D5C40EF3C14503A472BA4133AE3529C7578E30,
+		                                         _376ADC0F9371129A76766F8030F2E576165358C1);
+		assertEquals(6, log.size());
+		LogEntry logEntry = log.get(0);
+		assertEquals(_98D5C40EF3C14503A472BA4133AE3529C7578E30, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:26:24 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(1);
+		assertEquals(_AE94D7FA81437CBBD723049E3951F9DAAA62A7C0, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:32:19 +0100")));
+		assertEquals("Merge file:///tmp/testGit into testBranchName", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(2);
+		assertEquals(_8273C1E51992A4D7A1DA012DBB416864C2749A7F, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:34:03 +0100")));
+		assertEquals("Merge branch 'testBranchName'", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(3);
+		assertEquals(_927478915F2D8FB9135EB33D21CB8491C0E655BE, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:01:23 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(4);
+		assertEquals(_1AC6AAA05EB6D55939B20E70EC818BB413417757, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:02:30 +0100")));
+		assertEquals("chaging 2.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(5);
+		assertEquals(_376ADC0F9371129A76766F8030F2E576165358C1, logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:03:59 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
 	}
 	
 	@Test

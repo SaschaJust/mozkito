@@ -27,6 +27,7 @@ import java.util.Map;
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
@@ -34,10 +35,15 @@ import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 
 public class GitRepositoryTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	private GitRepository repo;
 	
@@ -164,7 +170,45 @@ public class GitRepositoryTest {
 	
 	@Test
 	public void testGetLog() {
-		// TODO write this test
+		final List<LogEntry> log = this.repo.log("98d5c40ef3c14503a472ba4133ae3529c7578e30",
+		                                         "376adc0f9371129a76766f8030f2e576165358c1");
+		assertEquals(6, log.size());
+		LogEntry logEntry = log.get(0);
+		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:26:24 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(1);
+		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:32:19 +0100")));
+		assertEquals("Merge file:///tmp/testGit into testBranchName", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(2);
+		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2010-11-22 20:34:03 +0100")));
+		assertEquals("Merge branch 'testBranchName'", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(3);
+		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:01:23 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(4);
+		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:02:30 +0100")));
+		assertEquals("chaging 2.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
+		logEntry = log.get(5);
+		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", logEntry.getRevision());
+		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:03:59 +0100")));
+		assertEquals("changing 1.txt", logEntry.getMessage());
+		assertTrue(logEntry.getOriginalId().isEmpty());
+		
 	}
 	
 	@Test
