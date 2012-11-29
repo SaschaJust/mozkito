@@ -68,9 +68,12 @@ public abstract class DistributedCommandLineRepository extends Repository {
 		final long fromIndex = getTransactionIndex(fromRevision);
 		final long toIndex = getTransactionIndex(toRev);
 		
-		Condition.check(fromIndex >= 0, "Start transaction for log() is unknown!");
-		Condition.check(toIndex >= 0, "End transaction for log() is unknown!");
-		Condition.check(fromIndex <= toIndex, "cannot log from later revision to earlier one!");
+		Condition.check(fromIndex >= 0, String.format("Start transaction %s for log() is unknown (%s)!", fromRevision,
+		                                              this.getClass().getCanonicalName()));
+		Condition.check(toIndex >= 0, String.format("End transaction %s for log() is unknown (%s)!", toRevision,
+		                                            this.getClass().getCanonicalName()));
+		Condition.check(fromIndex <= toIndex, String.format("cannot log from later revision to earlier one (%s)!",
+		                                                    this.getClass().getCanonicalName()));
 		
 		final List<LogEntry> result = new LinkedList<LogEntry>();
 		

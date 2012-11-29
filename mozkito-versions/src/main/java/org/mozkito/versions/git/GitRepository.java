@@ -651,6 +651,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	@Override
 	public long getTransactionIndex(final String transactionId) {
+		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
+			return this.transactionIDs.indexOf(getHEADRevisionId());
+		}
 		return this.transactionIDs.indexOf(transactionId);
 	}
 	

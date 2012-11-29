@@ -28,6 +28,7 @@ import java.util.Map;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -55,6 +56,10 @@ import difflib.Delta;
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
 public class Repository_MozkitoTest extends MozkitoTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/** The repositories. */
 	private static List<Repository>         repositories = new LinkedList<Repository>();
