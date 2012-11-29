@@ -13,7 +13,7 @@
 package org.mozkito.versions;
 
 public enum RepositoryType {
-	CVS, GIT, MERCURIAL, SUBVERSION;
+	GIT, MERCURIAL, SUBVERSION;
 	
 	public static String getHandle() {
 		return RepositoryType.class.getSimpleName();

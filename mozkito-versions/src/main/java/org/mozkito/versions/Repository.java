@@ -188,18 +188,6 @@ public abstract class Repository {
 	}
 	
 	/**
-	 * Returns the relative transaction id to the given one. Result is bounded by startRevision and endRevision.
-	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @param index
-	 *            the index
-	 * @return the relative transaction id
-	 */
-	public abstract String getRelativeTransactionId(String transactionId,
-	                                                long index);
-	
-	/**
 	 * Gets the repository type.
 	 * 
 	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
@@ -356,7 +344,7 @@ public abstract class Repository {
 	public Iterator<LogEntry> log(final String fromRevision,
 	                              final String toRevision,
 	                              final int cacheSize) {
-		return new LogIterator(this, fromRevision, toRevision, cacheSize);
+		return new LogIterator(this, fromRevision, toRevision);
 	}
 	
 	/**

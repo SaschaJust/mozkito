@@ -516,53 +516,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRelativeTransactionId(java.lang.String, long)
-	 */
-	@Override
-	public String getRelativeTransactionId(final String transactionId,
-	                                       final long index) {
-		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
-		
-		if (index == 0) {
-			return transactionId;
-		}
-		
-		final int fromIndex = this.transactionIDs.indexOf(transactionId);
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Requesting relative transaction id of " + transactionId + " (fromIdex=" + fromIndex
-			        + ") and index " + index);
-		}
-		
-		String result = null;
-		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
-			result = this.transactionIDs.get(this.transactionIDs.size() - 1);
-		} else {
-			result = this.transactionIDs.get((int) (fromIndex + index));
-		}
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Returning: " + result);
-		}
-		
-		return result;
-		
-		/*
-		 * else if (index < 0) { String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H",
-		 * "-r", transactionId }; Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args,
-		 * this.cloneDir, null, null); if (response.getFirst() != 0) { return null; } List<String> lines =
-		 * response.getSecond(); if (lines.size() < index) { return lines.get(lines.size() - 1); } else { return
-		 * lines.get((int) index); } } else { String[] args = new String[] { "log", "--branches", "--remotes",
-		 * "--reverse", "--pretty=format:%H", "-r", transactionId + ".." + getHEAD() }; Tuple<Integer, List<String>>
-		 * response = CommandExecutor.execute("git", args, this.cloneDir, null, null); if (response.getFirst() != 0) {
-		 * return null; } List<String> lines = response.getSecond(); if (lines.isEmpty()) { return transactionId; } if
-		 * (lines.size() < (index - 1)) { return lines.get(lines.size() - 1); } else { return lines.get((int) index -
-		 * 1); } }
-		 */
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override

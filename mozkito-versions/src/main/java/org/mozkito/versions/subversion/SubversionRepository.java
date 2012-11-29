@@ -22,7 +22,6 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,6 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.elements.LogIterator;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -216,20 +214,21 @@ public class SubversionRepository extends Repository {
 		
 		Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
 		
-		SVNURL checkoutPath;
 		try {
 			
-			checkoutPath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + relativeRepoPath);
 			final SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
 			                                                         SVNWCUtil.createDefaultOptions(true));
 			
 			final SVNRevision svnRevision = buildRevision(revision);
 			// check out the svnurl recursively into the createDir visible from
 			// revision 0 to given revision string
-			updateClient.doCheckout(checkoutPath, this.workingDirectory, svnRevision, svnRevision, SVNDepth.INFINITY,
-			                        false);
-			
-			return this.workingDirectory;
+			updateClient.doCheckout(this.repository.getRepositoryRoot(true), this.workingDirectory, svnRevision,
+			                        svnRevision, SVNDepth.INFINITY, false);
+			final File result = new File(this.workingDirectory.getAbsolutePath() + "/" + relativeRepoPath);
+			if (!result.exists()) {
+				return null;
+			}
+			return result;
 		} catch (final SVNException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -445,22 +444,6 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRelativeTransactionId (java.lang.String, long)
-	 */
-	@Override
-	public String getRelativeTransactionId(@NotNull final String transactionId,
-	                                       final long index) {
-		if ((buildRevision(transactionId).getNumber() + index) > buildRevision(getEndRevision()).getNumber()) {
-			return getEndRevision();
-		} else if ((buildRevision(transactionId).getNumber() + index) < buildRevision(getFirstRevisionId()).getNumber()) {
-			return getFirstRevisionId();
-		} else {
-			return (buildRevision(transactionId).getNumber() + index) + "";
-		}
-	}
-	
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
@@ -506,13 +489,23 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public String getTransactionId(final long index) {
-		return (1 + index) + "";
+		if (index < getTransactionCount()) {
+			return String.valueOf(1 + index);
+		}
+		return null;
 	}
 	
 	@Override
 	public long getTransactionIndex(final String transactionId) {
-		// TODO Auto-generated method stub
-		return 0;
+		String searchRev = transactionId;
+		if ("HEAD".equals(transactionId.toUpperCase()) || ("TIP".equals(transactionId.toUpperCase()))) {
+			searchRev = getHEADRevisionId();
+		}
+		final long index = Long.valueOf(searchRev).longValue() - 1;
+		if (index < 0) {
+			return -1;
+		}
+		return index;
 	}
 	
 	@Override
@@ -558,13 +551,6 @@ public class SubversionRepository extends Repository {
 			}
 			throw new RuntimeException();
 		}
-	}
-	
-	@Override
-	public Iterator<LogEntry> log(final String fromRevision,
-	                              final String toRevision,
-	                              final int cacheSize) {
-		return new LogIterator(this, fromRevision, toRevision, cacheSize);
 	}
 	
 	@Override

@@ -84,7 +84,7 @@ public class GitRepositoryTest {
 		assertTrue(line1 != null);
 		assertFalse(line1.hasAlternativePath());
 		assertTrue(line1.getAlternativeFilePath() == null);
-		assertEquals("changing 3", line0.getLine());
+		assertEquals("changing 3", line1.getLine());
 		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", line1.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line1.getTimestamp()));
 		assertEquals("Kim Herzig", line1.getUsername());
@@ -212,11 +212,6 @@ public class GitRepositoryTest {
 	}
 	
 	@Test
-	public void testGetRelativeTransactionId() {
-		// TODO write this test
-	}
-	
-	@Test
 	public void testGetTransactionCount() {
 		assertEquals(20, this.repo.getTransactionCount());
 	}
@@ -227,6 +222,12 @@ public class GitRepositoryTest {
 		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", this.repo.getTransactionId(6));
 		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", this.repo.getTransactionId(18));
 		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", this.repo.getTransactionId(19));
+	}
+	
+	@Test
+	public void testGetTransactionIndex() {
+		assertEquals(19, this.repo.getTransactionIndex("HEAD"));
+		assertEquals(6, this.repo.getTransactionIndex("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
 	}
 	
 	@Test

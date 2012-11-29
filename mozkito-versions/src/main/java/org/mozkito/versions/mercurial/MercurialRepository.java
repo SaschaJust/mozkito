@@ -530,38 +530,6 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return new MercurialLogParser();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRelativeTransactionId (java.lang.String, long)
-	 */
-	@Override
-	public String getRelativeTransactionId(final String transactionId,
-	                                       final long index) {
-		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
-		
-		if (index == 0) {
-			return transactionId;
-		} else if (index > 0) {
-			final String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template", "{node}\\n", "-l",
-			        String.valueOf(index + 1) };
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
-			if (response.getFirst() != 0) {
-				return null;
-			}
-			final List<String> list = response.getSecond();
-			return list.get(list.size() - 1).trim();
-		} else {
-			final String[] args = new String[] { "log", "-r", transactionId + ":0", "--template", "{node}\\n", "-l",
-			        String.valueOf(index + 1) };
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
-			if (response.getFirst() != 0) {
-				return null;
-			}
-			final List<String> list = response.getSecond();
-			return list.get(list.size() - 1).trim();
-		}
-	}
-	
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS

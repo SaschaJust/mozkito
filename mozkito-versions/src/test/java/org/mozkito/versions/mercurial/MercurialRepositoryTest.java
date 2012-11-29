@@ -47,6 +47,7 @@ public class MercurialRepositoryTest {
 	private static final String _8273C1E51992A4D7A1DA012DBB416864C2749A7F = "2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a";
 	private static final String _927478915F2D8FB9135EB33D21CB8491C0E655BE = "df6bde3bc282ec4815e98877e150a6881efc059e";
 	private static final String _1AC6AAA05EB6D55939B20E70EC818BB413417757 = "ef28e5ceba3b2d8d30999c4fea4301771802d550";
+	private static final String _D98B5A8740DBBE912B711E3A29DCC4FA3D3890E9 = "5be9fd4d8b5653706de0f21bf0c481515890c329";
 	private MercurialRepository repo;
 	
 	@Before
@@ -217,11 +218,6 @@ public class MercurialRepositoryTest {
 	}
 	
 	@Test
-	public void testGetRelativeTransactionId() {
-		// TODO write this test
-	}
-	
-	@Test
 	public void testGetTransactionCount() {
 		assertEquals(22, this.repo.getTransactionCount());
 	}
@@ -232,5 +228,11 @@ public class MercurialRepositoryTest {
 		assertEquals(_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getTransactionId(6));
 		assertEquals(_67635fe9efeb2fd3751df9ea67650c71e59e3df1, this.repo.getTransactionId(18));
 		assertEquals(_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getTransactionId(19));
+	}
+	
+	@Test
+	public void testGetTransactionIndex() {
+		assertEquals(21, this.repo.getTransactionIndex("HEAD"));
+		assertEquals(6, this.repo.getTransactionIndex(_CBCC33D919A27B9450D117F211A5F4F45615CAB9));
 	}
 }
