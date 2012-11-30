@@ -24,8 +24,18 @@ import difflib.DeleteDelta;
 import difflib.Delta;
 import difflib.Patch;
 
+/**
+ * The Class DiffUtils.
+ */
 public class DiffUtils {
 	
+	/**
+	 * File to lines.
+	 * 
+	 * @param filename
+	 *            the filename
+	 * @return the list
+	 */
 	private static List<String> fileToLines(final String filename) {
 		final List<String> lines = new LinkedList<String>();
 		String line = "";
@@ -39,6 +49,13 @@ public class DiffUtils {
 		return lines;
 	}
 	
+	/**
+	 * Gets the line numbers.
+	 * 
+	 * @param chunk
+	 *            the chunk
+	 * @return the line numbers
+	 */
 	public static HashSet<Integer> getLineNumbers(final Chunk chunk) {
 		final HashSet<Integer> result = new HashSet<Integer>();
 		final int startPos = chunk.getPosition();
@@ -48,6 +65,12 @@ public class DiffUtils {
 		return result;
 	}
 	
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(final String[] args) {
 		final List<String> original = fileToLines("/Users/kim/Downloads/1.txt");
 		final List<String> revised = fileToLines("/Users/kim/Downloads/2.txt");

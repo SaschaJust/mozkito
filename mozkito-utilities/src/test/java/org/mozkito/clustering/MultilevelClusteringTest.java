@@ -26,8 +26,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.clustering.MultilevelClustering.ComparableTuple;
 
+/**
+ * The Class MultilevelClusteringTest.
+ */
 public class MultilevelClusteringTest {
 	
+	/**
+	 * The Class StringScoreVisitor.
+	 */
 	private class StringScoreVisitor implements MultilevelClusteringScoreVisitor<String>,
 	        MultilevelClusteringCollapseVisitor<String> {
 		
@@ -40,6 +46,13 @@ public class MultilevelClusteringTest {
 			return;
 		}
 		
+		/**
+		 * Gets the levenshtein distance.
+		 *
+		 * @param s the s
+		 * @param t the t
+		 * @return the levenshtein distance
+		 */
 		public int getLevenshteinDistance(final String s,
 		                                  final String t) {
 			if ((s == null) || (t == null)) {
@@ -109,11 +122,17 @@ public class MultilevelClusteringTest {
 			return p[n];
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getMaxPossibleScore()
+		 */
 		@Override
 		public double getMaxPossibleScore() {
 			return 0;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringCollapseVisitor#getScore(org.mozkito.clustering.Cluster, org.mozkito.clustering.Cluster, java.util.Map)
+		 */
 		@Override
 		public double getScore(final Cluster<String> newCluster,
 		                       final Cluster<String> otherCluster,
@@ -133,6 +152,9 @@ public class MultilevelClusteringTest {
 			return 1d / d;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getScore(java.lang.Object, java.lang.Object)
+		 */
 		@Override
 		public double getScore(final String t1,
 		                       final String t2) {
@@ -145,9 +167,13 @@ public class MultilevelClusteringTest {
 		}
 	}
 	
+	/**
+	 * The Class TestScoreVisitor.
+	 */
 	private class TestScoreVisitor implements MultilevelClusteringScoreVisitor<Integer>,
 	        MultilevelClusteringCollapseVisitor<Integer> {
 		
+		/** The counter. */
 		private int counter = 0;
 		
 		/*
@@ -159,11 +185,17 @@ public class MultilevelClusteringTest {
 			return;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getMaxPossibleScore()
+		 */
 		@Override
 		public double getMaxPossibleScore() {
 			return 0;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringCollapseVisitor#getScore(org.mozkito.clustering.Cluster, org.mozkito.clustering.Cluster, java.util.Map)
+		 */
 		@Override
 		public double getScore(final Cluster<Integer> newCluster,
 		                       final Cluster<Integer> otherCluster,
@@ -171,6 +203,9 @@ public class MultilevelClusteringTest {
 			return (++this.counter);
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getScore(java.lang.Object, java.lang.Object)
+		 */
 		@Override
 		public double getScore(final Integer t1,
 		                       final Integer t2) {
@@ -179,8 +214,12 @@ public class MultilevelClusteringTest {
 		
 	}
 	
+	/** The visitor. */
 	private TestScoreVisitor visitor;
 	
+	/**
+	 * Comparator test.
+	 */
 	@Test
 	public void comparatorTest() {
 		final ComparableTuple<Double, Integer> t1 = new ComparableTuple<Double, Integer>(1d, 1);
@@ -190,6 +229,9 @@ public class MultilevelClusteringTest {
 		
 	}
 	
+	/**
+	 * Max test.
+	 */
 	@Test
 	public void maxTest() {
 		
@@ -241,11 +283,17 @@ public class MultilevelClusteringTest {
 		
 	}
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		this.visitor = new TestScoreVisitor();
 	}
 	
+	/**
+	 * Simple test.
+	 */
 	@Test
 	public void simpleTest() {
 		final Integer[] nodes = { 1, 2, 3, 4, 5, 6 };
@@ -276,6 +324,9 @@ public class MultilevelClusteringTest {
 		
 	}
 	
+	/**
+	 * String test.
+	 */
 	@Test
 	public void stringTest() {
 		

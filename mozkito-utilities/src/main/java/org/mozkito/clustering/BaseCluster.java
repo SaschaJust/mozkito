@@ -12,8 +12,24 @@
  ******************************************************************************/
 package org.mozkito.clustering;
 
+/**
+ * The Class BaseCluster.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public class BaseCluster<T> extends Cluster<T> {
 	
+	/**
+	 * Instantiates a new base cluster.
+	 * 
+	 * @param t1
+	 *            the t1
+	 * @param t2
+	 *            the t2
+	 * @param score
+	 *            the score
+	 */
 	public BaseCluster(final T t1, final T t2, final double score) {
 		super(new VirtualCluster<T>(t1), new VirtualCluster<T>(t2), score);
 	}

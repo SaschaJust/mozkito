@@ -7,8 +7,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
+/**
+ * The Class MaxCollapseVisitorTest.
+ */
 public class MaxCollapseVisitorTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		// final ,

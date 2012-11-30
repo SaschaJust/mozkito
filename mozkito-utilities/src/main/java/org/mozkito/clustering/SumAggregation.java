@@ -19,12 +19,25 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+/**
+ * The Class SumAggregation.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public class SumAggregation<T> extends ScoreAggregation<T> {
 	
+	/**
+	 * Instantiates a new sum aggregation.
+	 */
 	public SumAggregation() {
 		super();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.clustering.ScoreAggregation#aggregate(java.util.List)
+	 */
 	@Override
 	public double aggregate(final List<Double> values) {
 		final DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -36,6 +49,10 @@ public class SumAggregation<T> extends ScoreAggregation<T> {
 		return stats.getSum();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.clustering.ScoreAggregation#getInfo()
+	 */
 	@Override
 	public String getInfo() {
 		final StringBuilder sb = new StringBuilder();

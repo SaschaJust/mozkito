@@ -15,13 +15,34 @@ package org.mozkito.clustering;
 
 import java.util.List;
 
+/**
+ * The Class ScoreAggregation.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public abstract class ScoreAggregation<T> {
 	
+	/**
+	 * Instantiates a new score aggregation.
+	 */
 	public ScoreAggregation() {
 		
 	}
 	
+	/**
+	 * Aggregate.
+	 * 
+	 * @param values
+	 *            the values
+	 * @return the double
+	 */
 	public abstract double aggregate(final List<Double> values);
 	
+	/**
+	 * Gets the info.
+	 * 
+	 * @return the info
+	 */
 	public abstract String getInfo();
 }

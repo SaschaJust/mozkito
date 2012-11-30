@@ -26,25 +26,37 @@ import net.ownhero.dev.ioda.URIUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * The Class URIUtilsTest.
+ */
 public class URIUtilsTest {
 	
+	/** The original user. */
 	private static URI originalUser;
+	
+	/** The original no user. */
 	private static URI originalNoUser;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		try {
 			originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
 			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			fail();
 		}
 		
 	}
 	
+	/**
+	 * Test different username.
+	 */
 	@Test
 	public void testDifferentUsername() {
-		URI encoded = URIUtils.encodeUsername(originalUser, "kim");
+		final URI encoded = URIUtils.encodeUsername(originalUser, "kim");
 		assertFalse(encoded.equals(originalUser));
 		assertFalse(encoded.equals(originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
@@ -56,9 +68,12 @@ public class URIUtilsTest {
 		assertEquals(originalUser.getPort(), encoded.getPort());
 	}
 	
+	/**
+	 * Test empty username.
+	 */
 	@Test
 	public void testEmptyUsername() {
-		URI encoded = URIUtils.encodeUsername(originalUser, "");
+		final URI encoded = URIUtils.encodeUsername(originalUser, "");
 		assertFalse(encoded.equals(originalUser));
 		assertFalse(encoded.equals(originalNoUser));
 		assertEquals("", encoded.getUserInfo());
@@ -70,9 +85,12 @@ public class URIUtilsTest {
 		assertEquals(originalUser.getPort(), encoded.getPort());
 	}
 	
+	/**
+	 * Test no username.
+	 */
 	@Test
 	public void testNoUsername() {
-		URI encoded = URIUtils.encodeUsername(originalNoUser, "kim");
+		final URI encoded = URIUtils.encodeUsername(originalNoUser, "kim");
 		assertFalse(encoded.equals(originalUser));
 		assertFalse(encoded.equals(originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
@@ -84,6 +102,9 @@ public class URIUtilsTest {
 		assertEquals(originalNoUser.getPort(), encoded.getPort());
 	}
 	
+	/**
+	 * Test null username.
+	 */
 	@Test
 	public void testNullUsername() {
 		URI encoded = URIUtils.encodeUsername(originalNoUser, null);
@@ -95,22 +116,28 @@ public class URIUtilsTest {
 		assertFalse(encoded.equals(originalNoUser));
 	}
 	
+	/**
+	 * Test same username.
+	 */
 	@Test
 	public void testSameUsername() {
-		URI encoded = URIUtils.encodeUsername(originalUser, "user");
+		final URI encoded = URIUtils.encodeUsername(originalUser, "user");
 		assertTrue(encoded.equals(originalUser));
 		assertFalse(encoded.equals(originalNoUser));
 	}
 	
+	/**
+	 * Test ur i2 string.
+	 */
 	@Test
 	public void testURI2String() {
-		File file = new File("/tmp/");
-		URI uri = file.toURI();
+		final File file = new File("/tmp/");
+		final URI uri = file.toURI();
 		assertEquals("file:///tmp/", URIUtils.Uri2String(uri));
 		
 		try {
 			assertEquals("https://st.cs.uni-saarland.de", URIUtils.Uri2String(new URI("https://st.cs.uni-saarland.de")));
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
