@@ -15,25 +15,11 @@ package org.mozkito.versions;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.DefaultIntervalXYDataset;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
@@ -102,169 +88,11 @@ public abstract class Repository {
 	 *            the relative repository path
 	 * @param revision
 	 *            the revision
-	 * @return The file handle to the checked out, corresponding file or directory.
+	 * @return The file handle to the checked out, corresponding file or directory. Null if no such file exists or if
+	 *         the file could not be checked out.
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
 	                                  String revision);
-	
-	/**
-	 * Checks the repository for corruption.
-	 * 
-	 * @param logEntries
-	 *            the log entries
-	 * @param withInterface
-	 *            the with interface
-	 */
-	public void consistencyCheck(@NotNull final List<LogEntry> logEntries,
-	                             final boolean withInterface) {
-		LogEntry previous = null;
-		
-		for (final LogEntry entry : logEntries) {
-			// check monotonic timestamp property
-			if (previous != null) {
-				if (entry.getDateTime().isBefore(previous.getDateTime())) {
-					System.out.println("Transaction " + entry.getRevision()
-					        + " has timestamp before previous transaction: current " + entry + " vs. previous "
-					        + previous);
-				}
-			}
-			
-			previous = entry;
-		}
-		
-		if (withInterface) {
-			ChartFrame frame;
-			JFreeChart chart;
-			chart = createTransactionsPerAuthor(logEntries, logEntries.size() / 35);
-			frame = new ChartFrame("Bar Chart/Timestamp per transaction", chart);
-			frame.pack();
-			frame.setVisible(true);
-			
-			chart = createTimePerTransaction(logEntries);
-			frame = new ChartFrame("Scatterplot/Timestamp per transaction", chart);
-			frame.pack();
-			frame.setVisible(true);
-			
-			chart = createFileCountPerTransaction(logEntries);
-			frame = new ChartFrame("Histogram/Files per transaction", chart);
-			frame.pack();
-			frame.setVisible(true);
-		}
-	}
-	
-	/**
-	 * Creates the file count per transaction.
-	 * 
-	 * @param entries
-	 *            the entries
-	 * @return the j free chart
-	 */
-	private JFreeChart createFileCountPerTransaction(final List<LogEntry> entries) {
-		final List<Double> revisions = new ArrayList<Double>(entries.size());
-		final List<Double> files = new ArrayList<Double>(entries.size());
-		int i = 0;
-		final double[][] datapoints = new double[6][entries.size()];
-		
-		ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-		BarRenderer.setDefaultShadowsVisible(false);
-		
-		for (final LogEntry entry : entries) {
-			revisions.add(Double.parseDouble(entry.getRevision()));
-			final Map<String, ChangeType> changedPaths = getChangedPaths(entry.getRevision());
-			files.add((double) changedPaths.size());
-			
-			datapoints[0][i] = revisions.get(i);
-			datapoints[1][i] = revisions.get(i);
-			datapoints[2][i] = revisions.get(i);
-			datapoints[3][i] = files.get(i);
-			datapoints[4][i] = files.get(i);
-			datapoints[5][i] = files.get(i);
-			
-			++i;
-		}
-		
-		final DefaultIntervalXYDataset idataset = new DefaultIntervalXYDataset();
-		idataset.addSeries(new String("Files per revision"), datapoints);
-		final JFreeChart chart = ChartFactory.createXYBarChart("Files per revision", "revisions", false, "files",
-		                                                       idataset, PlotOrientation.VERTICAL, true, false, false);
-		
-		((XYBarRenderer) chart.getXYPlot().getRenderer()).setShadowVisible(false);
-		
-		return chart;
-	}
-	
-	/**
-	 * Creates the time per transaction.
-	 * 
-	 * @param entries
-	 *            the entries
-	 * @return the j free chart
-	 */
-	private JFreeChart createTimePerTransaction(final List<LogEntry> entries) {
-		final DefaultXYDataset dataset = new DefaultXYDataset();
-		final double[][] datapoints = new double[2][entries.size()];
-		
-		final List<Double> revisions = new ArrayList<Double>(entries.size());
-		final List<Double> times = new ArrayList<Double>(entries.size());
-		
-		for (final LogEntry entry : entries) {
-			// timestamp per revision
-			revisions.add(Double.parseDouble(entry.getRevision()));
-			times.add((double) entry.getDateTime().getMillis() / (1000));
-		}
-		
-		for (int i = 0; i < revisions.size(); ++i) {
-			datapoints[0][i] = revisions.get(i);
-		}
-		for (int i = 0; i < times.size(); ++i) {
-			datapoints[1][i] = times.get(i);
-		}
-		
-		dataset.addSeries(new String("time per revision"), datapoints);
-		return ChartFactory.createScatterPlot("Timestamp Analysis of Repository", "time in s", "revisions", dataset,
-		                                      PlotOrientation.VERTICAL, true, false, false);
-	}
-	
-	/**
-	 * Creates the transactions per author.
-	 * 
-	 * @param entries
-	 *            the entries
-	 * @param threshold
-	 *            the threshold
-	 * @return the j free chart
-	 */
-	private JFreeChart createTransactionsPerAuthor(final List<LogEntry> entries,
-	                                               final double threshold) {
-		final Map<String, Double> authors = new HashMap<String, Double>();
-		
-		for (final LogEntry entry : entries) {
-			// commits
-			final String author = entry.getAuthor().toString();
-			if (authors.containsKey(author)) {
-				authors.put(author, authors.get(author) + 1.0);
-			} else {
-				authors.put(author, 1.0);
-			}
-		}
-		
-		final DefaultCategoryDataset cdataset = new DefaultCategoryDataset();
-		
-		double others = 0.0d;
-		int otherCount = 0;
-		for (final String key : authors.keySet()) {
-			if (authors.get(key) > (entries.size() / 35)) {
-				cdataset.addValue(authors.get(key), key, new String("authors"));
-			} else {
-				others += authors.get(key);
-				++otherCount;
-			}
-		}
-		cdataset.addValue(others, "others (" + otherCount + ")", new String("authors"));
-		
-		return ChartFactory.createBarChart("Commits per Author (threshold " + ((100d * threshold) / entries.size())
-		        + "%)", "history", "commits", cdataset, PlotOrientation.VERTICAL, true, false, false);
-	}
 	
 	/**
 	 * Diff the file in the repository specified by filePath.
@@ -293,7 +121,7 @@ public abstract class Repository {
 	 * 
 	 * @param revision
 	 *            the revision to be analyzed
-	 * @return the changed paths
+	 * @return A map associating the changed paths with a ChangeType. Returns Null if an error occurrs.
 	 */
 	public abstract Map<String, ChangeType> getChangedPaths(String revision);
 	
@@ -360,18 +188,6 @@ public abstract class Repository {
 	}
 	
 	/**
-	 * Returns the relative transaction id to the given one. Result is bounded by startRevision and endRevision.
-	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @param index
-	 *            the index
-	 * @return the relative transaction id
-	 */
-	public abstract String getRelativeTransactionId(String transactionId,
-	                                                long index);
-	
-	/**
 	 * Gets the repository type.
 	 * 
 	 * @return the {@link RepositoryType} of the connector class determined by naming convention. See the java-doc of
@@ -435,6 +251,16 @@ public abstract class Repository {
 	 *         returns 021e7e97724b for 3.
 	 */
 	public abstract String getTransactionId(long index);
+	
+	/**
+	 * Method to retrieve the index of a transaction id within the topological order.
+	 * getTransactionId(getTransactionIndex("abc")).equals("abc")
+	 * 
+	 * @param transactionId
+	 *            the transaction id
+	 * @return the transaction index; return -1 if the transactionId does not exist
+	 */
+	public abstract long getTransactionIndex(String transactionId);
 	
 	/**
 	 * Gets the uri.
@@ -518,7 +344,7 @@ public abstract class Repository {
 	public Iterator<LogEntry> log(final String fromRevision,
 	                              final String toRevision,
 	                              final int cacheSize) {
-		return new LogIterator(this, fromRevision, toRevision, cacheSize);
+		return new LogIterator(this, fromRevision, toRevision);
 	}
 	
 	/**

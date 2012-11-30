@@ -27,15 +27,15 @@ import net.ownhero.dev.regex.util.Patterns;
 
 import org.joda.time.DateTime;
 import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
-
 
 /**
  * The Class GitLogParser.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-class GitLogParser {
+class GitLogParser implements LogParser {
 	
 	// protected static DateTimeFormatter gitLogDateFormat =
 	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
@@ -94,7 +94,7 @@ class GitLogParser {
 					username = match.getGroup("username").getMatch().trim();
 				} else {
 					fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
-					if (fullname.equals("")) {
+					if (fullname.isEmpty()) {
 						fullname = null;
 					}
 				}
@@ -113,7 +113,7 @@ class GitLogParser {
 			}
 			authorString = usernameRegex.removeAll(authorString);
 			fullname = authorString.replaceAll("<", "").replaceAll(">", "").trim();
-			if (fullname.equals("")) {
+			if (fullname.isEmpty()) {
 				fullname = null;
 			}
 		}
@@ -141,7 +141,8 @@ class GitLogParser {
 	 *            List of strings corresponding to the lines of the log message. (not null)
 	 * @return the list of parsed log entries representing the logMessages
 	 */
-	protected static List<LogEntry> parse(@NotNull final List<String> logMessages) {
+	@Override
+	public List<LogEntry> parse(@NotNull final List<String> logMessages) {
 		final List<LogEntry> result = new ArrayList<LogEntry>();
 		int lineCounter = 0;
 		

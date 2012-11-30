@@ -80,7 +80,10 @@ public class RCSTransaction implements Annotated {
 	 * @param originalId
 	 *            the original id
 	 * @return the rCS transaction
+	 * 
+	 * @deprecated Use constructor instead.
 	 */
+	@Deprecated
 	public static RCSTransaction createTransaction(@NotNull final String id,
 	                                               @NotNull final String message,
 	                                               @NotNull final DateTime timestamp,
@@ -157,8 +160,8 @@ public class RCSTransaction implements Annotated {
 	 * @param originalId
 	 *            the original id
 	 */
-	protected RCSTransaction(@NotNull final String id, @NotNull final String message,
-	        @NotNull final DateTime timestamp, @NotNull final Person author, final String originalId) {
+	public RCSTransaction(@NotNull final String id, @NotNull final String message, @NotNull final DateTime timestamp,
+	        @NotNull final Person author, final String originalId) {
 		setId(id);
 		setMessage(message);
 		setTimestamp(timestamp);
@@ -417,8 +420,12 @@ public class RCSTransaction implements Annotated {
 	 */
 	@Transient
 	public RCSRevision getRevisionForPath(final String path) {
+		String comparePath = path;
+		if (path.startsWith("/")) {
+			comparePath = path.substring(1);
+		}
 		for (final RCSRevision revision : getRevisions()) {
-			if (revision.getChangedFile().equals(path)) {
+			if (revision.getChangedFile().getPath(this).equals(comparePath)) {
 				return revision;
 			}
 		}

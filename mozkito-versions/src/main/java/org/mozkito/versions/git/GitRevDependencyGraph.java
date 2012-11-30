@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 package org.mozkito.versions.git;
 
 import java.io.File;
@@ -37,7 +49,6 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.Traversal;
 
-
 /**
  * The Class GitRevDependencyGraph.
  * 
@@ -45,14 +56,22 @@ import org.neo4j.kernel.Traversal;
  */
 class GitRevDependencyGraph implements IRevDependencyGraph {
 	
+	private static final int           REFS_TAGS_LENGTH    = 10;
+	
+	private static final int           REFS_PULL_LENGTH    = 10;
+	
+	private static final int           REFS_REMOTES_LENGTH = 13;
+	
+	private static final int           REFS_HEAD_LENGTH    = 11;
+	
 	/** The Constant NODE_ID. */
-	private static final String        NODE_ID = "revhash";
+	private static final String        NODE_ID             = "revhash";
 	
 	/** The Constant BRANCH. */
-	private static final String        BRANCH  = "branch";
+	private static final String        BRANCH              = "branch";
 	
 	/** The Constant TAG. */
-	private static final String        TAG     = "tag";
+	private static final String        TAG                 = "tag";
 	
 	/** The graph. */
 	private final GraphDatabaseService graph;
@@ -266,22 +285,22 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					Logger.debug("Found branch reference: " + branchName);
 				}
 				if (branchName.startsWith("refs/heads/")) {
-					branchName = branchName.substring(11);
-					if (branchName.equals("master")) {
+					branchName = branchName.substring(REFS_HEAD_LENGTH);
+					if ("master".equals(branchName)) {
 						continue;
 					}
 				} else if (branchName.startsWith("refs/remotes/")) {
-					branchName = branchName.substring(13);
-					if (branchName.equals("origin/HEAD")) {
+					branchName = branchName.substring(REFS_REMOTES_LENGTH);
+					if ("origin/HEAD".equals(branchName)) {
 						continue;
 					}
-					if (branchName.equals("origin/master")) {
+					if ("origin/master".equals(branchName)) {
 						branchName = RCSBranch.MASTER_BRANCH_NAME;
 					}
 				} else if (branchName.startsWith("refs/pull/")) {
-					branchName = branchName.substring(10);
+					branchName = branchName.substring(REFS_PULL_LENGTH);
 				} else if (branchName.startsWith("refs/tags/")) {
-					branchName = branchName.substring(10).replace("^{}", "");
+					branchName = branchName.substring(REFS_TAGS_LENGTH).replace("^{}", "");
 					if (!this.tags.containsKey(lineParts[0])) {
 						this.tags.put(lineParts[0], new HashSet<String>());
 					}
@@ -611,8 +630,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.IRevDependencyGraph#readFromDB(org.mozkito.persistence.
-	 * PersistenceUtil)
+	 * @see org.mozkito.versions.IRevDependencyGraph#readFromDB(org.mozkito.persistence. PersistenceUtil)
 	 */
 	@Override
 	@NoneNull

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,23 +41,22 @@ import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.Repository;
+import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -67,48 +67,26 @@ import difflib.Patch;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class MercurialRepository extends Repository {
+public class MercurialRepository extends DistributedCommandLineRepository {
 	
-	protected static final Regex             authorRegex          = new Regex(
-	                                                                          "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	private static final int                 HG_MODIFIED_PATHS_INDEX  = 5;
 	
-	protected static final DateTimeFormatter hgAnnotateDateFormat = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	private static final int                 HG_DELETED_PATHS_INDEX   = 4;
+	
+	private static final int                 HG_ADDED_PATHS_INDEX     = 3;
+	
+	protected static final int               HG_MAX_LINE_PARTS_LENGTH = 7;
+	
+	protected static final Regex             AUTHOR_REGEX             = new Regex(
+	                                                                              "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	
+	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT  = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
-	protected static final Regex             formerPathRegex      = new Regex("[^(]*\\(({result}[^(]+)\\)");
-	protected static final String            pattern              = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
-	protected static final Regex             regex                = new Regex(MercurialRepository.pattern);
-	
-	/**
-	 * Pre-filters log lines. Mercurial cannot replace newlines in the log messages. This method replaces newlines
-	 * marked with br-tags by br-tags only. This way, each entry in the returned list of strings represents a single,
-	 * atomic log entry.
-	 * 
-	 * @param lines
-	 *            the lines (not null)
-	 * @return the list
-	 */
-	@NoneNull
-	protected static List<String> preFilterLines(final List<String> lines) {
-		final List<String> completeLines = new LinkedList<String>();
-		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < lines.size(); ++i) {
-			final String line = lines.get(i);
-			if (line.endsWith("<br/>") && (lines.get(i + 1).split("\\+~\\+").length < 7)) {
-				stringBuilder.append(line);
-			} else {
-				if (stringBuilder.length() > 0) {
-					stringBuilder.append(line);
-					completeLines.add(stringBuilder.toString());
-					stringBuilder = new StringBuilder();
-				} else {
-					completeLines.add(line);
-				}
-			}
-		}
-		return completeLines;
-	}
+	protected static final Regex             FORMER_PATH_REGEX        = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static final String            PATTERN                  = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static final Regex             REGEX                    = new Regex(MercurialRepository.PATTERN);
 	
 	/**
 	 * Write a specific Mercurial log style into a temporary file. (should always be
@@ -135,9 +113,11 @@ public class MercurialRepository extends Repository {
 		
 	}
 	
-	private File           cloneDir;
+	private File               cloneDir;
 	
-	protected List<String> hashes = new ArrayList<String>();
+	protected List<String>     hashes         = new ArrayList<String>();
+	
+	private final List<String> transactionIDs = new LinkedList<String>();
 	
 	/*
 	 * (non-Javadoc)
@@ -173,21 +153,21 @@ public class MercurialRepository extends Repository {
 		final HashMap<String, String> hashCache = new HashMap<String, String>();
 		
 		for (final String line : lines) {
-			if (!MercurialRepository.regex.matchesFull(line)) {
+			if (!MercurialRepository.REGEX.matchesFull(line)) {
 				if (Logger.logError()) {
 					Logger.error("Found line in annotation that cannot be parsed. Abort");
 				}
 				return null;
 			}
-			final String author = MercurialRepository.regex.getGroup("author");
-			final String shortHash = MercurialRepository.regex.getGroup("hash");
-			final String date = MercurialRepository.regex.getGroup("date");
+			final String author = MercurialRepository.REGEX.getGroup("author");
+			final String shortHash = MercurialRepository.REGEX.getGroup("hash");
+			final String date = MercurialRepository.REGEX.getGroup("date");
 			
 			DateTime timestamp;
-			timestamp = MercurialRepository.hgAnnotateDateFormat.parseDateTime(date);
+			timestamp = MercurialRepository.HG_ANNOTATE_DATE_FORMAT.parseDateTime(date);
 			
-			final String file = MercurialRepository.regex.getGroup("file");
-			final String codeLine = MercurialRepository.regex.getGroup("codeline");
+			final String file = MercurialRepository.REGEX.getGroup("file");
+			final String codeLine = MercurialRepository.REGEX.getGroup("codeline");
 			
 			if (!hashCache.containsKey(shortHash)) {
 				boolean found = false;
@@ -228,7 +208,7 @@ public class MercurialRepository extends Repository {
 			return;
 		}
 		for (final String line : response.getSecond()) {
-			if (line.trim().equals("")) {
+			if (line.trim().isEmpty()) {
 				continue;
 			}
 			this.hashes.add(line.trim().replaceAll("'", ""));
@@ -333,6 +313,22 @@ public class MercurialRepository extends Repository {
 		return patch.getDeltas();
 	}
 	
+	@Override
+	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String revision) {
+		return hgLog(revision);
+	}
+	
+	@Override
+	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String fromRevision,
+	                                               @NotNull @MinLength (min = 1) final String toRevision) {
+		final StringBuilder revisionSelectionBuilder = new StringBuilder();
+		revisionSelectionBuilder.append(fromRevision);
+		revisionSelectionBuilder.append("::");
+		revisionSelectionBuilder.append(toRevision);
+		final String revisionSelection = revisionSelectionBuilder.toString();
+		return hgLog(revisionSelection);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#gatherToolInformation()
@@ -406,39 +402,39 @@ public class MercurialRepository extends Repository {
 		}
 		final String line = lines.get(0);
 		final String[] lineParts = line.split("\\+~\\+");
-		if (lineParts.length < 7) {
+		if (lineParts.length < HG_MAX_LINE_PARTS_LENGTH) {
 			if (Logger.logError()) {
 				Logger.error("hg log could not be parsed. Too less columns in logfile.");
 				return null;
 			}
 		}
-		if (lineParts.length > 7) {
+		if (lineParts.length > HG_MAX_LINE_PARTS_LENGTH) {
 			final StringBuilder s = new StringBuilder();
-			s.append(lineParts[6]);
-			for (int i = 7; i < lineParts.length; ++i) {
+			s.append(lineParts[HG_MAX_LINE_PARTS_LENGTH - 1]);
+			for (int i = HG_MAX_LINE_PARTS_LENGTH; i < lineParts.length; ++i) {
 				s.append(":");
 				s.append(lineParts[i]);
 			}
-			lineParts[6] = s.toString();
+			lineParts[HG_MAX_LINE_PARTS_LENGTH - 1] = s.toString();
 		}
-		final String[] addedPaths = lineParts[3].split(";");
-		final String[] deletedPaths = lineParts[4].split(";");
-		final String[] modifiedPaths = lineParts[5].split(";");
+		final String[] addedPaths = lineParts[HG_ADDED_PATHS_INDEX].split(";");
+		final String[] deletedPaths = lineParts[HG_DELETED_PATHS_INDEX].split(";");
+		final String[] modifiedPaths = lineParts[HG_MODIFIED_PATHS_INDEX].split(";");
 		
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		
 		for (final String addedPath : addedPaths) {
-			if (!addedPath.trim().equals("")) {
+			if (!addedPath.trim().isEmpty()) {
 				result.put("/" + addedPath, ChangeType.Added);
 			}
 		}
 		for (final String deletedPath : deletedPaths) {
-			if (!deletedPath.trim().equals("")) {
+			if (!deletedPath.trim().isEmpty()) {
 				result.put("/" + deletedPath, ChangeType.Deleted);
 			}
 		}
 		for (final String modifiedPath : modifiedPaths) {
-			if (!modifiedPath.trim().equals("")) {
+			if (!modifiedPath.trim().isEmpty()) {
 				result.put("/" + modifiedPath, ChangeType.Modified);
 			}
 		}
@@ -488,8 +484,8 @@ public class MercurialRepository extends Repository {
 		String result = null;
 		for (final String line : response.getSecond()) {
 			if (line.trim().startsWith(pathName)) {
-				MercurialRepository.formerPathRegex.find(line);
-				result = MercurialRepository.formerPathRegex.getGroup("result").trim();
+				MercurialRepository.FORMER_PATH_REGEX.find(line);
+				result = MercurialRepository.FORMER_PATH_REGEX.getGroup("result").trim();
 				break;
 			}
 		}
@@ -529,36 +525,9 @@ public class MercurialRepository extends Repository {
 		return getEndRevision();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRelativeTransactionId (java.lang.String, long)
-	 */
 	@Override
-	public String getRelativeTransactionId(final String transactionId,
-	                                       final long index) {
-		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
-		
-		if (index == 0) {
-			return transactionId;
-		} else if (index > 0) {
-			final String[] args = new String[] { "log", "-r", transactionId + ":tip", "--template", "{node}\\n", "-l",
-			        String.valueOf(index + 1) };
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
-			if (response.getFirst() != 0) {
-				return null;
-			}
-			final List<String> list = response.getSecond();
-			return list.get(list.size() - 1).trim();
-		} else {
-			final String[] args = new String[] { "log", "-r", transactionId + ":0", "--template", "{node}\\n", "-l",
-			        String.valueOf(index + 1) };
-			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
-			if (response.getFirst() != 0) {
-				return null;
-			}
-			final List<String> list = response.getSecond();
-			return list.get(list.size() - 1).trim();
-		}
+	protected LogParser getLogParser() {
+		return new MercurialLogParser();
 	}
 	
 	@Override
@@ -615,12 +584,20 @@ public class MercurialRepository extends Repository {
 	@Override
 	public String getTransactionId(@NotNegative final long index) {
 		
-		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template=\"{node}\\n\"" };
+		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template={node}\\n" };
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return null;
 		}
 		return response.getSecond().get(0).trim();
+	}
+	
+	@Override
+	public long getTransactionIndex(final String transactionId) {
+		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
+			return this.transactionIDs.indexOf(getHEADRevisionId());
+		}
+		return this.transactionIDs.indexOf(transactionId);
 	}
 	
 	/*
@@ -632,98 +609,9 @@ public class MercurialRepository extends Repository {
 		return this.cloneDir;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
-	 */
-	@Override
-	@NoneNull
-	public List<LogEntry> log(final String fromRevision,
-	                          final String toRevision) {
-		
-		final ArrayList<LogEntry> result = new ArrayList<LogEntry>();
-		if ((toRevision == null) || (fromRevision == null)) {
-			if (Logger.logError()) {
-				Logger.error("Cannot get log for null referenced revisions. Abort");
-			}
-			return null;
-		}
-		
-		try {
-			writeLogStyle(this.cloneDir);
-		} catch (final IOException e1) {
-			if (Logger.logError()) {
-				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
-				Logger.error(e1.getMessage());
-			}
-			return null;
-		}
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
-		        "minerlog", "-r", fromRevision + ":" + toRevision }, this.cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return null;
-		}
-		List<String> lines = response.getSecond();
-		
-		// pre-filter lines. hg log might have some entries spanning multiple
-		// lines.
-		lines = preFilterLines(lines);
-		
-		for (final String line : lines) {
-			final String[] lineParts = line.split("\\+~\\+");
-			if (lineParts.length < 7) {
-				if (Logger.logError()) {
-					Logger.error("hg log could not be parsed. Too less columns in logfile.");
-					return null;
-				}
-			}
-			if (lineParts.length > 7) {
-				final StringBuilder s = new StringBuilder();
-				s.append(lineParts[6]);
-				for (int i = 7; i < lineParts.length; ++i) {
-					s.append(":");
-					s.append(lineParts[i]);
-				}
-				lineParts[6] = s.toString();
-			}
-			final String revID = lineParts[0];
-			final String authorString = lineParts[1];
-			
-			String authorFullname = null;
-			String authorUsername = null;
-			String authorEmail = null;
-			
-			MercurialRepository.authorRegex.find(authorString);
-			MercurialRepository.authorRegex.getGroupNames();
-			
-			if (MercurialRepository.authorRegex.getGroup("plain") != null) {
-				authorUsername = MercurialRepository.authorRegex.getGroup("plain").trim();
-			} else if ((MercurialRepository.authorRegex.getGroup("lastname") != null)
-			        && (MercurialRepository.authorRegex.getGroup("name") != null)) {
-				authorFullname = MercurialRepository.authorRegex.getGroup("name").trim() + " "
-				        + MercurialRepository.authorRegex.getGroup("lastname").trim();
-			} else if (MercurialRepository.authorRegex.getGroup("name") != null) {
-				authorUsername = MercurialRepository.authorRegex.getGroup("name").trim();
-			}
-			if (MercurialRepository.authorRegex.getGroup("email") != null) {
-				authorEmail = MercurialRepository.authorRegex.getGroup("email").trim();
-			}
-			final Person author = new Person(authorUsername, authorFullname, authorEmail);
-			
-			final String[] dateString = lineParts[2].split(" ");
-			
-			final DateTime date = new DateTime(
-			                                   Long.valueOf(dateString[0]).longValue() * 1000,
-			                                   DateTimeZone.forOffsetMillis(Integer.valueOf(dateString[1]).intValue() * 1000));
-			
-			LogEntry previous = null;
-			if (result.size() > 0) {
-				previous = result.get(result.size() - 1);
-			}
-			result.add(new LogEntry(revID, previous, author, lineParts[6].replaceAll("<br/>", FileUtils.lineSeparator),
-			                        date, ""));
-		}
-		return result;
+	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) {
+		return CommandExecutor.execute("hg", new String[] { "log", "--style", "minerlog", "-r", revisionSelection },
+		                               this.cloneDir, null, null);
 		
 	}
 	
@@ -780,8 +668,34 @@ public class MercurialRepository extends Repository {
 			}
 		}
 		
+		try {
+			writeLogStyle(this.cloneDir);
+		} catch (final IOException e1) {
+			throw new UnrecoverableError("Could not set log style `miner` in order to parse log. Abort.");
+		}
+		
 		setStartRevision(getFirstRevisionId());
 		setEndRevision(getHEADRevisionId());
+		
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
+		        "{node}\n" }, this.cloneDir, null, new HashMap<String, String>());
+		if (response.getFirst() != 0) {
+			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
+		}
+		if (Logger.logDebug()) {
+			Logger.debug("############# hg log --template '{node}\n'");
+		}
+		
+		this.transactionIDs.clear();
+		this.transactionIDs.addAll(response.getSecond());
+		Collections.reverse(this.transactionIDs);
+		
+		if (!this.transactionIDs.isEmpty()) {
+			Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+			                "First revision ID and transaction ID list missmatch!");
+			Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+			                "End revision ID and transaction ID list missmatch!");
+		}
 		
 	}
 	

@@ -55,7 +55,7 @@ public class JavaElementLocationSet {
 	 * @param startLine
 	 *            the start line
 	 * @param endLine
-	 *            the end line
+	 *            The last line of the class definition (inclusive)
 	 * @param position
 	 *            the position
 	 * @param bodyStartLine
@@ -87,7 +87,7 @@ public class JavaElementLocationSet {
 	 * @param startLine
 	 *            the start line
 	 * @param endLine
-	 *            the end line
+	 *            The last line of the class definition (inclusive)
 	 * @param position
 	 *            the position
 	 * @param bodyStartLine
@@ -111,7 +111,8 @@ public class JavaElementLocationSet {
 	 * @param string
 	 * @param relativeFilePath
 	 * @param startLine
-	 * @param endLine
+	 * @param The
+	 *            last line of the interface definition (inclusive)
 	 * @param startPosition
 	 * @param bodyStartLine
 	 * @return
@@ -145,7 +146,7 @@ public class JavaElementLocationSet {
 	 * @param startLine
 	 *            the start line
 	 * @param endLine
-	 *            the end line
+	 *            The last line of the method call (inclusive)
 	 * @param position
 	 *            the position
 	 * @return the method call added
@@ -178,7 +179,7 @@ public class JavaElementLocationSet {
 	 * @param startLine
 	 *            the start line
 	 * @param endLine
-	 *            the end line
+	 *            The last line of the method definition (inclusive)
 	 * @param position
 	 *            the position
 	 * @param bodyStartLine

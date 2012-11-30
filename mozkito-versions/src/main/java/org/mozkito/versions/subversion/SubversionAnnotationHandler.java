@@ -25,7 +25,6 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
@@ -56,10 +55,10 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 * java.lang.String)
 	 */
 	@Override
-	public void handleLine(Date date,
-	                       long revision,
-	                       String author,
-	                       String line) throws SVNException {
+	public void handleLine(final Date date,
+	                       final long revision,
+	                       final String author,
+	                       final String line) throws SVNException {
 		this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
 	}
 	
@@ -69,15 +68,15 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 * java.lang.String, java.util.Date, long, java.lang.String, java.lang.String, int)
 	 */
 	@Override
-	public void handleLine(Date date,
-	                       long revision,
-	                       String author,
-	                       String line,
-	                       Date mergedDate,
-	                       long mergedRevision,
-	                       String mergedAuthor,
-	                       String mergedPath,
-	                       int lineNumber) throws SVNException {
+	public void handleLine(final Date date,
+	                       final long revision,
+	                       final String author,
+	                       final String line,
+	                       final Date mergedDate,
+	                       final long mergedRevision,
+	                       final String mergedAuthor,
+	                       final String mergedPath,
+	                       final int lineNumber) throws SVNException {
 		if (revision > mergedRevision) {
 			this.list.add(new AnnotationEntry(revision + "", author, new DateTime(date), line));
 		} else {
@@ -92,10 +91,10 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	 * java.io.File)
 	 */
 	@Override
-	public boolean handleRevision(Date date,
-	                              long revision,
-	                              String author,
-	                              File contents) throws SVNException {
+	public boolean handleRevision(final Date date,
+	                              final long revision,
+	                              final String author,
+	                              final File contents) throws SVNException {
 		return false;
 	}
 }

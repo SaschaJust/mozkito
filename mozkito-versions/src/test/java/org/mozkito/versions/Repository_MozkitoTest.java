@@ -18,30 +18,35 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import difflib.Delta;
-
-import org.mozkito.testing.VersionsTest;
-import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
+import org.mozkito.testing.MozkitoTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
+import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+
+import difflib.Delta;
 
 /**
  * The Class RepositoryTest.
@@ -49,7 +54,65 @@ import org.mozkito.versions.elements.LogEntry;
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion") })
-public class Repository_MozkitoTest extends VersionsTest {
+public class Repository_MozkitoTest extends MozkitoTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
+	
+	/** The repositories. */
+	private static List<Repository>         repositories = new LinkedList<Repository>();
+	
+	/** The repo map. */
+	private static Map<RepositoryType, URI> repoMap;
+	
+	/**
+	 * Before class.
+	 */
+	@BeforeClass
+	public static void beforeClass() {
+		repoMap = new HashMap<RepositoryType, URI>();
+		
+		for (final RepositoryType type : RepositoryType.values()) {
+			final String pathName = RepositorySettingsProcessor.getPathName(Repository_MozkitoTest.class, type);
+			if (pathName != null) {
+				try {
+					repoMap.put(type, new URI("file://" + pathName + File.separator + "repotest."
+					        + type.name().toLowerCase()));
+				} catch (final URISyntaxException e) {
+					fail(e.getMessage());
+				}
+			} else {
+				fail();
+			}
+			
+			Repository repository = null;
+			try {
+				repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
+			} catch (final InstantiationException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (final IllegalAccessException e1) {
+				e1.printStackTrace();
+				fail();
+			} catch (final UnregisteredRepositoryTypeException e1) {
+				e1.printStackTrace();
+				fail();
+			}
+			assert (repository != null);
+			repositories.add(repository);
+			
+			final File urlFile = new File(repoMap.get(type));
+			
+			try {
+				repository.setup(urlFile.toURI(), new BranchFactory(null), null, "master");
+			} catch (final Exception e) {
+				System.err.println(e.getMessage());
+				fail(e.getMessage());
+			}
+		}
+		
+	}
 	
 	/**
 	 * Gets the date from string.
@@ -68,7 +131,7 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testAnnotate() {
-		for (final Repository repository : getRepositories()) {
+		for (final Repository repository : repositories) {
 			final List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
 			assertEquals(2, annotation.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
@@ -115,7 +178,7 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testCheckout() {
-		for (final Repository repository : getRepositories()) {
+		for (final Repository repository : repositories) {
 			final File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
 			
 			assert (checkoutPath != null);
@@ -148,11 +211,13 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testCheckoutDir() {
-		for (final Repository repository : getRepositories()) {
+		for (final Repository repository : repositories) {
 			final File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
 			if (Logger.logDebug()) {
 				Logger.debug("Child entries of checkout path: " + JavaUtils.arrayToString(checkoutPath.list()));
 			}
+			assertTrue(checkoutPath.exists());
+			assertTrue(checkoutPath.isDirectory());
 			
 			final File dir_a = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_a");
 			final File dir_b = new File(checkoutPath.getAbsolutePath() + FileUtils.fileSeparator + "dir_b");
@@ -174,12 +239,11 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testCheckoutFile() {
-		for (final Repository repository : getRepositories()) {
-			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
-				assertFalse(repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD()) != null);
-			} else {
-				assertTrue(repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD()) != null);
-			}
+		for (final Repository repository : repositories) {
+			final File f = repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD());
+			assertTrue(f != null);
+			assertTrue(f.exists());
+			assertTrue(f.isFile());
 		}
 	}
 	
@@ -187,11 +251,10 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 * Test diff.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testDiff() {
-		for (final Repository repository : getRepositories()) {
-			final String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 11);
-			final String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 10);
+		for (final Repository repository : repositories) {
+			final String id = repository.getTransactionId(11);
+			final String parent = repository.getTransactionId(10);
 			final Collection<Delta> diff = repository.diff("file_1", parent, id);
 			assertEquals(1, diff.size());
 			final Delta[] deltas = diff.toArray(new Delta[1]);
@@ -205,9 +268,9 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testDiffMove() {
-		for (final Repository repository : getRepositories()) {
-			final String id = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 3);
-			final String parent = repository.getRelativeTransactionId(repository.getFirstRevisionId(), 2);
+		for (final Repository repository : repositories) {
+			final String id = repository.getTransactionId(3);
+			final String parent = repository.getTransactionId(2);
 			final Collection<Delta> diff = repository.diff("dir_a/file_2_dir_a", parent, id);
 			assertEquals(1, diff.size());
 			final Delta[] deltas = diff.toArray(new Delta[1]);
@@ -221,7 +284,7 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetChangedPaths() {
-		for (final Repository repository : getRepositories()) {
+		for (final Repository repository : repositories) {
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
 			final Map<String, ChangeType> paths = new HashMap<String, ChangeType>();
 			paths.put("/dir_b/file_2_dir_a", ChangeType.Modified);
@@ -240,10 +303,8 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetFirstRevisionID() {
-		for (final Repository repository : getRepositories()) {
-			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				// ignore
-			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
+		for (final Repository repository : repositories) {
+			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("1", repository.getFirstRevisionId());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("7b5b41fffc13fba4f2dbca350becc9bc27d2d311", repository.getFirstRevisionId());
@@ -258,9 +319,8 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetFormerPathName() {
-		for (final Repository repository : getRepositories()) {
-			final String formerPathName = repository.getFormerPathName(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-			                                                                                               3),
+		for (final Repository repository : repositories) {
+			final String formerPathName = repository.getFormerPathName(repository.getTransactionId(3),
 			                                                           "dir_b/file_2_dir_a");
 			try {
 				assertEquals("dir_a/file_2_dir_a", formerPathName);
@@ -276,10 +336,8 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetLastRevisionID() {
-		for (final Repository repository : getRepositories()) {
-			if (repository.getRepositoryType().equals(RepositoryType.CVS)) {
-				// ignore
-			} else if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
+		for (final Repository repository : repositories) {
+			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("17", repository.getEndRevision());
 			} else if (repository.getRepositoryType().equals(RepositoryType.GIT)) {
 				assertEquals("a19f0b6e729adbf26b70a0e17f32453835fb50eb", repository.getEndRevision());
@@ -291,22 +349,11 @@ public class Repository_MozkitoTest extends VersionsTest {
 	}
 	
 	/**
-	 * Test get relative transaction id.
-	 */
-	@Test
-	public void testGetRelativeTransactionId() {
-		for (final Repository repository : getRepositories()) {
-			final String endRevision = repository.getEndRevision();
-			assertEquals(endRevision, repository.getRelativeTransactionId(endRevision, 10));
-		}
-	}
-	
-	/**
 	 * Test log.
 	 */
 	@Test
 	public void testLog() {
-		for (final Repository repository : getRepositories()) {
+		for (final Repository repository : repositories) {
 			final List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
 			
 			// -- Rev 1 -- //
@@ -419,9 +466,8 @@ public class Repository_MozkitoTest extends VersionsTest {
 	 */
 	@Test
 	public void testMoveEdit() {
-		for (final Repository repository : getRepositories()) {
-			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getRelativeTransactionId(repository.getFirstRevisionId(),
-			                                                                                                            3));
+		for (final Repository repository : repositories) {
+			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getTransactionId(3));
 			assertEquals(2, changedPaths.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertTrue(changedPaths.containsKey("/dir_a"));

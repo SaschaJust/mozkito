@@ -16,10 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.git.GitRepository;
-import org.mozkito.versions.git.GitRevDependencyGraph;
-import org.mozkito.versions.git.GitRevDependencyType;
-
 
 public class GitRevDependencyGraphTest {
 	
@@ -367,11 +363,19 @@ public class GitRevDependencyGraphTest {
 		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", graph.getMergeParent(hash));
 		assertTrue(graph.isBranchHead(hash) == null);
 		
-		hash = "fe56f365f798c3742bac5e56f5ff30eca4f622c6"; // HEAD master
+		hash = "fe56f365f798c3742bac5e56f5ff30eca4f622c6";
 		assertTrue(graph.hasVertex(hash));
 		assertEquals(0, graph.getTags(hash).size());
 		assertTrue(graph.getBranchParent(hash) != null);
 		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", graph.getBranchParent(hash));
+		assertTrue(graph.getMergeParent(hash) == null);
+		assertTrue(graph.isBranchHead(hash) == null);
+		
+		hash = "96a9f105774b50f1fa3361212c4d12ae057a4285"; // HEAD master
+		assertTrue(graph.hasVertex(hash));
+		assertEquals(0, graph.getTags(hash).size());
+		assertTrue(graph.getBranchParent(hash) != null);
+		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", graph.getBranchParent(hash));
 		assertTrue(graph.getMergeParent(hash) == null);
 		assertEquals("master", graph.isBranchHead(hash));
 		

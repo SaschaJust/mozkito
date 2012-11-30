@@ -30,7 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
@@ -55,8 +55,9 @@ public class JavaChangeOperation implements Annotated {
 	 *            the element
 	 * @return the java change operation if successfull. Otherwise returns <node>null</code>
 	 */
+	@NoneNull
 	public static JavaChangeOperation fromXMLRepresentation(final Element element,
-	                                                        final PersistenceUtil persistenceUtil,
+	                                                        final ModelStorage<String, RCSTransaction> transactionStorage,
 	                                                        final JavaElementFactory elementFactory) {
 		
 		ChangeType changeType = null;
@@ -89,7 +90,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		final RCSTransaction transaction = persistenceUtil.loadById(transaction_id, RCSTransaction.class);
+		final RCSTransaction transaction = transactionStorage.getById(transaction_id);
 		if (!changedPath.startsWith("/")) {
 			changedPath = "/" + changedPath;
 		}

@@ -293,9 +293,9 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * Adds the comment lines.
 	 * 
 	 * @param from
-	 *            the from
+	 *            from line number
 	 * @param to
-	 *            the to
+	 *            until (including) line number
 	 */
 	@Transient
 	public void addCommentLines(@NotNegative final int from,
@@ -340,7 +340,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		LineCover lc = LineCover.FALSE;
 		for (final int line : lines) {
 			final LineCover tmpLC = coversLine(line);
-			if (tmpLC.equals(LineCover.FALSE)) {
+			if (tmpLC.equals(LineCover.FALSE) && (!this.commentLines.contains(line))) {
 				return tmpLC;
 			}
 			switch (lc) {
@@ -414,7 +414,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			if (getElement() instanceof JavaMethodCall) {
 				return LineCover.DEFINITION;
 			}
-			if ((getBodyStartLine() < 0) || (getBodyStartLine() >= line)) {
+			if ((getBodyStartLine() < 0) || (getBodyStartLine() > line)) {
 				return LineCover.DEFINITION;
 			}
 			return LineCover.BODY;

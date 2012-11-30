@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2011 Kim Herzig, Sascha Just
+ * Copyright 2012 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,10 +12,21 @@
  ******************************************************************************/
 package org.mozkito.versions;
 
-public enum RepositoryType {
-	GIT, MERCURIAL, SUBVERSION;
+import java.util.List;
+
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+
+import org.mozkito.versions.elements.LogEntry;
+
+public interface LogParser {
 	
-	public static String getHandle() {
-		return RepositoryType.class.getSimpleName();
-	}
+	/**
+	 * Parses log lines contained in the supplied list of lines.
+	 * 
+	 * @param logMessages
+	 *            the log messages
+	 * @return the list of LogEntries extracted from the raw output.
+	 */
+	List<LogEntry> parse(@NotNull final List<String> logMessages);
+	
 }

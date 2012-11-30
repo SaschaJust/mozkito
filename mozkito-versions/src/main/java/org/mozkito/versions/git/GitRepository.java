@@ -36,8 +36,8 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.ioda.URIUtils;
 import net.ownhero.dev.ioda.exceptions.ExternalExecutableException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -50,11 +50,11 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.Repository;
+import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -65,13 +65,15 @@ import difflib.Patch;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class GitRepository extends Repository {
+public class GitRepository extends DistributedCommandLineRepository {
+	
+	private static final int                 GIT_HASH_LENGTH   = 40;
 	
 	/** The current revision. */
-	private String                           currentRevision = null;
+	private String                           currentRevision   = null;
 	
 	/** The charset. */
-	protected static Charset                 charset         = Charset.defaultCharset();
+	protected static Charset                 charset           = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			charset = Charset.forName("UTF8");
@@ -79,23 +81,20 @@ public class GitRepository extends Repository {
 	}
 	
 	/** The Constant dtf. */
-	protected static final DateTimeFormatter dtf             = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static final DateTimeFormatter DTF               = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 	
 	/** The Constant regex. */
-	protected static final Regex             regex           = new Regex(
-	                                                                     ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	protected static final Regex             REGEX             = new Regex(
+	                                                                       ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
 	
 	/** The Constant formerPathRegex. */
-	protected static final Regex             formerPathRegex = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	protected static final Regex             FORMER_PATH_REGEX = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
 	
 	/** The clone dir. */
 	private File                             cloneDir;
 	
 	/** The transaction i ds. */
-	private List<String>                     transactionIDs  = new LinkedList<String>();
-	
-	/** The log cache. */
-	private final HashMap<String, LogEntry>  logCache        = new HashMap<String, LogEntry>();
+	private final List<String>               transactionIDs    = new LinkedList<String>();
 	
 	/** The branch factory. */
 	private BranchFactory                    branchFactory;
@@ -129,8 +128,8 @@ public class GitRepository extends Repository {
 		}
 		
 		for (final String line : response.getSecond()) {
-			String sha = line.substring(0, 40);
-			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, 40)))) {
+			String sha = line.substring(0, GIT_HASH_LENGTH);
+			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, GIT_HASH_LENGTH)))) {
 				sha = firstRev;
 			}
 			
@@ -143,10 +142,10 @@ public class GitRepository extends Repository {
 			DateTime date = new DateTime();
 			
 			String lineContent = "<unkown>";
-			if (regex.matchesFull(line)) {
-				author = regex.getGroup("author");
-				date = new DateTime(dtf.parseDateTime(regex.getGroup("date")));
-				lineContent = regex.getGroup("codeline");
+			if (REGEX.matchesFull(line)) {
+				author = REGEX.getGroup("author");
+				date = new DateTime(DTF.parseDateTime(REGEX.getGroup("date")));
+				lineContent = REGEX.getGroup("codeline");
 			} else {
 				
 				throw new UnrecoverableError("Could not extract author and date info from log entry for revision `"
@@ -182,7 +181,10 @@ public class GitRepository extends Repository {
 		}
 		final File result = new File(this.cloneDir, relativeRepoPath);
 		if (!result.exists()) {
-			throw new UnrecoverableError("Could not checkout `" + relativeRepoPath + "` in revision `" + revision);
+			if (Logger.logError()) {
+				Logger.error("Could not get requested path using command `git checkout %s`. Abort.", revision);
+			}
+			return null;
 		}
 		return result;
 	}
@@ -275,6 +277,27 @@ public class GitRepository extends Repository {
 		return patch.getDeltas();
 	}
 	
+	@Override
+	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) @NotNull final String revision) {
+		return gitLog(revision);
+	}
+	
+	@Override
+	@NoneNull
+	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) final String fromRevision,
+	                                               @MinLength (min = 4) final String toRevision) {
+		final StringBuilder revisionSelectionBuilder = new StringBuilder();
+		revisionSelectionBuilder.append(fromRevision);
+		revisionSelectionBuilder.append("^..");
+		revisionSelectionBuilder.append(toRevision);
+		String revisionSelection = revisionSelectionBuilder.toString();
+		if (fromRevision.equals(getFirstRevisionId())) {
+			revisionSelection = toRevision;
+		}
+		
+		return gitLog(revisionSelection);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#gatherToolInformation()
@@ -355,38 +378,40 @@ public class GitRepository extends Repository {
 			                                     + revision);
 		}
 		final String removed = lines.remove(0);
-		if ((!revision.toUpperCase().equals("HEAD")) && (!removed.trim().equals(revision))) {
-			
-			throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
-			        + revision + "`: wrong revision outputed. Abort parsing.");
-			
+		if ((!"HEAD".equals(revision.toUpperCase())) && (!removed.trim().equals(revision))) {
+			if (Logger.logError()) {
+				Logger.error("Error while parsing GIT log to unveil changed paths for revision `%s`: wrong revision outputed. Abort parsing.",
+				             revision);
+			}
+			return null;
 		}
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		for (String line : lines) {
-			if (line.trim().equals("")) {
+			if (line.trim().isEmpty()) {
 				// found the end of the log entry.
 				break;
 			}
 			line = line.replaceAll("\\s+", " ");
 			final String[] lineParts = line.split(" ");
 			if (lineParts.length < 2) {
-				
-				throw new UnrecoverableError("Error while parsing GIT log to unveil changed paths for revision `"
-				        + revision + "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator
-				        + "Line:" + line);
-				
+				if (Logger.logError()) {
+					Logger.error("Error while parsing GIT log to unveil changed paths for revision `" + revision
+					        + "`: wrong line format detected. Abort parsing." + FileUtils.lineSeparator + "Line:"
+					        + line);
+				}
+				return null;
 			}
 			final String type = lineParts[0];
 			final String path = "/" + lineParts[1];
-			if (type.equals("A")) {
+			if ("A".equals(type)) {
 				result.put(path, ChangeType.Added);
-			} else if (type.equals("C")) {
+			} else if ("C".equals(type)) {
 				result.put(path, ChangeType.Modified);
-			} else if (type.equals("D")) {
+			} else if ("D".equals(type)) {
 				result.put(path, ChangeType.Deleted);
-			} else if (type.equals("M")) {
+			} else if ("M".equals(type)) {
 				result.put(path, ChangeType.Modified);
-			} else if (type.equals("U")) {
+			} else if ("U".equals(type)) {
 				result.put(path, ChangeType.Modified);
 			}
 		}
@@ -437,14 +462,14 @@ public class GitRepository extends Repository {
 		}
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
-				final Match found = formerPathRegex.find(line);
+				final Match found = FORMER_PATH_REGEX.find(line);
 				if (!found.hasGroups()) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");
 					}
 					return null;
 				}
-				return formerPathRegex.getGroup("result");
+				return FORMER_PATH_REGEX.getGroup("result");
 			}
 		}
 		return null;
@@ -468,6 +493,11 @@ public class GitRepository extends Repository {
 		return response.getSecond().get(0).trim();
 	}
 	
+	@Override
+	protected LogParser getLogParser() {
+		return new GitLogParser();
+	}
+	
 	/**
 	 * Gets the ls remote.
 	 * 
@@ -482,71 +512,6 @@ public class GitRepository extends Repository {
 			throw new UnrecoverableError("Could not get ls-remote.");
 		}
 		return response.getSecond();
-	}
-	
-	/**
-	 * Gets the merges.
-	 * 
-	 * @return the merges
-	 */
-	public List<String> getMerges() {
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "rev-list",
-		                                                                              "--branches", "--remotes",
-		                                                                              "--parents", "--merges" },
-		                                                                      this.cloneDir, null,
-		                                                                      new HashMap<String, String>(),
-		                                                                      GitRepository.charset);
-		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not get rev-list --merges.");
-		}
-		return response.getSecond();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRelativeTransactionId(java.lang.String, long)
-	 */
-	@Override
-	public String getRelativeTransactionId(final String transactionId,
-	                                       final long index) {
-		Condition.notNull(transactionId, "Cannot get relative revision to null revision");
-		
-		if (index == 0) {
-			return transactionId;
-		}
-		
-		final int fromIndex = this.transactionIDs.indexOf(transactionId);
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Requesting relative transaction id of " + transactionId + " (fromIdex=" + fromIndex
-			        + ") and index " + index);
-		}
-		
-		String result = null;
-		if ((fromIndex < 0) || (this.transactionIDs.size() <= (fromIndex + index))) {
-			result = this.transactionIDs.get(this.transactionIDs.size() - 1);
-		} else {
-			result = this.transactionIDs.get((int) (fromIndex + index));
-		}
-		
-		if (Logger.logDebug()) {
-			Logger.debug("Returning: " + result);
-		}
-		
-		return result;
-		
-		/*
-		 * else if (index < 0) { String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H",
-		 * "-r", transactionId }; Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args,
-		 * this.cloneDir, null, null); if (response.getFirst() != 0) { return null; } List<String> lines =
-		 * response.getSecond(); if (lines.size() < index) { return lines.get(lines.size() - 1); } else { return
-		 * lines.get((int) index); } } else { String[] args = new String[] { "log", "--branches", "--remotes",
-		 * "--reverse", "--pretty=format:%H", "-r", transactionId + ".." + getHEAD() }; Tuple<Integer, List<String>>
-		 * response = CommandExecutor.execute("git", args, this.cloneDir, null, null); if (response.getFirst() != 0) {
-		 * return null; } List<String> lines = response.getSecond(); if (lines.isEmpty()) { return transactionId; } if
-		 * (lines.size() < (index - 1)) { return lines.get(lines.size() - 1); } else { return lines.get((int) index -
-		 * 1); } }
-		 */
 	}
 	
 	/*
@@ -570,8 +535,7 @@ public class GitRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.
-	 * PersistenceUtil)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence. PersistenceUtil)
 	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
@@ -626,13 +590,24 @@ public class GitRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getTransactionId(long)
 	 */
 	@Override
-	public String getTransactionId(@Positive ("Cannot get transaction id for revision number smaller than zero.") final long index) {
-		final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:'%H'", "--reverse" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return null;
+	public String getTransactionId(@NotNegative ("Cannot get transaction id for revision number smaller than zero.") final long index) {
+		// final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "--topo-order",
+		// "--reverse" };
+		// final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null,
+		// null);
+		// if (response.getFirst() != 0) {
+		// return null;
+		// }
+		// return response.getSecond().get((int) index);
+		return this.transactionIDs.get(Long.valueOf(index).intValue());
+	}
+	
+	@Override
+	public long getTransactionIndex(final String transactionId) {
+		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
+			return this.transactionIDs.indexOf(getHEADRevisionId());
 		}
-		return response.getSecond().get((int) index);
+		return this.transactionIDs.indexOf(transactionId);
 	}
 	
 	/*
@@ -648,72 +623,14 @@ public class GitRepository extends Repository {
 		return this.cloneDir;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
-	 */
-	@Override
-	@NoneNull
-	public List<LogEntry> log(@MinLength (min = 1) final String fromRevision,
-	                          @MinLength (min = 1) final String toRevision) {
-		String toRev = toRevision;
-		if (toRevision.equals("HEAD")) {
-			toRev = getHEADRevisionId();
-		}
-		final int fromIndex = this.transactionIDs.indexOf(fromRevision);
-		final int toIndex = this.transactionIDs.indexOf(toRev);
-		
-		Condition.check(fromIndex >= 0, "Start transaction for log() is unknown!");
-		Condition.check(toIndex >= 0, "End transaction for log() is unknown!");
-		Condition.check(fromIndex <= toIndex, "cannot log from later revision to earlier one!");
-		
-		final List<LogEntry> result = new LinkedList<LogEntry>();
-		
-		String revisionSelection = fromRevision + "^.." + toRevision;
-		if (fromRevision.equals(getFirstRevisionId())) {
-			revisionSelection = toRevision;
-		}
-		Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller",
-		                                                                        "--branches", "--remotes",
-		                                                                        "--topo-order", revisionSelection },
-		                                                                this.cloneDir, null,
-		                                                                new HashMap<String, String>());
-		if (response.getFirst() != 0) {
-			return null;
-		}
+	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) {
 		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order " + revisionSelection);
-		}
-		for (final LogEntry e : GitLogParser.parse(response.getSecond())) {
-			this.logCache.put(e.getRevision(), e);
+			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order %s.",
+			             revisionSelection);
 		}
 		
-		for (int i = fromIndex; i <= toIndex; ++i) {
-			final String tId = this.transactionIDs.get(i);
-			
-			if (!this.logCache.containsKey(tId)) {
-				revisionSelection = tId + "^.." + tId;
-				if (i < 1) {
-					revisionSelection = tId;
-				}
-				response = CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches",
-				                                           "--remotes", "--topo-order", revisionSelection },
-				                                   this.cloneDir, null,
-				                                   new HashMap<String, String>());
-				if (response.getFirst() != 0) {
-					return null;
-				}
-				if (Logger.logDebug()) {
-					Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order "
-					        + revisionSelection);
-				}
-				result.addAll(GitLogParser.parse(response.getSecond()));
-			} else {
-				result.add(this.logCache.get(tId));
-			}
-			this.logCache.remove(tId);
-		}
-		return result;
+		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", revisionSelection },
+		                               this.cloneDir, null, new HashMap<String, String>());
 	}
 	
 	/*
@@ -792,7 +709,8 @@ public class GitRepository extends Repository {
 		if (Logger.logDebug()) {
 			Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
 		}
-		this.transactionIDs = response.getSecond();
+		this.transactionIDs.clear();
+		this.transactionIDs.addAll(response.getSecond());
 		Collections.reverse(this.transactionIDs);
 		
 		if (!this.transactionIDs.isEmpty()) {

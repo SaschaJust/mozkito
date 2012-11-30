@@ -18,7 +18,6 @@ import java.util.Map;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
@@ -41,7 +40,7 @@ public class RCSFileManager {
 	 */
 	public RCSFile createFile(final String path,
 	                          final RCSTransaction transaction) {
-		RCSFile file = new RCSFile(path, transaction);
+		final RCSFile file = new RCSFile(path, transaction);
 		this.currentFiles.put(path, file);
 		return file;
 	}

@@ -33,10 +33,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.Annotated;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -51,6 +51,8 @@ public class RCSFile implements Annotated, Serializable {
 		private final Stack<RCSTransaction> mergePoints = new Stack<>();
 		private RCSTransaction              current;
 		
+		private boolean                     headVisited = false;
+		
 		public FileNameTransactionIterator(final RCSTransaction startTransaction) {
 			this.current = startTransaction;
 		}
@@ -61,7 +63,7 @@ public class RCSFile implements Annotated, Serializable {
 		 */
 		@Override
 		public boolean hasNext() {
-			return (this.current.getBranchParent() != null) || (!this.mergePoints.isEmpty());
+			return (!this.headVisited) || (this.current.getBranchParent() != null) || (!this.mergePoints.isEmpty());
 		}
 		
 		/*
@@ -79,6 +81,10 @@ public class RCSFile implements Annotated, Serializable {
 		 */
 		@Override
 		public RCSTransaction next() {
+			if (!this.headVisited) {
+				this.headVisited = true;
+				return this.current;
+			}
 			final RCSTransaction mergeParent = this.current.getMergeParent();
 			if (mergeParent != null) {
 				if (this.current.getBranchParent() != null) {
