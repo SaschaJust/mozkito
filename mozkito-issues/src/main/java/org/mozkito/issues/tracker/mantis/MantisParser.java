@@ -15,7 +15,9 @@ package org.mozkito.issues.tracker.mantis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -36,6 +38,7 @@ import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
+import net.ownhero.dev.ioda.exceptions.MIMETypeDeterminationException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -491,18 +494,24 @@ public class MantisParser implements Parser {
 					if (filenameTag == null) {
 						throw new UnrecoverableError("Could not find filenameTag for attachmentEntry.");
 					}
-					attachmentEntry.setFilename(filenameTag.text());
 					try {
-						attachmentEntry.setMime(MimeUtils.determineMIME(new URL(this.tracker.getUri().toASCIIString()
-						        + attachmentEntry.getLink()).toURI()));
-					} catch (final Exception e) {
-						if (Logger.logError()) {
-							Logger.error(e, "Could not determine MIME type of attachment '%s'.",
-							             attachmentEntry.getFilename());
-						}
+						final URI attachmentURI = new URL(this.tracker.getUri().toASCIIString()
+						        + attachmentEntry.getLink()).toURI();
 						
+						try {
+							attachmentEntry.setFilename(filenameTag.text());
+							attachmentEntry.setMime(MimeUtils.determineMIME(attachmentURI));
+						} catch (final MIMETypeDeterminationException | IOException | UnsupportedProtocolException
+						        | FetchException e) {
+							if (Logger.logError()) {
+								Logger.error("Could not determine MIME type for URL %s.", attachmentURI.toASCIIString());
+							}
+						}
+					} catch (final URISyntaxException | MalformedURLException e) {
+						if (Logger.logError()) {
+							Logger.error("Could not generate attachment URI !");
+						}
 					}
-					
 					final Person person = this.attachters.get(attachmentEntry.getFilename());
 					if (person == null) {
 						if (Logger.logWarn()) {
