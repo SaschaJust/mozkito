@@ -27,8 +27,8 @@ public class SumAggregation<T> extends ScoreAggregation<T> {
 	
 	@Override
 	public double aggregate(final List<Double> values) {
-		DescriptiveStatistics stats = new DescriptiveStatistics();
-		for (Double v : values) {
+		final DescriptiveStatistics stats = new DescriptiveStatistics();
+		for (final Double v : values) {
 			if (v != MultilevelClustering.IGNORE_SCORE) {
 				stats.addValue(v);
 			}
@@ -38,7 +38,7 @@ public class SumAggregation<T> extends ScoreAggregation<T> {
 	
 	@Override
 	public String getInfo() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("Type: " + SumAggregation.class.getSimpleName());
 		sb.append(FileUtils.lineSeparator);
 		return sb.toString();

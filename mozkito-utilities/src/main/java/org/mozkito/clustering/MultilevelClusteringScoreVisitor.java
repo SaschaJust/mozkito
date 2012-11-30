@@ -21,14 +21,14 @@ package org.mozkito.clustering;
  */
 public interface MultilevelClusteringScoreVisitor<T> {
 	
-	public void close();
+	void close();
 	
 	/**
 	 * Returns the highest possible score value
 	 * 
 	 * @return
 	 */
-	public double getMaxPossibleScore();
+	double getMaxPossibleScore();
 	
 	/**
 	 * Returns a confidence value between 0 and getMaxPossibleScore(). The higher the confidence, the stronger the voter
@@ -40,6 +40,6 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	 *            the old score
 	 * @return the new (manipulated) score
 	 */
-	public double getScore(final T t1,
-	                       final T t2);
+	double getScore(final T t1,
+	                final T t2);
 }

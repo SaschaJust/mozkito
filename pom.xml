@@ -475,7 +475,10 @@
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<configuration>
 							<destFile>${project.basedir}/target/jacoco-ut.exec</destFile>
-							<!-- <includes>org.mozkito.*</includes> -->
+							<excludes>
+								<exclude>**/*_.java</exclude>
+								<exclude>**/*_.class</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>
