@@ -20,8 +20,6 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.git.GitLogParser;
-
 
 public class GitLogParserTest {
 	
@@ -30,7 +28,6 @@ public class GitLogParserTest {
 		final String author1 = "Author: Carsten Nielsen <heycarsten@gmail.com>";
 		
 		Person author = GitLogParser.getAuthor(author1, 0);
-		
 		assertTrue(author.getFullnames() != null);
 		assertEquals(1, author.getFullnames().size());
 		assertTrue(author.getFullnames().contains("Carsten Nielsen"));

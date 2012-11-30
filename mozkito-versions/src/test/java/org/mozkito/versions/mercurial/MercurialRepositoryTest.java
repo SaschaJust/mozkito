@@ -2,6 +2,8 @@ package org.mozkito.versions.mercurial;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -54,7 +56,7 @@ public class MercurialRepositoryTest {
 	@Before
 	public void setup() {
 		final URL zipURL = MercurialRepositoryTest.class.getResource(FileUtils.fileSeparator + "testHg.zip");
-		assertTrue(zipURL != null);
+		assertNotNull(zipURL);
 		try {
 			final File tmpDir = FileUtils.createRandomDir("mozkito", "testHg", FileShutdownAction.DELETE);
 			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
@@ -76,27 +78,27 @@ public class MercurialRepositoryTest {
 		
 		assertEquals(3, annotate.size());
 		AnnotationEntry line0 = annotate.get(0);
-		assertTrue(line0 != null);
+		assertNotNull(line0);
 		assertFalse(line0.hasAlternativePath());
-		assertTrue(line0.getAlternativeFilePath() == null);
+		assertNull(line0.getAlternativeFilePath());
 		assertEquals("changing 3", line0.getLine());
 		assertEquals(_CBCC33D919A27B9450D117F211A5F4F45615CAB9, line0.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2010-11-22 20:30:52 +0100").isEqual(line0.getTimestamp()));
 		assertEquals(USER_NAME, line0.getUsername());
 		
 		final AnnotationEntry line1 = annotate.get(1);
-		assertTrue(line1 != null);
+		assertNotNull(line1);
 		assertFalse(line1.hasAlternativePath());
-		assertTrue(line1.getAlternativeFilePath() == null);
+		assertNull(line1.getAlternativeFilePath());
 		assertEquals("changing 3", line0.getLine());
 		assertEquals(_41A40FB23B54A49E91EB4CEE510533EEF810EC68, line1.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line1.getTimestamp()));
 		assertEquals(USER_NAME, line1.getUsername());
 		
 		final AnnotationEntry line2 = annotate.get(2);
-		assertTrue(line2 != null);
+		assertNotNull(line2);
 		assertFalse(line2.hasAlternativePath());
-		assertTrue(line2.getAlternativeFilePath() == null);
+		assertNull(line2.getAlternativeFilePath());
 		assertEquals("changing 3", line2.getLine());
 		assertEquals(_41A40FB23B54A49E91EB4CEE510533EEF810EC68, line2.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line2.getTimestamp()));
@@ -104,7 +106,7 @@ public class MercurialRepositoryTest {
 		
 		annotate = this.repo.annotate("3_renamed.txt", _96A9F105774B50F1FA3361212C4D12AE057A4285);
 		line0 = annotate.get(0);
-		assertTrue(line0 != null);
+		assertNotNull(line0);
 		// because we would have to use `hg mv` explicitly.
 		assertFalse(line0.hasAlternativePath());
 		assertEquals("changing 3", line0.getLine());
@@ -114,7 +116,7 @@ public class MercurialRepositoryTest {
 		
 		annotate = this.repo.annotate("2_renamed.txt", _D9A5542FE1B5A755502320BA38FDF180011B40DF);
 		line0 = annotate.get(0);
-		assertTrue(line0 != null);
+		assertNotNull(line0);
 		assertTrue(line0.hasAlternativePath());
 		assertEquals("2.txt", line0.getAlternativeFilePath());
 	}
@@ -127,7 +129,7 @@ public class MercurialRepositoryTest {
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("3.txt", _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB);
-		assertTrue(file != null);
+		assertNotNull(file);
 		assertTrue(file.exists());
 	}
 	

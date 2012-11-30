@@ -353,7 +353,7 @@ public abstract class Repository {
 	 * @param endRevision
 	 *            the endRevision to set
 	 */
-	public void setEndRevision(final String endRevision) {
+	protected void setEndRevision(final String endRevision) {
 		this.endRevision = endRevision;
 	}
 	
@@ -373,7 +373,7 @@ public abstract class Repository {
 	 * @param startRevision
 	 *            the startRevision to set
 	 */
-	public void setStartRevision(final String startRevision) {
+	protected void setStartRevision(final String startRevision) {
 		this.startRevision = startRevision;
 	}
 	

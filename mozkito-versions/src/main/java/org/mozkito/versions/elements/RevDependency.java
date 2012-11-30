@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+
 import org.apache.commons.lang.StringUtils;
 import org.mozkito.versions.model.RCSBranch;
 
@@ -51,6 +53,11 @@ public class RevDependency {
 	 */
 	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
+		if (isMerge) {
+			CollectionCondition.minSize(parents, 2, "Merges must have multiple parents.");
+		} else {
+			CollectionCondition.maxSize(parents, 1, "Non-merges must have at most one parent.");
+		}
 		this.revId = id;
 		this.commitBranch = commitBranch;
 		this.parents = parents;
