@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.core;
@@ -30,41 +27,42 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.genealogies.ChangeGenealogy;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.tooling.GlobalGraphOperations;
 
+import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.Transaction;
 
-public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransaction> {
+// import org.neo4j.graphdb.Transaction;
+
+public class TransactionChangeGenealogy implements ChangeGenealogy<Transaction> {
 	
-	public static final String                NODE_ID       = "transaction_id";
-	public static final String                ROOT_VERTICES = "root_vertices";
+	public static final String             NODE_ID       = "transaction_id";
+	public static final String             ROOT_VERTICES = "root_vertices";
 	
 	/** The graph. */
-	private final GraphDatabaseService        graph;
+	private final GraphDatabaseService     graph;
 	
 	/** The persistence util. */
-	private final PersistenceUtil             persistenceUtil;
+	private final PersistenceUtil          persistenceUtil;
 	
-	private final File                        dbFile;
+	private final java.io.File             dbFile;
 	
-	private final IndexManager                indexManager;
+	private final IndexManager             indexManager;
 	
-	private final Index<Node>                 nodeIndex;
-	private final Index<Node>                 rootIndex;
-	private final CoreChangeGenealogy         core;
+	private final Index<Node>              nodeIndex;
+	private final Index<Node>              rootIndex;
+	private final CoreChangeGenealogy      core;
 	
-	private final Map<String, RCSTransaction> nodeCache     = new HashMap<String, RCSTransaction>();
+	private final Map<String, Transaction> nodeCache     = new HashMap<String, Transaction>();
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -73,7 +71,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *            the graph
 	 * @param dbFile
 	 */
-	public TransactionChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull final File dbFile,
+	public TransactionChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull final java.io.File dbFile,
 	        final PersistenceUtil persistenceUtil, @NotNull final CoreChangeGenealogy core) {
 		this.graph = graph;
 		this.dbFile = dbFile;
@@ -97,8 +95,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return true, if successful
 	 */
 	@NoneNull
-	boolean addEdge(final RCSTransaction dependent,
-	                final RCSTransaction target,
+	boolean addEdge(final Transaction dependent,
+	                final Transaction target,
 	                final GenealogyEdgeType edgeType) {
 		
 		// add both vertices
@@ -125,7 +123,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			}
 		}
 		if (!edgeAlreadyExists) {
-			final Transaction tx = this.graph.beginTx();
+			final org.neo4j.graphdb.Transaction tx = this.graph.beginTx();
 			final Relationship relationship = from.createRelationshipTo(to, edgeType);
 			if (relationship == null) {
 				tx.failure();
@@ -135,7 +133,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			tx.success();
 			tx.finish();
 			if (isRoot(to)) {
-				final Transaction tx2 = this.graph.beginTx();
+				final org.neo4j.graphdb.Transaction tx2 = this.graph.beginTx();
 				this.rootIndex.remove(to, ROOT_VERTICES);
 				tx2.success();
 				tx2.finish();
@@ -155,14 +153,14 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *         already).
 	 */
 	@NoneNull
-	boolean addVertex(@NotNull final RCSTransaction v) {
+	boolean addVertex(@NotNull final Transaction v) {
 		if (hasVertex(v)) {
 			if (Logger.logTrace()) {
-				Logger.trace("RCSTransaction with id `" + v.getId() + "` already exists");
+				Logger.trace("Transaction with id `" + v.getId() + "` already exists");
 			}
 			return false;
 		}
-		final Transaction tx = this.graph.beginTx();
+		final org.neo4j.graphdb.Transaction tx = this.graph.beginTx();
 		final Node node = this.graph.createNode();
 		if (node == null) {
 			tx.failure();
@@ -200,14 +198,14 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return true, if an edge from <code>from</code> to <code>to</code> exists, false otherwise.
 	 */
 	@Override
-	public boolean containsEdge(final RCSTransaction from,
-	                            final RCSTransaction to) {
+	public boolean containsEdge(final Transaction from,
+	                            final Transaction to) {
 		final GenealogyEdgeType result = getEdge(from, to);
 		return result != null;
 	}
 	
 	@Override
-	public boolean containsVertex(final RCSTransaction vertex) {
+	public boolean containsVertex(final Transaction vertex) {
 		return hasVertex(vertex);
 	}
 	
@@ -228,7 +226,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getAllDependants(final RCSTransaction operation) {
+	public Collection<Transaction> getAllDependants(final Transaction operation) {
 		return getDependants(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -253,7 +251,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getAllParents(final RCSTransaction operation) {
+	public Collection<Transaction> getAllParents(final Transaction operation) {
 		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -275,8 +273,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 */
 	@Override
 	@NoneNull
-	public Collection<RCSTransaction> getDependants(final RCSTransaction operation,
-	                                                final GenealogyEdgeType... edgeTypes) {
+	public Collection<Transaction> getDependants(final Transaction operation,
+	                                             final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
@@ -284,10 +282,10 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 				        + operation.toString()
 				        + " that has no correspondence within the ChangeGenealogy. Returning empty collection.");
 			}
-			return new HashSet<RCSTransaction>();
+			return new HashSet<Transaction>();
 		}
 		final Collection<Node> dependentNodes = getDependents(node, edgeTypes);
-		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
+		final Set<Transaction> parentOperations = new HashSet<Transaction>();
 		for (final Node dependentNode : dependentNodes) {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
@@ -325,8 +323,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return the edge or <code>null</code> if no such edge exists.
 	 */
 	@NoneNull
-	public GenealogyEdgeType getEdge(final RCSTransaction from,
-	                                 final RCSTransaction to) {
+	public GenealogyEdgeType getEdge(final Transaction from,
+	                                 final Transaction to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -356,8 +354,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(final RCSTransaction from,
-	                                              final RCSTransaction to) {
+	public Collection<GenealogyEdgeType> getEdges(final Transaction from,
+	                                              final Transaction to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -421,7 +419,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return this.graph;
 	}
 	
-	private Node getNodeForVertex(final RCSTransaction op) {
+	private Node getNodeForVertex(final Transaction op) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, op.getId());
 		if (!indexHits.hasNext()) {
 			indexHits.close();
@@ -433,7 +431,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public String getNodeId(final RCSTransaction t) {
+	public String getNodeId(final Transaction t) {
 		if (containsVertex(t)) {
 			return t.getId();
 		}
@@ -465,18 +463,18 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return the dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getParents(final RCSTransaction operation,
-	                                             final GenealogyEdgeType... edgeTypes) {
+	public Collection<Transaction> getParents(final Transaction operation,
+	                                          final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("You cannot retrieve edges for RCSTransction `" + operation.toString()
 				        + "` that has no corresponce within the ChangeGenealogy. Returning empty null.");
 			}
-			return new HashSet<RCSTransaction>();
+			return new HashSet<Transaction>();
 		}
 		final Collection<Node> dependentNodes = getParents(node, edgeTypes);
-		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
+		final Set<Transaction> parentOperations = new HashSet<Transaction>();
 		for (final Node dependentNode : dependentNodes) {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
@@ -493,8 +491,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public Collection<RCSTransaction> getRoots() {
-		final Collection<RCSTransaction> result = new HashSet<RCSTransaction>();
+	public Collection<Transaction> getRoots() {
+		final Collection<Transaction> result = new HashSet<Transaction>();
 		final IndexHits<Node> indexHits = this.rootIndex.query(ROOT_VERTICES, 1);
 		while (indexHits.hasNext()) {
 			result.add(getVertexForNode(indexHits.next()));
@@ -503,17 +501,17 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return result;
 	}
 	
-	private RCSTransaction getVertexForNode(final Node dependentNode) {
+	private Transaction getVertexForNode(final Node dependentNode) {
 		final String operationId = (String) dependentNode.getProperty(NODE_ID);
-		return loadById(operationId, RCSTransaction.class);
+		return loadById(operationId, Transaction.class);
 	}
 	
-	public boolean hasVertex(final RCSTransaction vertex) {
+	public boolean hasVertex(final Transaction vertex) {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
 	@Override
-	public int inDegree(final RCSTransaction op) {
+	public int inDegree(final Transaction op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING,
 		                                                                   GenealogyEdgeType.values());
@@ -526,7 +524,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public int inDegree(final RCSTransaction op,
+	public int inDegree(final Transaction op,
 	                    final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
@@ -552,8 +550,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return result;
 	}
 	
-	public RCSTransaction loadById(final String id,
-	                               final Class<? extends RCSTransaction> clazz) {
+	public Transaction loadById(final String id,
+	                            final Class<? extends Transaction> clazz) {
 		if (!this.nodeCache.containsKey(id)) {
 			this.nodeCache.put(id, this.persistenceUtil.loadById(id, clazz));
 		}
@@ -570,7 +568,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public int outDegree(final RCSTransaction op) {
+	public int outDegree(final Transaction op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING,
 		                                                                   GenealogyEdgeType.values());
@@ -583,7 +581,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public int outDegree(final RCSTransaction op,
+	public int outDegree(final Transaction op,
 	                     final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
@@ -595,7 +593,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 		return numEdges;
 	}
 	
-	public Iterator<RCSTransaction> vertexIterator() {
+	public Iterator<Transaction> vertexIterator() {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
 		
 		final Set<String> ids = new HashSet<String>();
@@ -603,7 +601,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			ids.add((String) node.getProperty(NODE_ID));
 		}
 		indexHits.close();
-		return new Iterator<RCSTransaction>() {
+		return new Iterator<Transaction>() {
 			
 			private final Iterator<String> idIter = ids.iterator();
 			
@@ -613,8 +611,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			}
 			
 			@Override
-			public RCSTransaction next() {
-				return loadById(this.idIter.next(), RCSTransaction.class);
+			public Transaction next() {
+				return loadById(this.idIter.next(), Transaction.class);
 			}
 			
 			@Override
@@ -625,11 +623,11 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	}
 	
 	@Override
-	public Iterable<RCSTransaction> vertexSet() {
-		return new Iterable<RCSTransaction>() {
+	public Iterable<Transaction> vertexSet() {
+		return new Iterable<Transaction>() {
 			
 			@Override
-			public Iterator<RCSTransaction> iterator() {
+			public Iterator<Transaction> iterator() {
 				return vertexIterator();
 			}
 		};

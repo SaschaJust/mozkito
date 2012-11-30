@@ -20,7 +20,7 @@ import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -59,10 +59,10 @@ public class ChangeOperationGenerator {
 	 * @param transactions
 	 *            the transactions
 	 */
-	public void handleTransactions(final List<RCSTransaction> transactions) {
+	public void handleTransactions(final List<Transaction> transactions) {
 		final int size = transactions.size();
 		int counter = 0;
-		for (final RCSTransaction transaction : transactions) {
+		for (final Transaction transaction : transactions) {
 			
 			for (final ChangeOperationVisitor visitor : this.visitors) {
 				visitor.visit(transaction);

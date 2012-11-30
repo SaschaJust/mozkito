@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 /**
  * 
@@ -35,17 +32,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 
-
 /**
  * The Class AttachmentEntry.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
@@ -90,8 +88,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Instantiates a new attachment entry.
-	 *
-	 * @param attachId the attach id
+	 * 
+	 * @param attachId
+	 *            the attach id
 	 */
 	public AttachmentEntry(final String attachId) {
 		this.id = attachId;
@@ -99,7 +98,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the author.
-	 *
+	 * 
 	 * @return the author
 	 */
 	@Transient
@@ -109,7 +108,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the delta ts.
-	 *
+	 * 
 	 * @return the deltaTS
 	 */
 	public DateTime getDeltaTS() {
@@ -118,7 +117,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return the description
 	 */
 	@Basic
@@ -129,16 +128,24 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the filename.
-	 *
+	 * 
 	 * @return the filename
 	 */
 	public String getFilename() {
 		return this.filename;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(AttachmentEntry.class);
+	}
+	
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	@Id
@@ -148,7 +155,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the java timestamp.
-	 *
+	 * 
 	 * @return the java timestamp
 	 */
 	@Column (name = "timestamp")
@@ -161,7 +168,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the link.
-	 *
+	 * 
 	 * @return the link
 	 */
 	@Basic
@@ -171,7 +178,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the mime.
-	 *
+	 * 
 	 * @return the mime
 	 */
 	@Basic
@@ -181,7 +188,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the person container.
-	 *
+	 * 
 	 * @return the personContainer
 	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
@@ -191,7 +198,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the size.
-	 *
+	 * 
 	 * @return the size
 	 */
 	@Basic
@@ -201,7 +208,7 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Gets the timestamp.
-	 *
+	 * 
 	 * @return the timestamp
 	 */
 	@Transient
@@ -211,8 +218,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the author.
-	 *
-	 * @param author the author to set
+	 * 
+	 * @param author
+	 *            the author to set
 	 */
 	public void setAuthor(@NotNull final Person author) {
 		getPersonContainer().add("author", author);
@@ -221,8 +229,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the delta ts.
-	 *
-	 * @param deltaTS the deltaTS to set
+	 * 
+	 * @param deltaTS
+	 *            the deltaTS to set
 	 */
 	public void setDeltaTS(final DateTime deltaTS) {
 		this.deltaTS = deltaTS;
@@ -230,8 +239,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the description.
-	 *
-	 * @param description the description to set
+	 * 
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
@@ -239,8 +249,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the filename.
-	 *
-	 * @param filename the filename to set
+	 * 
+	 * @param filename
+	 *            the filename to set
 	 */
 	public void setFilename(final String filename) {
 		this.filename = filename;
@@ -248,8 +259,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the id.
-	 *
-	 * @param id the id to set
+	 * 
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(final String id) {
 		this.id = id;
@@ -257,8 +269,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the java timestamp.
-	 *
-	 * @param timestamp the new java timestamp
+	 * 
+	 * @param timestamp
+	 *            the new java timestamp
 	 */
 	public void setJavaTimestamp(final Date timestamp) {
 		setTimestamp(new DateTime(timestamp));
@@ -266,8 +279,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the link.
-	 *
-	 * @param link the link to set
+	 * 
+	 * @param link
+	 *            the link to set
 	 */
 	public void setLink(final String link) {
 		this.link = link;
@@ -275,8 +289,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the link.
-	 *
-	 * @param url the new link
+	 * 
+	 * @param url
+	 *            the new link
 	 */
 	@Transient
 	public void setLink(final URL url) {
@@ -285,8 +300,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the mime.
-	 *
-	 * @param mime the mime to set
+	 * 
+	 * @param mime
+	 *            the mime to set
 	 */
 	public void setMime(final String mime) {
 		this.mime = mime;
@@ -294,8 +310,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the person container.
-	 *
-	 * @param personContainer the personContainer to set
+	 * 
+	 * @param personContainer
+	 *            the personContainer to set
 	 */
 	public void setPersonContainer(final PersonContainer personContainer) {
 		this.personContainer = personContainer;
@@ -303,8 +320,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the size.
-	 *
-	 * @param size the size to set
+	 * 
+	 * @param size
+	 *            the size to set
 	 */
 	public void setSize(final long size) {
 		this.size = size;
@@ -312,8 +330,9 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * Sets the timestamp.
-	 *
-	 * @param timestamp the timestamp to set
+	 * 
+	 * @param timestamp
+	 *            the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
@@ -321,26 +340,26 @@ public class AttachmentEntry implements Annotated {
 	
 	/**
 	 * To uri.
-	 *
+	 * 
 	 * @return the uRI
 	 */
 	public URI toURI() {
 		try {
 			return new URI(getLink());
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			return null;
 		}
 	}
 	
 	/**
 	 * To url.
-	 *
+	 * 
 	 * @return the uRL
 	 */
 	public URL toURL() {
 		try {
 			return new URL(getLink());
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			return null;
 		}
 	}

@@ -31,6 +31,12 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	/** The log cache. */
 	private final HashMap<String, LogEntry> logCache = new HashMap<String, LogEntry>();
 	
+	/**
+	 * Execute log.
+	 *
+	 * @param revision the revision
+	 * @return the tuple
+	 */
 	public abstract Tuple<Integer, List<String>> executeLog(String revision);
 	
 	/**

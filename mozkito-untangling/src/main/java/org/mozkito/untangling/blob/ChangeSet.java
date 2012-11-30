@@ -24,7 +24,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -35,7 +35,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class ChangeSet implements Comparable<ChangeSet> {
 	
 	/** The transaction. */
-	private final RCSTransaction                  transaction;
+	private final Transaction                  transaction;
 	
 	/** The operations. */
 	private final Collection<JavaChangeOperation> operations;
@@ -48,7 +48,7 @@ public class ChangeSet implements Comparable<ChangeSet> {
 	 * @param operations
 	 *            the operations
 	 */
-	public ChangeSet(final RCSTransaction transaction, final Collection<JavaChangeOperation> operations) {
+	public ChangeSet(final Transaction transaction, final Collection<JavaChangeOperation> operations) {
 		this.transaction = transaction;
 		this.operations = operations;
 	}
@@ -60,7 +60,7 @@ public class ChangeSet implements Comparable<ChangeSet> {
 	@Override
 	public int compareTo(final ChangeSet other) {
 		
-		final Comparator<? super RCSTransaction> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
+		final Comparator<? super Transaction> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
 		return comparator.compare(other.getTransaction(), this.transaction);
 	}
 	
@@ -122,7 +122,7 @@ public class ChangeSet implements Comparable<ChangeSet> {
 	 * 
 	 * @return the transaction
 	 */
-	public RCSTransaction getTransaction() {
+	public Transaction getTransaction() {
 		return this.transaction;
 	}
 	

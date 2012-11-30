@@ -36,7 +36,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class CompletedOrderEngine.
@@ -185,7 +185,7 @@ public class CompletedOrderEngine extends Engine {
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
 	                        final Relation score) {
-		final RCSTransaction transaction = ((MappableTransaction) from).getTransaction();
+		final Transaction transaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;
 		
@@ -209,7 +209,7 @@ public class CompletedOrderEngine extends Engine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new And(new Atom(Index.TO, Report.class), new Atom(Index.FROM, RCSTransaction.class));
+		return new And(new Atom(Index.TO, Report.class), new Atom(Index.FROM, Transaction.class));
 	}
 	
 }

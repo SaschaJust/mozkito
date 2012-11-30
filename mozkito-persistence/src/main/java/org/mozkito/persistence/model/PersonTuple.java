@@ -20,10 +20,11 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import org.mozkito.persistence.Annotated;
-
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+
+import org.mozkito.persistence.Annotated;
 
 @Embeddable
 public class PersonTuple implements Annotated {
@@ -95,6 +96,10 @@ public class PersonTuple implements Annotated {
 			return false;
 		}
 		return true;
+	}
+	
+	public final String getHandle() {
+		return JavaUtils.getHandle(PersonTuple.class);
 	}
 	
 	/**

@@ -38,7 +38,7 @@ import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -78,7 +78,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		}
 		
 		@Override
-		public ChangeCouplingVoter createVoter(final RCSTransaction transaction) {
+		public ChangeCouplingVoter createVoter(final Transaction transaction) {
 			return new ChangeCouplingVoter(transaction, this.minSupport, this.minConfidence, this.persistenceUtil,
 			                               this.cacheDir);
 		}
@@ -181,7 +181,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	private LinkedList<MethodChangeCoupling> couplings;
 	
 	/** The transaction. */
-	private final RCSTransaction             transaction;
+	private final Transaction             transaction;
 	
 	/** The min support. */
 	private final int                        minSupport;
@@ -208,7 +208,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public ChangeCouplingVoter(@NotNull final RCSTransaction transaction, final int minSupport,
+	public ChangeCouplingVoter(@NotNull final Transaction transaction, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 		
 		this.transaction = transaction;

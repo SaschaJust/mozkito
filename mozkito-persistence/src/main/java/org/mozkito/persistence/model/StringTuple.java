@@ -16,9 +16,10 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
-import org.mozkito.persistence.Annotated;
-
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
+import org.mozkito.persistence.Annotated;
 
 @Embeddable
 public class StringTuple implements Annotated {
@@ -39,8 +40,12 @@ public class StringTuple implements Annotated {
 	}
 	
 	/**
+	 * Instantiates a new string tuple.
+	 * 
 	 * @param oldValue
+	 *            the old value
 	 * @param newValue
+	 *            the new value
 	 */
 	@NoneNull
 	public StringTuple(final String oldValue, final String newValue) {
@@ -63,7 +68,7 @@ public class StringTuple implements Annotated {
 		if (!(obj instanceof StringTuple)) {
 			return false;
 		}
-		StringTuple other = (StringTuple) obj;
+		final StringTuple other = (StringTuple) obj;
 		if (getNewValue() == null) {
 			if (other.getNewValue() != null) {
 				return false;
@@ -79,6 +84,10 @@ public class StringTuple implements Annotated {
 			return false;
 		}
 		return true;
+	}
+	
+	public final String getHandle() {
+		return JavaUtils.getHandle(StringTuple.class);
 	}
 	
 	/**
@@ -107,12 +116,12 @@ public class StringTuple implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getNewValue() == null)
-		                                                  ? 0
-		                                                  : getNewValue().hashCode());
-		result = prime * result + ((getOldValue() == null)
-		                                                  ? 0
-		                                                  : getOldValue().hashCode());
+		result = (prime * result) + ((getNewValue() == null)
+		                                                    ? 0
+		                                                    : getNewValue().hashCode());
+		result = (prime * result) + ((getOldValue() == null)
+		                                                    ? 0
+		                                                    : getOldValue().hashCode());
 		return result;
 	}
 	
@@ -138,7 +147,7 @@ public class StringTuple implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("StringTuple [old=");
 		builder.append(getOldValue());
 		builder.append(", new=");

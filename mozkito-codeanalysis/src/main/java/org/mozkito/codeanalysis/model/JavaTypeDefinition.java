@@ -23,11 +23,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom2.Element;
+
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.persistence.Annotated;
 
@@ -40,10 +42,19 @@ import org.mozkito.persistence.Annotated;
 @DiscriminatorValue ("JAVATYPEDEFINITION")
 public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
+	/** The Constant FULL_QUALIFIED_NAME. */
 	public static final String FULL_QUALIFIED_NAME   = "fullQualifiedName";
+	
+	/** The Constant JAVA_CLASS_DEFINITION. */
 	public static final String JAVA_CLASS_DEFINITION = "JavaClassDefinition";
+	
+	/** The Constant JAVA_CLASS_ANONYMOUS. */
 	public static final String JAVA_CLASS_ANONYMOUS  = "anonymous";
+	
+	/** The Constant JAVA_CLASS_INTERFACE. */
 	public static final String JAVA_CLASS_INTERFACE  = "interface";
+	
+	/** The Constant JAVA_CLASS_PARENT. */
 	public static final String JAVA_CLASS_PARENT     = "parent";
 	
 	/** The Constant serialVersionUID. */
@@ -54,6 +65,8 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @param element
 	 *            the element
+	 * @param factory
+	 *            the factory
 	 * @return the java class definition is successful, <code>null</code> otherwise.
 	 */
 	public static JavaTypeDefinition fromXMLRepresentation(final Element element,
@@ -111,8 +124,10 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	/** The anonym class. */
 	private boolean                         anonymClass    = false;
 	
+	/** The parent. */
 	private JavaTypeDefinition              parent;
 	
+	/** The interfaze. */
 	private boolean                         interfaze      = false;
 	
 	/**
@@ -126,10 +141,10 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	/**
 	 * Instantiates a new java class definition.
 	 * 
+	 * @param parent
+	 *            the parent
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param packageName
-	 *            the package name
 	 */
 	@NoneNull
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName) {
@@ -143,10 +158,12 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	/**
 	 * Instantiates a new java class definition.
 	 * 
+	 * @param parent
+	 *            the parent
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param packageName
-	 *            the package name
+	 * @param isInterface
+	 *            the is interface
 	 */
 	@NoneNull
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName,
@@ -164,8 +181,6 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param packageName
-	 *            the package name
 	 */
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName) {
@@ -180,8 +195,8 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param packageName
-	 *            the package name
+	 * @param isInterface
+	 *            the is interface
 	 */
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName, final boolean isInterface) {
@@ -193,6 +208,8 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	}
 	
 	/**
+	 * Gets the anon counters.
+	 * 
 	 * @return the anonCounters
 	 */
 	@Transient
@@ -200,6 +217,19 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		return this.anonCounters;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(JavaTypeDefinition.class);
+	}
+	
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	@ManyToOne (cascade = { CascadeType.PERSIST }, fetch = FetchType.LAZY)
 	public JavaTypeDefinition getParent() {
 		return this.parent;
@@ -249,11 +279,21 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		return this.anonymClass;
 	}
 	
+	/**
+	 * Checks if is interface.
+	 * 
+	 * @return true, if is interface
+	 */
 	@Transient
 	public boolean isInterface() {
 		return isInterfaze();
 	}
 	
+	/**
+	 * Checks if is interfaze.
+	 * 
+	 * @return true, if is interfaze
+	 */
 	public boolean isInterfaze() {
 		// PRECONDITIONS
 		
@@ -297,6 +337,12 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 		this.anonymClass = anonymClass;
 	}
 	
+	/**
+	 * Sets the interfaze.
+	 * 
+	 * @param interfaze
+	 *            the new interfaze
+	 */
 	public void setInterfaze(final boolean interfaze) {
 		// PRECONDITIONS
 		try {
@@ -309,7 +355,10 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	}
 	
 	/**
+	 * Sets the parent.
+	 * 
 	 * @param parent
+	 *            the new parent
 	 */
 	protected void setParent(final JavaTypeDefinition parent) {
 		this.parent = parent;

@@ -24,30 +24,35 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
- * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
+ * The {@link RepositoryPersister} taks {@link Transaction} from the previous node and dumps the data to the
  * database.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class RepositoryPersister extends Sink<RCSTransaction> {
+public class RepositoryPersister extends Sink<Transaction> {
 	
+	/** The Constant COMMIT_CACHE. */
 	private static final int COMMIT_CACHE = 100;
+	
+	/** The counter. */
 	Integer                  counter      = 0;
 	
 	/**
+	 * Instantiates a new repository persister.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
 	 * @see RepoSuiteSinkThread
-	 * @param threadGroup
-	 * @param settings
-	 * @param persistenceUtil
 	 */
 	public RepositoryPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -55,11 +60,11 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void process() {
-				final RCSTransaction data = getInputData();
+				final Transaction data = getInputData();
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
@@ -73,7 +78,7 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 			}
 		};
 		
-		new PostExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PostExecutionHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void postExecution() {

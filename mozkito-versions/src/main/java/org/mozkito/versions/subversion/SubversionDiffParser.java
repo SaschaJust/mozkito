@@ -33,14 +33,17 @@ import difflib.DiffUtils;
 import difflib.Patch;
 
 /**
+ * The Class SubversionDiffParser.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 class SubversionDiffParser implements ISVNDiffGenerator {
 	
 	/**
-	 * @param chunk
-	 * @return
+	 * Gets the line numbers.
+	 *
+	 * @param chunk the chunk
+	 * @return the line numbers
 	 */
 	public static HashSet<Integer> getLineNumbers(final Chunk chunk) {
 		final HashSet<Integer> result = new HashSet<Integer>();
@@ -52,8 +55,10 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	}
 	
 	/**
-	 * @param lines
-	 * @return
+	 * Lines to string.
+	 *
+	 * @param lines the lines
+	 * @return the string
 	 */
 	public static String linesToString(final List<String> lines) {
 		final StringBuilder sbuilder = new StringBuilder();
@@ -64,10 +69,11 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 		return sbuilder.toString();
 	}
 	
+	/** The deltas. */
 	protected HashSet<Delta> deltas;
 	
 	/**
-	 * 
+	 * Instantiates a new subversion diff parser.
 	 */
 	public SubversionDiffParser() {
 		this.deltas = new HashSet<Delta>();
@@ -152,7 +158,9 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	}
 	
 	/**
-	 * @return
+	 * Gets the deltas.
+	 *
+	 * @return the deltas
 	 */
 	public HashSet<Delta> getDeltas() {
 		return this.deltas;

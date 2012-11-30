@@ -23,7 +23,7 @@ import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.File;
 
 
 /**
@@ -87,13 +87,13 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 		final DescriptiveStatistics parentStat = new DescriptiveStatistics();
 		final DescriptiveStatistics dependantStat = new DescriptiveStatistics();
 		
-		final Set<RCSFile> changedFiles = new HashSet<RCSFile>();
+		final Set<File> changedFiles = new HashSet<File>();
 		for (final JavaChangeOperation op : item.getNode()) {
 			changedFiles.add(op.getRevision().getChangedFile());
 		}
 		
 		for (final ChangeGenealogyLayerNode parent : this.genealogy.getAllParents(item.getNode())) {
-			final Set<RCSFile> parentChangedFiles = new HashSet<RCSFile>();
+			final Set<File> parentChangedFiles = new HashSet<File>();
 			for (final JavaChangeOperation op : parent) {
 				parentChangedFiles.add(op.getRevision().getChangedFile());
 			}
@@ -103,7 +103,7 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 		}
 		
 		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(item.getNode())) {
-			final Set<RCSFile> dependentChangedFiles = new HashSet<RCSFile>();
+			final Set<File> dependentChangedFiles = new HashSet<File>();
 			for (final JavaChangeOperation op : dependant) {
 				dependentChangedFiles.add(op.getRevision().getChangedFile());
 			}

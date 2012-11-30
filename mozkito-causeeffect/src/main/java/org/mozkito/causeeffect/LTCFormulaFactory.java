@@ -22,8 +22,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -32,22 +32,22 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class LTCFormulaFactory {
 	
-	private final Set<CTLFormulaGenerator<RCSFile>> generators = new HashSet<>();
+	private final Set<CTLFormulaGenerator<File>> generators = new HashSet<>();
 	
-	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
-	                                               final RCSTransaction rootVertex,
-	                                               final VertexSelector<RCSTransaction> vertexSelector) {
+	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<Transaction> genealogy,
+	                                               final Transaction rootVertex,
+	                                               final VertexSelector<Transaction> vertexSelector) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
-		for (final CTLFormulaGenerator<RCSFile> generator : this.generators) {
+		for (final CTLFormulaGenerator<File> generator : this.generators) {
 			
 			// implication = all changes files of all dependent vertices valid by vertexSelector
-			final LinkedList<RCSTransaction> verticesToProcess = new LinkedList<>();
+			final LinkedList<Transaction> verticesToProcess = new LinkedList<>();
 			verticesToProcess.add(rootVertex);
-			final Set<RCSFile> implications = new HashSet<>();
+			final Set<File> implications = new HashSet<>();
 			while (!verticesToProcess.isEmpty()) {
-				final RCSTransaction vertex = verticesToProcess.poll();
-				for (final RCSTransaction dependent : genealogy.getAllDependants(vertex)) {
+				final Transaction vertex = verticesToProcess.poll();
+				for (final Transaction dependent : genealogy.getAllDependants(vertex)) {
 					if (vertexSelector.selectVertex(dependent)) {
 						verticesToProcess.add(dependent);
 					}
@@ -61,15 +61,15 @@ public class LTCFormulaFactory {
 	}
 	
 	@SuppressWarnings ("unchecked")
-	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
-	                                                               final RCSTransaction transaction) {
+	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<Transaction> genealogy,
+	                                                               final Transaction transaction) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
-		for (final CTLFormulaGenerator<RCSFile> generator : this.generators) {
+		for (final CTLFormulaGenerator<File> generator : this.generators) {
 			
-			final Collection<RCSFile> implications = transaction.getChangedFiles();
-			for (final RCSFile file : implications) {
-				final ArrayList<RCSFile> premise = new ArrayList<RCSFile>(1);
+			final Collection<File> implications = transaction.getChangedFiles();
+			for (final File file : implications) {
+				final ArrayList<File> premise = new ArrayList<File>(1);
 				premise.add(file);
 				formulas.addAll(generator.generate(premise, CollectionUtils.removeAll(implications, premise)));
 			}
@@ -77,7 +77,7 @@ public class LTCFormulaFactory {
 		return formulas;
 	}
 	
-	public boolean register(final CTLFormulaGenerator<RCSFile> generator) {
+	public boolean register(final CTLFormulaGenerator<File> generator) {
 		return this.generators.add(generator);
 	}
 }

@@ -85,15 +85,34 @@ import difflib.Patch;
  */
 public class SubversionRepository extends Repository {
 	
+	/** The end revision. */
 	private SVNRevision   endRevision;
+	
+	/** The initialized. */
 	private boolean       initialized = false;
+	
+	/** The password. */
 	private String        password;
+	
+	/** The repository. */
 	private SVNRepository repository;
+	
+	/** The start revision. */
 	private SVNRevision   startRevision;
+	
+	/** The svnurl. */
 	private SVNURL        svnurl;
+	
+	/** The type. */
 	private ProtocolType  type;
+	
+	/** The username. */
 	private String        username;
+	
+	/** The working directory. */
 	private File          workingDirectory;
+	
+	/** The tmp dir. */
 	private File          tmpDir;
 	
 	/**
@@ -136,12 +155,11 @@ public class SubversionRepository extends Repository {
 	
 	/**
 	 * Converts a given string to the corresponding SVNRevision. This requires
-	 * {@link Repository#setup(URI, String, String)} to be executed.
-	 * 
-	 * @param revision
-	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
-	 *            version of the alias string versions. This may not be null.
+	 *
+	 * @param revision the string representing an SVN revision. This is either a numeric of type long or a case insensitive
+	 * version of the alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision
+	 * {@link Repository#setup(URI, String, String)} to be executed.
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
@@ -290,6 +308,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#gatherToolInformation()
+	 */
 	@Override
 	public String gatherToolInformation() {
 		final StringBuilder builder = new StringBuilder();
@@ -348,6 +369,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getEndRevision()
+	 */
 	@Override
 	public String getEndRevision() {
 		return this.endRevision.toString();
@@ -444,6 +468,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
@@ -455,6 +482,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
@@ -495,6 +525,9 @@ public class SubversionRepository extends Repository {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 */
 	@Override
 	public long getTransactionIndex(final String transactionId) {
 		String searchRev = transactionId;
@@ -508,6 +541,9 @@ public class SubversionRepository extends Repository {
 		return index;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
+	 */
 	@Override
 	public File getWokingCopyLocation() {
 		return this.workingDirectory;
@@ -553,6 +589,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#setEndRevision(java.lang.String)
+	 */
 	@Override
 	public void setEndRevision(final String endRevision) {
 		try {
@@ -567,6 +606,9 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#setStartRevision(java.lang.String)
+	 */
 	@Override
 	public void setStartRevision(final String startRevision) {
 		this.startRevision = (startRevision != null

@@ -15,41 +15,49 @@ package org.mozkito.versions.elements;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Transaction;
 
 /**
+ * The Class RCSFileManager.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class RCSFileManager {
 	
-	private final Map<String, RCSFile> currentFiles = new HashMap<String, RCSFile>();
+	/** The current files. */
+	private final Map<String, File> currentFiles = new HashMap<String, File>();
 	
 	/**
-	 * @param file
+	 * Adds the file.
+	 *
+	 * @param file the file
 	 */
-	public void addFile(final RCSFile file) {
+	public void addFile(final File file) {
 		this.currentFiles.put(file.getLatestPath(), file);
 	}
 	
 	/**
-	 * @param path
-	 * @param transaction
-	 * @return
+	 * Creates the file.
+	 *
+	 * @param path the path
+	 * @param transaction the transaction
+	 * @return the file
 	 */
-	public RCSFile createFile(final String path,
-	                          final RCSTransaction transaction) {
-		final RCSFile file = new RCSFile(path, transaction);
+	public File createFile(final String path,
+	                          final Transaction transaction) {
+		final File file = new File(path, transaction);
 		this.currentFiles.put(path, file);
 		return file;
 	}
 	
 	/**
-	 * @param path
-	 * @return
+	 * Gets the file.
+	 *
+	 * @param path the path
+	 * @return the file
 	 */
-	public RCSFile getFile(final String path) {
+	public File getFile(final String path) {
 		return this.currentFiles.get(path);
 	}
 }

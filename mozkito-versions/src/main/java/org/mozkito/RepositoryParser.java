@@ -30,31 +30,32 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 /**
- * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced
- * {@link RCSTransaction} in the output storage.
- * 
+ * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced.
+ *
+ * {@link Transaction} in the output storage.
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
-public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
+public class RepositoryParser extends Transformer<LogEntry, Transaction> {
 	
 	/**
+	 * Instantiates a new repository parser.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param repository the repository
 	 * @see RepoSuiteTransformerThread
-	 * @param threadGroup
-	 * @param settings
-	 * @param repository
 	 */
 	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();
 		
-		new ProcessHook<LogEntry, RCSTransaction>(this) {
+		new ProcessHook<LogEntry, Transaction>(this) {
 			
 			@Override
 			public void process() {
@@ -69,13 +70,13 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 					        + data.getRevision() + ")");
 				}
 				
-				final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
+				final Transaction rcsTransaction = new Transaction(data.getRevision(), data.getMessage(),
 				                                                         data.getDateTime(), data.getAuthor(),
 				                                                         data.getOriginalId());
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {
-					RCSFile file;
+					File file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
 						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
@@ -101,7 +102,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 						}
 					}
 					
-					new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
+					new Revision(rcsTransaction, file, changedPaths.get(fileName));
 				}
 				
 				provideOutputData(rcsTransaction);

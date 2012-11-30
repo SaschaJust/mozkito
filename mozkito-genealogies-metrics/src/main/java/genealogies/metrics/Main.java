@@ -64,7 +64,7 @@ public class Main {
 			final OutputFileArgument.Options fileAggregateOutOptions = new OutputFileArgument.Options(
 			                                                                                          settings.getRoot(),
 			                                                                                          "fileAggregateOut",
-			                                                                                          "Filename that will contain genealogy metrics aggregated to RCSFile level as matrix.",
+			                                                                                          "Filename that will contain genealogy metrics aggregated to File level as matrix.",
 			                                                                                          null,
 			                                                                                          Requirement.optional,
 			                                                                                          true);

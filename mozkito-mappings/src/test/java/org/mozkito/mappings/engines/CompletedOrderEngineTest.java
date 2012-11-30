@@ -32,23 +32,32 @@ import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class CompletedOrderEngineTest.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-@DatabaseSettings (unit = "mappings", database = "moskito_jruby_july2010", options = ConnectOptions.VALIDATE)
-public class CompletedOrderEngineTest extends MozkitoTest {
+@DatabaseSettings (unit = "mappings", database = "moskito_jruby_july2010", options = ConnectOptions.CREATE)
+public class CompletedOrderEngineTest extends DatabaseTest {
 	
+	/** The engines. */
 	private Map<Class<? extends Engine>, Engine> engines;
+	
+	/** The engine. */
 	private Engine                               engine;
+	
+	/** The finder. */
 	private static Finder                        finder;
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Sets the up before class.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -57,24 +66,29 @@ public class CompletedOrderEngineTest extends MozkitoTest {
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Tear down after class.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 	}
 	
 	/**
-	 * Gets the simple name of the class.
+	 * Score.
 	 * 
-	 * @return the simple name of the class.
+	 * @param transactionId
+	 *            the transaction id
+	 * @param reportId
+	 *            the report id
+	 * @return the relation
+	 * @throws Exception
+	 *             the exception
 	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(CompletedOrderEngineTest.class);
-	}
-	
 	private Relation score(final String transactionId,
 	                       final String reportId) throws Exception {
-		final RCSTransaction transaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
+		final Transaction transaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
 		assertNotNull("Failed retreiving transaction from database.", transaction);
 		
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);
@@ -88,12 +102,21 @@ public class CompletedOrderEngineTest extends MozkitoTest {
 		return relation;
 	}
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		this.engines = finder.getEngines();
 		this.engine = this.engines.get(CodeFragmentsEngine.class);
 	}
 	
+	/**
+	 * Test score_9be47462f004ba9a9f729a46448fde9e304fe848_21.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public final void testScore_9be47462f004ba9a9f729a46448fde9e304fe848_21() throws Exception {
 		final Relation relation = score("9be47462f004ba9a9f729a46448fde9e304fe848", "JRUBY-21");

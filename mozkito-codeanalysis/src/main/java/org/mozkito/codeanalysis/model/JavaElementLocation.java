@@ -25,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -35,13 +36,12 @@ import org.apache.openjpa.persistence.Type;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 
 /**
  * The Class JavaElementLocation.
  * 
- * @param <T>
- *            the generic type
  * @author Kim Herzig <herzig@mozkito.org>
  */
 @Entity
@@ -64,14 +64,26 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 		FALSE
 	}
 	
+	/** The java element location tag. */
 	public static String      JAVA_ELEMENT_LOCATION_TAG             = "JavaElementLocation";
-	public static String      JAVA_ELEMENT_LOCATION_ID_ATTR         = "id";
-	public static String      JAVA_ELEMENT_LOCATION_START_LINE_ATTR = "startline";
-	public static String      JAVA_ELEMENT_LOCATION_END_LINE_ATTR   = "endline";
-	public static String      JAVA_ELEMENT_LOCATION_POSITION_ATTR   = "position";
-	public static String      JAVA_ELEMENT_LOCATION_PATH_TAG        = "filePath";
-	public static String      JAVA_ELEMENT_LOCATION_BODY_START_ATTR = "bodystartline";
 	
+	/** The java element location id attr. */
+	public static String      JAVA_ELEMENT_LOCATION_ID_ATTR         = "id";
+	
+	/** The java element location start line attr. */
+	public static String      JAVA_ELEMENT_LOCATION_START_LINE_ATTR = "startline";
+	
+	/** The java element location end line attr. */
+	public static String      JAVA_ELEMENT_LOCATION_END_LINE_ATTR   = "endline";
+	
+	/** The java element location position attr. */
+	public static String      JAVA_ELEMENT_LOCATION_POSITION_ATTR   = "position";
+	
+	/** The java element location path tag. */
+	public static String      JAVA_ELEMENT_LOCATION_PATH_TAG        = "filePath";
+	
+	/** The java element location body start attr. */
+	public static String      JAVA_ELEMENT_LOCATION_BODY_START_ATTR = "bodystartline";
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID                      = -4858435624572738026L;
 	
@@ -80,6 +92,8 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 * 
 	 * @param element
 	 *            the element
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java element location if successful. Returns <code>null</code> otherwise.
 	 */
 	public static JavaElementLocation fromXMLRepresentation(final Element element,
@@ -512,6 +526,14 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	 */
 	public String getFilePath() {
 		return this.filePath;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(JavaElementLocation.class);
 	}
 	
 	/**

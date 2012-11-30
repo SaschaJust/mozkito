@@ -39,17 +39,30 @@ class GitLogParser implements LogParser {
 	
 	// protected static DateTimeFormatter gitLogDateFormat =
 	// DateTimeFormat.forPattern("EEE MMM d HH:mm:ss yyyy Z");
+	/** The git log date format regex. */
 	protected static Regex gitLogDateFormatRegex = new Regex(
 	                                                         "({EEE}[A-Za-z]{3})\\s+({MMM}[A-Za-z]{3})\\s+({d}\\d{1,2})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)\\s+({yyyy}\\d{4})\\s+({Z}[+-]\\d{4})");
+	
+	/** The message regex. */
 	protected static Regex messageRegex          = new Regex(".*$$\\s*git-svn-id:.*");
 	
+	/** The email base regex. */
 	protected static Regex emailBaseRegex        = new Regex("({email}" + Patterns.EMAIL_ADDRESS + ")");
 	
 	// protected static Regex usernameBaseRegex = new Regex("\\s*<({username}[a-z0-9]{4,})>");
+	/** The username base regex. */
 	protected static Regex usernameBaseRegex     = new Regex("\\s*<({username}[a-z0-9]+)>");
 	
+	/** The original id regex. */
 	protected static Regex originalIdRegex       = new Regex(".*@({hit}\\d+)\\s+.*");
 	
+	/**
+	 * Gets the author.
+	 *
+	 * @param line the line
+	 * @param lineCounter the line counter
+	 * @return the author
+	 */
 	protected static Person getAuthor(final String line,
 	                                  final int lineCounter) {
 		String[] authorParts = line.split(":");

@@ -22,7 +22,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalInbreedMetrics;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,7 +34,7 @@ import net.ownhero.dev.kisa.Logger;
 public class TransactionInbreedMetrics extends GenealogyTransactionMetric {
 	
 	/** The universal metric. */
-	private final UniversalInbreedMetrics<RCSTransaction> universalMetric;
+	private final UniversalInbreedMetrics<Transaction> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction inbreed metrics.
@@ -43,7 +43,7 @@ public class TransactionInbreedMetrics extends GenealogyTransactionMetric {
 	 */
 	public TransactionInbreedMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalInbreedMetrics<RCSTransaction>(genealogy);
+		this.universalMetric = new UniversalInbreedMetrics<Transaction>(genealogy);
 	}
 	
 	/* (non-Javadoc)

@@ -25,7 +25,7 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -38,9 +38,9 @@ public class GenealogyTestEnvironment {
 	
 	private final PersistenceUtil                                    persistenceUtil;
 	
-	private final Map<RCSTransaction, Set<JavaChangeOperation>>      transactionMap;
+	private final Map<Transaction, Set<JavaChangeOperation>>      transactionMap;
 	
-	private final Map<Integer, RCSTransaction>                       environmentTransactions;
+	private final Map<Integer, Transaction>                       environmentTransactions;
 	
 	private final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations;
 	
@@ -51,8 +51,8 @@ public class GenealogyTestEnvironment {
 	private final File                                               tmpGraphDBFile;
 	
 	GenealogyTestEnvironment(PersistenceUtil persistenceUtil,
-	        Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap,
-	        Map<Integer, RCSTransaction> environmentTransactions,
+	        Map<Transaction, Set<JavaChangeOperation>> transactionMap,
+	        Map<Integer, Transaction> environmentTransactions,
 	        Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations, Repository repository,
 	        CoreChangeGenealogy changeGenealogy, File tmpGraphDBFile) {
 		
@@ -145,7 +145,7 @@ public class GenealogyTestEnvironment {
 		return this.environmentOperations;
 	}
 	
-	public Map<Integer, RCSTransaction> getEnvironmentTransactions() {
+	public Map<Integer, Transaction> getEnvironmentTransactions() {
 		return this.environmentTransactions;
 	}
 	
@@ -161,7 +161,7 @@ public class GenealogyTestEnvironment {
 		return this.tmpGraphDBFile;
 	}
 	
-	public Map<RCSTransaction, Set<JavaChangeOperation>> getTransactionMap() {
+	public Map<Transaction, Set<JavaChangeOperation>> getTransactionMap() {
 		return this.transactionMap;
 	}
 	

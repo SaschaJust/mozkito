@@ -49,7 +49,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import serp.util.Strings;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
@@ -76,7 +76,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 		
 		@Override
-		public CallGraphVoter createVoter(final RCSTransaction transaction) {
+		public CallGraphVoter createVoter(final Transaction transaction) {
 			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, transaction, this.cacheDir);
 		}
 		
@@ -218,7 +218,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction transaction,
+	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final Transaction transaction,
 	        final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {

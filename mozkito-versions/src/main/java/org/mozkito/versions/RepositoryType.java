@@ -12,9 +12,23 @@
  ******************************************************************************/
 package org.mozkito.versions;
 
+/**
+ * The Enum RepositoryType.
+ */
 public enum RepositoryType {
-	GIT, MERCURIAL, SUBVERSION;
 	
+	/** The git. */
+	GIT, 
+ /** The mercurial. */
+ MERCURIAL, 
+ /** The subversion. */
+ SUBVERSION;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public static String getHandle() {
 		return RepositoryType.class.getSimpleName();
 	}

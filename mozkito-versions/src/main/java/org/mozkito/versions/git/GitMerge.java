@@ -18,12 +18,27 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+/**
+ * The Class GitMerge.
+ */
 public class GitMerge {
 	
+	/** The merge hash. */
 	private final String      mergeHash;
+	
+	/** The branch parent. */
 	private final String      branchParent;
+	
+	/** The other parents. */
 	private final Set<String> otherParents = new HashSet<String>();
 	
+	/**
+	 * Instantiates a new git merge.
+	 *
+	 * @param mergeHash the merge hash
+	 * @param branchParent the branch parent
+	 * @param otherParents the other parents
+	 */
 	public GitMerge(@NotNull final String mergeHash, final String branchParent, final String... otherParents) {
 		this.mergeHash = mergeHash;
 		this.branchParent = branchParent;
@@ -32,6 +47,11 @@ public class GitMerge {
 		}
 	}
 	
+	/**
+	 * Gets the branch parent.
+	 *
+	 * @return the branch parent
+	 */
 	public String getBranchParent() {
 		// PRECONDITIONS
 		
@@ -42,6 +62,12 @@ public class GitMerge {
 		}
 	}
 	
+	/**
+	 * Gets the edge type.
+	 *
+	 * @param parent the parent
+	 * @return the edge type
+	 */
 	@NoneNull
 	public GitRevDependencyType getEdgeType(final String parent) {
 		// PRECONDITIONS
@@ -59,6 +85,11 @@ public class GitMerge {
 		}
 	}
 	
+	/**
+	 * Gets the merge hash.
+	 *
+	 * @return the merge hash
+	 */
 	public String getMergeHash() {
 		// PRECONDITIONS
 		
@@ -69,6 +100,11 @@ public class GitMerge {
 		}
 	}
 	
+	/**
+	 * Gets the other parents.
+	 *
+	 * @return the other parents
+	 */
 	public Set<String> getOtherParents() {
 		// PRECONDITIONS
 		

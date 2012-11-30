@@ -43,10 +43,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.tracker.model.comparators.HistoryElementComparator;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class History.
@@ -279,6 +279,14 @@ public class History implements Annotated {
 	@ManyToMany (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public SortedSet<HistoryElement> getElements() {
 		return this.elements;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(History.class);
 	}
 	
 	/**

@@ -24,7 +24,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class TransactionSet is a sorted set of transactions. All transactions in such a set must share at least one
@@ -32,7 +32,7 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCSTransaction> {
+public class TransactionSet implements SortedSet<Transaction>, Comparator<Transaction> {
 	
 	/**
 	 * The Enum TransactionSetOrder.
@@ -54,7 +54,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	private final Set<String>             branchIntersection = new HashSet<String>();
 	
 	/** The tree set. */
-	private final TreeSet<RCSTransaction> treeSet;
+	private final TreeSet<Transaction> treeSet;
 	
 	/**
 	 * Instantiates a new transaction set.
@@ -64,7 +64,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 */
 	public TransactionSet(final TransactionSetOrder order) {
 		this.order = order;
-		this.treeSet = new TreeSet<RCSTransaction>((Comparator<RCSTransaction>) this);
+		this.treeSet = new TreeSet<Transaction>((Comparator<Transaction>) this);
 	}
 	
 	/*
@@ -73,7 +73,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 */
 	@Override
 	@NoneNull
-	public boolean add(final RCSTransaction e) {
+	public boolean add(final Transaction e) {
 		// PRECONDITIONS
 		
 		try {
@@ -90,7 +90,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				final Collection<String> intersection = CollectionUtils.intersection(this.branchIntersection,
 				                                                                     branchNames);
 				if (intersection.isEmpty()) {
-					throw new IllegalArgumentException("The RCSTransaction " + e.getId()
+					throw new IllegalArgumentException("The Transaction " + e.getId()
 					        + " is not comparable to existing elements. " + "Transaction within the same "
 					        + "TransactionSet must share at " + "least one commong branch. "
 					        + "Exception according to Java specification on non-comparable objects within collections.");
@@ -109,11 +109,11 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Set#addAll(java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(final Collection<? extends RCSTransaction> c) {
+	public boolean addAll(final Collection<? extends Transaction> c) {
 		// PRECONDITIONS
 		boolean changed = false;
 		try {
-			for (final RCSTransaction t : c) {
+			for (final Transaction t : c) {
 				changed |= add(t);
 			}
 			return changed;
@@ -143,7 +143,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#comparator()
 	 */
 	@Override
-	public Comparator<? super RCSTransaction> comparator() {
+	public Comparator<? super Transaction> comparator() {
 		// PRECONDITIONS
 		
 		try {
@@ -158,8 +158,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(final RCSTransaction o1,
-	                   final RCSTransaction o2) {
+	public int compare(final Transaction o1,
+	                   final Transaction o2) {
 		// PRECONDITIONS
 		
 		try {
@@ -167,7 +167,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 			final Collection<String> intersection = CollectionUtils.intersection(o1.getBranchNames(),
 			                                                                     o2.getBranchNames());
 			if (intersection.isEmpty()) {
-				throw new IllegalArgumentException("The RCSTransaction " + o1.getId() + " and " + o2.getId()
+				throw new IllegalArgumentException("The Transaction " + o1.getId() + " and " + o2.getId()
 				        + " are not comparable. Both transactions must share at least one RCSBranch. "
 				        + "Exception according to Java specification on non-comparable objects within collections.");
 			}
@@ -217,7 +217,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#first()
 	 */
 	@Override
-	public RCSTransaction first() {
+	public Transaction first() {
 		// PRECONDITIONS
 		
 		try {
@@ -232,7 +232,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#headSet(java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> headSet(final RCSTransaction arg0) {
+	public SortedSet<Transaction> headSet(final Transaction arg0) {
 		// PRECONDITIONS
 		
 		try {
@@ -264,7 +264,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Set#iterator()
 	 */
 	@Override
-	public Iterator<RCSTransaction> iterator() {
+	public Iterator<Transaction> iterator() {
 		// PRECONDITIONS
 		
 		try {
@@ -279,7 +279,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#last()
 	 */
 	@Override
-	public RCSTransaction last() {
+	public Transaction last() {
 		// PRECONDITIONS
 		
 		try {
@@ -303,7 +303,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<Transaction> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -330,7 +330,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<Transaction> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -357,7 +357,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<Transaction> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -390,8 +390,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#subSet(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> subSet(final RCSTransaction arg0,
-	                                        final RCSTransaction arg1) {
+	public SortedSet<Transaction> subSet(final Transaction arg0,
+	                                        final Transaction arg1) {
 		// PRECONDITIONS
 		
 		try {
@@ -408,7 +408,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#tailSet(java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> tailSet(final RCSTransaction arg0) {
+	public SortedSet<Transaction> tailSet(final Transaction arg0) {
 		// PRECONDITIONS
 		
 		try {
@@ -439,13 +439,16 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Set#toArray(T[])
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		// PRECONDITIONS
 		
 		try {
-			return (T[]) this.treeSet.toArray(new RCSTransaction[this.treeSet.size()]);
+			return (T[]) this.treeSet.toArray(new Transaction[this.treeSet.size()]);
 		} finally {
 			// POSTCONDITIONS
 		}

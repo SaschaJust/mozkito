@@ -16,7 +16,7 @@
 
 package org.mozkito.genealogies.metrics;
 
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class GenealogyTransactionNode.
@@ -26,7 +26,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class GenealogyTransactionNode {
 	
 	/** The t. */
-	private RCSTransaction t;
+	private Transaction t;
 	
 	/** The node id. */
 	private String         nodeId;
@@ -40,7 +40,7 @@ public class GenealogyTransactionNode {
 	 * @param t the t
 	 * @param nodeId the node id
 	 */
-	public GenealogyTransactionNode(RCSTransaction t, String nodeId) {
+	public GenealogyTransactionNode(Transaction t, String nodeId) {
 		this.t = t;
 		this.nodeId = nodeId;
 		this.lastNode = false;
@@ -53,7 +53,7 @@ public class GenealogyTransactionNode {
 	 * @param nodeId the node id
 	 * @param lastNode the last node
 	 */
-	public GenealogyTransactionNode(RCSTransaction t, String nodeId, boolean lastNode) {
+	public GenealogyTransactionNode(Transaction t, String nodeId, boolean lastNode) {
 		this.t = t;
 		this.nodeId = nodeId;
 		this.lastNode = lastNode;
@@ -64,7 +64,7 @@ public class GenealogyTransactionNode {
 	 *
 	 * @return the node
 	 */
-	public RCSTransaction getNode() {
+	public Transaction getNode() {
 		return this.t;
 	}
 	

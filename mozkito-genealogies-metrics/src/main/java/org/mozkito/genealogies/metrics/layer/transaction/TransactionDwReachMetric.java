@@ -26,7 +26,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -37,7 +37,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	
 	/** The universal metric. */
-	private UniversalDwReachMetric<RCSTransaction> universalMetric;
+	private UniversalDwReachMetric<Transaction> universalMetric;
 	
 	/** The day diff size. */
 	private static int                             dayDiffSize = 14;
@@ -49,11 +49,11 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	 */
 	public TransactionDwReachMetric(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalDwReachMetric<RCSTransaction>(genealogy, new Comparator<RCSTransaction>() {
+		this.universalMetric = new UniversalDwReachMetric<Transaction>(genealogy, new Comparator<Transaction>() {
 			
 			@Override
-			public int compare(final RCSTransaction original,
-			                   final RCSTransaction t) {
+			public int compare(final Transaction original,
+			                   final Transaction t) {
 				final Days daysBetween = Days.daysBetween(original.getTimestamp(), t.getTimestamp());
 				if (daysBetween.getDays() > dayDiffSize) { return 1; }
 				return -1;

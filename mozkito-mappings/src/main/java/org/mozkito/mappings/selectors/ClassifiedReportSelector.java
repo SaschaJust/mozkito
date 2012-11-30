@@ -35,7 +35,7 @@ import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class ClassifiedReportSelector.
@@ -170,7 +170,7 @@ public class ClassifiedReportSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
-			return from.equals(RCSTransaction.class) && to.equals(Report.class);
+			return from.equals(Transaction.class) && to.equals(Report.class);
 		} finally {
 			// POSTCONDITIONS
 		}

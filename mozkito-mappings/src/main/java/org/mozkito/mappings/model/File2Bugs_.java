@@ -16,7 +16,7 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.File;
 
 /**
  * The Class File2Bugs_.
@@ -27,7 +27,7 @@ import org.mozkito.versions.model.RCSFile;
 public class File2Bugs_ {
 	
 	/** The file. */
-	public static volatile SingularAttribute<File2Bugs, RCSFile> file;
+	public static volatile SingularAttribute<File2Bugs, File> file;
 	
 	/** The reports. */
 	public static volatile SetAttribute<File2Bugs, Report>       reports;

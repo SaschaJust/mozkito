@@ -67,6 +67,7 @@ import difflib.Patch;
  */
 public class GitRepository extends DistributedCommandLineRepository {
 	
+	/** The Constant GIT_HASH_LENGTH. */
 	private static final int                 GIT_HASH_LENGTH   = 40;
 	
 	/** The current revision. */
@@ -277,11 +278,17 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return patch.getDeltas();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
+	 */
 	@Override
 	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) @NotNull final String revision) {
 		return gitLog(revision);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String, java.lang.String)
+	 */
 	@Override
 	@NoneNull
 	public Tuple<Integer, List<String>> executeLog(@MinLength (min = 4) final String fromRevision,
@@ -493,6 +500,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return response.getSecond().get(0).trim();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#getLogParser()
+	 */
 	@Override
 	protected LogParser getLogParser() {
 		return new GitLogParser();
@@ -602,6 +612,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return this.transactionIDs.get(Long.valueOf(index).intValue());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 */
 	@Override
 	public long getTransactionIndex(final String transactionId) {
 		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
@@ -623,6 +636,12 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return this.cloneDir;
 	}
 	
+	/**
+	 * Git log.
+	 *
+	 * @param revisionSelection the revision selection
+	 * @return the tuple
+	 */
 	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) {
 		if (Logger.logDebug()) {
 			Logger.debug("############# git log --pretty=fuller --branches --remotes --topo-order %s.",

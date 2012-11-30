@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.genealogies;
 
@@ -29,22 +26,24 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
+
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.genealogies.utils.GenealogyTestEnvironment;
 import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
-
-public class TransactionChangeGenealogy_MozkitoTest extends MozkitoTest {
+public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	@Test
-	@DatabaseSettings (unit = "codeanalysis", database = "moskito_genealogies_test_environment", options = ConnectOptions.CREATE)
+	@DatabaseSettings (unit = "codeanalysis",
+	                   database = "moskito_genealogies_test_environment",
+	                   options = ConnectOptions.CREATE)
 	public void test() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);
@@ -52,7 +51,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends MozkitoTest {
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
 		                                                                                                  branchFactory);
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
+		final Map<Integer, Transaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
 		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
@@ -238,7 +237,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends MozkitoTest {
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(10), environmentTransactions.get(10)));
 		
-		Collection<RCSTransaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
+		Collection<Transaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
@@ -250,7 +249,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends MozkitoTest {
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
 		
-		Collection<RCSTransaction> parents = tdg.getAllParents(environmentTransactions.get(10));
+		Collection<Transaction> parents = tdg.getAllParents(environmentTransactions.get(10));
 		assertEquals(3, parents.size());
 		assertTrue(parents.contains(environmentTransactions.get(4)));
 		assertTrue(parents.contains(environmentTransactions.get(5)));
@@ -262,8 +261,8 @@ public class TransactionChangeGenealogy_MozkitoTest extends MozkitoTest {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		final Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
-		for (final RCSTransaction v : tdg.vertexSet()) {
+		final Set<Transaction> vertices = new HashSet<Transaction>();
+		for (final Transaction v : tdg.vertexSet()) {
 			vertices.add(v);
 		}
 		

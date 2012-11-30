@@ -20,13 +20,14 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom2.Element;
-import org.mozkito.persistence.Annotated;
 
+import org.mozkito.persistence.Annotated;
 
 /**
  * The Class JavaMethodCall.
@@ -37,7 +38,10 @@ import org.mozkito.persistence.Annotated;
 @DiscriminatorValue ("JAVAMETHODCALL")
 public class JavaMethodCall extends JavaElement implements Annotated {
 	
+	/** The Constant FULL_QUALIFIED_NAME. */
 	public static final String FULL_QUALIFIED_NAME = "fullQualifiedName";
+	
+	/** The Constant JAVA_METHOD_CALL. */
 	public static final String JAVA_METHOD_CALL    = "JavaMethodCall";
 	
 	/** The Constant serialVersionUID. */
@@ -46,8 +50,10 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	/**
 	 * Compose full qualified name.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
 	 * @return the string
@@ -159,8 +165,10 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	/**
 	 * Instantiates a new java method call.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
 	 */
@@ -251,6 +259,14 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 */
 	public String getCalledPackageName() {
 		return this.calledPackageName;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(JavaMethodCall.class);
 	}
 	
 	/**

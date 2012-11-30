@@ -20,20 +20,19 @@ import java.net.URISyntaxException;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.bugzilla.BugzillaTracker;
-import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-
 
 /**
  * The Class ReportPersistence_NetTest.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class ReportPersistence_NetTest extends MozkitoTest {
+public class ReportPersistence_NetTest extends DatabaseTest {
 	
 	/**
 	 * Test bugzilla.

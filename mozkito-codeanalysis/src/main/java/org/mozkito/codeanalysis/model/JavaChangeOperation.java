@@ -24,16 +24,18 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class JavaChangeOperation.
@@ -57,11 +59,11 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@NoneNull
 	public static JavaChangeOperation fromXMLRepresentation(final Element element,
-	                                                        final ModelStorage<String, RCSTransaction> transactionStorage,
+	                                                        final ModelStorage<String, Transaction> transactionStorage,
 	                                                        final JavaElementFactory elementFactory) {
 		
 		ChangeType changeType = null;
-		RCSRevision revision = null;
+		Revision revision = null;
 		JavaElementLocation location = null;
 		
 		try {
@@ -90,7 +92,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		final RCSTransaction transaction = transactionStorage.getById(transaction_id);
+		final Transaction transaction = transactionStorage.getById(transaction_id);
 		if (!changedPath.startsWith("/")) {
 			changedPath = "/" + changedPath;
 		}
@@ -108,8 +110,8 @@ public class JavaChangeOperation implements Annotated {
 	
 	/** The id. */
 	private long                id;
-	private boolean             setId     = false;
 	
+	private boolean             setId     = false;
 	/** The change type. */
 	private ChangeType          changeType;
 	
@@ -117,7 +119,7 @@ public class JavaChangeOperation implements Annotated {
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
-	private RCSRevision         revision;
+	private Revision            revision;
 	
 	private boolean             essential = true;
 	
@@ -137,7 +139,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the revision
 	 */
 	@NoneNull
-	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision revision) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final Revision revision) {
 		setChangeType(type);
 		setChangedElementLocation(element);
 		setRevision(revision);
@@ -211,6 +213,14 @@ public class JavaChangeOperation implements Annotated {
 		return this.changeType;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(JavaChangeOperation.class);
+	}
+	
 	/**
 	 * Gets the id.
 	 * 
@@ -228,7 +238,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the revision
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.EAGER)
-	public RCSRevision getRevision() {
+	public Revision getRevision() {
 		return this.revision;
 	}
 	
@@ -309,7 +319,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	protected void setRevision(final RCSRevision revision) {
+	protected void setRevision(final Revision revision) {
 		this.revision = revision;
 	}
 	

@@ -69,33 +69,42 @@ import difflib.Patch;
  */
 public class MercurialRepository extends DistributedCommandLineRepository {
 	
+	/** The Constant HG_MODIFIED_PATHS_INDEX. */
 	private static final int                 HG_MODIFIED_PATHS_INDEX  = 5;
 	
+	/** The Constant HG_DELETED_PATHS_INDEX. */
 	private static final int                 HG_DELETED_PATHS_INDEX   = 4;
 	
+	/** The Constant HG_ADDED_PATHS_INDEX. */
 	private static final int                 HG_ADDED_PATHS_INDEX     = 3;
 	
+	/** The Constant HG_MAX_LINE_PARTS_LENGTH. */
 	protected static final int               HG_MAX_LINE_PARTS_LENGTH = 7;
 	
+	/** The Constant AUTHOR_REGEX. */
 	protected static final Regex             AUTHOR_REGEX             = new Regex(
 	                                                                              "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
+	/** The Constant HG_ANNOTATE_DATE_FORMAT. */
 	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT  = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
+	/** The Constant FORMER_PATH_REGEX. */
 	protected static final Regex             FORMER_PATH_REGEX        = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	
+	/** The Constant PATTERN. */
 	protected static final String            PATTERN                  = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	
+	/** The Constant REGEX. */
 	protected static final Regex             REGEX                    = new Regex(MercurialRepository.PATTERN);
 	
 	/**
 	 * Write a specific Mercurial log style into a temporary file. (should always be
+	 *
+	 * @param dir the directory the template file will be written to (
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 * {@link MercurialRepository#cloneDir}, not null)
-	 * 
-	 * @param dir
-	 *            the directory the template file will be written to (
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	@NoneNull
 	private static void writeLogStyle(final File dir) throws IOException {
@@ -113,10 +122,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		
 	}
 	
+	/** The clone dir. */
 	private File               cloneDir;
 	
+	/** The hashes. */
 	protected List<String>     hashes         = new ArrayList<String>();
 	
+	/** The transaction i ds. */
 	private final List<String> transactionIDs = new LinkedList<String>();
 	
 	/*
@@ -313,11 +325,17 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return patch.getDeltas();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
+	 */
 	@Override
 	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String revision) {
 		return hgLog(revision);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public Tuple<Integer, List<String>> executeLog(@NotNull @MinLength (min = 1) final String fromRevision,
 	                                               @NotNull @MinLength (min = 1) final String toRevision) {
@@ -525,11 +543,17 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return getEndRevision();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.DistributedCommandLineRepository#getLogParser()
+	 */
 	@Override
 	protected LogParser getLogParser() {
 		return new MercurialLogParser();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
@@ -541,6 +565,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
+	 */
 	@Override
 	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
@@ -592,6 +619,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return response.getSecond().get(0).trim();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 */
 	@Override
 	public long getTransactionIndex(final String transactionId) {
 		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
@@ -609,6 +639,12 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return this.cloneDir;
 	}
 	
+	/**
+	 * Hg log.
+	 *
+	 * @param revisionSelection the revision selection
+	 * @return the tuple
+	 */
 	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) {
 		return CommandExecutor.execute("hg", new String[] { "log", "--style", "minerlog", "-r", revisionSelection },
 		                               this.cloneDir, null, null);
@@ -629,15 +665,12 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * main setup method.
-	 * 
-	 * @param address
-	 *            the address
-	 * @param startRevision
-	 *            the start revision
-	 * @param endRevision
-	 *            the end revision
-	 * @param inputStream
-	 *            the input stream
+	 *
+	 * @param address the address
+	 * @param inputStream the input stream
+	 * @param branchFactory the branch factory
+	 * @param tmpDir the tmp dir
+	 * @param mainBranchName the main branch name
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,

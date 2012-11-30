@@ -29,9 +29,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -40,7 +42,6 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
-
 
 /**
  * The Class Report.
@@ -195,6 +196,14 @@ public class EnhancedReport implements Annotated, Comparable<EnhancedReport> {
 	@Transient
 	public Object getField(final String lowerFieldName) {
 		return getReport().getField(lowerFieldName);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(EnhancedReport.class);
 	}
 	
 	@Transient

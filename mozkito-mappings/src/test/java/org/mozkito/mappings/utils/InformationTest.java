@@ -65,7 +65,7 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testEnumerations() {
-		final Collection<Enumeration> enumerations = Information.enumerations(InformationTest.text);
+		final Collection<Enumeration> enumerations = Enumeration.extract(InformationTest.text);
 		int i = 0;
 		
 		for (final Enumeration map : enumerations) {

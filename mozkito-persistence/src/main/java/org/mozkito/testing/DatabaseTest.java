@@ -39,6 +39,8 @@ public class DatabaseTest {
 	
 	/** The util. */
 	private PersistenceUtil util;
+	
+	/** The connect options. */
 	private ConnectOptions  connectOptions;
 	
 	/**
@@ -105,6 +107,9 @@ public class DatabaseTest {
 		}
 	}
 	
+	/**
+	 * Initialize processors.
+	 */
 	private void initializeProcessors() {
 		for (final Annotation annotation : getClass().getAnnotations()) {
 			final MozkitoTestAnnotation mka = annotation.annotationType().getAnnotation(MozkitoTestAnnotation.class);
@@ -119,6 +124,12 @@ public class DatabaseTest {
 		}
 	}
 	
+	/**
+	 * Sets the connection option.
+	 * 
+	 * @param option
+	 *            the new connection option
+	 */
 	public void setConnectionOption(final ConnectOptions option) {
 		this.connectOptions = option;
 	}

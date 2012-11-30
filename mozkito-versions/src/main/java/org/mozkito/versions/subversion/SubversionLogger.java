@@ -23,13 +23,13 @@ import org.tmatesoft.svn.util.SVNDebugLogAdapter;
 import org.tmatesoft.svn.util.SVNLogType;
 
 /**
- * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper
- * 
+ * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class SubversionLogger extends SVNDebugLogAdapter {
 	
+	/** The Constant SVN_MAGIC_LOG_NUMBER. */
 	private static final int SVN_MAGIC_LOG_NUMBER = 4;
 	
 	/*

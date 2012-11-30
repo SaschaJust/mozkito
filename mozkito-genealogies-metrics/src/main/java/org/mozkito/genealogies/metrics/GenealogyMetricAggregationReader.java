@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -79,13 +79,13 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 					}
 					
 					final String transactionId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
-					final RCSTransaction transaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+					final Transaction transaction = persistenceUtil.loadById(transactionId, Transaction.class);
 					if (transaction != null) {
-						final Collection<RCSFile> changedFiles = transaction.getChangedFiles();
+						final Collection<File> changedFiles = transaction.getChangedFiles();
 						final Collection<GenealogyMetricValue> output = new HashSet<GenealogyMetricValue>();
 						
 						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
-							for (final RCSFile file : changedFiles) {
+							for (final File file : changedFiles) {
 								output.add(new GenealogyMetricValue(metricSet.getKey(), file.getPath(transaction),
 								                                    metricSet.getValue()));
 							}

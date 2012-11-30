@@ -16,11 +16,11 @@ public class RCSTransactionTest {
 	public void testGetChangedFiles() {
 		final Person person = new Person("kim", "", "");
 		
-		final RCSTransaction t_0 = new RCSTransaction("0", "", new DateTime(), person, "");
-		final RCSFile file = new RCSFile("public.java", t_0);
-		new RCSRevision(t_0, file, ChangeType.Added);
+		final Transaction t_0 = new Transaction("0", "", new DateTime(), person, "");
+		final File file = new File("public.java", t_0);
+		new Revision(t_0, file, ChangeType.Added);
 		
-		final Collection<RCSFile> changedFiles = t_0.getChangedFiles();
+		final Collection<File> changedFiles = t_0.getChangedFiles();
 		assertEquals(1, changedFiles.size());
 		assertTrue(changedFiles.contains(file));
 		
@@ -48,31 +48,31 @@ public class RCSTransactionTest {
 		
 		final Person person = new Person("kim", "", "");
 		
-		final RCSTransaction t_0 = new RCSTransaction("0", "", new DateTime(), person, "");
-		final RCSFile file = new RCSFile("public.java", t_0);
-		new RCSRevision(t_0, file, ChangeType.Added);
+		final Transaction t_0 = new Transaction("0", "", new DateTime(), person, "");
+		final File file = new File("public.java", t_0);
+		new Revision(t_0, file, ChangeType.Added);
 		
-		final RCSTransaction t_1 = new RCSTransaction("1", "", new DateTime(), person, "");
-		new RCSRevision(t_1, file, ChangeType.Modified);
+		final Transaction t_1 = new Transaction("1", "", new DateTime(), person, "");
+		new Revision(t_1, file, ChangeType.Modified);
 		t_1.setBranchParent(t_0);
 		
-		final RCSTransaction t_2 = new RCSTransaction("2", "", new DateTime(), person, "");
-		final RCSFile hiddenFile = new RCSFile("hidden.java", t_2);
-		new RCSRevision(t_2, hiddenFile, ChangeType.Added);
+		final Transaction t_2 = new Transaction("2", "", new DateTime(), person, "");
+		final File hiddenFile = new File("hidden.java", t_2);
+		new Revision(t_2, hiddenFile, ChangeType.Added);
 		t_2.setBranchParent(t_0);
 		
-		final RCSTransaction t_3 = new RCSTransaction("3", "", new DateTime(), person, "");
+		final Transaction t_3 = new Transaction("3", "", new DateTime(), person, "");
 		hiddenFile.assignTransaction(t_3, "moreHidden.java");
-		final RCSRevision revision = new RCSRevision(t_3, hiddenFile, ChangeType.Renamed);
+		final Revision revision = new Revision(t_3, hiddenFile, ChangeType.Renamed);
 		t_3.setBranchParent(t_2);
 		
-		final RCSTransaction t_4 = new RCSTransaction("4", "", new DateTime(), person, "");
-		final RCSRevision revision2 = new RCSRevision(t_4, hiddenFile, ChangeType.Modified);
+		final Transaction t_4 = new Transaction("4", "", new DateTime(), person, "");
+		final Revision revision2 = new Revision(t_4, hiddenFile, ChangeType.Modified);
 		t_4.setBranchParent(t_2);
 		t_4.setMergeParent(t_3);
 		
-		final RCSTransaction t_5 = new RCSTransaction("5", "", new DateTime(), person, "");
-		new RCSRevision(t_5, file, ChangeType.Modified);
+		final Transaction t_5 = new Transaction("5", "", new DateTime(), person, "");
+		new Revision(t_5, file, ChangeType.Modified);
 		t_5.setBranchParent(t_1);
 		t_5.setMergeParent(t_4);
 		

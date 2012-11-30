@@ -35,6 +35,13 @@ public interface IRevDependencyGraph {
 	 */
 	boolean createFromRepository();
 	
+	/**
+	 * Exists path.
+	 *
+	 * @param fromHash the from hash
+	 * @param toHash the to hash
+	 * @return true, if successful
+	 */
 	boolean existsPath(String fromHash,
 	                   String toHash);
 	
@@ -47,6 +54,12 @@ public interface IRevDependencyGraph {
 	 */
 	String getBranchParent(String hash);
 	
+	/**
+	 * Gets the branch transactions.
+	 *
+	 * @param branchName the branch name
+	 * @return the branch transactions
+	 */
 	Iterable<String> getBranchTransactions(String branchName);
 	
 	/**
@@ -58,6 +71,12 @@ public interface IRevDependencyGraph {
 	 */
 	String getMergeParent(String hash);
 	
+	/**
+	 * Gets the previous transactions.
+	 *
+	 * @param hash the hash
+	 * @return the previous transactions
+	 */
 	Iterable<String> getPreviousTransactions(String hash);
 	
 	/**

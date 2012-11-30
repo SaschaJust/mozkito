@@ -20,13 +20,23 @@ import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.versions.elements.ChangeType;
 
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSRevision.class)
+/**
+ * The Class Revision_.
+ */
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Revision.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Mar 01 23:42:05 CET 2012")
-public class RCSRevision_ {
+public class Revision_ {
 	
-	public static volatile SingularAttribute<RCSRevision, ChangeType>     changeType;
-	public static volatile SingularAttribute<RCSRevision, RCSFile>        changedFile;
-	public static volatile SingularAttribute<RCSRevision, Long>           revisionId;
-	public static volatile SingularAttribute<RCSRevision, RCSTransaction> transaction;
+	/** The change type. */
+	public static volatile SingularAttribute<Revision, ChangeType>     changeType;
+	
+	/** The changed file. */
+	public static volatile SingularAttribute<Revision, File>        changedFile;
+	
+	/** The revision id. */
+	public static volatile SingularAttribute<Revision, Long>           revisionId;
+	
+	/** The transaction. */
+	public static volatile SingularAttribute<Revision, Transaction> transaction;
 }

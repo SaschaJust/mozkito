@@ -25,7 +25,7 @@ import org.mozkito.clustering.MultilevelClustering;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -52,7 +52,7 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		}
 		
 		@Override
-		public TestImpactVoter createVoter(final RCSTransaction transaction) {
+		public TestImpactVoter createVoter(final Transaction transaction) {
 			return new TestImpactVoter(this.testCoverageIn);
 		}
 		

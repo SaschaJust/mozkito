@@ -32,7 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.Direction;
@@ -56,12 +56,16 @@ import org.neo4j.kernel.Traversal;
  */
 class GitRevDependencyGraph implements IRevDependencyGraph {
 	
+	/** The Constant REFS_TAGS_LENGTH. */
 	private static final int           REFS_TAGS_LENGTH    = 10;
 	
+	/** The Constant REFS_PULL_LENGTH. */
 	private static final int           REFS_PULL_LENGTH    = 10;
 	
+	/** The Constant REFS_REMOTES_LENGTH. */
 	private static final int           REFS_REMOTES_LENGTH = 13;
 	
+	/** The Constant REFS_HEAD_LENGTH. */
 	private static final int           REFS_HEAD_LENGTH    = 11;
 	
 	/** The Constant NODE_ID. */
@@ -85,8 +89,10 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 	/** The repository. */
 	private final GitRepository        repository;
 	
+	/** The branch heads. */
 	private Map<String, String>        branchHeads;
 	
+	/** The tags. */
 	private Map<String, Set<String>>   tags;
 	
 	/**
@@ -231,6 +237,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.IRevDependencyGraph#close()
+	 */
 	@Override
 	public void close() {
 		// PRECONDITIONS
@@ -295,7 +304,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 						continue;
 					}
 					if ("origin/master".equals(branchName)) {
-						branchName = RCSBranch.MASTER_BRANCH_NAME;
+						branchName = Branch.MASTER_BRANCH_NAME;
 					}
 				} else if (branchName.startsWith("refs/pull/")) {
 					branchName = branchName.substring(REFS_PULL_LENGTH);
@@ -313,7 +322,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					Logger.debug("Adding branch head for " + branchName + ": " + lineParts[0]);
 				}
 				if ((this.branchHeads.containsKey(lineParts[0]))
-				        && this.branchHeads.get(lineParts[0]).equals(RCSBranch.MASTER_BRANCH_NAME)) {
+				        && this.branchHeads.get(lineParts[0]).equals(Branch.MASTER_BRANCH_NAME)) {
 					continue;
 				}
 				this.branchHeads.put(lineParts[0], branchName);
@@ -353,6 +362,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.IRevDependencyGraph#existsPath(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean existsPath(final String fromHash,
 	                          final String toHash) {
@@ -402,6 +414,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.IRevDependencyGraph#getBranchTransactions(java.lang.String)
+	 */
 	@Override
 	public Iterable<String> getBranchTransactions(final String branchName) {
 		// PRECONDITIONS
@@ -515,6 +530,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.IRevDependencyGraph#getPreviousTransactions(java.lang.String)
+	 */
 	@Override
 	public Iterable<String> getPreviousTransactions(final String hash) {
 		// PRECONDITIONS
@@ -558,6 +576,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.IRevDependencyGraph#getVertices()
+	 */
 	@Override
 	public Iterable<String> getVertices() {
 		// PRECONDITIONS

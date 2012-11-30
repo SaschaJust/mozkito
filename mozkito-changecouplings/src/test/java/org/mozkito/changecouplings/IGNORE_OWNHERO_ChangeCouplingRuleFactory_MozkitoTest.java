@@ -15,7 +15,6 @@ package org.mozkito.changecouplings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,41 +24,37 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class ChangeCouplingRuleFactoryTest.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends MozkitoTest {
+public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends DatabaseTest {
 	
 	/** The persistence util. */
 	private static PersistenceUtil persistenceUtil = null;
 	
-	/**
-	 * Before class.
-	 */
-	@BeforeClass
-	public static void beforeClass() {
+	public IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
 		try {
 			
 			persistenceUtil = getPersistenceUtil();
 			URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
-			File sqlFile = new File(sqlURL.toURI());
+			java.io.File sqlFile = new java.io.File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
 			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
 			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
@@ -67,7 +62,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Mozkit
 			sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
-			sqlFile = new File(sqlURL.toURI());
+			sqlFile = new java.io.File(sqlURL.toURI());
 			query = FileUtils.readFileToString(sqlFile);
 			persistenceUtil.executeNativeQuery(query);
 		} catch (final IOException e) {
@@ -99,47 +94,47 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Mozkit
 		// ###transaction 1
 		
 		final DateTime now = new DateTime();
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", now, person, "");
-		final RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
+		final Transaction rcsTransaction = new Transaction("0", "", now, person, "");
+		final File fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
-		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
+		new Revision(rcsTransaction, fileA, ChangeType.Added);
 		
-		final RCSFile fileB = fileManager.createFile("B.java", rcsTransaction);
+		final File fileB = fileManager.createFile("B.java", rcsTransaction);
 		fileB.assignTransaction(rcsTransaction, "B.java");
-		new RCSRevision(rcsTransaction, fileB, ChangeType.Added);
+		new Revision(rcsTransaction, fileB, ChangeType.Added);
 		
-		final RCSFile fileC = fileManager.createFile("C.java", rcsTransaction);
+		final File fileC = fileManager.createFile("C.java", rcsTransaction);
 		fileC.assignTransaction(rcsTransaction, "C.java");
-		new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
+		new Revision(rcsTransaction, fileC, ChangeType.Added);
 		
 		persistenceUtil.saveOrUpdate(rcsTransaction);
 		
 		// ### transaction 2
 		
-		final RCSTransaction rcsTransaction2 = RCSTransaction.createTransaction("1", "", now.plus(10000), person, "");
-		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
-		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
-		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
+		final Transaction rcsTransaction2 = new Transaction("1", "", now.plus(10000), person, "");
+		new Revision(rcsTransaction2, fileA, ChangeType.Modified);
+		new Revision(rcsTransaction2, fileB, ChangeType.Added);
+		final File fileD = fileManager.createFile("D.java", rcsTransaction);
 		// fileC.assignTransaction(rcsTransaction2, "D.java");
-		new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
+		new Revision(rcsTransaction2, fileD, ChangeType.Added);
 		persistenceUtil.saveOrUpdate(rcsTransaction2);
 		
 		// ### transaction 3
 		
-		final RCSTransaction rcsTransaction3 = RCSTransaction.createTransaction("2", "", now.plus(20000), person, "");
-		new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
+		final Transaction rcsTransaction3 = new Transaction("2", "", now.plus(20000), person, "");
+		new Revision(rcsTransaction3, fileA, ChangeType.Modified);
 		
 		fileC.assignTransaction(rcsTransaction3, "C.java");
-		new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
-		new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
+		new Revision(rcsTransaction3, fileC, ChangeType.Modified);
+		new Revision(rcsTransaction3, fileB, ChangeType.Added);
 		persistenceUtil.saveOrUpdate(rcsTransaction3);
 		
 		// ### transaction 4
 		
-		final RCSTransaction rcsTransaction4 = RCSTransaction.createTransaction("3", "", now.plus(30000), person, "");
-		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
-		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
-		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
+		final Transaction rcsTransaction4 = new Transaction("3", "", now.plus(30000), person, "");
+		new Revision(rcsTransaction4, fileA, ChangeType.Modified);
+		new Revision(rcsTransaction4, fileC, ChangeType.Modified);
+		new Revision(rcsTransaction4, fileB, ChangeType.Modified);
 		persistenceUtil.saveOrUpdate(rcsTransaction4);
 		
 		persistenceUtil.commitTransaction();

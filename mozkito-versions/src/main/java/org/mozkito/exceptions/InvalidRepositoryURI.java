@@ -16,13 +16,20 @@
 package org.mozkito.exceptions;
 
 /**
+ * The Class InvalidRepositoryURI.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class InvalidRepositoryURI extends Exception {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1215614419586597882L;
 	
+	/**
+	 * Instantiates a new invalid repository uri.
+	 *
+	 * @param message the message
+	 */
 	public InvalidRepositoryURI(final String message) {
 		super(message);
 	}

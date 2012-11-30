@@ -28,6 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -36,6 +37,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
+
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -50,14 +52,6 @@ public class Person implements Annotated {
 	 * 
 	 */
 	private static final long serialVersionUID = -8598414850294255203L;
-	
-	/**
-	 * @return the simple class name
-	 */
-	@Transient
-	public static String getHandle() {
-		return Person.class.getSimpleName();
-	}
 	
 	/**
 	 * @param keeper
@@ -90,6 +84,7 @@ public class Person implements Annotated {
 	}
 	
 	private long        generatedId;
+	
 	private Set<String> usernames      = new TreeSet<String>();
 	private Set<String> emailAddresses = new TreeSet<String>();
 	private Set<String> fullnames      = new TreeSet<String>();
@@ -260,6 +255,14 @@ public class Person implements Annotated {
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	public long getGeneratedId() {
 		return this.generatedId;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(Person.class);
 	}
 	
 	/**

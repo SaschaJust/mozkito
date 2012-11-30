@@ -14,6 +14,13 @@ package org.mozkito.versions.git;
 
 import org.neo4j.graphdb.RelationshipType;
 
+/**
+ * The Enum GitRevDependencyType.
+ */
 public enum GitRevDependencyType implements RelationshipType {
-	BRANCH_EDGE, MERGE_EDGE;
+	
+	/** The branch edge. */
+	BRANCH_EDGE, 
+ /** The merge edge. */
+ MERGE_EDGE;
 }

@@ -25,17 +25,17 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class TransactionReader.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TransactionReader extends Source<RCSTransaction> {
+public class TransactionReader extends Source<Transaction> {
 	
 	/** The iterator. */
-	private Iterator<RCSTransaction> iterator;
+	private Iterator<Transaction> iterator;
 	
 	/**
 	 * Instantiates a new transaction reader.
@@ -50,22 +50,22 @@ public class TransactionReader extends Source<RCSTransaction> {
 	public TransactionReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				final List<RCSTransaction> list = persistenceUtil.load(criteria);
+				final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
+				final List<Transaction> list = persistenceUtil.load(criteria);
 				TransactionReader.this.iterator = list.iterator();
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void process() {
 				if (TransactionReader.this.iterator.hasNext()) {
-					final RCSTransaction transaction = TransactionReader.this.iterator.next();
+					final Transaction transaction = TransactionReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info(Messages.getString("ReportReader.providing", transaction)); //$NON-NLS-1$

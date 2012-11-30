@@ -21,7 +21,7 @@ import javax.persistence.Id;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.File;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
@@ -33,10 +33,10 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/** The premise. */
-	private final Set<RCSFile> premise;
+	private final Set<File> premise;
 	
 	/** The implication. */
-	private final RCSFile      implication;
+	private final File      implication;
 	
 	/** The support. */
 	private final Integer      support;
@@ -60,7 +60,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 */
 	public FileChangeCoupling(final Long[] premise, final Long implication, final Integer support,
 	        final Double confidence, final PersistenceUtil persistenceUtil) {
-		this.premise = new HashSet<RCSFile>();
+		this.premise = new HashSet<File>();
 		
 		boolean commit = false;
 		if (!persistenceUtil.activeTransaction()) {
@@ -69,22 +69,22 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		}
 		for (final Long fileId : premise) {
 			
-			final RCSFile rcsFile = persistenceUtil.loadById((long) fileId, RCSFile.class);
+			final File rcsFile = persistenceUtil.loadById((long) fileId, File.class);
 			if (rcsFile == null) {
-				throw new UnrecoverableError("Could not retrieve RCSFile with id " + fileId);
+				throw new UnrecoverableError("Could not retrieve File with id " + fileId);
 			}
 			this.premise.add(rcsFile);
 		}
 		
-		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);
+		File rcsFile = persistenceUtil.loadById((long) implication, File.class);
 		
-		final Criteria<RCSFile> criteria = persistenceUtil.createCriteria(RCSFile.class).eq("generatedId",
+		final Criteria<File> criteria = persistenceUtil.createCriteria(File.class).eq("generatedId",
 		                                                                                    (long) implication);
-		final List<RCSFile> load = persistenceUtil.load(criteria);
+		final List<File> load = persistenceUtil.load(criteria);
 		rcsFile = load.get(0);
 		
 		if (rcsFile == null) {
-			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
+			throw new UnrecoverableError("Could not retrieve File with id " + implication);
 		}
 		this.implication = rcsFile;
 		this.support = support;
@@ -135,7 +135,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 * 
 	 * @return the implication
 	 */
-	public RCSFile getImplication() {
+	public File getImplication() {
 		return this.implication;
 	}
 	
@@ -145,7 +145,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 * @return the premise
 	 */
 	@Id
-	public Set<RCSFile> getPremise() {
+	public Set<File> getPremise() {
 		return this.premise;
 	}
 	
@@ -164,7 +164,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 */
 	@Override
 	public String toString() {
-		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new RCSFile[this.premise.size()]))
+		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new File[this.premise.size()]))
 		        + ", implication=" + this.implication + ", support=" + this.support + ", confidence=" + this.confidence
 		        + "]";
 	}

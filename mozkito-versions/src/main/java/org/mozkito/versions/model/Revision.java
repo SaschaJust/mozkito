@@ -27,56 +27,58 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.mozkito.persistence.Annotated;
-import org.mozkito.versions.elements.ChangeType;
-
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.Annotated;
+import org.mozkito.versions.elements.ChangeType;
+
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class Revision.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
 @Table (name = "rcsrevision",
         uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
-public class RCSRevision implements Annotated {
+public class Revision implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2149118675856446526L;
 	
-	/**
-	 * @return the simple class name
-	 */
-	public static String getHandle() {
-		return RCSRevision.class.getSimpleName();
-	}
+	/** The change type. */
+	private ChangeType        changeType;
 	
-	private ChangeType     changeType;
+	/** The transaction. */
+	private Transaction       transaction;
 	
-	private RCSTransaction transaction;
+	/** The changed file. */
+	private File              changedFile;
 	
-	private RCSFile        changedFile;
-	
-	private long           revisionId;
+	/** The revision id. */
+	private long              revisionId;
 	
 	/**
-	 * used by PersistenceUtil to instantiate a {@link RCSRevision} object
+	 * used by PersistenceUtil to instantiate a {@link Revision} object.
 	 */
-	protected RCSRevision() {
+	protected Revision() {
 		
 	}
 	
 	/**
+	 * Instantiates a new revision.
+	 * 
 	 * @param rcsTransaction
+	 *            the rcs transaction
 	 * @param rcsFile
+	 *            the rcs file
 	 * @param changeType
+	 *            the change type
 	 */
 	@NoneNull
-	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
+	public Revision(final Transaction rcsTransaction, final File rcsFile, final ChangeType changeType) {
 		setTransaction(rcsTransaction);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
@@ -104,10 +106,10 @@ public class RCSRevision implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof RCSRevision)) {
+		if (!(obj instanceof Revision)) {
 			return false;
 		}
-		final RCSRevision other = (RCSRevision) obj;
+		final Revision other = (Revision) obj;
 		if (getChangeType() != other.getChangeType()) {
 			return false;
 		}
@@ -130,16 +132,20 @@ public class RCSRevision implements Annotated {
 	}
 	
 	/**
+	 * Gets the changed file.
+	 * 
 	 * @return the changedFile
 	 */
 	// @MapsId ("changedFile")
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
-	public RCSFile getChangedFile() {
+	public File getChangedFile() {
 		return this.changedFile;
 	}
 	
 	/**
+	 * Gets the change type.
+	 * 
 	 * @return the changeType
 	 */
 	@Enumerated (EnumType.ORDINAL)
@@ -147,7 +153,17 @@ public class RCSRevision implements Annotated {
 		return this.changeType;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(Revision.class);
+	}
+	
 	/**
+	 * Gets the revision id.
+	 * 
 	 * @return the revisionId
 	 */
 	@Id
@@ -157,12 +173,14 @@ public class RCSRevision implements Annotated {
 	}
 	
 	/**
+	 * Gets the transaction.
+	 * 
 	 * @return the transaction
 	 */
 	// @MapsId ("transaction")
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
-	public RCSTransaction getTransaction() {
+	public Transaction getTransaction() {
 		return this.transaction;
 	}
 	
@@ -190,14 +208,18 @@ public class RCSRevision implements Annotated {
 	}
 	
 	/**
+	 * Sets the changed file.
+	 * 
 	 * @param changedFile
 	 *            the changedFile to set
 	 */
-	public void setChangedFile(final RCSFile changedFile) {
+	public void setChangedFile(final File changedFile) {
 		this.changedFile = changedFile;
 	}
 	
 	/**
+	 * Sets the change type.
+	 * 
 	 * @param changeType
 	 *            the changeType to set
 	 */
@@ -206,6 +228,8 @@ public class RCSRevision implements Annotated {
 	}
 	
 	/**
+	 * Sets the revision id.
+	 * 
 	 * @param revisionId
 	 *            the revisionId to set
 	 */
@@ -214,10 +238,12 @@ public class RCSRevision implements Annotated {
 	}
 	
 	/**
+	 * Sets the transaction.
+	 * 
 	 * @param transaction
 	 *            the transaction to set
 	 */
-	public void setTransaction(final RCSTransaction transaction) {
+	public void setTransaction(final Transaction transaction) {
 		this.transaction = transaction;
 	}
 	
@@ -227,7 +253,7 @@ public class RCSRevision implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "RCSRevision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
+		return "Revision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
 		        + ", changeType=" + getChangeType() + "]";
 	}
 }

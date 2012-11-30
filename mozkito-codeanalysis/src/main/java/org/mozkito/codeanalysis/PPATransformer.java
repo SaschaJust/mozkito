@@ -11,7 +11,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -23,14 +23,14 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
+public class PPATransformer extends Transformer<Transaction, JavaChangeOperation> {
 	
 	public PPATransformer(final Group threadGroup, final Settings settings, final Repository repository,
 	        final Boolean usePPA, final JavaElementFactory factory, final String[] packageFilter) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
-		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
+		new ProcessHook<Transaction, JavaChangeOperation>(this) {
 			
 			private Iterator<JavaChangeOperation> iterator;
 			
@@ -39,7 +39,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 				
 				if ((this.iterator == null) || (!this.iterator.hasNext())) {
 					
-					final RCSTransaction transaction = getInputData();
+					final Transaction transaction = getInputData();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");

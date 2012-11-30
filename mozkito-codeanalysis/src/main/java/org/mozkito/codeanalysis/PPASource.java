@@ -16,9 +16,9 @@ import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -31,17 +31,17 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class PPASource extends Source<RCSTransaction> {
+public class PPASource extends Source<Transaction> {
 	
-	private Iterator<RCSBranch>      branchIterator   = null;
-	private Iterator<RCSTransaction> tIterator        = null;
+	private Iterator<Branch>      branchIterator   = null;
+	private Iterator<Transaction> tIterator        = null;
 	private Set<String>              transactionLimit = null;
 	
 	public PPASource(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
 	        final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -49,12 +49,12 @@ public class PPASource extends Source<RCSTransaction> {
 				if ((PPASource.this.transactionLimit != null) && (!PPASource.this.transactionLimit.isEmpty())) {
 					PPASource.this.transactionLimit = transactionLimit;
 				} else {
-					final List<RCSBranch> branches = new LinkedList<RCSBranch>();
+					final List<Branch> branches = new LinkedList<Branch>();
 					final BranchFactory branchFactory = new BranchFactory(persistenceUtil);
 					branches.add(branchFactory.getMasterBranch());
 					
-					final Criteria<RCSBranch> criteria = persistenceUtil.createCriteria(RCSBranch.class);
-					for (final RCSBranch branch : persistenceUtil.load(criteria)) {
+					final Criteria<Branch> criteria = persistenceUtil.createCriteria(Branch.class);
+					for (final Branch branch : persistenceUtil.load(criteria)) {
 						if (!branch.isMasterBranch()) {
 							branches.add(branch);
 						}
@@ -64,7 +64,7 @@ public class PPASource extends Source<RCSTransaction> {
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void process() {
@@ -73,7 +73,7 @@ public class PPASource extends Source<RCSTransaction> {
 					// test cases
 					if (PPASource.this.tIterator == null) {
 						// initialize
-						final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+						final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
 						criteria.in("id", PPASource.this.transactionLimit);
 						PPASource.this.tIterator = persistenceUtil.load(criteria).iterator();
 					}
@@ -96,7 +96,7 @@ public class PPASource extends Source<RCSTransaction> {
 					if ((PPASource.this.tIterator == null) || (!PPASource.this.tIterator.hasNext())) {
 						// load new transactions
 						if (PPASource.this.branchIterator.hasNext()) {
-							final RCSBranch next = PPASource.this.branchIterator.next();
+							final Branch next = PPASource.this.branchIterator.next();
 							final TransactionSet set = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
 							                                                              TransactionSetOrder.ASC);
 							PPASource.this.tIterator = set.iterator();
@@ -114,7 +114,7 @@ public class PPASource extends Source<RCSTransaction> {
 					
 					if (PPASource.this.tIterator.hasNext()) {
 						
-						final RCSTransaction transaction = PPASource.this.tIterator.next();
+						final Transaction transaction = PPASource.this.tIterator.next();
 						
 						// final int numRevision = transaction.getChangedFiles().size();
 						// if (numRevision > 50) {
@@ -126,13 +126,13 @@ public class PPASource extends Source<RCSTransaction> {
 						
 						// test if seen already
 						boolean skip = false;
-						for (final RCSRevision revision : transaction.getRevisions()) {
+						for (final Revision revision : transaction.getRevisions()) {
 							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
 							                                                                  .eq("revision", revision);
 							if (!persistenceUtil.load(skipCriteria).isEmpty()) {
 								skip = true;
 								if (Logger.logDebug()) {
-									Logger.debug("Skipping RCSTransaction %s. This transaction was analyzed and persisted already.",
+									Logger.debug("Skipping Transaction %s. This transaction was analyzed and persisted already.",
 									             transaction.getId());
 								}
 								break;

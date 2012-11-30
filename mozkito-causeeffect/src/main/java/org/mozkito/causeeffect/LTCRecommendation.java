@@ -24,8 +24,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -43,8 +43,8 @@ public class LTCRecommendation {
 	/**
 	 * @param changedFile
 	 */
-	public static void addChange(final RCSFile changedFile,
-	                             final RCSTransaction transaction) {
+	public static void addChange(final File changedFile,
+	                             final Transaction transaction) {
 		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
@@ -53,7 +53,7 @@ public class LTCRecommendation {
 		}
 	}
 	
-	public static LTCRecommendation getRecommendation(final RCSFile premise,
+	public static LTCRecommendation getRecommendation(final File premise,
 	                                                  final CTLFormula formula) {
 		if (!recommendations.containsKey(premise.getGeneratedId())) {
 			recommendations.put(premise.getGeneratedId(), new HashMap<CTLFormula, LTCRecommendation>());
@@ -64,7 +64,7 @@ public class LTCRecommendation {
 		return recommendations.get(premise.getGeneratedId()).get(formula);
 	}
 	
-	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
+	public static SortedSet<LTCRecommendation> getRecommendations(final File changedFile,
 	                                                              final ChangeProperty property) {
 		
 		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
@@ -89,13 +89,13 @@ public class LTCRecommendation {
 	 * @param formula
 	 */
 	@NoneNull
-	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
+	private LTCRecommendation(final File premise, final CTLFormula formula) {
 		this.premise = premise.getGeneratedId();
 		this.formula = formula;
 		this.support.put(ChangeProperty.NONE, new LinkedList<Tuple<String, DateTime>>());
 	}
 	
-	public void addSupport(final RCSTransaction transaction,
+	public void addSupport(final Transaction transaction,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
 		if (!this.support.containsKey(property)) {
@@ -123,8 +123,8 @@ public class LTCRecommendation {
 		}
 	}
 	
-	public void fileChanged(final RCSFile file,
-	                        final RCSTransaction transaction) {
+	public void fileChanged(final File file,
+	                        final Transaction transaction) {
 		if (this.premise.equals(file.getGeneratedId())) {
 			this.premiseChanges.add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
 		}

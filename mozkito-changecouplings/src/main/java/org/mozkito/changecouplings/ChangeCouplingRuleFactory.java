@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * A factory for creating ChangeCouplingRule objects.
@@ -61,7 +61,7 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction transaction,
+	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final Transaction transaction,
 	                                                                    @Positive final int minSupport,
 	                                                                    final double minConfidence,
 	                                                                    final PersistenceUtil persistenceUtil) {
@@ -138,7 +138,7 @@ public class ChangeCouplingRuleFactory {
 	 * @return the method change couplings
 	 */
 	@NoneNull
-	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction transaction,
+	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final Transaction transaction,
 	                                                                                     @Positive final int minSupport,
 	                                                                                     @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                                                     final Set<String> relevantMethodNames,

@@ -117,9 +117,6 @@ public class VersionsTest extends DatabaseTest {
 		this.repoMap = new HashMap<RepositoryType, URI>();
 		
 		for (final RepositoryType type : RepositoryType.values()) {
-			if (type.equals(RepositoryType.CVS)) {
-				continue;
-			}
 			
 			final String pathName = RepositorySettingsProcessor.getPathName(getClass(), type);
 			if (pathName != null) {

@@ -31,14 +31,13 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * A factory for creating Repository objects.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public final class RepositoryFactory {
 	
-	/**
-	 * container for repository connector mappings
-	 */
+	/** container for repository connector mappings. */
 	private static Map<RepositoryType, Class<? extends Repository>> repositoryHandlers = new HashMap<RepositoryType, Class<? extends Repository>>();
 	
 	/**
@@ -90,12 +89,10 @@ public final class RepositoryFactory {
 	}
 	
 	/**
-	 * registers a repository to the factory keyed by the {@link RepositoryType} and version string
-	 * 
-	 * @param repositoryIdentifier
-	 *            not null
-	 * @param repositoryClass
-	 *            class object implementing {@link Repository}, not null
+	 * registers a repository to the factory keyed by the {@link RepositoryType} and version string.
+	 *
+	 * @param repositoryIdentifier not null
+	 * @param repositoryClass class object implementing {@link Repository}, not null
 	 */
 	private static void addRepositoryHandler(@NotNull final RepositoryType repositoryIdentifier,
 	                                         @NotNull final Class<? extends Repository> repositoryClass) {
@@ -115,13 +112,11 @@ public final class RepositoryFactory {
 	}
 	
 	/**
-	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null)
-	 * 
-	 * @param repositoryIdentifier
-	 *            not null
+	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null).
+	 *
+	 * @param repositoryIdentifier not null
 	 * @return the corresponding {@link Repository} class object
-	 * @throws UnregisteredRepositoryTypeException
-	 *             if no matching repository class object could be found in the registry
+	 * @throws UnregisteredRepositoryTypeException if no matching repository class object could be found in the registry
 	 */
 	@NoneNull
 	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier) throws UnregisteredRepositoryTypeException {
@@ -139,12 +134,14 @@ public final class RepositoryFactory {
 	}
 	
 	/**
-	 * private constructor avoids instantiation
+	 * private constructor avoids instantiation.
 	 */
 	private RepositoryFactory() {
 	}
 	
 	/**
+	 * Gets the handle.
+	 *
 	 * @return the simple class name
 	 */
 	public String getHandle() {

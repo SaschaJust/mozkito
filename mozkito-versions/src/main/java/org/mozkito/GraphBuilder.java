@@ -26,8 +26,8 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class GraphBuilder.
@@ -41,22 +41,18 @@ public class GraphBuilder implements Runnable {
 	
 	/** The counter. */
 	private final IRevDependencyGraph revDepGraph;
+	
+	/** The persistence util. */
 	private final PersistenceUtil     persistenceUtil;
+	
+	/** The branch factory. */
 	private final BranchFactory       branchFactory;
 	
 	/**
 	 * Instantiates a new graph builder.
-	 * 
-	 * @param threadGroup
-	 *            the thread group
-	 * @param settings
-	 *            the settings
-	 * @param repository
-	 *            the repository
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @param branchFactory
-	 *            the branch factory
+	 *
+	 * @param repository the repository
+	 * @param persistenceUtil the persistence util
 	 */
 	@NoneNull
 	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {
@@ -66,7 +62,7 @@ public class GraphBuilder implements Runnable {
 	}
 	
 	/**
-	 * Phase one: iterate over all transactions and set parents, tags, and branchHEADs
+	 * Phase one: iterate over all transactions and set parents, tags, and branchHEADs.
 	 */
 	public void phaseOne() {
 		if (Logger.logInfo()) {
@@ -75,7 +71,7 @@ public class GraphBuilder implements Runnable {
 		this.persistenceUtil.beginTransaction();
 		int counter = 0;
 		for (final String hash : this.revDepGraph.getVertices()) {
-			final RCSTransaction rcsTransaction = this.persistenceUtil.loadById(hash, RCSTransaction.class);
+			final Transaction rcsTransaction = this.persistenceUtil.loadById(hash, Transaction.class);
 			
 			if (rcsTransaction == null) {
 				throw new UnrecoverableError("Could not load transaction " + hash + " from database.");
@@ -88,13 +84,13 @@ public class GraphBuilder implements Runnable {
 			// set parents
 			final String branchParentHash = this.revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
-				final RCSTransaction branchParent = this.persistenceUtil.loadById(branchParentHash,
-				                                                                  RCSTransaction.class);
+				final Transaction branchParent = this.persistenceUtil.loadById(branchParentHash,
+				                                                                  Transaction.class);
 				rcsTransaction.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
+				final Transaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, Transaction.class);
 				rcsTransaction.setMergeParent(mergeParent);
 			}
 			
@@ -107,7 +103,7 @@ public class GraphBuilder implements Runnable {
 			// persist branches
 			final String branchName = this.revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final RCSBranch branch = this.branchFactory.getBranch(branchName);
+				final Branch branch = this.branchFactory.getBranch(branchName);
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch " + branchName);
 				}
@@ -139,7 +135,7 @@ public class GraphBuilder implements Runnable {
 		for (final String hash : this.revDepGraph.getVertices()) {
 			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
+				final Transaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, Transaction.class);
 				if (mergeParent == null) {
 					throw new UnrecoverableError("Could not load transaction " + mergeParentHash + " from DB.");
 				}
@@ -149,7 +145,7 @@ public class GraphBuilder implements Runnable {
 					        + " are NULL or empty. Both is a fatal error.");
 				}
 				for (final String branchName : branchNames) {
-					final RCSBranch branch = this.persistenceUtil.loadById(branchName, RCSBranch.class);
+					final Branch branch = this.persistenceUtil.loadById(branchName, Branch.class);
 					branch.addMergedIn(hash);
 					this.persistenceUtil.saveOrUpdate(branch);
 					if ((++counter % COMMIT_LIMIT) == 0) {
@@ -175,20 +171,20 @@ public class GraphBuilder implements Runnable {
 			Logger.info("Phase II: Persisting branch transaction relationships ...");
 		}
 		
-		final List<RCSBranch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(RCSBranch.class));
+		final List<Branch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(Branch.class));
 		
 		if (branches.isEmpty()) {
 			throw new UnrecoverableError("Could not load any transactions from DB. This is a fatal error!");
 		}
 		
-		for (final RCSBranch branch : branches) {
+		for (final Branch branch : branches) {
 			if (Logger.logDebug()) {
 				Logger.debug("Handling branch " + branch.getName() + " with headId=" + branch.getHead().getId());
 			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
 			for (final String transactionId : this.revDepGraph.getBranchTransactions(branch.getName())) {
-				final RCSTransaction transaction = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
+				final Transaction transaction = this.persistenceUtil.loadById(transactionId, Transaction.class);
 				if (!transaction.addBranch(branch, index)) {
 					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
 					        + transaction.getId() + ". It appreas to be set before. Fatal error.");
@@ -207,6 +203,9 @@ public class GraphBuilder implements Runnable {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		phaseOne();

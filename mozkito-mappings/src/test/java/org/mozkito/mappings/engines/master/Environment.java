@@ -43,7 +43,7 @@ import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class Environment.
@@ -174,9 +174,9 @@ public final class Environment {
 	 *            the id
 	 * @return the rCS transaction
 	 */
-	public static RCSTransaction loadTransaction(final PersistenceUtil util,
+	public static Transaction loadTransaction(final PersistenceUtil util,
 	                                             final String id) {
-		return util.loadById(id, RCSTransaction.class);
+		return util.loadById(id, Transaction.class);
 	}
 	
 	/**

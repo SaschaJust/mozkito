@@ -21,11 +21,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
-import org.mozkito.persistence.Annotated;
 
+import org.mozkito.persistence.Annotated;
 
 @Embeddable
 public class DateTimeTuple implements Annotated {
@@ -80,7 +81,7 @@ public class DateTimeTuple implements Annotated {
 		if (!(obj instanceof DateTimeTuple)) {
 			return false;
 		}
-		DateTimeTuple other = (DateTimeTuple) obj;
+		final DateTimeTuple other = (DateTimeTuple) obj;
 		if (this.newValue == null) {
 			if (other.newValue != null) {
 				return false;
@@ -96,6 +97,15 @@ public class DateTimeTuple implements Annotated {
 			return false;
 		}
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Override
+	public String getHandle() {
+		return JavaUtils.getHandle(DateTimeTuple.class);
 	}
 	
 	/**
@@ -146,12 +156,12 @@ public class DateTimeTuple implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getNewValue() == null)
-		                                                  ? 0
-		                                                  : getNewValue().hashCode());
-		result = prime * result + ((getOldValue() == null)
-		                                                  ? 0
-		                                                  : getOldValue().hashCode());
+		result = (prime * result) + ((getNewValue() == null)
+		                                                    ? 0
+		                                                    : getNewValue().hashCode());
+		result = (prime * result) + ((getOldValue() == null)
+		                                                    ? 0
+		                                                    : getOldValue().hashCode());
 		return result;
 	}
 	
@@ -195,7 +205,7 @@ public class DateTimeTuple implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("DateTimeTuple [old=");
 		builder.append(getOldValue());
 		builder.append(", new=");

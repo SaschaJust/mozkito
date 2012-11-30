@@ -16,18 +16,47 @@ import org.joda.time.DateTime;
 
 import net.ownhero.dev.kisa.Logger;
 
+/**
+ * The Class AnnotationEntry.
+ */
 public class AnnotationEntry {
 	
+	/** The alternative file path. */
 	private final String   alternativeFilePath;
+	
+	/** The line. */
 	private final String   line;
+	
+	/** The revision. */
 	private final String   revision;
+	
+	/** The timestamp. */
 	private final DateTime timestamp;
+	
+	/** The username. */
 	private final String   username;
 	
+	/**
+	 * Instantiates a new annotation entry.
+	 *
+	 * @param revision the revision
+	 * @param username the username
+	 * @param timestamp the timestamp
+	 * @param line the line
+	 */
 	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line) {
 		this(revision, username, timestamp, line, null);
 	}
 	
+	/**
+	 * Instantiates a new annotation entry.
+	 *
+	 * @param revision the revision
+	 * @param username the username
+	 * @param timestamp the timestamp
+	 * @param line the line
+	 * @param alternativeFilePath the alternative file path
+	 */
 	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line,
 	        final String alternativeFilePath) {
 		this.revision = revision;
@@ -41,27 +70,46 @@ public class AnnotationEntry {
 		}
 	}
 	
+	/**
+	 * Gets the alternative file path.
+	 *
+	 * @return the alternative file path
+	 */
 	public String getAlternativeFilePath() {
 		return this.alternativeFilePath;
 		
 	}
 	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
 	
 	/**
+	 * Gets the line.
+	 *
 	 * @return the line
 	 */
 	public String getLine() {
 		return this.line;
 	}
 	
+	/**
+	 * Gets the revision.
+	 *
+	 * @return the revision
+	 */
 	public String getRevision() {
 		return this.revision;
 	}
 	
 	/**
+	 * Gets the timestamp.
+	 *
 	 * @return the timestamp
 	 */
 	public DateTime getTimestamp() {
@@ -69,12 +117,19 @@ public class AnnotationEntry {
 	}
 	
 	/**
+	 * Gets the username.
+	 *
 	 * @return the username
 	 */
 	public String getUsername() {
 		return this.username;
 	}
 	
+	/**
+	 * Checks for alternative path.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasAlternativePath() {
 		return (this.alternativeFilePath != null);
 	}

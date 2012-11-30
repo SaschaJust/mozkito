@@ -44,11 +44,34 @@ import org.mozkito.mappings.strategies.SVMStrategy;
  */
 public class LibSVMTrainer extends Trainer {
 	
+	/**
+     * 
+     */
+	private static final double EPS        = 0.001d;
+	/**
+     * 
+     */
+	private static final double P          = 0.10000000;
+	/**
+     * 
+     */
+	private static final double CACHE_SIZE = 100d;
+	
+	/**
+     * 
+     */
+	private static final double NU         = 0.5d;
+	
+	/**
+     * 
+     */
+	private static final int    DEGREE     = 3;
+	
 	/** The model. */
-	private svm_model        model;
+	private svm_model           model;
 	
 	/** The Constant MIN_TOKENS. */
-	private static final int MIN_TOKENS = 3;
+	private static final int    MIN_TOKENS = 3;
 	
 	/*
 	 * (non-Javadoc)
@@ -223,14 +246,14 @@ public class LibSVMTrainer extends Trainer {
 		final svm_parameter param = new svm_parameter();
 		param.svm_type = 0;
 		param.kernel_type = 2;
-		param.degree = 3;
+		param.degree = DEGREE;
 		param.gamma = 1 / vectorLength;
 		param.coef0 = 0d;
-		param.nu = 0.5d;
-		param.cache_size = 100d;
+		param.nu = NU;
+		param.cache_size = CACHE_SIZE;
 		param.C = 1d;
-		param.eps = 0.001d;
-		param.p = 0.10000000000000001d;
+		param.eps = EPS;
+		param.p = P;
 		param.shrinking = 1;
 		param.probability = 0;
 		param.nr_weight = 0;

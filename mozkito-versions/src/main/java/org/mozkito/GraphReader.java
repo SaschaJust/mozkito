@@ -19,7 +19,7 @@ import java.util.LinkedList;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -29,34 +29,37 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class GraphReader.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
-public class GraphReader extends Source<RCSTransaction> {
+public class GraphReader extends Source<Transaction> {
 	
 	/**
-	 * @param threadGroup
-	 * @param name
-	 * @param settings
+	 * Instantiates a new graph reader.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param persistenceUtil the persistence util
 	 */
 	public GraphReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
+		final LinkedList<Transaction> list = new LinkedList<Transaction>();
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
 				list.addAll(persistenceUtil.load(criteria));
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<Transaction, Transaction>(this) {
 			
 			@Override
 			public void process() {
-				final RCSTransaction transaction = list.poll();
+				final Transaction transaction = list.poll();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Providing " + transaction + ".");

@@ -19,26 +19,20 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.codeanalysis.model.JavaElementFactory;
-import org.mozkito.codeanalysis.model.JavaElementLocation;
-import org.mozkito.codeanalysis.model.JavaElementLocationSet;
-import org.mozkito.codeanalysis.model.JavaMethodDefinition;
+
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
-
-public class OpenJPA_PPA_MozkitoTest extends MozkitoTest {
+public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 	
 	@Test
 	@DatabaseSettings (unit = "codeanalysis")
@@ -52,13 +46,13 @@ public class OpenJPA_PPA_MozkitoTest extends MozkitoTest {
 		
 		final Person p = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final RCSBranch masterBranch = branchFactory.getMasterBranch();
+		final Branch masterBranch = branchFactory.getMasterBranch();
 		
-		final RCSTransaction transaction = RCSTransaction.createTransaction("1", "", now, p, "1");
+		final Transaction transaction = new Transaction("1", "", now, p, "1");
 		masterBranch.setHead(transaction);
 		
-		final RCSFile file = new RCSFileManager().createFile("a.java", transaction);
-		final RCSRevision rev = new RCSRevision(transaction, file, ChangeType.Added);
+		final File file = new RCSFileManager().createFile("a.java", transaction);
+		final Revision rev = new Revision(transaction, file, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
 		getPersistenceUtil().save(transaction);
 		getPersistenceUtil().save(op);

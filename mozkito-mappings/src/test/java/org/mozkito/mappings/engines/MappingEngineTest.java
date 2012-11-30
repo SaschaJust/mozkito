@@ -39,6 +39,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -58,7 +59,7 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class MappingEngineTest.
@@ -78,7 +79,7 @@ public class MappingEngineTest {
 	static Relation            score;
 	
 	/** The transaction. */
-	static RCSTransaction      transaction;
+	static Transaction         transaction;
 	
 	/**
 	 * Setup class.
@@ -140,11 +141,10 @@ public class MappingEngineTest {
 		
 		MappingEngineTest.report.setLastUpdateTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		
-		MappingEngineTest.transaction = RCSTransaction.createTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
-		                                                                 "Fixing bug 84698384.",
-		                                                                 new DateTime(2012, 01, 16, 19, 32, 12, 0),
-		                                                                 developer,
-		                                                                 "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
+		MappingEngineTest.transaction = new Transaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
+		                                                "Fixing bug 84698384.", new DateTime(2012, 01, 16, 19, 32, 12,
+		                                                                                     0), developer,
+		                                                "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
 		MappingEngineTest.mappableTransaction = new MappableTransaction(MappingEngineTest.transaction);
 	}
 	
@@ -160,6 +160,7 @@ public class MappingEngineTest {
 	/** The engines. */
 	private Collection<Engine> engines;
 	
+	/** The mapping options. */
 	private MappingOptions     mappingOptions;
 	
 	/**
@@ -170,6 +171,7 @@ public class MappingEngineTest {
 	 * @throws SettingsParseError
 	 *             the settings parse error
 	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
 	 */
 	@Before
 	public void setup() throws ArgumentRegistrationException, SettingsParseError, ArgumentSetRegistrationException {

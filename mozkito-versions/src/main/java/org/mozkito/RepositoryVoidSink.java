@@ -15,7 +15,7 @@
  */
 package org.mozkito;
 
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Sink;
@@ -28,7 +28,7 @@ import net.ownhero.dev.hiari.settings.Settings;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class RepositoryVoidSink extends Sink<RCSTransaction> {
+public class RepositoryVoidSink extends Sink<Transaction> {
 	
 	/**
 	 * Instantiates a new repository void sink.

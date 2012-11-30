@@ -28,10 +28,10 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class OpenJPA_RCS_MozkitoTest.
@@ -56,17 +56,16 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	@Test
 	public void testRCSBranch() {
 		
-		final RCSBranch branch = new RCSBranch("testBranch");
-		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000", "committed begin",
-		                                                                         new DateTime(),
-		                                                                         new Person("just", "Sascha Just",
-		                                                                                    "sascha.just@mozkito.org"),
-		                                                                         "000000000000000");
-		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde", "committed end",
-		                                                                       new DateTime(),
-		                                                                       new Person("just", "Sascha Just",
-		                                                                                  "sascha.just@mozkito.org"),
-		                                                                       "0123456789abcde");
+		final Branch branch = new Branch("testBranch");
+		final Transaction beginTransaction = new Transaction("000000000000000", "committed begin",
+		                                                           new DateTime(),
+		                                                           new Person("just", "Sascha Just",
+		                                                                      "sascha.just@mozkito.org"),
+		                                                           "000000000000000");
+		final Transaction endTransaction = new Transaction("0123456789abcde", "committed end", new DateTime(),
+		                                                         new Person("just", "Sascha Just",
+		                                                                    "sascha.just@mozkito.org"),
+		                                                         "0123456789abcde");
 		
 		branch.setHead(endTransaction);
 		
@@ -78,12 +77,12 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		endTransaction.setBranchParent(beginTransaction);
 		getPersistenceUtil().commitTransaction();
 		
-		final List<RCSBranch> list = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSBranch.class));
+		final List<Branch> list = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Branch.class));
 		
 		assertFalse(list.isEmpty());
 		assertEquals(1, list.size());
 		assertTrue(list.contains(branch));
-		for (final RCSBranch b : list) {
+		for (final Branch b : list) {
 			if (b.getName().equals(branch.getName())) {
 				assertEquals(endTransaction, branch.getHead());
 			}
@@ -96,9 +95,9 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	@Test
 	public void testRCSRevision() {
 		final Person person = new Person("just", null, null);
-		final RCSTransaction transaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
-		final RCSFile file = new RCSFileManager().createFile("test.java", transaction);
-		final RCSRevision revision = new RCSRevision(transaction, file, ChangeType.Added);
+		final Transaction transaction = new Transaction("0", "", new DateTime(), person, "");
+		final File file = new RCSFileManager().createFile("test.java", transaction);
+		final Revision revision = new Revision(transaction, file, ChangeType.Added);
 		
 		assertTrue(transaction.getRevisions().contains(revision));
 		this.branchFactory.getMasterBranch().setHead(transaction);
@@ -109,7 +108,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		assertTrue(transaction.getRevisions().contains(revision));
 		
 		// revision
-		final List<RCSRevision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSRevision.class));
+		final List<Revision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Revision.class));
 		assertFalse(revisionList.isEmpty());
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
@@ -118,7 +117,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		assertEquals(file, revisionList.get(0).getChangedFile());
 		
 		// file
-		final List<RCSFile> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSFile.class));
+		final List<File> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(File.class));
 		assertFalse(fileList.isEmpty());
 		assertEquals(1, fileList.size());
 		assertEquals(file, fileList.get(0));
@@ -140,7 +139,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		assertTrue(personList.get(0).getFullnames().isEmpty());
 		
 		// transaction
-		final List<RCSTransaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSTransaction.class));
+		final List<Transaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Transaction.class));
 		assertFalse(transactionList.isEmpty());
 		assertEquals(1, transactionList.size());
 		assertEquals(transaction, transactionList.get(0));
@@ -156,11 +155,11 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	public void testSaveRCSFile() {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
-		final RCSTransaction rcsTransaction = RCSTransaction.createTransaction("0", "", new DateTime(), person, "");
+		final Transaction rcsTransaction = new Transaction("0", "", new DateTime(), person, "");
 		
-		final RCSFile file = fileManager.createFile("test.java", rcsTransaction);
+		final File file = fileManager.createFile("test.java", rcsTransaction);
 		file.assignTransaction(rcsTransaction, "formerTest.java");
-		final RCSRevision revision = new RCSRevision(rcsTransaction, file, ChangeType.Added);
+		final Revision revision = new Revision(rcsTransaction, file, ChangeType.Added);
 		getPersistenceUtil().beginTransaction();
 		
 		this.branchFactory.getMasterBranch().setHead(rcsTransaction);
@@ -168,7 +167,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		getPersistenceUtil().saveOrUpdate(rcsTransaction);
 		getPersistenceUtil().commitTransaction();
 		
-		final List<RCSFile> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSFile.class));
+		final List<File> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(File.class));
 		assertEquals(1, fileList.size());
 		assertEquals(file, fileList.get(0));
 		
@@ -176,11 +175,11 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 		assertFalse(personList.isEmpty());
 		assertTrue(personList.contains(person));
 		
-		final List<RCSRevision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSRevision.class));
+		final List<Revision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Revision.class));
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
 		
-		final List<RCSTransaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSTransaction.class));
+		final List<Transaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Transaction.class));
 		assertFalse(transactionList.isEmpty());
 		assertTrue(transactionList.contains(rcsTransaction));
 	}

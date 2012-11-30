@@ -12,9 +12,27 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
+/**
+ * The Enum ChangeType.
+ */
 public enum ChangeType {
-	Added, Deleted, Modified, Renamed, All;
 	
+	/** The Added. */
+	Added, 
+ /** The Deleted. */
+ Deleted, 
+ /** The Modified. */
+ Modified, 
+ /** The Renamed. */
+ Renamed, 
+ /** The All. */
+ All;
+	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}

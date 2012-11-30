@@ -41,8 +41,8 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -182,14 +182,14 @@ public class ChangeGenealogyUtils {
 		// till here we loaded the database dump and extracted the repository.
 		
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
-		final Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
-		final Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
+		final Map<Integer, Transaction> environmentTransactions = new HashMap<Integer, Transaction>();
+		final Map<Transaction, Set<JavaChangeOperation>> transactionMap = new HashMap<Transaction, Set<JavaChangeOperation>>();
 		
 		// read all transactions and JavaChangeOperations
-		final Criteria<RCSTransaction> transactionCriteria = branchFactory.getPersistenceUtil()
-		                                                                  .createCriteria(RCSTransaction.class);
-		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
-		for (final RCSTransaction transaction : transactionList) {
+		final Criteria<Transaction> transactionCriteria = branchFactory.getPersistenceUtil()
+		                                                                  .createCriteria(Transaction.class);
+		final List<Transaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
+		for (final Transaction transaction : transactionList) {
 			if (transaction.getId().equals("a64df287a21f8a7b0690d13c1561171cbf48a0e1")) {
 				environmentTransactions.put(1, transaction);
 			} else if (transaction.getId().equals("a10344533c2b442235aa3bf3dc87dd0ac37cb0af")) {
@@ -211,11 +211,11 @@ public class ChangeGenealogyUtils {
 			} else if (transaction.getId().equals("5658606e2f80c30d0b835ed4216e9f8e0cc996fb")) {
 				environmentTransactions.put(10, transaction);
 			} else {
-				throw new UnrecoverableError("Got unexpected RCSTransaction from database: " + transaction.getId());
+				throw new UnrecoverableError("Got unexpected Transaction from database: " + transaction.getId());
 			}
 			
 			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
-			for (final RCSRevision revision : transaction.getRevisions()) {
+			for (final Revision revision : transaction.getRevisions()) {
 				final Criteria<JavaChangeOperation> operationCriteria = branchFactory.getPersistenceUtil()
 				                                                                     .createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
@@ -296,7 +296,7 @@ public class ChangeGenealogyUtils {
 			                             "Could not generate test change genealogy environment. Reading the CoreChangeGenealogy failed!");
 		}
 		
-		for (final Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
+		for (final Entry<Transaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
 			for (final JavaChangeOperation operation : transactionEntry.getValue()) {
 				changeGenealogy.addVertex(operation);
 			}

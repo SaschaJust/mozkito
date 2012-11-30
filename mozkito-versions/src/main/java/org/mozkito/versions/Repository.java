@@ -29,7 +29,7 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import difflib.Delta;
 
@@ -56,7 +56,7 @@ public abstract class Repository {
 	private String         endRevision;
 	
 	/** The start transaction. */
-	private RCSTransaction startTransaction = null;
+	private Transaction startTransaction = null;
 	
 	/** The main branch name. */
 	private String         mainBranchName;
@@ -231,7 +231,7 @@ public abstract class Repository {
 	 * 
 	 * @return the startTransaction
 	 */
-	public RCSTransaction getStartTransaction() {
+	public Transaction getStartTransaction() {
 		return this.startTransaction;
 	}
 	
@@ -383,7 +383,7 @@ public abstract class Repository {
 	 * @param startTransaction
 	 *            the startTransaction to set
 	 */
-	public void setStartTransaction(final RCSTransaction startTransaction) {
+	public void setStartTransaction(final Transaction startTransaction) {
 		this.startTransaction = startTransaction;
 	}
 	

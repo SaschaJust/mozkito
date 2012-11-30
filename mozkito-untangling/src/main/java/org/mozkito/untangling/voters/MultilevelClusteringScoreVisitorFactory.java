@@ -13,7 +13,7 @@
 package org.mozkito.untangling.voters;
 
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -22,7 +22,7 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public abstract class MultilevelClusteringScoreVisitorFactory<T extends MultilevelClusteringScoreVisitor<?>> {
 	
-	public abstract T createVoter(final RCSTransaction transaction);
+	public abstract T createVoter(final Transaction transaction);
 	
 	public abstract String getVoterName();
 }

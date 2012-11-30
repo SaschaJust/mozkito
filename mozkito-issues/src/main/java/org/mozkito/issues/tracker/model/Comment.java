@@ -34,15 +34,16 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.StringUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.Positive;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
-
 
 /**
  * The Class Comment.
@@ -150,6 +151,14 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	@GeneratedValue (strategy = GenerationType.SEQUENCE)
 	public long getGeneratedId() {
 		return this.generatedId;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(Comment.class);
 	}
 	
 	/**

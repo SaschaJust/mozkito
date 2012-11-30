@@ -111,6 +111,14 @@ public class PersonContainer implements Intercepted<Person>, Annotated {
 		return this.generatedId;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(PersonContainer.class);
+	}
+	
 	/**
 	 * Gets the map.
 	 * 

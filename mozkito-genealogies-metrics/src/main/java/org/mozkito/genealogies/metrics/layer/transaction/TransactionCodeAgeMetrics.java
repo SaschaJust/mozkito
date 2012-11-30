@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -98,7 +98,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
-		final RCSTransaction transaction = item.getNode();
+		final Transaction transaction = item.getNode();
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
 		                                                                                               transaction);
 		final DescriptiveStatistics lastModifiedStats = new DescriptiveStatistics();
@@ -109,16 +109,16 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
-			final List<RCSTransaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
+			final List<Transaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
 			                                                                                                element);
 			
 			if (!pastTransactions.isEmpty()) {
 				numChangesStats.addValue(pastTransactions.size());
 				
-				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
+				final Transaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
 				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
 			}
-			// final RCSTransaction firstModified =
+			// final Transaction firstModified =
 			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
 			// element);
 			final DateTime firstModified = PPAPersistenceUtil.getFirstTimestampChangingElement(this.persistenceUtil,

@@ -22,35 +22,35 @@ import org.mozkito.causeeffect.ctl.CTLAtomicFormula;
 import org.mozkito.causeeffect.ctl.CTLConjunction;
 import org.mozkito.causeeffect.ctl.CTLEF;
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.File;
 
 
 /**
  * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
-public class EFandEF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {
+public class EFandEF_FormulaGenearator extends CTLFormulaGenerator<File> {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.CTLFormulaGenerator#generate(java.util.Collection, java.util.Collection)
 	 */
 	@Override
-	public Collection<CTLFormula> generate(final Collection<RCSFile> premises,
-	                                       final Collection<RCSFile> implications) {
+	public Collection<CTLFormula> generate(final Collection<File> premises,
+	                                       final Collection<File> implications) {
 		// PRECONDITIONS
 		
 		try {
 			final Collection<CTLFormula> formulas = new HashSet<CTLFormula>();
 			
-			final List<RCSFile> implicationList = new ArrayList<>(implications.size());
+			final List<File> implicationList = new ArrayList<>(implications.size());
 			
-			final ListIterator<RCSFile> firstIter = implicationList.listIterator();
+			final ListIterator<File> firstIter = implicationList.listIterator();
 			while (firstIter.hasNext()) {
-				final RCSFile implication1 = firstIter.next();
-				final ListIterator<RCSFile> secondIter = implicationList.listIterator(firstIter.nextIndex());
+				final File implication1 = firstIter.next();
+				final ListIterator<File> secondIter = implicationList.listIterator(firstIter.nextIndex());
 				while (secondIter.hasNext()) {
-					final RCSFile implication2 = secondIter.next();
+					final File implication2 = secondIter.next();
 					final CTLFormula ef1 = CTLEF.get(CTLAtomicFormula.get(implication1.getGeneratedId()));
 					final CTLFormula ef2 = CTLEF.get(CTLAtomicFormula.get(implication2.getGeneratedId()));
 					formulas.add(CTLConjunction.get(ef1, ef2));

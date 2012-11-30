@@ -15,27 +15,36 @@
  */
 package org.mozkito.infozilla.model.attachment;
 
+import net.ownhero.dev.ioda.JavaUtils;
+
 import org.mozkito.persistence.Annotated;
 
 /**
  * The Enum AttachmentType.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum AttachmentType implements Annotated {
-	
 	/** The ARCHIVE. */
-	ARCHIVE, 
- /** The IMAGE. */
- IMAGE, 
- /** The LOG. */
- LOG, 
- /** The PATCH. */
- PATCH, 
- /** The SOURCECODE. */
- SOURCECODE, 
- /** The STACKTRACE. */
- STACKTRACE, 
- /** The UNKNOWN. */
- UNKNOWN;
+	ARCHIVE,
+	/** The IMAGE. */
+	IMAGE,
+	/** The LOG. */
+	LOG,
+	/** The PATCH. */
+	PATCH,
+	/** The SOURCECODE. */
+	SOURCECODE,
+	/** The STACKTRACE. */
+	STACKTRACE,
+	/** The UNKNOWN. */
+	UNKNOWN;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(AttachmentType.class);
+	}
 }

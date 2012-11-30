@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -25,12 +25,12 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode {
 	
-	private final RCSTransaction transaction;
+	private final Transaction transaction;
 	
 	/**
 	 * @param partition
 	 */
-	public TransactionChangeGenealogyNode(final RCSTransaction transaction,
+	public TransactionChangeGenealogyNode(final Transaction transaction,
 	        final Collection<JavaChangeOperation> partition) {
 		super(transaction.getId(), partition);
 		this.transaction = transaction;

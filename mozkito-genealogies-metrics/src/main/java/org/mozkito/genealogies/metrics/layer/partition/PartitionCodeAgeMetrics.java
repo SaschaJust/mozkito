@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 
 /**
@@ -109,16 +109,16 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 			
 			final DateTime before = op.getRevision().getTransaction().getTimestamp();
 			
-			final List<RCSTransaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
+			final List<Transaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
 			                                                                                                element);
 			
 			if (!pastTransactions.isEmpty()) {
 				numChangesStats.addValue(pastTransactions.size());
 				
-				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
+				final Transaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
 				lastModifiedStats.addValue(Math.abs(Days.daysBetween(lastModified.getTimestamp(), before).getDays()));
 			}
-			// final RCSTransaction firstModified =
+			// final Transaction firstModified =
 			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
 			// element);
 			final DateTime firstModified = PPAPersistenceUtil.getFirstTimestampChangingElement(this.persistenceUtil,

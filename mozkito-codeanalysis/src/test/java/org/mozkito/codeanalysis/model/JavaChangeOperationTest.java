@@ -6,19 +6,20 @@ import org.jdom2.Element;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.Transaction;
 
 public class JavaChangeOperationTest {
 	
-	private RCSTransaction         transaction;
+	private Transaction         transaction;
 	private JavaElementLocation    anonymousClassLocation;
 	private JavaElementLocationSet set;
-	private RCSFile                rcsFile;
+	private File                rcsFile;
 	private JavaChangeOperation    op;
 	private JavaElementFactory     elementFactory;
 	
@@ -32,11 +33,11 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.transaction = RCSTransaction.createTransaction("hash", "hubba hubba hopp!", new DateTime(),
-		                                                    new Person("kim", null, null), "143");
-		this.rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", this.transaction);
+		this.transaction = new Transaction("hash", "hubba hubba hopp!", new DateTime(),
+		                                      new Person("kim", null, null), "143");
+		this.rcsFile = new File("org/mozkito/codeanalysis/model/TestClass.java", this.transaction);
 		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-		                                  new RCSRevision(this.transaction, this.rcsFile, ChangeType.Added));
+		                                  new Revision(this.transaction, this.rcsFile, ChangeType.Added));
 	}
 	
 	@Test
@@ -49,10 +50,10 @@ public class JavaChangeOperationTest {
 	public void testXML() {
 		final Element xmlOp = this.op.getXMLRepresentation();
 		assertEquals(this.op,
-		             JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, RCSTransaction>() {
+		             JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, Transaction>() {
 			             
 			             @Override
-			             public RCSTransaction getById(final String id) {
+			             public Transaction getById(final String id) {
 				             return JavaChangeOperationTest.this.transaction;
 			             }
 		             }, this.elementFactory));

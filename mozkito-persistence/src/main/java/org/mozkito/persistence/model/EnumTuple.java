@@ -16,10 +16,11 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
-import org.mozkito.persistence.Annotated;
-
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
+import org.mozkito.persistence.Annotated;
 
 @Embeddable
 public class EnumTuple implements Annotated {
@@ -63,7 +64,7 @@ public class EnumTuple implements Annotated {
 	 */
 	private Enum<?> convertEnum(final Class<?> enumClass,
 	                            final String stringValue) {
-		for (Enum<?> e : (Enum<?>[]) enumClass.getEnumConstants()) {
+		for (final Enum<?> e : (Enum<?>[]) enumClass.getEnumConstants()) {
 			if (e.name().equals(stringValue)) {
 				return e;
 			}
@@ -86,7 +87,7 @@ public class EnumTuple implements Annotated {
 		if (!(obj instanceof EnumTuple)) {
 			return false;
 		}
-		EnumTuple other = (EnumTuple) obj;
+		final EnumTuple other = (EnumTuple) obj;
 		if (this.enumClass == null) {
 			if (other.enumClass != null) {
 				return false;
@@ -125,6 +126,14 @@ public class EnumTuple implements Annotated {
 	@Basic
 	protected String getEnumClassName() {
 		return this.enumClassName;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(EnumTuple.class);
 	}
 	
 	/**
@@ -205,7 +214,7 @@ public class EnumTuple implements Annotated {
 			if (_enum != null) {
 				setNewValue(_enum);
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new ClassLoadingError(e, className);
 		}
 	}
@@ -225,7 +234,7 @@ public class EnumTuple implements Annotated {
 	private void setNewStringValue(final String newStringValue) {
 		this.newStringValue = newStringValue;
 		if (getEnumClass() != null) {
-			Enum<?> _enum = convertEnum(getEnumClass(), newStringValue);
+			final Enum<?> _enum = convertEnum(getEnumClass(), newStringValue);
 			if (_enum != null) {
 				setNewValue(_enum);
 			}
@@ -247,7 +256,7 @@ public class EnumTuple implements Annotated {
 	private void setOldStringValue(final String oldStringValue) {
 		this.oldStringValue = oldStringValue;
 		if (getEnumClass() != null) {
-			Enum<?> _enum = convertEnum(getEnumClass(), oldStringValue);
+			final Enum<?> _enum = convertEnum(getEnumClass(), oldStringValue);
 			if (_enum != null) {
 				setOldValue(_enum);
 			}
@@ -268,7 +277,7 @@ public class EnumTuple implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("EnumTuple [class=");
 		builder.append(getEnumClassName());
 		builder.append(", old=");

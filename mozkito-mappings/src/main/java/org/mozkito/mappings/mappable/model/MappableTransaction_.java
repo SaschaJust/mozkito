@@ -14,7 +14,7 @@ package org.mozkito.mappings.mappable.model;
 
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class MappableTransaction_.
@@ -25,5 +25,5 @@ import org.mozkito.versions.model.RCSTransaction;
 public class MappableTransaction_ extends MappableEntity_ {
 	
 	/** The transaction. */
-	public static volatile SingularAttribute<MappableTransaction, RCSTransaction> transaction;
+	public static volatile SingularAttribute<MappableTransaction, Transaction> transaction;
 }

@@ -18,6 +18,9 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.mozkito.versions.elements.LogEntry;
 
+/**
+ * The Interface LogParser.
+ */
 public interface LogParser {
 	
 	/**

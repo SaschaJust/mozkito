@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.mozkito.mappings.mappable.model.MappableReport;
 import org.mozkito.mappings.mappable.model.MappableTransaction;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -30,7 +30,7 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class ReportSelectorsTest {
 	
-	private RCSTransaction      transaction;
+	private Transaction      transaction;
 	private MappableTransaction mTransaction;
 	private PersistenceUtil     util;
 	
@@ -39,7 +39,7 @@ public class ReportSelectorsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		this.transaction = this.util.loadById("abcdefg", RCSTransaction.class);
+		this.transaction = this.util.loadById("abcdefg", Transaction.class);
 		this.mTransaction = new MappableTransaction(this.transaction);
 	}
 	

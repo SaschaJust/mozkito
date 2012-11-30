@@ -22,7 +22,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalStructuralHolesMetrics;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,7 +34,7 @@ import net.ownhero.dev.kisa.Logger;
 public class TransactionStructuralHolesMetrics extends GenealogyTransactionMetric {
 	
 	/** The universal metric. */
-	private final UniversalStructuralHolesMetrics<RCSTransaction> universalMetric;
+	private final UniversalStructuralHolesMetrics<Transaction> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction structural holes metrics.
@@ -43,7 +43,7 @@ public class TransactionStructuralHolesMetrics extends GenealogyTransactionMetri
 	 */
 	public TransactionStructuralHolesMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalStructuralHolesMetrics<RCSTransaction>(genealogy);
+		this.universalMetric = new UniversalStructuralHolesMetrics<Transaction>(genealogy);
 	}
 	
 	/* (non-Javadoc)

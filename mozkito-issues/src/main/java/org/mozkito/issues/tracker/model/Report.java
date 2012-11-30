@@ -56,6 +56,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -118,7 +119,6 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/** The priority. */
 	private Priority              priority          = Priority.UNKNOWN;
-	
 	/** The product. */
 	private String                product;
 	
@@ -451,6 +451,14 @@ public class Report implements Annotated, Comparable<Report> {
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(Report.class);
 	}
 	
 	/**

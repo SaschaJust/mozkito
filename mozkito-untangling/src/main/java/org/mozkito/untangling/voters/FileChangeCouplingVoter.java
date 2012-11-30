@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.mozkito.untangling.voters;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,20 +23,20 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
+import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -50,7 +49,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final RCSTransaction           transaction;
+	private final Transaction              transaction;
 	
 	/** The min support. */
 	private final int                      minSupport;
@@ -77,8 +76,8 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public FileChangeCouplingVoter(@NotNull final RCSTransaction transaction, final int minSupport,
-	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
+	public FileChangeCouplingVoter(@NotNull final Transaction transaction, final int minSupport,
+	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final java.io.File cacheDir) {
 		
 		this.transaction = transaction;
 		this.minSupport = minSupport;
@@ -86,8 +85,8 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
-			        + "_file.cc");
+			final java.io.File serialFile = new java.io.File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
+			        + transaction.getId() + "_file.cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
@@ -161,8 +160,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	@NoneNull
@@ -190,7 +188,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			
 			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (final RCSFile file : c.getPremise()) {
+				for (final File file : c.getPremise()) {
 					final String fPath = file.getPath(this.transaction);
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;

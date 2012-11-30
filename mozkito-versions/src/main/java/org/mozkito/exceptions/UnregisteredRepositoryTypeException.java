@@ -13,14 +13,20 @@
 package org.mozkito.exceptions;
 
 /**
- * 
+ * The Class UnregisteredRepositoryTypeException.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class UnregisteredRepositoryTypeException extends Exception {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7392389210139073113L;
 	
+	/**
+	 * Instantiates a new unregistered repository type exception.
+	 *
+	 * @param string the string
+	 */
 	public UnregisteredRepositoryTypeException(final String string) {
 		super(string);
 	}

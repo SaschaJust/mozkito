@@ -38,7 +38,7 @@ import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Transaction;
 
 /**
  * The Class TransactionRegexSelector.
@@ -252,6 +252,6 @@ public class TransactionRegexSelector extends Selector {
 	@Override
 	public boolean supports(final Class<?> from,
 	                        final Class<?> to) {
-		return from.equals(Report.class) && to.equals(RCSTransaction.class);
+		return from.equals(Report.class) && to.equals(Transaction.class);
 	}
 }

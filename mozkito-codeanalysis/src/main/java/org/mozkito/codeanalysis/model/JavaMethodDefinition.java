@@ -21,12 +21,14 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -38,8 +40,13 @@ import org.mozkito.persistence.Annotated;
 @DiscriminatorValue ("JAVAMETHODDEFINITION")
 public class JavaMethodDefinition extends JavaElement implements Annotated, Serializable {
 	
+	/** The Constant FULL_QUALIFIED_NAME. */
 	public static final String FULL_QUALIFIED_NAME    = "fullQualifiedName";   //$NON-NLS-1$
+	                                                                            
+	/** The Constant JAVA_METHOD_DEFINITION. */
 	public static final String JAVA_METHOD_DEFINITION = "JavaMethodDefinition"; //$NON-NLS-1$
+	                                                                            
+	/** The Constant ANNOTATED_OVERRIDE. */
 	public static final String ANNOTATED_OVERRIDE     = "annotatedOverride";   //$NON-NLS-1$
 	                                                                            
 	/** The Constant serialVersionUID. */
@@ -48,8 +55,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	/**
 	 * Compose full qualified name.
 	 * 
-	 * @param parent
-	 *            the parent
+	 * @param parentName
+	 *            the parent name
 	 * @param methodName
 	 *            the method name
 	 * @param signature
@@ -121,6 +128,13 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		return new JavaMethodDefinition(parentName, methodName, argList, override);
 	}
 	
+	/**
+	 * Gets the signature string.
+	 * 
+	 * @param signature
+	 *            the signature
+	 * @return the signature string
+	 */
 	@NoneNull
 	public static String getSignatureString(final List<String> signature) {
 		final StringBuilder sb = new StringBuilder();
@@ -136,6 +150,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		return sb.toString();
 	}
 	
+	/** The annotated override. */
 	private boolean      annotatedOverride = false;
 	
 	/** The signature. */
@@ -152,10 +167,14 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	/**
 	 * Instantiates a new java method definition.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param parentName
+	 *            the parent name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
+	 * @param override
+	 *            the override
 	 */
 	@NoneNull
 	protected JavaMethodDefinition(final String parentName, final String methodName, final List<String> signature,
@@ -191,6 +210,14 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 			return false;
 		}
 		return true;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(JavaMethodDefinition.class);
 	}
 	
 	/**
@@ -234,6 +261,11 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		return result;
 	}
 	
+	/**
+	 * Checks if is annotated override.
+	 * 
+	 * @return true, if is annotated override
+	 */
 	public boolean isAnnotatedOverride() {
 		// PRECONDITIONS
 		
@@ -245,6 +277,12 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		}
 	}
 	
+	/**
+	 * Sets the annotated override.
+	 * 
+	 * @param annotatedOverride
+	 *            the new annotated override
+	 */
 	public void setAnnotatedOverride(final boolean annotatedOverride) {
 		// PRECONDITIONS
 		

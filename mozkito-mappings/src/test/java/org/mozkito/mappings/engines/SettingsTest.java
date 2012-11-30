@@ -26,11 +26,15 @@ import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.settings.MappingOptions;
 
 /**
+ * The Class SettingsTest.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class SettingsTest {
 	
+	/**
+	 * No test.
+	 */
 	public void noTest() {
 		Settings settings = null;
 		try {

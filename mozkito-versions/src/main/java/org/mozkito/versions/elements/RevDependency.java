@@ -17,20 +17,39 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 
+/**
+ * The Class RevDependency.
+ */
 public class RevDependency {
 	
+	/** The rev id. */
 	private final String       revId;
 	
 	/** The map of children to their branches. */
 	private Set<String>        parents = new HashSet<String>();
-	private final RCSBranch    commitBranch;
+	
+	/** The commit branch. */
+	private final Branch    commitBranch;
+	
+	/** The tag names. */
 	private final List<String> tagNames;
+	
+	/** The is merge. */
 	private final boolean      isMerge;
 	
-	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
+	/**
+	 * Instantiates a new rev dependency.
+	 *
+	 * @param id the id
+	 * @param commitBranch the commit branch
+	 * @param parents the parents
+	 * @param tagNames the tag names
+	 * @param isMerge the is merge
+	 */
+	public RevDependency(final String id, final Branch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
 		this.revId = id;
 		this.commitBranch = commitBranch;
@@ -39,26 +58,54 @@ public class RevDependency {
 		this.isMerge = isMerge;
 	}
 	
-	public RCSBranch getCommitBranch() {
+	/**
+	 * Gets the commit branch.
+	 *
+	 * @return the commit branch
+	 */
+	public Branch getCommitBranch() {
 		return this.commitBranch;
 	}
 	
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	public String getId() {
 		return this.revId;
 	}
 	
+	/**
+	 * Gets the parents.
+	 *
+	 * @return the parents
+	 */
 	public Set<String> getParents() {
 		return this.parents;
 	}
 	
+	/**
+	 * Gets the tag names.
+	 *
+	 * @return the tag names
+	 */
 	public List<String> getTagNames() {
 		return this.tagNames;
 	}
 	
+	/**
+	 * Checks if is merge.
+	 *
+	 * @return true, if is merge
+	 */
 	public boolean isMerge() {
 		return this.isMerge;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

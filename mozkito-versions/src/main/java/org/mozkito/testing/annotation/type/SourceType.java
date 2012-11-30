@@ -16,9 +16,14 @@
 package org.mozkito.testing.annotation.type;
 
 /**
+ * The Enum SourceType.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public enum SourceType {
-	RESOURCE, HTTP;
+	
+	/** The resource. */
+	RESOURCE, 
+ /** The http. */
+ HTTP;
 }

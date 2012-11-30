@@ -42,7 +42,7 @@ import org.mozkito.persistence.Annotated;
  */
 @Entity
 @Table (name = "rcsbranch")
-public class RCSBranch implements Annotated {
+public class Branch implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID   = 5419737140470855522L;
@@ -51,7 +51,7 @@ public class RCSBranch implements Annotated {
 	private String            name;
 	
 	/** The head. */
-	private RCSTransaction    head               = null;
+	private Transaction    head               = null;
 	
 	/** The merged in. */
 	private Set<String>       mergedIn           = new HashSet<String>();
@@ -59,6 +59,11 @@ public class RCSBranch implements Annotated {
 	/** The Constant MASTER_BRANCH_NAME. */
 	public static String      MASTER_BRANCH_NAME = "master";             //$NON-NLS-1$
 	                                                                      
+	/**
+	 * Sets the master branch name.
+	 *
+	 * @param name the new master branch name
+	 */
 	public static void setMasterBranchName(final String name) {
 		MASTER_BRANCH_NAME = name;
 	}
@@ -66,7 +71,7 @@ public class RCSBranch implements Annotated {
 	/**
 	 * Instantiates a new rCS branch.
 	 */
-	protected RCSBranch() {
+	protected Branch() {
 		
 	}
 	
@@ -76,7 +81,7 @@ public class RCSBranch implements Annotated {
 	 * @param name
 	 *            the name
 	 */
-	public RCSBranch(final String name) {
+	public Branch(final String name) {
 		setName(name);
 	}
 	
@@ -100,10 +105,10 @@ public class RCSBranch implements Annotated {
 	 * @return A sorted set of transactions committed into this branch
 	 */
 	@Transient
-	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
-		final TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
+	public TreeSet<Transaction> containsAnyTransaction(final Collection<String> tIds) {
+		final TreeSet<Transaction> result = new TreeSet<Transaction>();
 		for (final String id : tIds) {
-			final RCSTransaction t = containsTransaction(id);
+			final Transaction t = containsTransaction(id);
 			if (t != null) {
 				result.add(t);
 			}
@@ -112,7 +117,7 @@ public class RCSBranch implements Annotated {
 	}
 	
 	/**
-	 * Checks if the given transaction id was committed in this branch. Returns the RCSTransaction if found, otherwise
+	 * Checks if the given transaction id was committed in this branch. Returns the Transaction if found, otherwise
 	 * <code>null</code>.
 	 * 
 	 * @param tId
@@ -120,8 +125,8 @@ public class RCSBranch implements Annotated {
 	 * @return the transaction if found. Otherwise <code>null</code>
 	 */
 	@Transient
-	public RCSTransaction containsTransaction(final String tId) {
-		RCSTransaction current = getHead();
+	public Transaction containsTransaction(final String tId) {
+		Transaction current = getHead();
 		while (current != null) {
 			if (current.getId().equals(tId)) {
 				return current;
@@ -146,7 +151,7 @@ public class RCSBranch implements Annotated {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		final RCSBranch other = (RCSBranch) obj;
+		final Branch other = (Branch) obj;
 		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -164,7 +169,7 @@ public class RCSBranch implements Annotated {
 	 */
 	@Transient
 	public String getHandle() {
-		return RCSBranch.class.getSimpleName();
+		return Branch.class.getSimpleName();
 	}
 	
 	/**
@@ -173,7 +178,7 @@ public class RCSBranch implements Annotated {
 	 * @return the end
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	public RCSTransaction getHead() {
+	public Transaction getHead() {
 		return this.head;
 	}
 	
@@ -239,7 +244,7 @@ public class RCSBranch implements Annotated {
 	 * @param end
 	 *            the end to set
 	 */
-	public void setHead(final RCSTransaction end) {
+	public void setHead(final Transaction end) {
 		this.head = end;
 	}
 	

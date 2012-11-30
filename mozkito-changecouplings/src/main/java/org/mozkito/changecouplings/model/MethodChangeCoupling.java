@@ -90,7 +90,7 @@ public class MethodChangeCoupling implements Comparable<MethodChangeCoupling> {
 		                                                               .eq("fullQualifiedName", implication);
 		final List<JavaMethodDefinition> defs = persistenceUtil.load(criteria);
 		if ((defs == null) || (defs.size() != 1)) {
-			throw new UnrecoverableError("Could not retrieve RCSFile with id " + implication);
+			throw new UnrecoverableError("Could not retrieve File with id " + implication);
 		}
 		this.implication = defs.get(0);
 		this.support = support;

@@ -95,15 +95,10 @@ public class RepositorySettingsProcessor implements MozkitoSettingsProcessor {
 	 */
 	/**
 	 * Setup.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param test
-	 *            the test
-	 * @param annotation
-	 *            the annotation
-	 * @throws TestSettingsError
-	 *             the test settings error
+	 *
+	 * @param <T> the generic type
+	 * @param test the test
+	 * @param annotation the annotation
 	 */
 	@Override
 	public <T extends DatabaseTest> void setup(final T test,
@@ -214,15 +209,10 @@ public class RepositorySettingsProcessor implements MozkitoSettingsProcessor {
 	 */
 	/**
 	 * Tear down.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param test
-	 *            the test
-	 * @param annotation
-	 *            the annotation
-	 * @throws TestSettingsError
-	 *             the test settings error
+	 *
+	 * @param <T> the generic type
+	 * @param test the test
+	 * @param annotation the annotation
 	 */
 	@Override
 	public <T extends DatabaseTest> void tearDown(final T test,

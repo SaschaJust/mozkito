@@ -26,6 +26,9 @@ import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
 
+/**
+ * The Class MercurialLogParser.
+ */
 public class MercurialLogParser implements LogParser {
 	
 	/**
@@ -59,6 +62,9 @@ public class MercurialLogParser implements LogParser {
 		return completeLines;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.versions.LogParser#parse(java.util.List)
+	 */
 	@Override
 	public List<LogEntry> parse(@NotNull final List<String> logMessages) {
 		// pre-filter lines. hg log might have some entries spanning multiple

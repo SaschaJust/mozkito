@@ -27,26 +27,33 @@ import org.mozkito.persistence.model.Person;
  */
 public class LogEntry implements Comparable<LogEntry> {
 	
+	/** The author. */
 	protected Person   author;
+	
+	/** The commit date. */
 	protected DateTime commitDate;
+	
+	/** The message. */
 	protected String   message;
+	
+	/** The previous. */
 	protected LogEntry previous;
+	
+	/** The revision. */
 	protected String   revision;
+	
+	/** The original id. */
 	protected String   originalId;
 	
 	/**
 	 * Instantiates a new log entry.
-	 * 
-	 * @param revision
-	 *            the revision
-	 * @param previous
-	 *            the previous LogEntry, null if this is the first revision
-	 * @param author
-	 *            the author
-	 * @param message
-	 *            the message
-	 * @param dateTime
-	 *            the date time
+	 *
+	 * @param revision the revision
+	 * @param previous the previous LogEntry, null if this is the first revision
+	 * @param author the author
+	 * @param message the message
+	 * @param dateTime the date time
+	 * @param originalId the original id
 	 */
 	public LogEntry(@NotNull final String revision, final LogEntry previous, @NotNull final Person author,
 	        @NotNull final String message, @NotNull final DateTime dateTime, final String originalId) {
@@ -93,6 +100,11 @@ public class LogEntry implements Comparable<LogEntry> {
 		return this.commitDate;
 	}
 	
+	/**
+	 * Gets the handle.
+	 *
+	 * @return the handle
+	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
 	}
@@ -106,6 +118,11 @@ public class LogEntry implements Comparable<LogEntry> {
 		return this.message;
 	}
 	
+	/**
+	 * Gets the original id.
+	 *
+	 * @return the original id
+	 */
 	public String getOriginalId() {
 		if (this.originalId != null) {
 			return this.originalId;

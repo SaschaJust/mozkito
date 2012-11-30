@@ -26,14 +26,18 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 
 /**
+ * The Class SubversionAnnotationHandler.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
+	/** The list. */
 	private final List<AnnotationEntry> list = new LinkedList<AnnotationEntry>();
 	
 	/**
+	 * Gets the results.
+	 *
 	 * @return the resulting list of {@link AnnotationEntry}s
 	 */
 	public List<AnnotationEntry> getResults() {

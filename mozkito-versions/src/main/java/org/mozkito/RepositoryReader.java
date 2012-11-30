@@ -35,12 +35,15 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class RepositoryReader extends Source<LogEntry> {
 	
+	/** The log iterator. */
 	private Iterator<LogEntry> logIterator;
 	
 	/**
-	 * @param threadGroup
-	 * @param settings
-	 * @param repository
+	 * Instantiates a new repository reader.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param repository the repository
 	 */
 	public RepositoryReader(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
