@@ -15,16 +15,16 @@
  */
 package org.mozkito.issues;
 
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.model.Report;
+import org.mozkito.persistence.PersistenceUtil;
 
 /**
  * The Class TrackerReader.
@@ -42,6 +42,8 @@ public class TrackerReader extends Source<ReportLink> {
 	 *            the settings
 	 * @param tracker
 	 *            the tracker
+	 * @param persistenceUtil
+	 *            the PersistenceUtil
 	 */
 	public TrackerReader(final Group threadGroup, final Settings settings, final Tracker tracker,
 	        final PersistenceUtil persistenceUtil) {

@@ -90,19 +90,19 @@ public class JiraParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			if (resolutionString.toLowerCase().equals("unresolved")) {
+			if ("unresolved".equals(resolutionString.toLowerCase())) {
 				return Resolution.UNRESOLVED;
-			} else if (resolutionString.toLowerCase().equals("fixed")) {
+			} else if ("fixed".equals(resolutionString.toLowerCase())) {
 				return Resolution.RESOLVED;
-			} else if (resolutionString.toLowerCase().equals("won't fix")) {
+			} else if ("won't fix".equals(resolutionString.toLowerCase())) {
 				return Resolution.WONT_FIX;
-			} else if (resolutionString.toLowerCase().equals("duplicate")) {
+			} else if ("duplicate".equals(resolutionString.toLowerCase())) {
 				return Resolution.DUPLICATE;
-			} else if (resolutionString.toLowerCase().equals("incomplete")) {
+			} else if ("incomplete".equals(resolutionString.toLowerCase())) {
 				return Resolution.UNRESOLVED;
-			} else if (resolutionString.toLowerCase().equals("cannot reproduce")) {
+			} else if ("cannot reproduce".equals(resolutionString.toLowerCase())) {
 				return Resolution.WORKS_FOR_ME;
-			} else if (resolutionString.toLowerCase().equals("not a bug")) {
+			} else if ("not a bug".equals(resolutionString.toLowerCase())) {
 				return Resolution.INVALID;
 			} else {
 				return Resolution.UNKNOWN;
@@ -120,17 +120,17 @@ public class JiraParser implements Parser {
 	 * @return the severity
 	 */
 	public static Severity resolveSeverity(final String severity) {
-		if (severity.toLowerCase().equals("blocker")) {
+		if ("blocker".equals(severity.toLowerCase())) {
 			return Severity.BLOCKER;
-		} else if (severity.toLowerCase().equals("critical")) {
+		} else if ("critical".equals(severity.toLowerCase())) {
 			return Severity.CRITICAL;
-		} else if (severity.toLowerCase().equals("major")) {
+		} else if ("major".equals(severity.toLowerCase())) {
 			return Severity.MAJOR;
-		} else if (severity.toLowerCase().equals("minor")) {
+		} else if ("minor".equals(severity.toLowerCase())) {
 			return Severity.MINOR;
-		} else if (severity.toLowerCase().equals("trivial")) {
+		} else if ("trivial".equals(severity.toLowerCase())) {
 			return Severity.TRIVIAL;
-		} else if (severity.toLowerCase().equals("")) {
+		} else if (severity.toLowerCase().isEmpty()) {
 			return null;
 		} else {
 			return Severity.UNKNOWN;
@@ -145,19 +145,19 @@ public class JiraParser implements Parser {
 	 * @return the status
 	 */
 	public static Status resolveStatus(final String statusStr) {
-		if (statusStr.toLowerCase().equals("open")) {
+		if ("open".equals(statusStr.toLowerCase())) {
 			return Status.NEW;
-		} else if (statusStr.toLowerCase().equals("in progress")) {
+		} else if ("in progress".equals(statusStr.toLowerCase())) {
 			return Status.IN_PROGRESS;
-		} else if (statusStr.toLowerCase().equals("reopened")) {
+		} else if ("reopened".equals(statusStr.toLowerCase())) {
 			return Status.REOPENED;
-		} else if (statusStr.toLowerCase().equals("resolved")) {
+		} else if ("resolved".equals(statusStr.toLowerCase())) {
 			return Status.CLOSED;
-		} else if (statusStr.toLowerCase().equals("closed")) {
+		} else if ("closed".equals(statusStr.toLowerCase())) {
 			return Status.CLOSED;
-		} else if (statusStr.toLowerCase().equals("patch reviewed")) {
+		} else if ("patch reviewed".equals(statusStr.toLowerCase())) {
 			return Status.VERIFIED;
-		} else if (statusStr.toLowerCase().equals("ready to review")) {
+		} else if ("ready to review".equals(statusStr.toLowerCase())) {
 			return Status.REVIEWPENDING;
 		} else {
 			return Status.UNKNOWN;
@@ -172,17 +172,17 @@ public class JiraParser implements Parser {
 	 * @return the type
 	 */
 	public static Type resolveType(final String typeStr) {
-		if (typeStr.toLowerCase().equals("bug")) {
+		if ("bug".equals(typeStr.toLowerCase())) {
 			return Type.BUG;
-		} else if (typeStr.toLowerCase().equals("new feature")) {
+		} else if ("new feature".equals(typeStr.toLowerCase())) {
 			return Type.RFE;
-		} else if (typeStr.toLowerCase().equals("task")) {
+		} else if ("task".equals(typeStr.toLowerCase())) {
 			return Type.TASK;
-		} else if (typeStr.toLowerCase().equals("improvement")) {
+		} else if ("improvement".equals(typeStr.toLowerCase())) {
 			return Type.IMPROVEMENT;
-		} else if (typeStr.toLowerCase().equals("test")) {
+		} else if ("test".equals(typeStr.toLowerCase())) {
 			return Type.TEST;
-		} else if (typeStr.toLowerCase().equals("")) {
+		} else if (typeStr.toLowerCase().isEmpty()) {
 			return Type.OTHER;
 		}
 		return null;
@@ -196,14 +196,14 @@ public class JiraParser implements Parser {
 	private Tracker                         tracker;
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history         = null;
+	private final SortedSet<HistoryElement> history           = null;
 	
 	/** The resolver. */
 	private Person                          resolver;
 	
 	private byte[]                          md5;
 	
-	private ProxyConfig                     proxyConfig     = null;
+	private ProxyConfig                     proxyConfig       = null;
 	
 	private XmlReport                       report;
 	
@@ -213,7 +213,8 @@ public class JiraParser implements Parser {
 	
 	private String                          issueId;
 	
-	public static final String              dateTimePattern = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
+	/** The Constant DATE_TIME_PATTERN. */
+	public static final String              DATE_TIME_PATTERN = "({E}[A-Za-z]{3}),\\s+({dd}[0-3]?\\d)\\s+({MMM}[A-Za-z]{3,})\\s+({yyyy}\\d{4})\\s+({HH}[0-2]\\d):({mm}[0-5]\\d):({ss}[0-5]\\d)({Z}\\s[+-]\\d{4})";
 	
 	/*
 	 * (non-Javadoc)
@@ -301,7 +302,7 @@ public class JiraParser implements Parser {
 			if (nodeList.getLength() > 0) {
 				final Node assignee = nodeList.item(0);
 				final String username = assignee.getAttributes().getNamedItem("username").getTextContent();
-				if (username.equals("-1")) {
+				if ("-1".equals(username)) {
 					return null;
 				}
 				return new Person(username, assignee.getTextContent(), null);
@@ -358,15 +359,15 @@ public class JiraParser implements Parser {
 				}
 				if (createdNode != null) {
 					attachmentEntry.setTimestamp(DateTimeUtils.parseDate(createdNode.getTextContent(),
-					                                                     new Regex(JiraParser.dateTimePattern)));
+					                                                     new Regex(JiraParser.DATE_TIME_PATTERN)));
 				}
 				final String link = linkBuilder.toString();
 				attachmentEntry.setLink(link);
 				
-				if (!link.equals("")) {
+				if (!"".equals(link)) {
 					try {
 						attachmentEntry.setMime(MimeUtils.determineMIME(new URI(link)));
-					} catch (MIMETypeDeterminationException | IOException | UnsupportedProtocolException
+					} catch (final MIMETypeDeterminationException | IOException | UnsupportedProtocolException
 					        | FetchException | URISyntaxException e) {
 						if (Logger.logError()) {
 							Logger.error(e);
@@ -441,7 +442,7 @@ public class JiraParser implements Parser {
 				DateTime timestamp = null;
 				if (createdNode != null) {
 					timestamp = DateTimeUtils.parseDate(createdNode.getTextContent(),
-					                                    new Regex(JiraParser.dateTimePattern));
+					                                    new Regex(JiraParser.DATE_TIME_PATTERN));
 				}
 				
 				final Comment comment = new Comment(Integer.valueOf(idNode.getTextContent()).intValue(), author,
@@ -484,7 +485,7 @@ public class JiraParser implements Parser {
 		try {
 			final NodeList nodeList = this.document.getElementsByTagName("created");
 			if (nodeList.getLength() > 0) {
-				return DateTimeUtils.parseDate(nodeList.item(0).getTextContent(), new Regex(dateTimePattern));
+				return DateTimeUtils.parseDate(nodeList.item(0).getTextContent(), new Regex(DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {
@@ -611,10 +612,10 @@ public class JiraParser implements Parser {
 			final NodeList nodeList = this.document.getElementsByTagName("updated");
 			if (nodeList.getLength() > 0) {
 				final String dateString = nodeList.item(0).getTextContent();
-				if (dateString.equals("")) {
+				if (dateString.isEmpty()) {
 					return null;
 				}
-				return DateTimeUtils.parseDate(dateString, new Regex(dateTimePattern));
+				return DateTimeUtils.parseDate(dateString, new Regex(DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {
@@ -693,10 +694,10 @@ public class JiraParser implements Parser {
 			final NodeList nodeList = this.document.getElementsByTagName("resolved");
 			if (nodeList.getLength() > 0) {
 				final String dateString = nodeList.item(0).getTextContent();
-				if (dateString.equals("")) {
+				if (dateString.isEmpty()) {
 					return null;
 				}
-				return DateTimeUtils.parseDate(dateString, new Regex(dateTimePattern));
+				return DateTimeUtils.parseDate(dateString, new Regex(DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {
@@ -935,7 +936,7 @@ public class JiraParser implements Parser {
 				rawContent = IOUtils.fetch(uri, this.proxyConfig);
 			}
 			
-			if (rawContent.getContent().trim().equals("")) {
+			if (rawContent.getContent().trim().isEmpty()) {
 				return false;
 			}
 			
@@ -964,7 +965,7 @@ public class JiraParser implements Parser {
 			
 			return true;
 			
-		} catch (UnsupportedProtocolException | FetchException | ParserConfigurationException | SAXException
+		} catch (final UnsupportedProtocolException | FetchException | ParserConfigurationException | SAXException
 		        | IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e);

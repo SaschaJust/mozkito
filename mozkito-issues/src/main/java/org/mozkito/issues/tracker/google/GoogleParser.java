@@ -74,41 +74,46 @@ public class GoogleParser implements Parser {
 	 * @return the priority
 	 */
 	public static Priority resolvePriority(final String priority) {
-		if (priority.equals("critical")) {
-			return Priority.VERY_HIGH;
-		} else if (priority.equals("high")) {
-			return Priority.HIGH;
-		} else if (priority.equals("medium")) {
-			return Priority.NORMAL;
-		} else if (priority.equals("low")) {
-			return Priority.LOW;
+		switch (priority) {
+			case "critical":
+				return Priority.VERY_HIGH;
+			case "high":
+				return Priority.HIGH;
+			case "medium":
+				return Priority.NORMAL;
+			case "low":
+				return Priority.LOW;
+			default:
+				return Priority.UNKNOWN;
 		}
-		return Priority.UNKNOWN;
 	}
 	
 	/**
 	 * Resolve resolution.
 	 * 
-	 * @param status
+	 * @param resolution
 	 *            the status
 	 * @return the resolution
 	 */
-	private static Resolution resolveResolution(final String status) {
+	private static Resolution resolveResolution(final String resolution) {
 		// PRECONDITIONS
 		
 		try {
-			if (status.equals("duplicate")) {
-				return Resolution.DUPLICATE;
-			} else if (status.equals("fixed")) {
-				return Resolution.RESOLVED;
-			} else if (status.equals("invalid")) {
-				return Resolution.INVALID;
-			} else if (status.equals("knownquirk")) {
-				return Resolution.INVALID;
-			} else if (status.equals("notplanned")) {
-				return Resolution.INVALID;
+			
+			switch (resolution) {
+				case "duplicate":
+					return Resolution.DUPLICATE;
+				case "fixed":
+					return Resolution.RESOLVED;
+				case "invalid":
+					return Resolution.INVALID;
+				case "knownquirk":
+					return Resolution.INVALID;
+				case "notplanned":
+					return Resolution.INVALID;
+				default:
+					return null;
 			}
-			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -125,23 +130,29 @@ public class GoogleParser implements Parser {
 		// PRECONDITIONS
 		
 		try {
-			if (status.equals("started")) {
-				return Status.IN_PROGRESS;
-			} else if (status.equals("accepted")) {
-				return Status.ASSIGNED;
-			} else if (status.equals("fixednotreleased")) {
-				return Status.IN_PROGRESS;
-			} else if (status.equals("needsinfo")) {
-				return Status.FEEDBACK;
-			} else if (status.equals("new")) {
-				return Status.NEW;
-			} else if (status.equals("reviewpending")) {
-				return Status.REVIEWPENDING;
-			} else if (status.equals("fixed") || status.equals("duplicate") || status.equals("invalid")
-			        || status.equals("knownquirk") || status.equals("notplanned")) {
-				return Status.CLOSED;
+			switch (status) {
+			
+				case "started":
+					return Status.IN_PROGRESS;
+				case "accepted":
+					return Status.ASSIGNED;
+				case "fixednotreleased":
+					return Status.IN_PROGRESS;
+				case "needsinfo":
+					return Status.FEEDBACK;
+				case "new":
+					return Status.NEW;
+				case "reviewpending":
+					return Status.REVIEWPENDING;
+				case "fixed":
+				case "duplicate":
+				case "invalid":
+				case "knownquirk":
+				case "notplanned":
+					return Status.CLOSED;
+				default:
+					return null;
 			}
-			return null;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -155,23 +166,24 @@ public class GoogleParser implements Parser {
 	 * @return the type
 	 */
 	public static Type resolveType(final String type) {
-		if (type.equals("defect")) {
-			return Type.BUG;
-		} else if (type.equals("enhancement")) {
-			return Type.RFE;
-		} else if (type.equals("task")) {
-			return Type.TASK;
-		} else if (type.equals("docs")) {
-			return Type.OTHER;
-		} else if (type.equals("----")) {
-			return Type.UNKNOWN;
-		} else if (type.equals("feature")) {
-			return Type.RFE;
-		} else if (type.equals("optimization")) {
-			return Type.OTHER;
+		switch (type) {
+			case "defect":
+				return Type.BUG;
+			case "enhancement":
+				return Type.RFE;
+			case "task":
+				return Type.TASK;
+			case "docs":
+				return Type.OTHER;
+			case "----":
+				return Type.UNKNOWN;
+			case "feature":
+				return Type.RFE;
+			case "optimization":
+				return Type.OTHER;
+			default:
+				return Type.UNKNOWN;
 		}
-		return Type.UNKNOWN;
-		
 	}
 	
 	/** The tracker. */
@@ -266,7 +278,7 @@ public class GoogleParser implements Parser {
 				final String label = l.getValue();
 				final String compValue = l.getValue().toLowerCase();
 				if (compValue.startsWith("category-")) {
-					return label.substring(9).trim();
+					return label.substring("category-".length()).trim();
 				}
 			}
 			return null;
@@ -305,7 +317,7 @@ public class GoogleParser implements Parser {
 					Logger.error("Could not create feed for comments. getUri() returned unrecognized URI.");
 				}
 			} else {
-				final String baseUri = fetchUri.substring(0, fetchUri.length() - 4);
+				final String baseUri = fetchUri.substring(0, fetchUri.length() - "full".length());
 				final String commentUri = baseUri + getId() + "/comments/full";
 				try {
 					
@@ -321,12 +333,12 @@ public class GoogleParser implements Parser {
 						for (int i = 0; i < commentEntries.size(); i++) {
 							
 							final IssueCommentsEntry entry = commentEntries.get(i);
-							Person author = Tracker.unknownPerson;
+							Person author = Tracker.UNKNOWN_PERSON;
 							if (!entry.getAuthors().isEmpty()) {
 								final com.google.gdata.data.Person person = entry.getAuthors().get(0);
 								
 								if ((person.getName().contains("@"))
-								        && ((person.getEmail() == null) || person.getEmail().equals(""))) {
+								        && ((person.getEmail() == null) || person.getEmail().isEmpty())) {
 									author = new Person(null, null, person.getName());
 								} else {
 									author = new Person(null, person.getName(), person.getEmail());
@@ -362,52 +374,52 @@ public class GoogleParser implements Parser {
 									final String label = l.getValue();
 									final String compValue = l.getValue().toLowerCase();
 									if (compValue.startsWith("type-")) {
-										final String newValue = label.substring(5).trim();
+										final String newValue = label.substring("type-".length()).trim();
 										final Type newType = resolveType(newValue);
 										if (typeUpdate == null) {
 											typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
 										}
 										typeUpdate.setSecond(newType);
 									} else if (compValue.startsWith("-type-")) {
-										final String oldValue = label.substring(6).trim();
+										final String oldValue = label.substring("-type-".length()).trim();
 										if (typeUpdate == null) {
 											typeUpdate = new Tuple<Type, Type>(Type.UNKNOWN, Type.UNKNOWN);
 										}
 										typeUpdate.setFirst(resolveType(oldValue));
 									} else if (compValue.startsWith("priority-")) {
-										final String newValue = label.substring(9).trim();
+										final String newValue = label.substring("priority-".length()).trim();
 										if (priorityUpdate == null) {
 											priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
 											                                               Priority.UNKNOWN);
 										}
 										priorityUpdate.setSecond(resolvePriority(newValue));
 									} else if (compValue.startsWith("-priority-")) {
-										final String oldValue = label.substring(10).trim();
+										final String oldValue = label.substring("-priority-".length()).trim();
 										if (priorityUpdate == null) {
 											priorityUpdate = new Tuple<Priority, Priority>(Priority.UNKNOWN,
 											                                               Priority.UNKNOWN);
 										}
 										priorityUpdate.setFirst(resolvePriority(oldValue));
 									} else if (compValue.startsWith("category-")) {
-										final String newValue = label.substring(9).trim();
+										final String newValue = label.substring("category-".length()).trim();
 										if (categoryUpdate == null) {
 											categoryUpdate = new Tuple<String, String>("", "");
 										}
 										categoryUpdate.setSecond(newValue);
 									} else if (compValue.startsWith("-category-")) {
-										final String oldValue = label.substring(10).trim();
+										final String oldValue = label.substring("-category-".length()).trim();
 										if (categoryUpdate == null) {
 											categoryUpdate = new Tuple<String, String>("", "");
 										}
 										categoryUpdate.setSecond(oldValue);
 									} else if (compValue.startsWith("milestone-")) {
-										final String newValue = label.substring(10).trim();
+										final String newValue = label.substring("milestone-".length()).trim();
 										if (milestoneUpdate == null) {
 											milestoneUpdate = new Tuple<String, String>("", "");
 										}
 										milestoneUpdate.setSecond(newValue);
 									} else if (compValue.startsWith("-milestone-")) {
-										final String oldValue = label.substring(11).trim();
+										final String oldValue = label.substring("-milestone-".length()).trim();
 										if (milestoneUpdate == null) {
 											milestoneUpdate = new Tuple<String, String>("", "");
 										}
@@ -440,7 +452,7 @@ public class GoogleParser implements Parser {
 								}
 								
 								if (updates.getOwnerUpdate() != null) {
-									hElem.addChangedValue("assignedTo", Tracker.unknownPerson,
+									hElem.addChangedValue("assignedTo", Tracker.UNKNOWN_PERSON,
 									                      new Person(updates.getOwnerUpdate().getValue(), null, null));
 								}
 								
@@ -448,41 +460,55 @@ public class GoogleParser implements Parser {
 									final String status = updates.getStatus().getValue().toLowerCase();
 									Status newStatus = null;
 									Resolution newResolution = null;
-									if (status.equals("started")) {
-										newStatus = Status.IN_PROGRESS;
-									} else if (status.equals("accepted")) {
-										newStatus = Status.ASSIGNED;
-									} else if (status.equals("fixednotreleased")) {
-										this.resolver = author;
-										newStatus = Status.IN_PROGRESS;
-									} else if (status.equals("needsinfo")) {
-										newStatus = Status.FEEDBACK;
-									} else if (status.equals("new")) {
-										newStatus = Status.NEW;
-									} else if (status.equals("reviewpending")) {
-										newStatus = Status.REVIEWPENDING;
-									} else if (status.equals("duplicate")) {
-										newResolution = Resolution.DUPLICATE;
-										newStatus = Status.CLOSED;
-									} else if (status.equals("fixed")) {
-										if (this.resolver == null) {
+									switch (status) {
+										case "started":
+											newStatus = Status.IN_PROGRESS;
+											break;
+										case "accepted":
+											newStatus = Status.ASSIGNED;
+											break;
+										case "fixednotreleased":
 											this.resolver = author;
-										}
-										if (this.resolutionTimestamp == null) {
-											this.resolutionTimestamp = hElem.getTimestamp();
-										}
-										
-										newResolution = Resolution.RESOLVED;
-										newStatus = Status.CLOSED;
-									} else if (status.equals("invalid")) {
-										newResolution = Resolution.INVALID;
-										newStatus = Status.CLOSED;
-									} else if (status.equals("knownquirk")) {
-										newResolution = Resolution.INVALID;
-										newStatus = Status.CLOSED;
-									} else if (status.equals("notplanned")) {
-										newResolution = Resolution.INVALID;
-										newStatus = Status.CLOSED;
+											newStatus = Status.IN_PROGRESS;
+											break;
+										case "needsinfo":
+											newStatus = Status.FEEDBACK;
+											break;
+										case "new":
+											newStatus = Status.NEW;
+											break;
+										case "reviewpending":
+											newStatus = Status.REVIEWPENDING;
+											break;
+										case "duplicate":
+											newResolution = Resolution.DUPLICATE;
+											newStatus = Status.CLOSED;
+											break;
+										case "fixed":
+											if (this.resolver == null) {
+												this.resolver = author;
+											}
+											if (this.resolutionTimestamp == null) {
+												this.resolutionTimestamp = hElem.getTimestamp();
+											}
+											
+											newResolution = Resolution.RESOLVED;
+											newStatus = Status.CLOSED;
+											break;
+										case "invalid":
+											newResolution = Resolution.INVALID;
+											newStatus = Status.CLOSED;
+											break;
+										case "knownquirk":
+											newResolution = Resolution.INVALID;
+											newStatus = Status.CLOSED;
+											break;
+										case "notplanned":
+											newResolution = Resolution.INVALID;
+											newStatus = Status.CLOSED;
+											break;
+										default:
+											break;
 									}
 									if (newStatus != null) {
 										statusHistory.addFirst(new Tuple<Status, HistoryElement>(newStatus, hElem));
@@ -749,7 +775,7 @@ public class GoogleParser implements Parser {
 				final String label = l.getValue();
 				final String compValue = l.getValue().toLowerCase();
 				if (compValue.startsWith("priority-")) {
-					final String priority = label.substring(9).trim().toLowerCase();
+					final String priority = label.substring("priority-".length()).trim().toLowerCase();
 					return resolvePriority(priority);
 				}
 			}
@@ -965,7 +991,7 @@ public class GoogleParser implements Parser {
 				final String label = l.getValue();
 				final String compValue = l.getValue().toLowerCase();
 				if (compValue.startsWith("type-")) {
-					final String type = label.substring(5).trim();
+					final String type = label.substring("type-".length()).trim();
 					return resolveType(type.toLowerCase());
 				}
 			}
@@ -988,7 +1014,7 @@ public class GoogleParser implements Parser {
 				final String label = l.getValue();
 				final String compValue = l.getValue().toLowerCase();
 				if (compValue.startsWith("milestone-")) {
-					return label.substring(10).trim();
+					return label.substring("milestone-".length()).trim();
 				}
 			}
 			return null;

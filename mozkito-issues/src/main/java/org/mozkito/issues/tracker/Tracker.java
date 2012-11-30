@@ -23,6 +23,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ProxyConfig;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
@@ -30,12 +36,6 @@ import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class Tracker.
@@ -73,7 +73,7 @@ public abstract class Tracker {
 	private ProxyConfig               proxyConfig;
 	
 	/** The Constant unknownPerson. */
-	public final static Person        unknownPerson = new Person("<unknown>", null, null);    //$NON-NLS-1$
+	public static final Person        UNKNOWN_PERSON = new Person("<unknown>", null, null);    //$NON-NLS-1$
 	                                                                                           
 	/**
 	 * Instantiates a new tracker.

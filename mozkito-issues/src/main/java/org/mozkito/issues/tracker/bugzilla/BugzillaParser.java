@@ -56,10 +56,10 @@ import org.mozkito.issues.tracker.elements.Status;
 public abstract class BugzillaParser implements Parser {
 	
 	/** The history parser. */
-	protected BugzillaHistoryParser                  historyParser  = null;
+	protected BugzillaHistoryParser                  historyParser   = null;
 	
 	/** The Constant parserVersions. */
-	private static final Map<String, BugzillaParser> parserVersions = new HashMap<String, BugzillaParser>();
+	private static final Map<String, BugzillaParser> PARSER_VERSIONS = new HashMap<String, BugzillaParser>();
 	
 	/**
 	 * Gets the parser.
@@ -70,13 +70,13 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	@NoneNull
 	public static BugzillaParser getParser(final String bugzillaVersion) {
-		if (!parserVersions.containsKey(bugzillaVersion)) {
+		if (!PARSER_VERSIONS.containsKey(bugzillaVersion)) {
 			if (Logger.logError()) {
 				Logger.error("Bugzilla version " + bugzillaVersion
 				        + " not yet supported! Please contact mozkito dev team.");
 			}
 		}
-		return parserVersions.get(bugzillaVersion);
+		return PARSER_VERSIONS.get(bugzillaVersion);
 	}
 	
 	/**
@@ -88,18 +88,19 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	protected static Priority getPriority(final String string) {
 		final String priorityString = string.toUpperCase();
-		if (priorityString.equals("P1")) {
-			return Priority.VERY_HIGH;
-		} else if (priorityString.equals("P2")) {
-			return Priority.HIGH;
-		} else if (priorityString.equals("P3")) {
-			return Priority.NORMAL;
-		} else if (priorityString.equals("P4")) {
-			return Priority.LOW;
-		} else if (priorityString.equals("P5")) {
-			return Priority.VERY_LOW;
-		} else {
-			return Priority.UNKNOWN;
+		switch (priorityString) {
+			case "P1":
+				return Priority.VERY_HIGH;
+			case "P2":
+				return Priority.HIGH;
+			case "P3":
+				return Priority.NORMAL;
+			case "P4":
+				return Priority.LOW;
+			case "P5":
+				return Priority.VERY_LOW;
+			default:
+				return Priority.UNKNOWN;
 		}
 	}
 	
@@ -112,28 +113,28 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	protected static Resolution getResolution(final String string) {
 		final String resString = string.toUpperCase();
-		if (resString.equals("FIXED")) {
-			return Resolution.RESOLVED;
-		} else if (resString.equals("INVALID")) {
-			return Resolution.INVALID;
-		} else if (resString.equals("WONTFIX")) {
-			return Resolution.WONT_FIX;
-		} else if (resString.equals("LATER")) {
-			return Resolution.UNRESOLVED;
-		} else if (resString.equals("REMIND")) {
-			return Resolution.UNRESOLVED;
-		} else if (resString.equals("DUPLICATE")) {
-			return Resolution.DUPLICATE;
-		} else if (resString.equals("WORKSFORME")) {
-			return Resolution.WORKS_FOR_ME;
-		} else if (resString.equals("DUPLICATE")) {
-			return Resolution.DUPLICATE;
-		} else if (resString.equals("NOT_ECLIPSE")) {
-			return Resolution.INVALID;
-		} else if (resString.equals("") || resString.equals("---")) {
-			return Resolution.UNRESOLVED;
-		} else {
-			return Resolution.UNKNOWN;
+		switch (resString) {
+			case "FIXED":
+				return Resolution.RESOLVED;
+			case "INVALID":
+				return Resolution.INVALID;
+			case "WONTFIX":
+				return Resolution.WONT_FIX;
+			case "LATER":
+				return Resolution.UNRESOLVED;
+			case "REMIND":
+				return Resolution.UNRESOLVED;
+			case "DUPLICATE":
+				return Resolution.DUPLICATE;
+			case "WORKSFORME":
+				return Resolution.WORKS_FOR_ME;
+			case "NOT_ECLIPSE":
+				return Resolution.INVALID;
+			case "":
+			case "---":
+				return Resolution.UNRESOLVED;
+			default:
+				return Resolution.UNKNOWN;
 		}
 	}
 	
@@ -146,25 +147,26 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	protected static Severity getSeverity(final String string) {
 		final String serverityString = string.toLowerCase();
-		if (serverityString.equals("blocker")) {
-			return Severity.BLOCKER;
-		} else if (serverityString.equals("critical")) {
-			return Severity.CRITICAL;
-		} else if (serverityString.equals("major")) {
-			return Severity.MAJOR;
-		} else if (serverityString.equals("normal")) {
-			return Severity.NORMAL;
-		} else if (serverityString.equals("minor")) {
-			return Severity.MINOR;
-		} else if (serverityString.equals("trivial")) {
-			return Severity.TRIVIAL;
-		} else if (serverityString.equals("enhancement")) {
-			return Severity.ENHANCEMENT;
-		} else {
-			if (Logger.logWarn()) {
-				Logger.warn("Bugzilla severity `" + serverityString + "` could not be mapped. Ignoring it.");
-			}
-			return null;
+		switch (serverityString) {
+			case "blocker":
+				return Severity.BLOCKER;
+			case "critical":
+				return Severity.CRITICAL;
+			case "major":
+				return Severity.MAJOR;
+			case "normal":
+				return Severity.NORMAL;
+			case "minor":
+				return Severity.MINOR;
+			case "trivial":
+				return Severity.TRIVIAL;
+			case "enhancement":
+				return Severity.ENHANCEMENT;
+			default:
+				if (Logger.logWarn()) {
+					Logger.warn("Bugzilla severity `" + serverityString + "` could not be mapped. Ignoring it.");
+				}
+				return null;
 		}
 	}
 	
@@ -175,24 +177,25 @@ public abstract class BugzillaParser implements Parser {
 	 *            the string
 	 * @return the status
 	 */
-	protected static Status getStatus(final String string) {
+	protected static final Status getStatus(final String string) {
 		final String statusString = string.toUpperCase();
-		if (statusString.equals("UNCONFIRMED")) {
-			return Status.UNCONFIRMED;
-		} else if (statusString.equals("NEW")) {
-			return Status.NEW;
-		} else if (statusString.equals("ASSIGNED")) {
-			return Status.ASSIGNED;
-		} else if (statusString.equals("REOPENED")) {
-			return Status.REOPENED;
-		} else if (statusString.equals("RESOLVED")) {
-			return Status.CLOSED;
-		} else if (statusString.equals("VERIFIED")) {
-			return Status.VERIFIED;
-		} else if (statusString.equals("CLOSED")) {
-			return Status.CLOSED;
-		} else {
-			return Status.UNKNOWN;
+		switch (statusString) {
+			case "UNCONFIRMED":
+				return Status.UNCONFIRMED;
+			case "NEW":
+				return Status.NEW;
+			case "ASSIGNED":
+				return Status.ASSIGNED;
+			case "REOPENED":
+				return Status.REOPENED;
+			case "RESOLVED":
+				return Status.CLOSED;
+			case "VERIFIED":
+				return Status.VERIFIED;
+			case "CLOSED":
+				return Status.CLOSED;
+			default:
+				return Status.UNKNOWN;
 		}
 	}
 	
@@ -219,8 +222,8 @@ public abstract class BugzillaParser implements Parser {
 	public BugzillaParser(final Set<String> supportedVersions) {
 		this.supportedVersions = supportedVersions;
 		for (final String supportedVersion : supportedVersions) {
-			if (!parserVersions.containsKey(supportedVersion)) {
-				parserVersions.put(supportedVersion, this);
+			if (!PARSER_VERSIONS.containsKey(supportedVersion)) {
+				PARSER_VERSIONS.put(supportedVersion, this);
 			}
 		}
 	}

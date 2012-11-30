@@ -191,8 +191,8 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	 *            the map
 	 */
 	@NoneNull
-	private final void req(final IOptions<?, ?> option,
-	                       final Map<String, IOptions<?, ?>> map) {
+	private void req(final IOptions<?, ?> option,
+	                 final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);
 	}
 	

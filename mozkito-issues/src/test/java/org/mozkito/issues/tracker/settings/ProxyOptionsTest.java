@@ -42,18 +42,25 @@ import org.mozkito.issues.tracker.settings.Messages;
 
 import scala.actors.threadpool.Arrays;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ProxyOptionsTest.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class ProxyOptionsTest {
 	
+	/** The keys. */
 	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "proxy.cacheDir", "proxy.host", "proxy.internal",
 	        "proxy.password", "proxy.port", "useProxy", "tracker.proxy.username", "useProxy" });
 	
+	/** The cache dir. */
 	private static File         cacheDir;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		for (final String key : keys) {
@@ -63,6 +70,9 @@ public class ProxyOptionsTest {
 		                                     ProxyOptionsTest.class.getSimpleName(), FileShutdownAction.DELETE);
 	}
 	
+	/**
+	 * After.
+	 */
 	@After
 	public void after() {
 		for (final String key : keys) {
@@ -77,6 +87,9 @@ public class ProxyOptionsTest {
 		}
 	}
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
 		for (final String key : keys) {
@@ -86,6 +99,9 @@ public class ProxyOptionsTest {
 		}
 	}
 	
+	/**
+	 * Impossible npe test.
+	 */
 	@Test
 	public void impossibleNPETest() {
 		try {

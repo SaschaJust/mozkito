@@ -32,23 +32,26 @@ import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.jira.JiraHistoryParser;
-import org.mozkito.issues.tracker.jira.JiraParser;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.StringTuple;
 
-
+// TODO: Auto-generated Javadoc
 /**
- * @author Kim Herzig <herzig@mozkito.org>
+ * The Class JiraParserLUCENE2222_NetTest.
  * 
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JiraParserLUCENE2222_NetTest {
 	
+	/** The parser. */
 	private static JiraParser parser;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		try {
@@ -65,6 +68,9 @@ public class JiraParserLUCENE2222_NetTest {
 		}
 	}
 	
+	/**
+	 * Test get attachment entries.
+	 */
 	@Test
 	public void testGetAttachmentEntries() {
 		final List<AttachmentEntry> attachmentEntries = parser.getAttachmentEntries();
@@ -76,7 +82,7 @@ public class JiraParserLUCENE2222_NetTest {
 		             attachmentEntry.getLink());
 		assertEquals("text/plain", attachmentEntry.getMime());
 		assertEquals(7674l, attachmentEntry.getSize());
-		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 11:20:11 +0000", new Regex(JiraParser.dateTimePattern)),
+		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 11:20:11 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
 		             attachmentEntry.getTimestamp());
 		Person author = attachmentEntry.getAuthor();
 		assertTrue(author.getEmailAddresses().isEmpty());
@@ -90,7 +96,7 @@ public class JiraParserLUCENE2222_NetTest {
 		             attachmentEntry.getLink());
 		assertEquals("text/plain", attachmentEntry.getMime());
 		assertEquals(937l, attachmentEntry.getSize());
-		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 11:14:43 +0000", new Regex(JiraParser.dateTimePattern)),
+		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 11:14:43 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
 		             attachmentEntry.getTimestamp());
 		author = attachmentEntry.getAuthor();
 		assertTrue(author.getEmailAddresses().isEmpty());
@@ -104,7 +110,7 @@ public class JiraParserLUCENE2222_NetTest {
 		             attachmentEntry.getLink());
 		assertEquals("text/plain", attachmentEntry.getMime());
 		assertEquals(3872l, attachmentEntry.getSize());
-		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 00:45:29 +0000", new Regex(JiraParser.dateTimePattern)),
+		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 00:45:29 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
 		             attachmentEntry.getTimestamp());
 		author = attachmentEntry.getAuthor();
 		assertTrue(author.getEmailAddresses().isEmpty());
@@ -113,6 +119,9 @@ public class JiraParserLUCENE2222_NetTest {
 		
 	}
 	
+	/**
+	 * Test get history elements.
+	 */
 	@Test
 	public void testGetHistoryElements() {
 		final SortedSet<HistoryElement> historyElements = parser.getHistoryElements();
@@ -137,7 +146,7 @@ public class JiraParserLUCENE2222_NetTest {
 					assertEquals(0, hElem.getChangedStringValues().size());
 					assertEquals(null, hElem.getText());
 					assertEquals(DateTimeUtils.parseDate("2010-01-18T00:43+0000",
-					                                     new Regex(JiraHistoryParser.historyDateTimePattern)),
+					                                     new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN)),
 					             hElem.getTimestamp());
 					break;
 				case 1:
@@ -163,7 +172,7 @@ public class JiraParserLUCENE2222_NetTest {
 					assertEquals(0, hElem.getChangedStringValues().size());
 					assertEquals(null, hElem.getText());
 					assertEquals(DateTimeUtils.parseDate("2010-01-18T13:35+0000",
-					                                     new Regex(JiraHistoryParser.historyDateTimePattern)),
+					                                     new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN)),
 					             hElem.getTimestamp());
 					break;
 				case 2:
@@ -184,7 +193,7 @@ public class JiraParserLUCENE2222_NetTest {
 					assertEquals(0, hElem.getChangedEnumValues().size());
 					assertEquals(null, hElem.getText());
 					assertEquals(DateTimeUtils.parseDate("2010-10-12T13:39+0000",
-					                                     new Regex(JiraHistoryParser.historyDateTimePattern)),
+					                                     new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN)),
 					             hElem.getTimestamp());
 					break;
 				default:

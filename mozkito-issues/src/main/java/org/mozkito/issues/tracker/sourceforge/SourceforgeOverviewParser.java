@@ -111,11 +111,14 @@ public class SourceforgeOverviewParser implements OverviewParser {
 		
 		try {
 			
+			final int BASE_OVERVIEW_OFFSET = 100;
+			
 			int offset = 0;
 			boolean running = true;
 			while (running) {
 				final String nextUri = this.baseOverviewURI + offset;
-				offset += 100;
+				
+				offset += BASE_OVERVIEW_OFFSET;
 				final URL url = new URL(nextUri);
 				final SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
 				

@@ -14,6 +14,7 @@ package org.mozkito.issues.tracker.sourceforge;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -40,11 +41,9 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.issues.tracker.sourceforge.SourceforgeParser;
-import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
 import org.mozkito.persistence.model.Person;
 
-
+// TODO: Auto-generated Javadoc
 /**
  * The Class SourceforgeParserTest.
  * 
@@ -60,7 +59,7 @@ public class SourceforgeParserTest {
 	public void testAttachmentIdRegex() {
 		final String link = "<a href=\"/tracker/download.php?group_id=97367&amp;atid=617889&amp;file_id=336228&amp;aid=2825955\">Download</a>";
 		final Match find = new Regex(SourceforgeParser.fileIdPattern.getPattern()).find(link);
-		assert (find != null);
+		assertNotNull(find);
 		assertEquals(1, find.getGroupCount());
 		assertEquals("336228", find.getGroup(1).getMatch());
 	}

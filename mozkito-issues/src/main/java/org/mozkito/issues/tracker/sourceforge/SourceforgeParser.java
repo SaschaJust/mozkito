@@ -57,7 +57,6 @@ import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
-
 /**
  * The Class SourceForgeParser.
  * 
@@ -125,25 +124,26 @@ public class SourceforgeParser implements Parser {
 	private static Priority resolvePriority(final String value) {
 		// 1..9;
 		// UNKNOWN, VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH;
-		final int priority = Integer.parseInt(value);
-		switch (priority) {
-			case 1:
-			case 2:
-				return Priority.VERY_LOW;
-			case 3:
-			case 4:
-				return Priority.LOW;
-			case 5:
-				return Priority.NORMAL;
-			case 6:
-			case 7:
-				return Priority.HIGH;
-			case 8:
-			case 9:
-				return Priority.VERY_HIGH;
-			default:
-				return Priority.UNKNOWN;
+		@SuppressWarnings ("serial")
+		final Map<String, Priority> PRIORITY_MAP = new HashMap<String, Priority>() {
+			
+			{
+				put("1", Priority.VERY_LOW);
+				put("2", Priority.VERY_LOW);
+				put("3", Priority.LOW);
+				put("4", Priority.LOW);
+				put("5", Priority.NORMAL);
+				put("6", Priority.HIGH);
+				put("7", Priority.HIGH);
+				put("8", Priority.VERY_HIGH);
+				put("9", Priority.VERY_HIGH);
+			}
+		};
+		
+		if (PRIORITY_MAP.containsKey(value)) {
+			return PRIORITY_MAP.get(value);
 		}
+		return Priority.UNKNOWN;
 	}
 	
 	/**
@@ -159,32 +159,33 @@ public class SourceforgeParser implements Parser {
 		// WORKS_FOR_ME;
 		// to: UNKNOWN, UNRESOLVED, DUPLICATE, RESOLVED, INVALID,
 		// WONT_FIX, WORKS_FOR_ME;
-		if (value.equalsIgnoreCase("ACCEPTED")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("DUPLICATE")) {
-			return Resolution.DUPLICATE;
-		} else if (value.equalsIgnoreCase("FIXED")) {
-			return Resolution.RESOLVED;
-		} else if (value.equalsIgnoreCase("INVALID")) {
-			return Resolution.INVALID;
-		} else if (value.equalsIgnoreCase("LATER")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("NONE")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("OUT_OF_DATE")) {
-			return Resolution.UNKNOWN;
-		} else if (value.equalsIgnoreCase("POSTPONED")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("REJECTED")) {
-			return Resolution.INVALID;
-		} else if (value.equalsIgnoreCase("REMIND")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equalsIgnoreCase("WONT_FIX")) {
-			return Resolution.WONT_FIX;
-		} else if (value.equalsIgnoreCase("WORKS_FOR_ME")) {
-			return Resolution.WORKS_FOR_ME;
-		} else {
-			return Resolution.UNKNOWN;
+		switch (value.toUpperCase()) {
+			case "ACCEPTED":
+				return Resolution.UNRESOLVED;
+			case "DUPLICATE":
+				return Resolution.DUPLICATE;
+			case "FIXED":
+				return Resolution.RESOLVED;
+			case "INVALID":
+				return Resolution.INVALID;
+			case "LATER":
+				return Resolution.UNRESOLVED;
+			case "NONE":
+				return Resolution.UNRESOLVED;
+			case "OUT_OF_DATE":
+				return Resolution.UNKNOWN;
+			case "POSTPONED":
+				return Resolution.UNRESOLVED;
+			case "REJECTED":
+				return Resolution.INVALID;
+			case "REMIND":
+				return Resolution.UNRESOLVED;
+			case "WONT_FIX":
+				return Resolution.WONT_FIX;
+			case "WORKS_FOR_ME":
+				return Resolution.WORKS_FOR_ME;
+			default:
+				return Resolution.UNKNOWN;
 		}
 	}
 	
@@ -199,16 +200,17 @@ public class SourceforgeParser implements Parser {
 		// from: CLOSED, DELETED, OPEN, PENDING
 		// to: UNKNOWN, UNCONFIRMED, NEW, ASSIGNED, IN_PROGRESS,
 		// REOPENED, RESOLVED, VERIFIED, CLOSED
-		if (value.equalsIgnoreCase("CLOSED")) {
-			return Status.CLOSED;
-		} else if (value.equalsIgnoreCase("DELETED")) {
-			return Status.CLOSED;
-		} else if (value.equalsIgnoreCase("OPEN")) {
-			return Status.NEW;
-		} else if (value.equalsIgnoreCase("PENDING")) {
-			return Status.IN_PROGRESS;
-		} else {
-			return Status.UNKNOWN;
+		switch (value.toUpperCase()) {
+			case "CLOSED":
+				return Status.CLOSED;
+			case "DELETED":
+				return Status.CLOSED;
+			case "OPEN":
+				return Status.NEW;
+			case "PENDING":
+				return Status.IN_PROGRESS;
+			default:
+				return Status.UNKNOWN;
 		}
 	}
 	
@@ -305,7 +307,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.rightGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Assigned:")) {
+				if ("label".equals(child.tag().getName()) && "Assigned:".equals(child.text().trim())) {
 					final String name = child.nextElementSibling().text();
 					return new Person(null, name, null);
 				}
@@ -337,7 +339,8 @@ public class SourceforgeParser implements Parser {
 			final Element tbody = table.getElementsByTag("tbody").get(0);
 			for (final Element tr : tbody.getElementsByTag("tr")) {
 				final Elements tds = tr.getElementsByTag("td");
-				if (tds.size() < 3) {
+				final int TD_SIZE = 3;
+				if (tds.size() < TD_SIZE) {
 					continue;
 				}
 				final String filename = htmlCommentRegex.removeAll(tds.get(0).text()).replaceAll("\"", "").trim();
@@ -350,7 +353,7 @@ public class SourceforgeParser implements Parser {
 				String link = aTags.get(0).attr("href");
 				String attachId = null;
 				for (final Group group : fileIdPattern.find(link)) {
-					if ((group.getName() != null) && (group.getName().equals("fileid"))) {
+					if ((group.getName() != null) && ("fileid".equals(group.getName()))) {
 						attachId = group.getMatch().trim();
 					}
 				}
@@ -411,7 +414,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.rightGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Category:")) {
+				if ("label".equals(child.tag().getName()) && "Category:".equals(child.text().trim())) {
 					return child.nextElementSibling().text().trim();
 				}
 			}
@@ -438,7 +441,7 @@ public class SourceforgeParser implements Parser {
 				}
 				int commentId = -1;
 				for (final Group group : commentIdMatch) {
-					if ((group.getName() != null) && (group.getName().equals("comment_id"))) {
+					if ((group.getName() != null) && ("comment_id".equals(group.getName()))) {
 						commentId = Integer.valueOf(group.getMatch().trim()).intValue();
 					}
 				}
@@ -465,9 +468,9 @@ public class SourceforgeParser implements Parser {
 				DateTime timestamp = null;
 				Person sender = null;
 				for (final Group group : find) {
-					if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
+					if ((group.getName() != null) && ("timestamp".equals(group.getName()))) {
 						timestamp = DateTimeUtils.parseDate(group.getMatch());
-					} else if ((group.getName() != null) && (group.getName().equals("username"))) {
+					} else if ((group.getName() != null) && ("username".equals(group.getName()))) {
 						sender = new Person(group.getMatch(), null, null);
 					}
 				}
@@ -506,14 +509,14 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
+				if ("label".equals(child.tag().getName()) && "Submitted:".equals(child.text().trim())) {
 					final Element pElement = child.nextElementSibling();
 					final MultiMatch findAll = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
 					if (findAll != null) {
 						final Match groups = findAll.getMatch(0);
 						String dateStr = null;
 						for (final Group group : groups) {
-							if ((group.getName() != null) && (group.getName().equals("timestamp"))) {
+							if ((group.getName() != null) && ("timestamp".equals(group.getName()))) {
 								dateStr = group.getMatch().trim();
 								break;
 							}
@@ -540,7 +543,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.gBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Details:")) {
+				if ("label".equals(child.tag().getName()) && "Details:".equals(child.text().trim())) {
 					final String description = child.nextElementSibling().text().trim();
 					return htmlCommentRegex.removeAll(description);
 				}
@@ -588,13 +591,15 @@ public class SourceforgeParser implements Parser {
 				
 				for (final Element tr : this.historyTableContainer.getElementsByTag("tr")) {
 					final Elements tds = tr.getElementsByTag("td");
-					if (tds.size() < 4) {
+					final int TD_SIZE = 4;
+					if (tds.size() < TD_SIZE) {
 						continue;
 					}
 					final String fieldname = tds.get(0).text().trim();
 					final String oldValue = tds.get(1).text().trim();
 					final DateTime timestamp = DateTimeUtils.parseDate(tds.get(2).text().trim());
-					final Element aElem = tds.get(3).child(0);
+					final int A_ELEMENT_INDEX = 3;
+					final Element aElem = tds.get(A_ELEMENT_INDEX).child(0);
 					final Person author = new Person(aElem.text().trim(), aElem.attr("title"), null);
 					
 					if (this.lastUpdateTimestamp == null) {
@@ -609,44 +614,55 @@ public class SourceforgeParser implements Parser {
 						lastHistoryElement = newHistoryElement;
 					}
 					
-					if (fieldname.equals("summary")) {
-						lastHistoryElement.addChangedValue("summary", oldValue, summary);
-						summary = oldValue;
-					} else if (fieldname.equals("assigned_to")) {
-						if (assignedTo == null) {
-							assignedTo = Tracker.unknownPerson;
-						}
-						final Person oldAssignedTo = new Person(oldValue, null, null);
-						lastHistoryElement.addChangedValue("assignedTo", oldAssignedTo, assignedTo);
-						assignedTo = oldAssignedTo;
-					} else if (fieldname.equals("category_id")) {
-						lastHistoryElement.addChangedValue("category", oldValue, category);
-						category = oldValue;
-					} else if (fieldname.equals("resolution_id")) {
-						final Resolution oldResolution = resolveResolution(oldValue);
-						lastHistoryElement.addChangedValue("resolution", oldResolution, resolution);
-						resolution = oldResolution;
-						if (resolution.equals(Resolution.RESOLVED) && (this.resolver == null)) {
-							this.resolver = author;
-							this.resolutionTimestamp = timestamp;
-						}
-					} else if (fieldname.equals("status_id")) {
-						final Status oldStatus = resolveStatus(oldValue);
-						lastHistoryElement.addChangedValue("status", oldStatus, status);
-						status = oldStatus;
-					} else if (fieldname.equals("priority")) {
-						final Priority oldPriority = resolvePriority(oldValue);
-						lastHistoryElement.addChangedValue("priority", oldPriority, priority);
-						priority = oldPriority;
-					} else if (fieldname.equals("File Added")) {
-						final String[] split = oldValue.split(":");
-						String filename = split[0];
-						if (split.length > 1) {
-							filename = split[1];
-						}
-						if (!this.attachmentHistory.containsKey(filename)) {
-							this.attachmentHistory.put(filename.trim(), new AttachmentHistoryEntry(author, timestamp));
-						}
+					switch (fieldname) {
+						case "summary":
+							lastHistoryElement.addChangedValue("summary", oldValue, summary);
+							summary = oldValue;
+							break;
+						case "assigned_to":
+							if (assignedTo == null) {
+								assignedTo = Tracker.UNKNOWN_PERSON;
+							}
+							final Person oldAssignedTo = new Person(oldValue, null, null);
+							lastHistoryElement.addChangedValue("assignedTo", oldAssignedTo, assignedTo);
+							assignedTo = oldAssignedTo;
+							break;
+						case "category_id":
+							lastHistoryElement.addChangedValue("category", oldValue, category);
+							category = oldValue;
+							break;
+						case "resolution_id":
+							final Resolution oldResolution = resolveResolution(oldValue);
+							lastHistoryElement.addChangedValue("resolution", oldResolution, resolution);
+							resolution = oldResolution;
+							if (resolution.equals(Resolution.RESOLVED) && (this.resolver == null)) {
+								this.resolver = author;
+								this.resolutionTimestamp = timestamp;
+							}
+							break;
+						case "status_id":
+							final Status oldStatus = resolveStatus(oldValue);
+							lastHistoryElement.addChangedValue("status", oldStatus, status);
+							status = oldStatus;
+							break;
+						case "priority":
+							final Priority oldPriority = resolvePriority(oldValue);
+							lastHistoryElement.addChangedValue("priority", oldPriority, priority);
+							priority = oldPriority;
+							break;
+						case "File Added":
+							final String[] split = oldValue.split(":");
+							String filename = split[0];
+							if (split.length > 1) {
+								filename = split[1];
+							}
+							if (!this.attachmentHistory.containsKey(filename)) {
+								this.attachmentHistory.put(filename.trim(), new AttachmentHistoryEntry(author,
+								                                                                       timestamp));
+							}
+							break;
+						default:
+							break;
 					}
 				}
 				if ((lastHistoryElement != null) && (!lastHistoryElement.isEmpty())) {
@@ -729,7 +745,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Priority:")) {
+				if ("label".equals(child.tag().getName()) && "Priority:".equals(child.text().trim())) {
 					final String priorityStr = child.nextElementSibling().text();
 					return resolvePriority(priorityStr);
 				}
@@ -765,7 +781,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Resolution:")) {
+				if ("label".equals(child.tag().getName()) && "Resolution:".equals(child.text().trim())) {
 					final String str = child.nextElementSibling().text();
 					return resolveResolution(str);
 				}
@@ -863,7 +879,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Status:")) {
+				if ("label".equals(child.tag().getName()) && "Status:".equals(child.text().trim())) {
 					final String str = child.nextElementSibling().text();
 					return resolveStatus(str);
 				}
@@ -876,8 +892,7 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public String getSubject() {
@@ -900,9 +915,7 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport
-	 * )
+	 * @see org.mozkito.bugs.tracker.Parser#setXMLReport(org.mozkito.bugs.tracker.XmlReport )
 	 */
 	@Override
 	public Person getSubmitter() {
@@ -910,7 +923,7 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			for (final Element child : this.leftGBox.children()) {
-				if (child.tag().getName().equals("label") && child.text().trim().equals("Submitted:")) {
+				if ("label".equals(child.tag().getName()) && "Submitted:".equals(child.text().trim())) {
 					final Element pElement = child.nextElementSibling();
 					final MultiMatch multiMatch = SourceforgeParser.submittedRegex.findAll(pElement.text().trim());
 					if (multiMatch != null) {
@@ -918,9 +931,9 @@ public class SourceforgeParser implements Parser {
 						String uname = null;
 						final Match groups = multiMatch.getMatch(0);
 						for (final Group group : groups) {
-							if ((group.getName() != null) && (group.getName().equals("fullname"))) {
+							if ((group.getName() != null) && ("fullname".equals(group.getName()))) {
 								name = group.getMatch().trim();
-							} else if ((group.getName() != null) && (group.getName().equals("username"))) {
+							} else if ((group.getName() != null) && ("username".equals(group.getName()))) {
 								uname = group.getMatch().trim();
 							}
 						}
@@ -983,8 +996,7 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
+	 * @see org.mozkito.bugs.tracker.Parser#setTracker(org.mozkito.bugs.tracker.Tracker)
 	 */
 	@Override
 	public void setTracker(final Tracker tracker) {
@@ -999,8 +1011,7 @@ public class SourceforgeParser implements Parser {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
+	 * @see org.mozkito.bugs.tracker.Parser#setURI(org.mozkito.bugs.tracker.ReportLink)
 	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {
@@ -1028,8 +1039,8 @@ public class SourceforgeParser implements Parser {
 			final Elements errorElements = document.getElementsByClass("error");
 			if (!errorElements.isEmpty()) {
 				for (final Element errorElem : errorElements) {
-					if ((errorElem.tag().getName().equals("h4"))
-					        && (errorElem.text().trim().replaceAll("\"", "").trim().equals("Error"))) {
+					if (("h4".equals(errorElem.tag().getName()))
+					        && ("Error".equals(errorElem.text().trim().replaceAll("\"", "").trim()))) {
 						return false;
 					}
 				}
@@ -1130,7 +1141,7 @@ public class SourceforgeParser implements Parser {
 			
 			final Element commentTableContainer = this.mainElement.getElementById("comment_table_container");
 			this.commentTable = commentTableContainer.child(0);
-			if ((this.commentTable == null) || (!this.commentTable.tag().getName().equals("table"))) {
+			if ((this.commentTable == null) || (!"table".equals(this.commentTable.tag().getName()))) {
 				if (Logger.logError()) {
 					Logger.error("Could not find comment table.");
 				}

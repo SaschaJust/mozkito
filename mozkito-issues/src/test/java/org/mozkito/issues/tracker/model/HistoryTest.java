@@ -29,6 +29,7 @@ import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.persistence.model.Person;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class HistoryTest.
  * 

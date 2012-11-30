@@ -78,6 +78,10 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
+	private static final int MIN_CLOSED_TD_TAGS = 3;
+	
+	private static final int MIN_OPEN_TD_TAGS   = 3;
+	
 	/**
 	 * Gets the priority.
 	 * 
@@ -90,20 +94,21 @@ public class MantisParser implements Parser {
 			return null;
 		}
 		final String value = s.toLowerCase();
-		if (value.equals("none")) {
-			return Priority.VERY_LOW;
-		} else if (value.equals("low")) {
-			return Priority.LOW;
-		} else if (value.equals("normal")) {
-			return Priority.NORMAL;
-		} else if (value.equals("high")) {
-			return Priority.HIGH;
-		} else if (value.equals("urgent")) {
-			return Priority.VERY_HIGH;
-		} else if (value.equals("immediate")) {
-			return Priority.VERY_HIGH;
-		} else {
-			return Priority.UNKNOWN;
+		switch (value) {
+			case "none":
+				return Priority.VERY_LOW;
+			case "low":
+				return Priority.LOW;
+			case "normal":
+				return Priority.NORMAL;
+			case "high":
+				return Priority.HIGH;
+			case "urgent":
+				return Priority.VERY_HIGH;
+			case "immediate":
+				return Priority.VERY_HIGH;
+			default:
+				return Priority.UNKNOWN;
 		}
 	}
 	
@@ -119,24 +124,25 @@ public class MantisParser implements Parser {
 			return null;
 		}
 		final String value = s.toLowerCase();
-		if (value.equals("open")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equals("fixed")) {
-			return Resolution.RESOLVED;
-		} else if (value.equals("unable to reproduce")) {
-			return Resolution.WORKS_FOR_ME;
-		} else if (value.equals("duplicate")) {
-			return Resolution.DUPLICATE;
-		} else if (value.equals("no change required")) {
-			return Resolution.INVALID;
-		} else if (value.equals("suspended")) {
-			return Resolution.UNRESOLVED;
-		} else if (value.equals("out of date")) {
-			return Resolution.INVALID;
-		} else if (value.equals("invalid")) {
-			return Resolution.INVALID;
-		} else {
-			return Resolution.UNKNOWN;
+		switch (value) {
+			case "open":
+				return Resolution.UNRESOLVED;
+			case "fixed":
+				return Resolution.RESOLVED;
+			case "unable to reproduce":
+				return Resolution.WORKS_FOR_ME;
+			case "duplicate":
+				return Resolution.DUPLICATE;
+			case "no change required":
+				return Resolution.INVALID;
+			case "suspended":
+				return Resolution.UNRESOLVED;
+			case "out of date":
+				return Resolution.INVALID;
+			case "invalid":
+				return Resolution.INVALID;
+			default:
+				return Resolution.UNKNOWN;
 		}
 	}
 	
@@ -152,16 +158,17 @@ public class MantisParser implements Parser {
 			return null;
 		}
 		final String value = s.toLowerCase();
-		if (value.equals("trivial")) {
-			return Severity.TRIVIAL;
-		} else if (value.equals("minor")) {
-			return Severity.MINOR;
-		} else if (value.equals("major")) {
-			return Severity.MAJOR;
-		} else if (value.equals("critical")) {
-			return Severity.CRITICAL;
-		} else {
-			return Severity.UNKNOWN;
+		switch (value) {
+			case "trivial":
+				return Severity.TRIVIAL;
+			case "minor":
+				return Severity.MINOR;
+			case "major":
+				return Severity.MAJOR;
+			case "critical":
+				return Severity.CRITICAL;
+			default:
+				return Severity.UNKNOWN;
 		}
 	}
 	
@@ -177,20 +184,21 @@ public class MantisParser implements Parser {
 			return null;
 		}
 		final String value = s.toLowerCase();
-		if (value.equals("new")) {
-			return Status.NEW;
-		} else if (value.equals("feedback")) {
-			return Status.FEEDBACK;
-		} else if (value.equals("acknowledged")) {
-			return Status.ACKNOWLEDGED;
-		} else if (value.equals("scheduled")) {
-			return Status.IN_PROGRESS;
-		} else if (value.equals("resolved")) {
-			return Status.CLOSED;
-		} else if (value.equals("closed")) {
-			return Status.CLOSED;
-		} else {
-			return Status.UNKNOWN;
+		switch (value) {
+			case "new":
+				return Status.NEW;
+			case "feedback":
+				return Status.FEEDBACK;
+			case "acknowledged":
+				return Status.ACKNOWLEDGED;
+			case "scheduled":
+				return Status.IN_PROGRESS;
+			case "resolved":
+				return Status.CLOSED;
+			case "closed":
+				return Status.CLOSED;
+			default:
+				return Status.UNKNOWN;
 		}
 	}
 	
@@ -205,16 +213,18 @@ public class MantisParser implements Parser {
 		if (s == null) {
 			return null;
 		}
-		if (s.toLowerCase().equals("defect")) {
-			return Type.BUG;
-		} else if (s.toLowerCase().equals("design defect")) {
-			return Type.DESIGN_DEFECT;
-		} else if (s.toLowerCase().equals("feature request")) {
-			return Type.RFE;
-		} else if (s.toLowerCase().equals("feature request")) {
-			return Type.BACKPORT;
-		} else {
-			return Type.UNKNOWN;
+		final String value = s.toLowerCase();
+		switch (value) {
+			case "defect":
+				return Type.BUG;
+			case "design defect":
+				return Type.DESIGN_DEFECT;
+			case "feature request":
+				return Type.RFE;
+			case "backport":
+				return Type.BACKPORT;
+			default:
+				return Type.UNKNOWN;
 		}
 	}
 	
@@ -285,58 +295,73 @@ public class MantisParser implements Parser {
 			newValue = changedValues[0].trim();
 		}
 		if (((oldValue == null) && (newValue == null))
-		        || ((oldValue != null) && (newValue != null) && (oldValue.equals("") && newValue.equals("")))) {
+		        || ((oldValue != null) && (newValue != null) && (oldValue.isEmpty() && newValue.isEmpty()))) {
 			return;
 		}
 		
 		try {
-			if (field.toLowerCase().equals("category")) {
-				historyElement.addChangedValue(field, oldValue, newValue);
-			} else if (field.toLowerCase().equals("type")) {
-				historyElement.addChangedValue(field, getType(oldValue), getType(newValue));
-			} else if (field.toLowerCase().equals("severity")) {
-				historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
-			} else if (field.toLowerCase().equals("assigned to")) {
-				Person oldPerson = new Person(oldValue, null, null);
-				if ((oldValue == null) || oldValue.equals("")) {
-					oldPerson = Tracker.unknownPerson;
-				}
-				Person newPerson = new Person(newValue, null, null);
-				if ((newValue == null) || newValue.equals("")) {
-					newPerson = Tracker.unknownPerson;
-				}
-				historyElement.addChangedValue("assignedto", oldPerson, newPerson);
-			} else if (field.toLowerCase().equals("priority")) {
-				historyElement.addChangedValue(field, getPriority(oldValue), getPriority(newValue));
-			} else if (field.toLowerCase().equals("resolution")) {
-				final Resolution newResolution = getResolution(newValue);
-				historyElement.addChangedValue(field, getResolution(oldValue), newResolution);
-				if (newResolution.equals(Resolution.RESOLVED)) {
-					this.resolutionTimestamp = historyElement.getTimestamp();
-					this.resolver = historyElement.getAuthor();
-				}
-			} else if (field.toLowerCase().equals("fixed in scm revision")) {
-				if (oldValue != null) {
-					oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
-				}
-				if (newValue != null) {
-					newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
-				}
-				historyElement.addChangedValue("scmfixversion", oldValue, newValue);
-			} else if (field.toLowerCase().equals("product version")) {
-				historyElement.addChangedValue(field, oldValue, newValue);
-			} else if (field.toLowerCase().equals("modules")) {
-				historyElement.addChangedValue("component", oldValue, newValue);
-			} else if (field.toLowerCase().equals("summary")) {
-				historyElement.addChangedValue(field, oldValue, newValue);
-			} else if (field.toLowerCase().equals("description")) {
-				historyElement.addChangedValue(field, oldValue, newValue);
-			} else if (field.toLowerCase().startsWith("file added")) {
-				this.attachters.put(field.replaceAll("File Added:", "").trim(), historyElement.getAuthor());
-			} else if (field.toLowerCase().startsWith("status")) {
-				historyElement.addChangedValue(field, getStatus(oldValue), getStatus(newValue));
+			final String lowerCaseFiled = field.toLowerCase();
+			switch (lowerCaseFiled) {
+				case "category":
+					historyElement.addChangedValue(field, oldValue, newValue);
+					break;
+				case "type":
+					historyElement.addChangedValue(field, getType(oldValue), getType(newValue));
+					break;
+				case "severity":
+					historyElement.addChangedValue(field, getSeverity(oldValue), getSeverity(newValue));
+					break;
+				case "assigned to":
+					Person oldPerson = new Person(oldValue, null, null);
+					if ((oldValue == null) || oldValue.isEmpty()) {
+						oldPerson = Tracker.UNKNOWN_PERSON;
+					}
+					Person newPerson = new Person(newValue, null, null);
+					if ((newValue == null) || newValue.isEmpty()) {
+						newPerson = Tracker.UNKNOWN_PERSON;
+					}
+					historyElement.addChangedValue("assignedto", oldPerson, newPerson);
+					break;
+				case "priority":
+					historyElement.addChangedValue(field, getPriority(oldValue), getPriority(newValue));
+					break;
+				case "resolution":
+					final Resolution newResolution = getResolution(newValue);
+					historyElement.addChangedValue(field, getResolution(oldValue), newResolution);
+					if (newResolution.equals(Resolution.RESOLVED)) {
+						this.resolutionTimestamp = historyElement.getTimestamp();
+						this.resolver = historyElement.getAuthor();
+					}
+					break;
+				case "fixed in scm revision":
+					if (oldValue != null) {
+						oldValue = oldValue.replaceAll("\\[\\^\\]", "").trim();
+					}
+					if (newValue != null) {
+						newValue = newValue.replaceAll("\\[\\^\\]", "").trim();
+					}
+					historyElement.addChangedValue("scmfixversion", oldValue, newValue);
+					break;
+				case "product version":
+					historyElement.addChangedValue(field, oldValue, newValue);
+					break;
+				case "modules":
+					historyElement.addChangedValue("component", oldValue, newValue);
+					break;
+				case "summary":
+					historyElement.addChangedValue(field, oldValue, newValue);
+					break;
+				case "description":
+					historyElement.addChangedValue(field, oldValue, newValue);
+					break;
+				default:
+					if (field.toLowerCase().startsWith("file added")) {
+						this.attachters.put(field.replaceAll("File Added:", "").trim(), historyElement.getAuthor());
+					} else if (field.toLowerCase().startsWith("status")) {
+						historyElement.addChangedValue(field, getStatus(oldValue), getStatus(newValue));
+					}
+					break;
 			}
-			
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -416,8 +441,8 @@ public class MantisParser implements Parser {
 				return null;
 			}
 			final String username = td.text().trim();
-			if (username.equals("")) {
-				return Tracker.unknownPerson;
+			if (username.isEmpty()) {
+				return Tracker.UNKNOWN_PERSON;
 			}
 			return new Person(td.text(), null, null);
 		} finally {
@@ -616,16 +641,16 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find first <br> after comment id.");
 					}
 					final Element developerTag = brTag.nextElementSibling();
-					if ((!developerTag.tagName().toLowerCase().equals("a"))
-					        && (!developerTag.tagName().toLowerCase().equals("font"))) {
+					if ((!"a".equals(developerTag.tagName().toLowerCase()))
+					        && (!"font".equals(developerTag.tagName().toLowerCase()))) {
 						throw new UnrecoverableError(
 						                             "Could not extract comment author. Could not find <a> nor <font> tag.");
 					}
 					
 					final String developerString = developerTag.text().trim();
 					Person author = new Person(developerString, null, null);
-					if (developerString.equals("")) {
-						author = Tracker.unknownPerson;
+					if (developerString.isEmpty()) {
+						author = Tracker.UNKNOWN_PERSON;
 					}
 					
 					final Element spanTag = developerTag.nextElementSibling();
@@ -780,8 +805,8 @@ public class MantisParser implements Parser {
 				if ((result.isEmpty()) || (!result.last().getTimestamp().isEqual(timestamp))) {
 					final String authorString = authorChild.text().trim();
 					Person author = new Person(authorString, null, null);
-					if ((authorString == null) || authorString.equals("")) {
-						author = Tracker.unknownPerson;
+					if ((authorString == null) || authorString.isEmpty()) {
+						author = Tracker.UNKNOWN_PERSON;
 					}
 					result.add(new HistoryElement(getId(), author, timestamp));
 				}
@@ -834,7 +859,7 @@ public class MantisParser implements Parser {
 			final Element cell = getMainTableCell("Tags", 1);
 			final String content = cell.text().trim();
 			final Set<String> result = new HashSet<String>();
-			if (!content.toLowerCase().equals("no tags attached.")) {
+			if (!"no tags attached.".equals(content.toLowerCase())) {
 				final String[] tags = content.split(",");
 				for (final String tag : tags) {
 					result.add(tag.trim());
@@ -1087,7 +1112,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find any row in open relationship table.");
 					}
 					final Elements openTdTags = openTrTag.getElementsByTag("td");
-					if (openTdTags.isEmpty() || (openTdTags.size() < 3)) {
+					if (openTdTags.isEmpty() || (openTdTags.size() < MIN_OPEN_TD_TAGS)) {
 						// throw new UnrecoverableError("Could not find any column in open relationship table row.");
 						continue;
 					}
@@ -1116,7 +1141,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find any row in closed relationship table.");
 					}
 					final Elements closedTdTags = closedTrTag.getElementsByTag("td");
-					if (closedTdTags.isEmpty() || (closedTdTags.size() < 3)) {
+					if (closedTdTags.isEmpty() || (closedTdTags.size() < MIN_CLOSED_TD_TAGS)) {
 						throw new UnrecoverableError("Could not find any column in closed relationship table row.");
 					}
 					final Element closedTdTag = closedTdTags.get(2);
@@ -1180,8 +1205,8 @@ public class MantisParser implements Parser {
 		try {
 			final Element cell = getMainTableCell("Reporter", 1);
 			final String username = cell.text().trim();
-			if (username.equals("")) {
-				return Tracker.unknownPerson;
+			if (username.isEmpty()) {
+				return Tracker.UNKNOWN_PERSON;
 			}
 			return new Person(cell.text().trim(), null, null);
 		} finally {

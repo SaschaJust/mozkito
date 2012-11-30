@@ -22,10 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.mantis.MantisTracker;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -37,6 +33,10 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.mantis.MantisTracker;
 
 /**
  * The Class MantisOptions.
@@ -89,7 +89,7 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 					int idIndex = -1;
 					String[] lineParts = nextLine.split(",");
 					for (int i = 0; i < lineParts.length; ++i) {
-						if (lineParts[i].toLowerCase().replaceAll("\"", "").equals("id")) {
+						if ("id".equals(lineParts[i].toLowerCase().replaceAll("\"", ""))) {
 							idIndex = i;
 							break;
 						}
@@ -152,8 +152,8 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
-	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 * @see org.mozkito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String, java.lang.String,
+	 * net.ownhero.dev.ioda.ProxyConfig)
 	 */
 	@Override
 	public void setup(final URI trackerUri,

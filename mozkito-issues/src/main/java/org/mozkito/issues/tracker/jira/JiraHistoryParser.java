@@ -35,7 +35,6 @@ import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
-
 /**
  * The Class JiraHistoryParser.
  * 
@@ -43,12 +42,16 @@ import org.mozkito.persistence.model.Person;
  */
 public class JiraHistoryParser {
 	
+	private static final int                MIN_CHILD_NODE_SIZE       = 3;
+	
+	private static final int                NAME_TAG_LENGTH           = 5;
+	
 	/** The skip regex. */
-	private static Regex                    skipRegex              = new Regex(
-	                                                                           "The issue you are trying to view does not exist");
+	private static Regex                    skipRegex                 = new Regex(
+	                                                                              "The issue you are trying to view does not exist");
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history                = new TreeSet<HistoryElement>();
+	private final SortedSet<HistoryElement> history                   = new TreeSet<HistoryElement>();
 	
 	/** The report id. */
 	private final String                    reportId;
@@ -57,9 +60,10 @@ public class JiraHistoryParser {
 	private final URI                       uri;
 	
 	/** The resolver. */
-	private Person                          resolver               = null;
+	private Person                          resolver                  = null;
 	
-	public static String                    historyDateTimePattern = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
+	/** The history date time pattern. */
+	public static String                    HISTORY_DATE_TIME_PATTERN = "({yyyy}\\d{4})[-:/_]({MM}[0-2]\\d)[-:/_]({dd}[0-3]\\d)T({HH}[0-2]\\d)[-:/_]({mm}[0-5]\\d)([-:/_]({ss}[0-5]\\d))?({Z}[+-]\\d{4})?";
 	
 	/**
 	 * Instantiates a new jira history parser.
@@ -159,7 +163,7 @@ public class JiraHistoryParser {
 							if (href != null) {
 								final int index = href.indexOf("name=");
 								if (index > -1) {
-									username = href.substring(index + 5);
+									username = href.substring(index + NAME_TAG_LENGTH);
 								}
 							}
 							final String fullname = aTag.text();
@@ -170,7 +174,7 @@ public class JiraHistoryParser {
 					final Elements dateElems = header.getElementsByTag("time");
 					if (!dateElems.isEmpty()) {
 						when = DateTimeUtils.parseDate(dateElems.get(0).attr("datetime"),
-						                               new Regex(historyDateTimePattern));
+						                               new Regex(HISTORY_DATE_TIME_PATTERN));
 					}
 					if ((who != null) && (when != null)) {
 						final HistoryElement historyElement = new HistoryElement(this.reportId, who, when);
@@ -187,7 +191,7 @@ public class JiraHistoryParser {
 							continue;
 						}
 						for (final Element tr : trs) {
-							if (tr.childNodes().size() < 3) {
+							if (tr.childNodes().size() < MIN_CHILD_NODE_SIZE) {
 								if (Logger.logError()) {
 									Logger.error("Cannot handle history table row with less than three columns: reportId="
 									        + this.reportId);
@@ -199,10 +203,10 @@ public class JiraHistoryParser {
 							                          .replaceAll("\\[[^\\]]+\\]", "").trim().toLowerCase();
 							final String newValue = tr.child(2).text().replaceAll("\"", "")
 							                          .replaceAll("\\[[^\\]]+\\]", "").trim().toLowerCase();
-							if (fieldString.equals("type")) {
+							if ("type".equals(fieldString)) {
 								historyElement.addChangedValue("type", JiraParser.resolveType(oldValue),
 								                               JiraParser.resolveType(newValue));
-							} else if (fieldString.equals("priority")) {
+							} else if ("priority".equals(fieldString)) {
 								historyElement.addChangedValue("severity", JiraParser.resolveSeverity(oldValue),
 								                               JiraParser.resolveSeverity(newValue));
 							} else if (fieldString.startsWith("affects version")) {
@@ -211,24 +215,24 @@ public class JiraHistoryParser {
 								} else {
 									@SuppressWarnings ("unchecked")
 									final Tuple<String, String> tuple = (Tuple<String, String>) historyElement.get("version");
-									if (((tuple.getFirst() == null) || (tuple.getFirst().equals("")))
-									        && (oldValue != null) && (!oldValue.equals(""))) {
+									if (((tuple.getFirst() == null) || (tuple.getFirst().isEmpty()))
+									        && (oldValue != null) && (!oldValue.isEmpty())) {
 										tuple.setFirst(oldValue);
 									}
-									if (((tuple.getSecond() == null) || (tuple.getSecond().equals("")))
-									        && (newValue != null) && (!newValue.equals(""))) {
+									if (((tuple.getSecond() == null) || (tuple.getSecond().isEmpty()))
+									        && (newValue != null) && (!newValue.isEmpty())) {
 										tuple.setSecond(newValue);
 									}
 									historyElement.addChangedValue("version", tuple.getFirst(), tuple.getSecond());
 								}
 							} else if (fieldString.startsWith("component")) {
 								historyElement.addChangedValue("component", oldValue, newValue);
-							} else if (fieldString.equals("labels")) {
+							} else if ("labels".equals(fieldString)) {
 								historyElement.addChangedValue("keywords", oldValue, newValue);
-							} else if (fieldString.equals("status")) {
+							} else if ("status".equals(fieldString)) {
 								historyElement.addChangedValue("status", JiraParser.resolveStatus(oldValue),
 								                               JiraParser.resolveStatus(newValue));
-							} else if (fieldString.equals("resolution")) {
+							} else if ("resolution".equals(fieldString)) {
 								final Resolution newResolution = JiraParser.resolveResolution(newValue);
 								historyElement.addChangedValue("resolution", JiraParser.resolveResolution(oldValue),
 								                               newResolution);
