@@ -189,7 +189,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@Lob
 	@Basic
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getMessage() {
 		return this.message;
 	}

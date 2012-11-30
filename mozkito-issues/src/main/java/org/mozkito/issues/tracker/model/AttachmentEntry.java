@@ -121,7 +121,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the description
 	 */
 	@Basic
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getDescription() {
 		return this.description;
 	}

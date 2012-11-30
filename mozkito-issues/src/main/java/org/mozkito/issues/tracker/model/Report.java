@@ -157,6 +157,8 @@ public class Report implements Annotated, Comparable<Report> {
 	
 	/**
 	 * Instantiates a new report.
+	 * 
+	 * @deprecated
 	 */
 	@Deprecated
 	public Report() {
@@ -305,6 +307,10 @@ public class Report implements Annotated, Comparable<Report> {
 		return comp;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -410,7 +416,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	@Lob
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getDescription() {
 		return this.description;
 	}
@@ -682,7 +688,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	@Lob
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getSubject() {
 		return this.subject;
 	}
@@ -707,7 +713,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Basic
 	@Lob
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getSummary() {
 		return this.summary;
 	}
@@ -732,6 +738,10 @@ public class Report implements Annotated, Comparable<Report> {
 		return this.version;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
