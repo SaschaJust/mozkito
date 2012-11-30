@@ -144,10 +144,12 @@ public class RCSFile implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Instantiates a new file.
-	 *
-	 * @param path the path
-	 * @param rCSTransaction the transaction
+	 * Instantiates a new RCSFile.
+	 * 
+	 * @param path
+	 *            the path of the file
+	 * @param transaction
+	 *            the transaction the file was modified in
 	 */
 	public RCSFile(final String path, final RCSTransaction rCSTransaction) {
 		getChangedNames().put(rCSTransaction.getId(), path);
@@ -228,7 +230,7 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Gets the latest path.
-	 *
+	 * 
 	 * @return the latest path
 	 */
 	@Transient
@@ -237,10 +239,11 @@ public class RCSFile implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Gets the path.
-	 *
-	 * @param rCSTransaction the transaction
-	 * @return the path
+	 * Gets the path the file has in transactions
+	 * 
+	 * @param transaction
+	 *            the transaction to retrieve the file's path for
+	 * @return the path of the RCSFile as set in transaction
 	 */
 	@Transient
 	public String getPath(final RCSTransaction rCSTransaction) {
@@ -273,9 +276,9 @@ public class RCSFile implements Annotated, Serializable {
 	}
 	
 	/**
-	 * Saved.
-	 *
-	 * @return true, if successful
+	 * Check if the RCSFile got saved in the DB.
+	 * 
+	 * @return true, if successful saved in DB, false otherwise
 	 */
 	@Transient
 	public boolean saved() {

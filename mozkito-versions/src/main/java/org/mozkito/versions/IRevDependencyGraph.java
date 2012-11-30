@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.mozkito.persistence.PersistenceUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface IRevDependencyGraph.
  * 
@@ -37,9 +38,11 @@ public interface IRevDependencyGraph {
 	
 	/**
 	 * Exists path.
-	 *
-	 * @param fromHash the from hash
-	 * @param toHash the to hash
+	 * 
+	 * @param fromHash
+	 *            the from hash
+	 * @param toHash
+	 *            the to hash
 	 * @return true, if successful
 	 */
 	boolean existsPath(String fromHash,
@@ -56,8 +59,9 @@ public interface IRevDependencyGraph {
 	
 	/**
 	 * Gets the branch transactions.
-	 *
-	 * @param branchName the branch name
+	 * 
+	 * @param branchName
+	 *            the branch name
 	 * @return the branch transactions
 	 */
 	Iterable<String> getBranchTransactions(String branchName);
@@ -73,8 +77,9 @@ public interface IRevDependencyGraph {
 	
 	/**
 	 * Gets the previous transactions.
-	 *
-	 * @param hash the hash
+	 * 
+	 * @param hash
+	 *            the hash
 	 * @return the previous transactions
 	 */
 	Iterable<String> getPreviousTransactions(String hash);

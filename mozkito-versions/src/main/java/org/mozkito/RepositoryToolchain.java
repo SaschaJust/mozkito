@@ -15,11 +15,6 @@
  */
 package org.mozkito;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.Repository;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -32,10 +27,15 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.versions.Repository;
+
 /**
  * The Class RepositoryToolchain.
  * 
- * {@link RepositoryToolchain} is the standard {@link RepoSuiteToolchain} to mine a repository.
+ * {@link RepositoryToolchain} is the standard {@link Chain} to mine a repository.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */

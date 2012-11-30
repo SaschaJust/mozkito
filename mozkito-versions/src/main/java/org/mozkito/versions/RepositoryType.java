@@ -18,15 +18,15 @@ package org.mozkito.versions;
 public enum RepositoryType {
 	
 	/** The git. */
-	GIT, 
- /** The mercurial. */
- MERCURIAL, 
- /** The subversion. */
- SUBVERSION;
+	GIT,
+	/** The mercurial. */
+	MERCURIAL,
+	/** The subversion. */
+	SUBVERSION;
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	public static String getHandle() {

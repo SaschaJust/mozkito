@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.mozkito.versions.elements;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.joda.time.DateTime;
 
 import net.ownhero.dev.kisa.Logger;
@@ -38,11 +40,15 @@ public class AnnotationEntry {
 	
 	/**
 	 * Instantiates a new annotation entry.
-	 *
-	 * @param revision the revision
-	 * @param username the username
-	 * @param timestamp the timestamp
-	 * @param line the line
+	 * 
+	 * @param revision
+	 *            the revision
+	 * @param username
+	 *            the username
+	 * @param timestamp
+	 *            the timestamp
+	 * @param line
+	 *            the line
 	 */
 	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line) {
 		this(revision, username, timestamp, line, null);
@@ -50,12 +56,17 @@ public class AnnotationEntry {
 	
 	/**
 	 * Instantiates a new annotation entry.
-	 *
-	 * @param revision the revision
-	 * @param username the username
-	 * @param timestamp the timestamp
-	 * @param line the line
-	 * @param alternativeFilePath the alternative file path
+	 * 
+	 * @param revision
+	 *            the revision
+	 * @param username
+	 *            the username
+	 * @param timestamp
+	 *            the timestamp
+	 * @param line
+	 *            the line
+	 * @param alternativeFilePath
+	 *            the alternative file path
 	 */
 	public AnnotationEntry(final String revision, final String username, final DateTime timestamp, final String line,
 	        final String alternativeFilePath) {
@@ -72,7 +83,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the alternative file path.
-	 *
+	 * 
 	 * @return the alternative file path
 	 */
 	public String getAlternativeFilePath() {
@@ -82,7 +93,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	public String getHandle() {
@@ -91,7 +102,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the line.
-	 *
+	 * 
 	 * @return the line
 	 */
 	public String getLine() {
@@ -100,7 +111,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the revision.
-	 *
+	 * 
 	 * @return the revision
 	 */
 	public String getRevision() {
@@ -109,7 +120,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the timestamp.
-	 *
+	 * 
 	 * @return the timestamp
 	 */
 	public DateTime getTimestamp() {
@@ -118,7 +129,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Gets the username.
-	 *
+	 * 
 	 * @return the username
 	 */
 	public String getUsername() {
@@ -127,7 +138,7 @@ public class AnnotationEntry {
 	
 	/**
 	 * Checks for alternative path.
-	 *
+	 * 
 	 * @return true, if successful
 	 */
 	public boolean hasAlternativePath() {

@@ -55,8 +55,8 @@ import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 
 /**
- * The Class Transaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object to
- * database. The attached {@link RCSFile} will not be saved cascaded due to {@link RevisionPrimaryKey}.
+ * The Class RCSTransaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object
+ * to database. The attached {@link RCSFile} will not be saved cascaded due to {@link RevisionPrimaryKey}.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */

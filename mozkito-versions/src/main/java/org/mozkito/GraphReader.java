@@ -17,16 +17,16 @@ package org.mozkito;
 
 import java.util.LinkedList;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class GraphReader.
@@ -37,10 +37,13 @@ public class GraphReader extends Source<RCSTransaction> {
 	
 	/**
 	 * Instantiates a new graph reader.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public GraphReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);

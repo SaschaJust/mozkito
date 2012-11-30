@@ -15,11 +15,11 @@
  */
 package org.mozkito;
 
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
+
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * This class is a end point for the {@link RepositoryToolchain} tool chain in case no database connection is used. The
@@ -32,10 +32,11 @@ public class RepositoryVoidSink extends Sink<RCSTransaction> {
 	
 	/**
 	 * Instantiates a new repository void sink.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @see RepoSuiteSinkThread
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
 	 */
 	public RepositoryVoidSink(final Group threadGroup, final Settings settings) {
 		super(threadGroup, settings, false);

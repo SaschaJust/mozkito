@@ -46,7 +46,7 @@ public class RepositorySettingsProcessor implements MozkitoSettingsProcessor {
 	 * Gets the path name.
 	 * 
 	 * @param aClass
-	 *            the a class
+	 *            class for which the method shall return the path name
 	 * @param type
 	 *            the type
 	 * @return the path name

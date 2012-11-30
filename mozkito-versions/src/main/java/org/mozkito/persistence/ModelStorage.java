@@ -15,16 +15,19 @@ package org.mozkito.persistence;
 
 /**
  * The Interface ModelStorage.
- *
- * @param <S> the generic type
- * @param <T> the generic type
+ * 
+ * @param <S>
+ *            the generic type
+ * @param <T>
+ *            the generic type
  */
 public interface ModelStorage<S, T> {
 	
 	/**
 	 * Gets the by id.
-	 *
-	 * @param id the id
+	 * 
+	 * @param id
+	 *            the id
 	 * @return the by id
 	 */
 	T getById(S id);
