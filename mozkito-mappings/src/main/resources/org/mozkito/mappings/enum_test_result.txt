@@ -1,0 +1,78 @@
+=== ENUM 1 ===
+a) field changing from nothing to nothing (don't ask) and 
+b) by wrong field name additionally
+
+=== ENUM 2 ===
+1) added new test for Reposiotries. 
+2) fixed multiple bugs in Repsoitories 
+3) Fixed getFormerPath() method in SubversionRepository
+
+=== ENUM 3 ===
+1) preparing essential changes in JavaChangeOperation
+2) preparing atomic changes in RCSTransaction
+3) adding dependencies for untangling module
+
+=== ENUM 4 ===
+i. everything is alright
+ii. everything works as expected
+iii. no bugs have been introduced
+iv. our algorithm is sound
+
+=== ENUM 5 ===
+A) Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+B) Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+C) Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+applying new registered design (required after changes to andamasettings
+according init() method) Removing validate from default options (setting to
+create) and actually dropping and recreating database if DB_DROP_CREATE is set.
+see function(a, d) and such.
+
+D) Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+E) Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+=== ENUM 6 ===
+i. for one 
+	for one
+ii. second
+	second
+	second
+iii. third
+	third
+	third
+	third
+iiii. and last
+	and last
+
+=== ENUM 7 ===
+1: abcdef
+2: ghijkl
+3: mnopqr

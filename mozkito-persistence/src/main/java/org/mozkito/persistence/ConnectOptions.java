@@ -14,5 +14,5 @@
 package org.mozkito.persistence;
 
 public enum ConnectOptions {
-	VALIDATE, CREATE, DB_DROP_CREATE;
+	CREATE, DB_DROP_CREATE;
 }

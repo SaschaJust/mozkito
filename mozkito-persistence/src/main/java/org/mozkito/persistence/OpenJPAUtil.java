@@ -211,14 +211,17 @@ public class OpenJPAUtil implements PersistenceUtil {
 	                                 final String driver,
 	                                 final String unit,
 	                                 final ConnectOptions options) {
-		final String url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String url = null;
+		
+		if ((host == null) || host.isEmpty()) {
+			url = "jdbc:" + type.toLowerCase() + ":" + database + ";create=true";
+		} else {
+			url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		
 		final Properties properties = new Properties();
 		properties.put("openjpa.ConnectionURL", url); //$NON-NLS-1$
 		switch (options) {
-			case VALIDATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "validate"); //$NON-NLS-1$ //$NON-NLS-2$
-				break;
 			case CREATE:
 				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
 				break;

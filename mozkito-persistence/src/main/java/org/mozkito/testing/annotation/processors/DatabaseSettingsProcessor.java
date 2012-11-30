@@ -23,9 +23,12 @@ import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class DatabaseSettingsProcessor.
+ */
 public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	
 	/*
@@ -33,8 +36,8 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	 * @see org.mozkito.testing.annotation.processors. MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void setup(final Class<?> aClass,
-	                  final Annotation annotation) throws TestSettingsError {
+	public <T extends DatabaseTest> void setup(final T test,
+	                                           final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		final String databaseName = System.getProperty("database.name") != null
 		                                                                       ? System.getProperty("database.name")
@@ -117,7 +120,8 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			}
 		}
 		
-		MozkitoTest.setPersistenceUtil(util);
+		test.setConnectionOption(databaseOptions);
+		test.setUtil(util);
 	}
 	
 	/*
@@ -126,8 +130,8 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#tearDown(java.lang.annotation.Annotation)
 	 */
 	@Override
-	public void tearDown(final Class<?> aClass,
-	                     final Annotation annotation) throws TestSettingsError {
+	public <T extends DatabaseTest> void tearDown(final T test,
+	                                              final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		final String databaseDriver = System.getProperty("database.driver") != null
 		                                                                           ? System.getProperty("database.driver")
@@ -145,7 +149,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		                                                                           ? System.getProperty("database.user")
 		                                                                           : settings.username();
 		
-		MozkitoTest.getPersistenceUtil().shutdown();
+		test.getPersistenceUtil().shutdown();
 		
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();

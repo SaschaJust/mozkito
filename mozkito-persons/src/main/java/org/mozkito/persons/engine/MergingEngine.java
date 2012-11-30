@@ -45,23 +45,34 @@ import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.processing.PersonManager;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class MergingEngine.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class MergingEngine implements SettingsProvider {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static class Options extends
 	        ArgumentSetOptions<Set<MergingEngine>, ArgumentSet<Set<MergingEngine>, Options>> {
 		
+		/** The Constant tag. */
 		protected static final String tag         = "persons";                                             //$NON-NLS-1$
+		                                                                                                    
+		/** The Constant description. */
 		private static final String   description = Messages.getString("MergingEngine.optionsDescription"); //$NON-NLS-1$
+		                                                                                                    
+		/** The persons option. */
 		private SetArgument.Options   personsOption;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, tag, description, requirements);
@@ -171,23 +182,32 @@ public abstract class MergingEngine implements SettingsProvider {
 		
 	}
 	
+	/**
+	 * Instantiates a new merging engine.
+	 */
 	public MergingEngine() {
 		
 	}
 	
 	/**
+	 * Collides.
+	 * 
 	 * @param person
+	 *            the person
 	 * @param container
+	 *            the container
 	 * @param manager
-	 * @param features
-	 * @return
+	 *            the manager
+	 * @return the list
 	 */
 	public abstract List<PersonBucket> collides(Person person,
 	                                            PersonContainer container,
 	                                            PersonManager manager);
 	
 	/**
-	 * @return
+	 * Gets the description.
+	 * 
+	 * @return the description
 	 */
 	public abstract String getDescription();
 	

@@ -209,7 +209,7 @@
 				<version>2.12</version>
 				<configuration>
 					<enableAssertions>true</enableAssertions>
-					<forkMode>pertest</forkMode>
+					<forkMode>perTest</forkMode>
 					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar</argLine>
 					<workingDirectory>${basedir}/target</workingDirectory>
 					<excludes>
@@ -697,6 +697,7 @@
 						<version>2.12</version>
 						<configuration>
 							<argLine>-javaagent:${sonar.jacoco.agent.path}=destfile=${sonar.jacoco.reportPath}</argLine>
+							<forkMode>perTest</forkMode>
 						</configuration>
 					</plugin>
 				</plugins>

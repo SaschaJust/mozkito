@@ -14,24 +14,51 @@
 package org.mozkito.persistence;
 
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mozkito.testing.MozkitoTest;
+
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class CreateAndDropDB_MozkitoTest.
+ */
 @DatabaseSettings (database = "just_test", unit = "persistence")
-public class CreateAndDropDB_MozkitoTest extends MozkitoTest {
+public class CreateAndDropDB_MozkitoTest extends DatabaseTest {
 	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		System.out.println("before class"); //$NON-NLS-1$
-	}
+	/**
+	 * Sets the up before class.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	
+	/**
+	 * Tear down after class.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		System.out.println("after class"); //$NON-NLS-1$
 	}
 	
+	/**
+     * 
+     */
+	public CreateAndDropDB_MozkitoTest() {
+		// PRECONDITIONS
+		
+		try {
+			System.out.println("before class"); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		// fail("Not yet implemented");

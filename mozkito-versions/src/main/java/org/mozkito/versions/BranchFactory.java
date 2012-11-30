@@ -17,23 +17,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSBranch;
 
-import net.ownhero.dev.kanuni.annotations.simple.NotNull;
-import net.ownhero.dev.kisa.Logger;
-
+/**
+ * A factory for creating Branch objects.
+ */
 public class BranchFactory {
 	
+	/** The branch cache. */
 	private final Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
 	
+	/** The persistence util. */
 	private final PersistenceUtil        persistenceUtil;
 	
+	/**
+	 * Instantiates a new branch factory.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 */
 	public BranchFactory(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;
 	}
 	
+	/**
+	 * Gets the branch.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return the branch
+	 */
 	public synchronized RCSBranch getBranch(@NotNull final String name) {
 		if (!this.branchCache.containsKey(name)) {
 			
@@ -75,10 +93,20 @@ public class BranchFactory {
 		return this.branchCache.get(name);
 	}
 	
+	/**
+	 * Gets the master branch.
+	 * 
+	 * @return the master branch
+	 */
 	public RCSBranch getMasterBranch() {
 		return getBranch(RCSBranch.MASTER_BRANCH_NAME);
 	}
 	
+	/**
+	 * Gets the persistence util.
+	 * 
+	 * @return the persistence util
+	 */
 	public PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
 	}

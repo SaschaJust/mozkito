@@ -29,12 +29,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -42,7 +43,8 @@ import org.mozkito.versions.model.RCSTransaction;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class Merge_NetTest extends MozkitoTest {
+@DatabaseSettings (unit = "versions")
+public class Merge_NetTest extends DatabaseTest {
 	
 	/**
 	 * Test for {@link Person}, {@link PersonContainer}, {@link PersonManager}
@@ -52,7 +54,6 @@ public class Merge_NetTest extends MozkitoTest {
 	 */
 	@SuppressWarnings ("deprecation")
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testMergePerson() throws SettingsParseError, ArgumentRegistrationException {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
@@ -62,8 +63,7 @@ public class Merge_NetTest extends MozkitoTest {
 		
 		final Person[] persons = new Person[] { new Person("just", null, null),
 		        new Person(null, null, "sascha.just@mozkito.org"), new Person(null, "Sascha Just", null),
-		        new Person("just", "Sascha Just", null),
-		        new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
+		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
 		        new Person("just", null, "sascha.just@mozkito.org") };
 		
 		RCSTransaction rcsTransaction = null;

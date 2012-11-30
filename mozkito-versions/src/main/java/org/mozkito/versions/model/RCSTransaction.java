@@ -48,6 +48,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
@@ -139,6 +140,7 @@ public class RCSTransaction implements Annotated {
 	 * used by PersistenceUtil to create RCSTransaction instance.
 	 */
 	protected RCSTransaction() {
+		this.atomic = false;
 	}
 	
 	/**
@@ -460,7 +462,7 @@ public class RCSTransaction implements Annotated {
 	 * 
 	 * @return true, if is atomic
 	 */
-	@Column (columnDefinition = "boolean default 'FALSE'")
+	// @Column (columnDefinition = "boolean default 'FALSE'")
 	public boolean isAtomic() {
 		return this.atomic;
 	}

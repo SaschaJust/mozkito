@@ -15,8 +15,7 @@ package org.mozkito.mappings.utils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 import net.ownhero.dev.ioda.FileUtils;
 
@@ -66,16 +65,16 @@ public class InformationTest {
 	 */
 	@Test
 	public final void testEnumerations() {
-		final List<Map<String, String>> enumerations = Information.enumerations(InformationTest.text);
+		final Collection<Enumeration> enumerations = Information.enumerations(InformationTest.text);
 		int i = 0;
 		
-		for (final Map<String, String> map : enumerations) {
+		for (final Enumeration map : enumerations) {
 			System.err.println(String.format("===== Set number (%s) =====", ++i));
 			
 			int j = 0;
 			
-			for (final String bullet : map.keySet()) {
-				System.err.println(String.format("Item %3s - Bullet: %s - Text: %s", ++j, bullet, map.get(bullet)));
+			for (final EnumerationEntry bullet : map) {
+				System.err.println(String.format("Item %3s - Bullet: %s", ++j, bullet));
 			}
 		}
 		Assert.fail("Not yet implemented");

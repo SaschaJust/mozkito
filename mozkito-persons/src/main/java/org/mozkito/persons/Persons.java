@@ -17,13 +17,6 @@ package org.mozkito.persons;
 
 import java.util.Set;
 
-import org.mozkito.RepositoryToolchain;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persons.engine.MergingEngine;
-import org.mozkito.persons.engine.Messages;
-import org.mozkito.persons.processing.MergingProcessor;
-import org.mozkito.settings.DatabaseOptions;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -36,17 +29,44 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.RepositoryToolchain;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persons.engine.MergingEngine;
+import org.mozkito.persons.engine.Messages;
+import org.mozkito.persons.processing.MergingProcessor;
+import org.mozkito.settings.DatabaseOptions;
+
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class Persons.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Persons extends Chain<Settings> {
 	
+	/** The thread pool. */
 	private final Pool                                             threadPool;
+	
+	/** The database arguments. */
 	private ArgumentSet<PersistenceUtil, DatabaseOptions>          databaseArguments;
+	
+	/** The persistence util. */
 	private PersistenceUtil                                        persistenceUtil;
+	
+	/** The engines set. */
 	private ArgumentSet<Set<MergingEngine>, MergingEngine.Options> enginesSet;
 	
+	/**
+	 * Instantiates a new persons.
+	 * 
+	 * @param util
+	 *            the util
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
+	 * @throws ArgumentSetRegistrationException
+	 *             the argument set registration exception
+	 */
 	@Deprecated
 	Persons(final PersistenceUtil util) throws SettingsParseError, ArgumentRegistrationException,
 	        ArgumentSetRegistrationException {
@@ -61,9 +81,14 @@ public class Persons extends Chain<Settings> {
 	}
 	
 	/**
-	 * @throws SettingsParseError
-	 * @throws ArgumentRegistrationException
+	 * Instantiates a new persons.
 	 * 
+	 * @param settings
+	 *            the settings
+	 * @throws SettingsParseError
+	 *             the settings parse error
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	public Persons(final Settings settings) throws SettingsParseError, ArgumentRegistrationException {
 		super(settings);

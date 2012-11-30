@@ -22,10 +22,10 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Interface DatabaseSettings.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
@@ -33,21 +33,66 @@ import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 @Target (value = { ElementType.METHOD, ElementType.TYPE })
 public @interface DatabaseSettings {
 	
-	String database() default "moskito_junit";
+	/**
+	 * Database.
+	 * 
+	 * @return the string
+	 */
+	String database() default "test.db";
 	
-	String driver() default "org.postgresql.Driver";
+	/**
+	 * Driver.
+	 * 
+	 * @return the string
+	 */
+	String driver() default "org.apache.derby.jdbc.EmbeddedDriver";
 	
-	String hostname() default "grid1.st.cs.uni-saarland.de";
+	/**
+	 * Hostname.
+	 * 
+	 * @return the string
+	 */
+	String hostname() default "";
 	
+	/**
+	 * Options.
+	 * 
+	 * @return the connect options
+	 */
 	ConnectOptions options() default org.mozkito.persistence.ConnectOptions.DB_DROP_CREATE;
 	
-	String password() default "miner";
+	/**
+	 * Password.
+	 * 
+	 * @return the string
+	 */
+	String password() default "";
 	
-	String type() default "postgresql";
+	/**
+	 * Type.
+	 * 
+	 * @return the string
+	 */
+	String type() default "DERBY";
 	
+	/**
+	 * Unit.
+	 * 
+	 * @return the string
+	 */
 	String unit();
 	
-	String username() default "miner";
+	/**
+	 * Username.
+	 * 
+	 * @return the string
+	 */
+	String username() default "";
 	
+	/**
+	 * Util.
+	 * 
+	 * @return the class<? extends persistence util>
+	 */
 	Class<? extends PersistenceUtil> util() default org.mozkito.persistence.OpenJPAUtil.class;
 }

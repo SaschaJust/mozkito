@@ -18,10 +18,6 @@ package org.mozkito.persons;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.PersonContainer;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -29,19 +25,29 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.PersonContainer;
+
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PersonsReader.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersonsReader extends Source<PersonContainer> {
 	
+	/** The iterator. */
 	private ListIterator<PersonContainer> iterator;
 	
 	/**
+	 * Instantiates a new persons reader.
+	 * 
 	 * @param threadGroup
-	 * @param name
+	 *            the thread group
 	 * @param settings
+	 *            the settings
 	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public PersonsReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);

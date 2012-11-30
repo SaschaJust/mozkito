@@ -18,14 +18,21 @@ import static org.junit.Assert.assertFalse;
 import java.util.List;
 
 import org.junit.Test;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
+/**
+ * The Class OpenJPA_Persistence_MozkitoTest.
+ */
 @DatabaseSettings (unit = "persistence")
-public class OpenJPA_Persistence_MozkitoTest extends MozkitoTest {
+public class OpenJPA_Persistence_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test person.
+	 */
 	@Test
 	public void testPerson() {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
@@ -42,6 +49,9 @@ public class OpenJPA_Persistence_MozkitoTest extends MozkitoTest {
 		assertEquals(person, list.get(0));
 	}
 	
+	/**
+	 * Test per son container.
+	 */
 	@Test
 	public void testPersonContainer() {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();

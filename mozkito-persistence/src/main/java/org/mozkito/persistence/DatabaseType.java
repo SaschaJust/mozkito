@@ -20,5 +20,5 @@ package org.mozkito.persistence;
  * 
  */
 public enum DatabaseType {
-	POSTGRESQL, MYSQL;
+	POSTGRESQL, MYSQL, DERBY;
 }

@@ -10,8 +10,9 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+
 import org.mozkito.persistence.model.Person;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
@@ -21,7 +22,8 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class RCSPersistenceUtilTest.
  */
-public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
+@DatabaseSettings (unit = "versions")
+public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 	
 	/** The t_280b1b. */
 	private RCSTransaction t_280b1b;
@@ -186,7 +188,6 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	 * Test branch asc.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testBranchASC() {
 		
 		final List<RCSTransaction> tList = setup(getPersistenceUtil());
@@ -228,7 +229,6 @@ public class RCSPersistenceUtil_MozkitoTest extends MozkitoTest {
 	 * Test branch desc.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testBranchDESC() {
 		
 		final List<RCSTransaction> tList = setup(getPersistenceUtil());

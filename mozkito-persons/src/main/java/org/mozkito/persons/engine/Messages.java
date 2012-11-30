@@ -16,15 +16,25 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class Messages.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Messages {
 	
-	private static final String         BUNDLE_NAME     = "org.mozkito.persons.messages"; //$NON-NLS-1$
-	                                                                                                       
+	/** The Constant BUNDLE_NAME. */
+	private static final String         BUNDLE_NAME     = "org.mozkito.persons.messages";       //$NON-NLS-1$
+	                                                                                             
+	/** The Constant RESOURCE_BUNDLE. */
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 	
+	/**
+	 * Gets the string.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the string
+	 */
 	public static String getString(final String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
@@ -33,6 +43,9 @@ public class Messages {
 		}
 	}
 	
+	/**
+	 * Instantiates a new messages.
+	 */
 	private Messages() {
 	}
 }

@@ -21,8 +21,9 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.persistence.model.Person;
-import org.mozkito.testing.MozkitoTest;
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
@@ -32,28 +33,36 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
+/**
+ * The Class OpenJPA_RCS_MozkitoTest.
+ */
 @DatabaseSettings (unit = "versions")
-public class OpenJPA_RCS_MozkitoTest extends MozkitoTest {
+public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	
+	/** The branch factory. */
 	private BranchFactory branchFactory;
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 	}
 	
+	/**
+	 * Test rcs branch.
+	 */
 	@Test
 	public void testRCSBranch() {
 		
 		final RCSBranch branch = new RCSBranch("testBranch");
-		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000",
-		                                                                         "committed begin",
+		final RCSTransaction beginTransaction = RCSTransaction.createTransaction("000000000000000", "committed begin",
 		                                                                         new DateTime(),
 		                                                                         new Person("just", "Sascha Just",
 		                                                                                    "sascha.just@mozkito.org"),
 		                                                                         "000000000000000");
-		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde",
-		                                                                       "committed end",
+		final RCSTransaction endTransaction = RCSTransaction.createTransaction("0123456789abcde", "committed end",
 		                                                                       new DateTime(),
 		                                                                       new Person("just", "Sascha Just",
 		                                                                                  "sascha.just@mozkito.org"),
@@ -81,6 +90,9 @@ public class OpenJPA_RCS_MozkitoTest extends MozkitoTest {
 		}
 	}
 	
+	/**
+	 * Test rcs revision.
+	 */
 	@Test
 	public void testRCSRevision() {
 		final Person person = new Person("just", null, null);
@@ -137,6 +149,9 @@ public class OpenJPA_RCS_MozkitoTest extends MozkitoTest {
 		assertEquals(1, transactionList.get(0).getRevisions().size());
 	}
 	
+	/**
+	 * Test save rcs file.
+	 */
 	@Test
 	public void testSaveRCSFile() {
 		final RCSFileManager fileManager = new RCSFileManager();

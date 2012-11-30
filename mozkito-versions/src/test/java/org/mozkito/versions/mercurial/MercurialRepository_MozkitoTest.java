@@ -24,19 +24,20 @@ import net.ownhero.dev.regex.Regex;
 
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import org.mozkito.testing.MozkitoTest;
+
+import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
  * The Class MercurialRepositoryTest.
  */
-public class MercurialRepository_MozkitoTest extends MozkitoTest {
+@DatabaseSettings (unit = "versions")
+public class MercurialRepository_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test fixed date time zone.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testFixedDateTimeZone() {
 		final int offset = 25200;
 		final DateTimeZone timeZone = DateTimeZone.forOffsetMillis(offset * 1000);
@@ -47,7 +48,6 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	 * Test former path regex.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testFormerPathRegex() {
 		final String line = "reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CommandExecutor.java (reposuite-rcs/src/main/java/net.ownhero.dev.ioda/CMDExecutor.java)";
 		final Match found = MercurialRepository.formerPathRegex.find(line);
@@ -61,7 +61,6 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	 * Test plaine name.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testPlaineName() {
 		Regex.analyzePattern(MercurialRepository.authorRegex.getPattern());
 		final Match found = MercurialRepository.authorRegex.find("just");
@@ -74,7 +73,6 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	 * Test pre filter lines.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testPreFilterLines() {
 		List<String> lines = new ArrayList<String>();
 		lines.add("1510979776500f102ff503949ea34cdbf8c653d8+~+just+~+2010-10-22 14:33 +0000+~+file_1;+~++~++~+creating file_1");
@@ -107,7 +105,6 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	 * Test replace line breaks.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testReplaceLineBreaks() {
 		final String s = "hubba<br/>hubba<br/>hopp";
 		final String newS = s.replaceAll("<br/>", FileUtils.lineSeparator);
@@ -118,7 +115,6 @@ public class MercurialRepository_MozkitoTest extends MozkitoTest {
 	 * Test saschas mega reg exp.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testSaschasMegaRegExp() {
 		final List<String> lines = new ArrayList<String>();
 		lines.add("sascha e63a20871c7f Tue Oct 19 15:24:30 2010 +0200 reposuite-fixindchanges/pom.xml: <?xml version=\"1.0\"?>");

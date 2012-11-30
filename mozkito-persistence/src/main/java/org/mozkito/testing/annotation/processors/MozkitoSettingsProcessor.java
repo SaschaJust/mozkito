@@ -16,14 +16,41 @@ package org.mozkito.testing.annotation.processors;
 import java.lang.annotation.Annotation;
 
 import org.mozkito.exceptions.TestSettingsError;
+import org.mozkito.testing.DatabaseTest;
 
-
+/**
+ * The Interface MozkitoSettingsProcessor.
+ */
 public interface MozkitoSettingsProcessor {
 	
-	void setup(Class<?> aClass,
-	           Annotation annotation) throws TestSettingsError;
+	/**
+	 * Setup.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param test
+	 *            the test
+	 * @param annotation
+	 *            the annotation
+	 * @throws TestSettingsError
+	 *             the test settings error
+	 */
+	<T extends DatabaseTest> void setup(T test,
+	                                         Annotation annotation) throws TestSettingsError;
 	
-	void tearDown(Class<?> aClass,
-	              Annotation annotation) throws TestSettingsError;
+	/**
+	 * Tear down.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param test
+	 *            the test
+	 * @param annotation
+	 *            the annotation
+	 * @throws TestSettingsError
+	 *             the test settings error
+	 */
+	<T extends DatabaseTest> void tearDown(T test,
+	                                            Annotation annotation) throws TestSettingsError;
 	
 }

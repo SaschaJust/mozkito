@@ -15,6 +15,7 @@
  */
 package org.mozkito.persistence;
 
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -29,23 +30,35 @@ import net.ownhero.dev.andama.exceptions.InstantiationError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PersistenceManager.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersistenceManager {
 	
+	/** The Constant nativeQueries. */
 	private static final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
 	
+	/** The Constant storedQueries. */
 	private static final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
 	
 	/**
+	 * Creates the database.
+	 * 
 	 * @param host
+	 *            the host
 	 * @param database
+	 *            the database
 	 * @param user
+	 *            the user
 	 * @param password
+	 *            the password
 	 * @param type
+	 *            the type
 	 * @param driver
+	 *            the driver
 	 * @throws SQLException
+	 *             the sQL exception
 	 */
 	public static void createDatabase(final String host,
 	                                  final String database,
@@ -59,31 +72,51 @@ public class PersistenceManager {
 			throw new SQLException("Could not load JDBC driver " + driver, e);
 		}
 		
-		// FIXME determine default database other than postgres
-		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		                                                          password);
-		if (connection != null) {
-			final Statement statement = connection.createStatement();
-			if (statement != null) {
-				statement.executeUpdate("CREATE DATABASE " + database + ";"); //$NON-NLS-1$
-				statement.close();
+		if ((host == null) || host.isEmpty()) {
+			final File file = new File(database);
+			if (file.exists()) {
+				file.delete();
 			}
-			connection.close();
+			
+		} else {
+			// FIXME determine default database other than postgres
+			final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			                                                          password);
+			if (connection != null) {
+				final Statement statement = connection.createStatement();
+				if (statement != null) {
+					statement.executeUpdate("CREATE DATABASE " + database + ";"); //$NON-NLS-1$
+					statement.close();
+				}
+				connection.close();
+			}
 		}
 	}
 	
 	/**
+	 * Creates the util.
+	 * 
 	 * @param host
+	 *            the host
 	 * @param database
+	 *            the database
 	 * @param user
+	 *            the user
 	 * @param password
+	 *            the password
 	 * @param type
+	 *            the type
 	 * @param driver
+	 *            the driver
 	 * @param unit
+	 *            the unit
 	 * @param dropContents
+	 *            the drop contents
 	 * @param middleware
-	 * @return
+	 *            the middleware
+	 * @return the persistence util
 	 * @throws UnrecoverableError
+	 *             the unrecoverable error
 	 */
 	public static PersistenceUtil createUtil(final String host,
 	                                         final String database,
@@ -109,17 +142,29 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * Creates the util.
+	 * 
 	 * @param host
+	 *            the host
 	 * @param database
+	 *            the database
 	 * @param user
+	 *            the user
 	 * @param password
+	 *            the password
 	 * @param type
+	 *            the type
 	 * @param driver
+	 *            the driver
 	 * @param unit
+	 *            the unit
 	 * @param options
+	 *            the options
 	 * @param middleware
-	 * @return
+	 *            the middleware
+	 * @return the persistence util
 	 * @throws UnrecoverableError
+	 *             the unrecoverable error
 	 */
 	@SuppressWarnings ("unchecked")
 	public static PersistenceUtil createUtil(final String host,
@@ -144,13 +189,22 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * Drop database.
+	 * 
 	 * @param host
+	 *            the host
 	 * @param database
+	 *            the database
 	 * @param user
+	 *            the user
 	 * @param password
+	 *            the password
 	 * @param type
+	 *            the type
 	 * @param driver
+	 *            the driver
 	 * @throws SQLException
+	 *             the sQL exception
 	 */
 	public static void dropDatabase(final String host,
 	                                final String database,
@@ -165,22 +219,31 @@ public class PersistenceManager {
 			throw new SQLException("Could not load JDBC driver " + driver, e);
 		}
 		
-		final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		                                                          password);
-		if (connection != null) {
-			final Statement statement = connection.createStatement();
-			if (statement != null) {
-				statement.executeUpdate("DROP DATABASE " + database + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-				statement.close();
+		if ((host == null) || host.isEmpty()) {
+			final File file = new File(database);
+			file.delete();
+		} else {
+			final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			                                                          password);
+			if (connection != null) {
+				final Statement statement = connection.createStatement();
+				if (statement != null) {
+					statement.executeUpdate("DROP DATABASE " + database + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+					statement.close();
+				}
+				connection.close();
 			}
-			connection.close();
 		}
 	}
 	
 	/**
+	 * Gets the native query.
+	 * 
 	 * @param util
+	 *            the util
 	 * @param id
-	 * @return
+	 *            the id
+	 * @return the native query
 	 */
 	public static synchronized String getNativeQuery(final PersistenceUtil util,
 	                                                 final String id) {
@@ -193,8 +256,15 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * Gets the stored query.
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param id
-	 * @return
+	 *            the id
+	 * @param clazz
+	 *            the clazz
+	 * @return the stored query
 	 */
 	@SuppressWarnings ("unchecked")
 	public static synchronized <T> Criteria<T> getStoredQuery(final String id,
@@ -203,10 +273,15 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * Register native query.
+	 * 
 	 * @param type
+	 *            the type
 	 * @param id
+	 *            the id
 	 * @param query
-	 * @return
+	 *            the query
+	 * @return the string
 	 */
 	public static synchronized String registerNativeQuery(final String type,
 	                                                      final String id,
@@ -221,16 +296,26 @@ public class PersistenceManager {
 	}
 	
 	/**
+	 * Register prepared query.
+	 * 
 	 * @param <T>
+	 *            the generic type
 	 * @param query
+	 *            the query
 	 */
 	public static synchronized <T> void registerPreparedQuery(final PreparedQuery<T> query) {
 		// ignore
 	}
 	
 	/**
+	 * Register query.
+	 * 
+	 * @param <T>
+	 *            the generic type
 	 * @param id
-	 * @param query
+	 *            the id
+	 * @param criteria
+	 *            the criteria
 	 */
 	@SuppressWarnings ("unchecked")
 	public static synchronized <T> void registerQuery(final String id,

@@ -24,59 +24,75 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persons.elements.PersonBucket;
 
-import net.ownhero.dev.kisa.Logger;
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PersonManager.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersonManager {
 	
+	/** The email map. */
 	private final Map<String, List<PersonBucket>> emailMap    = new HashMap<String, List<PersonBucket>>();
+	
+	/** The username map. */
 	private final Map<String, List<PersonBucket>> usernameMap = new HashMap<String, List<PersonBucket>>();
+	
+	/** The fullname map. */
 	private final Map<String, List<PersonBucket>> fullnameMap = new HashMap<String, List<PersonBucket>>();
+	
+	/** The util. */
 	private final PersistenceUtil                 util;
+	
+	/** The deleted. */
 	private final Set<Long>                       deleted     = new TreeSet<Long>();
 	
+	/**
+	 * Instantiates a new person manager.
+	 * 
+	 * @param util
+	 *            the util
+	 */
 	public PersonManager(final PersistenceUtil util) {
 		this.util = util;
 	}
 	
 	/**
-	 * 
+	 * Begin transaction.
 	 */
 	public void beginTransaction() {
 		getUtil().beginTransaction();
 	}
 	
 	/**
-	 * 
+	 * Commit transaction.
 	 */
 	public void commitTransaction() {
 		getUtil().commitTransaction();
 	}
 	
 	/**
-	 * 
+	 * Consolidate.
 	 */
 	public void consolidate() {
 		// make sure we don't consolidate a bucket more than once, thus using a
 		// set
-		HashSet<PersonBucket> allBuckets = new HashSet<PersonBucket>();
+		final HashSet<PersonBucket> allBuckets = new HashSet<PersonBucket>();
 		
-		for (List<PersonBucket> buckets : this.emailMap.values()) {
+		for (final List<PersonBucket> buckets : this.emailMap.values()) {
 			allBuckets.addAll(buckets);
 		}
 		
-		for (List<PersonBucket> buckets : this.usernameMap.values()) {
+		for (final List<PersonBucket> buckets : this.usernameMap.values()) {
 			allBuckets.addAll(buckets);
 		}
 		
-		for (List<PersonBucket> buckets : this.fullnameMap.values()) {
+		for (final List<PersonBucket> buckets : this.fullnameMap.values()) {
 			allBuckets.addAll(buckets);
 		}
 		
@@ -85,13 +101,16 @@ public class PersonManager {
 			Logger.info("Delete cache size: " + this.deleted.size());
 		}
 		
-		for (PersonBucket bucket : allBuckets) {
+		for (final PersonBucket bucket : allBuckets) {
 			bucket.consolidate(this);
 		}
 	}
 	
 	/**
+	 * Delete.
+	 * 
 	 * @param person
+	 *            the person
 	 */
 	public void delete(final Person person) {
 		// delete person if it hasn't been deleted yet
@@ -112,25 +131,28 @@ public class PersonManager {
 	}
 	
 	/**
+	 * Gets the buckets.
+	 * 
 	 * @param person
-	 * @return
+	 *            the person
+	 * @return the buckets
 	 */
 	public List<PersonBucket> getBuckets(final Person person) {
-		List<PersonBucket> list = new LinkedList<PersonBucket>();
+		final List<PersonBucket> list = new LinkedList<PersonBucket>();
 		
-		for (String email : person.getEmailAddresses()) {
+		for (final String email : person.getEmailAddresses()) {
 			if (this.emailMap.containsKey(email)) {
 				list.addAll(this.emailMap.get(email));
 			}
 		}
 		
-		for (String username : person.getUsernames()) {
+		for (final String username : person.getUsernames()) {
 			if (this.usernameMap.containsKey(username)) {
 				list.addAll(this.usernameMap.get(username));
 			}
 		}
 		
-		for (String fullname : person.getFullnames()) {
+		for (final String fullname : person.getFullnames()) {
 			if (this.fullnameMap.containsKey(fullname)) {
 				list.addAll(this.fullnameMap.get(fullname));
 			}
@@ -140,6 +162,8 @@ public class PersonManager {
 	}
 	
 	/**
+	 * Gets the util.
+	 * 
 	 * @return the util
 	 */
 	private PersistenceUtil getUtil() {
@@ -147,55 +171,62 @@ public class PersonManager {
 	}
 	
 	/**
+	 * Checks if is processed.
+	 * 
 	 * @param id
-	 * @return
+	 *            the id
+	 * @return true, if is processed
 	 */
 	public boolean isProcessed(final long id) {
 		return this.deleted.contains(id);
 	}
 	
 	/**
+	 * Update and remove.
+	 * 
 	 * @param bucket
+	 *            the bucket
 	 * @param list
+	 *            the list
 	 */
 	public void updateAndRemove(final PersonBucket bucket,
 	                            final Collection<PersonBucket> list) {
 		// update
-		for (String username : bucket.getUsernames()) {
+		for (final String username : bucket.getUsernames()) {
 			if (!this.usernameMap.containsKey(username)) {
 				this.usernameMap.put(username, new LinkedList<PersonBucket>());
 			}
-			List<PersonBucket> buckets = this.usernameMap.get(username);
+			final List<PersonBucket> buckets = this.usernameMap.get(username);
 			buckets.add(bucket);
 			this.usernameMap.put(username, buckets);
 		}
 		
-		for (String email : bucket.getEmails()) {
+		for (final String email : bucket.getEmails()) {
 			if (!this.emailMap.containsKey(email)) {
 				this.emailMap.put(email, new LinkedList<PersonBucket>());
 			}
-			List<PersonBucket> buckets = this.emailMap.get(email);
+			final List<PersonBucket> buckets = this.emailMap.get(email);
 			buckets.add(bucket);
 			this.emailMap.put(email, buckets);
 		}
 		
-		for (String fullname : bucket.getFullnames()) {
+		for (final String fullname : bucket.getFullnames()) {
 			if (!this.fullnameMap.containsKey(fullname)) {
 				this.fullnameMap.put(fullname, new LinkedList<PersonBucket>());
 			}
-			List<PersonBucket> buckets = this.fullnameMap.get(fullname);
+			final List<PersonBucket> buckets = this.fullnameMap.get(fullname);
 			buckets.add(bucket);
 			this.fullnameMap.put(fullname, buckets);
 		}
 		
 		// remove
 		if (!list.isEmpty()) {
-			for (String key : this.emailMap.keySet()) {
-				List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+			for (final String key : this.emailMap.keySet()) {
+				final List<PersonBucket> buckets = new LinkedList<PersonBucket>();
 				
-				for (PersonBucket b1 : this.emailMap.get(key)) {
+				for (final PersonBucket b1 : this.emailMap.get(key)) {
 					boolean found = false;
-					for (PersonBucket b2 : list) {
+					for (final PersonBucket b2 : list) {
 						if (b1 == b2) {
 							found = true;
 							break;
@@ -212,12 +243,12 @@ public class PersonManager {
 				this.emailMap.put(key, buckets);
 			}
 			
-			for (String key : this.usernameMap.keySet()) {
-				List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+			for (final String key : this.usernameMap.keySet()) {
+				final List<PersonBucket> buckets = new LinkedList<PersonBucket>();
 				
-				for (PersonBucket b1 : this.usernameMap.get(key)) {
+				for (final PersonBucket b1 : this.usernameMap.get(key)) {
 					boolean found = false;
-					for (PersonBucket b2 : list) {
+					for (final PersonBucket b2 : list) {
 						if (b1 == b2) {
 							found = true;
 							break;
@@ -233,12 +264,12 @@ public class PersonManager {
 				this.usernameMap.put(key, buckets);
 			}
 			
-			for (String key : this.fullnameMap.keySet()) {
-				List<PersonBucket> buckets = new LinkedList<PersonBucket>();
+			for (final String key : this.fullnameMap.keySet()) {
+				final List<PersonBucket> buckets = new LinkedList<PersonBucket>();
 				
-				for (PersonBucket b1 : this.fullnameMap.get(key)) {
+				for (final PersonBucket b1 : this.fullnameMap.get(key)) {
 					boolean found = false;
-					for (PersonBucket b2 : list) {
+					for (final PersonBucket b2 : list) {
 						if (b1 == b2) {
 							found = true;
 							break;

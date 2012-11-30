@@ -18,32 +18,49 @@ package org.mozkito.persistence;
 import java.util.Collection;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Interface Intercepted.
  * 
+ * @param <T>
+ *            the generic type
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Intercepted<T> {
 	
 	/**
+	 * Adds the.
+	 * 
 	 * @param id
+	 *            the id
 	 * @param t
+	 *            the t
+	 * @return the t
 	 */
 	public T add(String id,
 	             T t);
 	
 	/**
+	 * Gets the.
+	 * 
 	 * @param id
-	 * @return
+	 *            the id
+	 * @return the t
 	 */
 	public T get(String id);
 	
 	/**
-	 * @return
+	 * Interceptor targets.
+	 * 
+	 * @return the collection
 	 */
 	public Collection<T> interceptorTargets();
 	
 	/**
+	 * Replace.
+	 * 
 	 * @param from
+	 *            the from
 	 * @param to
+	 *            the to
 	 */
 	public void replace(T from,
 	                    T to);

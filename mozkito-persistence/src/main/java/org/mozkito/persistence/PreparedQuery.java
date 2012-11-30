@@ -16,12 +16,27 @@
 package org.mozkito.persistence;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PreparedQuery.
  * 
+ * @param <T>
+ *            the generic type
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class PreparedQuery<T> {
 	
+	/**
+	 * Builds the criteria.
+	 * 
+	 * @param args
+	 *            the args
+	 * @return the criteria
+	 */
 	public abstract Criteria<T> buildCriteria(Object... args);
 	
+	/**
+	 * Gets the identifier.
+	 * 
+	 * @return the identifier
+	 */
 	public abstract String getIdentifier();
 }

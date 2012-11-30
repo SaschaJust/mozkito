@@ -18,19 +18,31 @@ package org.mozkito.persons.elements;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kisa.Logger;
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PersonBucket.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PersonBucket {
 	
+	/**
+	 * Merge.
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param manager
+	 *            the manager
+	 * @return the person bucket
+	 */
 	public static PersonBucket merge(final PersonBucket from,
 	                                 final PersonBucket to,
 	                                 final PersonManager manager) {
@@ -38,18 +50,23 @@ public class PersonBucket {
 		return to;
 	}
 	
+	/** The persons. */
 	List<Tuple<Person, List<PersonContainer>>> persons = new LinkedList<Tuple<Person, List<PersonContainer>>>();
 	
 	/**
-	 * 
+	 * Instantiates a new person bucket.
 	 */
 	public PersonBucket() {
 		
 	}
 	
 	/**
+	 * Instantiates a new person bucket.
+	 * 
 	 * @param person
+	 *            the person
 	 * @param container
+	 *            the container
 	 */
 	public PersonBucket(final Person person, final PersonContainer container) {
 		final LinkedList<PersonContainer> list = new LinkedList<PersonContainer>();
@@ -58,7 +75,10 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Consolidate.
+	 * 
 	 * @param manager
+	 *            the manager
 	 */
 	public void consolidate(final PersonManager manager) {
 		// Consolidate this bucket.
@@ -116,8 +136,11 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Find.
+	 * 
 	 * @param person
-	 * @return
+	 *            the person
+	 * @return the tuple
 	 */
 	private Tuple<Person, List<PersonContainer>> find(final Person person) {
 		// step through all entries in the person list
@@ -134,7 +157,9 @@ public class PersonBucket {
 	}
 	
 	/**
-	 * @return
+	 * Gets the emails.
+	 * 
+	 * @return the emails
 	 */
 	public List<String> getEmails() {
 		final List<String> list = new LinkedList<String>();
@@ -146,7 +171,9 @@ public class PersonBucket {
 	}
 	
 	/**
-	 * @return
+	 * Gets the fullnames.
+	 * 
+	 * @return the fullnames
 	 */
 	public List<String> getFullnames() {
 		final List<String> list = new LinkedList<String>();
@@ -158,7 +185,9 @@ public class PersonBucket {
 	}
 	
 	/**
-	 * @return
+	 * Gets the usernames.
+	 * 
+	 * @return the usernames
 	 */
 	public List<String> getUsernames() {
 		final List<String> list = new LinkedList<String>();
@@ -169,8 +198,11 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Checks for email.
+	 * 
 	 * @param email
-	 * @return
+	 *            the email
+	 * @return true, if successful
 	 */
 	public boolean hasEmail(final String email) {
 		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
@@ -182,8 +214,11 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Checks for fullname.
+	 * 
 	 * @param fullname
-	 * @return
+	 *            the fullname
+	 * @return true, if successful
 	 */
 	public boolean hasFullname(final String fullname) {
 		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
@@ -195,8 +230,11 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Checks for username.
+	 * 
 	 * @param username
-	 * @return
+	 *            the username
+	 * @return true, if successful
 	 */
 	public boolean hasUsername(final String username) {
 		for (final Tuple<Person, List<PersonContainer>> key : this.persons) {
@@ -208,9 +246,14 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Insert.
+	 * 
 	 * @param person
+	 *            the person
 	 * @param container
+	 *            the container
 	 * @param manager
+	 *            the manager
 	 */
 	public void insert(final Person person,
 	                   final PersonContainer container,
@@ -256,8 +299,12 @@ public class PersonBucket {
 	}
 	
 	/**
+	 * Insert all.
+	 * 
 	 * @param tuples
+	 *            the tuples
 	 * @param manager
+	 *            the manager
 	 */
 	private void insertAll(final List<Tuple<Person, List<PersonContainer>>> tuples,
 	                       final PersonManager manager) {
