@@ -38,12 +38,12 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.model.Transaction;
 
+@DatabaseSettings (unit = "codeanalysis",
+                   database = "moskito_genealogies_test_environment",
+                   options = ConnectOptions.CREATE)
 public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	@Test
-	@DatabaseSettings (unit = "codeanalysis",
-	                   database = "moskito_genealogies_test_environment",
-	                   options = ConnectOptions.CREATE)
 	public void test() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);

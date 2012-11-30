@@ -32,13 +32,13 @@ import org.mozkito.testing.annotation.DatabaseSettings;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
+@DatabaseSettings (unit = "issues")
 public class ReportPersistence_NetTest extends DatabaseTest {
 	
 	/**
 	 * Test bugzilla.
 	 */
 	@Test
-	@DatabaseSettings (unit = "issues")
 	public void testBugzilla() {
 		try {
 			final BugzillaTracker tracker = new BugzillaTracker();

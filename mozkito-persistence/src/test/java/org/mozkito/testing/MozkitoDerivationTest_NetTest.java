@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.mozkito.persistence.OpenJPAUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
@@ -65,7 +64,6 @@ public class MozkitoDerivationTest_NetTest extends DatabaseTest {
 	 */
 	@Test
 	@Ignore
-	@DatabaseSettings (unit = "codeanalysis", util = OpenJPAUtil.class)
 	public void testIgnore() {
 		// ignore
 	}

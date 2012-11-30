@@ -39,6 +39,8 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	public <T extends DatabaseTest> void setup(final T test,
 	                                           final Annotation annotation) throws TestSettingsError {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
+		
+		// system properties overwrite annotation settings
 		final String databaseName = System.getProperty("database.name") != null
 		                                                                       ? System.getProperty("database.name")
 		                                                                       : settings.database();

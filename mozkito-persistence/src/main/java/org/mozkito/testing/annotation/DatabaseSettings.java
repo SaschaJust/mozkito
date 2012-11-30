@@ -30,7 +30,7 @@ import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
 @MozkitoTestAnnotation (DatabaseSettingsProcessor.class)
-@Target (value = { ElementType.METHOD, ElementType.TYPE })
+@Target (value = { ElementType.TYPE })
 public @interface DatabaseSettings {
 	
 	/**

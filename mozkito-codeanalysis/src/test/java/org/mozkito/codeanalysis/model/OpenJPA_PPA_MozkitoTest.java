@@ -32,14 +32,13 @@ import org.mozkito.versions.model.File;
 import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.Transaction;
 
+@DatabaseSettings (unit = "codeanalysis")
 public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 	
 	@Test
-	@DatabaseSettings (unit = "codeanalysis")
 	public void test() {
-		
-		getPersistenceUtil().beginTransaction();
 		final JavaElementFactory elementFactory = new JavaElementFactory();
+		getPersistenceUtil().beginTransaction();
 		final JavaElementLocationSet cache = new JavaElementLocationSet(elementFactory);
 		final JavaElementLocation classDefinition = cache.addClassDefinition("a.A", "a.java", 0, 30, 123, 5);
 		final DateTime now = new DateTime();
@@ -66,7 +65,6 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 	}
 	
 	@Test
-	@DatabaseSettings (unit = "codeanalysis")
 	public void testTMP() {
 		final JavaMethodDefinition def = new JavaMethodDefinition("parenName", "methodName", new ArrayList<String>(0),
 		                                                          false);

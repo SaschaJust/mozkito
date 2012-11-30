@@ -25,18 +25,18 @@ import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
 
 /**
  * The Interface RepositorySettings.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@MozkitoSuiteAnnotation (RepositorySettingsProcessor.class)
+@MozkitoTestAnnotation (RepositorySettingsProcessor.class)
 @Target (value = { ElementType.TYPE })
 public @interface RepositorySettings {
 	
 	/**
 	 * Value.
-	 *
+	 * 
 	 * @return the repository setting[]
 	 */
 	RepositorySetting[] value();

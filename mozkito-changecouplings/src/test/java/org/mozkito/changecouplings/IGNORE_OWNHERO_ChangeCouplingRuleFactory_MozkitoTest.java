@@ -42,6 +42,7 @@ import org.mozkito.versions.model.Transaction;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
+@DatabaseSettings (unit = "versions")
 public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends DatabaseTest {
 	
 	/** The persistence util. */
@@ -83,7 +84,6 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	 * Test change couplings.
 	 */
 	@Test
-	@DatabaseSettings (unit = "versions")
 	public void testChangeCouplings() {
 		
 		persistenceUtil.beginTransaction();

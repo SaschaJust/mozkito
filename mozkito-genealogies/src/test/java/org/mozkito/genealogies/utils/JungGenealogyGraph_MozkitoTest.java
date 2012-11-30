@@ -33,12 +33,12 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 
+@DatabaseSettings (unit = "codeanalysis",
+                   database = "moskito_genealogies_test_environment",
+                   options = ConnectOptions.CREATE)
 public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
 	@Test
-	@DatabaseSettings (unit = "codeanalysis",
-	                   database = "moskito_genealogies_test_environment",
-	                   options = ConnectOptions.CREATE)
 	public void testCoreLayer() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);

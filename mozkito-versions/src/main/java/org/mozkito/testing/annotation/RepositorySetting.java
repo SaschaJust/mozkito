@@ -32,7 +32,7 @@ import org.mozkito.versions.RepositoryType;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@MozkitoSuiteAnnotation (RepositorySettingsProcessor.class)
+@MozkitoTestAnnotation (RepositorySettingsProcessor.class)
 @Target (value = { ElementType.TYPE })
 public @interface RepositorySetting {
 	

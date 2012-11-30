@@ -28,13 +28,13 @@ import org.mozkito.testing.annotation.DatabaseSettings;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
+@DatabaseSettings (unit = "issues")
 public class OpenJPA_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test orphan person.
 	 */
 	@Test
-	@DatabaseSettings (unit = "issues")
 	public void testOrphanPerson() {
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
