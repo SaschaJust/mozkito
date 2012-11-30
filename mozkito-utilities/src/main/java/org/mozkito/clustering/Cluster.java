@@ -74,7 +74,7 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Cluster other = (Cluster) obj;
+		final Cluster other = (Cluster) obj;
 		if (this.children == null) {
 			if (other.children != null) {
 				return false;
@@ -91,7 +91,7 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	 * @return the all elements
 	 */
 	public Set<T> getAllElements() {
-		Set<T> result = new HashSet<T>();
+		final Set<T> result = new HashSet<T>();
 		result.addAll(this.children.getFirst().getAllElements());
 		result.addAll(this.children.getSecond().getAllElements());
 		return result;
@@ -114,9 +114,9 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.children == null)
-		                                                  ? 0
-		                                                  : this.children.hashCode());
+		result = (prime * result) + ((this.children == null)
+		                                                    ? 0
+		                                                    : this.children.hashCode());
 		return result;
 	}
 	

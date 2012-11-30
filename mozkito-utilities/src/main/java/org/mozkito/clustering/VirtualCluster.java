@@ -36,7 +36,7 @@ public class VirtualCluster<T> extends Cluster<T> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		VirtualCluster other = (VirtualCluster) obj;
+		final VirtualCluster other = (VirtualCluster) obj;
 		if (this.t == null) {
 			if (other.t != null) {
 				return false;
@@ -53,7 +53,7 @@ public class VirtualCluster<T> extends Cluster<T> {
 	 */
 	@Override
 	public Set<T> getAllElements() {
-		Set<T> result = new HashSet<T>();
+		final Set<T> result = new HashSet<T>();
 		result.add(this.t);
 		return result;
 	}
@@ -62,9 +62,9 @@ public class VirtualCluster<T> extends Cluster<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((this.t == null)
-		                                           ? 0
-		                                           : this.t.hashCode());
+		result = (prime * result) + ((this.t == null)
+		                                             ? 0
+		                                             : this.t.hashCode());
 		return result;
 	}
 	
