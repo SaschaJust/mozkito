@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -25,24 +25,24 @@ import org.mozkito.versions.model.Transaction;
  */
 public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode {
 	
-	private final Transaction transaction;
+	private final RCSTransaction rCSTransaction;
 	
 	/**
 	 * @param partition
 	 */
-	public TransactionChangeGenealogyNode(final Transaction transaction,
+	public TransactionChangeGenealogyNode(final RCSTransaction rCSTransaction,
 	        final Collection<JavaChangeOperation> partition) {
-		super(transaction.getId(), partition);
-		this.transaction = transaction;
+		super(rCSTransaction.getId(), partition);
+		this.rCSTransaction = rCSTransaction;
 	}
 	
 	@Override
 	public DateTime getEarliestTimestamp() {
-		return this.transaction.getTimestamp();
+		return this.rCSTransaction.getTimestamp();
 	}
 	
 	@Override
 	public DateTime getLatestTimestamp() {
-		return this.transaction.getTimestamp();
+		return this.rCSTransaction.getTimestamp();
 	}
 }

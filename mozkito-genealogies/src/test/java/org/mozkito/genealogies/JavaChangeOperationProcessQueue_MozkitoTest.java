@@ -35,11 +35,22 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 
+/**
+ * The Class JavaChangeOperationProcessQueue_MozkitoTest.
+ */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
-                   options = ConnectOptions.CREATE)
+                   options = ConnectOptions.CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver")
 public class JavaChangeOperationProcessQueue_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",

@@ -27,10 +27,10 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 @DatabaseSettings (unit = "codeanalysis")
 public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
@@ -45,15 +45,15 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		
 		final Person p = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final Branch masterBranch = branchFactory.getMasterBranch();
+		final RCSBranch masterBranch = branchFactory.getMasterBranch();
 		
-		final Transaction transaction = new Transaction("1", "", now, p, "1");
-		masterBranch.setHead(transaction);
+		final RCSTransaction rCSTransaction = new RCSTransaction("1", "", now, p, "1");
+		masterBranch.setHead(rCSTransaction);
 		
-		final File file = new RCSFileManager().createFile("a.java", transaction);
-		final Revision rev = new Revision(transaction, file, ChangeType.Added);
+		final RCSFile rCSFile = new RCSFileManager().createFile("a.java", rCSTransaction);
+		final RCSRevision rev = new RCSRevision(rCSTransaction, rCSFile, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-		getPersistenceUtil().save(transaction);
+		getPersistenceUtil().save(rCSTransaction);
 		getPersistenceUtil().save(op);
 		getPersistenceUtil().commitTransaction();
 		getPersistenceUtil().beginTransaction();

@@ -30,8 +30,8 @@ import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -114,7 +114,7 @@ public class Main {
 			                                                                                           settings.getRoot(),
 			                                                                                           "branch",
 			                                                                                           "Use transactions of this branch to generate LTCs for. Make sure that this matches the tranactions in the genealogy graph.",
-			                                                                                           Branch.MASTER_BRANCH_NAME,
+			                                                                                           RCSBranch.MASTER_BRANCH_NAME,
 			                                                                                           Requirement.required));
 			
 			final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgument = ArgumentSetFactory.create(genealogyOptions);
@@ -134,11 +134,11 @@ public class Main {
 			                                                   timeWindowOpt.getValue().intValue(),
 			                                                   numRecomOpt.getValue().intValue());
 			
-			final Branch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), Branch.class);
+			final RCSBranch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), RCSBranch.class);
 			if (masterBranch == null) {
 				final List<String> branchNames = new LinkedList<>();
-				for (final Branch branch : persistenceUtil.load(persistenceUtil.createCriteria(Branch.class))) {
-					branchNames.add(branch.getName());
+				for (final RCSBranch rCSBranch : persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class))) {
+					branchNames.add(rCSBranch.getName());
 				}
 				if (Logger.logError()) {
 					Logger.error("Could not find a branch with name %s. Cannot create genealogy graph. Temrinating. Possible branch names are: %s.",
@@ -149,26 +149,26 @@ public class Main {
 			
 			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
-			final List<Transaction> transactions = new LinkedList<>();
-			for (final Transaction t : masterTransactions) {
+			final List<RCSTransaction> rCSTransactions = new LinkedList<>();
+			for (final RCSTransaction t : masterTransactions) {
 				if (transactionLayer.containsVertex(t)) {
-					transactions.add(t);
+					rCSTransactions.add(t);
 				}
 			}
 			
 			if (Logger.logDebug()) {
-				Logger.debug("%d out of %d transactions found in genealogy graph.", transactions.size(),
+				Logger.debug("%d out of %d transactions found in genealogy graph.", rCSTransactions.size(),
 				             masterTransactions.size());
 			}
 			
-			final int trainSize = new Double(transactions.size() * 0.1).intValue();
+			final int trainSize = new Double(rCSTransactions.size() * 0.1).intValue();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Training set contains %d entities.", trainSize);
 			}
 			
-			final List<Transaction> trainList = transactions.subList(0, trainSize);
-			final List<Transaction> testList = transactions.subList(trainSize, transactions.size());
+			final List<RCSTransaction> trainList = rCSTransactions.subList(0, trainSize);
+			final List<RCSTransaction> testList = rCSTransactions.subList(trainSize, rCSTransactions.size());
 			
 			experiment.run(trainList, testList, innerRulesOpt.getValue());
 			

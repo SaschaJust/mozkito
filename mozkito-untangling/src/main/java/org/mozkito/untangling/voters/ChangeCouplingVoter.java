@@ -38,7 +38,7 @@ import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -78,8 +78,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		}
 		
 		@Override
-		public ChangeCouplingVoter createVoter(final Transaction transaction) {
-			return new ChangeCouplingVoter(transaction, this.minSupport, this.minConfidence, this.persistenceUtil,
+		public ChangeCouplingVoter createVoter(final RCSTransaction rCSTransaction) {
+			return new ChangeCouplingVoter(rCSTransaction, this.minSupport, this.minConfidence, this.persistenceUtil,
 			                               this.cacheDir);
 		}
 		
@@ -181,7 +181,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	private LinkedList<MethodChangeCoupling> couplings;
 	
 	/** The transaction. */
-	private final Transaction             transaction;
+	private final RCSTransaction             rCSTransaction;
 	
 	/** The min support. */
 	private final int                        minSupport;
@@ -195,7 +195,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -208,16 +208,16 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public ChangeCouplingVoter(@NotNull final Transaction transaction, final int minSupport,
+	public ChangeCouplingVoter(@NotNull final RCSTransaction rCSTransaction, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 		
-		this.transaction = transaction;
+		this.rCSTransaction = rCSTransaction;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId()
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId()
 			        + ".cc");
 			if (serialFile.exists()) {
 				// load serial file
@@ -245,7 +245,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 			if (this.couplings == null) {
 				// run query and save tmp file
-				this.couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(transaction, minSupport,
+				this.couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(rCSTransaction, minSupport,
 				                                                                    minConfidence,
 				                                                                    new HashSet<String>(),
 				                                                                    persistenceUtil);
@@ -342,7 +342,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			}
 		} else {
-			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.transaction, this.minSupport,
+			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.rCSTransaction, this.minSupport,
 			                                                                      this.minConfidence,
 			                                                                      relevantMethodNames,
 			                                                                      this.persistenceUtil);

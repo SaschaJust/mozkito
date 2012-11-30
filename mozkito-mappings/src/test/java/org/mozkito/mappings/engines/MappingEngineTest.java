@@ -59,7 +59,7 @@ import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class MappingEngineTest.
@@ -79,7 +79,7 @@ public class MappingEngineTest {
 	static Relation            score;
 	
 	/** The transaction. */
-	static Transaction         transaction;
+	static RCSTransaction         rCSTransaction;
 	
 	/**
 	 * Setup class.
@@ -141,11 +141,11 @@ public class MappingEngineTest {
 		
 		MappingEngineTest.report.setLastUpdateTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		
-		MappingEngineTest.transaction = new Transaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
+		MappingEngineTest.rCSTransaction = new RCSTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
 		                                                "Fixing bug 84698384.", new DateTime(2012, 01, 16, 19, 32, 12,
 		                                                                                     0), developer,
 		                                                "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
-		MappingEngineTest.mappableTransaction = new MappableTransaction(MappingEngineTest.transaction);
+		MappingEngineTest.mappableTransaction = new MappableTransaction(MappingEngineTest.rCSTransaction);
 	}
 	
 	/** The arguments. */
@@ -276,14 +276,14 @@ public class MappingEngineTest {
 						
 					}
 				});
-				put(new TimestampEngine(new Interval(MappingEngineTest.transaction.getTimestamp().getMillis()
-				            - (1000 * 3600), MappingEngineTest.transaction.getTimestamp().getMillis() + (1000 * 3600))),
+				put(new TimestampEngine(new Interval(MappingEngineTest.rCSTransaction.getTimestamp().getMillis()
+				            - (1000 * 3600), MappingEngineTest.rCSTransaction.getTimestamp().getMillis() + (1000 * 3600))),
 				    new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
 					    
 					    {
 						    add(new Tuple<MappableEntity, MappableEntity>(
 						                                                  new MappableTransaction(
-						                                                                          MappingEngineTest.transaction),
+						                                                                          MappingEngineTest.rCSTransaction),
 						                                                  new MappableReport(MappingEngineTest.report)));
 					    }
 				    });

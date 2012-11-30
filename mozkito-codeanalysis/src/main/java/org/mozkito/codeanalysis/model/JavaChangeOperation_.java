@@ -7,8 +7,7 @@ package org.mozkito.codeanalysis.model;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.Revision;
-
+import org.mozkito.versions.model.RCSRevision;
 
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.codeanalysis.model.JavaChangeOperation.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
@@ -19,5 +18,5 @@ public class JavaChangeOperation_ {
 	public static volatile SingularAttribute<JavaChangeOperation, JavaElementLocation> changedElementLocation;
 	public static volatile SingularAttribute<JavaChangeOperation, Boolean>             essential;
 	public static volatile SingularAttribute<JavaChangeOperation, Long>                id;
-	public static volatile SingularAttribute<JavaChangeOperation, Revision>         revision;
+	public static volatile SingularAttribute<JavaChangeOperation, RCSRevision>         revision;
 }

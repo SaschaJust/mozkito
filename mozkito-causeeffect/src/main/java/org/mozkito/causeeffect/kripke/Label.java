@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.RCSFile;
 
 
 /**
@@ -39,7 +39,7 @@ public class Label {
 	 *            Content to be associated with the label.
 	 * @return Label associated with the given content.
 	 */
-	public static Label getLabel(File content) {
+	public static Label getLabel(RCSFile content) {
 		if (!content2label.containsKey(content.toString())) {
 			content2label.put(content.toString(), new Label(content));
 		}
@@ -55,7 +55,7 @@ public class Label {
 	 * @param event
 	 *            Content to attach to the label created.
 	 */
-	private Label(File content) {
+	private Label(RCSFile content) {
 		this.content = content.getGeneratedId();
 	}
 	

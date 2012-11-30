@@ -19,7 +19,7 @@ package org.mozkito.genealogies.metrics;
 import java.util.Iterator;
 
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -36,7 +36,7 @@ import net.ownhero.dev.kisa.Logger;
 public class TransactionGenealogyReader extends Source<GenealogyTransactionNode> {
 	
 	/** The iterator. */
-	private Iterator<Transaction> iterator;
+	private Iterator<RCSTransaction> iterator;
 	
 	/**
 	 * Instantiates a new transaction genealogy reader.
@@ -62,7 +62,7 @@ public class TransactionGenealogyReader extends Source<GenealogyTransactionNode>
 			@Override
 			public void process() {
 				if (TransactionGenealogyReader.this.iterator.hasNext()) {
-					final Transaction t = TransactionGenealogyReader.this.iterator.next();
+					final RCSTransaction t = TransactionGenealogyReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);

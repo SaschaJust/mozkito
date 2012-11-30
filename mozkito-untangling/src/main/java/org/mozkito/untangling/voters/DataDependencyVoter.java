@@ -33,7 +33,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -73,8 +73,8 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		}
 		
 		@Override
-		public DataDependencyVoter createVoter(final Transaction transaction) {
-			return new DataDependencyVoter(this.eclipseDir, this.repository, transaction, this.cacheDir);
+		public DataDependencyVoter createVoter(final RCSTransaction rCSTransaction) {
+			return new DataDependencyVoter(this.eclipseDir, this.repository, rCSTransaction, this.cacheDir);
 		}
 		
 		/*
@@ -170,7 +170,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	private final File                     cacheDir;
 	
 	/** The transaction. */
-	private final Transaction           transaction;
+	private final RCSTransaction           rCSTransaction;
 	
 	/** The cache. */
 	private Map<String, Set<Set<Integer>>> cache       = new HashMap<>();
@@ -184,18 +184,18 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 *            the eclipse dir
 	 * @param repository
 	 *            the repository
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @param cacheDir
 	 *            the cache file
 	 */
 	@SuppressWarnings ("unchecked")
 	public DataDependencyVoter(@NotNull final File eclipseDir, @NotNull final Repository repository,
-	        final Transaction transaction, final File cacheDir) {
-		this.transaction = transaction;
+	        final RCSTransaction rCSTransaction, final File cacheDir) {
+		this.rCSTransaction = rCSTransaction;
 		this.eclipseDir = eclipseDir;
 		this.cacheDir = cacheDir;
-		final String cacheFileName = this.transaction.getId() + ".dd";
+		final String cacheFileName = this.rCSTransaction.getId() + ".dd";
 		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
 		if ((this.cacheDir != null) && (this.cacheFile.exists())) {
 			try (final ObjectInputStream objIn = new ObjectInputStream(
@@ -213,13 +213,13 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 		} else {
 			if (this.checkoutDir == null) {
-				this.checkoutDir = repository.checkoutPath("/", transaction.getId());
+				this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
 				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-					throw new UnrecoverableError("Could not checkout transaction " + transaction.getId());
+					throw new UnrecoverableError("Could not checkout transaction " + rCSTransaction.getId());
 				}
 			}
 		}
-		this.checkoutDir = repository.checkoutPath("/", transaction.getId());
+		this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
 	}
 	
 	/*
@@ -260,7 +260,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Computing data dependency score for transaction %s and JavaChangeOperations %s and %s.",
-			             this.transaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
+			             this.rCSTransaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
 		}
 		
 		Condition.notNull(op1.getChangedElementLocation(), "op1.getChangeElementLocation() must not be NULL.",
@@ -287,7 +287,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			// build path for file to analyze
 			if (this.checkoutDir == null) {
 				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-					throw new UnrecoverableError("Could not checkout transaction " + this.transaction.getId());
+					throw new UnrecoverableError("Could not checkout transaction " + this.rCSTransaction.getId());
 				}
 			}
 			

@@ -22,7 +22,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.RCSBranch;
 
 /**
  * A factory for creating Branch objects.
@@ -30,7 +30,7 @@ import org.mozkito.versions.model.Branch;
 public class BranchFactory {
 	
 	/** The branch cache. */
-	private final Map<String, Branch> branchCache = new HashMap<String, Branch>();
+	private final Map<String, RCSBranch> branchCache = new HashMap<String, RCSBranch>();
 	
 	/** The persistence util. */
 	private final PersistenceUtil        persistenceUtil;
@@ -52,13 +52,13 @@ public class BranchFactory {
 	 *            the name
 	 * @return the branch
 	 */
-	public synchronized Branch getBranch(@NotNull final String name) {
+	public synchronized RCSBranch getBranch(@NotNull final String name) {
 		if (!this.branchCache.containsKey(name)) {
 			
 			if (this.persistenceUtil == null) {
 				
 				// create new branch and cache
-				final Branch newBranch = new Branch(name);
+				final RCSBranch newBranch = new RCSBranch(name);
 				if (Logger.logDebug()) {
 					Logger.debug("Creating new Branch " + newBranch.toString());
 				}
@@ -68,9 +68,9 @@ public class BranchFactory {
 				// The existed no previous persistence util: try to load
 				// persisted
 				// MASTER_BRANCH
-				final Criteria<Branch> criteria = this.persistenceUtil.createCriteria(Branch.class).eq("name",
+				final Criteria<RCSBranch> criteria = this.persistenceUtil.createCriteria(RCSBranch.class).eq("name",
 				                                                                                             name);
-				final List<Branch> loadedBranches = this.persistenceUtil.load(criteria);
+				final List<RCSBranch> loadedBranches = this.persistenceUtil.load(criteria);
 				if (loadedBranches.isEmpty()) {
 					// We could not load a persisted MASTER_BRANCH. So, create a
 					// new one and return.
@@ -79,7 +79,7 @@ public class BranchFactory {
 						        + " from existing database connection failed: "
 						        + this.persistenceUtil.getToolInformation() + " using criteria " + criteria.toString());
 					}
-					final Branch newBranch = new Branch(name);
+					final RCSBranch newBranch = new RCSBranch(name);
 					if (Logger.logDebug()) {
 						Logger.debug("Creating new Branch " + newBranch.toString());
 					}
@@ -98,8 +98,8 @@ public class BranchFactory {
 	 * 
 	 * @return the master branch
 	 */
-	public Branch getMasterBranch() {
-		return getBranch(Branch.MASTER_BRANCH_NAME);
+	public RCSBranch getMasterBranch() {
+		return getBranch(RCSBranch.MASTER_BRANCH_NAME);
 	}
 	
 	/**

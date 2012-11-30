@@ -22,7 +22,7 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.RCSBranch;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -192,7 +192,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
 			
-			Branch.setMasterBranchName(mainBranchArgument.getValue());
+			RCSBranch.setMasterBranchName(mainBranchArgument.getValue());
 			
 			final URI repositoryURI = dirArgument.getValue();
 			String username = userArgument.getValue();

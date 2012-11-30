@@ -29,7 +29,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.RCSRevision;
 
 
 /**
@@ -157,9 +157,9 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	public boolean canBeCombined(final ChangeSet t1,
 	                             final ChangeSet t2) {
 		
-		for (final Revision rev : t1.getTransaction().getRevisions()) {
+		for (final RCSRevision rev : t1.getTransaction().getRevisions()) {
 			final String path = rev.getChangedFile().getPath(t1.getTransaction());
-			for (final Revision rev2 : t2.getTransaction().getRevisions()) {
+			for (final RCSRevision rev2 : t2.getTransaction().getRevisions()) {
 				final String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
 				if (Logger.logDebug()) {
 					Logger.debug("Trying to combine %s and %s using max package distance of %d ...", path, path2,

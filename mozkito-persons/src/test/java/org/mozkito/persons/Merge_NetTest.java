@@ -37,7 +37,7 @@ import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.processing.PersonManager;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -66,13 +66,13 @@ public class Merge_NetTest extends DatabaseTest {
 		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
 		        new Person("just", null, "sascha.just@mozkito.org") };
 		
-		Transaction rcsTransaction = null;
+		RCSTransaction rcsTransaction = null;
 		
 		persistenceUtil.beginTransaction();
 		
 		int i = 0;
 		for (final Person person : persons) {
-			rcsTransaction = new Transaction("" + ++i, "test", new DateTime(), person, "");
+			rcsTransaction = new RCSTransaction("" + ++i, "test", new DateTime(), person, "");
 			persistenceUtil.saveOrUpdate(rcsTransaction);
 		}
 		

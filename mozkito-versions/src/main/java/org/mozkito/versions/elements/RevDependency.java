@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.RCSBranch;
 
 
 /**
@@ -32,7 +32,7 @@ public class RevDependency {
 	private Set<String>        parents = new HashSet<String>();
 	
 	/** The commit branch. */
-	private final Branch    commitBranch;
+	private final RCSBranch    commitBranch;
 	
 	/** The tag names. */
 	private final List<String> tagNames;
@@ -49,7 +49,7 @@ public class RevDependency {
 	 * @param tagNames the tag names
 	 * @param isMerge the is merge
 	 */
-	public RevDependency(final String id, final Branch commitBranch, final Set<String> parents,
+	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
 		this.revId = id;
 		this.commitBranch = commitBranch;
@@ -63,7 +63,7 @@ public class RevDependency {
 	 *
 	 * @return the commit branch
 	 */
-	public Branch getCommitBranch() {
+	public RCSBranch getCommitBranch() {
 		return this.commitBranch;
 	}
 	

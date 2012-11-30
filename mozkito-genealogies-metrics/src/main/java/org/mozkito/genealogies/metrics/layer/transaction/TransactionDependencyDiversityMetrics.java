@@ -24,8 +24,8 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -86,14 +86,14 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 		final DescriptiveStatistics parentStat = new DescriptiveStatistics();
 		final DescriptiveStatistics dependantStat = new DescriptiveStatistics();
 		
-		final Collection<File> changedFiles = item.getNode().getChangedFiles();
+		final Collection<RCSFile> changedFiles = item.getNode().getChangedFiles();
 		
-		for (final Transaction parent : this.genealogy.getAllParents(item.getNode())) {
+		for (final RCSTransaction parent : this.genealogy.getAllParents(item.getNode())) {
 			final int intersectionSize = CollectionUtils.intersection(changedFiles, parent.getChangedFiles()).size();
 			parentStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}
 		
-		for (final Transaction dependant : this.genealogy.getAllDependants(item.getNode())) {
+		for (final RCSTransaction dependant : this.genealogy.getAllDependants(item.getNode())) {
 			final int intersectionSize = CollectionUtils.intersection(changedFiles, dependant.getChangedFiles()).size();
 			dependantStat.addValue(1d - ((double) intersectionSize / (double) changedFiles.size()));
 		}

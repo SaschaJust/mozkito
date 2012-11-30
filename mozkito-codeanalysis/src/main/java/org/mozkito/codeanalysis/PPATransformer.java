@@ -11,7 +11,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -23,14 +23,14 @@ import net.ownhero.dev.kisa.Logger;
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class PPATransformer extends Transformer<Transaction, JavaChangeOperation> {
+public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
 	
 	public PPATransformer(final Group threadGroup, final Settings settings, final Repository repository,
 	        final Boolean usePPA, final JavaElementFactory factory, final String[] packageFilter) {
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
-		new ProcessHook<Transaction, JavaChangeOperation>(this) {
+		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
 			
 			private Iterator<JavaChangeOperation> iterator;
 			
@@ -39,10 +39,10 @@ public class PPATransformer extends Transformer<Transaction, JavaChangeOperation
 				
 				if ((this.iterator == null) || (!this.iterator.hasNext())) {
 					
-					final Transaction transaction = getInputData();
+					final RCSTransaction rCSTransaction = getInputData();
 					
 					if (Logger.logInfo()) {
-						Logger.info("Computing change operations for transaction `" + transaction.getId() + "`");
+						Logger.info("Computing change operations for transaction `" + rCSTransaction.getId() + "`");
 					}
 					
 					try {
@@ -52,7 +52,7 @@ public class PPATransformer extends Transformer<Transaction, JavaChangeOperation
 					}
 					if (usePPA) {
 						
-						PPAUtils.generateChangeOperations(repository, transaction,
+						PPAUtils.generateChangeOperations(repository, rCSTransaction,
 						                                  new HashSet<ChangeOperationVisitor>() {
 							                                  
 							                                  private static final long serialVersionUID = -6294280837922825955L;
@@ -62,7 +62,7 @@ public class PPATransformer extends Transformer<Transaction, JavaChangeOperation
 							                                  }
 						                                  }, factory, packageFilter);
 					} else {
-						PPAUtils.generateChangeOperationsNOPPA(repository, transaction,
+						PPAUtils.generateChangeOperationsNOPPA(repository, rCSTransaction,
 						                                       new HashSet<ChangeOperationVisitor>() {
 							                                       
 							                                       private static final long serialVersionUID = -3888102603870272730L;

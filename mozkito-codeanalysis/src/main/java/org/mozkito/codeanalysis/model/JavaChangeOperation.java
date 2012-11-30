@@ -34,8 +34,8 @@ import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class JavaChangeOperation.
@@ -45,6 +45,7 @@ import org.mozkito.versions.model.Transaction;
 @Entity
 public class JavaChangeOperation implements Annotated {
 	
+	/** The transaction tag name. */
 	public static String      TRANSACTION_TAG_NAME = "transaction";
 	
 	/** The Constant serialVersionUID. */
@@ -55,15 +56,19 @@ public class JavaChangeOperation implements Annotated {
 	 * 
 	 * @param element
 	 *            the element
+	 * @param transactionStorage
+	 *            the transaction storage
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java change operation if successfull. Otherwise returns <node>null</code>
 	 */
 	@NoneNull
 	public static JavaChangeOperation fromXMLRepresentation(final Element element,
-	                                                        final ModelStorage<String, Transaction> transactionStorage,
+	                                                        final ModelStorage<String, RCSTransaction> transactionStorage,
 	                                                        final JavaElementFactory elementFactory) {
 		
 		ChangeType changeType = null;
-		Revision revision = null;
+		RCSRevision rCSRevision = null;
 		JavaElementLocation location = null;
 		
 		try {
@@ -92,25 +97,26 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		final Transaction transaction = transactionStorage.getById(transaction_id);
+		final RCSTransaction rCSTransaction = transactionStorage.getById(transaction_id);
 		if (!changedPath.startsWith("/")) {
 			changedPath = "/" + changedPath;
 		}
-		revision = transaction.getRevisionForPath(changedPath);
+		rCSRevision = rCSTransaction.getRevisionForPath(changedPath);
 		
-		if (revision == null) {
+		if (rCSRevision == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract revision from XML. Returning null.");
 			}
 		}
 		
-		return new JavaChangeOperation(changeType, location, revision);
+		return new JavaChangeOperation(changeType, location, rCSRevision);
 		
 	}
 	
 	/** The id. */
 	private long                id;
 	
+	/** The set id. */
 	private boolean             setId     = false;
 	/** The change type. */
 	private ChangeType          changeType;
@@ -119,10 +125,14 @@ public class JavaChangeOperation implements Annotated {
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
-	private Revision            revision;
+	private RCSRevision         revision;
 	
+	/** The essential. */
 	private boolean             essential = true;
 	
+	/**
+	 * Instantiates a new java change operation.
+	 */
 	@Deprecated
 	public JavaChangeOperation() {
 		
@@ -135,14 +145,14 @@ public class JavaChangeOperation implements Annotated {
 	 *            the type
 	 * @param element
 	 *            the element
-	 * @param revision
+	 * @param rCSRevision
 	 *            the revision
 	 */
 	@NoneNull
-	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final Revision revision) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision rCSRevision) {
 		setChangeType(type);
 		setChangedElementLocation(element);
-		setRevision(revision);
+		setRevision(rCSRevision);
 	}
 	
 	/*
@@ -238,7 +248,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the revision
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.EAGER)
-	public Revision getRevision() {
+	public RCSRevision getRevision() {
 		return this.revision;
 	}
 	
@@ -255,6 +265,10 @@ public class JavaChangeOperation implements Annotated {
 		return thisElement;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		int result = 1;
@@ -273,7 +287,12 @@ public class JavaChangeOperation implements Annotated {
 		return result;
 	}
 	
-	@Column (columnDefinition = "boolean default 'TRUE'")
+	/**
+	 * Checks if is essential.
+	 * 
+	 * @return true, if is essential
+	 */
+	@Column (columnDefinition = "boolean default true")
 	public boolean isEssential() {
 		return this.essential;
 	}
@@ -298,6 +317,12 @@ public class JavaChangeOperation implements Annotated {
 		this.changeType = changeType;
 	}
 	
+	/**
+	 * Sets the essential.
+	 * 
+	 * @param isEssential
+	 *            the new essential
+	 */
 	public void setEssential(final boolean isEssential) {
 		this.essential = isEssential;
 	}
@@ -319,10 +344,14 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	protected void setRevision(final Revision revision) {
+	protected void setRevision(final RCSRevision revision) {
 		this.revision = revision;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

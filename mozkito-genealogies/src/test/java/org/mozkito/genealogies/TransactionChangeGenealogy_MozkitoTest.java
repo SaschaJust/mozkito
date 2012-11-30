@@ -36,13 +36,24 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
+/**
+ * The Class TransactionChangeGenealogy_MozkitoTest.
+ */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
-                   options = ConnectOptions.CREATE)
+                   options = ConnectOptions.CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver")
 public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
@@ -51,7 +62,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
 		                                                                                                  branchFactory);
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		final Map<Integer, Transaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
+		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
 		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
@@ -237,7 +248,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(10), environmentTransactions.get(10)));
 		
-		Collection<Transaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
+		Collection<RCSTransaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
@@ -249,7 +260,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
 		
-		Collection<Transaction> parents = tdg.getAllParents(environmentTransactions.get(10));
+		Collection<RCSTransaction> parents = tdg.getAllParents(environmentTransactions.get(10));
 		assertEquals(3, parents.size());
 		assertTrue(parents.contains(environmentTransactions.get(4)));
 		assertTrue(parents.contains(environmentTransactions.get(5)));
@@ -261,8 +272,8 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		final Set<Transaction> vertices = new HashSet<Transaction>();
-		for (final Transaction v : tdg.vertexSet()) {
+		final Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
+		for (final RCSTransaction v : tdg.vertexSet()) {
 			vertices.add(v);
 		}
 		

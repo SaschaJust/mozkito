@@ -46,7 +46,7 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * This engine scores according to the equality of the authors of both entities. If the confidence value isn't set
@@ -253,7 +253,7 @@ public class MethodModificationEngine extends Engine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new And(new Atom(Index.FROM, Transaction.class), new Atom(Index.TO, FieldKey.BODY));
+		return new And(new Atom(Index.FROM, RCSTransaction.class), new Atom(Index.TO, FieldKey.BODY));
 	}
 	
 }

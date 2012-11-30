@@ -15,7 +15,7 @@ package org.mozkito.versions.atomic;
 import java.util.Collection;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
@@ -25,21 +25,21 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
  */
 public class AtomicTransactionImporter {
 	
-	public static synchronized boolean markTransactionAsAtomic(final Transaction transaction,
+	public static synchronized boolean markTransactionAsAtomic(final RCSTransaction rCSTransaction,
 	                                                           final PersistenceUtil persistenceUtil) {
-		transaction.setAtomic(true);
-		persistenceUtil.saveOrUpdate(transaction);
+		rCSTransaction.setAtomic(true);
+		persistenceUtil.saveOrUpdate(rCSTransaction);
 		return true;
 	}
 	
 	public static synchronized boolean markTransactionIdAsAtomic(final String transactionId,
 	                                                             final PersistenceUtil persistenceUtil) {
-		final Transaction transaction = persistenceUtil.loadById(transactionId, Transaction.class);
-		if (transaction == null) {
+		final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		if (rCSTransaction == null) {
 			return false;
 		}
-		transaction.setAtomic(true);
-		persistenceUtil.saveOrUpdate(transaction);
+		rCSTransaction.setAtomic(true);
+		persistenceUtil.saveOrUpdate(rCSTransaction);
 		return true;
 	}
 	
@@ -48,8 +48,8 @@ public class AtomicTransactionImporter {
 	                                                              final PersistenceUtil persistenceUtil) {
 		persistenceUtil.beginTransaction();
 		for (final String id : transactionIds) {
-			final Transaction transaction = persistenceUtil.loadById(id, Transaction.class);
-			if ((transaction == null) || (!markTransactionAsAtomic(transaction, persistenceUtil))) {
+			final RCSTransaction rCSTransaction = persistenceUtil.loadById(id, RCSTransaction.class);
+			if ((rCSTransaction == null) || (!markTransactionAsAtomic(rCSTransaction, persistenceUtil))) {
 				persistenceUtil.rollbackTransaction();
 				return false;
 			}
@@ -58,10 +58,10 @@ public class AtomicTransactionImporter {
 		return true;
 	}
 	
-	public static synchronized boolean markTransactionsAsAtomic(final Collection<Transaction> transactions,
+	public static synchronized boolean markTransactionsAsAtomic(final Collection<RCSTransaction> rCSTransactions,
 	                                                            final PersistenceUtil persistenceUtil) {
 		persistenceUtil.beginTransaction();
-		for (final Transaction t : transactions) {
+		for (final RCSTransaction t : rCSTransactions) {
 			if (!markTransactionAsAtomic(t, persistenceUtil)) {
 				persistenceUtil.rollbackTransaction();
 				return false;

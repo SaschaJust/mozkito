@@ -26,8 +26,8 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class GraphBuilder.
@@ -71,7 +71,7 @@ public class GraphBuilder implements Runnable {
 		this.persistenceUtil.beginTransaction();
 		int counter = 0;
 		for (final String hash : this.revDepGraph.getVertices()) {
-			final Transaction rcsTransaction = this.persistenceUtil.loadById(hash, Transaction.class);
+			final RCSTransaction rcsTransaction = this.persistenceUtil.loadById(hash, RCSTransaction.class);
 			
 			if (rcsTransaction == null) {
 				throw new UnrecoverableError("Could not load transaction " + hash + " from database.");
@@ -84,13 +84,13 @@ public class GraphBuilder implements Runnable {
 			// set parents
 			final String branchParentHash = this.revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
-				final Transaction branchParent = this.persistenceUtil.loadById(branchParentHash,
-				                                                                  Transaction.class);
+				final RCSTransaction branchParent = this.persistenceUtil.loadById(branchParentHash,
+				                                                                  RCSTransaction.class);
 				rcsTransaction.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final Transaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, Transaction.class);
+				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
 				rcsTransaction.setMergeParent(mergeParent);
 			}
 			
@@ -103,12 +103,12 @@ public class GraphBuilder implements Runnable {
 			// persist branches
 			final String branchName = this.revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final Branch branch = this.branchFactory.getBranch(branchName);
+				final RCSBranch rCSBranch = this.branchFactory.getBranch(branchName);
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch " + branchName);
 				}
-				branch.setHead(rcsTransaction);
-				this.persistenceUtil.saveOrUpdate(branch);
+				rCSBranch.setHead(rcsTransaction);
+				this.persistenceUtil.saveOrUpdate(rCSBranch);
 			}
 			this.persistenceUtil.saveOrUpdate(rcsTransaction);
 			if ((++counter % COMMIT_LIMIT) == 0) {
@@ -135,7 +135,7 @@ public class GraphBuilder implements Runnable {
 		for (final String hash : this.revDepGraph.getVertices()) {
 			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final Transaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, Transaction.class);
+				final RCSTransaction mergeParent = this.persistenceUtil.loadById(mergeParentHash, RCSTransaction.class);
 				if (mergeParent == null) {
 					throw new UnrecoverableError("Could not load transaction " + mergeParentHash + " from DB.");
 				}
@@ -145,9 +145,9 @@ public class GraphBuilder implements Runnable {
 					        + " are NULL or empty. Both is a fatal error.");
 				}
 				for (final String branchName : branchNames) {
-					final Branch branch = this.persistenceUtil.loadById(branchName, Branch.class);
-					branch.addMergedIn(hash);
-					this.persistenceUtil.saveOrUpdate(branch);
+					final RCSBranch rCSBranch = this.persistenceUtil.loadById(branchName, RCSBranch.class);
+					rCSBranch.addMergedIn(hash);
+					this.persistenceUtil.saveOrUpdate(rCSBranch);
 					if ((++counter % COMMIT_LIMIT) == 0) {
 						this.persistenceUtil.commitTransaction();
 						this.persistenceUtil.beginTransaction();
@@ -171,23 +171,23 @@ public class GraphBuilder implements Runnable {
 			Logger.info("Phase II: Persisting branch transaction relationships ...");
 		}
 		
-		final List<Branch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(Branch.class));
+		final List<RCSBranch> branches = this.persistenceUtil.load(this.persistenceUtil.createCriteria(RCSBranch.class));
 		
 		if (branches.isEmpty()) {
 			throw new UnrecoverableError("Could not load any transactions from DB. This is a fatal error!");
 		}
 		
-		for (final Branch branch : branches) {
+		for (final RCSBranch rCSBranch : branches) {
 			if (Logger.logDebug()) {
-				Logger.debug("Handling branch " + branch.getName() + " with headId=" + branch.getHead().getId());
+				Logger.debug("Handling branch " + rCSBranch.getName() + " with headId=" + rCSBranch.getHead().getId());
 			}
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
-			for (final String transactionId : this.revDepGraph.getBranchTransactions(branch.getName())) {
-				final Transaction transaction = this.persistenceUtil.loadById(transactionId, Transaction.class);
-				if (!transaction.addBranch(branch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + branch.getName() + " to transaction: "
-					        + transaction.getId() + ". It appreas to be set before. Fatal error.");
+			for (final String transactionId : this.revDepGraph.getBranchTransactions(rCSBranch.getName())) {
+				final RCSTransaction rCSTransaction = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
+				if (!rCSTransaction.addBranch(rCSBranch, index)) {
+					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName() + " to transaction: "
+					        + rCSTransaction.getId() + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
 				if ((index % COMMIT_LIMIT) == 0) {

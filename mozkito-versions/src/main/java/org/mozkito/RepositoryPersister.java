@@ -24,16 +24,16 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * The {@link RepositoryPersister} taks {@link Transaction} from the previous node and dumps the data to the
+ * The {@link RepositoryPersister} taks {@link RCSTransaction} from the previous node and dumps the data to the
  * database.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  * 
  */
-public class RepositoryPersister extends Sink<Transaction> {
+public class RepositoryPersister extends Sink<RCSTransaction> {
 	
 	/** The Constant COMMIT_CACHE. */
 	private static final int COMMIT_CACHE = 100;
@@ -52,7 +52,7 @@ public class RepositoryPersister extends Sink<Transaction> {
 	public RepositoryPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<Transaction, Transaction>(this) {
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
@@ -60,11 +60,11 @@ public class RepositoryPersister extends Sink<Transaction> {
 			}
 		};
 		
-		new ProcessHook<Transaction, Transaction>(this) {
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
-				final Transaction data = getInputData();
+				final RCSTransaction data = getInputData();
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + data);
 				}
@@ -78,7 +78,7 @@ public class RepositoryPersister extends Sink<Transaction> {
 			}
 		};
 		
-		new PostExecutionHook<Transaction, Transaction>(this) {
+		new PostExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void postExecution() {

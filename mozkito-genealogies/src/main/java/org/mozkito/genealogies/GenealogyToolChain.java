@@ -36,7 +36,7 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 public class GenealogyToolChain extends Chain<Settings> {
@@ -105,12 +105,12 @@ public class GenealogyToolChain extends Chain<Settings> {
 				Logger.info("Number of vertices: " + transactionLayer.vertexSize());
 				Logger.info("Number of edges: " + transactionLayer.edgeSize());
 				
-				final Iterator<Transaction> vertexIterator = transactionLayer.vertexIterator();
+				final Iterator<RCSTransaction> vertexIterator = transactionLayer.vertexIterator();
 				final DescriptiveStatistics youngestGapStat = new DescriptiveStatistics();
 				while (vertexIterator.hasNext()) {
-					final Transaction t = vertexIterator.next();
+					final RCSTransaction t = vertexIterator.next();
 					int dayGap = Integer.MAX_VALUE;
-					for (final Transaction c : transactionLayer.getAllDependants(t)) {
+					for (final RCSTransaction c : transactionLayer.getAllDependants(t)) {
 						final int gap = Math.abs(Days.daysBetween(t.getTimestamp(), c.getTimestamp()).getDays());
 						if (gap < dayGap) {
 							dayGap = gap;

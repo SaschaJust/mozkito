@@ -49,7 +49,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import serp.util.Strings;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
@@ -76,8 +76,8 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 		
 		@Override
-		public CallGraphVoter createVoter(final Transaction transaction) {
-			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, transaction, this.cacheDir);
+		public CallGraphVoter createVoter(final RCSTransaction rCSTransaction) {
+			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, rCSTransaction, this.cacheDir);
 		}
 		
 		/*
@@ -213,16 +213,16 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 *            the eclipse dir
 	 * @param eclipseArguments
 	 *            the eclipse arguments
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final Transaction transaction,
+	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction rCSTransaction,
 	        final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
-			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + transaction.getId() + ".cg");
+			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId() + ".cg");
 			if (callGraphFile.exists()) {
 				this.callGraph = CallGraph.unserialize(callGraphFile);
 				this.usedGraphFile = callGraphFile;
@@ -239,7 +239,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			
 			final File eclipseExecDir = FileUtils.createRandomDir("mozkito", "callgraph_exec", FileShutdownAction.KEEP);
 			
-			arguments.add("-DtransactionId=" + transaction.getId());
+			arguments.add("-DtransactionId=" + rCSTransaction.getId());
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph
@@ -263,7 +263,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				if (Logger.logError()) {
 					final StringBuilder sb = new StringBuilder();
 					sb.append("Could not generate call graph for transaction ");
-					sb.append(transaction);
+					sb.append(rCSTransaction);
 					sb.append(". Reason:");
 					sb.append(FileUtils.lineSeparator);
 					if (response.getSecond() != null) {

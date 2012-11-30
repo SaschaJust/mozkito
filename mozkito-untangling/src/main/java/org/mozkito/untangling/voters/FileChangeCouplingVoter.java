@@ -35,8 +35,8 @@ import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -49,7 +49,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final Transaction              transaction;
+	private final RCSTransaction              rCSTransaction;
 	
 	/** The min support. */
 	private final int                      minSupport;
@@ -63,7 +63,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -76,17 +76,17 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public FileChangeCouplingVoter(@NotNull final Transaction transaction, final int minSupport,
+	public FileChangeCouplingVoter(@NotNull final RCSTransaction rCSTransaction, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final java.io.File cacheDir) {
 		
-		this.transaction = transaction;
+		this.rCSTransaction = rCSTransaction;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
 			final java.io.File serialFile = new java.io.File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
-			        + transaction.getId() + "_file.cc");
+			        + rCSTransaction.getId() + "_file.cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
@@ -113,7 +113,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			}
 			if (this.couplings == null) {
 				// run query and save tmp file
-				final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
+				final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(rCSTransaction,
 				                                                                                                            3,
 				                                                                                                            0.1,
 				                                                                                                            persistenceUtil);
@@ -178,7 +178,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
 		if (this.couplings == null) {
-			this.couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.transaction, 3, 0.1,
+			this.couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.rCSTransaction, 3, 0.1,
 			                                                                  this.persistenceUtil);
 		}
 		
@@ -188,15 +188,15 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			
 			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (final File file : c.getPremise()) {
-					final String fPath = file.getPath(this.transaction);
+				for (final RCSFile rCSFile : c.getPremise()) {
+					final String fPath = rCSFile.getPath(this.rCSTransaction);
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;
 						break;
 					}
 				}
 				
-				final String iPath = c.getImplication().getPath(this.transaction);
+				final String iPath = c.getImplication().getPath(this.rCSTransaction);
 				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
 					currentCouplings.add(c);
 				}

@@ -25,7 +25,7 @@ import java.util.Set;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -79,18 +79,18 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 		}
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
-		final Transaction transaction = item.getNode();
-		final String nodeId = this.genealogy.getNodeId(transaction);
+		final RCSTransaction rCSTransaction = item.getNode();
+		final String nodeId = this.genealogy.getNodeId(rCSTransaction);
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final Transaction dependant : this.genealogy.getAllDependants(transaction)) {
+		for (final RCSTransaction dependant : this.genealogy.getAllDependants(rCSTransaction)) {
 			depAuthors.add(dependant.getPersons().getGeneratedId());
 		}
 		
 		metricValues.add(new GenealogyMetricValue(numDepAuthors, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
-		for (final Transaction parent : this.genealogy.getAllParents(transaction)) {
+		for (final RCSTransaction parent : this.genealogy.getAllParents(rCSTransaction)) {
 			parentAuthors.add(parent.getPersons().getGeneratedId());
 		}
 		

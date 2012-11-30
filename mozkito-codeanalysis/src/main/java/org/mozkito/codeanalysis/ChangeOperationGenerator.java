@@ -20,7 +20,7 @@ import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -56,24 +56,24 @@ public class ChangeOperationGenerator {
 	/**
 	 * Handle transactions and generate ChangeOperations.
 	 * 
-	 * @param transactions
+	 * @param rCSTransactions
 	 *            the transactions
 	 */
-	public void handleTransactions(final List<Transaction> transactions) {
-		final int size = transactions.size();
+	public void handleTransactions(final List<RCSTransaction> rCSTransactions) {
+		final int size = rCSTransactions.size();
 		int counter = 0;
-		for (final Transaction transaction : transactions) {
+		for (final RCSTransaction rCSTransaction : rCSTransactions) {
 			
 			for (final ChangeOperationVisitor visitor : this.visitors) {
-				visitor.visit(transaction);
+				visitor.visit(rCSTransaction);
 			}
 			
 			if (Logger.logInfo()) {
-				Logger.info("Computing change operations for transaction `" + transaction.getId() + "` (" + (++counter)
+				Logger.info("Computing change operations for transaction `" + rCSTransaction.getId() + "` (" + (++counter)
 				        + "/" + size + ")");
 			}
 			
-			PPAUtils.generateChangeOperations(this.repo, transaction, this.visitors, this.elementFactory,
+			PPAUtils.generateChangeOperations(this.repo, rCSTransaction, this.visitors, this.elementFactory,
 			                                  this.packageFilter);
 		}
 		for (final ChangeOperationVisitor visitor : this.visitors) {

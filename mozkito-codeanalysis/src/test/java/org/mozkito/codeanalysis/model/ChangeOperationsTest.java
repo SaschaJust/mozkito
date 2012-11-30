@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 public class ChangeOperationsTest {
 	
@@ -43,25 +43,25 @@ public class ChangeOperationsTest {
 		                                                                 "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                 methodDefinitionLocation.getElement(), 34, 56,
 		                                                                 7854);
-		final Transaction transaction = new Transaction("hash", "hubba hubba hopp!", new DateTime(),
+		final RCSTransaction rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(),
 		                                                      new Person("kim", null, null), "143");
-		final File rcsFile = new File("org/mozkito/codeanalysis/model/TestClass.java", transaction);
+		final RCSFile rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", rCSTransaction);
 		final JavaChangeOperation addAnonClassDefOp = new JavaChangeOperation(ChangeType.Added, anonymousClassLocation,
-		                                                                      new Revision(transaction, rcsFile,
+		                                                                      new RCSRevision(rCSTransaction, rcsFile,
 		                                                                                      ChangeType.Added));
 		final JavaChangeOperation delClassDefOp = new JavaChangeOperation(ChangeType.Deleted, classLocation,
-		                                                                  new Revision(transaction, rcsFile,
+		                                                                  new RCSRevision(rCSTransaction, rcsFile,
 		                                                                                  ChangeType.Deleted));
 		final JavaChangeOperation addClassDefOp = new JavaChangeOperation(ChangeType.Added, classLocation,
-		                                                                  new Revision(transaction, rcsFile,
+		                                                                  new RCSRevision(rCSTransaction, rcsFile,
 		                                                                                  ChangeType.Added));
 		
 		final JavaChangeOperation delCallOp = new JavaChangeOperation(ChangeType.Deleted, methodCallLocation,
-		                                                              new Revision(transaction, rcsFile,
+		                                                              new RCSRevision(rCSTransaction, rcsFile,
 		                                                                              ChangeType.Deleted));
 		
 		final JavaChangeOperation addCallOp = new JavaChangeOperation(ChangeType.Added, methodCallLocation,
-		                                                              new Revision(transaction, rcsFile,
+		                                                              new RCSRevision(rCSTransaction, rcsFile,
 		                                                                              ChangeType.Added));
 		
 		final ChangeOperations ops = new ChangeOperations();

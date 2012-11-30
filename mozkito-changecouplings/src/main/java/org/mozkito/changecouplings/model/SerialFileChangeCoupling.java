@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.RCSFile;
 
 
 /**
@@ -56,8 +56,8 @@ public class SerialFileChangeCoupling implements Serializable {
 	 *            the confidence
 	 */
 	public SerialFileChangeCoupling(final FileChangeCoupling coupling) {
-		for (final File file : coupling.getPremise()) {
-			this.premise.add(file.getGeneratedId());
+		for (final RCSFile rCSFile : coupling.getPremise()) {
+			this.premise.add(rCSFile.getGeneratedId());
 		}
 		this.implication = coupling.getImplication().getGeneratedId();
 		this.support = coupling.getSupport();

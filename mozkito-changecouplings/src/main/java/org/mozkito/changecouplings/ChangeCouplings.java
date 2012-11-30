@@ -24,7 +24,7 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -135,11 +135,11 @@ public class ChangeCouplings {
 	 * Run.
 	 */
 	public void run() {
-		final Transaction transaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
-		                                                                 Transaction.class);
+		final RCSTransaction rCSTransaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
+		                                                                 RCSTransaction.class);
 		
 		if (this.granularityArgument.getValue().equals(Level.FILE)) {
-			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(transaction,
+			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(rCSTransaction,
 			                                                                                                            this.minSupport.intValue(),
 			                                                                                                            this.minConf.doubleValue(),
 			                                                                                                            this.persistenceUtil);

@@ -33,11 +33,22 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 
+/**
+ * The Class JungGenealogyGraph_MozkitoTest.
+ */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
-                   options = ConnectOptions.CREATE)
+                   options = ConnectOptions.CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRES",
+                   driver = "org.postgresql.Driver")
 public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test core layer.
+	 */
 	@Test
 	public void testCoreLayer() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",

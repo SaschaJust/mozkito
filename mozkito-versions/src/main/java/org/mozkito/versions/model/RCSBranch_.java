@@ -16,27 +16,23 @@
 
 package org.mozkito.versions.model;
 
+import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
-import org.mozkito.versions.elements.ChangeType;
-
 /**
- * The Class Revision_.
+ * The Class RCSBranch_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Revision.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSBranch.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Thu Mar 01 23:42:05 CET 2012")
-public class Revision_ {
+                             date = "Fri Mar 02 12:03:07 CET 2012")
+public class RCSBranch_ {
 	
-	/** The change type. */
-	public static volatile SingularAttribute<Revision, ChangeType>     changeType;
+	/** The head. */
+	public static volatile SingularAttribute<RCSBranch, RCSTransaction> head;
 	
-	/** The changed file. */
-	public static volatile SingularAttribute<Revision, File>        changedFile;
+	/** The merged in. */
+	public static volatile SetAttribute<RCSBranch, String>              mergedIn;
 	
-	/** The revision id. */
-	public static volatile SingularAttribute<Revision, Long>           revisionId;
-	
-	/** The transaction. */
-	public static volatile SingularAttribute<Revision, Transaction> transaction;
+	/** The name. */
+	public static volatile SingularAttribute<RCSBranch, String>         name;
 }

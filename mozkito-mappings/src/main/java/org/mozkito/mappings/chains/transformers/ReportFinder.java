@@ -31,14 +31,14 @@ import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Candidate;
 import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class TransactionFinder.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReportFinder extends Transformer<Transaction, Candidate> {
+public class ReportFinder extends Transformer<RCSTransaction, Candidate> {
 	
 	private final CandidateFactory<MappableReport, MappableTransaction> candidateFactory = CandidateFactory.getInstance(MappableReport.class,
 	                                                                                                                    MappableTransaction.class);
@@ -61,7 +61,7 @@ public class ReportFinder extends Transformer<Transaction, Candidate> {
 		
 		final Set<Candidate> candidates = new HashSet<>();
 		
-		new PreProcessHook<Transaction, Candidate>(this) {
+		new PreProcessHook<RCSTransaction, Candidate>(this) {
 			
 			@Override
 			public void preProcess() {
@@ -93,7 +93,7 @@ public class ReportFinder extends Transformer<Transaction, Candidate> {
 			}
 		};
 		
-		new ProcessHook<Transaction, Candidate>(this) {
+		new ProcessHook<RCSTransaction, Candidate>(this) {
 			
 			@Override
 			public void process() {

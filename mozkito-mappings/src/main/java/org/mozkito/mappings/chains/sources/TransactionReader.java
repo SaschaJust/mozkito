@@ -25,17 +25,17 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class TransactionReader.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class TransactionReader extends Source<Transaction> {
+public class TransactionReader extends Source<RCSTransaction> {
 	
 	/** The iterator. */
-	private Iterator<Transaction> iterator;
+	private Iterator<RCSTransaction> iterator;
 	
 	/**
 	 * Instantiates a new transaction reader.
@@ -50,28 +50,28 @@ public class TransactionReader extends Source<Transaction> {
 	public TransactionReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
-		new PreExecutionHook<Transaction, Transaction>(this) {
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
-				final List<Transaction> list = persistenceUtil.load(criteria);
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final List<RCSTransaction> list = persistenceUtil.load(criteria);
 				TransactionReader.this.iterator = list.iterator();
 			}
 		};
 		
-		new ProcessHook<Transaction, Transaction>(this) {
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
 				if (TransactionReader.this.iterator.hasNext()) {
-					final Transaction transaction = TransactionReader.this.iterator.next();
+					final RCSTransaction rCSTransaction = TransactionReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
-						Logger.info(Messages.getString("ReportReader.providing", transaction)); //$NON-NLS-1$
+						Logger.info(Messages.getString("ReportReader.providing", rCSTransaction)); //$NON-NLS-1$
 					}
 					
-					providePartialOutputData(transaction);
+					providePartialOutputData(rCSTransaction);
 				} else {
 					provideOutputData(null, true);
 				}

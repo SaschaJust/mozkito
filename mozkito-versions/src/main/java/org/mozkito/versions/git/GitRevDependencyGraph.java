@@ -32,7 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.RCSBranch;
 import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.Direction;
@@ -304,7 +304,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 						continue;
 					}
 					if ("origin/master".equals(branchName)) {
-						branchName = Branch.MASTER_BRANCH_NAME;
+						branchName = RCSBranch.MASTER_BRANCH_NAME;
 					}
 				} else if (branchName.startsWith("refs/pull/")) {
 					branchName = branchName.substring(REFS_PULL_LENGTH);
@@ -322,7 +322,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					Logger.debug("Adding branch head for " + branchName + ": " + lineParts[0]);
 				}
 				if ((this.branchHeads.containsKey(lineParts[0]))
-				        && this.branchHeads.get(lineParts[0]).equals(Branch.MASTER_BRANCH_NAME)) {
+				        && this.branchHeads.get(lineParts[0]).equals(RCSBranch.MASTER_BRANCH_NAME)) {
 					continue;
 				}
 				this.branchHeads.put(lineParts[0], branchName);

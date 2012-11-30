@@ -34,7 +34,7 @@ import org.mozkito.mappings.model.Relation;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class SummarSearchEngineTest.
@@ -88,14 +88,14 @@ public class SummarSearchEngineTest extends DatabaseTest {
 	 */
 	private Relation score(final String transactionId,
 	                       final String reportId) throws Exception {
-		final Transaction transaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
-		assertNotNull("Failed retreiving transaction from database.", transaction);
+		final RCSTransaction rCSTransaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
+		assertNotNull("Failed retreiving transaction from database.", rCSTransaction);
 		
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);
 		assertNotNull("Failed retreiving report from database.", report);
 		
-		final Relation relation = Environment.relation(transaction, report);
-		assertNotNull("Failed creating relation from " + transaction + " and " + report, relation);
+		final Relation relation = Environment.relation(rCSTransaction, report);
+		assertNotNull("Failed creating relation from " + rCSTransaction + " and " + report, relation);
 		
 		finder.score(this.engine, relation);
 		

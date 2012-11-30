@@ -42,7 +42,7 @@ import org.mozkito.persistence.Annotated;
  */
 @Entity
 @Table (name = "rcsbranch")
-public class Branch implements Annotated {
+public class RCSBranch implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID   = 5419737140470855522L;
@@ -51,7 +51,7 @@ public class Branch implements Annotated {
 	private String            name;
 	
 	/** The head. */
-	private Transaction    head               = null;
+	private RCSTransaction    head               = null;
 	
 	/** The merged in. */
 	private Set<String>       mergedIn           = new HashSet<String>();
@@ -71,7 +71,7 @@ public class Branch implements Annotated {
 	/**
 	 * Instantiates a new rCS branch.
 	 */
-	protected Branch() {
+	protected RCSBranch() {
 		
 	}
 	
@@ -81,7 +81,7 @@ public class Branch implements Annotated {
 	 * @param name
 	 *            the name
 	 */
-	public Branch(final String name) {
+	public RCSBranch(final String name) {
 		setName(name);
 	}
 	
@@ -105,10 +105,10 @@ public class Branch implements Annotated {
 	 * @return A sorted set of transactions committed into this branch
 	 */
 	@Transient
-	public TreeSet<Transaction> containsAnyTransaction(final Collection<String> tIds) {
-		final TreeSet<Transaction> result = new TreeSet<Transaction>();
+	public TreeSet<RCSTransaction> containsAnyTransaction(final Collection<String> tIds) {
+		final TreeSet<RCSTransaction> result = new TreeSet<RCSTransaction>();
 		for (final String id : tIds) {
-			final Transaction t = containsTransaction(id);
+			final RCSTransaction t = containsTransaction(id);
 			if (t != null) {
 				result.add(t);
 			}
@@ -125,8 +125,8 @@ public class Branch implements Annotated {
 	 * @return the transaction if found. Otherwise <code>null</code>
 	 */
 	@Transient
-	public Transaction containsTransaction(final String tId) {
-		Transaction current = getHead();
+	public RCSTransaction containsTransaction(final String tId) {
+		RCSTransaction current = getHead();
 		while (current != null) {
 			if (current.getId().equals(tId)) {
 				return current;
@@ -151,7 +151,7 @@ public class Branch implements Annotated {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		final Branch other = (Branch) obj;
+		final RCSBranch other = (RCSBranch) obj;
 		if (getName() == null) {
 			if (other.getName() != null) {
 				return false;
@@ -169,7 +169,7 @@ public class Branch implements Annotated {
 	 */
 	@Transient
 	public String getHandle() {
-		return Branch.class.getSimpleName();
+		return RCSBranch.class.getSimpleName();
 	}
 	
 	/**
@@ -178,7 +178,7 @@ public class Branch implements Annotated {
 	 * @return the end
 	 */
 	@OneToOne (fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-	public Transaction getHead() {
+	public RCSTransaction getHead() {
 		return this.head;
 	}
 	
@@ -244,7 +244,7 @@ public class Branch implements Annotated {
 	 * @param end
 	 *            the end to set
 	 */
-	public void setHead(final Transaction end) {
+	public void setHead(final RCSTransaction end) {
 		this.head = end;
 	}
 	

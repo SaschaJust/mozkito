@@ -29,7 +29,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.untangling.Untangling;
 import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.conditions.Condition;
@@ -132,7 +132,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		
 		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
 		
-		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, Transaction>> negativePool = new LinkedList<>();
+		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> negativePool = new LinkedList<>();
 		
 		for (final Entry<ChangeSet, Set<JavaChangeOperation>> entry : selectedTransactions.entrySet()) {
 			final List<JavaChangeOperation> opList = new ArrayList<>(entry.getValue().size());
@@ -142,7 +142,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 					final Tuple<JavaChangeOperation, JavaChangeOperation> negInnerTuple = new Tuple<JavaChangeOperation, JavaChangeOperation>(
 					                                                                                                                          opList.get(i),
 					                                                                                                                          opList.get(j));
-					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, Transaction>(
+					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>(
 					                                                                                            negInnerTuple,
 					                                                                                            entry.getKey()
 					                                                                                                 .getTransaction()));
@@ -164,7 +164,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
-		List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, Transaction>> sampledNegativePool = new LinkedList<>();
+		List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> sampledNegativePool = new LinkedList<>();
 		if (!seenSamples.isEmpty()) {
 			
 			for (final int i : seenSamples) {
@@ -174,7 +174,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			sampledNegativePool = negativePool;
 		}
 		
-		for (final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, Transaction> sample : sampledNegativePool) {
+		for (final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction> sample : sampledNegativePool) {
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(sample.getSecond());
 			final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 			for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {

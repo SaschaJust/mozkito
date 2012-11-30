@@ -24,8 +24,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -43,17 +43,17 @@ public class LTCRecommendation {
 	/**
 	 * @param changedFile
 	 */
-	public static void addChange(final File changedFile,
-	                             final Transaction transaction) {
+	public static void addChange(final RCSFile changedFile,
+	                             final RCSTransaction rCSTransaction) {
 		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
 		for (final LTCRecommendation r : recommendations.get(changedFile.getGeneratedId()).values()) {
-			r.fileChanged(changedFile, transaction);
+			r.fileChanged(changedFile, rCSTransaction);
 		}
 	}
 	
-	public static LTCRecommendation getRecommendation(final File premise,
+	public static LTCRecommendation getRecommendation(final RCSFile premise,
 	                                                  final CTLFormula formula) {
 		if (!recommendations.containsKey(premise.getGeneratedId())) {
 			recommendations.put(premise.getGeneratedId(), new HashMap<CTLFormula, LTCRecommendation>());
@@ -64,7 +64,7 @@ public class LTCRecommendation {
 		return recommendations.get(premise.getGeneratedId()).get(formula);
 	}
 	
-	public static SortedSet<LTCRecommendation> getRecommendations(final File changedFile,
+	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
 	                                                              final ChangeProperty property) {
 		
 		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
@@ -89,21 +89,21 @@ public class LTCRecommendation {
 	 * @param formula
 	 */
 	@NoneNull
-	private LTCRecommendation(final File premise, final CTLFormula formula) {
+	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
 		this.premise = premise.getGeneratedId();
 		this.formula = formula;
 		this.support.put(ChangeProperty.NONE, new LinkedList<Tuple<String, DateTime>>());
 	}
 	
-	public void addSupport(final Transaction transaction,
+	public void addSupport(final RCSTransaction rCSTransaction,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
 		if (!this.support.containsKey(property)) {
 			this.support.put(property, new LinkedList<Tuple<String, DateTime>>());
 		}
 		
-		this.support.get(ChangeProperty.NONE).add(new Tuple<String, DateTime>(transaction.getId(),
-		                                                                      transaction.getTimestamp()));
+		this.support.get(ChangeProperty.NONE).add(new Tuple<String, DateTime>(rCSTransaction.getId(),
+		                                                                      rCSTransaction.getTimestamp()));
 		Tuple<String, DateTime> supportEntry = this.support.get(ChangeProperty.NONE).peek();
 		while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 			supportEntry = this.support.get(ChangeProperty.NONE).poll();
@@ -115,7 +115,7 @@ public class LTCRecommendation {
 		
 		if (!property.equals(ChangeProperty.NONE)) {
 			this.support.get(property)
-			            .add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
+			            .add(new Tuple<String, DateTime>(rCSTransaction.getId(), rCSTransaction.getTimestamp()));
 			supportEntry = this.support.get(property).peek();
 			while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 				supportEntry = this.support.get(property).poll();
@@ -123,10 +123,10 @@ public class LTCRecommendation {
 		}
 	}
 	
-	public void fileChanged(final File file,
-	                        final Transaction transaction) {
-		if (this.premise.equals(file.getGeneratedId())) {
-			this.premiseChanges.add(new Tuple<String, DateTime>(transaction.getId(), transaction.getTimestamp()));
+	public void fileChanged(final RCSFile rCSFile,
+	                        final RCSTransaction rCSTransaction) {
+		if (this.premise.equals(rCSFile.getGeneratedId())) {
+			this.premiseChanges.add(new Tuple<String, DateTime>(rCSTransaction.getId(), rCSTransaction.getTimestamp()));
 		}
 	}
 	

@@ -32,6 +32,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.jdom2.Element;
+
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -131,7 +132,7 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @return the fullQualifiedName
 	 */
-	@Column (columnDefinition = "TEXT")
+	@Column (length = 0)
 	public String getFullQualifiedName() {
 		return this.fullQualifiedName;
 	}

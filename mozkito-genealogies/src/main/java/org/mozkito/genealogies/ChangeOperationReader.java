@@ -29,8 +29,8 @@ import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -96,7 +96,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			                                                    argumentSet,
 			                                                    "branch",
 			                                                    "Create tha change genealogy that corresponds to the given branch. Genealogies accross branches are not supported yet.",
-			                                                    Branch.MASTER_BRANCH_NAME, Requirement.required);
+			                                                    RCSBranch.MASTER_BRANCH_NAME, Requirement.required);
 			
 			this.skipTestsOptions = new BooleanArgument.Options(
 			                                                    argumentSet,
@@ -109,7 +109,7 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		}
 	}
 	
-	private final Iterator<Transaction> iterator;
+	private final Iterator<RCSTransaction> iterator;
 	private final BranchFactory            branchFactory;
 	private final PersistenceUtil          persistenceUtil;
 	private final boolean                  ignoreTests;
@@ -121,12 +121,12 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		this.persistenceUtil = persistenceUtil;
 		this.branchFactory = new BranchFactory(persistenceUtil);
 		this.ignoreTests = ignoreTests;
-		final Branch masterBranch = persistenceUtil.loadById(branchName, Branch.class);
+		final RCSBranch masterBranch = persistenceUtil.loadById(branchName, RCSBranch.class);
 		
 		if (masterBranch == null) {
 			final List<String> branchNames = new LinkedList<>();
-			for (final Branch branch : persistenceUtil.load(persistenceUtil.createCriteria(Branch.class))) {
-				branchNames.add(branch.getName());
+			for (final RCSBranch rCSBranch : persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class))) {
+				branchNames.add(rCSBranch.getName());
 			}
 			if (Logger.logError()) {
 				Logger.error("Could not find a branch with name %s. Cannot create genealogy graph. Temrinating. Possible branch names are: %s.",
@@ -171,17 +171,17 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		// PRECONDITIONS
 		++this.tCounter;
 		try {
-			final Transaction transaction = this.iterator.next();
+			final RCSTransaction rCSTransaction = this.iterator.next();
 			if (Logger.logInfo()) {
-				Logger.info("Processing transaction %s (%s/%s).", transaction.getId(), String.valueOf(this.tCounter),
+				Logger.info("Processing transaction %s (%s/%s).", rCSTransaction.getId(), String.valueOf(this.tCounter),
 				            String.valueOf(this.numTransaction));
 			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			
 			if (this.ignoreTests) {
-				changeOperations = PPAPersistenceUtil.getChangeOperationNoTest(this.persistenceUtil, transaction);
+				changeOperations = PPAPersistenceUtil.getChangeOperationNoTest(this.persistenceUtil, rCSTransaction);
 			} else {
-				changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, transaction);
+				changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, rCSTransaction);
 			}
 			return changeOperations;
 		} finally {

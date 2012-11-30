@@ -19,8 +19,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.Branch;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class RCSPersistenceUtil.
@@ -32,7 +32,7 @@ public class RCSPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param branch
+	 * @param rCSBranch
 	 *            the branch
 	 * @param order
 	 *            the order
@@ -41,13 +41,13 @@ public class RCSPersistenceUtil {
 	 */
 	@NoneNull
 	public static TransactionSet getTransactions(final PersistenceUtil persistenceUtil,
-	                                             final Branch branch,
+	                                             final RCSBranch rCSBranch,
 	                                             final TransactionSetOrder order) {
 		
-		final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
-		final MapJoin<Transaction, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
-		final CriteriaQuery<Transaction> query = criteria.getQuery();
-		query.where(criteria.getBuilder().equal(branchRoot.key(), branch.getName()));
+		final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+		final MapJoin<RCSTransaction, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
+		final CriteriaQuery<RCSTransaction> query = criteria.getQuery();
+		query.where(criteria.getBuilder().equal(branchRoot.key(), rCSBranch.getName()));
 		criteria.setQuery(query);
 		
 		final TransactionSet result = new TransactionSet(order);

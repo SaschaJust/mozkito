@@ -24,7 +24,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -33,10 +33,10 @@ import net.ownhero.dev.kisa.Logger;
  *
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionTempDepthMetrics extends GenealogyTransactionMetric implements DayTimeDiff<Transaction> {
+public class TransactionTempDepthMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
 	
 	/** The universal metric. */
-	private final UniversalTempDepthMetrics<Transaction> universalMetric;
+	private final UniversalTempDepthMetrics<RCSTransaction> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction temp depth metrics.
@@ -45,15 +45,15 @@ public class TransactionTempDepthMetrics extends GenealogyTransactionMetric impl
 	 */
 	public TransactionTempDepthMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalTempDepthMetrics<Transaction>(genealogy, this);
+		this.universalMetric = new UniversalTempDepthMetrics<RCSTransaction>(genealogy, this);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.DayTimeDiff#daysDiff(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int daysDiff(final Transaction t1,
-	                    final Transaction t2) {
+	public int daysDiff(final RCSTransaction t1,
+	                    final RCSTransaction t2) {
 		return DaysBetweenUtils.getDaysBetween(t1, t2);
 	}
 	

@@ -22,7 +22,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalPageRankMetric;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,7 +34,7 @@ import net.ownhero.dev.kisa.Logger;
 public class TransactionPageRankMetric extends GenealogyTransactionMetric {
 	
 	/** The universal metric. */
-	private final UniversalPageRankMetric<Transaction> universalMetric;
+	private final UniversalPageRankMetric<RCSTransaction> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction page rank metric.
@@ -43,7 +43,7 @@ public class TransactionPageRankMetric extends GenealogyTransactionMetric {
 	 */
 	public TransactionPageRankMetric(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalPageRankMetric<Transaction>(genealogy);
+		this.universalMetric = new UniversalPageRankMetric<RCSTransaction>(genealogy);
 	}
 	
 	/* (non-Javadoc)

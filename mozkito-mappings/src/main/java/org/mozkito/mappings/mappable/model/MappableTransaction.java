@@ -31,11 +31,11 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * Class that wraps {@link Transaction} to be mapped.
+ * Class that wraps {@link RCSTransaction} to be mapped.
  * 
  * @see MappableEntity
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -49,7 +49,7 @@ public class MappableTransaction extends MappableEntity {
 	private static final long serialVersionUID = 3493346151115096823L;
 	
 	/** The transaction. */
-	private Transaction    transaction;
+	private RCSTransaction    rCSTransaction;
 	
 	/**
 	 * Instantiates a new mappable transaction.
@@ -64,13 +64,13 @@ public class MappableTransaction extends MappableEntity {
 	/**
 	 * Instantiates a new mappable transaction.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 */
-	public MappableTransaction(final Transaction transaction) {
+	public MappableTransaction(final RCSTransaction rCSTransaction) {
 		super();
 		
-		setTransaction(transaction);
+		setTransaction(rCSTransaction);
 	}
 	
 	/*
@@ -143,7 +143,7 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	@Transient
 	public Class<?> getBaseType() {
-		return Transaction.class;
+		return RCSTransaction.class;
 	}
 	
 	/**
@@ -154,11 +154,11 @@ public class MappableTransaction extends MappableEntity {
 	 * @return the file
 	 */
 	@Transient
-	public File getFile(@NotNegative final int index) {
-		final Collection<File> changedFiles = getTransaction().getChangedFiles();
+	public RCSFile getFile(@NotNegative final int index) {
+		final Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
 		
 		if (changedFiles.size() > index) {
-			return (File) CollectionUtils.get(changedFiles, index);
+			return (RCSFile) CollectionUtils.get(changedFiles, index);
 		} else {
 			return null;
 		}
@@ -190,18 +190,18 @@ public class MappableTransaction extends MappableEntity {
 	 * @return the transaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
-	public Transaction getTransaction() {
-		return this.transaction;
+	public RCSTransaction getTransaction() {
+		return this.rCSTransaction;
 	}
 	
 	/**
 	 * Sets the transaction.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the new transaction
 	 */
-	public void setTransaction(final Transaction transaction) {
-		this.transaction = transaction;
+	public void setTransaction(final RCSTransaction rCSTransaction) {
+		this.rCSTransaction = rCSTransaction;
 	}
 	
 	/*

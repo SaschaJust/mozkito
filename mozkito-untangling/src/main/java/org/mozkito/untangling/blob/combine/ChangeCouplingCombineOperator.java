@@ -36,8 +36,8 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -134,8 +134,8 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 		// PRECONDITIONS
 		
 		try {
-			final Transaction cl1T = cl1.getTransaction();
-			final Transaction cl2T = cl2.getTransaction();
+			final RCSTransaction cl1T = cl1.getTransaction();
+			final RCSTransaction cl2T = cl2.getTransaction();
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Trying to combine %s and %s ...", cl1T.getId(), cl2T.getId());
@@ -181,12 +181,12 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			}
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
 				
-				final Set<File> premise = coupling.getPremise();
+				final Set<RCSFile> premise = coupling.getPremise();
 				final Set<Long> premiseIds = new HashSet<>(premise.size());
-				for (final File p : premise) {
+				for (final RCSFile p : premise) {
 					premiseIds.add(p.getGeneratedId());
 				}
-				final File implication = coupling.getImplication();
+				final RCSFile implication = coupling.getImplication();
 				final Long implicationId = implication.getGeneratedId();
 				
 				if (Logger.logTrace()) {

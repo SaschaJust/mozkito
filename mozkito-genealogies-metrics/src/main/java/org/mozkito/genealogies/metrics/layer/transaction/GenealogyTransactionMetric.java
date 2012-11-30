@@ -20,7 +20,7 @@ import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetric;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -31,7 +31,7 @@ import org.mozkito.versions.model.Transaction;
 public abstract class GenealogyTransactionMetric implements GenealogyMetric<GenealogyTransactionNode> {
 	
 	/** The genealogy. */
-	protected ChangeGenealogy<Transaction> genealogy;
+	protected ChangeGenealogy<RCSTransaction> genealogy;
 	
 	/**
 	 * Instantiates a new genealogy transaction metric.

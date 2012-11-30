@@ -74,7 +74,7 @@ import org.mozkito.untangling.settings.UntanglingOptions;
 import org.mozkito.untangling.voters.FileDistanceVoter;
 import org.mozkito.untangling.voters.LineDistanceVoter;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
 
@@ -282,16 +282,16 @@ public class Untangling {
 	/**
 	 * Generate score visitors.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @return the list
 	 */
-	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final Transaction transaction) {
+	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction rCSTransaction) {
 		
 		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<>();
 		
 		for (final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voterFactory : this.untanglingControl.getConfidenceVoters()) {
-			scoreVisitors.add(voterFactory.createVoter(transaction));
+			scoreVisitors.add(voterFactory.createVoter(rCSTransaction));
 		}
 		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());
@@ -326,16 +326,16 @@ public class Untangling {
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
 		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
-		Criteria<Transaction> transactionCriteria = null;
+		Criteria<RCSTransaction> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(Transaction.class).in("id", atomicTransactionIds);
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
 		} else {
-			transactionCriteria = persistenceUtil.createCriteria(Transaction.class).eq("atomic", true);
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
 		}
 		
-		final List<Transaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		
-		for (final Transaction t : atomicTransactions) {
+		for (final RCSTransaction t : atomicTransactions) {
 			atomicChangeSets.add(new ChangeSet(t, PPAPersistenceUtil.getChangeOperation(persistenceUtil, t)));
 		}
 		
@@ -480,11 +480,11 @@ public class Untangling {
 		// key within the blobWindowsSize
 		final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
 		
-		Criteria<Transaction> transactionCriteria = null;
+		Criteria<RCSTransaction> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(Transaction.class).in("id", atomicTransactionIds);
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
 		} else {
-			transactionCriteria = persistenceUtil.createCriteria(Transaction.class).eq("atomic", true);
+			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
 		}
 		
 		// now load the criteria and ad fill the candidate map
@@ -492,12 +492,12 @@ public class Untangling {
 			Logger.info("Computing transaction combination candidates using blobWindowSize=%s",
 			            String.valueOf(this.untanglingControl.getBlobWindowSize()));
 		}
-		final List<Transaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
 		
 		final Set<ChangeSet> toCompare = new HashSet<>();
 		
-		for (final Transaction t : atomicTransactions) {
+		for (final RCSTransaction t : atomicTransactions) {
 			
 			// this is required due to some unknown problem which
 			// causes NullpointerExceptions because Fetch.LAZY returns null.
@@ -675,7 +675,7 @@ public class Untangling {
 				Logger.info(experimentInfo);
 			}
 			
-			final Set<Transaction> usedTransactions = new HashSet<Transaction>();
+			final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
 			
 			MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
 			switch (this.untanglingControl.getCollapseMode()) {
@@ -804,7 +804,7 @@ public class Untangling {
 				outWriter.append(FileUtils.lineSeparator);
 				
 				outWriter.append("Used transactions:");
-				for (final Transaction t : usedTransactions) {
+				for (final RCSTransaction t : usedTransactions) {
 					outWriter.append(t.getId());
 					outWriter.append(",");
 				}

@@ -30,17 +30,17 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced.
  *
- * {@link Transaction} in the output storage.
+ * {@link RCSTransaction} in the output storage.
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class RepositoryParser extends Transformer<LogEntry, Transaction> {
+public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
 	/**
 	 * Instantiates a new repository parser.
@@ -55,7 +55,7 @@ public class RepositoryParser extends Transformer<LogEntry, Transaction> {
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Set<String> tids = new HashSet<String>();
 		
-		new ProcessHook<LogEntry, Transaction>(this) {
+		new ProcessHook<LogEntry, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
@@ -70,39 +70,39 @@ public class RepositoryParser extends Transformer<LogEntry, Transaction> {
 					        + data.getRevision() + ")");
 				}
 				
-				final Transaction rcsTransaction = new Transaction(data.getRevision(), data.getMessage(),
+				final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
 				                                                         data.getDateTime(), data.getAuthor(),
 				                                                         data.getOriginalId());
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {
-					File file;
+					RCSFile rCSFile;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-						if (file == null) {
+						rCSFile = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+						if (rCSFile == null) {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
 								        + changedPaths.get(fileName));
 							}
-							file = fileManager.getFile(fileName);
+							rCSFile = fileManager.getFile(fileName);
 							
-							if (file == null) {
-								file = fileManager.createFile(fileName, rcsTransaction);
+							if (rCSFile == null) {
+								rCSFile = fileManager.createFile(fileName, rcsTransaction);
 							}
 						} else {
-							file.assignTransaction(rcsTransaction, fileName);
+							rCSFile.assignTransaction(rcsTransaction, fileName);
 						}
 					} else {
-						file = fileManager.getFile(fileName);
+						rCSFile = fileManager.getFile(fileName);
 						
-						if (file == null) {
-							file = fileManager.createFile(fileName, rcsTransaction);
+						if (rCSFile == null) {
+							rCSFile = fileManager.createFile(fileName, rcsTransaction);
 						}
 					}
 					
-					new Revision(rcsTransaction, file, changedPaths.get(fileName));
+					new RCSRevision(rcsTransaction, rCSFile, changedPaths.get(fileName));
 				}
 				
 				provideOutputData(rcsTransaction);

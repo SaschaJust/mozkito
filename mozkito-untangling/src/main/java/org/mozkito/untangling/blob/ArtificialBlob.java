@@ -30,7 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -152,7 +152,7 @@ public class ArtificialBlob {
 	 */
 	public Long getDayWindow() {
 		TreeSet<DateTime> timeStamps = new TreeSet<DateTime>();
-		for (Transaction t : getTransactions()) {
+		for (RCSTransaction t : getTransactions()) {
 			timeStamps.add(t.getTimestamp());
 		}
 		Days daysBetween = Days.daysBetween(timeStamps.first(), timeStamps.last());
@@ -164,7 +164,7 @@ public class ArtificialBlob {
 	 * 
 	 * @return the latest transaction
 	 */
-	public Transaction getLatestTransaction() {
+	public RCSTransaction getLatestTransaction() {
 		return this.blobTransactions.last().getTransaction();
 	}
 	
@@ -173,8 +173,8 @@ public class ArtificialBlob {
 	 * 
 	 * @return the transactions
 	 */
-	public Set<Transaction> getTransactions() {
-		Set<Transaction> result = new HashSet<Transaction>();
+	public Set<RCSTransaction> getTransactions() {
+		Set<RCSTransaction> result = new HashSet<RCSTransaction>();
 		for (ChangeSet t : this.blobTransactions) {
 			result.add(t.getTransaction());
 		}

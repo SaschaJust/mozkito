@@ -30,7 +30,7 @@ import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -98,9 +98,9 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
-		final Transaction transaction = item.getNode();
+		final RCSTransaction rCSTransaction = item.getNode();
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-		                                                                                               transaction);
+		                                                                                               rCSTransaction);
 		final DescriptiveStatistics lastModifiedStats = new DescriptiveStatistics();
 		final DescriptiveStatistics ageStats = new DescriptiveStatistics();
 		final DescriptiveStatistics numChangesStats = new DescriptiveStatistics();
@@ -109,14 +109,14 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
-			final List<Transaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
+			final List<RCSTransaction> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
 			                                                                                                element);
 			
 			if (!pastTransactions.isEmpty()) {
 				numChangesStats.addValue(pastTransactions.size());
 				
-				final Transaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
-				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, transaction));
+				final RCSTransaction lastModified = pastTransactions.get(pastTransactions.size() - 1);
+				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, rCSTransaction));
 			}
 			// final Transaction firstModified =
 			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
@@ -130,7 +130,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				}
 				continue;
 			}
-			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, transaction.getTimestamp()).getDays()));
+			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, rCSTransaction.getTimestamp()).getDays()));
 		}
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();

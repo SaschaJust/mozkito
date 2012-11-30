@@ -25,10 +25,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.tinkerpop.blueprints.pgm.Graph;
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
+
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
@@ -41,14 +50,8 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -182,14 +185,16 @@ public class ChangeGenealogyUtils {
 		// till here we loaded the database dump and extracted the repository.
 		
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
-		final Map<Integer, Transaction> environmentTransactions = new HashMap<Integer, Transaction>();
-		final Map<Transaction, Set<JavaChangeOperation>> transactionMap = new HashMap<Transaction, Set<JavaChangeOperation>>();
+		final Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
+		final Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
 		
 		// read all transactions and JavaChangeOperations
-		final Criteria<Transaction> transactionCriteria = branchFactory.getPersistenceUtil()
-		                                                                  .createCriteria(Transaction.class);
-		final List<Transaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
-		for (final Transaction transaction : transactionList) {
+		final Criteria<RCSTransaction> transactionCriteria = branchFactory.getPersistenceUtil()
+		                                                                  .createCriteria(RCSTransaction.class);
+		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
+		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
+		System.err.println(JavaUtils.collectionToString(transactionList));
+		for (final RCSTransaction transaction : transactionList) {
 			if (transaction.getId().equals("a64df287a21f8a7b0690d13c1561171cbf48a0e1")) {
 				environmentTransactions.put(1, transaction);
 			} else if (transaction.getId().equals("a10344533c2b442235aa3bf3dc87dd0ac37cb0af")) {
@@ -215,11 +220,14 @@ public class ChangeGenealogyUtils {
 			}
 			
 			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
-			for (final Revision revision : transaction.getRevisions()) {
+			
+			for (final RCSRevision revision : transaction.getRevisions()) {
 				final Criteria<JavaChangeOperation> operationCriteria = branchFactory.getPersistenceUtil()
 				                                                                     .createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
 				final List<JavaChangeOperation> changeOps = branchFactory.getPersistenceUtil().load(operationCriteria);
+				CollectionCondition.size(changeOps, 17, "Manually validated.");
+				System.err.println(JavaUtils.collectionToString(changeOps));
 				operations.addAll(changeOps);
 				for (final JavaChangeOperation op : changeOps) {
 					switch ((int) op.getId()) {
@@ -296,7 +304,7 @@ public class ChangeGenealogyUtils {
 			                             "Could not generate test change genealogy environment. Reading the CoreChangeGenealogy failed!");
 		}
 		
-		for (final Entry<Transaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
+		for (final Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
 			for (final JavaChangeOperation operation : transactionEntry.getValue()) {
 				changeGenealogy.addVertex(operation);
 			}

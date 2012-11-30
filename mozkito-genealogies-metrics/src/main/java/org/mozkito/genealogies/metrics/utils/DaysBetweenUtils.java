@@ -16,7 +16,7 @@ package org.mozkito.genealogies.metrics.utils;
 import org.joda.time.Days;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -57,8 +57,8 @@ public class DaysBetweenUtils {
 	 *            the t2
 	 * @return the days between
 	 */
-	public static int getDaysBetween(final Transaction t1,
-	                                 final Transaction t2) {
+	public static int getDaysBetween(final RCSTransaction t1,
+	                                 final RCSTransaction t2) {
 		return Math.abs(Days.daysBetween(t1.getTimestamp(), t2.getTimestamp()).getDays());
 	}
 	

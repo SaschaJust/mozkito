@@ -16,20 +16,27 @@
 
 package org.mozkito.versions.model;
 
-import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
+import org.mozkito.versions.elements.ChangeType;
+
 /**
- * The Class File_.
+ * The Class Revision_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.File.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSRevision.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Mar 01 23:42:05 CET 2012")
-public class File_ {
+public class RCSRevision_ {
 	
-	/** The changed names. */
-	public static volatile MapAttribute<File, String, String> changedNames;
+	/** The change type. */
+	public static volatile SingularAttribute<RCSRevision, ChangeType>     changeType;
 	
-	/** The generated id. */
-	public static volatile SingularAttribute<File, Long>      generatedId;
+	/** The changed file. */
+	public static volatile SingularAttribute<RCSRevision, RCSFile>        changedFile;
+	
+	/** The revision id. */
+	public static volatile SingularAttribute<RCSRevision, Long>           revisionId;
+	
+	/** The transaction. */
+	public static volatile SingularAttribute<RCSRevision, RCSTransaction> transaction;
 }

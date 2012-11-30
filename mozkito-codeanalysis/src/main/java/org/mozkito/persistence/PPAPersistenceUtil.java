@@ -38,8 +38,8 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -57,21 +57,21 @@ public class PPAPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @return the change operation
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                 @NotNull final Transaction transaction) {
+	                                                                 @NotNull final RCSTransaction rCSTransaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Loading change operations for transaction " + transaction.getId() + " from database.");
+			Logger.debug("Loading change operations for transaction " + rCSTransaction.getId() + " from database.");
 		}
 		
-		for (final Revision revision : transaction.getRevisions()) {
+		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
 			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			criteria.eq("revision", revision);
+			criteria.eq("revision", rCSRevision);
 			result.addAll(persistenceUtil.load(criteria));
 		}
 		return result;
@@ -90,9 +90,9 @@ public class PPAPersistenceUtil {
 	                                                                 @NotNull final String transactionId) {
 		final List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
-		final Transaction transaction = persistenceUtil.loadById(transactionId, Transaction.class);
-		if (transaction != null) {
-			return getChangeOperation(persistenceUtil, transaction);
+		final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		if (rCSTransaction != null) {
+			return getChangeOperation(persistenceUtil, rCSTransaction);
 		}
 		
 		return result;
@@ -104,26 +104,26 @@ public class PPAPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction
 	 * @return the change operation no test
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperationNoTest(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                       @NotNull final Transaction transaction) {
+	                                                                       @NotNull final RCSTransaction rCSTransaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Loading change operations (without tests) for transaction " + transaction.getId()
+			Logger.debug("Loading change operations (without tests) for transaction " + rCSTransaction.getId()
 			        + " from database.");
 		}
 		
-		for (final Revision revision : transaction.getRevisions()) {
-			final String changedPath = revision.getChangedFile().getPath(transaction);
+		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
+			final String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
 			if (changedPath.toLowerCase().contains("test")) {
 				continue;
 			}
 			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			criteria.eq("revision", revision);
+			criteria.eq("revision", rCSRevision);
 			result.addAll(persistenceUtil.load(criteria));
 		}
 		return result;
@@ -163,16 +163,16 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static Transaction getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static RCSTransaction getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                 @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from firstElementChange(");
 		query.append(element.getGeneratedId());
 		query.append(");");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), Transaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
 		if (nativeQuery != null) {
-			final List<Transaction> resultList = nativeQuery.getResultList();
+			final List<RCSTransaction> resultList = nativeQuery.getResultList();
 			if (!resultList.isEmpty()) {
 				return resultList.get(0);
 			}
@@ -227,15 +227,15 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<Transaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                  @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
-		final List<Transaction> result = new LinkedList<Transaction>();
+		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from elementChanges(");
 		query.append(element.getGeneratedId());
 		query.append(");");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), Transaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
 		if (nativeQuery != null) {
 			result.addAll(nativeQuery.getResultList());
 		} else {
@@ -261,12 +261,12 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<Transaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                  @NotNull final JavaElement element,
 	                                                                  @NotNull final DateTime before,
 	                                                                  @NotNull final DateTime after) {
 		updateProcedures(persistenceUtil);
-		final List<Transaction> result = new LinkedList<Transaction>();
+		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 		
 		final StringBuilder query = new StringBuilder();
@@ -277,7 +277,7 @@ public class PPAPersistenceUtil {
 		query.append("','");
 		query.append(formatter.print(after));
 		query.append("');");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), Transaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
 		if (nativeQuery != null) {
 			result.addAll(nativeQuery.getResultList());
 		} else {

@@ -19,7 +19,7 @@ import java.util.LinkedList;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -33,7 +33,7 @@ import net.ownhero.dev.kisa.Logger;
  *
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class GraphReader extends Source<Transaction> {
+public class GraphReader extends Source<RCSTransaction> {
 	
 	/**
 	 * Instantiates a new graph reader.
@@ -44,28 +44,28 @@ public class GraphReader extends Source<Transaction> {
 	 */
 	public GraphReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		final LinkedList<Transaction> list = new LinkedList<Transaction>();
+		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
 		
-		new PreExecutionHook<Transaction, Transaction>(this) {
+		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<Transaction> criteria = persistenceUtil.createCriteria(Transaction.class);
+				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
 				list.addAll(persistenceUtil.load(criteria));
 			}
 		};
 		
-		new ProcessHook<Transaction, Transaction>(this) {
+		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
-				final Transaction transaction = list.poll();
+				final RCSTransaction rCSTransaction = list.poll();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Providing " + transaction + ".");
+					Logger.debug("Providing " + rCSTransaction + ".");
 				}
-				if (transaction != null) {
-					providePartialOutputData(transaction);
+				if (rCSTransaction != null) {
+					providePartialOutputData(rCSTransaction);
 				} else {
 					provideOutputData(null, true);
 					setCompleted();

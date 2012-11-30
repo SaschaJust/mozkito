@@ -56,7 +56,7 @@ import org.mozkito.untangling.voters.ChangeCouplingVoter;
 import org.mozkito.untangling.voters.DataDependencyVoter;
 import org.mozkito.untangling.voters.TestImpactVoter;
 import org.mozkito.untangling.voters.TestImpactVoter.Factory;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class UntanglingOptions.
@@ -242,8 +242,8 @@ public class UntanglingOptions extends
 								            line);
 							}
 						}
-						final Transaction transaction = persistenceUtil.loadById(lineParts[0], Transaction.class);
-						if (transaction == null) {
+						final RCSTransaction rCSTransaction = persistenceUtil.loadById(lineParts[0], RCSTransaction.class);
+						if (rCSTransaction == null) {
 							if (Logger.logWarn()) {
 								Logger.warn("Could not find change set with ID %s. Ignoring corresponding line in change set file.",
 								            lineParts[0]);
@@ -252,9 +252,9 @@ public class UntanglingOptions extends
 						}
 						instructions.add(new UntangleInstruction(
 						                                         new ChangeSet(
-						                                                       transaction,
+						                                                       rCSTransaction,
 						                                                       PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-						                                                                                             transaction)),
+						                                                                                             rCSTransaction)),
 						                                         Double.valueOf(lineParts[1])));
 					}
 				} catch (NumberFormatException | IOException e) {

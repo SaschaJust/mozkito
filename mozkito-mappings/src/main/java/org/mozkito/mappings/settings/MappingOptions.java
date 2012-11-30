@@ -39,7 +39,7 @@ import org.mozkito.mappings.selectors.Selector;
 import org.mozkito.mappings.splitters.Splitter;
 import org.mozkito.mappings.strategies.Strategy;
 import org.mozkito.mappings.training.Trainer;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class MappingArguments.
@@ -219,7 +219,7 @@ public class MappingOptions extends ArgumentSetOptions<Finder, ArgumentSet<Finde
 			                                               "sourceTypes", //$NON-NLS-1$
 			                                               Messages.getString("optionSourceTypes"), //$NON-NLS-1$
 			                                               new Tuple<String, String>(
-			                                                                         Transaction.class.getSimpleName(),
+			                                                                         RCSTransaction.class.getSimpleName(),
 			                                                                         Report.class.getSimpleName()),
 			                                               Requirement.required);
 			map.put(this.sourceOptions.getName(), this.sourceOptions);

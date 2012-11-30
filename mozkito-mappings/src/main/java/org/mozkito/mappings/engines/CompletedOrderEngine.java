@@ -36,7 +36,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class CompletedOrderEngine.
@@ -185,20 +185,20 @@ public class CompletedOrderEngine extends Engine {
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
 	                        final Relation score) {
-		final Transaction transaction = ((MappableTransaction) from).getTransaction();
+		final RCSTransaction rCSTransaction = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
-		        && transaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
+		        && rCSTransaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
 			if (Logger.logDebug()) {
 				Logger.debug("Transaction was committed before report got marked as resolved."); //$NON-NLS-1$
 			}
 			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), transaction.getTimestamp(),
-		           transaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
+		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), rCSTransaction.getTimestamp(),
+		           rCSTransaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
 		           report.getResolutionTimestamp());
 		
 	}
@@ -209,7 +209,7 @@ public class CompletedOrderEngine extends Engine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new And(new Atom(Index.TO, Report.class), new Atom(Index.FROM, Transaction.class));
+		return new And(new Atom(Index.TO, Report.class), new Atom(Index.FROM, RCSTransaction.class));
 	}
 	
 }

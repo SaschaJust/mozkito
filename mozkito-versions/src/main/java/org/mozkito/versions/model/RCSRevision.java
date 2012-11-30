@@ -43,7 +43,7 @@ import org.mozkito.versions.elements.ChangeType;
 @Entity
 @Table (name = "rcsrevision",
         uniqueConstraints = @UniqueConstraint (columnNames = { "TRANSACTION_ID", "CHANGEDFILE_ID" }))
-public class Revision implements Annotated {
+public class RCSRevision implements Annotated {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 2149118675856446526L;
@@ -52,18 +52,18 @@ public class Revision implements Annotated {
 	private ChangeType        changeType;
 	
 	/** The transaction. */
-	private Transaction       transaction;
+	private RCSTransaction       transaction;
 	
 	/** The changed file. */
-	private File              changedFile;
+	private RCSFile              changedFile;
 	
 	/** The revision id. */
 	private long              revisionId;
 	
 	/**
-	 * used by PersistenceUtil to instantiate a {@link Revision} object.
+	 * used by PersistenceUtil to instantiate a {@link RCSRevision} object.
 	 */
-	protected Revision() {
+	protected RCSRevision() {
 		
 	}
 	
@@ -78,7 +78,7 @@ public class Revision implements Annotated {
 	 *            the change type
 	 */
 	@NoneNull
-	public Revision(final Transaction rcsTransaction, final File rcsFile, final ChangeType changeType) {
+	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
 		setTransaction(rcsTransaction);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
@@ -106,10 +106,10 @@ public class Revision implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Revision)) {
+		if (!(obj instanceof RCSRevision)) {
 			return false;
 		}
-		final Revision other = (Revision) obj;
+		final RCSRevision other = (RCSRevision) obj;
 		if (getChangeType() != other.getChangeType()) {
 			return false;
 		}
@@ -139,7 +139,7 @@ public class Revision implements Annotated {
 	// @MapsId ("changedFile")
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
-	public File getChangedFile() {
+	public RCSFile getChangedFile() {
 		return this.changedFile;
 	}
 	
@@ -158,7 +158,7 @@ public class Revision implements Annotated {
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	public final String getHandle() {
-		return JavaUtils.getHandle(Revision.class);
+		return JavaUtils.getHandle(RCSRevision.class);
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class Revision implements Annotated {
 	// @MapsId ("transaction")
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
-	public Transaction getTransaction() {
+	public RCSTransaction getTransaction() {
 		return this.transaction;
 	}
 	
@@ -213,7 +213,7 @@ public class Revision implements Annotated {
 	 * @param changedFile
 	 *            the changedFile to set
 	 */
-	public void setChangedFile(final File changedFile) {
+	public void setChangedFile(final RCSFile changedFile) {
 		this.changedFile = changedFile;
 	}
 	
@@ -240,11 +240,11 @@ public class Revision implements Annotated {
 	/**
 	 * Sets the transaction.
 	 * 
-	 * @param transaction
+	 * @param rCSTransaction
 	 *            the transaction to set
 	 */
-	public void setTransaction(final Transaction transaction) {
-		this.transaction = transaction;
+	public void setTransaction(final RCSTransaction rCSTransaction) {
+		this.transaction = rCSTransaction;
 	}
 	
 	/*

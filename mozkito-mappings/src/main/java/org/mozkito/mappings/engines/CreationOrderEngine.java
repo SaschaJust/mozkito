@@ -35,7 +35,7 @@ import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class CreationOrderEngine.
@@ -203,7 +203,7 @@ public class CreationOrderEngine extends Engine {
 	 */
 	@Override
 	public Expression supported() {
-		return new And(new Atom(Index.FROM, Report.class), new Atom(Index.TO, Transaction.class));
+		return new And(new Atom(Index.FROM, Report.class), new Atom(Index.TO, RCSTransaction.class));
 	}
 	
 }

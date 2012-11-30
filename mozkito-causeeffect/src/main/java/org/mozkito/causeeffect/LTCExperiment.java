@@ -33,9 +33,9 @@ import org.mozkito.causeeffect.kripke.LabelGenerator;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.File;
-import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
@@ -44,18 +44,18 @@ import org.mozkito.versions.model.Transaction;
  */
 public class LTCExperiment {
 	
-	public static boolean isBigChange(final Transaction t) {
+	public static boolean isBigChange(final RCSTransaction t) {
 		if (t.getChangedFiles().size() > 19) {
 			return true;
 		}
 		return false;
 	}
 	
-	public static boolean isBugFix(final Transaction t) {
+	public static boolean isBugFix(final RCSTransaction t) {
 		return false;
 	}
 	
-	private final ChangeGenealogy<Transaction> genealogy;
+	private final ChangeGenealogy<RCSTransaction> genealogy;
 	
 	private final LTCFormulaFactory               formulaFactory;
 	private int                                   truePositives            = 0;
@@ -72,7 +72,7 @@ public class LTCExperiment {
 	private final int                             numRecommendations;
 	
 	@NoneNull
-	public LTCExperiment(final ChangeGenealogy<Transaction> genealogy, final LTCFormulaFactory formulaFactory,
+	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
 	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow,
 	        final int numRecommendations) {
 		this.genealogy = genealogy;
@@ -97,21 +97,21 @@ public class LTCExperiment {
 	}
 	
 	@NoneNull
-	public void run(final List<Transaction> trainingSet,
-	                final List<Transaction> testingSet,
+	public void run(final List<RCSTransaction> trainingSet,
+	                final List<RCSTransaction> testingSet,
 	                final boolean includeInnerRules) {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Training phase.");
 		}
 		
-		for (final Transaction trainingInstance : trainingSet) {
+		for (final RCSTransaction trainingInstance : trainingSet) {
 			train(trainingInstance, includeInnerRules);
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Testing phase.");
 		}
-		for (final Transaction testInstance : testingSet) {
+		for (final RCSTransaction testInstance : testingSet) {
 			test(testInstance);
 			train(testInstance, includeInnerRules);
 		}
@@ -131,7 +131,7 @@ public class LTCExperiment {
 	}
 	
 	@NoneNull
-	public void test(final Transaction t) {
+	public void test(final RCSTransaction t) {
 		
 		if ((t.getRevisions().size() > 10) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
 			if (Logger.logInfo()) {
@@ -150,26 +150,26 @@ public class LTCExperiment {
 			                                               t.toString()));
 		}
 		
-		final LabelGenerator<Transaction> labelGenerator = new LabelGenerator<Transaction>() {
+		final LabelGenerator<RCSTransaction> labelGenerator = new LabelGenerator<RCSTransaction>() {
 			
 			@Override
-			public Collection<Label> getLabels(final Transaction t) {
+			public Collection<Label> getLabels(final RCSTransaction t) {
 				final Collection<Label> labels = new HashSet<Label>();
-				for (final File file : t.getChangedFiles()) {
-					labels.add(Label.getLabel(file));
+				for (final RCSFile rCSFile : t.getChangedFiles()) {
+					labels.add(Label.getLabel(rCSFile));
 				}
 				return labels;
 			}
 		};
 		
 		// generate Kripke Structure
-		final KripkeStructure<Transaction> kripkeStructure = KripkeStructure.createFrom(this.genealogy,
+		final KripkeStructure<RCSTransaction> kripkeStructure = KripkeStructure.createFrom(this.genealogy,
 		                                                                                   t,
 		                                                                                   labelGenerator,
-		                                                                                   new VertexSelector<Transaction>() {
+		                                                                                   new VertexSelector<RCSTransaction>() {
 			                                                                                   
 			                                                                                   @Override
-			                                                                                   public boolean selectVertex(final Transaction vertex) {
+			                                                                                   public boolean selectVertex(final RCSTransaction vertex) {
 				                                                                                   if (Math.abs(Days.daysBetween(t.getTimestamp(),
 				                                                                                                                 vertex.getTimestamp())
 				                                                                                                    .getDays()) < LTCExperiment.this.timeWindow) {
@@ -190,11 +190,11 @@ public class LTCExperiment {
 		final SortedSet<LTCRecommendation> recommendations = new TreeSet<>(
 		                                                                   new LTCRecommendationComparator(
 		                                                                                                   changeProperty));
-		for (final Revision revision : t.getRevisions()) {
-			if (revision.getChangeType().equals(ChangeType.Deleted)) {
+		for (final RCSRevision rCSRevision : t.getRevisions()) {
+			if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 				continue;
 			}
-			final File changedFile = revision.getChangedFile();
+			final RCSFile changedFile = rCSRevision.getChangedFile();
 			final SortedSet<LTCRecommendation> fileRecommends = LTCRecommendation.getRecommendations(changedFile,
 			                                                                                         changeProperty);
 			final Iterator<LTCRecommendation> fileRecommendIterator = fileRecommends.iterator();
@@ -238,7 +238,7 @@ public class LTCExperiment {
 	}
 	
 	@NoneNull
-	public void train(final Transaction t,
+	public void train(final RCSTransaction t,
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
 		
@@ -258,10 +258,10 @@ public class LTCExperiment {
 		
 		final Collection<CTLFormula> templateFormulas = this.formulaFactory.generateFormulas(this.genealogy,
 		                                                                                     t,
-		                                                                                     new VertexSelector<Transaction>() {
+		                                                                                     new VertexSelector<RCSTransaction>() {
 			                                                                                     
 			                                                                                     @Override
-			                                                                                     public boolean selectVertex(final Transaction vertex) {
+			                                                                                     public boolean selectVertex(final RCSTransaction vertex) {
 				                                                                                     if (Math.abs(Days.daysBetween(t.getTimestamp(),
 				                                                                                                                   vertex.getTimestamp())
 				                                                                                                      .getDays()) < LTCExperiment.this.keepFormulaMaxDays) {
@@ -279,11 +279,11 @@ public class LTCExperiment {
 		
 		// add support for these formulas
 		for (final CTLFormula f : templateFormulas) {
-			for (final Revision revision : t.getRevisions()) {
-				if (revision.getChangeType().equals(ChangeType.Deleted)) {
+			for (final RCSRevision rCSRevision : t.getRevisions()) {
+				if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 					continue;
 				}
-				final File changedFile = revision.getChangedFile();
+				final RCSFile changedFile = rCSRevision.getChangedFile();
 				LTCRecommendation.getRecommendation(changedFile, f).addSupport(t,
 				                                                               changeProperty,
 				                                                               t.getTimestamp()
@@ -297,7 +297,7 @@ public class LTCExperiment {
 			// add support for these formulas
 			for (final CTLFormula f : innerFormulas) {
 				if (!templateFormulas.contains(f)) {
-					for (final File changedFile : t.getChangedFiles()) {
+					for (final RCSFile changedFile : t.getChangedFiles()) {
 						LTCRecommendation.getRecommendation(changedFile, f)
 						                 .addSupport(t, changeProperty,
 						                             t.getTimestamp().minusDays(this.keepFormulaMaxDays));
@@ -307,7 +307,7 @@ public class LTCExperiment {
 		}
 		
 		// mark file as changed in recommendations
-		for (final File changedFile : t.getChangedFiles()) {
+		for (final RCSFile changedFile : t.getChangedFiles()) {
 			LTCRecommendation.addChange(changedFile, t);
 		}
 	}

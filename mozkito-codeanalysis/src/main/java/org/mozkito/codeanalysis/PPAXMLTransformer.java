@@ -44,7 +44,7 @@ import org.jdom2.output.XMLOutputter;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.persistence.ModelStorage;
-import org.mozkito.versions.model.Transaction;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class PPAXMLSink stores computed JavaChanegOperations into an XML file (or prints the XML to stdout).
@@ -56,7 +56,7 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
 	public static List<JavaChangeOperation> readOperations(final Element element,
-	                                                       final ModelStorage<String, Transaction> transactionStorage) {
+	                                                       final ModelStorage<String, RCSTransaction> transactionStorage) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
 			if (Logger.logError()) {
@@ -81,7 +81,7 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	}
 	
 	public static List<JavaChangeOperation> readOperations(final File file,
-	                                                       final ModelStorage<String, Transaction> transactionStorage) {
+	                                                       final ModelStorage<String, RCSTransaction> transactionStorage) {
 		try {
 			final BufferedReader reader = new BufferedReader(new FileReader(file));
 			final SAXBuilder saxBuilder = new SAXBuilder(

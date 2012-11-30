@@ -20,29 +20,29 @@ import org.mozkito.causeeffect.ctl.CTLAtomicFormula;
 import org.mozkito.causeeffect.ctl.CTLEF;
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.causeeffect.ctl.CTLImplication;
-import org.mozkito.versions.model.File;
+import org.mozkito.versions.model.RCSFile;
 
 
 /**
  * @author Kim Herzig <herzig@mozkito.org>
  * 
  */
-public class AG_EF_FormulaGenearator extends CTLFormulaGenerator<File> {
+public class AG_EF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.CTLFormulaGenerator#generate(java.util.Collection, java.util.Collection)
 	 */
 	@Override
-	public Collection<CTLFormula> generate(final Collection<File> premises,
-	                                       final Collection<File> implications) {
+	public Collection<CTLFormula> generate(final Collection<RCSFile> premises,
+	                                       final Collection<RCSFile> implications) {
 		// PRECONDITIONS
 		
 		try {
 			final Collection<CTLFormula> formulas = new HashSet<CTLFormula>();
 			
-			for (final File implication1 : implications) {
-				for (final File implication2 : implications) {
+			for (final RCSFile implication1 : implications) {
+				for (final RCSFile implication2 : implications) {
 					if (implication1.equals(implication2)) {
 						continue;
 					}

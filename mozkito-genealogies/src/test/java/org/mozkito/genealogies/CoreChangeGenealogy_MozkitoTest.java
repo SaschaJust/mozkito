@@ -40,11 +40,22 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 
+/**
+ * The Class CoreChangeGenealogy_MozkitoTest.
+ */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
-                   options = ConnectOptions.CREATE)
+                   options = ConnectOptions.CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver")
 public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test change genealogy.
+	 */
 	@Test
 	public void testChangeGenealogy() {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
