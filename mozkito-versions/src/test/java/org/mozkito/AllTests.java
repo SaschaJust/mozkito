@@ -17,6 +17,9 @@ import org.mozkito.versions.model.RCSFileTest;
 import org.mozkito.versions.model.RCSTransactionTest;
 import org.mozkito.versions.subversion.SubversionRepositoryTest;
 
+/**
+ * The Class AllTests.
+ */
 @RunWith (Suite.class)
 @SuiteClasses ({ RepositoryFactoryTest.class, TransactionSetTest.class, GitLogParserTest.class,
         GitRepositoryTest.class, GitRevDependencyGraphTest.class, GitTransactionIteratorTest.class, RCSFileTest.class,

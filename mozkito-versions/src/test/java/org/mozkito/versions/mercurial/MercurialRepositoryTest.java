@@ -28,31 +28,68 @@ import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MercurialRepositoryTest.
+ */
 public class MercurialRepositoryTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
+	/** The Constant _67635fe9efeb2fd3751df9ea67650c71e59e3df1. */
 	private static final String _67635fe9efeb2fd3751df9ea67650c71e59e3df1 = "2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9";
+	
+	/** The Constant _E52DEF97EBC1F78C9286B1E7C36783AA67604439. */
 	private static final String _E52DEF97EBC1F78C9286B1E7C36783AA67604439 = "caac84e3edc88a6f3ec2b71bbcd6ad78445ef985";
+	
+	/** The Constant USER_NAME. */
 	private static final String USER_NAME                                 = "kim";
+	
+	/** The Constant _96A9F105774B50F1FA3361212C4D12AE057A4285. */
 	private static final String _96A9F105774B50F1FA3361212C4D12AE057A4285 = "b01759380f692e073bdb63d79f5238f1982d0bbd";
+	
+	/** The Constant _41A40FB23B54A49E91EB4CEE510533EEF810EC68. */
 	private static final String _41A40FB23B54A49E91EB4CEE510533EEF810EC68 = "bc67c4d57423730912fda92ff8849d0e78d44c6f";
+	
+	/** The Constant _CBCC33D919A27B9450D117F211A5F4F45615CAB9. */
 	private static final String _CBCC33D919A27B9450D117F211A5F4F45615CAB9 = "2398c6b6da51e317c951dba74e9d205db17fce02";
+	
+	/** The Constant _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB. */
 	private static final String _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB = "c6b358dfd0e99376c15038d4f90d8fe2c1a766af";
+	
+	/** The Constant _D9A5542FE1B5A755502320BA38FDF180011B40DF. */
 	private static final String _D9A5542FE1B5A755502320BA38FDF180011B40DF = "d9a5542fe1b5a755502320ba38fdf180011b40df";
+	
+	/** The Constant _9BE561B3657E2B1DA2B09D675DDDD5F45C47F57C. */
 	private static final String _9BE561B3657E2B1DA2B09D675DDDD5F45C47F57C = "e17ec8036b3bf49667ec1bb7fe474e65451a98b0";
+	
+	/** The Constant _376ADC0F9371129A76766F8030F2E576165358C1. */
 	private static final String _376ADC0F9371129A76766F8030F2E576165358C1 = "ffaaa326e3b8cd68c2396b21eb49b26a1cb3835c";
+	
+	/** The Constant _98D5C40EF3C14503A472BA4133AE3529C7578E30. */
 	private static final String _98D5C40EF3C14503A472BA4133AE3529C7578E30 = "8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da";
+	
+	/** The Constant _AE94D7FA81437CBBD723049E3951F9DAAA62A7C0. */
 	private static final String _AE94D7FA81437CBBD723049E3951F9DAAA62A7C0 = "c601aab93720e3062c7335f970ccfafcae9d1822";
+	
+	/** The Constant _8273C1E51992A4D7A1DA012DBB416864C2749A7F. */
 	private static final String _8273C1E51992A4D7A1DA012DBB416864C2749A7F = "2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a";
+	
+	/** The Constant _927478915F2D8FB9135EB33D21CB8491C0E655BE. */
 	private static final String _927478915F2D8FB9135EB33D21CB8491C0E655BE = "df6bde3bc282ec4815e98877e150a6881efc059e";
+	
+	/** The Constant _1AC6AAA05EB6D55939B20E70EC818BB413417757. */
 	private static final String _1AC6AAA05EB6D55939B20E70EC818BB413417757 = "ef28e5ceba3b2d8d30999c4fea4301771802d550";
 	// private static final String _D98B5A8740DBBE912B711E3A29DCC4FA3D3890E9 =
 	// "5be9fd4d8b5653706de0f21bf0c481515890c329";
+	/** The repo. */
 	private MercurialRepository repo;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		final URL zipURL = MercurialRepositoryTest.class.getResource(FileUtils.fileSeparator + "testHg.zip");
@@ -72,6 +109,9 @@ public class MercurialRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test annotate.
+	 */
 	@Test
 	public void testAnnotate() {
 		List<AnnotationEntry> annotate = this.repo.annotate("3.txt", _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB);
@@ -121,11 +161,17 @@ public class MercurialRepositoryTest {
 		assertEquals("2.txt", line0.getAlternativeFilePath());
 	}
 	
+	/**
+	 * Test checkout path fail.
+	 */
 	@Test
 	public void testCheckoutPathFail() {
 		assertTrue(this.repo.checkoutPath("3.txt", _96A9F105774B50F1FA3361212C4D12AE057A4285) == null);
 	}
 	
+	/**
+	 * Test checkout path success.
+	 */
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("3.txt", _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB);
@@ -133,6 +179,9 @@ public class MercurialRepositoryTest {
 		assertTrue(file.exists());
 	}
 	
+	/**
+	 * Test diff.
+	 */
 	@Test
 	public void testDiff() {
 		final Collection<Delta> diff = this.repo.diff("3.txt", _637ACF68104E7BDFF8235FB2E1A254300FFEA3CB,
@@ -146,6 +195,9 @@ public class MercurialRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test get changes paths.
+	 */
 	@Test
 	public void testGetChangesPaths() {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths(_376ADC0F9371129A76766F8030F2E576165358C1);
@@ -168,6 +220,9 @@ public class MercurialRepositoryTest {
 		assertEquals(ChangeType.Added, changedPaths.get("/2_renamed.txt"));
 	}
 	
+	/**
+	 * Test get former path name.
+	 */
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName(_96A9F105774B50F1FA3361212C4D12AE057A4285, "3_renamed.txt");
@@ -178,6 +233,9 @@ public class MercurialRepositoryTest {
 		assertEquals("2.txt", formerPathName);
 	}
 	
+	/**
+	 * Test get log.
+	 */
 	@Test
 	public void testGetLog() {
 		final List<LogEntry> log = this.repo.log(_98D5C40EF3C14503A472BA4133AE3529C7578E30,
@@ -220,11 +278,17 @@ public class MercurialRepositoryTest {
 		assertTrue(logEntry.getOriginalId().isEmpty());
 	}
 	
+	/**
+	 * Test get transaction count.
+	 */
 	@Test
 	public void testGetTransactionCount() {
 		assertEquals(22, this.repo.getTransactionCount());
 	}
 	
+	/**
+	 * Test get transaction id.
+	 */
 	@Test
 	public void testGetTransactionId() {
 		assertEquals(_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getTransactionId(0));
@@ -233,6 +297,9 @@ public class MercurialRepositoryTest {
 		assertEquals(_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getTransactionId(19));
 	}
 	
+	/**
+	 * Test get transaction index.
+	 */
 	@Test
 	public void testGetTransactionIndex() {
 		assertEquals(21, this.repo.getTransactionIndex("HEAD"));

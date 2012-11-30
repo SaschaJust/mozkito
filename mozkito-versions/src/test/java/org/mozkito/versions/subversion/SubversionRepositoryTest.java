@@ -29,14 +29,22 @@ import org.mozkito.versions.git.GitRepositoryTest;
 
 import difflib.Delta;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SubversionRepositoryTest.
+ */
 public class SubversionRepositoryTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
+	/** The repo. */
 	private SubversionRepository repo;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testSvn.zip");
@@ -56,6 +64,9 @@ public class SubversionRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test annotate.
+	 */
 	@Test
 	public void testAnnotate() {
 		final List<AnnotationEntry> annotate = this.repo.annotate("file_1", "9");
@@ -99,11 +110,17 @@ public class SubversionRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test checkout path fail.
+	 */
 	@Test
 	public void testCheckoutPathFail() {
 		assertTrue(this.repo.checkoutPath("file_8989", "17") == null);
 	}
 	
+	/**
+	 * Test checkout path success.
+	 */
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("dir_a/file_3_dir_a", "16");
@@ -111,6 +128,9 @@ public class SubversionRepositoryTest {
 		assertTrue(file.exists());
 	}
 	
+	/**
+	 * Test diff.
+	 */
 	@Test
 	public void testDiff() {
 		final Collection<Delta> diff = this.repo.diff("file_1", "9", "11");
@@ -124,6 +144,9 @@ public class SubversionRepositoryTest {
 		assertEquals("Adding test change 5 to file_1", lines.get(1));
 	}
 	
+	/**
+	 * Test get changes paths.
+	 */
 	@Test
 	public void testGetChangesPaths() {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths("2");
@@ -153,16 +176,25 @@ public class SubversionRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test get end revision id.
+	 */
 	@Test
 	public void testGetEndRevisionId() {
 		assertEquals("18", this.repo.getEndRevision());
 	}
 	
+	/**
+	 * Test get first revision id.
+	 */
 	@Test
 	public void testGetFirstRevisionId() {
 		assertEquals("1", this.repo.getFirstRevisionId());
 	}
 	
+	/**
+	 * Test get former path name.
+	 */
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName("3", "/dir_a/file_2_dir_a");
@@ -177,6 +209,9 @@ public class SubversionRepositoryTest {
 		assertEquals("/file_1", formerPathName);
 	}
 	
+	/**
+	 * Test get log.
+	 */
 	@Test
 	public void testGetLog() {
 		final List<LogEntry> log = this.repo.log("6", "11");
@@ -232,11 +267,17 @@ public class SubversionRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test get transaction count.
+	 */
 	@Test
 	public void testGetTransactionCount() {
 		assertEquals(18, this.repo.getTransactionCount());
 	}
 	
+	/**
+	 * Test get transaction id.
+	 */
 	@Test
 	public void testGetTransactionId() {
 		assertEquals("1", this.repo.getTransactionId(0));
@@ -246,6 +287,9 @@ public class SubversionRepositoryTest {
 		assertTrue(this.repo.getTransactionId(18) == null);
 	}
 	
+	/**
+	 * Test get transaction index.
+	 */
 	@Test
 	public void testGetTransactionIndex() {
 		assertEquals(17, this.repo.getTransactionIndex("HEAD"));

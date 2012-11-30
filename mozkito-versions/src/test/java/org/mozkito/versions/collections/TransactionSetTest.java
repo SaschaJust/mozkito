@@ -19,15 +19,33 @@ import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TransactionSetTest.
+ */
 public class TransactionSetTest {
 	
+	/** The t list. */
 	private List<RCSTransaction> tList;
-	private RCSTransaction       otherT;
-	private RCSBranch            otherBranch;
-	private Person               person;
-	private long                 index;
-	private RCSBranch            rCSBranch;
 	
+	/** The other t. */
+	private RCSTransaction       otherT;
+	
+	/** The other branch. */
+	private RCSBranch            otherBranch;
+	
+	/** The person. */
+	private Person               person;
+	
+	/** The index. */
+	private long                 index;
+	
+	/** The branch. */
+	private RCSBranch            branch;
+	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		/*
@@ -125,6 +143,9 @@ public class TransactionSetTest {
 		this.tList.add(t_d52295);
 	}
 	
+	/**
+	 * Test add fail.
+	 */
 	@Test
 	public void testAddFail() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -137,6 +158,9 @@ public class TransactionSetTest {
 		}
 	}
 	
+	/**
+	 * Test asc.
+	 */
 	@Test
 	public void testAsc() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.ASC);
@@ -171,6 +195,9 @@ public class TransactionSetTest {
 		
 	}
 	
+	/**
+	 * Test clear.
+	 */
 	@Test
 	public void testClear() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -179,6 +206,9 @@ public class TransactionSetTest {
 		assertTrue(tSet.isEmpty());
 	}
 	
+	/**
+	 * Test contains.
+	 */
 	@Test
 	public void testContains() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -188,6 +218,9 @@ public class TransactionSetTest {
 		}
 	}
 	
+	/**
+	 * Test contains all.
+	 */
 	@Test
 	public void testContainsAll() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -202,6 +235,9 @@ public class TransactionSetTest {
 		assertFalse(tSet.containsAll(this.tList));
 	}
 	
+	/**
+	 * Test desc.
+	 */
 	@Test
 	public void testDesc() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -235,6 +271,9 @@ public class TransactionSetTest {
 		assertFalse(iterator.hasNext());
 	}
 	
+	/**
+	 * Test first.
+	 */
 	@Test
 	public void testFirst() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -242,6 +281,9 @@ public class TransactionSetTest {
 		assertEquals(this.tList.get(0), tSet.first());
 	}
 	
+	/**
+	 * Test head tail set.
+	 */
 	@Test
 	public void testHeadTailSet() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -254,6 +296,9 @@ public class TransactionSetTest {
 		assertTrue(tailSet.containsAll(this.tList.subList(6, this.tList.size())));
 	}
 	
+	/**
+	 * Test last.
+	 */
 	@Test
 	public void testLast() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -261,6 +306,9 @@ public class TransactionSetTest {
 		assertEquals(this.tList.get(this.tList.size() - 1), tSet.last());
 	}
 	
+	/**
+	 * Test remove.
+	 */
 	@Test
 	public void testRemove() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -276,6 +324,9 @@ public class TransactionSetTest {
 		assertFalse(tSet.contains(infinityTransaction));
 	}
 	
+	/**
+	 * Test remove all.
+	 */
 	@Test
 	public void testRemoveAll() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
@@ -303,6 +354,9 @@ public class TransactionSetTest {
 		
 	}
 	
+	/**
+	 * Test retain all.
+	 */
 	@Test
 	public void testRetainAll() {
 		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);

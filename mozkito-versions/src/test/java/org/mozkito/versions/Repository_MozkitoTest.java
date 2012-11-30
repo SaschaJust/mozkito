@@ -44,6 +44,8 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 
+import difflib.Delta;
+
 /**
  * The Class RepositoryTest.
  */

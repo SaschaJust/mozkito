@@ -42,6 +42,14 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	private BranchFactory branchFactory;
 	
 	/**
+	 * Before.
+	 */
+	@Before
+	public void before() {
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
+	}
+	
+	/**
 	 * Test rcs branch.
 	 */
 	@Test

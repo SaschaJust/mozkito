@@ -14,12 +14,19 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.mozkito.versions.model.RCSBranch;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RevDependencyTest.
+ */
 public class RevDependencyTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
+	/**
+	 * Test rev dependency merge.
+	 */
 	@Test
 	public void testRevDependencyMerge() {
 		final String id = "r17";
@@ -38,6 +45,9 @@ public class RevDependencyTest {
 		assertEquals(true, revDep.isMerge());
 	}
 	
+	/**
+	 * Test rev dependency non merge.
+	 */
 	@Test
 	public void testRevDependencyNonMerge() {
 		final String id = "r17";
