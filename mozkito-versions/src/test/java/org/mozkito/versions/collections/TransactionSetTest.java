@@ -76,7 +76,7 @@ public class TransactionSetTest {
 		final DateTime now = new DateTime();
 		this.person = new Person("kim", null, null);
 		final BranchFactory branchFactory = new BranchFactory(null);
-		this.rCSBranch = branchFactory.getMasterBranch();
+		this.branch = branchFactory.getMasterBranch();
 		this.index = 0;
 		
 		this.otherBranch = branchFactory.getBranch("otherBranch");
@@ -88,58 +88,58 @@ public class TransactionSetTest {
 		
 		final RCSTransaction t_280b1b = new RCSTransaction("280b1b8695286699770c5da85204e1718f7f4b66", "", now,
 		                                                   this.person, null);
-		this.rCSBranch.setHead(t_280b1b);
-		t_280b1b.addBranch(this.rCSBranch, this.index);
+		this.branch.setHead(t_280b1b);
+		t_280b1b.addBranch(this.branch, this.index);
 		this.tList.add(t_280b1b);
 		
 		final RCSTransaction t_702abf = new RCSTransaction("702abfed3f8ca043b2636efd31c14ba7552603dd", "", now,
 		                                                   this.person, null);
-		t_702abf.addBranch(this.rCSBranch, --this.index);
+		t_702abf.addBranch(this.branch, --this.index);
 		this.tList.add(t_702abf);
 		
 		final RCSTransaction t_cce07f = new RCSTransaction("cce07fdcb9f3a0efcd67c75de60d5608c63cb5c2", "", now,
 		                                                   this.person, null);
-		t_cce07f.addBranch(this.rCSBranch, --this.index);
+		t_cce07f.addBranch(this.branch, --this.index);
 		this.tList.add(t_cce07f);
 		
 		final RCSTransaction t_94f8b9 = new RCSTransaction("94f8b9f16e9f3d423225b28619281a5ecf877275", "", now,
 		                                                   this.person, null);
-		t_94f8b9.addBranch(this.rCSBranch, --this.index);
+		t_94f8b9.addBranch(this.branch, --this.index);
 		this.tList.add(t_94f8b9);
 		
 		final RCSTransaction t_5813ab = new RCSTransaction("5813ab7d15c9c97ff45a44e051f8e9776a1f7e42", "", now,
 		                                                   this.person, null);
-		t_5813ab.addBranch(this.rCSBranch, --this.index);
+		t_5813ab.addBranch(this.branch, --this.index);
 		this.tList.add(t_5813ab);
 		
 		final RCSTransaction t_8bc067 = new RCSTransaction("8bc0679ca73760e68c0c27b54dc2855de34c1bdb", "", now,
 		                                                   this.person, null);
-		t_8bc067.addBranch(this.rCSBranch, --this.index);
+		t_8bc067.addBranch(this.branch, --this.index);
 		this.tList.add(t_8bc067);
 		
 		final RCSTransaction t_9f6f10 = new RCSTransaction("9f6f106cdc16effd8c093defd47f1626195d03db", "", now,
 		                                                   this.person, null);
-		t_9f6f10.addBranch(this.rCSBranch, --this.index);
+		t_9f6f10.addBranch(this.branch, --this.index);
 		this.tList.add(t_9f6f10);
 		
 		final RCSTransaction t_6bfee3 = new RCSTransaction("6bfee30b10fb0498f3d70f383814a669939bb1c7", "", now,
 		                                                   this.person, null);
-		t_6bfee3.addBranch(this.rCSBranch, --this.index);
+		t_6bfee3.addBranch(this.branch, --this.index);
 		this.tList.add(t_6bfee3);
 		
 		final RCSTransaction t_45702d = new RCSTransaction("45702d2a094554789dc51bd23869ed5ddd8822a6", "", now,
 		                                                   this.person, null);
-		t_45702d.addBranch(this.rCSBranch, --this.index);
+		t_45702d.addBranch(this.branch, --this.index);
 		this.tList.add(t_45702d);
 		
 		final RCSTransaction t_9c7c6d = new RCSTransaction("9c7c6d1ef4ffe95dfcbaf850f869d6742d16bd59", "", now,
 		                                                   this.person, null);
-		t_9c7c6d.addBranch(this.rCSBranch, --this.index);
+		t_9c7c6d.addBranch(this.branch, --this.index);
 		this.tList.add(t_9c7c6d);
 		
 		final RCSTransaction t_d52295 = new RCSTransaction("d522956171853fc2d7ca106d9c8d2b93e82df9d3", "", now,
 		                                                   this.person, null);
-		t_d52295.addBranch(this.rCSBranch, --this.index);
+		t_d52295.addBranch(this.branch, --this.index);
 		this.tList.add(t_d52295);
 	}
 	
@@ -230,7 +230,7 @@ public class TransactionSetTest {
 		assertTrue(tSet.containsAll(this.tList));
 		final RCSTransaction infinityTransaction = new RCSTransaction("inifinity", "none", new DateTime(), this.person,
 		                                                              "");
-		infinityTransaction.addBranch(this.rCSBranch, --this.index);
+		infinityTransaction.addBranch(this.branch, --this.index);
 		this.tList.add(infinityTransaction);
 		assertFalse(tSet.containsAll(this.tList));
 	}
@@ -317,7 +317,7 @@ public class TransactionSetTest {
 		assertTrue(tSet.remove(t7));
 		final RCSTransaction infinityTransaction = new RCSTransaction("inifinity", "none", new DateTime(), this.person,
 		                                                              "");
-		infinityTransaction.addBranch(this.rCSBranch, --this.index);
+		infinityTransaction.addBranch(this.branch, --this.index);
 		assertFalse(tSet.remove(infinityTransaction));
 		assertEquals(this.tList.size() - 1, tSet.size());
 		assertFalse(tSet.contains(t7));
@@ -337,7 +337,7 @@ public class TransactionSetTest {
 		tSet.addAll(this.tList);
 		final RCSTransaction infinityTransaction = new RCSTransaction("inifinity", "none", new DateTime(), this.person,
 		                                                              "");
-		infinityTransaction.addBranch(this.rCSBranch, --this.index);
+		infinityTransaction.addBranch(this.branch, --this.index);
 		final List<RCSTransaction> t2List = new LinkedList<>();
 		t2List.addAll(this.tList);
 		t2List.add(infinityTransaction);
