@@ -160,7 +160,9 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	}
 	
 	/**
-	 * @return
+	 * Gets the deltas.
+	 * 
+	 * @return the deltas
 	 */
 	public HashSet<Delta> getDeltas() {
 		return this.deltas;

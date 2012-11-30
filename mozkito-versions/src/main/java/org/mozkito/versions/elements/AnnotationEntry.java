@@ -16,8 +16,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 
-import net.ownhero.dev.kisa.Logger;
-
 /**
  * The Class AnnotationEntry.
  */

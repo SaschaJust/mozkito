@@ -40,7 +40,7 @@ import org.mozkito.persistence.Annotated;
 
 /**
  * The Class File.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
@@ -63,8 +63,9 @@ public class RCSFile implements Annotated, Serializable {
 		
 		/**
 		 * Instantiates a new file name transaction iterator.
-		 *
-		 * @param startTransaction the start transaction
+		 * 
+		 * @param startTransaction
+		 *            the start transaction
 		 */
 		public FileNameTransactionIterator(final RCSTransaction startTransaction) {
 			this.current = startTransaction;
@@ -151,8 +152,8 @@ public class RCSFile implements Annotated, Serializable {
 	 * @param transaction
 	 *            the transaction the file was modified in
 	 */
-	public RCSFile(final String path, final RCSTransaction rCSTransaction) {
-		getChangedNames().put(rCSTransaction.getId(), path);
+	public RCSFile(final String path, final RCSTransaction transaction) {
+		getChangedNames().put(transaction.getId(), path);
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
@@ -197,7 +198,7 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Gets the changed names.
-	 *
+	 * 
 	 * @return the changedNames
 	 */
 	@ElementCollection
@@ -208,7 +209,7 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Gets the generated id.
-	 *
+	 * 
 	 * @return the generatedId
 	 */
 	@Id
@@ -220,9 +221,10 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the simple class name
 	 */
+	@Override
 	@Transient
 	public String getHandle() {
 		return RCSFile.class.getSimpleName();
@@ -246,9 +248,9 @@ public class RCSFile implements Annotated, Serializable {
 	 * @return the path of the RCSFile as set in transaction
 	 */
 	@Transient
-	public String getPath(final RCSTransaction rCSTransaction) {
+	public String getPath(final RCSTransaction transaction) {
 		
-		final FileNameTransactionIterator fileNameIter = new FileNameTransactionIterator(rCSTransaction);
+		final FileNameTransactionIterator fileNameIter = new FileNameTransactionIterator(transaction);
 		while (fileNameIter.hasNext()) {
 			final RCSTransaction current = fileNameIter.next();
 			if (getChangedNames().containsKey(current.getId())) {
@@ -258,7 +260,7 @@ public class RCSFile implements Annotated, Serializable {
 		
 		if (Logger.logWarn()) {
 			Logger.warn("Could not determine path for File (id=" + getGeneratedId() + ") for transaction "
-			        + rCSTransaction.getId() + ". Returning latestPath.");
+			        + transaction.getId() + ". Returning latestPath.");
 		}
 		return getLatestPath();
 	}
@@ -287,8 +289,9 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Sets the changed names.
-	 *
-	 * @param changedNames the changed names
+	 * 
+	 * @param changedNames
+	 *            the changed names
 	 */
 	protected void setChangedNames(final Map<String, String> changedNames) {
 		this.changedNames = changedNames;
@@ -296,8 +299,9 @@ public class RCSFile implements Annotated, Serializable {
 	
 	/**
 	 * Sets the generated id.
-	 *
-	 * @param generatedId the generatedId to set
+	 * 
+	 * @param generatedId
+	 *            the generatedId to set
 	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;

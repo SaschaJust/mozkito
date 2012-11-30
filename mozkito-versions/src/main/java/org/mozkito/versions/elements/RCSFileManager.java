@@ -32,8 +32,8 @@ public class RCSFileManager {
 	 * @param file
 	 *            the file to be registered
 	 */
-	public void addFile(final RCSFile rCSFile) {
-		this.currentFiles.put(rCSFile.getLatestPath(), rCSFile);
+	public void addFile(final RCSFile file) {
+		this.currentFiles.put(file.getLatestPath(), file);
 	}
 	
 	/**
@@ -46,8 +46,8 @@ public class RCSFileManager {
 	 * @return the {@link RCSFile}
 	 */
 	public RCSFile createFile(final String path,
-	                          final RCSTransaction rCSTransaction) {
-		final RCSFile rCSFile = new RCSFile(path, rCSTransaction);
+	                          final RCSTransaction transaction) {
+		final RCSFile rCSFile = new RCSFile(path, transaction);
 		this.currentFiles.put(path, rCSFile);
 		return rCSFile;
 	}
