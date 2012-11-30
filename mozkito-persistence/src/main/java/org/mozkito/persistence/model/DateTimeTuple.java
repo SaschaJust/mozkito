@@ -28,27 +28,35 @@ import org.joda.time.DateTime;
 
 import org.mozkito.persistence.Annotated;
 
+/**
+ * The Class DateTimeTuple.
+ */
 @Embeddable
 public class DateTimeTuple implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8037500943691455328L;
 	
+	/** The old value. */
 	private DateTime          oldValue;
+	
+	/** The new value. */
 	private DateTime          newValue;
 	
 	/**
-	 * 
+	 * Instantiates a new date time tuple.
 	 */
 	protected DateTimeTuple() {
 		
 	}
 	
 	/**
+	 * Instantiates a new date time tuple.
+	 * 
 	 * @param oldValue
+	 *            the old value
 	 * @param newValue
+	 *            the new value
 	 */
 	@NoneNull
 	public DateTimeTuple(final Date oldValue, final Date newValue) {
@@ -57,8 +65,12 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Instantiates a new date time tuple.
+	 * 
 	 * @param oldValue
+	 *            the old value
 	 * @param newValue
+	 *            the new value
 	 */
 	@NoneNull
 	public DateTimeTuple(final DateTime oldValue, final DateTime newValue) {
@@ -109,6 +121,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the java new value.
+	 * 
 	 * @return the newValue
 	 */
 	@Basic
@@ -121,6 +135,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the java old value.
+	 * 
 	 * @return the oldValue
 	 */
 	@Basic
@@ -133,6 +149,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the new value.
+	 * 
 	 * @return the newValue
 	 */
 	@Transient
@@ -141,6 +159,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the old value.
+	 * 
 	 * @return the oldValue
 	 */
 	@Transient
@@ -166,7 +186,10 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the java new value.
+	 * 
 	 * @param date
+	 *            the new java new value
 	 */
 	protected void setJavaNewValue(final Date date) {
 		setNewValue(date != null
@@ -175,7 +198,10 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the java old value.
+	 * 
 	 * @param date
+	 *            the new java old value
 	 */
 	protected void setJavaOldValue(final Date date) {
 		setOldValue(date != null
@@ -184,6 +210,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the new value.
+	 * 
 	 * @param newValue
 	 *            the newValue to set
 	 */
@@ -192,6 +220,8 @@ public class DateTimeTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the old value.
+	 * 
 	 * @param oldValue
 	 *            the oldValue to set
 	 */

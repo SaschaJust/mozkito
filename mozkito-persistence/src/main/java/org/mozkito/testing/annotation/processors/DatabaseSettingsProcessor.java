@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,8 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
-
+ **********************************************************************************************************************/
 package org.mozkito.testing.annotation.processors;
 
 import java.lang.annotation.Annotation;
@@ -18,6 +17,8 @@ import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
 import net.ownhero.dev.kisa.Logger;
+
+import org.joda.time.DateTime;
 
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
@@ -37,7 +38,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	 */
 	@Override
 	public <T extends DatabaseTest> void setup(final T test,
-	                                           final Annotation annotation) throws TestSettingsError {
+	                                           final Annotation annotation) {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		
 		// system properties overwrite annotation settings
@@ -72,7 +73,9 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
 			tag = tag.replaceAll("\\W", "_");
+			tag = tag + "_" + new DateTime().getMillis() + "";
 			final String dbName = databaseName + '_' + tag;
+			test.setDatabaseName(dbName);
 			
 			if (Logger.logInfo()) {
 				Logger.info("Setting up database test environment: 'name:%s', 'driver:%s', 'host:%s', 'options:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
@@ -80,7 +83,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			}
 			
 			try {
-				if (Logger.logAlways()) {
+				if (Logger.logInfo()) {
 					Logger.always("Dropping database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
 					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
 				}
@@ -89,8 +92,9 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			} catch (final SQLException ignore) {
 				// ignore
 			}
+			
 			try {
-				if (Logger.logAlways()) {
+				if (Logger.logInfo()) {
 					Logger.always("Creating database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
 					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
 				}
@@ -122,7 +126,6 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 			}
 		}
 		
-		test.setConnectionOption(databaseOptions);
 		test.setUtil(util);
 	}
 	
@@ -133,7 +136,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	 */
 	@Override
 	public <T extends DatabaseTest> void tearDown(final T test,
-	                                              final Annotation annotation) throws TestSettingsError {
+	                                              final Annotation annotation) {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		final String databaseDriver = System.getProperty("database.driver") != null
 		                                                                           ? System.getProperty("database.driver")
@@ -151,12 +154,13 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		                                                                           ? System.getProperty("database.user")
 		                                                                           : settings.username();
 		
-		test.getPersistenceUtil().shutdown();
+		if (test.getPersistenceUtil() != null) {
+			test.getPersistenceUtil().shutdown();
+		}
 		
 		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
-			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
-			tag = tag.replaceAll("\\W", "_");
-			final String dbName = settings.database() + '_' + tag;
+			
+			final String dbName = test.getDatabaseName();
 			try {
 				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
 				                                databaseDriver);
@@ -164,6 +168,7 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 				throw new TestSettingsError("Could not drop database " + dbName, e);
 			}
 		}
+		test.setUtil(null);
 	}
 	
 }

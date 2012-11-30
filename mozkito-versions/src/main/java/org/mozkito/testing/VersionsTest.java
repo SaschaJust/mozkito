@@ -16,6 +16,7 @@ package org.mozkito.testing;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -23,10 +24,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.junit.After;
+import org.junit.Before;
+
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
+import org.mozkito.testing.annotation.MozkitoTestAnnotation;
+import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
@@ -41,13 +46,19 @@ import org.mozkito.versions.RepositoryType;
 public class VersionsTest extends DatabaseTest {
 	
 	/** The path name. */
-	private String                   pathName;
+	private String                      pathName;
 	
 	/** The repositories. */
-	private final List<Repository>   repositories = new LinkedList<Repository>();
+	private final List<Repository>      repositories = new LinkedList<Repository>();
 	
 	/** The repo map. */
-	private Map<RepositoryType, URI> repoMap;
+	private Map<RepositoryType, URI>    repoMap;
+	
+	/** The annotation. */
+	private RepositorySettings          annotation;
+	
+	/** The processor. */
+	private RepositorySettingsProcessor processor;
 	
 	/**
 	 * Instantiates a new version test.
@@ -56,7 +67,7 @@ public class VersionsTest extends DatabaseTest {
 		// PRECONDITIONS
 		
 		try {
-			initializeRepositories();
+			initializeProcessor();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -111,9 +122,32 @@ public class VersionsTest extends DatabaseTest {
 	}
 	
 	/**
+	 * Initialize processor.
+	 */
+	private void initializeProcessor() {
+		for (final Annotation annotation : getClass().getAnnotations()) {
+			final MozkitoTestAnnotation mka = annotation.annotationType().getAnnotation(MozkitoTestAnnotation.class);
+			if (mka != null) {
+				try {
+					if (annotation.annotationType().equals(RepositorySettings.class)) {
+						this.annotation = (RepositorySettings) annotation;
+						final RepositorySettingsProcessor processor = (RepositorySettingsProcessor) mka.value()
+						                                                                               .newInstance();
+						this.processor = processor;
+					}
+				} catch (final InstantiationException | IllegalAccessException e) {
+					fail(e.getMessage());
+				}
+			}
+		}
+		
+	}
+	
+	/**
 	 * Initialize repositories.
 	 */
 	private void initializeRepositories() {
+		this.processor.setup(this, this.annotation);
 		this.repoMap = new HashMap<RepositoryType, URI>();
 		
 		for (final RepositoryType type : RepositoryType.values()) {
@@ -159,22 +193,20 @@ public class VersionsTest extends DatabaseTest {
 	}
 	
 	/**
-	 * Sets the path name.
-	 * 
-	 * @param pathName
-	 *            the new path name
+	 * Setup repositories.
 	 */
-	public final void setPathName(final String pathName) {
-		// PRECONDITIONS
-		Condition.notNull(pathName, "Argument '%s' in '%s'.", "pathName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.pathName = pathName;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.pathName, pathName,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
+	@Before
+	public void setupRepositories() {
+		initializeRepositories();
+	}
+	
+	/**
+	 * Shutdown repositories.
+	 */
+	@After
+	public void shutdownRepositories() {
+		// ignore for now
+		this.processor.tearDown(this, this.annotation);
 	}
 	
 }

@@ -22,30 +22,47 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.persistence.Annotated;
 
+/**
+ * The Class EnumTuple.
+ */
 @Embeddable
 public class EnumTuple implements Annotated {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7376689941623465731L;
+	
+	/** The old value. */
 	private Enum<?>           oldValue;
+	
+	/** The old string value. */
 	private String            oldStringValue;
+	
+	/** The new value. */
 	private Enum<?>           newValue;
+	
+	/** The new string value. */
 	private String            newStringValue;
+	
+	/** The enum class. */
 	private Class<?>          enumClass;
+	
+	/** The enum class name. */
 	private String            enumClassName;
 	
 	/**
-	 * 
+	 * Instantiates a new enum tuple.
 	 */
 	protected EnumTuple() {
 		
 	}
 	
 	/**
+	 * Instantiates a new enum tuple.
+	 * 
 	 * @param oldValue
+	 *            the old value
 	 * @param newValue
+	 *            the new value
 	 */
 	@NoneNull
 	public EnumTuple(final Enum<?> oldValue, final Enum<?> newValue) {
@@ -58,9 +75,13 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Convert enum.
+	 * 
 	 * @param enumClass
+	 *            the enum class
 	 * @param stringValue
-	 * @return
+	 *            the string value
+	 * @return the enum
 	 */
 	private Enum<?> convertEnum(final Class<?> enumClass,
 	                            final String stringValue) {
@@ -113,6 +134,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the enum class.
+	 * 
 	 * @return the enumClass
 	 */
 	@Transient
@@ -121,6 +144,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the enum class name.
+	 * 
 	 * @return the enumClassName
 	 */
 	@Basic
@@ -137,6 +162,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the new string value.
+	 * 
 	 * @return the newStringValue
 	 */
 	@Basic
@@ -145,6 +172,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the new value.
+	 * 
 	 * @return the newValue
 	 */
 	@Transient
@@ -153,6 +182,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the old string value.
+	 * 
 	 * @return the oldStringValue
 	 */
 	@Basic
@@ -161,6 +192,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the old value.
+	 * 
 	 * @return the oldValue
 	 */
 	@Transient
@@ -189,6 +222,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the enum class.
+	 * 
 	 * @param enumClass
 	 *            the enumClass to set
 	 */
@@ -198,7 +233,10 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the enum class.
+	 * 
 	 * @param className
+	 *            the new enum class
 	 */
 	public void setEnumClass(final String className) {
 		try {
@@ -220,6 +258,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the enum class name.
+	 * 
 	 * @param enumClassName
 	 *            the enumClassName to set
 	 */
@@ -228,6 +268,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the new string value.
+	 * 
 	 * @param newStringValue
 	 *            the newStringValue to set
 	 */
@@ -242,6 +284,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the new value.
+	 * 
 	 * @param newValue
 	 *            the newValue to set
 	 */
@@ -250,6 +294,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the old string value.
+	 * 
 	 * @param oldStringValue
 	 *            the oldStringValue to set
 	 */
@@ -264,6 +310,8 @@ public class EnumTuple implements Annotated {
 	}
 	
 	/**
+	 * Sets the old value.
+	 * 
 	 * @param oldValue
 	 *            the oldValue to set
 	 */

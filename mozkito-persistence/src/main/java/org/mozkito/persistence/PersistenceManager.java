@@ -16,6 +16,7 @@
 package org.mozkito.persistence;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -28,6 +29,9 @@ import java.util.Map;
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.andama.exceptions.InstantiationError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * The Class PersistenceManager.
@@ -36,11 +40,11 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
  */
 public class PersistenceManager {
 	
-	/** The Constant nativeQueries. */
-	private static final Map<String, Map<String, String>>        nativeQueries = new HashMap<String, Map<String, String>>();
+	/** The Constant NATIVE_QUERIES. */
+	private static final Map<String, Map<String, String>>        NATIVE_QUERIES = new HashMap<String, Map<String, String>>();
 	
-	/** The Constant storedQueries. */
-	private static final Map<Class<?>, Map<String, Criteria<?>>> storedQueries = new HashMap<Class<?>, Map<String, Criteria<?>>>();
+	/** The Constant STORED_QUERIES. */
+	private static final Map<Class<?>, Map<String, Criteria<?>>> STORED_QUERIES = new HashMap<Class<?>, Map<String, Criteria<?>>>();
 	
 	/**
 	 * Creates the database.
@@ -75,7 +79,22 @@ public class PersistenceManager {
 		if ((host == null) || host.isEmpty()) {
 			final File file = new File(database);
 			if (file.exists()) {
-				file.delete();
+				if (file.isFile()) {
+					if (Logger.logAlways()) {
+						Logger.always("deleting database file '%s'", file.getAbsolutePath());
+					}
+					file.delete();
+				} else if (file.isDirectory()) {
+					try {
+						if (Logger.logAlways()) {
+							Logger.always("deleting database directory '%s'", file.getAbsolutePath());
+						}
+						FileUtils.deleteDirectory(file);
+					} catch (final IOException e) {
+						throw new UnrecoverableError(e);
+						
+					}
+				}
 			}
 			
 		} else {
@@ -126,7 +145,7 @@ public class PersistenceManager {
 	                                         final String driver,
 	                                         final String unit,
 	                                         final ConnectOptions dropContents,
-	                                         final Class<?> middleware) throws UnrecoverableError {
+	                                         final Class<?> middleware) {
 		
 		PersistenceUtil instance = null;
 		try {
@@ -175,7 +194,7 @@ public class PersistenceManager {
 	                                         final String driver,
 	                                         final String unit,
 	                                         final ConnectOptions options,
-	                                         final String middleware) throws UnrecoverableError {
+	                                         final String middleware) {
 		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
 		Class<PersistenceUtil> klass = null;
 		try {
@@ -221,7 +240,24 @@ public class PersistenceManager {
 		
 		if ((host == null) || host.isEmpty()) {
 			final File file = new File(database);
-			file.delete();
+			if (file.exists()) {
+				if (file.isFile()) {
+					if (Logger.logAlways()) {
+						Logger.always("deleting database file '%s'", file.getAbsolutePath());
+					}
+					file.delete();
+				} else if (file.isDirectory()) {
+					try {
+						if (Logger.logAlways()) {
+							Logger.always("deleting database directory '%s'", file.getAbsolutePath());
+						}
+						FileUtils.deleteDirectory(file);
+					} catch (final IOException e) {
+						throw new UnrecoverableError(e);
+						
+					}
+				}
+			}
 		} else {
 			final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			                                                          password);
@@ -249,8 +285,8 @@ public class PersistenceManager {
 	                                                 final String id) {
 		final String databaseType = util.getType().toLowerCase();
 		
-		if (nativeQueries.containsKey(databaseType) && nativeQueries.get(databaseType).containsKey(id)) {
-			return nativeQueries.get(databaseType).get(id);
+		if (NATIVE_QUERIES.containsKey(databaseType) && NATIVE_QUERIES.get(databaseType).containsKey(id)) {
+			return NATIVE_QUERIES.get(databaseType).get(id);
 		}
 		return null;
 	}
@@ -269,7 +305,7 @@ public class PersistenceManager {
 	@SuppressWarnings ("unchecked")
 	public static synchronized <T> Criteria<T> getStoredQuery(final String id,
 	                                                          final Class<T> clazz) {
-		return (Criteria<T>) storedQueries.get(clazz).get(id);
+		return (Criteria<T>) STORED_QUERIES.get(clazz).get(id);
 	}
 	
 	/**
@@ -287,11 +323,11 @@ public class PersistenceManager {
 	                                                      final String id,
 	                                                      final String query) {
 		final String databaseType = type.toLowerCase();
-		if (!nativeQueries.containsKey(databaseType)) {
-			nativeQueries.put(databaseType, new HashMap<String, String>());
+		if (!NATIVE_QUERIES.containsKey(databaseType)) {
+			NATIVE_QUERIES.put(databaseType, new HashMap<String, String>());
 		}
 		
-		final Map<String, String> map = nativeQueries.get(databaseType);
+		final Map<String, String> map = NATIVE_QUERIES.get(databaseType);
 		return map.put(id, query);
 	}
 	
@@ -328,10 +364,10 @@ public class PersistenceManager {
 			actualRawTypeArgument = (Class<T>) actualTypeArgument;
 		}
 		
-		if (!storedQueries.containsKey(actualRawTypeArgument)) {
-			storedQueries.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
+		if (!STORED_QUERIES.containsKey(actualRawTypeArgument)) {
+			STORED_QUERIES.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
 		}
 		
-		storedQueries.get(actualRawTypeArgument).put(id, criteria);
+		STORED_QUERIES.get(actualRawTypeArgument).put(id, criteria);
 	}
 }

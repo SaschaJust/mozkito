@@ -22,19 +22,32 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class Criteria.
  * 
+ * @param <T>
+ *            the generic type
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Criteria<T> {
 	
+	/** The root. */
 	private Root<T>          root;
+	
+	/** The builder. */
 	private CriteriaBuilder  builder;
+	
+	/** The query. */
 	private CriteriaQuery<T> query;
 	
 	/**
+	 * Instantiates a new criteria.
+	 * 
 	 * @param root
+	 *            the root
 	 * @param builder
+	 *            the builder
 	 * @param query
+	 *            the query
 	 */
 	public Criteria(final Root<T> root, final CriteriaBuilder builder, final CriteriaQuery<T> query) {
 		this.root = root;
@@ -43,9 +56,13 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Eq.
+	 * 
 	 * @param column
+	 *            the column
 	 * @param value
-	 * @return
+	 *            the value
+	 * @return the criteria
 	 */
 	public Criteria<T> eq(final String column,
 	                      final Object value) {
@@ -54,6 +71,8 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Gets the builder.
+	 * 
 	 * @return the builder
 	 */
 	public CriteriaBuilder getBuilder() {
@@ -61,6 +80,8 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Gets the query.
+	 * 
 	 * @return the query
 	 */
 	public CriteriaQuery<T> getQuery() {
@@ -68,29 +89,56 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Gets the root.
+	 * 
 	 * @return the root
 	 */
 	public Root<T> getRoot() {
 		return this.root;
 	}
 	
+	/**
+	 * In.
+	 * 
+	 * @param column
+	 *            the column
+	 * @param values
+	 *            the values
+	 * @return the criteria
+	 */
 	public Criteria<T> in(final String column,
 	                      final Collection<?> values) {
 		this.query.where(this.root.get(column).in(values));
 		return this;
 	}
 	
+	/**
+	 * Oder by asc.
+	 * 
+	 * @param column
+	 *            the column
+	 * @return the criteria
+	 */
 	public Criteria<T> oderByAsc(final String column) {
 		this.query.orderBy(this.builder.asc(this.root.get(column)));
 		return this;
 	}
 	
+	/**
+	 * Oder by desc.
+	 * 
+	 * @param column
+	 *            the column
+	 * @return the criteria
+	 */
 	public Criteria<T> oderByDesc(final String column) {
 		this.query.orderBy(this.builder.desc(this.root.get(column)));
 		return this;
 	}
 	
 	/**
+	 * Sets the builder.
+	 * 
 	 * @param builder
 	 *            the builder to set
 	 */
@@ -99,6 +147,8 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Sets the query.
+	 * 
 	 * @param query
 	 *            the query to set
 	 */
@@ -107,6 +157,8 @@ public class Criteria<T> {
 	}
 	
 	/**
+	 * Sets the root.
+	 * 
 	 * @param root
 	 *            the root to set
 	 */

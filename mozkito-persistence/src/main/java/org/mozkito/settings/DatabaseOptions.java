@@ -16,11 +16,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.persistence.ConnectOptions;
-import org.mozkito.persistence.DatabaseType;
-import org.mozkito.persistence.PersistenceManager;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.EnumArgument;
@@ -33,28 +28,60 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseType;
+import org.mozkito.persistence.PersistenceManager;
+import org.mozkito.persistence.PersistenceUtil;
+
 /**
- * @author Kim Herzig <herzig@mozkito.org>
+ * The Class DatabaseOptions.
  * 
+ * @author Kim Herzig <herzig@mozkito.org>
  */
 public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, ArgumentSet<PersistenceUtil, DatabaseOptions>> {
 	
+	/** The database unit. */
 	private StringArgument.Options               databaseUnit;
+	
+	/** The database options. */
 	private EnumArgument.Options<ConnectOptions> databaseOptions;
+	
+	/** The database middleware. */
 	private StringArgument.Options               databaseMiddleware;
+	
+	/** The database driver. */
 	private StringArgument.Options               databaseDriver;
+	
+	/** The database type. */
 	private EnumArgument.Options<DatabaseType>   databaseType;
+	
+	/** The database password. */
 	private StringArgument.Options               databasePassword;
+	
+	/** The database host. */
 	private StringArgument.Options               databaseHost;
+	
+	/** The database user. */
 	private StringArgument.Options               databaseUser;
+	
+	/** The database name. */
 	private StringArgument.Options               databaseName;
+	
+	/** The unit. */
 	private final String                         unit;
+	
+	/** The settings. */
 	private final ISettings                      settings;
 	
 	/**
+	 * Instantiates a new database options.
+	 * 
 	 * @param argumentSet
-	 * @param isRequired
-	 * @throws ArgumentRegistrationException
+	 *            the argument set
+	 * @param requirement
+	 *            the requirement
+	 * @param unit
+	 *            the unit
 	 */
 	public DatabaseOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement, final String unit) {
 		super(argumentSet, "database", "Specifies connection options for the database connection.", requirement);
@@ -63,6 +90,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database driver.
+	 * 
 	 * @return the databaseDriver
 	 */
 	public final StringArgument.Options getDatabaseDriver() {
@@ -70,6 +99,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database host.
+	 * 
 	 * @return the databaseHost
 	 */
 	public final StringArgument.Options getDatabaseHost() {
@@ -77,6 +108,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database middleware.
+	 * 
 	 * @return the databaseMiddleware
 	 */
 	public final StringArgument.Options getDatabaseMiddleware() {
@@ -84,6 +117,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database name.
+	 * 
 	 * @return the databaseName
 	 */
 	public final StringArgument.Options getDatabaseName() {
@@ -91,6 +126,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database options.
+	 * 
 	 * @return the databaseOptions
 	 */
 	public final EnumArgument.Options<ConnectOptions> getDatabaseOptions() {
@@ -98,6 +135,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database password.
+	 * 
 	 * @return the databasePassword
 	 */
 	public final StringArgument.Options getDatabasePassword() {
@@ -105,6 +144,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database type.
+	 * 
 	 * @return the databaseType
 	 */
 	public final EnumArgument.Options<DatabaseType> getDatabaseType() {
@@ -112,6 +153,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database unit.
+	 * 
 	 * @return the databaseUnit
 	 */
 	public final StringArgument.Options getDatabaseUnit() {
@@ -119,6 +162,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	}
 	
 	/**
+	 * Gets the database user.
+	 * 
 	 * @return the databaseUser
 	 */
 	public final StringArgument.Options getDatabaseUser() {

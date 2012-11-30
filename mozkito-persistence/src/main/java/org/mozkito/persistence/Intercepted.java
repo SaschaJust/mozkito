@@ -35,8 +35,8 @@ public interface Intercepted<T> {
 	 *            the t
 	 * @return the t
 	 */
-	public T add(String id,
-	             T t);
+	T add(String id,
+	      T t);
 	
 	/**
 	 * Gets the.
@@ -45,14 +45,14 @@ public interface Intercepted<T> {
 	 *            the id
 	 * @return the t
 	 */
-	public T get(String id);
+	T get(String id);
 	
 	/**
 	 * Interceptor targets.
 	 * 
 	 * @return the collection
 	 */
-	public Collection<T> interceptorTargets();
+	Collection<T> interceptorTargets();
 	
 	/**
 	 * Replace.
@@ -62,6 +62,6 @@ public interface Intercepted<T> {
 	 * @param to
 	 *            the to
 	 */
-	public void replace(T from,
-	                    T to);
+	void replace(T from,
+	             T to);
 }

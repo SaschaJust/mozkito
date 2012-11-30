@@ -22,7 +22,7 @@ import org.mozkito.versions.model.Transaction;
 /**
  * The Class RCSPersistenceUtilTest.
  */
-@DatabaseSettings (unit = "versions")
+@DatabaseSettings (unit = "versions", options = ConnectOptions.DB_DROP_CREATE)
 public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 	
 	/** The t_280b1b. */
@@ -100,16 +100,13 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		long index = 0;
 		
 		final Branch otherBranch = branchFactory.getBranch("otherBranch");
-		final Transaction otherT = new Transaction("280b1b8695286699770c5da85204e1718fXXXXXX", "", now, person,
-		                                                 null);
+		final Transaction otherT = new Transaction("280b1b8695286699770c5da85204e1718fXXXXXX", "", now, person, null);
 		otherT.addBranch(otherBranch, 0l);
 		otherBranch.setHead(otherT);
-		final Transaction otherT2 = new Transaction("702abfed3f8ca043b2636efd31c14ba75XXXXXX", "", now, person,
-		                                                  null);
+		final Transaction otherT2 = new Transaction("702abfed3f8ca043b2636efd31c14ba75XXXXXX", "", now, person, null);
 		otherT2.addBranch(otherBranch, -1l);
 		
-		final Transaction otherT3 = new Transaction("cce07fdcb9f3a0efcd67c75de60d5608c6XXXXXX", "", now, person,
-		                                                  null);
+		final Transaction otherT3 = new Transaction("cce07fdcb9f3a0efcd67c75de60d5608c6XXXXXX", "", now, person, null);
 		otherT3.addBranch(otherBranch, -1l);
 		
 		persistenceUtil.beginTransaction();
@@ -183,9 +180,8 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
 		final Iterator<Transaction> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
-		                                                                             branchFactory.getMasterBranch(),
-		                                                                             TransactionSetOrder.ASC)
-		                                                            .iterator();
+		                                                                          branchFactory.getMasterBranch(),
+		                                                                          TransactionSetOrder.ASC).iterator();
 		int gindex = tList.size();
 		
 		assertTrue(iterator.hasNext());
@@ -224,9 +220,8 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
 		final Iterator<Transaction> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
-		                                                                             branchFactory.getMasterBranch(),
-		                                                                             TransactionSetOrder.DESC)
-		                                                            .iterator();
+		                                                                          branchFactory.getMasterBranch(),
+		                                                                          TransactionSetOrder.DESC).iterator();
 		int gindex = -1;
 		
 		assertTrue(iterator.hasNext());

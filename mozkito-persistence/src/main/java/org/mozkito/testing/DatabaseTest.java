@@ -16,19 +16,18 @@ package org.mozkito.testing;
 import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 
-import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.MozkitoTestAnnotation;
-import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
+import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 
 /**
  * The Class TestZweiPunktNull.
@@ -38,10 +37,16 @@ import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 public class DatabaseTest {
 	
 	/** The util. */
-	private PersistenceUtil util;
+	private PersistenceUtil           util;
 	
-	/** The connect options. */
-	private ConnectOptions  connectOptions;
+	/** The processor. */
+	private DatabaseSettingsProcessor processor;
+	
+	/** The annotation. */
+	private DatabaseSettings          annotation;
+	
+	/** The database name. */
+	private String                    databaseName;
 	
 	/**
 	 * Instantiates a new test zwei punkt null.
@@ -52,21 +57,60 @@ public class DatabaseTest {
 		try {
 			
 			// check if developer uses @BeforeClass instead of a constructor
-			for (final Method method : getClass().getMethods()) {
-				if ((method.getModifiers() & Modifier.STATIC) != 0) {
-					for (final Annotation annotation : method.getAnnotations()) {
-						if (annotation.annotationType().equals(BeforeClass.class)) {
-							fail("@BeforeClass is not supported in " + getHandle()
-							        + ". Please use a default constructor.");
-						}
-					}
-				}
-			}
+			// for (final Method method : getClass().getMethods()) {
+			// if ((method.getModifiers() & Modifier.STATIC) != 0) {
+			// for (final Annotation annotation : method.getAnnotations()) {
+			// if (annotation.annotationType().equals(BeforeClass.class)) {
+			// fail("@BeforeClass is not supported in " + getHandle()
+			// + ". Please use a default constructor.");
+			// }
+			// }
+			// }
+			// }
 			
-			initializeProcessors();
+			initializeProcessor();
 			
 		} finally {
 			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Setup.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Before
+	public final void databaseSetup() throws Exception {
+		setupDatabase();
+	}
+	
+	/**
+	 * Tear down.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
+	@After
+	public final void databaseTearDown() throws Exception {
+		shutdownDatabase();
+		
+	}
+	
+	/**
+	 * Gets the database name.
+	 * 
+	 * @return the database name
+	 */
+	public final String getDatabaseName() {
+		// PRECONDITIONS
+		
+		try {
+			return this.databaseName;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.databaseName, "Field '%s' in '%s'.", "databaseName", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -85,39 +129,24 @@ public class DatabaseTest {
 	 * @return the util
 	 */
 	public final PersistenceUtil getPersistenceUtil() {
-		// PRECONDITIONS
-		
-		try {
-			switch (this.connectOptions) {
-				case CREATE:
-					// reading mode
-					return this.util;
-				case DB_DROP_CREATE:
-					// writing mode
-					initializeProcessors();
-					return this.util;
-				default:
-					fail("Unsupported database connection option: " + this.connectOptions.name());
-					return null;
-			}
-			
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.util, "Field '%s' in '%s'.", "util", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		return this.util;
 	}
 	
 	/**
 	 * Initialize processors.
 	 */
-	private void initializeProcessors() {
+	private void initializeProcessor() {
 		for (final Annotation annotation : getClass().getAnnotations()) {
 			final MozkitoTestAnnotation mka = annotation.annotationType().getAnnotation(MozkitoTestAnnotation.class);
 			if (mka != null) {
 				try {
-					final MozkitoSettingsProcessor processor = mka.value().newInstance();
-					processor.setup(this, annotation);
-				} catch (InstantiationException | IllegalAccessException e) {
+					if (annotation.annotationType().equals(DatabaseSettings.class)) {
+						this.annotation = (DatabaseSettings) annotation;
+						final DatabaseSettingsProcessor processor = (DatabaseSettingsProcessor) mka.value()
+						                                                                           .newInstance();
+						this.processor = processor;
+					}
+				} catch (final InstantiationException | IllegalAccessException e) {
 					fail(e.getMessage());
 				}
 			}
@@ -125,13 +154,31 @@ public class DatabaseTest {
 	}
 	
 	/**
-	 * Sets the connection option.
+	 * Sets the database name.
 	 * 
-	 * @param option
-	 *            the new connection option
+	 * @param databaseName
+	 *            the new database name
 	 */
-	public void setConnectionOption(final ConnectOptions option) {
-		this.connectOptions = option;
+	public final void setDatabaseName(final String databaseName) {
+		// PRECONDITIONS
+		Condition.notNull(databaseName, "Argument '%s' in '%s'.", "databaseName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.databaseName = databaseName;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.databaseName, databaseName,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Setup database.
+	 */
+	private void setupDatabase() {
+		if (this.processor != null) {
+			this.processor.setup(this, this.annotation);
+		}
 	}
 	
 	/**
@@ -141,15 +188,15 @@ public class DatabaseTest {
 	 *            the new util
 	 */
 	public final void setUtil(final PersistenceUtil util) {
-		// PRECONDITIONS
-		Condition.notNull(util, "Argument '%s' in '%s'.", "util", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.util = util;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.util, util,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		this.util = util;
+	}
+	
+	/**
+	 * Shutdown database.
+	 */
+	private void shutdownDatabase() {
+		if (this.processor != null) {
+			this.processor.tearDown(this, this.annotation);
 		}
 	}
 }

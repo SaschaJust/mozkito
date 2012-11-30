@@ -47,17 +47,24 @@ import org.apache.openjpa.persistence.criteria.OpenJPACriteriaBuilder;
 import org.apache.openjpa.persistence.criteria.OpenJPACriteriaQuery;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class OpenJPAUtil.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class OpenJPAUtil implements PersistenceUtil {
 	
+	/** The factory. */
 	private OpenJPAEntityManagerFactory factory;
 	
+	/** The entity manager. */
 	private EntityManager               entityManager;
 	
+	/** The type. */
 	private String                      type;
 	
+	/**
+	 * Instantiates a new open jpa util.
+	 */
 	OpenJPAUtil() {
 		
 	}
@@ -126,7 +133,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 	}
 	
 	/**
+	 * Creates the session factory.
+	 * 
 	 * @param properties
+	 *            the properties
 	 */
 	@Override
 	public void createSessionFactory(final Properties properties) {
@@ -195,12 +205,24 @@ public class OpenJPAUtil implements PersistenceUtil {
 	}
 	
 	/**
+	 * Creates the session factory.
+	 * 
 	 * @param host
+	 *            the host
 	 * @param database
+	 *            the database
 	 * @param user
+	 *            the user
 	 * @param password
+	 *            the password
 	 * @param type
+	 *            the type
 	 * @param driver
+	 *            the driver
+	 * @param unit
+	 *            the unit
+	 * @param options
+	 *            the options
 	 */
 	@Override
 	public void createSessionFactory(final String host,
@@ -276,6 +298,10 @@ public class OpenJPAUtil implements PersistenceUtil {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.PersistenceUtil#executeNativeSelectQuery(java.lang.String)
+	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public List executeNativeSelectQuery(final String queryString) {
@@ -380,16 +406,19 @@ public class OpenJPAUtil implements PersistenceUtil {
 	@Override
 	public <T extends Annotated> T loadById(final Object id,
 	                                        final Class<T> clazz) {
+		final String prefix = "get";
+		final int prefixLength = prefix.length();
 		// determine id column
 		for (final Method m : clazz.getDeclaredMethods()) {
 			// found
-			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith("get")) { //$NON-NLS-1$
+			if ((m.getAnnotation(Id.class) != null) && m.getName().startsWith(prefix)) {
 				if (m.getReturnType().equals(id.getClass()) || m.getReturnType().isAssignableFrom(id.getClass())
 				        || wrap(m.getReturnType()).equals(wrap(id.getClass()))) {
 					final Criteria<T> criteria = createCriteria(clazz);
 					String column = null;
 					
-					column = m.getName().substring(3, 4).toLowerCase() + m.getName().substring(4);
+					column = m.getName().substring(prefixLength, prefixLength + 1).toLowerCase()
+					        + m.getName().substring(prefixLength + 1);
 					criteria.eq(column, id);
 					final List<T> list = load(criteria);
 					if (!list.isEmpty()) {
@@ -461,31 +490,33 @@ public class OpenJPAUtil implements PersistenceUtil {
 	}
 	
 	/**
+	 * Wrap.
+	 * 
 	 * @param returnType
-	 * @param class1
-	 * @return
+	 *            the return type
+	 * @return the class
 	 */
 	private Class<?> wrap(final Class<?> returnType) {
 		if (returnType.isPrimitive()) {
-			if (returnType.getCanonicalName().equals("long")) { //$NON-NLS-1$
+			if ("long".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Long.class;
 			}
-			if (returnType.getCanonicalName().equals("char")) { //$NON-NLS-1$
+			if ("char".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Character.class;
 			}
-			if (returnType.getCanonicalName().equals("int")) { //$NON-NLS-1$
+			if ("int".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Integer.class;
 			}
-			if (returnType.getCanonicalName().equals("double")) { //$NON-NLS-1$
+			if ("double".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Double.class;
 			}
-			if (returnType.getCanonicalName().equals("short")) { //$NON-NLS-1$
+			if ("short".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Short.class;
 			}
-			if (returnType.getCanonicalName().equals("byte")) { //$NON-NLS-1$
+			if ("byte".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Byte.class;
 			}
-			if (returnType.getCanonicalName().equals("float")) { //$NON-NLS-1$
+			if ("float".equals(returnType.getCanonicalName())) { //$NON-NLS-1$
 				return Float.class;
 			}
 		}

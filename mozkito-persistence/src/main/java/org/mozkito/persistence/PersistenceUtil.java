@@ -32,17 +32,17 @@ public interface PersistenceUtil {
 	 * 
 	 * @return true, if successful
 	 */
-	public boolean activeTransaction();
+	boolean activeTransaction();
 	
 	/**
 	 * Begin transaction.
 	 */
-	public void beginTransaction();
+	void beginTransaction();
 	
 	/**
 	 * Commit transaction.
 	 */
-	public void commitTransaction();
+	void commitTransaction();
 	
 	/**
 	 * Creates the criteria.
@@ -53,7 +53,7 @@ public interface PersistenceUtil {
 	 *            the clazz
 	 * @return the criteria
 	 */
-	public <T> Criteria<T> createCriteria(final Class<T> clazz);
+	<T> Criteria<T> createCriteria(final Class<T> clazz);
 	
 	/**
 	 * Creates the native query.
@@ -66,8 +66,8 @@ public interface PersistenceUtil {
 	 *            the clazz
 	 * @return the query
 	 */
-	public <T> Query createNativeQuery(String query,
-	                                   Class<T> clazz);
+	<T> Query createNativeQuery(String query,
+	                            Class<T> clazz);
 	
 	/**
 	 * Creates the query.
@@ -76,7 +76,7 @@ public interface PersistenceUtil {
 	 *            the query
 	 * @return the query
 	 */
-	public Query createQuery(final String query);
+	Query createQuery(final String query);
 	
 	/**
 	 * Creates the session factory.
@@ -84,7 +84,7 @@ public interface PersistenceUtil {
 	 * @param properties
 	 *            the properties
 	 */
-	public void createSessionFactory(final Properties properties);
+	void createSessionFactory(final Properties properties);
 	
 	/**
 	 * Creates the session factory.
@@ -106,14 +106,14 @@ public interface PersistenceUtil {
 	 * @param options
 	 *            the options
 	 */
-	public void createSessionFactory(final String host,
-	                                 final String database,
-	                                 final String user,
-	                                 final String password,
-	                                 final String type,
-	                                 final String driver,
-	                                 final String unit,
-	                                 final ConnectOptions options);
+	void createSessionFactory(final String host,
+	                          final String database,
+	                          final String user,
+	                          final String password,
+	                          final String type,
+	                          final String driver,
+	                          final String unit,
+	                          final ConnectOptions options);
 	
 	/**
 	 * Delete.
@@ -121,7 +121,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	public void delete(final Annotated object);
+	void delete(final Annotated object);
 	
 	/**
 	 * Execute native query.
@@ -129,7 +129,7 @@ public interface PersistenceUtil {
 	 * @param query
 	 *            the query
 	 */
-	public void executeNativeQuery(final String query);
+	void executeNativeQuery(final String query);
 	
 	/**
 	 * Execute native select query.
@@ -139,7 +139,7 @@ public interface PersistenceUtil {
 	 * @return the list
 	 */
 	@SuppressWarnings ("rawtypes")
-	public List executeNativeSelectQuery(final String queryString);
+	List executeNativeSelectQuery(final String queryString);
 	
 	/**
 	 * Execute query.
@@ -147,7 +147,7 @@ public interface PersistenceUtil {
 	 * @param query
 	 *            the query
 	 */
-	public void executeQuery(final String query);
+	void executeQuery(final String query);
 	
 	/**
 	 * Exmerge.
@@ -155,26 +155,26 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	public void exmerge(final Annotated object);
+	void exmerge(final Annotated object);
 	
 	/**
 	 * Flush.
 	 */
-	public void flush();
+	void flush();
 	
 	/**
 	 * Gets the tool information.
 	 * 
 	 * @return the tool information
 	 */
-	public String getToolInformation();
+	String getToolInformation();
 	
 	/**
 	 * Gets the type.
 	 * 
 	 * @return the type
 	 */
-	public String getType();
+	String getType();
 	
 	/**
 	 * Load.
@@ -185,7 +185,7 @@ public interface PersistenceUtil {
 	 *            the criteria
 	 * @return the list
 	 */
-	public <T> List<T> load(final Criteria<T> criteria);
+	<T> List<T> load(final Criteria<T> criteria);
 	
 	/**
 	 * Load.
@@ -198,8 +198,8 @@ public interface PersistenceUtil {
 	 *            the size limit
 	 * @return the list
 	 */
-	public <T> List<T> load(final Criteria<T> criteria,
-	                        int sizeLimit);
+	<T> List<T> load(final Criteria<T> criteria,
+	                 int sizeLimit);
 	
 	/**
 	 * Load by id.
@@ -212,13 +212,13 @@ public interface PersistenceUtil {
 	 *            the clazz
 	 * @return the t
 	 */
-	public <T extends Annotated> T loadById(final Object id,
-	                                        Class<T> clazz);
+	<T extends Annotated> T loadById(final Object id,
+	                                 Class<T> clazz);
 	
 	/**
 	 * Rollback transaction.
 	 */
-	public void rollbackTransaction();
+	void rollbackTransaction();
 	
 	/**
 	 * Save.
@@ -226,7 +226,7 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	public void save(final Annotated object);
+	void save(final Annotated object);
 	
 	/**
 	 * Save or update.
@@ -234,12 +234,12 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	public void saveOrUpdate(final Annotated object);
+	void saveOrUpdate(final Annotated object);
 	
 	/**
 	 * Shutdown.
 	 */
-	public void shutdown();
+	void shutdown();
 	
 	/**
 	 * Update.
@@ -247,5 +247,5 @@ public interface PersistenceUtil {
 	 * @param object
 	 *            the object
 	 */
-	public void update(final Annotated object);
+	void update(final Annotated object);
 }

@@ -21,19 +21,23 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.persistence.Annotated;
 
+/**
+ * The Class StringTuple.
+ */
 @Embeddable
 public class StringTuple implements Annotated {
 	
+	/** The old value. */
 	private String            oldValue;
+	
+	/** The new value. */
 	private String            newValue;
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -268313983915960230L;
 	
 	/**
-	 * 
+	 * Instantiates a new string tuple.
 	 */
 	protected StringTuple() {
 		
@@ -86,11 +90,16 @@ public class StringTuple implements Annotated {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
 	public final String getHandle() {
 		return JavaUtils.getHandle(StringTuple.class);
 	}
 	
 	/**
+	 * Gets the new value.
+	 *
 	 * @return the newValue
 	 */
 	@Basic
@@ -100,6 +109,8 @@ public class StringTuple implements Annotated {
 	}
 	
 	/**
+	 * Gets the old value.
+	 *
 	 * @return the oldValue
 	 */
 	@Basic
@@ -126,16 +137,18 @@ public class StringTuple implements Annotated {
 	}
 	
 	/**
-	 * @param newValue
-	 *            the newValue to set
+	 * Sets the new value.
+	 *
+	 * @param newValue the newValue to set
 	 */
 	public void setNewValue(final String newValue) {
 		this.newValue = newValue;
 	}
 	
 	/**
-	 * @param oldValue
-	 *            the oldValue to set
+	 * Sets the old value.
+	 *
+	 * @param oldValue the oldValue to set
 	 */
 	public void setOldValue(final String oldValue) {
 		this.oldValue = oldValue;

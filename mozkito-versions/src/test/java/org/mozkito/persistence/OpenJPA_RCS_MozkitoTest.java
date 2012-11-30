@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.persistence.model.Person;
@@ -36,36 +35,28 @@ import org.mozkito.versions.model.Transaction;
 /**
  * The Class OpenJPA_RCS_MozkitoTest.
  */
-@DatabaseSettings (unit = "versions")
+@DatabaseSettings (unit = "versions", options = ConnectOptions.DB_DROP_CREATE)
 public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	
 	/** The branch factory. */
 	private BranchFactory branchFactory;
 	
 	/**
-	 * Before.
-	 */
-	@Before
-	public void before() {
-		this.branchFactory = new BranchFactory(getPersistenceUtil());
-	}
-	
-	/**
 	 * Test rcs branch.
 	 */
 	@Test
 	public void testRCSBranch() {
-		
-		final Branch branch = new Branch("testBranch");
-		final Transaction beginTransaction = new Transaction("000000000000000", "committed begin",
-		                                                           new DateTime(),
-		                                                           new Person("just", "Sascha Just",
-		                                                                      "sascha.just@mozkito.org"),
-		                                                           "000000000000000");
-		final Transaction endTransaction = new Transaction("0123456789abcde", "committed end", new DateTime(),
-		                                                         new Person("just", "Sascha Just",
-		                                                                    "sascha.just@mozkito.org"),
-		                                                         "0123456789abcde");
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
+		final Branch branch = this.branchFactory.getBranch("testBranch");
+		final Transaction beginTransaction = new Transaction("000000000000000", "committed begin", new DateTime(),
+		                                                     new Person("just", "Sascha Just",
+		                                                                "sascha.just@mozkito.org"), "000000000000000");
+		final Transaction endTransaction = new Transaction(
+		                                                   "0123456789abcde",
+		                                                   "committed end",
+		                                                   new DateTime(),
+		                                                   new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
+		                                                   "0123456789abcde");
 		
 		branch.setHead(endTransaction);
 		
@@ -94,6 +85,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	 */
 	@Test
 	public void testRCSRevision() {
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final Person person = new Person("just", null, null);
 		final Transaction transaction = new Transaction("0", "", new DateTime(), person, "");
 		final File file = new RCSFileManager().createFile("test.java", transaction);
@@ -153,6 +145,7 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	 */
 	@Test
 	public void testSaveRCSFile() {
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
 		final Transaction rcsTransaction = new Transaction("0", "", new DateTime(), person, "");
