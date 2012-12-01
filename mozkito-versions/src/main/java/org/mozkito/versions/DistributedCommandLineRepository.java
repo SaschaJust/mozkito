@@ -33,8 +33,9 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	
 	/**
 	 * Execute log.
-	 *
-	 * @param revision the revision
+	 * 
+	 * @param revision
+	 *            the revision
 	 * @return the tuple
 	 */
 	public abstract Tuple<Integer, List<String>> executeLog(String revision);

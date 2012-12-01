@@ -24,8 +24,9 @@ public class UnregisteredRepositoryTypeException extends Exception {
 	
 	/**
 	 * Instantiates a new unregistered repository type exception.
-	 *
-	 * @param string the string
+	 * 
+	 * @param string
+	 *            the string
 	 */
 	public UnregisteredRepositoryTypeException(final String string) {
 		super(string);

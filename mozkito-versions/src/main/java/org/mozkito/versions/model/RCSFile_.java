@@ -16,7 +16,7 @@ import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 
 /**
- * The Class File_.
+ * The Class RCSFile_.
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSFile.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",

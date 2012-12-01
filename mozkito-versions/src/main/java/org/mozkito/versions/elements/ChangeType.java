@@ -18,19 +18,19 @@ package org.mozkito.versions.elements;
 public enum ChangeType {
 	
 	/** The Added. */
-	Added, 
- /** The Deleted. */
- Deleted, 
- /** The Modified. */
- Modified, 
- /** The Renamed. */
- Renamed, 
- /** The All. */
- All;
+	Added,
+	/** The Deleted. */
+	Deleted,
+	/** The Modified. */
+	Modified,
+	/** The Renamed. */
+	Renamed,
+	/** The All. */
+	All;
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	public String getHandle() {

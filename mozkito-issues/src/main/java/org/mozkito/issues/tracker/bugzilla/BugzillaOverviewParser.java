@@ -34,7 +34,6 @@ import org.jsoup.select.Elements;
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 
-
 /**
  * The Class BugzillaOverviewParser.
  * 
@@ -192,7 +191,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 			}
 			final Elements trs = tbodies.get(0).getElementsByTag("tr");
 			for (final Element tr : trs) {
-				if (!tr.attr("id").equals("")) {
+				if (!tr.attr("id").isEmpty()) {
 					for (final Element td : tr.getElementsByTag("td")) {
 						if (td.attr("class").contains("bz_id_column")) {
 							try {

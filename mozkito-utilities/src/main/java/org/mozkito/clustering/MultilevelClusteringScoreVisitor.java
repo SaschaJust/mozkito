@@ -21,12 +21,15 @@ package org.mozkito.clustering;
  */
 public interface MultilevelClusteringScoreVisitor<T> {
 	
+	/**
+	 * Close.
+	 */
 	void close();
 	
 	/**
-	 * Returns the highest possible score value
+	 * Returns the highest possible score value.
 	 * 
-	 * @return
+	 * @return the max possible score
 	 */
 	double getMaxPossibleScore();
 	
@@ -34,10 +37,10 @@ public interface MultilevelClusteringScoreVisitor<T> {
 	 * Returns a confidence value between 0 and getMaxPossibleScore(). The higher the confidence, the stronger the voter
 	 * indicates that the provided artifacts t1 and t2 should belong to the same cluster.
 	 * 
-	 * @param ts
-	 *            the ts
-	 * @param oldScore
-	 *            the old score
+	 * @param t1
+	 *            the t1
+	 * @param t2
+	 *            the t2
 	 * @return the new (manipulated) score
 	 */
 	double getScore(final T t1,

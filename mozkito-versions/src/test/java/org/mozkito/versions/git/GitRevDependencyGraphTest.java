@@ -17,11 +17,21 @@ import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GitRevDependencyGraphTest.
+ */
 public class GitRevDependencyGraphTest {
 	
+	/** The branch factory. */
 	private static BranchFactory branchFactory;
+	
+	/** The repo. */
 	private static GitRepository repo;
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		try {
@@ -46,6 +56,9 @@ public class GitRevDependencyGraphTest {
 		}
 	}
 	
+	/**
+	 * Regression test rhino.
+	 */
 	@Test
 	public void regressionTestRhino() {
 		/* 
@@ -139,6 +152,9 @@ public class GitRevDependencyGraphTest {
 		
 	}
 	
+	/**
+	 * Regression test rhino2.
+	 */
 	@Test
 	public void regressionTestRhino2() {
 		/*
@@ -219,6 +235,9 @@ public class GitRevDependencyGraphTest {
 		assertFalse(iterator.hasNext());
 	}
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final IRevDependencyGraph graph = repo.getRevDependencyGraph();

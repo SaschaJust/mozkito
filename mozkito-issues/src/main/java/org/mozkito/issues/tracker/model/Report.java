@@ -76,6 +76,8 @@ import org.mozkito.persistence.model.PersonContainer;
 @Table (name = "report")
 public class Report implements Annotated, Comparable<Report> {
 	
+	private static final int      HASH_SIZE         = 33;
+	
 	/** The Constant serialVersionUID. */
 	private static final long     serialVersionUID  = 3241584366125944268L;
 	
@@ -98,7 +100,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                description;
 	
 	/** The hash. */
-	private byte[]                hash              = new byte[33];
+	private byte[]                hash              = new byte[HASH_SIZE];
 	
 	/** The history. */
 	private History               history;
@@ -158,7 +160,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 * 
-	 * @deprecated should only be used by persistence util in case of dynamic enhancement
+	 * @deprecated Should never be used. Exists to fulfill OpenJPA requirements.
 	 */
 	@Deprecated
 	public Report() {
@@ -393,7 +395,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
-	public Date getCreationJavaTimestamp() {
+	private Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
 		                                     ? getCreationTimestamp().toDate()
 		                                     : null;
@@ -530,7 +532,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastFetch")
-	public Date getLastFetchJava() {
+	private Date getLastFetchJava() {
 		return getLastFetch() != null
 		                             ? getLastFetch().toDate()
 		                             : null;
@@ -543,7 +545,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastUpdateTimestamp")
-	public Date getLastUpdateJavaTimestamp() {
+	private Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
 		                                       ? getLastUpdateTimestamp().toDate()
 		                                       : null;
@@ -606,7 +608,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "resolutionTimestamp")
-	public Date getResolutionJavaTimestamp() {
+	private Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
 		                                       ? getResolutionTimestamp().toDate()
 		                                       : null;
@@ -787,7 +789,8 @@ public class Report implements Annotated, Comparable<Report> {
 	 * 
 	 * @param comments
 	 *            the comments to set
-	 * @Deprecetd use addComment instead
+	 * 
+	 * @deprecated use addComment instead
 	 */
 	@Deprecated
 	public void setComments(final SortedSet<Comment> comments) {
@@ -811,7 +814,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new creation java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	public void setCreationJavaTimestamp(final Date creationTimestamp) {
+	private void setCreationJavaTimestamp(final Date creationTimestamp) {
 		setCreationTimestamp(creationTimestamp != null
 		                                              ? new DateTime(creationTimestamp)
 		                                              : null);
@@ -894,7 +897,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param history
 	 *            the history to set
 	 */
-	public void setHistory(final History history) {
+	private void setHistory(final History history) {
 		this.history = history;
 	}
 	
@@ -904,7 +907,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(final String id) {
+	private void setId(final String id) {
 		this.id = id;
 	}
 	
@@ -942,7 +945,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new last fetch java
 	 */
 	@SuppressWarnings ("unused")
-	public void setLastFetchJava(final Date lastFetch) {
+	private void setLastFetchJava(final Date lastFetch) {
 		setLastFetch(lastFetch != null
 		                              ? new DateTime(lastFetch)
 		                              : null);
@@ -955,7 +958,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new last update java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	public void setLastUpdateJavaTimestamp(final Date date) {
+	private void setLastUpdateJavaTimestamp(final Date date) {
 		setLastUpdateTimestamp(date != null
 		                                   ? new DateTime(date)
 		                                   : null);
@@ -1018,7 +1021,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new resolution java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	public void setResolutionJavaTimestamp(final Date date) {
+	private void setResolutionJavaTimestamp(final Date date) {
 		setResolutionTimestamp(date != null
 		                                   ? new DateTime(date)
 		                                   : null);
@@ -1195,6 +1198,7 @@ public class Report implements Annotated, Comparable<Report> {
 		} catch (final UnsupportedEncodingException e) {
 			hash = "encoding failed"; // this will never be executed
 		}
+		final int short_string_length = 10;
 		return "Report [id="
 		        + getId()
 		        + ", assignedTo="
@@ -1207,17 +1211,26 @@ public class Report implements Annotated, Comparable<Report> {
 		                                : 0)
 		        + ", description="
 		        + getDescription().substring(0,
-		                                     getDescription().length() > 10
-		                                                                   ? 10
-		                                                                   : Math.max(getDescription().length() - 1, 0))
-		        + "... , severity=" + getSeverity() + ", priority=" + getPriority() + ", resolution=" + getResolution()
-		        + ", submitter=" + getSubmitter() + ", subject="
-		        + getSubject().substring(0, getSubject().length() > 10
-		                                                              ? 10
-		                                                              : Math.max(getSubject().length() - 1, 0))
-		        + "... , resolver=" + getResolver() + ", status=" + getStatus() + ", type=" + getType()
-		        + ", creationTimestamp=" + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash
-		        + "]";
+		                                     getDescription().length() > short_string_length
+		                                                                                    ? short_string_length
+		                                                                                    : Math.max(getDescription().length() - 1,
+		                                                                                               0))
+		        + "... , severity="
+		        + getSeverity()
+		        + ", priority="
+		        + getPriority()
+		        + ", resolution="
+		        + getResolution()
+		        + ", submitter="
+		        + getSubmitter()
+		        + ", subject="
+		        + getSubject().substring(0,
+		                                 getSubject().length() > short_string_length
+		                                                                            ? short_string_length
+		                                                                            : Math.max(getSubject().length() - 1,
+		                                                                                       0)) + "... , resolver="
+		        + getResolver() + ", status=" + getStatus() + ", type=" + getType() + ", creationTimestamp="
+		        + getCreationTimestamp() + ", lastFetch=" + getLastFetch() + ", hash=" + hash + "]";
 	}
 	
 }

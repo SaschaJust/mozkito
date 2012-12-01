@@ -36,7 +36,6 @@ import org.jsoup.select.Elements;
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 
-
 /**
  * The Class MantisOverviewParser.
  * 
@@ -44,6 +43,20 @@ import org.mozkito.issues.tracker.ReportLink;
  */
 public class MantisOverviewParser implements OverviewParser {
 	
+	private static final int MANTIS_BUG_ID_LENGTH = 7;
+	
+	/**
+	 * Create a ReportLing instance.
+	 * 
+	 * @param uri
+	 *            the the report can be found
+	 * @param bugId
+	 *            the bug id. Mantis bug IDs have leading zeros. The provided ID might be the short ID (no leading
+	 *            zeros).
+	 * @return the link from id
+	 * @throws URISyntaxException
+	 *             the uRI syntax exception
+	 */
 	public static ReportLink getLinkFromId(final URI uri,
 	                                       final String bugId) throws URISyntaxException {
 		final StringBuilder sb = new StringBuilder();
@@ -51,7 +64,7 @@ public class MantisOverviewParser implements OverviewParser {
 		sb.append("view.php?id=");
 		sb.append(bugId);
 		final StringBuilder bugIdBuilder = new StringBuilder();
-		for (int i = 0; i < (7 - bugId.length()); ++i) {
+		for (int i = 0; i < (MANTIS_BUG_ID_LENGTH - bugId.length()); ++i) {
 			bugIdBuilder.append("0");
 		}
 		bugIdBuilder.append(bugId);
@@ -151,7 +164,7 @@ public class MantisOverviewParser implements OverviewParser {
 			final String href = lastATag.attr("href");
 			final Match regexGroups = this.pageRegex.find(href);
 			for (final Group regexGroup : regexGroups) {
-				if ((regexGroup.getName() != null) && (regexGroup.getName().equals("page_number"))) {
+				if ((regexGroup.getName() != null) && ("page_number".equals(regexGroup.getName()))) {
 					return Integer.valueOf(regexGroup.getMatch());
 				}
 			}
@@ -231,13 +244,15 @@ public class MantisOverviewParser implements OverviewParser {
 				                             "Could not find <table id=\"buglist\"> in overview HTML page. Maybe CSS changed.");
 			}
 			final Elements trs = buglistTable.getElementsByTag("tr");
-			if ((trs == null) || (trs.isEmpty()) || (trs.size() < 4)) {
+			final int min_num_trs = 4;
+			if ((trs == null) || (trs.isEmpty()) || (trs.size() < min_num_trs)) {
 				if (Logger.logWarn()) {
 					Logger.warn("Found <table id=\"buglist\"> table with less than 4 table rows.");
 				}
 				return result;
 			}
-			for (int i = 3; i < trs.size(); ++i) {
+			final int num_ignore_trs = 3;
+			for (int i = num_ignore_trs; i < trs.size(); ++i) {
 				final Element row = trs.get(i);
 				final Elements aTags = row.getElementsByTag("a");
 				if ((aTags == null) || (aTags.isEmpty())) {
@@ -250,11 +265,11 @@ public class MantisOverviewParser implements OverviewParser {
 						continue;
 					}
 					for (final Group regexGroup : find) {
-						if ((regexGroup.getName() != null) && (regexGroup.getName().equals("bugid"))) {
+						if ((regexGroup.getName() != null) && ("bugid".equals(regexGroup.getName()))) {
 							
 							final String bugId = regexGroup.getMatch();
 							final StringBuilder bugIdBuilder = new StringBuilder();
-							for (int j = 0; j < (7 - bugId.length()); ++j) {
+							for (int j = 0; j < (MANTIS_BUG_ID_LENGTH - bugId.length()); ++j) {
 								bugIdBuilder.append("0");
 							}
 							bugIdBuilder.append(bugId);

@@ -32,17 +32,23 @@ import org.mozkito.issues.tracker.settings.TrackerOptions;
 
 import scala.actors.threadpool.Arrays;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TrackerOptionsTest.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class TrackerOptionsTest {
 	
+	/** The keys. */
 	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "tracker.password", "tracker.proxy.cacheDir",
 	        "tracker.proxy.host", "tracker.proxy.internal", "tracker.proxy.password", "tracker.proxy.port",
 	        "tracker.useProxy", "tracker.proxy.username", "tracker.type", "tracker.uri", "tracker.user" });
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		for (final String key : keys) {
@@ -50,6 +56,9 @@ public class TrackerOptionsTest {
 		}
 	}
 	
+	/**
+	 * After.
+	 */
 	@After
 	public void after() {
 		for (final String key : TrackerOptionsTest.keys) {
@@ -59,6 +68,9 @@ public class TrackerOptionsTest {
 		}
 	}
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
 		for (final String key : TrackerOptionsTest.keys) {
@@ -68,6 +80,11 @@ public class TrackerOptionsTest {
 		}
 	}
 	
+	/**
+	 * Test.
+	 *
+	 * @throws ArgumentRegistrationException the argument registration exception
+	 */
 	@Test (expected = ArgumentRegistrationException.class)
 	public void test() throws ArgumentRegistrationException {
 		try {

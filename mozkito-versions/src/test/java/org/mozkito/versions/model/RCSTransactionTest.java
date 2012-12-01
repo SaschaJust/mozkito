@@ -10,8 +10,15 @@ import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RCSTransactionTest.
+ */
 public class RCSTransactionTest {
 	
+	/**
+	 * Test get changed files.
+	 */
 	@Test
 	public void testGetChangedFiles() {
 		final Person person = new Person("kim", "", "");
@@ -26,6 +33,9 @@ public class RCSTransactionTest {
 		
 	}
 	
+	/**
+	 * Test get revision for path.
+	 */
 	@Test
 	public void testGetRevisionForPath() {
 		/*

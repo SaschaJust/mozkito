@@ -32,11 +32,14 @@ public class LogIterator implements Iterator<LogEntry> {
 	private final Iterator<LogEntry> logIterator;
 	
 	/**
-	 * Instantiates a new log iterator.
-	 *
-	 * @param repository the repository
-	 * @param startRevision the start revision
-	 * @param endRevision the end revision
+	 * Instantiates a new LogIterator.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param startRevision
+	 *            the start revision
+	 * @param endRevision
+	 *            the end revision
 	 */
 	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision) {
 		this.logIterator = repository.log(startRevision, endRevision).iterator();

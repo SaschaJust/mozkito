@@ -16,24 +16,24 @@
 package org.mozkito.versions;
 
 /**
- * Supported protocol types for repositories.
- *
+ * Supported protocol types for repositories
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum ProtocolType {
 	
 	/** The file. */
-	FILE, 
- /** The http. */
- HTTP, 
- /** The https. */
- HTTPS, 
- /** The ssh. */
- SSH;
+	FILE,
+	/** The http. */
+	HTTP,
+	/** The https. */
+	HTTPS,
+	/** The ssh. */
+	SSH;
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the handle
 	 */
 	public String getHandle() {

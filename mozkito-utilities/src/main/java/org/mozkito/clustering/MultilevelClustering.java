@@ -80,8 +80,10 @@ public class MultilevelClustering<T> {
 	/** The aggregator. */
 	private final ScoreAggregation<T>                       aggregator;
 	
+	/** The score visitors. */
 	private final List<MultilevelClusteringScoreVisitor<T>> scoreVisitors;
 	
+	/** The last selected score. */
 	private double                                          lastSelectedScore = -1d;
 	
 	/**
@@ -91,6 +93,7 @@ public class MultilevelClustering<T> {
 	 * @param nodes
 	 *            the nodes
 	 * @param scoreVisitors
+	 *            the score visitors
 	 * @param aggregator
 	 *            the aggregator
 	 * @param collapseVisitor
@@ -114,6 +117,8 @@ public class MultilevelClustering<T> {
 	 * 
 	 * @param nodes
 	 *            the nodes
+	 * @param scoreVisitors
+	 *            the score visitors
 	 * @param aggregator
 	 *            the aggregator
 	 * @param collapseVisitor
@@ -128,6 +133,11 @@ public class MultilevelClustering<T> {
 		this.init(nodes);
 	}
 	
+	/**
+	 * Gets the lowest score.
+	 * 
+	 * @return the lowest score
+	 */
 	public double getLowestScore() {
 		return this.lastSelectedScore;
 	}

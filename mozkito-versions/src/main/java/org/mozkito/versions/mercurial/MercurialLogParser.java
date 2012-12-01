@@ -62,7 +62,8 @@ public class MercurialLogParser implements LogParser {
 		return completeLines;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.LogParser#parse(java.util.List)
 	 */
 	@Override

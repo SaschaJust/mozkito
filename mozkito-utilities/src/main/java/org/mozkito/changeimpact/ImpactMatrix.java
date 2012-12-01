@@ -23,26 +23,58 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 
+/**
+ * The Class ImpactMatrix.
+ */
 public class ImpactMatrix implements Serializable {
 	
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long                           serialVersionUID    = 5456334661961732039L;
+	
+	/** The impact matrix. */
 	private final Map<String, Map<String, Set<String>>> impactMatrix        = new HashMap<String, Map<String, Set<String>>>();
+	
+	/** The sum source changed. */
 	private final Map<String, Set<String>>              sumSourceChanged    = new HashMap<String, Set<String>>();
+	
+	/** The sum source impacted. */
 	private final Map<String, Set<String>>              sumSourceImpacted   = new HashMap<String, Set<String>>();
+	
+	/** The bugs. */
 	private Map<String, Integer>                        bugs                = new HashMap<String, Integer>();
+	
+	/** The impact weighted churn. */
 	private final Map<String, Long>                     impactWeightedChurn = new HashMap<String, Long>();
 	
+	/**
+	 * Instantiates a new impact matrix.
+	 */
 	public ImpactMatrix() {
 		
 	}
 	
+	/**
+	 * Instantiates a new impact matrix.
+	 * 
+	 * @param bugs
+	 *            the bugs
+	 */
 	public ImpactMatrix(final Map<String, Integer> bugs) {
 		this.bugs = bugs;
 	}
 	
+	/**
+	 * Adds the.
+	 * 
+	 * @param changedSource
+	 *            the changed source
+	 * @param impactedSource
+	 *            the impacted source
+	 * @param transactionId
+	 *            the transaction id
+	 * @param numDiff
+	 *            the num diff
+	 */
 	public void add(final String changedSource,
 	                final String impactedSource,
 	                final String transactionId,
@@ -73,6 +105,15 @@ public class ImpactMatrix implements Serializable {
 		this.impactWeightedChurn.put(changedSource, this.impactWeightedChurn.get(changedSource) + numDiff);
 	}
 	
+	/**
+	 * Gets the occurence.
+	 * 
+	 * @param changed
+	 *            the changed
+	 * @param impacted
+	 *            the impacted
+	 * @return the occurence
+	 */
 	public int getOccurence(final String changed,
 	                        final String impacted) {
 		if (!this.impactMatrix.containsKey(changed)) {
@@ -84,6 +125,13 @@ public class ImpactMatrix implements Serializable {
 		return this.impactMatrix.get(changed).get(impacted).size();
 	}
 	
+	/**
+	 * Gets the sum changed.
+	 * 
+	 * @param changed
+	 *            the changed
+	 * @return the sum changed
+	 */
 	public int getSumChanged(final String changed) {
 		if (!this.sumSourceChanged.containsKey(changed)) {
 			return 0;
@@ -91,6 +139,13 @@ public class ImpactMatrix implements Serializable {
 		return this.sumSourceChanged.get(changed).size();
 	}
 	
+	/**
+	 * Gets the sumimpacted.
+	 * 
+	 * @param impacted
+	 *            the impacted
+	 * @return the sumimpacted
+	 */
 	public int getSumimpacted(final String impacted) {
 		if (!this.sumSourceImpacted.containsKey(impacted)) {
 			return 0;
@@ -98,6 +153,11 @@ public class ImpactMatrix implements Serializable {
 		return this.sumSourceImpacted.get(impacted).size();
 	}
 	
+	/**
+	 * To csv.
+	 * 
+	 * @return the string
+	 */
 	public String toCSV() {
 		final StringBuilder sb = new StringBuilder();
 		

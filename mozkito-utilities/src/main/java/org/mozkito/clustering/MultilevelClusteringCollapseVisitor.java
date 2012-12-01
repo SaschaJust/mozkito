@@ -14,8 +14,25 @@ package org.mozkito.clustering;
 
 import java.util.Map;
 
+/**
+ * The Interface MultilevelClusteringCollapseVisitor.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public interface MultilevelClusteringCollapseVisitor<T> {
 	
+	/**
+	 * Gets the score.
+	 * 
+	 * @param newCluster
+	 *            the new cluster
+	 * @param otherCluster
+	 *            the other cluster
+	 * @param originalScoreMatrix
+	 *            the original score matrix
+	 * @return the score
+	 */
 	double getScore(final Cluster<T> newCluster,
 	                final Cluster<T> otherCluster,
 	                final Map<T, Map<T, Double>> originalScoreMatrix);

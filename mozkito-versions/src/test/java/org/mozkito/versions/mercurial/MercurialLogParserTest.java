@@ -14,6 +14,10 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MercurialLogParserTest.
+ */
 public class MercurialLogParserTest {
 	
 	static {
@@ -55,6 +59,9 @@ public class MercurialLogParserTest {
 		assertEquals("just", MercurialRepository.AUTHOR_REGEX.getGroup("plain"));
 	}
 	
+	/**
+	 * Test pre filter lines.
+	 */
 	@Test
 	public void testPreFilterLines() {
 		List<String> lines = new ArrayList<String>();

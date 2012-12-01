@@ -16,10 +16,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.google.GoogleTracker;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -31,6 +27,10 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
+import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.google.GoogleTracker;
 
 /**
  * The Class GoogleOptions.
@@ -100,8 +100,8 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	 * @param map
 	 *            the map
 	 */
-	private final void req(final IOptions<?, ?> option,
-	                       final Map<String, IOptions<?, ?>> map) {
+	private void req(final IOptions<?, ?> option,
+	                 final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);
 	}
 	
@@ -133,8 +133,8 @@ public class GoogleOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String,
-	 * java.lang.String, net.ownhero.dev.ioda.ProxyConfig)
+	 * @see org.mozkito.bugs.tracker.settings.ITrackerOptions#setup(java.net.URI, java.lang.String, java.lang.String,
+	 * net.ownhero.dev.ioda.ProxyConfig)
 	 */
 	@Override
 	public void setup(final URI trackerUri,

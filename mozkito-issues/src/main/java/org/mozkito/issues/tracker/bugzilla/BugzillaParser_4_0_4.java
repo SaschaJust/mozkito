@@ -185,7 +185,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 					final DateTime timestamp = DateTimeUtils.parseDate(longDesc.getBugWhen());
 					Person person = null;
 					if ((username == null) && (name == null)) {
-						person = Tracker.unknownPerson;
+						person = Tracker.UNKNOWN_PERSON;
 					} else {
 						person = new Person(username, name, null);
 					}
@@ -355,7 +355,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				if ((keyword != null)) {
 					final String[] keywordParts = keyword.split(",");
 					for (final String kw : keywordParts) {
-						if (!kw.trim().equals("")) {
+						if (!kw.trim().isEmpty()) {
 							result.add(kw);
 						}
 					}
@@ -563,7 +563,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 				if (groupsList != null) {
 					for (final Match groups : groupsList) {
 						for (final Group group : groups) {
-							if (group.getName().equals("sibling")) {
+							if ("sibling".equals(group.getName())) {
 								result.add(group.getMatch());
 							}
 						}
@@ -656,7 +656,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			if (bugSeverity == null) {
 				return null;
 			}
-			if (bugSeverity.toLowerCase().equals("enhancement")) {
+			if ("enhancement".equals(bugSeverity.toLowerCase())) {
 				return Type.RFE;
 			}
 			return Type.BUG;

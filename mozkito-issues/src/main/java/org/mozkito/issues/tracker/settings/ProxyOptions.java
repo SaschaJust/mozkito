@@ -52,6 +52,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<ProxyConfig, ProxyOptions>> {
 	
+	private static final int          DEFAULT_PROXY_PORT = 8584;
+	
+	private static final int          PROXY_WAIT_TIMEOUT = 1000;
+	
 	/** The host options. */
 	private HostArgument.Options      hostOptions;
 	
@@ -106,8 +110,8 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			
 			if (internalArgument.getValue()) {
 				// use internal proxy
-				if ((hostArgument.getValue() != null) && !hostArgument.getValue().equalsIgnoreCase("localhost")
-				        && !hostArgument.getValue().equalsIgnoreCase("127.0.0.1")) {
+				if ((hostArgument.getValue() != null) && !"localhost".equalsIgnoreCase(hostArgument.getValue())
+				        && !"127.0.0.1".equalsIgnoreCase(hostArgument.getValue())) {
 					if (Logger.logWarn()) {
 						Logger.warn("Proxy '%s' argument is invalid. While internal proxy is enabled, we do not support '%s' arguments other than localhost.",
 						            hostArgument.getTag(), hostArgument.getTag());
@@ -168,7 +172,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					});
 					// wait for proxy to settle
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(PROXY_WAIT_TIMEOUT);
 					} catch (final InterruptedException ignore) {
 						// ignore
 					}
@@ -222,8 +226,8 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 	 * @param map
 	 *            the map
 	 */
-	private final void req(final IOptions<?, ?> option,
-	                       final Map<String, IOptions<?, ?>> map) {
+	private void req(final IOptions<?, ?> option,
+	                 final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);
 	}
 	
@@ -264,7 +268,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			
 			this.portOptions = new PortArgument.Options(
 			                                            set,
-			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), 8584, //$NON-NLS-1$ //$NON-NLS-2$
+			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), DEFAULT_PROXY_PORT, //$NON-NLS-1$ //$NON-NLS-2$
 			                                            Requirement.equals(this.internalOptions, false), true);
 			req(this.portOptions, map);
 			

@@ -47,13 +47,19 @@ public class LogEntry implements Comparable<LogEntry> {
 	
 	/**
 	 * Instantiates a new log entry.
-	 *
-	 * @param revision the revision
-	 * @param previous the previous LogEntry, null if this is the first revision
-	 * @param author the author
-	 * @param message the message
-	 * @param dateTime the date time
-	 * @param originalId the original id
+	 * 
+	 * @param revision
+	 *            the revision
+	 * @param previous
+	 *            the previous LogEntry, null if this is the first revision
+	 * @param author
+	 *            the author
+	 * @param message
+	 *            the message
+	 * @param dateTime
+	 *            the date time
+	 * @param originalId
+	 *            the original id
 	 */
 	public LogEntry(@NotNull final String revision, final LogEntry previous, @NotNull final Person author,
 	        @NotNull final String message, @NotNull final DateTime dateTime, final String originalId) {
@@ -102,8 +108,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	
 	/**
 	 * Gets the handle.
-	 *
-	 * @return the handle
+	 * 
+	 * @return the simple class name of this class.
 	 */
 	public String getHandle() {
 		return this.getClass().getSimpleName();
@@ -119,8 +125,8 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 	
 	/**
-	 * Gets the original id.
-	 *
+	 * Returns the ID of the log entry in the original repository if the repository was converted (e.g. from SVN to Git)
+	 * 
 	 * @return the original id
 	 */
 	public String getOriginalId() {

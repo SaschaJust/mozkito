@@ -16,9 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+
 import org.apache.commons.lang.StringUtils;
 import org.mozkito.versions.model.RCSBranch;
-
 
 /**
  * The Class RevDependency.
@@ -42,15 +43,25 @@ public class RevDependency {
 	
 	/**
 	 * Instantiates a new rev dependency.
-	 *
-	 * @param id the id
-	 * @param commitBranch the commit branch
-	 * @param parents the parents
-	 * @param tagNames the tag names
-	 * @param isMerge the is merge
+	 * 
+	 * @param id
+	 *            the id
+	 * @param commitBranch
+	 *            the commit branch
+	 * @param parents
+	 *            the parents
+	 * @param tagNames
+	 *            the tag names
+	 * @param isMerge
+	 *            the is merge
 	 */
 	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
+		if (isMerge) {
+			CollectionCondition.minSize(parents, 2, "Merges must have multiple parents.");
+		} else {
+			CollectionCondition.maxSize(parents, 1, "Non-merges must have at most one parent.");
+		}
 		this.revId = id;
 		this.commitBranch = commitBranch;
 		this.parents = parents;
@@ -60,7 +71,7 @@ public class RevDependency {
 	
 	/**
 	 * Gets the commit branch.
-	 *
+	 * 
 	 * @return the commit branch
 	 */
 	public RCSBranch getCommitBranch() {
@@ -69,7 +80,7 @@ public class RevDependency {
 	
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return the id
 	 */
 	public String getId() {
@@ -78,7 +89,7 @@ public class RevDependency {
 	
 	/**
 	 * Gets the parents.
-	 *
+	 * 
 	 * @return the parents
 	 */
 	public Set<String> getParents() {
@@ -87,7 +98,7 @@ public class RevDependency {
 	
 	/**
 	 * Gets the tag names.
-	 *
+	 * 
 	 * @return the tag names
 	 */
 	public List<String> getTagNames() {
@@ -96,14 +107,15 @@ public class RevDependency {
 	
 	/**
 	 * Checks if is merge.
-	 *
+	 * 
 	 * @return true, if is merge
 	 */
 	public boolean isMerge() {
 		return this.isMerge;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

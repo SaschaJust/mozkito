@@ -16,8 +16,19 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
+/**
+ * The Class MaxCollapseVisitor.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public class MaxCollapseVisitor<T> implements MultilevelClusteringCollapseVisitor<T> {
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.clustering.MultilevelClusteringCollapseVisitor#getScore(org.mozkito.clustering.Cluster,
+	 * org.mozkito.clustering.Cluster, java.util.Map)
+	 */
 	@Override
 	public double getScore(final Cluster<T> newCluster,
 	                       final Cluster<T> otherCluster,

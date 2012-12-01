@@ -17,15 +17,15 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.Parser;
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.Tracker;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.tracker.Parser;
+import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.Tracker;
 
 /**
  * The Class MantisTracker.
@@ -85,6 +85,12 @@ public class MantisTracker extends Tracker {
 		}
 	}
 	
+	/**
+	 * Sets the report IDs handles by this tracker instance. (Should only be called from MintisOptions)
+	 * 
+	 * @param ids
+	 *            the new report ids
+	 */
 	public void setReportIds(final Collection<String> ids) {
 		this.bugIds = ids;
 	}

@@ -34,10 +34,13 @@ public class GitMerge {
 	
 	/**
 	 * Instantiates a new git merge.
-	 *
-	 * @param mergeHash the merge hash
-	 * @param branchParent the branch parent
-	 * @param otherParents the other parents
+	 * 
+	 * @param mergeHash
+	 *            the merge hash
+	 * @param branchParent
+	 *            the branch parent
+	 * @param otherParents
+	 *            the other parents
 	 */
 	public GitMerge(@NotNull final String mergeHash, final String branchParent, final String... otherParents) {
 		this.mergeHash = mergeHash;
@@ -49,7 +52,7 @@ public class GitMerge {
 	
 	/**
 	 * Gets the branch parent.
-	 *
+	 * 
 	 * @return the branch parent
 	 */
 	public String getBranchParent() {
@@ -64,8 +67,9 @@ public class GitMerge {
 	
 	/**
 	 * Gets the edge type.
-	 *
-	 * @param parent the parent
+	 * 
+	 * @param parent
+	 *            the parent
 	 * @return the edge type
 	 */
 	@NoneNull
@@ -87,7 +91,7 @@ public class GitMerge {
 	
 	/**
 	 * Gets the merge hash.
-	 *
+	 * 
 	 * @return the merge hash
 	 */
 	public String getMergeHash() {
@@ -102,7 +106,7 @@ public class GitMerge {
 	
 	/**
 	 * Gets the other parents.
-	 *
+	 * 
 	 * @return the other parents
 	 */
 	public Set<String> getOtherParents() {

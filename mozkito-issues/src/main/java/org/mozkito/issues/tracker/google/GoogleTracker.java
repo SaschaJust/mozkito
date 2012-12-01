@@ -21,21 +21,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.ProxyConfig;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
-import net.ownhero.dev.kisa.Logger;
 
 import com.google.gdata.client.projecthosting.ProjectHostingService;
 import com.google.gdata.data.projecthosting.IssuesEntry;
 import com.google.gdata.data.projecthosting.IssuesFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-
 
 /**
  * The Class GoogleTracker.
@@ -199,7 +198,7 @@ public class GoogleTracker extends Tracker {
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
 		try {
-			if ((getUsername() != null) && (getPassword() != null) && (!getUsername().trim().equals(""))) {
+			if ((getUsername() != null) && (getPassword() != null) && (!getUsername().trim().isEmpty())) {
 				this.service.setUserCredentials(getUsername(), getPassword());
 			}
 		} catch (final AuthenticationException e) {

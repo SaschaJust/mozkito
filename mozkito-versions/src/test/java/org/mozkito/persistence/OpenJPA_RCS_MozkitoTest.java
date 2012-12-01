@@ -19,8 +19,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -42,21 +42,29 @@ public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	private BranchFactory branchFactory;
 	
 	/**
+	 * Before.
+	 */
+	@Before
+	public void before() {
+		this.branchFactory = new BranchFactory(getPersistenceUtil());
+	}
+	
+	/**
 	 * Test rcs branch.
 	 */
 	@Test
 	public void testRCSBranch() {
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final RCSBranch rCSBranch = this.branchFactory.getBranch("testBranch");
-		final RCSTransaction beginTransaction = new RCSTransaction("000000000000000", "committed begin", new DateTime(),
-		                                                     new Person("just", "Sascha Just",
-		                                                                "sascha.just@mozkito.org"), "000000000000000");
-		final RCSTransaction endTransaction = new RCSTransaction(
-		                                                   "0123456789abcde",
-		                                                   "committed end",
-		                                                   new DateTime(),
-		                                                   new Person("just", "Sascha Just", "sascha.just@mozkito.org"),
-		                                                   "0123456789abcde");
+		final RCSTransaction beginTransaction = new RCSTransaction("000000000000000", "committed begin",
+		                                                           new DateTime(),
+		                                                           new Person("just", "Sascha Just",
+		                                                                      "sascha.just@mozkito.org"),
+		                                                           "000000000000000");
+		final RCSTransaction endTransaction = new RCSTransaction("0123456789abcde", "committed end", new DateTime(),
+		                                                         new Person("just", "Sascha Just",
+		                                                                    "sascha.just@mozkito.org"),
+		                                                         "0123456789abcde");
 		
 		rCSBranch.setHead(endTransaction);
 		

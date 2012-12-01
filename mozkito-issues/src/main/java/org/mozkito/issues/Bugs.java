@@ -15,11 +15,6 @@
  */
 package org.mozkito.issues;
 
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.settings.TrackerOptions;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -35,12 +30,19 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.settings.TrackerOptions;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+
 /**
  * The Class Bugs.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Bugs extends Chain<Settings> {
+	
+	private static final long                             DEFAULT_CACHE_SIZE = 3000l;
 	
 	/** The thread pool. */
 	private final Pool                                    threadPool;
@@ -77,7 +79,7 @@ public class Bugs extends Chain<Settings> {
 			                                                settings.getRoot(),
 			                                                "cacheSize",
 			                                                "determines the cache size (number of logs) that are prefetched during reading",
-			                                                3000l, Requirement.required));
+			                                                DEFAULT_CACHE_SIZE, Requirement.required));
 			Logger.always(settings.toString());
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {

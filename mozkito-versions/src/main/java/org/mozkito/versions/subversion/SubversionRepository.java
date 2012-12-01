@@ -340,16 +340,21 @@ public class SubversionRepository extends Repository {
 				final Map<Object, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
 				for (final Object o : changedPaths.keySet()) {
 					switch (changedPaths.get(o).getType()) {
-						case 'M':
+						case SVNLogEntryPath.TYPE_MODIFIED:
 							map.put(changedPaths.get(o).getPath(), ChangeType.Modified);
 							break;
-						case 'A':
-							map.put(changedPaths.get(o).getPath(), ChangeType.Added);
+						case SVNLogEntryPath.TYPE_ADDED:
+							final String copyPath = changedPaths.get(o).getCopyPath();
+							if (copyPath != null) {
+								map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
+							} else {
+								map.put(changedPaths.get(o).getPath(), ChangeType.Added);
+							}
 							break;
-						case 'D':
+						case SVNLogEntryPath.TYPE_DELETED:
 							map.put(changedPaths.get(o).getPath(), ChangeType.Deleted);
 							break;
-						case 'R':
+						case SVNLogEntryPath.TYPE_REPLACED:
 							map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
 							break;
 						default:
@@ -593,7 +598,7 @@ public class SubversionRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#setEndRevision(java.lang.String)
 	 */
 	@Override
-	public void setEndRevision(final String endRevision) {
+	protected void setEndRevision(final String endRevision) {
 		try {
 			this.endRevision = (endRevision != null
 			                                       ? SVNRevision.parse(endRevision)
@@ -610,7 +615,7 @@ public class SubversionRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#setStartRevision(java.lang.String)
 	 */
 	@Override
-	public void setStartRevision(final String startRevision) {
+	protected void setStartRevision(final String startRevision) {
 		this.startRevision = (startRevision != null
 		                                           ? SVNRevision.parse(startRevision)
 		                                           : SVNRevision.create(1));

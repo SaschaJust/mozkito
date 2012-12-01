@@ -26,13 +26,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class FileUtilsTest.
+ */
 public class FileUtilsTest {
 	
+	/** The chars. */
 	private static String chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
+	/** The name dir. */
 	File                  nameDir;
+	
+	/** The tmp dir. */
 	File                  tmpDir;
 	
+	/**
+	 * Exists.
+	 */
 	@Test
 	public void exists() {
 		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator + "reposuiteFileUtilsTestDir");
@@ -44,6 +54,9 @@ public class FileUtilsTest {
 		assertEquals(this.nameDir, newDir);
 	}
 	
+	/**
+	 * Exists as file.
+	 */
 	@Test
 	public void existsAsFile() {
 		this.nameDir = new File(this.tmpDir.getAbsoluteFile() + FileUtils.fileSeparator + "reposuiteFileUtilsTestDir");
@@ -59,6 +72,9 @@ public class FileUtilsTest {
 		assertEquals(null, newDir);
 	}
 	
+	/**
+	 * Parent dir no dir.
+	 */
 	@Test
 	public void parentDirNoDir() {
 		
@@ -70,12 +86,18 @@ public class FileUtilsTest {
 		assertEquals(null, newDir);
 	}
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		this.tmpDir = new File(System.getProperty("java.io.tmpdir"));
 		this.nameDir = this.tmpDir;
 	}
 	
+	/**
+	 * Tear down.
+	 */
 	@After
 	public void tearDown() {
 		this.nameDir.delete();

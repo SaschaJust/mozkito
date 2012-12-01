@@ -29,33 +29,35 @@ public class RCSFileManager {
 	private final Map<String, RCSFile> currentFiles = new HashMap<String, RCSFile>();
 	
 	/**
-	 * Adds the file.
-	 *
-	 * @param rCSFile the file
+	 * @param file
+	 *            the file to be registered
 	 */
-	public void addFile(final RCSFile rCSFile) {
-		this.currentFiles.put(rCSFile.getLatestPath(), rCSFile);
+	public void addFile(final RCSFile file) {
+		this.currentFiles.put(file.getLatestPath(), file);
 	}
 	
 	/**
-	 * Creates the file.
-	 *
-	 * @param path the path
-	 * @param rCSTransaction the transaction
-	 * @return the file
+	 * Creates and registers a file with the provided path and transaction.
+	 * 
+	 * @param path
+	 *            the path of the file to be created
+	 * @param transaction
+	 *            the transaction
+	 * @return the {@link RCSFile}
 	 */
 	public RCSFile createFile(final String path,
-	                          final RCSTransaction rCSTransaction) {
-		final RCSFile rCSFile = new RCSFile(path, rCSTransaction);
+	                          final RCSTransaction transaction) {
+		final RCSFile rCSFile = new RCSFile(path, transaction);
 		this.currentFiles.put(path, rCSFile);
 		return rCSFile;
 	}
 	
 	/**
-	 * Gets the file.
-	 *
-	 * @param path the path
-	 * @return the file
+	 * Get the file registered with the given path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the {@link RCSFile} if exists, null otherwise.
 	 */
 	public RCSFile getFile(final String path) {
 		return this.currentFiles.get(path);

@@ -42,8 +42,12 @@ import org.mozkito.persistence.model.Person;
  */
 public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	
+	private static final int                MIN_HISTORY_ELEMENT_TABLE_COLUMNS = 5;
+	
+	private static final int                MIN_NUMBER_BODY_TABLE_COLUMNS     = 3;
+	
 	/** The namespace. */
-	protected static Namespace              namespace = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
+	protected static Namespace              namespace                         = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 	
 	/** The history uri. */
 	private final URI                       historyUri;
@@ -58,13 +62,14 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	private DateTime                        resolutionTimestamp;
 	
 	/** The history. */
-	private final SortedSet<HistoryElement> history   = new TreeSet<HistoryElement>();
+	private final SortedSet<HistoryElement> history                           = new TreeSet<HistoryElement>();
 	
 	/** The parsed. */
-	private boolean                         parsed    = false;
+	private boolean                         parsed                            = false;
 	
 	/** The skip regex. */
-	private static Regex                    skipRegex = new Regex("No changes have been made to this bug yet.");
+	private static Regex                    skipRegex                         = new Regex(
+	                                                                                      "No changes have been made to this bug yet.");
 	
 	/**
 	 * Instantiates a new bugzilla history parser.
@@ -168,7 +173,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			for (int i = 1; i < trs.size(); ++i) {
 				final Element tr = trs.get(i);
 				final Elements tds = tr.getElementsByTag("td");
-				if (tds.size() < 3) {
+				if (tds.size() < MIN_NUMBER_BODY_TABLE_COLUMNS) {
 					if (Logger.logError()) {
 						Logger.error(errorHeader
 						        + "at least 3 columns in a mozilla body table are expected in every row.");
@@ -181,7 +186,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				                                 : 0;
 				
 				if (rowspan < 2) {
-					if (tds.size() < 5) {
+					if (tds.size() < MIN_HISTORY_ELEMENT_TABLE_COLUMNS) {
 						if (Logger.logError()) {
 							Logger.error(errorHeader
 							        + "at least 5 columns in a mozilla body table are expected in new history element rows.");
@@ -189,7 +194,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 						return false;
 					}
 					final String rowspanString = tds.get(0).attr("rowspan");
-					if (!rowspanString.equals("")) {
+					if (!rowspanString.isEmpty()) {
 						rowspan = Integer.valueOf(rowspanString);
 						if (rowspan > 1) {
 							++rowspan;
@@ -201,8 +206,8 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 					// get who
 					final String whoString = tds.get(0).text().trim();
 					Person who = new Person(whoString, null, null);
-					if (whoString.equals("")) {
-						who = Tracker.unknownPerson;
+					if (whoString.isEmpty()) {
+						who = Tracker.UNKNOWN_PERSON;
 					}
 					
 					// get when
@@ -228,49 +233,60 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				final String added = tds.get(whatIndex + 2).text().trim();
 				
 				String field = null;
-				if (what.equals("priority")) {
-					field = "priority";
-					hElement.addChangedValue(field, BugzillaParser.getPriority(removed),
-					                         BugzillaParser.getPriority(added));
-				} else if (what.equals("summary")) {
-					field = ("summary");
-					hElement.addChangedValue(field, removed, added);
-				} else if (what.equals("resolution")) {
-					field = ("resolution");
-					hElement.addChangedValue(field, BugzillaParser.getResolution(removed),
-					                         BugzillaParser.getResolution(added));
-					// set report resolution date and resolver
-					if (BugzillaParser.getResolution(added).equals(Resolution.RESOLVED)) {
-						this.resolver = hElement.getAuthor();
-						this.resolutionTimestamp = hElement.getTimestamp();
-					}
-				} else if (what.equals("assignee")) {
-					field = ("assignedTo");
-					final Person oldValue = new Person(removed, null, null);
-					final Person newValue = new Person(added, null, null);
-					hElement.addChangedValue(field, oldValue, newValue);
-				} else if (what.equals("component")) {
-					field = ("component");
-					hElement.addChangedValue(field, removed, added);
-				} else if (what.equals("version")) {
-					field = ("version");
-					hElement.addChangedValue(field, removed, added);
-				} else if (what.equals("summary")) {
-					field = ("summary");
-					hElement.addChangedValue(field, removed, added);
-				} else if (what.equals("severity")) {
-					field = ("severity");
-					hElement.addChangedValue(field, BugzillaParser.getSeverity(removed),
-					                         BugzillaParser.getSeverity(added));
-				} else if (what.equals("status")) {
-					field = ("status");
-					hElement.addChangedValue(field, BugzillaParser.getStatus(removed), BugzillaParser.getStatus(added));
-				} else if (what.equals("product")) {
-					field = ("product");
-					hElement.addChangedValue(field, removed, added);
-				} else if (what.equals("category")) {
-					field = ("category");
-					hElement.addChangedValue(field, removed, added);
+				switch (what) {
+					case "priority":
+						field = "priority";
+						hElement.addChangedValue(field, BugzillaParser.getPriority(removed),
+						                         BugzillaParser.getPriority(added));
+						break;
+					case "summary":
+						field = ("summary");
+						hElement.addChangedValue(field, removed, added);
+						break;
+					case "resolution":
+						field = ("resolution");
+						hElement.addChangedValue(field, BugzillaParser.getResolution(removed),
+						                         BugzillaParser.getResolution(added));
+						// set report resolution date and resolver
+						if (BugzillaParser.getResolution(added).equals(Resolution.RESOLVED)) {
+							this.resolver = hElement.getAuthor();
+							this.resolutionTimestamp = hElement.getTimestamp();
+						}
+						break;
+					case "assignee":
+						field = ("assignedTo");
+						final Person oldValue = new Person(removed, null, null);
+						final Person newValue = new Person(added, null, null);
+						hElement.addChangedValue(field, oldValue, newValue);
+						break;
+					case "component":
+						field = ("component");
+						hElement.addChangedValue(field, removed, added);
+						break;
+					case "version":
+						field = ("version");
+						hElement.addChangedValue(field, removed, added);
+						break;
+					case "severity":
+						field = ("severity");
+						hElement.addChangedValue(field, BugzillaParser.getSeverity(removed),
+						                         BugzillaParser.getSeverity(added));
+						break;
+					case "status":
+						field = ("status");
+						hElement.addChangedValue(field, BugzillaParser.getStatus(removed),
+						                         BugzillaParser.getStatus(added));
+						break;
+					case "product":
+						field = ("product");
+						hElement.addChangedValue(field, removed, added);
+						break;
+					case "category":
+						field = ("category");
+						hElement.addChangedValue(field, removed, added);
+						break;
+					default:
+						break;
 				}
 				--rowspan;
 			}

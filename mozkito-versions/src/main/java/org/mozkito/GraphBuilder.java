@@ -50,9 +50,11 @@ public class GraphBuilder implements Runnable {
 	
 	/**
 	 * Instantiates a new graph builder.
-	 *
-	 * @param repository the repository
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param persistenceUtil
+	 *            the PersitenceUtil allowing DB connection
 	 */
 	@NoneNull
 	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {

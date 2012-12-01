@@ -15,15 +15,32 @@ package org.mozkito.clustering;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The Class VirtualCluster.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 public class VirtualCluster<T> extends Cluster<T> {
 	
+	/** The t. */
 	private final T t;
 	
+	/**
+	 * Instantiates a new virtual cluster.
+	 * 
+	 * @param t
+	 *            the t
+	 */
 	public VirtualCluster(final T t) {
 		super(0d);
 		this.t = t;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.clustering.Cluster#equals(java.lang.Object)
+	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public boolean equals(final Object obj) {
@@ -58,6 +75,10 @@ public class VirtualCluster<T> extends Cluster<T> {
 		return result;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.clustering.Cluster#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

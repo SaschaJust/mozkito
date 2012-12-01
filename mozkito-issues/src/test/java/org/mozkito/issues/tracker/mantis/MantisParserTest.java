@@ -40,12 +40,10 @@ import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
 import org.mozkito.issues.tracker.elements.Status;
 import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.mantis.MantisParser;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.PersonTuple;
-
 
 /**
  * The Class MantisParserTest.
@@ -145,51 +143,6 @@ public class MantisParserTest {
 		parser.setURI(new ReportLink(this.report18828.getUri(), "18828"));
 		final List<AttachmentEntry> attachments = parser.getAttachmentEntries();
 		assertTrue(attachments.isEmpty());
-	}
-	
-	/**
-	 * Test attachments19810.
-	 */
-	@Test
-	public void testAttachments19810() {
-		
-		final MantisParser parser = new MantisParser();
-		parser.setURI(new ReportLink(this.report19810.getUri(), "19810"));
-		final List<AttachmentEntry> attachments = parser.getAttachmentEntries();
-		
-		final String reportLink = this.report19810.getUri().toASCIIString();
-		final int index = reportLink.lastIndexOf("/");
-		
-		assertEquals(3, attachments.size());
-		assertEquals("5008", attachments.get(0).getId());
-		assertTrue(attachments.get(0) != null);
-		assertTrue(attachments.get(0).getAuthor() != null);
-		assertTrue(attachments.get(0).getAuthor().getUsernames().contains("alostale"));
-		assertEquals(DateTimeUtils.parseDate("2012-02-20 10:39"), attachments.get(0).getTimestamp());
-		assertEquals(null, attachments.get(0).getDescription());
-		assertEquals("Selection_031.png", attachments.get(0).getFilename());
-		assertEquals(reportLink.substring(0, index + 1) + "file_download.php?file_id=5008&type=bug",
-		             attachments.get(0).getLink().toString());
-		assertEquals(37363, attachments.get(0).getSize());
-		
-		assertEquals("5009", attachments.get(1).getId());
-		assertTrue(attachments.get(1).getAuthor().getUsernames().contains("alostale"));
-		assertEquals(DateTimeUtils.parseDate("2012-02-20 10:40"), attachments.get(1).getTimestamp());
-		assertEquals(null, attachments.get(1).getDescription());
-		assertEquals("Selection_032.png", attachments.get(1).getFilename());
-		assertEquals(reportLink.substring(0, index + 1) + "file_download.php?file_id=5009&type=bug",
-		             attachments.get(1).getLink().toString());
-		assertEquals(150567, attachments.get(1).getSize());
-		
-		assertEquals("5010", attachments.get(2).getId());
-		assertTrue(attachments.get(2).getAuthor().getUsernames().contains("alostale"));
-		assertEquals(DateTimeUtils.parseDate("2012-02-20 10:40"), attachments.get(2).getTimestamp());
-		assertEquals(null, attachments.get(2).getDescription());
-		assertEquals("test.html", attachments.get(2).getFilename());
-		assertEquals(reportLink.substring(0, index + 1) + "file_download.php?file_id=5010&type=bug",
-		             attachments.get(2).getLink().toString());
-		assertEquals(1073, attachments.get(2).getSize());
-		
 	}
 	
 	/**

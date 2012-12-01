@@ -20,7 +20,7 @@ import org.neo4j.graphdb.RelationshipType;
 public enum GitRevDependencyType implements RelationshipType {
 	
 	/** The branch edge. */
-	BRANCH_EDGE, 
- /** The merge edge. */
- MERGE_EDGE;
+	BRANCH_EDGE,
+	/** The merge edge. */
+	MERGE_EDGE;
 }

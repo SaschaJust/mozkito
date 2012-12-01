@@ -24,6 +24,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * The Class JiraIDExtractor.
+ */
 public class JiraIDExtractor extends DefaultHandler {
 	
 	private boolean            inItem  = false;
@@ -44,9 +47,9 @@ public class JiraIDExtractor extends DefaultHandler {
 	public void endElement(final String uri,
 	                       final String localName,
 	                       final String qName) {
-		if (localName.equals("item")) {
+		if ("item".equals(localName)) {
 			this.inItem = false;
-		} else if (localName.equals("title") && this.inItem) {
+		} else if ("title".equals(localName) && this.inItem) {
 			final Match groups = idRegex.find(this.content.toString().trim());
 			final Group group = groups.getGroup("bugid");
 			if (group == null) {
@@ -60,6 +63,11 @@ public class JiraIDExtractor extends DefaultHandler {
 		this.content.setLength(0);
 	}
 	
+	/**
+	 * Gets the bug report IDs.
+	 * 
+	 * @return the ids
+	 */
 	public List<String> getIds() {
 		return this.ids;
 	}
@@ -69,7 +77,7 @@ public class JiraIDExtractor extends DefaultHandler {
 	                         final String localName,
 	                         final String qName,
 	                         final Attributes attributes) throws SAXException {
-		if (localName.equals("item")) {
+		if ("item".equals(localName)) {
 			this.inItem = true;
 		}
 	}

@@ -61,8 +61,9 @@ public class RCSBranch implements Annotated {
 	                                                                      
 	/**
 	 * Sets the master branch name.
-	 *
-	 * @param name the new master branch name
+	 * 
+	 * @param name
+	 *            the new master branch name
 	 */
 	public static void setMasterBranchName(final String name) {
 		MASTER_BRANCH_NAME = name;

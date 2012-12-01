@@ -17,7 +17,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.mozkito.versions.elements.ChangeType;
 
 /**
- * The Class Revision_.
+ * The Class RCSRevision_.
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSRevision.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",

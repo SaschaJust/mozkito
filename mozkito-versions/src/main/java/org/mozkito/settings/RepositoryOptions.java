@@ -16,14 +16,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.RepositoryFactory;
-import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.model.RCSBranch;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
@@ -37,6 +29,13 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.RepositoryFactory;
+import org.mozkito.versions.RepositoryType;
+import org.mozkito.versions.model.RCSBranch;
 
 /**
  * The Class RepositoryOptions.
@@ -106,7 +105,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the database options.
-	 *
+	 * 
 	 * @return the database options
 	 */
 	public DatabaseOptions getDatabaseOptions() {
@@ -115,7 +114,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	
 	/**
 	 * Gets the main branch arg.
-	 *
+	 * 
 	 * @return the main branch arg
 	 */
 	public StringArgument.Options getMainBranchArg() {
@@ -132,18 +131,18 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	}
 	
 	/**
-	 * Gets the repo dir arg.
+	 * Gets the repository directory argument.
 	 * 
-	 * @return the repo dir arg
+	 * @return the repository directory argument
 	 */
 	public URIArgument.Options getRepoDirArg() {
 		return this.repoDirArg;
 	}
 	
 	/**
-	 * Gets the repo type arg.
+	 * Gets the repo type argument.
 	 * 
-	 * @return the repo type arg
+	 * @return the repo type argument
 	 */
 	public EnumArgument.Options<RepositoryType> getRepoTypeArg() {
 		return this.repoTypeArg;

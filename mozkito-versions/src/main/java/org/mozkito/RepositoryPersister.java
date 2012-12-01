@@ -43,11 +43,14 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 	
 	/**
 	 * Instantiates a new repository persister.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param persistenceUtil the persistence util
-	 * @see RepoSuiteSinkThread
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * 
 	 */
 	public RepositoryPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);

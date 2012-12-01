@@ -44,9 +44,11 @@ import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class BugzillaParser_4_0_4_Test.
+ *
  * @author Sascha Just <sascha.just@mozkito.org>
- * 
  */
 public class BugzillaParser_4_0_4_Test {
 	
@@ -65,6 +67,7 @@ public class BugzillaParser_4_0_4_Test {
 	/** The fetch uri. */
 	private URI                  fetchURI;
 	
+	/** The parser. */
 	private BugzillaParser_4_0_4 parser;
 	
 	/**

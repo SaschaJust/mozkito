@@ -28,6 +28,7 @@ import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.jira.JiraTracker;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class JiraTracker_NetTest.
  * 
@@ -58,6 +59,9 @@ public class JiraTracker_NetTest {
 		}
 	}
 	
+	/**
+	 * Test overview.
+	 */
 	@Test
 	public void testOverview() {
 		

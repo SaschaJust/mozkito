@@ -314,6 +314,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 	 */
 	@Override
 	public String toString() {
+		final int short_message_length = 10;
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Comment [id=");
 		builder.append(getId());
@@ -322,7 +323,7 @@ public class Comment implements Annotated, TextElement, Comparable<Comment> {
 		builder.append(", author=");
 		builder.append(getAuthor());
 		builder.append(", message=");
-		builder.append(StringUtils.truncate(getMessage(), 10));
+		builder.append(StringUtils.truncate(getMessage(), short_message_length));
 		builder.append(", bugReport=");
 		builder.append(getBugReport() == null
 		                                     ? null

@@ -7,8 +7,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
+/**
+ * The Class MinCollapseVisitorTest.
+ */
 public class MinCollapseVisitorTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		// final ,

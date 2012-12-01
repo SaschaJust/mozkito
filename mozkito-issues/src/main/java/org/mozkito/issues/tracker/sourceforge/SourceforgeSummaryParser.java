@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.issues.tracker.sourceforge;
 
@@ -24,26 +21,26 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The Class SourceforgeSummaryParser.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SourceforgeSummaryParser extends DefaultHandler {
 	
 	/**
 	 * The Enum SummaryParserMode.
-	 *
+	 * 
 	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private static enum SummaryParserMode {
 		
 		/** The DEFAULT. */
-		DEFAULT, 
- /** The TABLE. */
- TABLE, 
- /** The TR. */
- TR, 
- /** The TD. */
- TD
+		DEFAULT,
+		/** The TABLE. */
+		TABLE,
+		/** The TR. */
+		TR,
+		/** The TD. */
+		TD
 	}
 	
 	/** The content. */
@@ -64,7 +61,8 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		this.ids = new HashSet<String>();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	@Override
@@ -76,7 +74,8 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -84,9 +83,9 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 	                       final String localName,
 	                       final String qName) {
 		
-		if (localName.equals("tfoot")) {
+		if ("tfoot".equals(localName)) {
 			this.currentMode = SummaryParserMode.TABLE;
-		} else if ((this.currentMode == SummaryParserMode.TD) && (localName.equals("td"))) {
+		} else if ((this.currentMode == SummaryParserMode.TD) && ("td".equals(localName))) {
 			final String idString = this.content.toString().trim();
 			this.ids.add(idString);
 			this.currentMode = SummaryParserMode.TABLE;
@@ -95,15 +94,17 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 	
 	/**
 	 * Gets the i ds.
-	 *
+	 * 
 	 * @return the i ds
 	 */
 	public Set<String> getIDs() {
 		return this.ids;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	/*
+	 * (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String,
+	 * org.xml.sax.Attributes)
 	 */
 	@Override
 	public void startElement(final String uri,
@@ -111,9 +112,9 @@ public class SourceforgeSummaryParser extends DefaultHandler {
 	                         final String qName,
 	                         final Attributes attributes) throws SAXException {
 		
-		if ((this.currentMode == SummaryParserMode.TABLE) && localName.equals("tr")) {
+		if ((this.currentMode == SummaryParserMode.TABLE) && "tr".equals(localName)) {
 			this.currentMode = SummaryParserMode.TR;
-		} else if ((this.currentMode == SummaryParserMode.TR) && localName.equals("td")) {
+		} else if ((this.currentMode == SummaryParserMode.TR) && "td".equals(localName)) {
 			this.currentMode = SummaryParserMode.TD;
 			this.content.setLength(0);
 		}

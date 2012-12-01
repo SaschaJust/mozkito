@@ -19,12 +19,17 @@ import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RCSFileTest.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class RCSFileTest {
 	
+	/**
+	 * Test get path.
+	 */
 	@Test
 	public void testGetPath() {
 		/*
@@ -71,6 +76,9 @@ public class RCSFileTest {
 		assertEquals("public.java", rCSFile.getPath(t_2));
 	}
 	
+	/**
+	 * Test hidden file name.
+	 */
 	@Test
 	public void testHiddenFileName() {
 		/*
@@ -124,6 +132,9 @@ public class RCSFileTest {
 		
 	}
 	
+	/**
+	 * Test hidden file name2.
+	 */
 	@Test
 	public void testHiddenFileName2() {
 		/*

@@ -29,6 +29,7 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	/** The elements. */
 	private Tuple<Cluster<T>, Cluster<T>> children = null;
 	
+	/** The score. */
 	private final double                  score;
 	
 	/**
@@ -38,6 +39,8 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	 *            the t1
 	 * @param t2
 	 *            the t2
+	 * @param score
+	 *            the score
 	 */
 	public Cluster(final Cluster<T> t1, final Cluster<T> t2, final double score) {
 		this.children = new Tuple<Cluster<T>, Cluster<T>>(t1, t2);
@@ -46,11 +49,18 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 	
 	/**
 	 * Instantiates a new partition.
+	 * 
+	 * @param score
+	 *            the score
 	 */
 	protected Cluster(final double score) {
 		this.score = score;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(final Cluster<T> o) {
 		if (this.getScore() > o.getScore()) {
@@ -62,6 +72,10 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public boolean equals(final Object obj) {
@@ -106,10 +120,19 @@ public class Cluster<T> implements Comparable<Cluster<T>> {
 		return this.children;
 	}
 	
+	/**
+	 * Gets the score.
+	 * 
+	 * @return the score
+	 */
 	public double getScore() {
 		return this.score;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -22,7 +22,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.mozkito.persistence.model.PersonContainer;
 
 /**
- * The Class Transaction_.
+ * The Class RCSTransaction_.
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSTransaction.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",

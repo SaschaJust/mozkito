@@ -36,13 +36,27 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GitTransactionIteratorTest.
+ */
 public class GitTransactionIteratorTest {
 	
+	/** The branch factory. */
 	private static BranchFactory               branchFactory;
+	
+	/** The repo. */
 	private static GitRepository               repo;
+	
+	/** The transaction map. */
 	private static Map<String, RCSTransaction> transactionMap = new HashMap<String, RCSTransaction>();
+	
+	/** The branch map. */
 	private static Map<String, RCSBranch>      branchMap      = new HashMap<String, RCSBranch>();
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		try {
@@ -112,6 +126,9 @@ public class GitTransactionIteratorTest {
 		
 	}
 	
+	/**
+	 * Test maintenance branch.
+	 */
 	@Test
 	public void testMaintenanceBranch() {
 		final Iterator<String> transactions = repo.getRevDependencyGraph().getBranchTransactions("origin/maintenance")
@@ -156,6 +173,9 @@ public class GitTransactionIteratorTest {
 		assertFalse(transactions.hasNext());
 	}
 	
+	/**
+	 * Test master branch.
+	 */
 	@Test
 	public void testMasterBranch() {
 		final Iterator<String> transactions = repo.getRevDependencyGraph()

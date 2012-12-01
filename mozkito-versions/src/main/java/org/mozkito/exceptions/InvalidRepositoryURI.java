@@ -27,8 +27,9 @@ public class InvalidRepositoryURI extends Exception {
 	
 	/**
 	 * Instantiates a new invalid repository uri.
-	 *
-	 * @param message the message
+	 * 
+	 * @param message
+	 *            the message
 	 */
 	public InvalidRepositoryURI(final String message) {
 		super(message);

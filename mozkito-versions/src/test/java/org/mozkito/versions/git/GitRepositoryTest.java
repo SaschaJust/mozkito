@@ -14,6 +14,8 @@ package org.mozkito.versions.git;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -39,18 +41,26 @@ import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GitRepositoryTest.
+ */
 public class GitRepositoryTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
+	/** The repo. */
 	private GitRepository repo;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-		assertTrue(zipURL != null);
+		assertNotNull(zipURL);
 		try {
 			final File tmpDir = FileUtils.createRandomDir("mozkito", "testGit", FileShutdownAction.DELETE);
 			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
@@ -66,33 +76,36 @@ public class GitRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test annotate.
+	 */
 	@Test
 	public void testAnnotate() {
 		List<AnnotationEntry> annotate = this.repo.annotate("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb");
 		
 		assertEquals(3, annotate.size());
 		AnnotationEntry line0 = annotate.get(0);
-		assertTrue(line0 != null);
+		assertNotNull(line0);
 		assertFalse(line0.hasAlternativePath());
-		assertTrue(line0.getAlternativeFilePath() == null);
+		assertNull(line0.getAlternativeFilePath());
 		assertEquals("changing 3", line0.getLine());
 		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", line0.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2010-11-22 20:30:52 +0100").isEqual(line0.getTimestamp()));
 		assertEquals("Kim Herzig", line0.getUsername());
 		
 		final AnnotationEntry line1 = annotate.get(1);
-		assertTrue(line1 != null);
+		assertNotNull(line1);
 		assertFalse(line1.hasAlternativePath());
-		assertTrue(line1.getAlternativeFilePath() == null);
+		assertNull(line1.getAlternativeFilePath());
 		assertEquals("changing 3", line1.getLine());
 		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", line1.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line1.getTimestamp()));
 		assertEquals("Kim Herzig", line1.getUsername());
 		
 		final AnnotationEntry line2 = annotate.get(2);
-		assertTrue(line2 != null);
+		assertNotNull(line2);
 		assertFalse(line2.hasAlternativePath());
-		assertTrue(line2.getAlternativeFilePath() == null);
+		assertNull(line2.getAlternativeFilePath());
 		assertEquals("changing 3", line2.getLine());
 		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", line2.getRevision());
 		assertTrue(DateTimeUtils.parseDate("2011-01-20 12:03:24 +0100").isEqual(line2.getTimestamp()));
@@ -100,8 +113,8 @@ public class GitRepositoryTest {
 		
 		annotate = this.repo.annotate("3_renamed.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285");
 		line0 = annotate.get(0);
-		assertTrue(line0 != null);
-		assertTrue(line0.hasAlternativePath());
+		assertNotNull(line0);
+		assertEquals(true, line0.hasAlternativePath());
 		assertEquals("3.txt", line0.getAlternativeFilePath());
 		assertEquals("changing 3", line0.getLine());
 		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", line0.getRevision());
@@ -110,18 +123,27 @@ public class GitRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test checkout path fail.
+	 */
 	@Test
 	public void testCheckoutPathFail() {
 		assertTrue(this.repo.checkoutPath("3.txt", "96a9f105774b50f1fa3361212c4d12ae057a4285") == null);
 	}
 	
+	/**
+	 * Test checkout path success.
+	 */
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb");
-		assertTrue(file != null);
+		assertNotNull(file);
 		assertTrue(file.exists());
 	}
 	
+	/**
+	 * Test diff.
+	 */
 	@Test
 	public void testDiff() {
 		final Collection<Delta> diff = this.repo.diff("3.txt", "637acf68104e7bdff8235fb2e1a254300ffea3cb",
@@ -135,6 +157,9 @@ public class GitRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test former path regex.
+	 */
 	@Test
 	public void testFormerPathRegex() {
 		final String line = "R100    hello.py        python.py";
@@ -143,6 +168,9 @@ public class GitRepositoryTest {
 		assertEquals("hello.py", GitRepository.FORMER_PATH_REGEX.getGroup("result"));
 	}
 	
+	/**
+	 * Test get changes paths.
+	 */
 	@Test
 	public void testGetChangesPaths() {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths("376adc0f9371129a76766f8030f2e576165358c1");
@@ -158,6 +186,9 @@ public class GitRepositoryTest {
 		assertEquals(ChangeType.Added, changedPaths.get("/3_renamed.txt"));
 	}
 	
+	/**
+	 * Test get former path name.
+	 */
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName("96a9f105774b50f1fa3361212c4d12ae057a4285", "3_renamed.txt");
@@ -168,6 +199,9 @@ public class GitRepositoryTest {
 		assertTrue(formerPathName == null);
 	}
 	
+	/**
+	 * Test get log.
+	 */
 	@Test
 	public void testGetLog() {
 		final List<LogEntry> log = this.repo.log("98d5c40ef3c14503a472ba4133ae3529c7578e30",
@@ -211,11 +245,17 @@ public class GitRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test get transaction count.
+	 */
 	@Test
 	public void testGetTransactionCount() {
 		assertEquals(20, this.repo.getTransactionCount());
 	}
 	
+	/**
+	 * Test get transaction id.
+	 */
 	@Test
 	public void testGetTransactionId() {
 		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", this.repo.getTransactionId(0));
@@ -224,12 +264,18 @@ public class GitRepositoryTest {
 		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", this.repo.getTransactionId(19));
 	}
 	
+	/**
+	 * Test get transaction index.
+	 */
 	@Test
 	public void testGetTransactionIndex() {
 		assertEquals(19, this.repo.getTransactionIndex("HEAD"));
 		assertEquals(6, this.repo.getTransactionIndex("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
 	}
 	
+	/**
+	 * Test saschas anderer mega regex.
+	 */
 	@Test
 	public void testSaschasAndererMegaRegex() {
 		final String line = "^f554664a346629dc2b839f7292d06bad2db4aec hello.py (Mike Donaghy 2007-11-20 15:28:39 -0500 1) #!/usr/bin/env python";

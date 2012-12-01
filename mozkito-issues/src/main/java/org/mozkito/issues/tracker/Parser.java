@@ -27,7 +27,6 @@ import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
-
 /**
  * The Interface Parser.
  * 
@@ -119,6 +118,11 @@ public interface Parser {
 	 */
 	DateTime getLastUpdateTimestamp();
 	
+	/**
+	 * Gets the md5.
+	 * 
+	 * @return the md5
+	 */
 	byte[] getMd5();
 	
 	/**

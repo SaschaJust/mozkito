@@ -2,6 +2,7 @@ package org.mozkito.versions.subversion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -28,18 +29,26 @@ import org.mozkito.versions.git.GitRepositoryTest;
 
 import difflib.Delta;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SubversionRepositoryTest.
+ */
 public class SubversionRepositoryTest {
 	
 	static {
 		KanuniAgent.initialize();
 	}
 	
+	/** The repo. */
 	private SubversionRepository repo;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testSvn.zip");
-		assertTrue(zipURL != null);
+		assertNotNull(zipURL);
 		try {
 			final File tmpDir = FileUtils.createRandomDir("mozkito", "testSvn", FileShutdownAction.DELETE);
 			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
@@ -55,13 +64,16 @@ public class SubversionRepositoryTest {
 		}
 	}
 	
+	/**
+	 * Test annotate.
+	 */
 	@Test
 	public void testAnnotate() {
 		final List<AnnotationEntry> annotate = this.repo.annotate("file_1", "9");
 		
 		assertEquals(4, annotate.size());
 		final AnnotationEntry line0 = annotate.get(0);
-		assertTrue(line0 != null);
+		assertNotNull(line0);
 		assertFalse(line0.hasAlternativePath());
 		assertEquals("file_1 content", line0.getLine());
 		assertEquals("2", line0.getRevision());
@@ -70,7 +82,7 @@ public class SubversionRepositoryTest {
 		assertEquals("just", line0.getUsername());
 		
 		final AnnotationEntry line1 = annotate.get(1);
-		assertTrue(line1 != null);
+		assertNotNull(line1);
 		assertFalse(line1.hasAlternativePath());
 		assertEquals("Adding test change 1 to file_1", line1.getLine());
 		assertEquals("7", line1.getRevision());
@@ -79,7 +91,7 @@ public class SubversionRepositoryTest {
 		assertEquals("just", line1.getUsername());
 		
 		final AnnotationEntry line2 = annotate.get(2);
-		assertTrue(line2 != null);
+		assertNotNull(line2);
 		assertFalse(line2.hasAlternativePath());
 		assertEquals("Adding test change 2 to file_1", line2.getLine());
 		assertEquals("8", line2.getRevision());
@@ -88,7 +100,7 @@ public class SubversionRepositoryTest {
 		assertEquals("just", line2.getUsername());
 		
 		final AnnotationEntry line3 = annotate.get(3);
-		assertTrue(line3 != null);
+		assertNotNull(line3);
 		assertFalse(line3.hasAlternativePath());
 		assertEquals("Adding test change 3 to file_1", line3.getLine());
 		assertEquals("9", line3.getRevision());
@@ -98,18 +110,27 @@ public class SubversionRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test checkout path fail.
+	 */
 	@Test
 	public void testCheckoutPathFail() {
 		assertTrue(this.repo.checkoutPath("file_8989", "17") == null);
 	}
 	
+	/**
+	 * Test checkout path success.
+	 */
 	@Test
 	public void testCheckoutPathSuccess() {
 		final File file = this.repo.checkoutPath("dir_a/file_3_dir_a", "16");
-		assertTrue(file != null);
+		assertNotNull(file);
 		assertTrue(file.exists());
 	}
 	
+	/**
+	 * Test diff.
+	 */
 	@Test
 	public void testDiff() {
 		final Collection<Delta> diff = this.repo.diff("file_1", "9", "11");
@@ -123,6 +144,9 @@ public class SubversionRepositoryTest {
 		assertEquals("Adding test change 5 to file_1", lines.get(1));
 	}
 	
+	/**
+	 * Test get changes paths.
+	 */
 	@Test
 	public void testGetChangesPaths() {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths("2");
@@ -139,11 +163,38 @@ public class SubversionRepositoryTest {
 		assertTrue(changedPaths.containsKey("/dir_a"));
 		assertEquals(ChangeType.Added, changedPaths.get("/dir_a"));
 		assertTrue(changedPaths.containsKey("/dir_a/file_2_dir_a"));
-		assertEquals(ChangeType.Added, changedPaths.get("/dir_a/file_2_dir_a"));
+		assertEquals(ChangeType.Renamed, changedPaths.get("/dir_a/file_2_dir_a"));
 		assertTrue(changedPaths.containsKey("/file_2"));
 		assertEquals(ChangeType.Deleted, changedPaths.get("/file_2"));
+		
+		changedPaths = this.repo.getChangedPaths("18");
+		assertEquals(2, changedPaths.size());
+		assertTrue(changedPaths.containsKey("/file_1_renamed"));
+		assertEquals(ChangeType.Renamed, changedPaths.get("/file_1_renamed"));
+		assertTrue(changedPaths.containsKey("/file_1"));
+		assertEquals(ChangeType.Deleted, changedPaths.get("/file_1"));
+		
 	}
 	
+	/**
+	 * Test get end revision id.
+	 */
+	@Test
+	public void testGetEndRevisionId() {
+		assertEquals("18", this.repo.getEndRevision());
+	}
+	
+	/**
+	 * Test get first revision id.
+	 */
+	@Test
+	public void testGetFirstRevisionId() {
+		assertEquals("1", this.repo.getFirstRevisionId());
+	}
+	
+	/**
+	 * Test get former path name.
+	 */
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName("3", "/dir_a/file_2_dir_a");
@@ -152,8 +203,15 @@ public class SubversionRepositoryTest {
 		
 		formerPathName = this.repo.getFormerPathName("6", "file_3");
 		assertTrue(formerPathName == null);
+		
+		formerPathName = this.repo.getFormerPathName("18", "/file_1_renamed");
+		assertTrue(formerPathName != null);
+		assertEquals("/file_1", formerPathName);
 	}
 	
+	/**
+	 * Test get log.
+	 */
 	@Test
 	public void testGetLog() {
 		final List<LogEntry> log = this.repo.log("6", "11");
@@ -209,23 +267,33 @@ public class SubversionRepositoryTest {
 		
 	}
 	
+	/**
+	 * Test get transaction count.
+	 */
 	@Test
 	public void testGetTransactionCount() {
-		assertEquals(17, this.repo.getTransactionCount());
+		assertEquals(18, this.repo.getTransactionCount());
 	}
 	
+	/**
+	 * Test get transaction id.
+	 */
 	@Test
 	public void testGetTransactionId() {
 		assertEquals("1", this.repo.getTransactionId(0));
 		assertEquals("7", this.repo.getTransactionId(6));
 		assertEquals("12", this.repo.getTransactionId(11));
 		assertEquals("17", this.repo.getTransactionId(16));
-		assertTrue(this.repo.getTransactionId(17) == null);
+		assertTrue(this.repo.getTransactionId(18) == null);
 	}
 	
+	/**
+	 * Test get transaction index.
+	 */
 	@Test
 	public void testGetTransactionIndex() {
-		assertEquals(16, this.repo.getTransactionIndex("HEAD"));
+		assertEquals(17, this.repo.getTransactionIndex("HEAD"));
 		assertEquals(5, this.repo.getTransactionIndex("6"));
 	}
+	
 }

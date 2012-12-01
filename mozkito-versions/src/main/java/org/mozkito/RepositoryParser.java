@@ -44,11 +44,13 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
 	/**
 	 * Instantiates a new repository parser.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param repository the repository
-	 * @see RepoSuiteTransformerThread
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param repository
+	 *            the repository
 	 */
 	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
@@ -76,33 +78,33 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 				tids.add(data.getRevision());
 				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 				for (final String fileName : changedPaths.keySet()) {
-					RCSFile rCSFile;
+					RCSFile file;
 					
 					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-						rCSFile = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-						if (rCSFile == null) {
+						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+						if (file == null) {
 							
 							if (Logger.logWarn()) {
 								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
 								        + changedPaths.get(fileName));
 							}
-							rCSFile = fileManager.getFile(fileName);
+							file = fileManager.getFile(fileName);
 							
-							if (rCSFile == null) {
-								rCSFile = fileManager.createFile(fileName, rcsTransaction);
+							if (file == null) {
+								file = fileManager.createFile(fileName, rcsTransaction);
 							}
 						} else {
-							rCSFile.assignTransaction(rcsTransaction, fileName);
+							file.assignTransaction(rcsTransaction, fileName);
 						}
 					} else {
-						rCSFile = fileManager.getFile(fileName);
+						file = fileManager.getFile(fileName);
 						
-						if (rCSFile == null) {
-							rCSFile = fileManager.createFile(fileName, rcsTransaction);
+						if (file == null) {
+							file = fileManager.createFile(fileName, rcsTransaction);
 						}
 					}
 					
-					new RCSRevision(rcsTransaction, rCSFile, changedPaths.get(fileName));
+					new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
 				}
 				
 				provideOutputData(rcsTransaction);

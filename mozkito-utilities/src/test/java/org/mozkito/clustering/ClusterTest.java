@@ -23,8 +23,14 @@ import org.mozkito.clustering.Cluster;
 import org.mozkito.clustering.VirtualCluster;
 
 
+/**
+ * The Class ClusterTest.
+ */
 public class ClusterTest {
 	
+	/**
+	 * Test get all elements.
+	 */
 	@Test
 	public void testGetAllElements() {
 		
