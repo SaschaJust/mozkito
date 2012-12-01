@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,10 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
-/**
- * 
- */
+ **********************************************************************************************************************/
 package org.mozkito.versions.model;
 
 import java.util.Collection;
@@ -55,8 +52,7 @@ import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 
 /**
- * The Class Transaction.Please use the {@link RCSTransaction#save(Session)} method to write instances of this Object to
- * database. The attached {@link RCSFile} will not be saved cascaded due to {@link RevisionPrimaryKey}.
+ * The Class Transaction.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
@@ -653,4 +649,5 @@ public class RCSTransaction implements Annotated {
 		string.append("]"); //$NON-NLS-1$
 		return string.toString();
 	}
+	
 }

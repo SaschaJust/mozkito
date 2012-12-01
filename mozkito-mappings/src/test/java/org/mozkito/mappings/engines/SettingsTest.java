@@ -22,6 +22,8 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Assert;
+
+import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.settings.MappingOptions;
 

@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
+import org.mozkito.testing.annotation.processors.RepositoryProcessor;
 
 /**
  * The Interface RepositorySettings.
@@ -30,7 +30,7 @@ import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
  */
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
-@MozkitoTestAnnotation (RepositorySettingsProcessor.class)
+@EnvironmentProcessor (RepositoryProcessor.class)
 @Target (value = { ElementType.TYPE })
 public @interface RepositorySettings {
 	

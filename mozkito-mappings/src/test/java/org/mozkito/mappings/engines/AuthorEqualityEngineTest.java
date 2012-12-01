@@ -41,7 +41,14 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-@DatabaseSettings (unit = "mappings", database = "moskito_jruby_july2010", options = ConnectOptions.CREATE)
+@DatabaseSettings (unit = "mappings",
+                   database = "moskito_jruby_july2010",
+                   options = ConnectOptions.CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver")
 public class AuthorEqualityEngineTest extends DatabaseTest {
 	
 	/** The engines. */

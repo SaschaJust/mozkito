@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,10 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
-/*
- * To change this template, choose Tools | Templates and open the template in the editor.
- */
+ **********************************************************************************************************************/
 package org.mozkito.codeanalysis.model;
 
 import javax.persistence.Column;
@@ -50,6 +47,13 @@ public abstract class JavaElement implements Annotated {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8960043672858454394L;
 	
+	/**
+	 * Extract method name.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
+	 * @return the string
+	 */
 	public static String extractMethodName(final String fullQualifiedName) {
 		Condition.check(fullQualifiedName.contains("."), "Full qualified method name must contain a '.' character");
 		Condition.check(fullQualifiedName.contains("("), "Full qualified method name must contain a '(' character");
@@ -60,10 +64,13 @@ public abstract class JavaElement implements Annotated {
 		return result;
 	}
 	
+	/** The generated id. */
 	private long   generatedId;
 	
+	/** The full qualified name. */
 	private String fullQualifiedName;
 	
+	/** The element type. */
 	private String elementType;
 	
 	/**
@@ -78,6 +85,8 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
+	 * @param elementType
+	 *            the element type
 	 */
 	@NoneNull
 	public JavaElement(final String fullQualifiedName, final String elementType) {
@@ -120,6 +129,8 @@ public abstract class JavaElement implements Annotated {
 	}
 	
 	/**
+	 * Gets the element type.
+	 * 
 	 * @return the elementType
 	 */
 	// @Column (name = "elementtype", nullable = false)
@@ -137,6 +148,11 @@ public abstract class JavaElement implements Annotated {
 		return this.fullQualifiedName;
 	}
 	
+	/**
+	 * Gets the generated id.
+	 * 
+	 * @return the generated id
+	 */
 	@Id
 	@GeneratedValue
 	public long getGeneratedId() {
@@ -199,6 +215,8 @@ public abstract class JavaElement implements Annotated {
 	}
 	
 	/**
+	 * Sets the element type.
+	 * 
 	 * @param elementType
 	 *            the elementType to set
 	 */
@@ -211,12 +229,17 @@ public abstract class JavaElement implements Annotated {
 	 * 
 	 * @param name
 	 *            the new full qualified name
-	 * @return the fullQualifiedName
 	 */
 	public void setFullQualifiedName(final String name) {
 		this.fullQualifiedName = name;
 	}
 	
+	/**
+	 * Sets the generated id.
+	 * 
+	 * @param generatedId
+	 *            the new generated id
+	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
@@ -229,4 +252,5 @@ public abstract class JavaElement implements Annotated {
 	public String toString() {
 		return "JavaElement [fullQualifiedName=" + getFullQualifiedName() + "]";
 	}
+	
 }

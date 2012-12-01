@@ -13,20 +13,22 @@
 
 package org.mozkito.testing;
 
-import static org.junit.Assert.fail;
-
 import java.lang.annotation.Annotation;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
+import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
 
+import org.mozkito.exceptions.TestSetupException;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.testing.annotation.MozkitoTestAnnotation;
+import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 
 /**
@@ -35,6 +37,10 @@ import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class DatabaseTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/** The util. */
 	private PersistenceUtil           util;
@@ -49,26 +55,23 @@ public class DatabaseTest {
 	private String                    databaseName;
 	
 	/**
-	 * Instantiates a new test zwei punkt null.
+	 * Instantiates a new database test.
 	 */
 	public DatabaseTest() {
 		// PRECONDITIONS
 		
 		try {
+			final Annotation annotation = getClass().getAnnotation(DatabaseSettings.class);
 			
-			// check if developer uses @BeforeClass instead of a constructor
-			// for (final Method method : getClass().getMethods()) {
-			// if ((method.getModifiers() & Modifier.STATIC) != 0) {
-			// for (final Annotation annotation : method.getAnnotations()) {
-			// if (annotation.annotationType().equals(BeforeClass.class)) {
-			// fail("@BeforeClass is not supported in " + getHandle()
-			// + ". Please use a default constructor.");
-			// }
-			// }
-			// }
+			// if (annotation == null) {
+			// throw new TestSettingsError(String.format("Test '%s' is a '%s', but is lagging '%s' annotation.",
+			// getHandle(), DatabaseTest.class.getSimpleName(),
+			// DatabaseSettings.class.getSimpleName()));
 			// }
 			
-			initializeProcessor();
+			if (annotation != null) {
+				initializeProcessor();
+			}
 			
 		} finally {
 			// POSTCONDITIONS
@@ -78,24 +81,31 @@ public class DatabaseTest {
 	/**
 	 * Setup.
 	 * 
-	 * @throws Exception
+	 * @throws TestSetupException
 	 *             the exception
 	 */
 	@Before
-	public final void databaseSetup() throws Exception {
-		setupDatabase();
+	public final void databaseSetup() throws TestSetupException {
+		if (this.annotation != null) {
+			if (Logger.logInfo()) {
+				Logger.info("Connecting to database: " + this.annotation);
+			}
+			setupDatabase();
+			if (getPersistenceUtil() == null) {
+				throw new TestSetupException(String.format("Establishing "));
+			}
+		}
 	}
 	
 	/**
 	 * Tear down.
 	 * 
-	 * @throws Exception
-	 *             the exception
 	 */
 	@After
-	public final void databaseTearDown() throws Exception {
-		shutdownDatabase();
-		
+	public final void databaseTearDown() {
+		if (this.annotation != null) {
+			shutdownDatabase();
+		}
 	}
 	
 	/**
@@ -136,20 +146,27 @@ public class DatabaseTest {
 	 * Initialize processors.
 	 */
 	private void initializeProcessor() {
-		for (final Annotation annotation : getClass().getAnnotations()) {
-			final MozkitoTestAnnotation mka = annotation.annotationType().getAnnotation(MozkitoTestAnnotation.class);
-			if (mka != null) {
-				try {
-					if (annotation.annotationType().equals(DatabaseSettings.class)) {
-						this.annotation = (DatabaseSettings) annotation;
-						final DatabaseSettingsProcessor processor = (DatabaseSettingsProcessor) mka.value()
-						                                                                           .newInstance();
-						this.processor = processor;
-					}
-				} catch (final InstantiationException | IllegalAccessException e) {
-					fail(e.getMessage());
+		// PRECONDITIONS
+		
+		try {
+			try {
+				final DatabaseSettings databaseSettings = getClass().getAnnotation(DatabaseSettings.class);
+				final EnvironmentProcessor processorAnnotation = databaseSettings.annotationType()
+				                                                                 .getAnnotation(EnvironmentProcessor.class);
+				final DatabaseSettingsProcessor processor = (DatabaseSettingsProcessor) processorAnnotation.value()
+				                                                                                           .newInstance();
+				
+				this.annotation = databaseSettings;
+				this.processor = processor;
+			} catch (final InstantiationException | IllegalAccessException e) {
+				final UnrecoverableError error = new UnrecoverableError(e);
+				if (Logger.logError()) {
+					Logger.error(error.analyzeFailureCause());
 				}
+				throw error;
 			}
+		} finally {
+			// POSTCONDITIONS
 		}
 	}
 	
@@ -176,9 +193,8 @@ public class DatabaseTest {
 	 * Setup database.
 	 */
 	private void setupDatabase() {
-		if (this.processor != null) {
-			this.processor.setup(this, this.annotation);
-		}
+		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		this.processor.setup(this, this.annotation);
 	}
 	
 	/**
@@ -195,8 +211,7 @@ public class DatabaseTest {
 	 * Shutdown database.
 	 */
 	private void shutdownDatabase() {
-		if (this.processor != null) {
-			this.processor.tearDown(this, this.annotation);
-		}
+		Condition.notNull(this.processor, "Field '%s' in '%s'.", "processor", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+		this.processor.tearDown(this, this.annotation);
 	}
 }

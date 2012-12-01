@@ -13,30 +13,24 @@
 
 package org.mozkito.testing;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
 import java.lang.annotation.Annotation;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
 
-import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
-import org.mozkito.testing.annotation.MozkitoTestAnnotation;
+import org.mozkito.exceptions.TestSettingsError;
+import org.mozkito.testing.annotation.EnvironmentProcessor;
+import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
-import org.mozkito.testing.annotation.processors.RepositorySettingsProcessor;
-import org.mozkito.versions.BranchFactory;
+import org.mozkito.testing.annotation.processors.RepositoryProcessor;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.RepositoryFactory;
-import org.mozkito.versions.RepositoryType;
 
 /**
  * The Class VersionTest.
@@ -45,20 +39,14 @@ import org.mozkito.versions.RepositoryType;
  */
 public class VersionsTest extends DatabaseTest {
 	
-	/** The path name. */
-	private String                      pathName;
-	
 	/** The repositories. */
-	private final List<Repository>      repositories = new LinkedList<Repository>();
-	
-	/** The repo map. */
-	private Map<RepositoryType, URI>    repoMap;
+	private Map<String, Repository> repositories = new HashMap<>();
 	
 	/** The annotation. */
-	private RepositorySettings          annotation;
+	private Annotation              annotation;
 	
 	/** The processor. */
-	private RepositorySettingsProcessor processor;
+	private RepositoryProcessor     processor;
 	
 	/**
 	 * Instantiates a new version test.
@@ -74,43 +62,11 @@ public class VersionsTest extends DatabaseTest {
 	}
 	
 	/**
-	 * Gets the path name.
-	 * 
-	 * @return the path name
-	 */
-	public final String getPathName() {
-		// PRECONDITIONS
-		
-		try {
-			return this.pathName;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.pathName, "Field '%s' in '%s'.", "pathName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets the repo map.
-	 * 
-	 * @return the repo map
-	 */
-	public final Map<RepositoryType, URI> getRepoMap() {
-		// PRECONDITIONS
-		
-		try {
-			return this.repoMap;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.repoMap, "Field '%s' in '%s'.", "repoMap", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
 	 * Gets the repositories.
 	 * 
 	 * @return the repositories
 	 */
-	public final List<Repository> getRepositories() {
+	public final Map<String, Repository> getRepositories() {
 		// PRECONDITIONS
 		
 		try {
@@ -125,71 +81,57 @@ public class VersionsTest extends DatabaseTest {
 	 * Initialize processor.
 	 */
 	private void initializeProcessor() {
-		for (final Annotation annotation : getClass().getAnnotations()) {
-			final MozkitoTestAnnotation mka = annotation.annotationType().getAnnotation(MozkitoTestAnnotation.class);
-			if (mka != null) {
-				try {
-					if (annotation.annotationType().equals(RepositorySettings.class)) {
-						this.annotation = (RepositorySettings) annotation;
-						final RepositorySettingsProcessor processor = (RepositorySettingsProcessor) mka.value()
-						                                                                               .newInstance();
-						this.processor = processor;
-					}
-				} catch (final InstantiationException | IllegalAccessException e) {
-					fail(e.getMessage());
-				}
-			}
-		}
+		// PRECONDITIONS
 		
+		try {
+			try {
+				final RepositorySetting repositorySetting = getClass().getAnnotation(RepositorySetting.class);
+				if (repositorySetting == null) {
+					final RepositorySettings repositorySettings = getClass().getAnnotation(RepositorySettings.class);
+					if (repositorySettings == null) {
+						throw new TestSettingsError("");
+					} else {
+						this.annotation = repositorySettings;
+					}
+				} else {
+					this.annotation = repositorySetting;
+				}
+				assert (this.annotation != null);
+				
+				final EnvironmentProcessor processorAnnotation = this.annotation.annotationType()
+				                                                                .getAnnotation(EnvironmentProcessor.class);
+				final RepositoryProcessor processor = (RepositoryProcessor) processorAnnotation.value().newInstance();
+				
+				this.processor = processor;
+			} catch (final InstantiationException | IllegalAccessException e) {
+				final UnrecoverableError error = new UnrecoverableError(e);
+				if (Logger.logError()) {
+					Logger.error(error.analyzeFailureCause());
+				}
+				throw error;
+			}
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
-	 * Initialize repositories.
+	 * Sets the repositories.
+	 * 
+	 * @param repositories
+	 *            the repositories
 	 */
-	private void initializeRepositories() {
-		this.processor.setup(this, this.annotation);
-		this.repoMap = new HashMap<RepositoryType, URI>();
+	public final void setRepositories(final Map<String, Repository> repositories) {
+		// PRECONDITIONS
+		Condition.notNull(repositories, "Argument '%s' in '%s'.", "repositories", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		for (final RepositoryType type : RepositoryType.values()) {
-			
-			final String pathName = RepositorySettingsProcessor.getPathName(getClass(), type);
-			if (pathName != null) {
-				try {
-					this.repoMap.put(type, new URI("file://" + pathName + File.separator + "repotest."
-					        + type.name().toLowerCase()));
-				} catch (final URISyntaxException e) {
-					fail(e.getMessage());
-				}
-			} else {
-				fail();
-			}
-			
-			Repository repository = null;
-			try {
-				repository = RepositoryFactory.getRepositoryHandler(type).newInstance();
-			} catch (final InstantiationException e1) {
-				e1.printStackTrace();
-				fail();
-			} catch (final IllegalAccessException e1) {
-				e1.printStackTrace();
-				fail();
-			} catch (final UnregisteredRepositoryTypeException e1) {
-				e1.printStackTrace();
-				fail();
-			}
-			assert (repository != null);
-			this.repositories.add(repository);
-			
-			final File urlFile = new File(this.repoMap.get(type));
-			
-			try {
-				repository.setup(urlFile.toURI(), new BranchFactory(null), null, "master");
-			} catch (final Exception e) {
-				System.err.println(e.getMessage());
-				fail(e.getMessage());
-			}
+		try {
+			this.repositories = repositories;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.repositories, repositories,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
-		
 	}
 	
 	/**
@@ -197,7 +139,7 @@ public class VersionsTest extends DatabaseTest {
 	 */
 	@Before
 	public void setupRepositories() {
-		initializeRepositories();
+		// ignore
 	}
 	
 	/**

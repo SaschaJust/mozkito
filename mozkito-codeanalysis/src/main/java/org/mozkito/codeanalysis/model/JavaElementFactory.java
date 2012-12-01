@@ -1,4 +1,4 @@
-/*******************************************************************************
+/***********************************************************************************************************************
  * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package org.mozkito.codeanalysis.model;
 
 import java.util.HashMap;
@@ -23,6 +23,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 
+/**
+ * A factory for creating JavaElement objects.
+ */
 public class JavaElementFactory {
 	
 	/** The class definitions by name. */
@@ -34,10 +37,19 @@ public class JavaElementFactory {
 	/** The method calls by name. */
 	private final Map<String, JavaMethodCall>       methodCalls = new HashMap<String, JavaMethodCall>();
 	
+	/**
+	 * Instantiates a new java element factory.
+	 */
 	public JavaElementFactory() {
 		
 	}
 	
+	/**
+	 * Instantiates a new java element factory.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 */
 	public JavaElementFactory(final PersistenceUtil persistenceUtil) {
 		final Criteria<JavaTypeDefinition> criteria = persistenceUtil.createCriteria(JavaTypeDefinition.class);
 		final List<JavaTypeDefinition> defs = persistenceUtil.load(criteria);
@@ -59,22 +71,10 @@ public class JavaElementFactory {
 	/**
 	 * Gets the class definition.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
-	 * @param file
-	 *            the file
 	 * @param parent
 	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
-	 * @param bodyStartLine
-	 *            the body start line
-	 * @param packageName
-	 *            the package name
+	 * @param fullQualifiedName
+	 *            the full qualified name
 	 * @return the class definition
 	 */
 	public JavaTypeDefinition getAnonymousClassDefinition(@NotNull final JavaTypeDefinition parent,
@@ -95,20 +95,6 @@ public class JavaElementFactory {
 	 * 
 	 * @param fullQualifiedName
 	 *            the full qualified name
-	 * @param file
-	 *            the file
-	 * @param parent
-	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
-	 * @param bodyStartLine
-	 *            the body start line
-	 * @param packageName
-	 *            the package name
 	 * @return the class definition
 	 */
 	public JavaTypeDefinition getClassDefinition(@NotNull final String fullQualifiedName) {
@@ -124,9 +110,11 @@ public class JavaElementFactory {
 	}
 	
 	/**
+	 * Gets the interface definition.
+	 * 
 	 * @param fullQualifiedName
-	 * @param fullQualifiedName2
-	 * @return
+	 *            the full qualified name
+	 * @return the interface definition
 	 */
 	public JavaTypeDefinition getInterfaceDefinition(final String fullQualifiedName) {
 		JavaTypeDefinition def = null;
@@ -142,20 +130,14 @@ public class JavaElementFactory {
 	/**
 	 * Gets the method call.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
-	 * @param file
-	 *            the file
 	 * @param parent
 	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
 	 * @return the method call
 	 */
 	public JavaMethodCall getMethodCall(@NotNull final String objectName,
@@ -186,23 +168,14 @@ public class JavaElementFactory {
 	/**
 	 * Gets the method definition.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
 	 * @param override
-	 * @param file
-	 *            the file
-	 * @param parent
-	 *            the parent
-	 * @param startLine
-	 *            the start line
-	 * @param endLine
-	 *            the end line
-	 * @param position
-	 *            the position
-	 * @param bodyStartLine
-	 *            the body start line
+	 *            the override
 	 * @return the method definition
 	 */
 	public JavaMethodDefinition getMethodDefinition(@NotNull final String objectName,
@@ -221,4 +194,5 @@ public class JavaElementFactory {
 		}
 		return def;
 	}
+	
 }

@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.mozkito.versions.elements.ChangeType;
 
-
 /**
  * The Class ChangeOperations.
  * 
@@ -46,8 +45,8 @@ public class ChangeOperations {
 	/**
 	 * Adds the.
 	 * 
-	 * @param op
-	 *            the op
+	 * @param _op
+	 *            the _op
 	 * @return true, if successful
 	 */
 	public boolean add(final JavaChangeOperation _op) {

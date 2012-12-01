@@ -158,7 +158,7 @@ public class Report implements Annotated, Comparable<Report> {
 	/**
 	 * Instantiates a new report.
 	 * 
-	 * @deprecated
+	 * @deprecated should only be used by persistence util in case of dynamic enhancement
 	 */
 	@Deprecated
 	public Report() {
@@ -393,7 +393,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "creationTimestamp")
-	private Date getCreationJavaTimestamp() {
+	public Date getCreationJavaTimestamp() {
 		return getCreationTimestamp() != null
 		                                     ? getCreationTimestamp().toDate()
 		                                     : null;
@@ -530,7 +530,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastFetch")
-	private Date getLastFetchJava() {
+	public Date getLastFetchJava() {
 		return getLastFetch() != null
 		                             ? getLastFetch().toDate()
 		                             : null;
@@ -543,7 +543,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "lastUpdateTimestamp")
-	private Date getLastUpdateJavaTimestamp() {
+	public Date getLastUpdateJavaTimestamp() {
 		return getLastUpdateTimestamp() != null
 		                                       ? getLastUpdateTimestamp().toDate()
 		                                       : null;
@@ -606,7 +606,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 */
 	@Temporal (TemporalType.TIMESTAMP)
 	@Column (name = "resolutionTimestamp")
-	private Date getResolutionJavaTimestamp() {
+	public Date getResolutionJavaTimestamp() {
 		return getResolutionTimestamp() != null
 		                                       ? getResolutionTimestamp().toDate()
 		                                       : null;
@@ -811,7 +811,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new creation java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	private void setCreationJavaTimestamp(final Date creationTimestamp) {
+	public void setCreationJavaTimestamp(final Date creationTimestamp) {
 		setCreationTimestamp(creationTimestamp != null
 		                                              ? new DateTime(creationTimestamp)
 		                                              : null);
@@ -894,7 +894,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param history
 	 *            the history to set
 	 */
-	private void setHistory(final History history) {
+	public void setHistory(final History history) {
 		this.history = history;
 	}
 	
@@ -904,7 +904,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 * @param id
 	 *            the id to set
 	 */
-	private void setId(final String id) {
+	public void setId(final String id) {
 		this.id = id;
 	}
 	
@@ -942,7 +942,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new last fetch java
 	 */
 	@SuppressWarnings ("unused")
-	private void setLastFetchJava(final Date lastFetch) {
+	public void setLastFetchJava(final Date lastFetch) {
 		setLastFetch(lastFetch != null
 		                              ? new DateTime(lastFetch)
 		                              : null);
@@ -955,7 +955,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new last update java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	private void setLastUpdateJavaTimestamp(final Date date) {
+	public void setLastUpdateJavaTimestamp(final Date date) {
 		setLastUpdateTimestamp(date != null
 		                                   ? new DateTime(date)
 		                                   : null);
@@ -1018,7 +1018,7 @@ public class Report implements Annotated, Comparable<Report> {
 	 *            the new resolution java timestamp
 	 */
 	@SuppressWarnings ("unused")
-	private void setResolutionJavaTimestamp(final Date date) {
+	public void setResolutionJavaTimestamp(final Date date) {
 		setResolutionTimestamp(date != null
 		                                   ? new DateTime(date)
 		                                   : null);

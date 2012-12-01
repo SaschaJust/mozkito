@@ -27,7 +27,7 @@ import org.mozkito.testing.annotation.processors.MozkitoSettingsProcessor;
 @Documented
 @Retention (RetentionPolicy.RUNTIME)
 @Target (value = { ElementType.ANNOTATION_TYPE })
-public @interface MozkitoTestAnnotation {
+public @interface EnvironmentProcessor {
 	
 	/**
 	 * Value.

@@ -275,7 +275,7 @@ public abstract class MappableEntity implements Annotated {
 	 * @param generatedId
 	 *            the generatedId to set
 	 */
-	public final void setGeneratedId(final long generatedId) {
+	public void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
 	}
 	

@@ -132,6 +132,8 @@ public class JavaChangeOperation implements Annotated {
 	
 	/**
 	 * Instantiates a new java change operation.
+	 * 
+	 * @deprecated only to be used by dynamic enhancing persistence util
 	 */
 	@Deprecated
 	public JavaChangeOperation() {
