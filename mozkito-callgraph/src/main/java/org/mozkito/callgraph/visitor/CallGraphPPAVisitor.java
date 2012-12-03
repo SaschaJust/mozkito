@@ -193,7 +193,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			calledObjectName = calledObjectName.substring(4);
 		}
 		
-		if (calledObjectName.equals("UNKNOWN")) {
+		if ("UNKNOWN".equals(calledObjectName)) {
 			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve called class name for ConstructorInvocation");
 			ss.append("\n\t");
@@ -304,7 +304,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			calledObjectName = calledObjectName.substring(4);
 		}
 		
-		if (calledObjectName.equals("UNKNOWN")) {
+		if ("UNKNOWN".equals(calledObjectName)) {
 			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation ");
 			ss.append(" in class `");
@@ -429,7 +429,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			calledObjectName = calledObjectName.substring(4);
 		}
 		
-		if (calledObjectName.equals("UNKNOWN")) {
+		if ("UNKNOWN".equals(calledObjectName)) {
 			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve called class name for SuperConstructorInvocation");
 			ss.append("\n\t");
@@ -532,7 +532,7 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 			calledObjectName = calledObjectName.substring(4);
 		}
 		
-		if (calledObjectName.equals("UNKNOWN")) {
+		if ("UNKNOWN".equals(calledObjectName)) {
 			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation ");
 			ss.append(" in class `");

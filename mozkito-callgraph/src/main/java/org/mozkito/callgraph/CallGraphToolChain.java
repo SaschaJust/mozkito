@@ -149,7 +149,10 @@ public class CallGraphToolChain {
 			                                                                                    Requirement.optional));
 			
 			if (settings.helpRequested()) {
-				System.err.println(settings.getHelpString());
+				if (Logger.logAlways()) {
+					Logger.always(settings.getHelpString());
+				}
+				
 				throw new Shutdown();
 			}
 			
