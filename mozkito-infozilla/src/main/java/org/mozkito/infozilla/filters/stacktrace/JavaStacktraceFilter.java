@@ -20,6 +20,7 @@ import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.infozilla.filters.FilterTextRemover;
 import org.mozkito.infozilla.model.stacktrace.JavaStacktrace;
@@ -273,7 +274,9 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				final int traceEnd = traceStart + matchText.length() + 1;
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
-					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
+					if (Logger.logError()) {
+						Logger.error("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
+					}
 				}
 				// Check if it is a cause or not
 				if (matchText.trim().startsWith("Caused by:")) {
@@ -310,7 +313,9 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 				final int traceEnd = traceStart + matchText.length();
 				this.textRemover.markForDeletion(traceStart, traceEnd);
 				if ((traceStart == 0) && (traceEnd == 0)) {
-					System.out.println("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
+					if (Logger.logError()) {
+						Logger.error("Critical Error in Stacktrace InfozillaFilter! Could not find start and End!");
+					}
 				}
 				
 				// Check if it is a cause or not
