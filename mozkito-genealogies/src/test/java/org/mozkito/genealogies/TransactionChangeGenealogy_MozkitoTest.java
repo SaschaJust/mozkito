@@ -24,6 +24,7 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
@@ -50,6 +51,10 @@ import org.mozkito.versions.model.RCSTransaction;
                    driver = "org.postgresql.Driver",
                    remote = true)
 public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/**
 	 * Test.
