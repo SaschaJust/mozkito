@@ -29,7 +29,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
@@ -96,7 +95,7 @@ public class Merge_NetTest extends DatabaseTest {
 			@Override
 			public boolean evaluate(final Object object) {
 				final Person p = (Person) object;
-				return (p.getUsernames().size() == 1) && p.getUsernames().iterator().next().equals("just");
+				return (p.getUsernames().size() == 1) && "just".equals(p.getUsernames().iterator().next());
 			}
 		});
 		

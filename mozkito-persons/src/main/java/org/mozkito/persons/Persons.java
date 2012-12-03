@@ -145,23 +145,19 @@ public class Persons extends Chain<Settings> {
 			try {
 				engine.provide(getSettings().getRoot());
 			} catch (final ArgumentRegistrationException e) {
-				// TODO Auto-generated catch block
 				if (Logger.logError()) {
 					Logger.error(e);
 				}
 				
 			} catch (final ArgumentSetRegistrationException e) {
-				// TODO Auto-generated catch block
 				if (Logger.logError()) {
 					Logger.error(e);
 				}
 				
 			} catch (final SettingsParseError e) {
-				// TODO Auto-generated catch block
 				if (Logger.logError()) {
 					Logger.error(e);
 				}
-				
 			}
 			engine.init();
 		}
