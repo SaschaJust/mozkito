@@ -19,7 +19,6 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 
 // TODO: Auto-generated Javadoc
@@ -144,21 +143,21 @@ public class GitLogParserTest {
 		int found = 0;
 		assertEquals(8, groups.getGroupCount());
 		for (final Group group : groups) {
-			if ((group.getName().equals("Z")) && (group.getMatch().equals("+0000"))) {
+			if (("Z".equals(group.getName())) && ("+0000".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("EEE")) && (group.getMatch().equals("Tue"))) {
+			} else if (("EEE".equals(group.getName())) && ("Tue".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("MMM")) && (group.getMatch().equals("Jan"))) {
+			} else if (("MMM".equals(group.getName())) && ("Jan".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("d")) && (group.getMatch().equals("13"))) {
+			} else if (("d".equals(group.getName())) && ("13".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("HH")) && (group.getMatch().equals("22"))) {
+			} else if (("HH".equals(group.getName())) && ("22".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("mm")) && (group.getMatch().equals("54"))) {
+			} else if (("mm".equals(group.getName())) && ("54".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("ss")) && (group.getMatch().equals("37"))) {
+			} else if (("ss".equals(group.getName())) && ("37".equals(group.getMatch()))) {
 				++found;
-			} else if ((group.getName().equals("yyyy")) && (group.getMatch().equals("2004"))) {
+			} else if (("yyyy".equals(group.getName())) && ("2004".equals(group.getMatch()))) {
 				++found;
 			}
 		}

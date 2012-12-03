@@ -34,13 +34,12 @@ import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+
+import difflib.Delta;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -193,11 +192,11 @@ public class GitRepositoryTest {
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName("96a9f105774b50f1fa3361212c4d12ae057a4285", "3_renamed.txt");
-		assertTrue(formerPathName != null);
+		assertNotNull(formerPathName);
 		assertEquals("3.txt", formerPathName);
 		
 		formerPathName = this.repo.getFormerPathName("96a9f105774b50f1fa3361212c4d12ae057a4285", "1.txt");
-		assertTrue(formerPathName == null);
+		assertNull(formerPathName);
 	}
 	
 	/**

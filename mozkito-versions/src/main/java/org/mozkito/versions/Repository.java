@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import difflib.Delta;
-
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
@@ -32,6 +30,8 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSTransaction;
+
+import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -270,45 +270,6 @@ public abstract class Repository {
 	public URI getUri() {
 		return this.uri;
 	}
-	
-	// /**
-	// * This method extracts the fragment of the URI, saves the given uri
-	// without
-	// * fragment as repository uri and returns the fragment as string.
-	// *
-	// * @param address
-	// * the address
-	// * @return the string the extracted fragment section of the given address
-	// * uri
-	// */
-	// protected String getUriFragment() {
-	//
-	// URI address = getUri();
-	// String fragment = address.getFragment();
-	// if ((fragment != null) && (!fragment.equals(""))) {
-	// // need to reformat URI and gitName
-	// StringBuilder uriBuilder = new StringBuilder();
-	// uriBuilder.append(address.getScheme());
-	// uriBuilder.append("://");
-	// uriBuilder.append(address.getAuthority());
-	// uriBuilder.append(address.getPath());
-	// if ((address.getQuery() != null) && (!address.getQuery().equals(""))) {
-	// uriBuilder.append("?");
-	// uriBuilder.append(address.getQuery());
-	// }
-	// try {
-	// uri = new URI(uriBuilder.toString());
-	// } catch (URISyntaxException e1) {
-	// if (Logger.logError()) {
-	// Logger.error("Newly generated URI using the specified username cannot be parsed. URI = `"
-	// + uriBuilder.toString() + "`");
-	// }
-	// }
-	// }
-	// return (fragment != null
-	// ? fragment
-	// : "");
-	// }
 	
 	/**
 	 * Returns the path of the directory that contains the local copy/clone/checkout of the repository (the working

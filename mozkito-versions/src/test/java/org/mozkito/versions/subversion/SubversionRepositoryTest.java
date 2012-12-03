@@ -15,6 +15,7 @@ package org.mozkito.versions.subversion;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,16 +34,14 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.git.GitRepositoryTest;
 
-// TODO: Auto-generated Javadoc
+import difflib.Delta;
+
 /**
  * The Class SubversionRepositoryTest.
  */
@@ -211,14 +210,14 @@ public class SubversionRepositoryTest {
 	@Test
 	public void testGetFormerPathName() {
 		String formerPathName = this.repo.getFormerPathName("3", "/dir_a/file_2_dir_a");
-		assertTrue(formerPathName != null);
+		assertNotNull(formerPathName);
 		assertEquals("/file_2", formerPathName);
 		
 		formerPathName = this.repo.getFormerPathName("6", "file_3");
-		assertTrue(formerPathName == null);
+		assertNull(formerPathName);
 		
 		formerPathName = this.repo.getFormerPathName("18", "/file_1_renamed");
-		assertTrue(formerPathName != null);
+		assertNotNull(formerPathName);
 		assertEquals("/file_1", formerPathName);
 	}
 	
