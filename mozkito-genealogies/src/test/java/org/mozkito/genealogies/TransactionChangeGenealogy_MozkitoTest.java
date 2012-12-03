@@ -26,7 +26,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
-
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
@@ -48,7 +47,8 @@ import org.mozkito.versions.model.RCSTransaction;
                    password = "miner",
                    username = "miner",
                    type = "POSTGRESQL",
-                   driver = "org.postgresql.Driver")
+                   driver = "org.postgresql.Driver",
+                   remote = true)
 public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	/**
