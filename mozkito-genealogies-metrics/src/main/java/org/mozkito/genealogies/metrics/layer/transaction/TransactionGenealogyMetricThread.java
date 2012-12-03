@@ -35,7 +35,7 @@ import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 public class TransactionGenealogyMetricThread extends Transformer<GenealogyTransactionNode, GenealogyMetricValue> {
 	
 	/** The registered metrics. */
-	static private Map<String, TransactionGenealogyMetricThread> registeredMetrics = new HashMap<String, TransactionGenealogyMetricThread>();
+	private static Map<String, TransactionGenealogyMetricThread> registeredMetrics = new HashMap<String, TransactionGenealogyMetricThread>();
 	
 	/** The iter. */
 	protected Iterator<GenealogyMetricValue>                     iter;

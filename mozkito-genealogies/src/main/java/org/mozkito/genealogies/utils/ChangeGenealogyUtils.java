@@ -31,7 +31,6 @@ import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -210,7 +209,7 @@ public class ChangeGenealogyUtils {
 		                                                                  .createCriteria(RCSTransaction.class);
 		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
-		System.err.println(JavaUtils.collectionToString(transactionList));
+		
 		for (final RCSTransaction transaction : transactionList) {
 			if ("a64df287a21f8a7b0690d13c1561171cbf48a0e1".equals(transaction.getId())) {
 				environmentTransactions.put(1, transaction);
@@ -244,7 +243,7 @@ public class ChangeGenealogyUtils {
 				operationCriteria.eq("revision", revision);
 				final List<JavaChangeOperation> changeOps = branchFactory.getPersistenceUtil().load(operationCriteria);
 				CollectionCondition.size(changeOps, 17, "Manually validated.");
-				System.err.println(JavaUtils.collectionToString(changeOps));
+				
 				operations.addAll(changeOps);
 				for (final JavaChangeOperation op : changeOps) {
 					switch ((int) op.getId()) {

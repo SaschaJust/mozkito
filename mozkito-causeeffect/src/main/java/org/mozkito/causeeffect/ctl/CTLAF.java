@@ -16,6 +16,8 @@ package org.mozkito.causeeffect.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,7 +55,7 @@ public class CTLAF extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLAF getFromXMLRepresentation(final Element element) {
-		assert "CTL-AF".equals(element.getNodeName());
+		CompareCondition.equals(element.getNodeName(), "CTL-AF", "Node name invalid.");
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLAF.get(formula);
 	}

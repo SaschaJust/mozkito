@@ -127,7 +127,7 @@ public class CTLAtomicFormula extends CTLFormula {
 		if (obj == null) {
 			return false;
 		}
-		if (this.getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final CTLAtomicFormula other = (CTLAtomicFormula) obj;

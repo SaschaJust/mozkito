@@ -30,6 +30,6 @@ public interface CombineOperator<T> {
 	 *            the t2
 	 * @return true, if successful
 	 */
-	public boolean canBeCombined(T t1,
-	                             T t2);
+	boolean canBeCombined(T t1,
+	                      T t2);
 }

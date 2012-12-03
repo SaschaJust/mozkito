@@ -32,25 +32,25 @@ import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	
 	/** The Constant changeSize. */
-	private static final String changeSize          = "changeSize";
+	private static final String CHANGE_SIZE             = "changeSize";
 	
 	/** The Constant avgDepChangeSize. */
-	private static final String avgDepChangeSize    = "avgDepChangeSize";
+	private static final String AVG_DEP_CHANGE_SIZE     = "avgDepChangeSize";
 	
 	/** The Constant maxDepChangeSize. */
-	private static final String maxDepChangeSize    = "maxDepChangeSize";
+	private static final String MAX_DEP_CHANGE_SIZE     = "maxDepChangeSize";
 	
 	/** The Constant sumDepChangeSize. */
-	private static final String sumDepChangeSize    = "sumDepChangeSize";
+	private static final String SUM_DEP_CHANGE_SIZE     = "sumDepChangeSize";
 	
 	/** The Constant avgParentChangeSize. */
-	private static final String avgParentChangeSize = "avgParentChangeSize";
+	private static final String AVG_PARENT_CHANGE_SIZE  = "avgParentChangeSize";
 	
 	/** The Constant maxParentChangeSize. */
-	private static final String maxParentChangeSize = "maxParentChangeSize";
+	private static final String MAX_PARENT_CHANGES_SIZE = "maxParentChangeSize";
 	
 	/** The Constant sumParentChangeSize. */
-	private static final String sumParentChangeSize = "sumParentChangeSize";
+	private static final String SUM_PARENT_CHANGE_SIZE  = "sumParentChangeSize";
 	
 	/**
 	 * Instantiates a new partition change size metrics.
@@ -69,13 +69,13 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(7);
-		metricNames.add(PartitionChangeSizeMetrics.changeSize);
-		metricNames.add(PartitionChangeSizeMetrics.avgDepChangeSize);
-		metricNames.add(PartitionChangeSizeMetrics.maxDepChangeSize);
-		metricNames.add(PartitionChangeSizeMetrics.sumDepChangeSize);
-		metricNames.add(PartitionChangeSizeMetrics.avgParentChangeSize);
-		metricNames.add(PartitionChangeSizeMetrics.maxParentChangeSize);
-		metricNames.add(PartitionChangeSizeMetrics.sumParentChangeSize);
+		metricNames.add(PartitionChangeSizeMetrics.CHANGE_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.AVG_DEP_CHANGE_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.MAX_DEP_CHANGE_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.SUM_DEP_CHANGE_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.AVG_PARENT_CHANGE_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.MAX_PARENT_CHANGES_SIZE);
+		metricNames.add(PartitionChangeSizeMetrics.SUM_PARENT_CHANGE_SIZE);
 		return metricNames;
 	}
 	
@@ -93,28 +93,28 @@ public class PartitionChangeSizeMetrics extends GenealogyPartitionMetric {
 		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
 		final DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.changeSize, nodeId, partition.size()));
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.CHANGE_SIZE, nodeId, partition.size()));
 		
 		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllDependants(partition)) {
 			dependantStats.addValue(dependant.size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.avgDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.AVG_DEP_CHANGE_SIZE, nodeId,
 		                                          dependantStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.maxDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.MAX_DEP_CHANGE_SIZE, nodeId,
 		                                          dependantStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.sumDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.SUM_DEP_CHANGE_SIZE, nodeId,
 		                                          dependantStats.getSum()));
 		
 		for (final ChangeGenealogyLayerNode dependant : this.genealogy.getAllParents(partition)) {
 			parentStats.addValue(dependant.size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.avgParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.AVG_PARENT_CHANGE_SIZE, nodeId,
 		                                          parentStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.maxParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.MAX_PARENT_CHANGES_SIZE, nodeId,
 		                                          parentStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.sumParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(PartitionChangeSizeMetrics.SUM_PARENT_CHANGE_SIZE, nodeId,
 		                                          parentStats.getSum()));
 		
 		return metricValues;

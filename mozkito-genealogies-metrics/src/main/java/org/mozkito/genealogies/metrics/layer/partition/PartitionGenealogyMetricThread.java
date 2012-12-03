@@ -38,7 +38,7 @@ public class PartitionGenealogyMetricThread extends Transformer<GenealogyPartiti
 	Iterator<GenealogyMetricValue>                             iter              = null;
 	
 	/** The registered metrics. */
-	static private Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
+	private static Map<String, PartitionGenealogyMetricThread> registeredMetrics = new HashMap<String, PartitionGenealogyMetricThread>();
 	
 	/**
 	 * Instantiates a new partition genealogy metric thread.

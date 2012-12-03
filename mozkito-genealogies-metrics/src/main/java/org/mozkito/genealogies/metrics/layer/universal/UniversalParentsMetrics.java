@@ -81,8 +81,8 @@ public class UniversalParentsMetrics<T> {
 	 *            the depth
 	 * @return the string
 	 */
-	private static final String composeMetricName(final GenealogyEdgeType eType,
-	                                              final int depth) {
+	private static String composeMetricName(final GenealogyEdgeType eType,
+	                                        final int depth) {
 		if (depth > 1) {
 			return "Num" + eType.toString() + "ParentsD" + depth;
 		} else if (depth < 0) {

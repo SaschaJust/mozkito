@@ -161,7 +161,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	public double aggregate(final List<Double> values) {
 		Condition.check(this.trained, "You must train a model before using it,");
 		
-		final svm_node x[] = new svm_node[values.size()];
+		final svm_node[] x = new svm_node[values.size()];
 		for (int i = 0; i < values.size(); ++i) {
 			x[i] = new svm_node();
 			x[i].index = i + 1;

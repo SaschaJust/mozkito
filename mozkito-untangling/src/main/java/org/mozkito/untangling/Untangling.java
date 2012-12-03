@@ -166,7 +166,10 @@ public class Untangling {
 			final ArgumentSet<UntanglingControl, UntanglingOptions> untanglingControlArgumentSet = ArgumentSetFactory.create(untanglingOptions);
 			
 			if (settings.helpRequested()) {
-				System.err.println(settings.getHelpString());
+				if (Logger.logAlways()) {
+					Logger.always(settings.getHelpString());
+				}
+				
 				throw new Shutdown();
 			}
 			

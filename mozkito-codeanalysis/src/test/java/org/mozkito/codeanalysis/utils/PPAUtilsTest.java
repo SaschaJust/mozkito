@@ -26,8 +26,6 @@ public class PPAUtilsTest {
 	
 	/**
 	 * Gets the definition names for call nametest.
-	 *
-	 * @return the definition names for call nametest
 	 */
 	@Test
 	public void getDefinitionNamesForCallNametest() {
