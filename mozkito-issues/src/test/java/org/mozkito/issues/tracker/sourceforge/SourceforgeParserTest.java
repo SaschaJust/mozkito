@@ -283,7 +283,7 @@ public class SourceforgeParserTest {
 			final Comment c1 = iterator.next();
 			assertEquals(2658599, c1.getId());
 			final Person daliboz = c1.getAuthor();
-			assertTrue(daliboz != null);
+			assertNotNull(daliboz);
 			assertTrue(c1.getMessage().startsWith("bumping up priority."));
 			DateTime dt = DateTimeUtils.parseDate("2008-02-05 08:52:57 PST");
 			assertTrue(dt.isEqual(c1.getTimestamp()));
@@ -291,7 +291,7 @@ public class SourceforgeParserTest {
 			final Comment c2 = iterator.next();
 			assertEquals(2658950, c2.getId());
 			final Person scolebourne = c2.getAuthor();
-			assertTrue(scolebourne != null);
+			assertNotNull(scolebourne);
 			assertTrue(c2.getMessage().startsWith("Are you using v1.5.2?"));
 			dt = DateTimeUtils.parseDate("2008-02-05 14:37:45 PST");
 			assertTrue(dt.isEqual(c2.getTimestamp()));

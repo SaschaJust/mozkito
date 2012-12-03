@@ -103,7 +103,6 @@ public class EnumerationFilter extends InfozillaFilter {
 	 */
 	private void filterLine(final int lineNum,
 	                        final String text) {
-		// System.err.println("Called to filter line number: " + lineNum);
 		final String[] lines = text.split("[\n\r]");
 		
 		// Calculate start position
@@ -113,11 +112,7 @@ public class EnumerationFilter extends InfozillaFilter {
 		}
 		// Calculate end position
 		final int end = start + lines[lineNum].length();
-		/*
-		 * System.err.println("Filtering Line: " + lines[lineNum]); System.err.println("Range: " + start + " - " +
-		 * (end+1)); System.err.println(textRemover.getText().substring(start, (end+1))); System.out.println("}}}}" +
-		 * textRemover.getText() + "{{{{\n\n");
-		 */
+		
 		// Mark this range for deletion
 		this.textRemover.markForDeletion(start, end + 1);
 	}
@@ -431,11 +426,7 @@ public class EnumerationFilter extends InfozillaFilter {
 	 * @return a String that contains the text after being processed.
 	 */
 	private String getProcessedText() {
-		if (this.textRemover == null) {
-			System.err.println("We need an Instance of FilterTextRemover first!");
-			System.err.println("Make sure you call setProcessedText before getProcessedText!");
-			System.exit(1);
-		}
+		assert this.textRemover != null;
 		this.processedText = this.textRemover.doDelete();
 		return this.processedText;
 	}

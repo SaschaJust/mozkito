@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import scala.actors.threadpool.Arrays;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TrackerOptionsTest.
  * 
@@ -90,7 +89,6 @@ public class TrackerOptionsTest {
 			System.setProperty("tracker.useProxy", "true");
 			final Settings settings = new Settings();
 			ArgumentSetFactory.create(new TrackerOptions(settings.getRoot(), Requirement.required));
-			System.err.println(settings);
 			fail();
 		} catch (final SettingsParseError e) {
 			e.printStackTrace();

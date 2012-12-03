@@ -48,7 +48,7 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 		
 		for (final GenealogyMetricValue mValue : metricValues) {
 			if (mValue.getMetricId().equals(UniversalTempDepthMetrics.getMaxtempdepth1())) {
-				if (mValue.getNodeId().equals("1")) {
+				if ("1".equals(mValue.getNodeId())) {
 					assertEquals(0, mValue.getValue(), 0);
 				} else if (mValue.getNodeId().equals("2")) {
 					assertEquals(1, mValue.getValue(), 0);

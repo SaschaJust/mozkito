@@ -47,33 +47,33 @@ public class UniversalDwReachMetricTest extends TestEnvironment {
 		
 		for (final GenealogyMetricValue mValue : metricValues) {
 			assertEquals(UniversalDwReachMetric.getDwreach(), mValue.getMetricId());
-			if (mValue.getNodeId().equals("1")) {
+			if ("1".equals(mValue.getNodeId())) {
 				assertEquals(0, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("2")) {
+			} else if ("2".equals(mValue.getNodeId())) {
 				assertEquals(1, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("3")) {
+			} else if ("3".equals(mValue.getNodeId())) {
 				assertEquals(1, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("4")) {
+			} else if ("4".equals(mValue.getNodeId())) {
 				assertEquals(4, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("5")) {
+			} else if ("5".equals(mValue.getNodeId())) {
 				assertEquals(3.3, mValue.getValue(), 0.1);
-			} else if (mValue.getNodeId().equals("6")) {
+			} else if ("6".equals(mValue.getNodeId())) {
 				assertEquals(3.5, mValue.getValue(), 0.1);
-			} else if (mValue.getNodeId().equals("7")) {
+			} else if ("7".equals(mValue.getNodeId())) {
 				assertEquals(2, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("8")) {
+			} else if ("8".equals(mValue.getNodeId())) {
 				assertEquals(3.83, mValue.getValue(), 0.01);
-			} else if (mValue.getNodeId().equals("9")) {
+			} else if ("9".equals(mValue.getNodeId())) {
 				assertEquals(3, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("10")) {
+			} else if ("10".equals(mValue.getNodeId())) {
 				assertEquals(3, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("11")) {
+			} else if ("11".equals(mValue.getNodeId())) {
 				assertEquals(4.5, mValue.getValue(), 0);
-			} else if (mValue.getNodeId().equals("12")) {
+			} else if ("12".equals(mValue.getNodeId())) {
 				assertEquals(2.916, mValue.getValue(), 0.001);
-			} else if (mValue.getNodeId().equals("13")) {
+			} else if ("13".equals(mValue.getNodeId())) {
 				assertEquals(2.916, mValue.getValue(), 0.001);
-			} else if (mValue.getNodeId().equals("14")) {
+			} else if ("14".equals(mValue.getNodeId())) {
 				assertEquals(6.25, mValue.getValue(), 0);
 			}
 		}

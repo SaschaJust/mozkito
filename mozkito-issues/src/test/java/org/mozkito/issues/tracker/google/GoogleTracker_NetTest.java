@@ -38,7 +38,7 @@ import org.mozkito.issues.tracker.model.Report;
 public class GoogleTracker_NetTest {
 	
 	/** The Constant dateTimeHistoryFormatRegex. */
-	protected static final Regex dateTimeHistoryFormatRegex = new Regex(
+	protected static final Regex DATE_TIME_HISTORY_FORMAT_REGEX = new Regex(
 	                                                                    "(({yyyy}\\d{4})-({MM}\\d{2})-({dd}\\d{2})T({HH}\\d{2}):({mm}[0-5]\\d):({ss}[0-5]\\d))");
 	
 	/**
@@ -85,7 +85,7 @@ public class GoogleTracker_NetTest {
 			
 			assertEquals(null, report.getComponent());
 			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z",
-			                                   GoogleTracker_NetTest.dateTimeHistoryFormatRegex)
+			                                   GoogleTracker_NetTest.DATE_TIME_HISTORY_FORMAT_REGEX)
 			                        .isEqual(report.getCreationTimestamp()));
 			
 			assertTrue(report.getHistory() != null);
@@ -95,7 +95,7 @@ public class GoogleTracker_NetTest {
 			assertEquals(new Report("0").getProduct(), report.getProduct());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
 			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z",
-			                                   GoogleTracker_NetTest.dateTimeHistoryFormatRegex)
+			                                   GoogleTracker_NetTest.DATE_TIME_HISTORY_FORMAT_REGEX)
 			                        .isEqual(report.getResolutionTimestamp()));
 			assertTrue(report.getResolver() != null);
 			assertEquals(1, report.getResolver().getEmailAddresses().size());

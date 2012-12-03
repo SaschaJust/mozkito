@@ -14,6 +14,7 @@ package org.mozkito.issues.tracker.bugzilla;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -214,7 +215,7 @@ public class BugzillaParser_4_0_4_Test {
 	public void testDateParse() {
 		final String date = "2005-11-01 11:43:19 EST";
 		final DateTime dateTime = DateTimeUtils.parseDate(date);
-		assertTrue(dateTime != null);
+		assertNotNull(dateTime);
 	}
 	
 	/**
@@ -290,9 +291,7 @@ public class BugzillaParser_4_0_4_Test {
 		assertEquals(null, this.parser.getSummary());
 		assertEquals(Type.RFE, this.parser.getType());
 		assertEquals("unspecified", this.parser.getVersion());
-		for (final String keyword : this.parser.getKeywords()) {
-			System.err.println("`" + keyword + "`");
-		}
+		
 		assertTrue(this.parser.getKeywords().isEmpty());
 		
 	}

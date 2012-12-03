@@ -16,6 +16,8 @@ package org.mozkito.infozilla.filters;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ownhero.dev.kisa.Logger;
+
 /**
  * The <code>FilterTextRemover</code> class is used to cut out the structural element from the complete input text.
  * Given a list of (possibly overlapping) cut points, the class calculates the longest consecutive parts and marks them
@@ -163,9 +165,11 @@ public class FilterTextRemover {
 				this.deletionMask[i] = true;
 			}
 		} else {
-			System.err.println("Warning! Trying to Delete out of Bounds: " + start + " until " + end
-			        + " but bounds are 0:" + this.deletionMask.length);
-			System.err.println("Will not mark for deletion!");
+			if (Logger.logError()) {
+				Logger.error("Warning! Trying to Delete out of Bounds: " + start + " until " + end
+				        + " but bounds are 0:" + this.deletionMask.length);
+				Logger.error("Will not mark for deletion!");
+			}
 		}
 	}
 	
