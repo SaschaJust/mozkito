@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -71,7 +72,7 @@ public class ChangeCouplingRuleFactory {
 		
 		final LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
-		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
+		if (!persistenceUtil.getType().equalsIgnoreCase(DatabaseType.POSTGRESQL.name())) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
 			        + persistenceUtil.getType() + ").");
 		}
@@ -149,7 +150,7 @@ public class ChangeCouplingRuleFactory {
 		
 		final LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
-		if (!persistenceUtil.getType().toLowerCase().equals("postgresql")) {
+		if (!persistenceUtil.getType().equalsIgnoreCase(DatabaseType.POSTGRESQL.name())) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
 			        + persistenceUtil.getType() + ").");
 		}
