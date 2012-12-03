@@ -14,7 +14,6 @@ package org.mozkito.utilities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -108,11 +107,11 @@ public class URIUtilsTest {
 	@Test
 	public void testNullUsername() {
 		URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalNoUser, null);
-		assertTrue(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(URIUtilsTest.originalNoUser, encoded);
 		assertFalse(encoded.equals(URIUtilsTest.originalUser));
 		
 		encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, null);
-		assertTrue(encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(URIUtilsTest.originalUser, encoded);
 		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
@@ -122,7 +121,7 @@ public class URIUtilsTest {
 	@Test
 	public void testSameUsername() {
 		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "user");
-		assertTrue(encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(URIUtilsTest.originalUser, encoded);
 		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
@@ -136,7 +135,8 @@ public class URIUtilsTest {
 		assertEquals("file:///tmp/", URIUtils.Uri2String(uri));
 		
 		try {
-			assertEquals("https://st.cs.uni-saarland.de", URIUtils.Uri2String(new URI("https://st.cs.uni-saarland.de")));
+			final String uriString = "https://st.cs.uni-saarland.de";
+			assertEquals(uriString, URIUtils.Uri2String(new URI(uriString)));
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
