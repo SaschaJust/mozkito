@@ -87,7 +87,7 @@ public class ClassificationImporter {
 					final String bugId = lineParts[0];
 					Type bugType = null;
 					String bugTyepString = lineParts[1].trim().toUpperCase();
-					if (bugTyepString.equals("DESIGN")) {
+					if ("DESIGN".equals(bugTyepString)) {
 						bugTyepString = "DESIGN_DEFECT";
 					}
 					try {
@@ -128,7 +128,7 @@ public class ClassificationImporter {
 					persistenceUtil.commitTransaction();
 				}
 			}
-		} catch (ArgumentRegistrationException | ArgumentSetRegistrationException | IOException e) {
+		} catch (final ArgumentRegistrationException | ArgumentSetRegistrationException | IOException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
