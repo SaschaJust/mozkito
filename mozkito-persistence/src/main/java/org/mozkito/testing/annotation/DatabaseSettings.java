@@ -69,6 +69,13 @@ public @interface DatabaseSettings {
 	String password() default "";
 	
 	/**
+	 * Remote.
+	 * 
+	 * @return true, if successful
+	 */
+	boolean remote() default false;
+	
+	/**
 	 * Type.
 	 * 
 	 * @return the string

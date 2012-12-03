@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceManager;
@@ -48,9 +47,9 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		final String databaseDriver = System.getProperty("database.driver") != null
 		                                                                           ? System.getProperty("database.driver")
 		                                                                           : settings.driver();
-		final String databaseHost = System.getProperty("database.host") != null
-		                                                                       ? System.getProperty("database.host")
-		                                                                       : settings.hostname();
+		final String databaseHost = (System.getProperty("database.host") != null) && settings.remote()
+		                                                                                              ? System.getProperty("database.host")
+		                                                                                              : settings.hostname();
 		final ConnectOptions databaseOptions = System.getProperty("database.options") != null
 		                                                                                     ? ConnectOptions.valueOf(System.getProperty("database.options")
 		                                                                                                                    .toUpperCase())
