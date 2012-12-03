@@ -1319,7 +1319,7 @@ public class PPAUtils {
 			int index = 0;
 			final String[] nameParts = name.split("\\.");
 			for (final String namePart : nameParts) {
-				if (namePart.equals("<init>()")) {
+				if ("<init>()".equals(namePart)) {
 					break;
 				}
 				++index;
@@ -1343,7 +1343,7 @@ public class PPAUtils {
 		if (nameParts.length > 3) {
 			nameParts[nameParts.length - 3] = "";
 			for (int i = 0; i < nameParts.length; ++i) {
-				if (!nameParts[i].equals("")) {
+				if (!nameParts[i].isEmpty()) {
 					alternativeName.append(nameParts[i]);
 					if (i != (nameParts.length - 1)) {
 						alternativeName.append(".");

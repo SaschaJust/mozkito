@@ -156,6 +156,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	
 	/**
 	 * Instantiates a new java method call.
+	 * 
+	 * @deprecated shoud only be used by the persistence util in case dynamic enhancement is nescessary
 	 */
 	@Deprecated
 	public JavaMethodCall() {

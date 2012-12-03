@@ -25,8 +25,14 @@ import org.junit.Test;
 
 import org.mozkito.codeanalysis.utils.JavaElementLocations;
 
+/**
+ * The Class JavaElementLocationSetTest.
+ */
 public class JavaElementLocationSetTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final JavaElementLocationSet set = new JavaElementLocationSet(new JavaElementFactory());
@@ -139,6 +145,9 @@ public class JavaElementLocationSetTest {
 		                           .contains(methodDefinitionLocation));
 	}
 	
+	/**
+	 * Test java element locations.
+	 */
 	@Test
 	public void testJavaElementLocations() {
 		final JavaElementLocationSet set = new JavaElementLocationSet(new JavaElementFactory());

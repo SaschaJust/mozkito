@@ -17,8 +17,14 @@ import static org.junit.Assert.assertEquals;
 import org.jdom2.Element;
 import org.junit.Test;
 
+/**
+ * The Class JavaClassDefinitionTest.
+ */
 public class JavaClassDefinitionTest {
 	
+	/**
+	 * Test xml.
+	 */
 	@Test
 	public void testXML() {
 		final JavaElementFactory elementFactory = new JavaElementFactory();

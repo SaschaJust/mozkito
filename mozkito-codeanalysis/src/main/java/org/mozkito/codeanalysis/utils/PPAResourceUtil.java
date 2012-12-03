@@ -22,8 +22,8 @@ import java.io.InputStream;
 
 import ca.mcgill.cs.swevo.ppa.SnippetUtil;
 import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
+import net.ownhero.dev.kisa.Logger;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -38,9 +38,6 @@ import org.eclipse.jdt.core.dom.PPABindingsUtil;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class PPAResourceUtil {
-	
-	/** The Constant logger. */
-	private final static Logger logger = Logger.getLogger(PPAResourceUtil.class);
 	
 	/**
 	 * <p>
@@ -279,7 +276,9 @@ public class PPAResourceUtil {
 				isEmpty = (members == null) || (members.length == 0);
 			}
 		} catch (final CoreException ce) {
-			PPAResourceUtil.logger.error("Error while checking if folder is empty.", ce);
+			if (Logger.logError()) {
+				Logger.error(ce, "Error while checking if folder is empty.");
+			}
 		}
 		
 		return isEmpty;
@@ -293,7 +292,7 @@ public class PPAResourceUtil {
 	 * @return true, if is src folder
 	 */
 	private static boolean isSrcFolder(final IFolder parentFolder) {
-		return parentFolder.getName().equals("src");
+		return "src".equals(parentFolder.getName());
 	}
 	
 }

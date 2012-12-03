@@ -24,13 +24,26 @@ import org.junit.Test;
 
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 
+/**
+ * The Class JavaElementLocationTest.
+ */
 public class JavaElementLocationTest {
 	
+	/** The element factory. */
 	private JavaElementFactory     elementFactory;
+	
+	/** The set. */
 	private JavaElementLocationSet set;
+	
+	/** The java type. */
 	private JavaTypeDefinition     javaType;
+	
+	/** The location. */
 	private JavaElementLocation    location;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		this.elementFactory = new JavaElementFactory();
@@ -43,6 +56,9 @@ public class JavaElementLocationTest {
 		this.location.addCommentLines(22, 23);
 	}
 	
+	/**
+	 * Test covers all lines.
+	 */
 	@Test
 	public void testCoversAllLines() {
 		final ArrayList<Integer> lineList = new ArrayList<Integer>();
@@ -70,6 +86,9 @@ public class JavaElementLocationTest {
 		assertEquals(LineCover.BODY, this.location.coversAllLines(lineList));
 	}
 	
+	/**
+	 * Test covers any line.
+	 */
 	@Test
 	public void testCoversAnyLine() {
 		final ArrayList<Integer> lineList = new ArrayList<Integer>();
@@ -96,6 +115,9 @@ public class JavaElementLocationTest {
 		assertEquals(LineCover.BODY, this.location.coversAnyLine(lineList));
 	}
 	
+	/**
+	 * Test covers line.
+	 */
 	@Test
 	public void testCoversLine() {
 		assertEquals(LineCover.FALSE, this.location.coversLine(19));
@@ -108,6 +130,9 @@ public class JavaElementLocationTest {
 		assertEquals(LineCover.FALSE, this.location.coversLine(26));
 	}
 	
+	/**
+	 * Test get comment lines.
+	 */
 	@Test
 	public void testGetCommentLines() {
 		final Set<Integer> commentLines = this.location.getCommentLines();
@@ -116,6 +141,9 @@ public class JavaElementLocationTest {
 		assertTrue(commentLines.contains(23));
 	}
 	
+	/**
+	 * Test xml.
+	 */
 	@Test
 	public void testXML() {
 		final Element xmlRepresentation = this.location.getXMLRepresentation();

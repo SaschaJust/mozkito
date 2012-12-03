@@ -19,8 +19,16 @@ import org.junit.Test;
 
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 
+/**
+ * The Class PPAUtilsTest.
+ */
 public class PPAUtilsTest {
 	
+	/**
+	 * Gets the definition names for call nametest.
+	 *
+	 * @return the definition names for call nametest
+	 */
 	@Test
 	public void getDefinitionNamesForCallNametest() {
 		final String orgName = "src.com.google.gwt.sample.kitchensink.client.Popups.MyPopup.<init>()";

@@ -138,7 +138,7 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		final String calledObject = mBinding.getDeclaringClass().getQualifiedName();
 		
-		if (calledObject.equals("UNKNOWN") || calledObject.equals("")) {
+		if ("UNKNOWN".equals(calledObject) || calledObject.isEmpty()) {
 			final StringBuilder ss = new StringBuilder();
 			ss.append("Could not resolve method binding for MethodInvocation in revision ");
 			if (classContext != null) {

@@ -20,8 +20,14 @@ import java.util.List;
 import org.jdom2.Element;
 import org.junit.Test;
 
+/**
+ * The Class JavaMethodDefinitionTest.
+ */
 public class JavaMethodDefinitionTest {
 	
+	/**
+	 * Test get full qualified name.
+	 */
 	@Test
 	public void testGetFullQualifiedName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -33,6 +39,9 @@ public class JavaMethodDefinitionTest {
 		             element.getFullQualifiedName());
 	}
 	
+	/**
+	 * Test get short name.
+	 */
 	@Test
 	public void testGetShortName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -43,6 +52,9 @@ public class JavaMethodDefinitionTest {
 		assertEquals("foo(String,Object)", element.getShortName());
 	}
 	
+	/**
+	 * Test package name.
+	 */
 	@Test
 	public void testPackageName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -53,6 +65,9 @@ public class JavaMethodDefinitionTest {
 		assertEquals(JavaMethodDefinition.class.getPackage().getName(), element.getPackageName());
 	}
 	
+	/**
+	 * Test xml.
+	 */
 	@Test
 	public void testXML() {
 		final List<String> argList = new ArrayList<String>(2);

@@ -25,7 +25,7 @@ public interface ChangeOperationVisitor {
 	/**
 	 * End visit. Called after set of transactions are done.
 	 */
-	public void endVisit();
+	void endVisit();
 	
 	/**
 	 * Visit.
@@ -33,7 +33,7 @@ public interface ChangeOperationVisitor {
 	 * @param change
 	 *            the change
 	 */
-	public void visit(JavaChangeOperation change);
+	void visit(JavaChangeOperation change);
 	
 	/**
 	 * Visit.
@@ -41,6 +41,6 @@ public interface ChangeOperationVisitor {
 	 * @param rCSTransaction
 	 *            the transaction
 	 */
-	public void visit(RCSTransaction rCSTransaction);
+	void visit(RCSTransaction rCSTransaction);
 	
 }

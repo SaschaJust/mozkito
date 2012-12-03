@@ -158,6 +158,8 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	
 	/**
 	 * Instantiates a new java method definition.
+	 * 
+	 * @deprecated should only be used by the persistence util if dynamic enhancement is nescessary
 	 */
 	@Deprecated
 	public JavaMethodDefinition() {

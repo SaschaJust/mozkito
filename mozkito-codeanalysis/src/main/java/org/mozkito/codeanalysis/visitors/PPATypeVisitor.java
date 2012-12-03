@@ -317,7 +317,7 @@ public class PPATypeVisitor extends ASTVisitor {
 			final Type superClassType = td.getSuperclassType();
 			final JavaTypeDefinition element = ((JavaTypeDefinition) this.classStack.peek().getElement());
 			if ((superClassType != null)
-			        && ((element.getSuperClassName() == null) || (element.getSuperClassName().equals("")))) {
+			        && ((element.getSuperClassName() == null) || (element.getSuperClassName().isEmpty()))) {
 				final ITypeBinding superClassBinding = superClassType.resolveBinding();
 				if (superClassBinding != null) {
 					String superClassName = superClassBinding.getQualifiedName();
@@ -395,7 +395,7 @@ public class PPATypeVisitor extends ASTVisitor {
 					startLineShifted = true;
 					if ((modifier.getNodeType() == ASTNode.MARKER_ANNOTATION)) {
 						final MarkerAnnotation annotation = (MarkerAnnotation) modifier;
-						if (annotation.getTypeName().getFullyQualifiedName().toLowerCase().equals("override")) {
+						if ("override".equals(annotation.getTypeName().getFullyQualifiedName().toLowerCase())) {
 							if (Logger.logTrace()) {
 								Logger.trace("Found @override method declaration ");
 							}

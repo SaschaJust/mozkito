@@ -26,15 +26,32 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
+/**
+ * The Class JavaChangeOperationTest.
+ */
 public class JavaChangeOperationTest {
 	
+	/** The r cs transaction. */
 	private RCSTransaction         rCSTransaction;
+	
+	/** The anonymous class location. */
 	private JavaElementLocation    anonymousClassLocation;
+	
+	/** The set. */
 	private JavaElementLocationSet set;
+	
+	/** The rcs file. */
 	private RCSFile                rcsFile;
+	
+	/** The op. */
 	private JavaChangeOperation    op;
+	
+	/** The element factory. */
 	private JavaElementFactory     elementFactory;
 	
+	/**
+	 * Before.
+	 */
 	@Before
 	public void before() {
 		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");
@@ -52,12 +69,18 @@ public class JavaChangeOperationTest {
 		                                  new RCSRevision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
 	}
 	
+	/**
+	 * Test to string.
+	 */
 	@Test
 	public void testToString() {
 		assertEquals("0: Added <path = org/mozkito/codeanalysis/model/TestClass.java, element: org.mozkito.codeanalysis.model.TestClass$1, transaction: hash>",
 		             this.op.toString());
 	}
 	
+	/**
+	 * Test xml.
+	 */
 	@Test
 	public void testXML() {
 		final Element xmlOp = this.op.getXMLRepresentation();

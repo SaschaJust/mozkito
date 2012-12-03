@@ -32,9 +32,15 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
+/**
+ * The Class OpenJPA_PPA_MozkitoTest.
+ */
 @DatabaseSettings (unit = "codeanalysis")
 public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final JavaElementFactory elementFactory = new JavaElementFactory();
@@ -64,6 +70,9 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		getPersistenceUtil().commitTransaction();
 	}
 	
+	/**
+	 * Test tmp.
+	 */
 	@Test
 	public void testTMP() {
 		final JavaMethodDefinition def = new JavaMethodDefinition("parenName", "methodName", new ArrayList<String>(0),

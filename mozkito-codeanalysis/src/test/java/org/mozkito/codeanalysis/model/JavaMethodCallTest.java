@@ -20,8 +20,14 @@ import java.util.List;
 import org.jdom2.Element;
 import org.junit.Test;
 
+/**
+ * The Class JavaMethodCallTest.
+ */
 public class JavaMethodCallTest {
 	
+	/**
+	 * Test get full qualified name.
+	 */
 	@Test
 	public void testGetFullQualifiedName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -31,6 +37,9 @@ public class JavaMethodCallTest {
 		assertEquals("org.mozkito.codeanalysis.model.JavaMethodCall.foo(String,Object)", element.getFullQualifiedName());
 	}
 	
+	/**
+	 * Test get short name.
+	 */
 	@Test
 	public void testGetShortName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -40,6 +49,9 @@ public class JavaMethodCallTest {
 		assertEquals("foo(String,Object)", element.getShortName());
 	}
 	
+	/**
+	 * Test package name.
+	 */
 	@Test
 	public void testPackageName() {
 		final List<String> argList = new ArrayList<String>(2);
@@ -49,6 +61,9 @@ public class JavaMethodCallTest {
 		assertEquals(JavaMethodCall.class.getPackage().getName(), element.getPackageName());
 	}
 	
+	/**
+	 * Test xml.
+	 */
 	@Test
 	public void testXML() {
 		final List<String> argList = new ArrayList<String>(2);

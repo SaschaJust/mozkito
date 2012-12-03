@@ -116,7 +116,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	private String                          superClassName = null;
 	
 	/** The Constant anonCheck. */
-	private final static String             anonCheck      = ".*\\$\\d+";
+	private static final String             ANON_CHECK     = ".*\\$\\d+";
 	
 	/** The anon counter. */
 	private final HashMap<Integer, Integer> anonCounters   = new HashMap<Integer, Integer>();
@@ -132,6 +132,8 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	
 	/**
 	 * Instantiates a new java class definition.
+	 * 
+	 * @deprecated should only be used by the persistence util if dynamic enhancement is nescessary
 	 */
 	@Deprecated
 	public JavaTypeDefinition() {
@@ -149,7 +151,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.ANON_CHECK, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
 		setParent(parent);
@@ -169,7 +171,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName,
 	        final boolean isInterface) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.ANON_CHECK, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
 		setParent(parent);
@@ -185,7 +187,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.ANON_CHECK, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
 	}
@@ -201,7 +203,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName, final boolean isInterface) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.ANON_CHECK, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
 		setInterfaze(isInterface);

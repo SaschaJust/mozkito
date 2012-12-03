@@ -16,8 +16,14 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/**
+ * The Class JavaElementTest.
+ */
 public class JavaElementTest {
 	
+	/**
+	 * Test extract method name.
+	 */
 	@Test
 	public void testExtractMethodName() {
 		final String methodName = JavaElement.extractMethodName("org.mozkito.codeanalysis.model.JavaElement.foo(String s, Object o, HashSet<String[]> set)");

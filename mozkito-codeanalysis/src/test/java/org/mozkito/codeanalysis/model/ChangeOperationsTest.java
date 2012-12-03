@@ -27,8 +27,14 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
+/**
+ * The Class ChangeOperationsTest.
+ */
 public class ChangeOperationsTest {
 	
+	/**
+	 * Test.
+	 */
 	@Test
 	public void test() {
 		final JavaTypeDefinition javaType = new JavaTypeDefinition("org.mozkito.codeanalysis.model.TestClass");

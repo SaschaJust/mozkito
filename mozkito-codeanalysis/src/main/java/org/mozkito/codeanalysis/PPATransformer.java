@@ -72,9 +72,9 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 					}
 					
 					try {
-						PPAPersister.available.acquire();
+						PPAPersister.AVAILABLE.acquire();
 					} catch (final InterruptedException e) {
-						PPAPersister.available.release();
+						PPAPersister.AVAILABLE.release();
 					}
 					if (usePPA) {
 						
@@ -98,7 +98,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 							                                       }
 						                                       }, factory, packageFilter);
 					}
-					PPAPersister.available.release();
+					PPAPersister.AVAILABLE.release();
 					
 					this.iterator = visitor.getIterator();
 				}
