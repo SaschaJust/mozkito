@@ -421,8 +421,8 @@ public class SubversionRepository extends Repository {
 				for (final Object o : changedPaths.keySet()) {
 					final SVNLogEntryPath logEntryPath = changedPaths.get(o);
 					switch (logEntryPath.getType()) {
-						case 'R':
-						case 'A':
+						case SVNLogEntryPath.TYPE_REPLACED:
+						case SVNLogEntryPath.TYPE_ADDED:
 							if (logEntryPath.getCopyPath() == null) {
 								continue;
 							}
@@ -436,7 +436,7 @@ public class SubversionRepository extends Repository {
 							}
 							break;
 						default:
-							// FIXME
+							// here no renaming can have happend. Simply do nothing which means return null.
 							break;
 					}
 					

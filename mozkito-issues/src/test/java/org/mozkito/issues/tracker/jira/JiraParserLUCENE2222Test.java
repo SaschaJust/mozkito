@@ -13,6 +13,7 @@
 package org.mozkito.issues.tracker.jira;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,7 +30,6 @@ import net.ownhero.dev.regex.Regex;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.elements.Resolution;
@@ -59,8 +59,8 @@ public class JiraParserLUCENE2222Test {
 		try {
 			final URI uri = JiraParserLUCENE2222Test.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                              .toURI();
-			JiraParserLUCENE2222Test.parser = new JiraParser();
-			assert (JiraParserLUCENE2222Test.parser.setURI(new ReportLink(uri, "LUCENE-2222")));
+			parser = new JiraParser();
+			assertTrue(parser.setURI(new ReportLink(uri, "LUCENE-2222")));
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -75,7 +75,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetAssignedTo() {
-		assertEquals(null, JiraParserLUCENE2222Test.parser.getAssignedTo());
+		assertNull(parser.getAssignedTo());
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	@Ignore
 	public void testGetAttachmentEntries() {
-		final List<AttachmentEntry> attachmentEntries = JiraParserLUCENE2222Test.parser.getAttachmentEntries();
+		final List<AttachmentEntry> attachmentEntries = parser.getAttachmentEntries();
 		assertEquals(3, attachmentEntries.size());
 		AttachmentEntry attachmentEntry = attachmentEntries.get(0);
 		assertEquals("LUCENE-2222.patch", attachmentEntry.getFilename());
@@ -132,7 +132,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetCategory() {
-		assertEquals(null, JiraParserLUCENE2222Test.parser.getCategory());
+		assertEquals(null, parser.getCategory());
 	}
 	
 	/**
@@ -140,7 +140,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetComments() {
-		final SortedSet<Comment> comments = JiraParserLUCENE2222Test.parser.getComments();
+		final SortedSet<Comment> comments = parser.getComments();
 		assertEquals(11, comments.size());
 		
 		for (final Comment comment : comments) {
@@ -257,7 +257,6 @@ public class JiraParserLUCENE2222Test {
 					assertEquals(0, author.getUsernames().size());
 					assertEquals(0, author.getFullnames().size());
 					assertTrue(author.getEmailAddresses().contains("paul.elschot@xs4all.nl"));
-					System.err.println(comment.getMessage());
 					assertTrue(comment.getMessage().startsWith("<p>ForDecompress.decodeAnyFrame() is pretty slow,"));
 					assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 18:39:07 +0000",
 					                                     new Regex(JiraParser.DATE_TIME_PATTERN)),
@@ -275,7 +274,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetComponent() {
-		assertEquals("core/index", JiraParserLUCENE2222Test.parser.getComponent());
+		assertEquals("core/index", parser.getComponent());
 	}
 	
 	/**
@@ -284,7 +283,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	public void testGetCreationTimestamp() {
 		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 00:18:30 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
-		             JiraParserLUCENE2222Test.parser.getCreationTimestamp());
+		             parser.getCreationTimestamp());
 	}
 	
 	/**
@@ -292,12 +291,11 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetDescription() {
-		assertTrue(JiraParserLUCENE2222Test.parser.getDescription() != null);
-		System.err.println(JiraParserLUCENE2222Test.parser.getDescription());
-		assertTrue(JiraParserLUCENE2222Test.parser.getDescription()
-		                                          .startsWith("<p>The FixedIntBlockIndexInput.Reader.pending int array is not initialised. As a consequence, the FixedIntBlockIndexInput.Reader#next() method returns always 0.</p>"));
-		assertTrue(JiraParserLUCENE2222Test.parser.getDescription()
-		                                          .endsWith("<p>A call to FixedIntBlockIndexInput.Reader#blockReader.readBlock() during the Reader initialisation may solve the issue (to be tested).</p>"));
+		assertTrue(parser.getDescription() != null);
+		assertTrue(parser.getDescription()
+		                 .startsWith("<p>The FixedIntBlockIndexInput.Reader.pending int array is not initialised. As a consequence, the FixedIntBlockIndexInput.Reader#next() method returns always 0.</p>"));
+		assertTrue(parser.getDescription()
+		                 .endsWith("<p>A call to FixedIntBlockIndexInput.Reader#blockReader.readBlock() during the Reader initialisation may solve the issue (to be tested).</p>"));
 	}
 	
 	/**
@@ -305,7 +303,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetId() {
-		assertEquals("LUCENE-2222", JiraParserLUCENE2222Test.parser.getId());
+		assertEquals("LUCENE-2222", parser.getId());
 	}
 	
 	/**
@@ -313,7 +311,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetKeywords() {
-		assertEquals(0, JiraParserLUCENE2222Test.parser.getKeywords().size());
+		assertEquals(0, parser.getKeywords().size());
 	}
 	
 	/**
@@ -322,7 +320,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	public void testGetLastUpdateTimestamp() {
 		assertEquals(DateTimeUtils.parseDate("Tue, 12 Oct 2010 13:39:41 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
-		             JiraParserLUCENE2222Test.parser.getLastUpdateTimestamp());
+		             parser.getLastUpdateTimestamp());
 	}
 	
 	/**
@@ -330,7 +328,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetPriority() {
-		assertEquals(Priority.NORMAL, JiraParserLUCENE2222Test.parser.getPriority());
+		assertEquals(Priority.NORMAL, parser.getPriority());
 	}
 	
 	/**
@@ -338,7 +336,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetProduct() {
-		assertEquals(null, JiraParserLUCENE2222Test.parser.getProduct());
+		assertEquals(null, parser.getProduct());
 	}
 	
 	/**
@@ -346,7 +344,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetResolution() {
-		assertEquals(Resolution.RESOLVED, JiraParserLUCENE2222Test.parser.getResolution());
+		assertEquals(Resolution.RESOLVED, parser.getResolution());
 	}
 	
 	/**
@@ -355,7 +353,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	public void testGetResolutionTimestamp() {
 		assertEquals(DateTimeUtils.parseDate("Mon, 18 Jan 2010 13:35:14 +0000", new Regex(JiraParser.DATE_TIME_PATTERN)),
-		             JiraParserLUCENE2222Test.parser.getResolutionTimestamp());
+		             parser.getResolutionTimestamp());
 	}
 	
 	/**
@@ -363,7 +361,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetScmFixVersion() {
-		assertEquals(null, JiraParserLUCENE2222Test.parser.getScmFixVersion());
+		assertEquals(null, parser.getScmFixVersion());
 	}
 	
 	/**
@@ -371,7 +369,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetSeverity() {
-		assertEquals(Severity.MINOR, JiraParserLUCENE2222Test.parser.getSeverity());
+		assertEquals(Severity.MINOR, parser.getSeverity());
 	}
 	
 	/**
@@ -379,7 +377,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetSiblings() {
-		assertEquals(0, JiraParserLUCENE2222Test.parser.getSiblings().size());
+		assertEquals(0, parser.getSiblings().size());
 	}
 	
 	/**
@@ -387,7 +385,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetStatus() {
-		assertEquals(Status.CLOSED, JiraParserLUCENE2222Test.parser.getStatus());
+		assertEquals(Status.CLOSED, parser.getStatus());
 	}
 	
 	/**
@@ -396,7 +394,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	public void testGetSubject() {
 		assertEquals("[LUCENE-2222] FixedIntBlockIndexInput.Reader does not initialise 'pending' int array",
-		             JiraParserLUCENE2222Test.parser.getSubject());
+		             parser.getSubject());
 	}
 	
 	/**
@@ -404,7 +402,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetSubmitter() {
-		final Person submitter = JiraParserLUCENE2222Test.parser.getSubmitter();
+		final Person submitter = parser.getSubmitter();
 		assertEquals(0, submitter.getEmailAddresses().size());
 		assertTrue(submitter.getFullnames().contains("Renaud Delbru"));
 		assertTrue(submitter.getUsernames().contains("renaud.delbru"));
@@ -416,7 +414,7 @@ public class JiraParserLUCENE2222Test {
 	@Test
 	public void testgetSummary() {
 		assertEquals("[LUCENE-2222] FixedIntBlockIndexInput.Reader does not initialise 'pending' int array",
-		             JiraParserLUCENE2222Test.parser.getSummary());
+		             parser.getSummary());
 	}
 	
 	/**
@@ -424,7 +422,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetType() {
-		assertEquals(Type.BUG, JiraParserLUCENE2222Test.parser.getType());
+		assertEquals(Type.BUG, parser.getType());
 	}
 	
 	/**
@@ -432,7 +430,7 @@ public class JiraParserLUCENE2222Test {
 	 */
 	@Test
 	public void testGetVersion() {
-		assertEquals("4.0", JiraParserLUCENE2222Test.parser.getVersion());
+		assertEquals("4.0", parser.getVersion());
 	}
 	
 }
