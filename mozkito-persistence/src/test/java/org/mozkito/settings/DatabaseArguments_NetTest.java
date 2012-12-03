@@ -13,19 +13,14 @@
 package org.mozkito.settings;
 
 import static org.junit.Assert.fail;
-
-import java.util.Map;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
-import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.persistence.PersistenceUtil;
 
 /**
@@ -53,13 +48,7 @@ public class DatabaseArguments_NetTest {
 		
 		try {
 			final DatabaseOptions dbArgs = new DatabaseOptions(settings.getRoot(), Requirement.required, "persistence"); //$NON-NLS-1$
-			System.err.println(settings);
-			System.err.println(settings.getHelpString());
-			System.err.println(dbArgs);
-			final Map<String, IOptions<?, ?>> requirements = dbArgs.requirements(settings.getRoot());
-			for (final IOptions<?, ?> option : requirements.values()) {
-				System.err.println(option);
-			}
+			dbArgs.requirements(settings.getRoot());
 			final ArgumentSet<PersistenceUtil, DatabaseOptions> argumentSet = ArgumentSetFactory.create(dbArgs);
 			
 			if (argumentSet.getValue() == null) {

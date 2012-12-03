@@ -140,9 +140,9 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		final String databaseDriver = System.getProperty("database.driver") != null
 		                                                                           ? System.getProperty("database.driver")
 		                                                                           : settings.driver();
-		final String databaseHost = System.getProperty("database.host") != null
-		                                                                       ? System.getProperty("database.host")
-		                                                                       : settings.hostname();
+		final String databaseHost = (System.getProperty("database.host") != null) && settings.remote()
+		                                                                                              ? System.getProperty("database.host")
+		                                                                                              : settings.hostname();
 		final String databasePassword = System.getProperty("database.password") != null
 		                                                                               ? System.getProperty("database.password")
 		                                                                               : settings.password();

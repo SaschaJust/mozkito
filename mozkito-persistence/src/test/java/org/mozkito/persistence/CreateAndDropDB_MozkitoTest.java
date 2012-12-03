@@ -13,9 +13,10 @@
 
 package org.mozkito.persistence;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.junit.AfterClass;
 import org.junit.Test;
-
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 
@@ -40,7 +41,9 @@ public class CreateAndDropDB_MozkitoTest extends DatabaseTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.out.println("after class"); //$NON-NLS-1$
+		if (Logger.logInfo()) {
+			Logger.info("after class"); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -50,7 +53,9 @@ public class CreateAndDropDB_MozkitoTest extends DatabaseTest {
 		// PRECONDITIONS
 		
 		try {
-			System.out.println("before class"); //$NON-NLS-1$
+			if (Logger.logInfo()) {
+				Logger.info("before class"); //$NON-NLS-1$
+			}
 		} finally {
 			// POSTCONDITIONS
 		}

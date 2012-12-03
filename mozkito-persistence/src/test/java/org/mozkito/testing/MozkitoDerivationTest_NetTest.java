@@ -12,12 +12,13 @@
  **********************************************************************************************************************/
 package org.mozkito.testing;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.mozkito.testing.annotation.DatabaseSettings;
 
 /**
@@ -36,14 +37,18 @@ public class MozkitoDerivationTest_NetTest extends DatabaseTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.out.println("tearDownAfterClass()"); //$NON-NLS-1$
+		if (Logger.logDebug()) {
+			Logger.debug("tearDownAfterClass()"); //$NON-NLS-1$
+		}
 	}
 	
 	/**
 	 * Instantiates a new mozkito derivation test_ net test.
 	 */
 	public MozkitoDerivationTest_NetTest() {
-		System.out.println("setUpBeforClass()"); //$NON-NLS-1$
+		if (Logger.logDebug()) {
+			Logger.debug("setUpBeforClass()"); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -54,7 +59,9 @@ public class MozkitoDerivationTest_NetTest extends DatabaseTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		System.out.println("setUp()"); //$NON-NLS-1$
+		if (Logger.logDebug()) {
+			Logger.debug("setUp()"); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -65,7 +72,9 @@ public class MozkitoDerivationTest_NetTest extends DatabaseTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		System.out.println("tearDown()"); //$NON-NLS-1$
+		if (Logger.logDebug()) {
+			Logger.debug("tearDown()"); //$NON-NLS-1$
+		}
 	}
 	
 	/**
