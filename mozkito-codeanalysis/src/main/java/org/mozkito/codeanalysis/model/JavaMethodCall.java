@@ -26,7 +26,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.jdom2.Element;
-
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -198,10 +197,6 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.model.JavaElement#equals(java.lang .Object)
-	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -210,15 +205,29 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		if (!super.equals(obj)) {
 			return false;
 		}
-		if (this.getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final JavaMethodCall other = (JavaMethodCall) obj;
-		if (getSignature() == null) {
-			if (other.getSignature() != null) {
+		if (this.calledClassName == null) {
+			if (other.calledClassName != null) {
 				return false;
 			}
-		} else if (!getSignature().equals(other.getSignature())) {
+		} else if (!this.calledClassName.equals(other.calledClassName)) {
+			return false;
+		}
+		if (this.calledPackageName == null) {
+			if (other.calledPackageName != null) {
+				return false;
+			}
+		} else if (!this.calledPackageName.equals(other.calledPackageName)) {
+			return false;
+		}
+		if (this.signature == null) {
+			if (other.signature != null) {
+				return false;
+			}
+		} else if (!this.signature.equals(other.signature)) {
 			return false;
 		}
 		return true;
@@ -267,6 +276,7 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	public final String getHandle() {
 		return JavaUtils.getHandle(JavaMethodCall.class);
 	}
@@ -294,6 +304,22 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = (prime * result) + ((this.calledClassName == null)
+		                                                           ? 0
+		                                                           : this.calledClassName.hashCode());
+		result = (prime * result) + ((this.calledPackageName == null)
+		                                                             ? 0
+		                                                             : this.calledPackageName.hashCode());
+		result = (prime * result) + ((this.signature == null)
+		                                                     ? 0
+		                                                     : this.signature.hashCode());
+		return result;
 	}
 	
 	/**

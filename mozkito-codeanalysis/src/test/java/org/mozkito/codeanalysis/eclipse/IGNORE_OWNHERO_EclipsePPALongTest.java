@@ -33,24 +33,47 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * The Class IGNORE_OWNHERO_EclipsePPALongTest.
+ */
 @Ignore
 public class IGNORE_OWNHERO_EclipsePPALongTest {
 	
+	/** The basic vmargs. */
 	private static String  BASIC_VMARGS    = "-vmargs -DdisableCrashEmail -Dlog.console.level=DEBUG -Ddatabase.host=grid1.st.cs.uni-saarland.de -Ddatabase.name=moskito_ppa_junit -Ddatabase.user=miner -Ddatabase.password=miner -Dlog.level=warn -Drepository.type=GIT";
 	
+	/** The eclipse bin dir. */
 	private static File    eclipseBinDir;
 	
+	/** The repo zip. */
 	private static File    repoZip         = null;
+	
+	/** The comp xml. */
 	private static File    compXML         = null;
+	
+	/** The comp xm l2. */
 	@SuppressWarnings ("unused")
 	private static File    compXML2        = null;
+	
+	/** The comp xm l2_altern. */
 	@SuppressWarnings ("unused")
 	private static File    compXML2_altern = null;
+	
+	/** The comp xm l3. */
 	private static File    compXML3        = null;
+	
+	/** The comp xm l4. */
 	private static File    compXML4        = null;
+	
+	/** The tmp dir. */
 	private static File    tmpDir          = null;
+	
+	/** The mac. */
 	private static boolean mac             = false;
 	
+	/**
+	 * After class.
+	 */
 	@AfterClass
 	public static void afterClass() {
 		try {
@@ -60,6 +83,9 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		}
 	}
 	
+	/**
+	 * Before class.
+	 */
 	@BeforeClass
 	public static void beforeClass() {
 		
@@ -165,7 +191,16 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		
 	}
 	
-	@SuppressWarnings ({ "unused", "null" })
+	/**
+	 * Compare xml.
+	 * 
+	 * @param original
+	 *            the original
+	 * @param tocompare
+	 *            the tocompare
+	 * @return true, if successful
+	 */
+	@SuppressWarnings ({ "unused" })
 	private static boolean compareXML(final File original,
 	                                  final File tocompare) {
 		
@@ -181,9 +216,16 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		if (Logger.logDebug()) {
 			Logger.debug(result);
 		}
-		return (result == null) || result.trim().equals("");
+		return (result == null) || result.trim().isEmpty();
 	}
 	
+	/**
+	 * Run eclipse.
+	 * 
+	 * @param args
+	 *            the args
+	 * @return the tuple
+	 */
 	private static Tuple<Integer, List<String>> runEclipse(final String[] args) {
 		CommandExecutor.execute("chmod", new String[] { "+x", "eclipse" },
 		                        IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir, null, null);
@@ -201,6 +243,9 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		return response;
 	}
 	
+	/**
+	 * Test eclipse app1.
+	 */
 	@Test
 	@Ignore
 	public void testEclipseApp1() {
@@ -225,6 +270,9 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	// tmpFile.delete();
 	// }
 	
+	/**
+	 * Test eclipse app3.
+	 */
 	@Test
 	@Ignore
 	public void testEclipseApp3() {
@@ -236,6 +284,9 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		tmpFile.delete();
 	}
 	
+	/**
+	 * Test eclipse app4.
+	 */
 	@Test
 	@Ignore
 	public void testEclipseApp4() {

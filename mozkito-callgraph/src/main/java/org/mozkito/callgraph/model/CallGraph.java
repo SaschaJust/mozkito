@@ -135,6 +135,7 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	 * (non-Javadoc)
 	 * @see edu.uci.ics.jung.graph.AbstractGraph#addEdge(java.lang.Object, edu.uci.ics.jung.graph.util.Pair,
 	 * edu.uci.ics.jung.graph.util.EdgeType)
+	 * @deprecated use {@link #addEdge(MethodVertex,MethodVertex}. This method exists due to Jung requirements
 	 */
 	@Override
 	@Deprecated
@@ -451,6 +452,7 @@ public class CallGraph extends AbstractGraph<MethodVertex, CallGraphEdge> implem
 	/*
 	 * (non-Javadoc)
 	 * @see edu.uci.ics.jung.graph.Hypergraph#removeEdge(java.lang.Object)
+	 * @deprecated use {@link #removeEdge(MethodVertex,MethodVertex}. This method exists due to Jung requirements
 	 */
 	@Override
 	@Deprecated
