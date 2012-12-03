@@ -89,13 +89,10 @@ public class MappingChain extends Chain<Settings> {
 			this.mappingOptions = new MappingOptions(getSettings().getRoot(), Requirement.required);
 			this.mappingArguments = ArgumentSetFactory.create(this.mappingOptions);
 		} catch (final ArgumentRegistrationException e) {
-			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final ArgumentSetRegistrationException e) {
-			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		} catch (final SettingsParseError e) {
-			System.err.println(settings.toString());
 			throw new Shutdown(e.getMessage(), e);
 		}
 		
@@ -126,7 +123,10 @@ public class MappingChain extends Chain<Settings> {
 			
 			if (finder == null) {
 				getEventBus().fireEvent(new ErrorEvent(Messages.getString("MappingChain.finderInit"))); //$NON-NLS-1$
-				System.err.println(getSettings().getHelpString());
+				if (Logger.logAlways()) {
+					Logger.always(getSettings().getHelpString());
+				}
+				
 				shutdown();
 				return;
 			}
@@ -137,7 +137,10 @@ public class MappingChain extends Chain<Settings> {
 			
 			if (persistenceUtil == null) {
 				getEventBus().fireEvent(new ErrorEvent(Messages.getString("MappingChain.dbInit"))); //$NON-NLS-1$
-				System.err.println(getSettings().getHelpString());
+				if (Logger.logError()) {
+					Logger.error(getSettings().getHelpString());
+				}
+				
 				shutdown();
 				return;
 			}

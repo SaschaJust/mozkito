@@ -75,7 +75,9 @@ public class RepositoryToolchain extends Chain<Settings> {
 			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
 			if (getSettings().helpRequested()) {
-				System.err.println(getSettings().getHelpString());
+				if (Logger.logAlways()) {
+					Logger.always(getSettings().getHelpString());
+				}
 				throw new Shutdown();
 			}
 			
