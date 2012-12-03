@@ -26,7 +26,6 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.mozkito.genealogies.metrics.GenealogyCoreNode;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 
@@ -38,7 +37,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, GenealogyMetricValue> {
 	
 	/** The registered metrics. */
-	static private Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
+	private static Map<String, GenealogyMetricThread> registeredMetrics = new HashMap<String, GenealogyMetricThread>();
 	
 	/** The iter. */
 	private Iterator<GenealogyMetricValue>            iter              = null;

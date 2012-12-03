@@ -25,7 +25,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
@@ -40,34 +39,34 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalParentsMetrics<T> {
 	
 	/** The cache. */
-	Map<T, Map<Integer, Map<String, Set<T>>>> cache               = new HashMap<T, Map<Integer, Map<String, Set<T>>>>();
+	Map<T, Map<Integer, Map<String, Set<T>>>> cache                 = new HashMap<T, Map<Integer, Map<String, Set<T>>>>();
 	
 	/** The all parents. */
-	private static final String               allParents          = "NumParents";
+	private static final String               ALL_PARENTS           = "NumParents";
 	
 	/** The all parents d2. */
-	private static final String               allParentsD2        = "NumParents_depth_2";
+	private static final String               ALL_PARENTS_D2        = "NumParents_depth_2";
 	
 	/** The all parents d3. */
-	private static final String               allParentsD3        = "NumParents_depth_3";
+	private static final String               ALL_PARENTS_D3        = "NumParents_depth_3";
 	
 	/** The definition parents. */
-	private static final String               definitionParents   = "NumDefinitionParents";
+	private static final String               DEFINITION_PARENTS    = "NumDefinitionParents";
 	
 	/** The definition parents d2. */
-	private static final String               definitionParentsD2 = "NumDefinitionParents_depth_2";
+	private static final String               DEFINITION_PARENTS_D2 = "NumDefinitionParents_depth_2";
 	
 	/** The definition parents d3. */
-	private static final String               definitionParentsD3 = "NumDefinitionParents_depth_3";
+	private static final String               DEFINITION_PARENTS_D3 = "NumDefinitionParents_depth_3";
 	
 	/** The call parents. */
-	private static final String               callParents         = "NumCallParents";
+	private static final String               CALL_PARENTS          = "NumCallParents";
 	
 	/** The call parents d2. */
-	private static final String               callParentsD2       = "NumCallParents_depth_2";
+	private static final String               CALL_PARENTS_D2       = "NumCallParents_depth_2";
 	
 	/** The call parents d3. */
-	private static final String               callParentsD3       = "NumCallParents_depth_3";
+	private static final String               CALL_PARENTS_D3       = "NumCallParents_depth_3";
 	
 	/** The metric names. */
 	private static List<String>               metricNames;
@@ -81,8 +80,8 @@ public class UniversalParentsMetrics<T> {
 	 *            the depth
 	 * @return the string
 	 */
-	private static final String composeMetricName(final GenealogyEdgeType eType,
-	                                              final int depth) {
+	private static String composeMetricName(final GenealogyEdgeType eType,
+	                                        final int depth) {
 		if (depth > 1) {
 			return "Num" + eType.toString() + "ParentsD" + depth;
 		} else if (depth < 0) {
@@ -101,15 +100,15 @@ public class UniversalParentsMetrics<T> {
 			return UniversalParentsMetrics.metricNames;
 		}
 		UniversalParentsMetrics.metricNames = new LinkedList<String>();
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.allParents);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.allParentsD2);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.allParentsD3);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.definitionParents);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.definitionParentsD2);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.definitionParentsD3);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.callParents);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.callParentsD2);
-		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.callParentsD3);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.ALL_PARENTS);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.ALL_PARENTS_D2);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.ALL_PARENTS_D3);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.DEFINITION_PARENTS);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.DEFINITION_PARENTS_D2);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.DEFINITION_PARENTS_D3);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.CALL_PARENTS);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.CALL_PARENTS_D2);
+		UniversalParentsMetrics.metricNames.add(UniversalParentsMetrics.CALL_PARENTS_D3);
 		for (final GenealogyEdgeType eType : GenealogyEdgeType.values()) {
 			UniversalParentsMetrics.metricNames.add(composeMetricName(eType, 1));
 			UniversalParentsMetrics.metricNames.add(composeMetricName(eType, -1));
@@ -195,15 +194,15 @@ public class UniversalParentsMetrics<T> {
 		
 		// NumDependencies
 		int numAllParents = getNumParents(node, 1, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.allParents, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.ALL_PARENTS, this.genealogy.getNodeId(node),
 		                                    numAllParents));
 		
 		numAllParents = getNumParents(node, 2, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.allParentsD2, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.ALL_PARENTS_D2, this.genealogy.getNodeId(node),
 		                                    numAllParents));
 		
 		numAllParents = getNumParents(node, 3, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.allParentsD3, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.ALL_PARENTS_D3, this.genealogy.getNodeId(node),
 		                                    numAllParents));
 		
 		// for each GenealogyEdgeType
@@ -223,34 +222,34 @@ public class UniversalParentsMetrics<T> {
 		int numDefinitionParents = getNumParents(node, 1, GenealogyEdgeType.DefinitionOnDefinition,
 		                                         GenealogyEdgeType.DefinitionOnDeletedDefinition,
 		                                         GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.definitionParents, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.DEFINITION_PARENTS, this.genealogy.getNodeId(node),
 		                                    numDefinitionParents));
 		numDefinitionParents = getNumParents(node, 2, GenealogyEdgeType.DefinitionOnDefinition,
 		                                     GenealogyEdgeType.DefinitionOnDeletedDefinition,
 		                                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.definitionParentsD2,
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.DEFINITION_PARENTS_D2,
 		                                    this.genealogy.getNodeId(node), numDefinitionParents));
 		numDefinitionParents = getNumParents(node, 3, GenealogyEdgeType.DefinitionOnDefinition,
 		                                     GenealogyEdgeType.DefinitionOnDeletedDefinition,
 		                                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.definitionParentsD3,
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.DEFINITION_PARENTS_D3,
 		                                    this.genealogy.getNodeId(node), numDefinitionParents));
 		
 		// Call dependants
 		int numCallParents = getNumParents(node, 1, GenealogyEdgeType.CallOnDefinition,
 		                                   GenealogyEdgeType.DeletedCallOnCall,
 		                                   GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.callParents, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.CALL_PARENTS, this.genealogy.getNodeId(node),
 		                                    numCallParents));
 		numCallParents = getNumParents(node, 2, GenealogyEdgeType.CallOnDefinition,
 		                               GenealogyEdgeType.DeletedCallOnCall,
 		                               GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.callParentsD2, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.CALL_PARENTS_D2, this.genealogy.getNodeId(node),
 		                                    numCallParents));
 		numCallParents = getNumParents(node, 3, GenealogyEdgeType.CallOnDefinition,
 		                               GenealogyEdgeType.DeletedCallOnCall,
 		                               GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(UniversalParentsMetrics.callParentsD3, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalParentsMetrics.CALL_PARENTS_D3, this.genealogy.getNodeId(node),
 		                                    numCallParents));
 		
 		// check for data integrity

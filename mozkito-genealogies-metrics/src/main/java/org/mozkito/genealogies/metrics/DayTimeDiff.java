@@ -31,7 +31,7 @@ public interface DayTimeDiff<T> {
 	 *            the t2
 	 * @return the int
 	 */
-	public int daysDiff(T t1,
-	                    T t2);
+	int daysDiff(T t1,
+	             T t2);
 	
 }

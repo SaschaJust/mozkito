@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
@@ -47,67 +46,67 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
 	/** The Constant changeSize. */
-	private static final String   changeSize                    = "numChangeOperations";
+	private static final String   CHANGE_SIZE                   = "numChangeOperations";
 	
 	/** The Constant numAddOperations. */
-	private static final String   numAddOperations              = "numAddOperations";
+	private static final String   NUM_ADD_OPS                   = "numAddOperations";
 	
 	/** The Constant numDelOperations. */
-	private static final String   numDelOperations              = "numDelOperations";
+	private static final String   NUM_DEL_OPS                   = "numDelOperations";
 	
 	/** The Constant numAddedMethDefs. */
-	private static final String   numAddedMethDefs              = "numAddedMethDefs";
+	private static final String   NUM_ADD_METH_DEFS             = "numAddedMethDefs";
 	
 	/** The Constant numDeletedMethDefs. */
-	private static final String   numDeletedMethDefs            = "numDeletedMethDefs";
+	private static final String   NUM_DEL_METH_DEFS             = "numDeletedMethDefs";
 	
 	/** The Constant numAddedClassDefs. */
-	private static final String   numAddedClassDefs             = "numAddedClassDefs";
+	private static final String   NUM_ADD_CLASS_DEFS            = "numAddedClassDefs";
 	
 	/** The Constant numDeletedClassDefs. */
-	private static final String   numDeletedClassDefs           = "numDeletedClassDefs";
+	private static final String   NUM_DEL_CLASS_DEFS            = "numDeletedClassDefs";
 	
 	/** The Constant numAddedCalls. */
-	private static final String   numAddedCalls                 = "numAddedCalls";
+	private static final String   NUM_ADD_CALLS                 = "numAddedCalls";
 	
 	/** The Constant numDeletedCalls. */
-	private static final String   numDeletedCalls               = "numDeletedCalls";
+	private static final String   NUM_DEL_CALLS                 = "numDeletedCalls";
 	
 	/** The Constant avgDepChangeSize. */
-	private static final String   avgDepChangeSize              = "avgDepChangeSize";
+	private static final String   AVG_DEP_CHANGE_SIZE           = "avgDepChangeSize";
 	
 	/** The Constant maxDepChangeSize. */
-	private static final String   maxDepChangeSize              = "maxDepChangeSize";
+	private static final String   MAX_DEP_CHANGE_SIZE           = "maxDepChangeSize";
 	
 	/** The Constant sumDepChangeSize. */
-	private static final String   sumDepChangeSize              = "sumDepChangeSize";
+	private static final String   SUM_DEP_CHANGE_SIZE           = "sumDepChangeSize";
 	
 	/** The Constant avgParentChangeSize. */
-	private static final String   avgParentChangeSize           = "avgParentChangeSize";
+	private static final String   AVG_PARENT_CHANGE_SIZE        = "avgParentChangeSize";
 	
 	/** The Constant maxParentChangeSize. */
-	private static final String   maxParentChangeSize           = "maxParentChangeSize";
+	private static final String   MAX_PARENT_CHANGE_SIZE        = "maxParentChangeSize";
 	
 	/** The Constant sumParentChangeSize. */
-	private static final String   sumParentChangeSize           = "sumParentChangeSize";
+	private static final String   SUM_PARENT_CHANGE_SIZE        = "sumParentChangeSize";
 	
 	/** The Constant numChangedFiles. */
-	private static final String   numChangedFiles               = "numChangedFiles";
+	private static final String   NUM_CHANGED_FILES               = "numChangedFiles";
 	
 	/** The Constant effectiveNumOperations. */
-	private static final String   effectiveNumOperations        = "effectiveNumOperations";
+	private static final String   EFFECTIVE_NUM_OPS        = "effectiveNumOperations";
 	
 	/** The Constant effectiveNumMethDefOperations. */
-	private static final String   effectiveNumMethDefOperations = "effectiveNumMethDefOperations";
+	private static final String   EFFECTIVE_NUM_DEF_OPS = "effectiveNumMethDefOperations";
 	
 	/** The Constant effectiveNumCallOperations. */
-	private static final String   effectiveNumCallOperations    = "effectiveNumCallOperations";
+	private static final String   EFFECTIVE_NUM_CALL_OPS    = "effectiveNumCallOperations";
 	
 	/** The Constant changedBlocks. */
-	private static final String   changedBlocks                 = "numChangedLineBlocks";
+	private static final String   CHANEGED_BLOCKS                 = "numChangedLineBlocks";
 	
 	/** The Constant numAffectedPackages. */
-	private static final String   numAffectedPackages           = "numAffectedPackages";
+	private static final String   NUM_AFFECTED_PACKAGES           = "numAffectedPackages";
 	
 	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
@@ -130,20 +129,20 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(7);
-		metricNames.add(TransactionChangeSizeMetrics.changeSize);
-		metricNames.add(TransactionChangeSizeMetrics.avgDepChangeSize);
-		metricNames.add(TransactionChangeSizeMetrics.maxDepChangeSize);
-		metricNames.add(TransactionChangeSizeMetrics.sumDepChangeSize);
-		metricNames.add(TransactionChangeSizeMetrics.avgParentChangeSize);
-		metricNames.add(TransactionChangeSizeMetrics.maxParentChangeSize);
-		metricNames.add(TransactionChangeSizeMetrics.sumParentChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.AVG_DEP_CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.MAX_DEP_CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.SUM_DEP_CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.AVG_PARENT_CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.MAX_PARENT_CHANGE_SIZE);
+		metricNames.add(TransactionChangeSizeMetrics.SUM_PARENT_CHANGE_SIZE);
 		
-		metricNames.add(TransactionChangeSizeMetrics.numChangedFiles);
-		metricNames.add(TransactionChangeSizeMetrics.effectiveNumOperations);
-		metricNames.add(TransactionChangeSizeMetrics.effectiveNumMethDefOperations);
-		metricNames.add(TransactionChangeSizeMetrics.effectiveNumCallOperations);
+		metricNames.add(TransactionChangeSizeMetrics.NUM_CHANGED_FILES);
+		metricNames.add(TransactionChangeSizeMetrics.EFFECTIVE_NUM_OPS);
+		metricNames.add(TransactionChangeSizeMetrics.EFFECTIVE_NUM_DEF_OPS);
+		metricNames.add(TransactionChangeSizeMetrics.EFFECTIVE_NUM_CALL_OPS);
 		
-		metricNames.add(TransactionChangeSizeMetrics.changedBlocks);
+		metricNames.add(TransactionChangeSizeMetrics.CHANEGED_BLOCKS);
 		
 		return metricNames;
 	}
@@ -168,7 +167,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
 		                                                                                               rCSTransaction);
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.changeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANGE_SIZE, nodeId,
 		                                          changeOperations.size()));
 		
 		int numAddOperations = 0;
@@ -229,32 +228,30 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			}
 		}
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddOperations, nodeId,
-		                                          numAddOperations));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDelOperations, nodeId,
-		                                          numDelOperations));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_ADD_OPS, nodeId, numAddOperations));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_DEL_OPS, nodeId, numDelOperations));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedMethDefs, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_ADD_METH_DEFS, nodeId,
 		                                          numAddedMethDefs));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedClassDefs, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_ADD_CLASS_DEFS, nodeId,
 		                                          numAddedClassDefs));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAddedCalls, nodeId, numAddedCalls));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_ADD_CALLS, nodeId, numAddedCalls));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedMethDefs, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_DEL_METH_DEFS, nodeId,
 		                                          numDeletedMethDefs));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedClassDefs, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_DEL_CLASS_DEFS, nodeId,
 		                                          numDeletedClassDefs));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numDeletedCalls, nodeId, numDeletedCalls));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_DEL_CALLS, nodeId, numDeletedCalls));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numChangedFiles, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_CHANGED_FILES, nodeId,
 		                                          changedFiles.size()));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumOperations, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.EFFECTIVE_NUM_OPS, nodeId,
 		                                          numAddOperations - numDelOperations));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumMethDefOperations, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.EFFECTIVE_NUM_DEF_OPS, nodeId,
 		                                          numAddedMethDefs - numDeletedMethDefs));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.effectiveNumCallOperations, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.EFFECTIVE_NUM_CALL_OPS, nodeId,
 		                                          numAddedCalls - numDeletedCalls));
 		
 		int numChangedLineBlocks = 0;
@@ -268,7 +265,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 				lastLine = line;
 			}
 		}
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.changedBlocks, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANEGED_BLOCKS, nodeId,
 		                                          numChangedLineBlocks));
 		
 		for (final RCSTransaction dependant : this.genealogy.getAllDependants(rCSTransaction)) {
@@ -276,15 +273,15 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.avgDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.AVG_DEP_CHANGE_SIZE, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.maxDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.MAX_DEP_CHANGE_SIZE, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.sumDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.SUM_DEP_CHANGE_SIZE, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getSum()));
@@ -294,20 +291,20 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			parentStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.avgParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.AVG_PARENT_CHANGE_SIZE, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.maxParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.MAX_PARENT_CHANGE_SIZE, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.sumParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.SUM_PARENT_CHANGE_SIZE, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getSum()));
 		
-		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAffectedPackages, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.NUM_AFFECTED_PACKAGES, nodeId,
 		                                          packageNames.size()));
 		
 		return metricValues;

@@ -29,7 +29,7 @@ public interface GenealogyMetric<T> {
 	 * 
 	 * @return the metric names
 	 */
-	public abstract Collection<String> getMetricNames();
+	Collection<String> getMetricNames();
 	
 	/**
 	 * Handle.
@@ -38,5 +38,5 @@ public interface GenealogyMetric<T> {
 	 *            the item
 	 * @return the collection
 	 */
-	public abstract Collection<GenealogyMetricValue> handle(T item);
+	Collection<GenealogyMetricValue> handle(T item);
 }

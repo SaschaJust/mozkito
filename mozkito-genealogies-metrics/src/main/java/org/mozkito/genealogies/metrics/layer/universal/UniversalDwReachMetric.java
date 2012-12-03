@@ -34,7 +34,7 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalDwReachMetric<T> {
 	
 	/** The Constant dwReach. */
-	private static final String dwReach = "dwReach";
+	private static final String DW_REACH = "dwReach";
 	
 	/**
 	 * Gets the dwreach.
@@ -42,7 +42,7 @@ public class UniversalDwReachMetric<T> {
 	 * @return the dwreach
 	 */
 	public static String getDwreach() {
-		return UniversalDwReachMetric.dwReach;
+		return UniversalDwReachMetric.DW_REACH;
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class UniversalDwReachMetric<T> {
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(UniversalDwReachMetric.dwReach);
+		metricNames.add(UniversalDwReachMetric.DW_REACH);
 		return metricNames;
 	}
 	
@@ -137,16 +137,12 @@ public class UniversalDwReachMetric<T> {
 		seen.add(node);
 		final List<Set<T>> reach = getReach(node, roots, seen);
 		
-		// System.out.println("########## " + genealogy.getNodeId(node));
-		// System.out.println(StringUtils.join(reach.toArray(new
-		// Object[reach.size()])));
-		
 		double dwReachValue = 0;
 		for (int i = 0; i < reach.size(); ++i) {
 			dwReachValue += (reach.get(i).size() / ((double) i + 1));
 		}
 		
-		metricValues.add(new GenealogyMetricValue(UniversalDwReachMetric.dwReach, this.genealogy.getNodeId(node),
+		metricValues.add(new GenealogyMetricValue(UniversalDwReachMetric.DW_REACH, this.genealogy.getNodeId(node),
 		                                          dwReachValue));
 		
 		return metricValues;

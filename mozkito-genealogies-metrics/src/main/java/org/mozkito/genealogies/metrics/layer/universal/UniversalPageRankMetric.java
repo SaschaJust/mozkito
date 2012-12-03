@@ -34,7 +34,7 @@ import org.mozkito.genealogies.utils.JungGenealogyGraph.Edge;
 public class UniversalPageRankMetric<T> {
 	
 	/** The page rank. */
-	private static final String pageRankName = "pageRank";
+	private static final String PAGE_RANK_NAME = "pageRank";
 	
 	/**
 	 * Gets the metric names.
@@ -43,7 +43,7 @@ public class UniversalPageRankMetric<T> {
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(UniversalPageRankMetric.pageRankName);
+		metricNames.add(UniversalPageRankMetric.PAGE_RANK_NAME);
 		return metricNames;
 	}
 	
@@ -78,7 +78,7 @@ public class UniversalPageRankMetric<T> {
 	                                               final boolean finalNode) {
 		final Double vertexScore = this.pageRank.getVertexScore(node);
 		final Collection<GenealogyMetricValue> result = new LinkedList<GenealogyMetricValue>();
-		result.add(new GenealogyMetricValue(UniversalPageRankMetric.pageRankName, this.genealogy.getNodeId(node),
+		result.add(new GenealogyMetricValue(UniversalPageRankMetric.PAGE_RANK_NAME, this.genealogy.getNodeId(node),
 		                                    vertexScore));
 		return result;
 	}

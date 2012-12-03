@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
@@ -33,22 +32,22 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionDependencyDiversityMetrics extends GenealogyTransactionMetric {
 	
 	/** The Constant avgParentsFileDiversityName. */
-	private final static String avgParentsFileDiversityName    = "AvgParentsFileDiversity";
+	private static final String AVG_PARENTS_FILE_DIVERSITY_NAME    = "AvgParentsFileDiversity";
 	
 	/** The Constant maxParentsFileDiversityName. */
-	private final static String maxParentsFileDiversityName    = "MaxParentsFileDiversity";
+	private static final String MAX_PARENTS_FILE_DIVERSITY_NAME    = "MaxParentsFileDiversity";
 	
 	/** The Constant minParentsFileDiversityName. */
-	private final static String minParentsFileDiversityName    = "MinParentsFileDiversity";
+	private static final String MIN_PARENTS_FILE_DIVERSITY_NAME    = "MinParentsFileDiversity";
 	
 	/** The Constant avgDependantsFileDiversityName. */
-	private final static String avgDependantsFileDiversityName = "AvgDependantsFileDiversity";
+	private static final String AVG_DEPENDANTS_FILE_DIVERSITY_NAME = "AvgDependantsFileDiversity";
 	
 	/** The Constant maxDependantsFileDiversityName. */
-	private final static String maxDependantsFileDiversityName = "MaxDependantsFileDiversity";
+	private static final String MAX_DEPENDANTS_FILE_DIVERSITY_NAME = "MaxDependantsFileDiversity";
 	
 	/** The Constant minDependantsFileDiversityName. */
-	private final static String minDependantsFileDiversityName = "MinDependantsFileDiversity";
+	private static final String MIN_DEPENDANTS_FILE_DIVERSITY_NAME = "MinDependantsFileDiversity";
 	
 	/**
 	 * Instantiates a new transaction dependency diversity metrics.
@@ -68,12 +67,12 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
-		result.add(TransactionDependencyDiversityMetrics.avgParentsFileDiversityName);
-		result.add(TransactionDependencyDiversityMetrics.maxParentsFileDiversityName);
-		result.add(TransactionDependencyDiversityMetrics.minParentsFileDiversityName);
-		result.add(TransactionDependencyDiversityMetrics.avgDependantsFileDiversityName);
-		result.add(TransactionDependencyDiversityMetrics.maxDependantsFileDiversityName);
-		result.add(TransactionDependencyDiversityMetrics.minDependantsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.AVG_PARENTS_FILE_DIVERSITY_NAME);
+		result.add(TransactionDependencyDiversityMetrics.MAX_PARENTS_FILE_DIVERSITY_NAME);
+		result.add(TransactionDependencyDiversityMetrics.MIN_PARENTS_FILE_DIVERSITY_NAME);
+		result.add(TransactionDependencyDiversityMetrics.AVG_DEPENDANTS_FILE_DIVERSITY_NAME);
+		result.add(TransactionDependencyDiversityMetrics.MAX_DEPENDANTS_FILE_DIVERSITY_NAME);
+		result.add(TransactionDependencyDiversityMetrics.MIN_DEPENDANTS_FILE_DIVERSITY_NAME);
 		return result;
 	}
 	
@@ -102,28 +101,28 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.avgParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.AVG_PARENTS_FILE_DIVERSITY_NAME, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMean()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.maxParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.MAX_PARENTS_FILE_DIVERSITY_NAME, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMax()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.minParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.MIN_PARENTS_FILE_DIVERSITY_NAME, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMin()
 		                                                           : -1));
 		
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.avgDependantsFileDiversityName,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.AVG_DEPENDANTS_FILE_DIVERSITY_NAME,
 		                                    nodeId, (dependantStat.getN() > 0)
 		                                                                      ? dependantStat.getMean()
 		                                                                      : -1));
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.maxDependantsFileDiversityName,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.MAX_DEPENDANTS_FILE_DIVERSITY_NAME,
 		                                    nodeId, (dependantStat.getN() > 0)
 		                                                                      ? dependantStat.getMax()
 		                                                                      : -1));
-		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.minDependantsFileDiversityName,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.MIN_DEPENDANTS_FILE_DIVERSITY_NAME,
 		                                    nodeId, (dependantStat.getN() > 0)
 		                                                                      ? dependantStat.getMin()
 		                                                                      : -1));

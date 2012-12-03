@@ -33,34 +33,34 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 public class UniversalTempDepthMetrics<T> {
 	
 	/** The Constant maxTempDepth1. */
-	private static final String maxTempDepth1      = "maxTempDepth_1";
+	private static final String MAX_TEMP_DEPTH_1      = "maxTempDepth_1";
 	
 	/** The Constant maxTempDepth2. */
-	private static final String maxTempDepth2      = "maxTempDepth_2";
+	private static final String MAX_TEMP_DEPTH_2      = "maxTempDepth_2";
 	
 	/** The Constant maxTempDepth5. */
-	private static final String maxTempDepth5      = "maxTempDepth_5";
+	private static final String MAX_TEMP_DEPTH_5      = "maxTempDepth_5";
 	
 	/** The Constant maxTempDepth10. */
-	private static final String maxTempDepth10     = "maxTempDepth_10";
+	private static final String MAX_TEMP_DEPTH_10     = "maxTempDepth_10";
 	
 	/** The Constant maxTempDepth14. */
-	private static final String maxTempDepth14     = "maxTempDepth_14";
+	private static final String MAX_TEMP_DEPTH_14     = "maxTempDepth_14";
 	
 	/** The Constant numTempResponses1. */
-	private static final String numTempResponses1  = "numTempResponses_1";
+	private static final String NUM_TEMP_RESPONSES_1  = "numTempResponses_1";
 	
 	/** The Constant numTempResponses2. */
-	private static final String numTempResponses2  = "numTempResponses_2";
+	private static final String NUM_TEMP_RESPONSES_2  = "numTempResponses_2";
 	
 	/** The Constant numTempResponses5. */
-	private static final String numTempResponses5  = "numTempResponses_5";
+	private static final String NUM_TEMP_RESPONSES_5  = "numTempResponses_5";
 	
 	/** The Constant numTempResponses10. */
-	private static final String numTempResponses10 = "numTempResponses_10";
+	private static final String NUM_TEMP_RESPONSES_10 = "numTempResponses_10";
 	
 	/** The Constant numTempResponses14. */
-	private static final String numTempResponses14 = "numTempResponses_14";
+	private static final String NUM_TEMP_RESPONSES_14 = "numTempResponses_14";
 	
 	/**
 	 * Gets the maxtempdepth1.
@@ -68,7 +68,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the maxtempdepth1
 	 */
 	public static String getMaxtempdepth1() {
-		return UniversalTempDepthMetrics.maxTempDepth1;
+		return UniversalTempDepthMetrics.MAX_TEMP_DEPTH_1;
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the maxtempdepth10
 	 */
 	public static String getMaxtempdepth10() {
-		return UniversalTempDepthMetrics.maxTempDepth10;
+		return UniversalTempDepthMetrics.MAX_TEMP_DEPTH_10;
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the maxtempdepth14
 	 */
 	public static String getMaxtempdepth14() {
-		return UniversalTempDepthMetrics.maxTempDepth14;
+		return UniversalTempDepthMetrics.MAX_TEMP_DEPTH_14;
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the maxtempdepth2
 	 */
 	public static String getMaxtempdepth2() {
-		return UniversalTempDepthMetrics.maxTempDepth2;
+		return UniversalTempDepthMetrics.MAX_TEMP_DEPTH_2;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the maxtempdepth5
 	 */
 	public static String getMaxtempdepth5() {
-		return UniversalTempDepthMetrics.maxTempDepth5;
+		return UniversalTempDepthMetrics.MAX_TEMP_DEPTH_5;
 	}
 	
 	/**
@@ -114,16 +114,16 @@ public class UniversalTempDepthMetrics<T> {
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> result = new LinkedList<String>();
-		result.add(UniversalTempDepthMetrics.maxTempDepth1);
-		result.add(UniversalTempDepthMetrics.maxTempDepth2);
-		result.add(UniversalTempDepthMetrics.maxTempDepth5);
-		result.add(UniversalTempDepthMetrics.maxTempDepth10);
-		result.add(UniversalTempDepthMetrics.maxTempDepth14);
-		result.add(UniversalTempDepthMetrics.numTempResponses1);
-		result.add(UniversalTempDepthMetrics.numTempResponses2);
-		result.add(UniversalTempDepthMetrics.numTempResponses5);
-		result.add(UniversalTempDepthMetrics.numTempResponses10);
-		result.add(UniversalTempDepthMetrics.numTempResponses14);
+		result.add(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_1);
+		result.add(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_2);
+		result.add(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_5);
+		result.add(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_10);
+		result.add(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_14);
+		result.add(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_1);
+		result.add(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_2);
+		result.add(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_5);
+		result.add(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_10);
+		result.add(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_14);
 		return result;
 	}
 	
@@ -133,7 +133,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the numtempresponses1
 	 */
 	public static String getNumtempresponses1() {
-		return UniversalTempDepthMetrics.numTempResponses1;
+		return UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_1;
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the numtempresponses10
 	 */
 	public static String getNumtempresponses10() {
-		return UniversalTempDepthMetrics.numTempResponses10;
+		return UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_10;
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the numtempresponses14
 	 */
 	public static String getNumtempresponses14() {
-		return UniversalTempDepthMetrics.numTempResponses14;
+		return UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_14;
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the numtempresponses2
 	 */
 	public static String getNumtempresponses2() {
-		return UniversalTempDepthMetrics.numTempResponses2;
+		return UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_2;
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class UniversalTempDepthMetrics<T> {
 	 * @return the numtempresponses5
 	 */
 	public static String getNumtempresponses5() {
-		return UniversalTempDepthMetrics.numTempResponses5;
+		return UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_5;
 	}
 	
 	/** The genealogy. */
@@ -231,21 +231,21 @@ public class UniversalTempDepthMetrics<T> {
 		
 		final String nodeId = this.genealogy.getNodeId(node);
 		
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth1, nodeId, longestPaths[0]));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth2, nodeId, longestPaths[1]));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth5, nodeId, longestPaths[2]));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth10, nodeId, longestPaths[3]));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth14, nodeId, longestPaths[4]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_1, nodeId, longestPaths[0]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_2, nodeId, longestPaths[1]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_5, nodeId, longestPaths[2]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_10, nodeId, longestPaths[3]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.MAX_TEMP_DEPTH_14, nodeId, longestPaths[4]));
 		
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses1, nodeId,
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_1, nodeId,
 		                                    this.responses_1.size()));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses2, nodeId,
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_2, nodeId,
 		                                    this.responses_2.size()));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses5, nodeId,
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_5, nodeId,
 		                                    this.responses_5.size()));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses10, nodeId,
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_10, nodeId,
 		                                    this.responses_10.size()));
-		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses14, nodeId,
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.NUM_TEMP_RESPONSES_14, nodeId,
 		                                    this.responses_14.size()));
 		
 		return result;

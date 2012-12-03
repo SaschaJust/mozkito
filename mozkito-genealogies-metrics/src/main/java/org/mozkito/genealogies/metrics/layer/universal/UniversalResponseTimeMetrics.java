@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.metrics.DayTimeDiff;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
@@ -51,7 +50,7 @@ public class UniversalResponseTimeMetrics<T> {
 	 * 
 	 * @return the metric names
 	 */
-	public final static Collection<String> getMetricNames() {
+	public static final Collection<String> getMetricNames() {
 		final Collection<String> metricNames = new ArrayList<String>(2);
 		metricNames.add(UniversalResponseTimeMetrics.avgResponseTime);
 		metricNames.add(UniversalResponseTimeMetrics.minResponseTime);

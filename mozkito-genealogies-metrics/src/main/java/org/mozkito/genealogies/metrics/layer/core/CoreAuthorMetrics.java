@@ -32,10 +32,10 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	
 	/** The Constant numDepAuthors. */
-	private static final String numDepAuthors    = "changeSize";
+	private static final String NUM_DEP_AUTHORS    = "changeSize";
 	
 	/** The Constant numParentAuthors. */
-	private static final String numParentAuthors = "avgDepChangeSize";
+	private static final String NUM_PARENT_AUTHORS = "avgDepChangeSize";
 	
 	/**
 	 * Instantiates a new core author metrics.
@@ -54,8 +54,8 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(CoreAuthorMetrics.numDepAuthors);
-		metricNames.add(CoreAuthorMetrics.numParentAuthors);
+		metricNames.add(CoreAuthorMetrics.NUM_DEP_AUTHORS);
+		metricNames.add(CoreAuthorMetrics.NUM_PARENT_AUTHORS);
 		return metricNames;
 	}
 	
@@ -75,13 +75,13 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 			depAuthors.add(dependant.getRevision().getTransaction().getPersons().getGeneratedId());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.numDepAuthors, nodeId, depAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.NUM_DEP_AUTHORS, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
 		for (final JavaChangeOperation parent : this.genealogy.getAllParents(operation)) {
 			parentAuthors.add(parent.getRevision().getTransaction().getPersons().getGeneratedId());
 		}
-		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.numParentAuthors, nodeId, parentAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.NUM_PARENT_AUTHORS, nodeId, parentAuthors.size()));
 		
 		return metricValues;
 	}

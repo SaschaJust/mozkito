@@ -22,7 +22,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
@@ -44,25 +43,25 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	private final PersistenceUtil persistenceUtil;
 	
 	/** The Constant avgLastModifiedName. */
-	private final static String   avgLastModifiedName    = "AvgLastModified";
+	private static final String   AVG_LAST_MODIFIED_NAME    = "AvgLastModified";
 	
 	/** The Constant minLastModifiedName. */
-	private final static String   minLastModifiedName    = "MinLastModified";
+	private static final String   MIN_LAST_MODIFIED_NAME    = "MinLastModified";
 	
 	/** The Constant avgAgeName. */
-	private final static String   avgAgeName             = "AvgAge";
+	private static final String   AVG_AGE_NAME             = "AvgAge";
 	
 	/** The Constant minAgeName. */
-	private final static String   minAgeName             = "MinAge";
+	private static final String   MIN_AGE_NAME             = "MinAge";
 	
 	/** The Constant maxAgeName. */
-	private final static String   maxAgeName             = "MaxAge";
+	private static final String   MAX_AGE_NAME             = "MaxAge";
 	
 	/** The Constant avgNumChangesLastMonth. */
-	private final static String   avgNumChangesLastMonth = "AvgNumChangesLastMonth";
+	private static final String   AVG_NUM_CHANGES_LAST_MONTH = "AvgNumChangesLastMonth";
 	
 	/** The Constant maxNumChangesLastMonth. */
-	private final static String   maxNumChangesLastMonth = "MaxNumChangesLastMonth";
+	private static final String   MAX_NUM_CHANGES_LAST_MONTH = "MaxNumChangesLastMonth";
 	
 	/**
 	 * Instantiates a new transaction code age metrics.
@@ -82,13 +81,13 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
-		result.add(TransactionCodeAgeMetrics.avgLastModifiedName);
-		result.add(TransactionCodeAgeMetrics.minLastModifiedName);
-		result.add(TransactionCodeAgeMetrics.avgAgeName);
-		result.add(TransactionCodeAgeMetrics.minAgeName);
-		result.add(TransactionCodeAgeMetrics.maxAgeName);
-		result.add(TransactionCodeAgeMetrics.avgNumChangesLastMonth);
-		result.add(TransactionCodeAgeMetrics.maxNumChangesLastMonth);
+		result.add(TransactionCodeAgeMetrics.AVG_LAST_MODIFIED_NAME);
+		result.add(TransactionCodeAgeMetrics.MIN_LAST_MODIFIED_NAME);
+		result.add(TransactionCodeAgeMetrics.AVG_AGE_NAME);
+		result.add(TransactionCodeAgeMetrics.MIN_AGE_NAME);
+		result.add(TransactionCodeAgeMetrics.MAX_AGE_NAME);
+		result.add(TransactionCodeAgeMetrics.AVG_NUM_CHANGES_LAST_MONTH);
+		result.add(TransactionCodeAgeMetrics.MAX_NUM_CHANGES_LAST_MONTH);
 		return result;
 	}
 	
@@ -136,31 +135,31 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		final String nodeId = item.getNodeId();
 		
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.avgLastModifiedName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.AVG_LAST_MODIFIED_NAME, nodeId,
 		                                    lastModifiedStats.getN() > 0
 		                                                                ? lastModifiedStats.getMean()
 		                                                                : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.minLastModifiedName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.MIN_LAST_MODIFIED_NAME, nodeId,
 		                                    lastModifiedStats.getN() > 0
 		                                                                ? lastModifiedStats.getMin()
 		                                                                : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.avgAgeName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.AVG_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMean()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.minAgeName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.MIN_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMin()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.maxAgeName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.MAX_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMax()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.avgNumChangesLastMonth, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.AVG_NUM_CHANGES_LAST_MONTH, nodeId,
 		                                    numChangesStats.getN() > 0
 		                                                              ? numChangesStats.getMean()
 		                                                              : 0));
-		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.maxNumChangesLastMonth, nodeId,
+		result.add(new GenealogyMetricValue(TransactionCodeAgeMetrics.MAX_NUM_CHANGES_LAST_MONTH, nodeId,
 		                                    numChangesStats.getN() > 0
 		                                                              ? numChangesStats.getMax()
 		                                                              : 0));
