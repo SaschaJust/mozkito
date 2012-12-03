@@ -21,17 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.persistence.PPAPersistenceUtil;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.RCSPersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
@@ -44,6 +33,20 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.persistence.PPAPersistenceUtil;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.RCSPersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.collections.TransactionSet;
+import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.RCSTransaction;
+
+/**
+ * The Class ChangeOperationReader.
+ */
 public class ChangeOperationReader implements Iterator<Collection<JavaChangeOperation>> {
 	
 	/**
@@ -52,15 +55,24 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	public static class Options extends
 	        ArgumentSetOptions<ChangeOperationReader, ArgumentSet<ChangeOperationReader, Options>> {
 		
+		/** The branch name options. */
 		private StringArgument.Options                                 branchNameOptions;
+		
+		/** The database options. */
 		private final DatabaseOptions                                  databaseOptions;
+		
+		/** The skip tests options. */
 		private net.ownhero.dev.hiari.settings.BooleanArgument.Options skipTestsOptions;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
-		 * @param name
-		 * @param description
+		 *            the argument set
 		 * @param requirements
+		 *            the requirements
+		 * @param databaseOptions
+		 *            the database options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final DatabaseOptions databaseOptions) {
@@ -109,13 +121,34 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		}
 	}
 	
+	/** The iterator. */
 	private final Iterator<RCSTransaction> iterator;
+	
+	/** The branch factory. */
 	private final BranchFactory            branchFactory;
+	
+	/** The persistence util. */
 	private final PersistenceUtil          persistenceUtil;
+	
+	/** The ignore tests. */
 	private final boolean                  ignoreTests;
+	
+	/** The num transaction. */
 	private final int                      numTransaction;
+	
+	/** The t counter. */
 	private int                            tCounter = 0;
 	
+	/**
+	 * Instantiates a new change operation reader.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param branchName
+	 *            the branch name
+	 * @param ignoreTests
+	 *            the ignore tests
+	 */
 	private ChangeOperationReader(final PersistenceUtil persistenceUtil, final String branchName,
 	        final boolean ignoreTests) {
 		this.persistenceUtil = persistenceUtil;
@@ -173,8 +206,8 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		try {
 			final RCSTransaction rCSTransaction = this.iterator.next();
 			if (Logger.logInfo()) {
-				Logger.info("Processing transaction %s (%s/%s).", rCSTransaction.getId(), String.valueOf(this.tCounter),
-				            String.valueOf(this.numTransaction));
+				Logger.info("Processing transaction %s (%s/%s).", rCSTransaction.getId(),
+				            String.valueOf(this.tCounter), String.valueOf(this.numTransaction));
 			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			

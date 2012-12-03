@@ -10,13 +10,14 @@ import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PPATransformerVisitor.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
+	/** The list. */
 	private final LinkedList<JavaChangeOperation> list = new LinkedList<JavaChangeOperation>();
 	
 	/*
@@ -29,7 +30,9 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	}
 	
 	/**
-	 * @return
+	 * Gets the iterator.
+	 * 
+	 * @return the iterator
 	 */
 	public Iterator<JavaChangeOperation> getIterator() {
 		return this.list.iterator();
@@ -37,8 +40,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor
-	 * #visit(org.mozkito.ppa.model.JavaChangeOperation)
+	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.ppa.model.JavaChangeOperation)
 	 */
 	@Override
 	public void visit(final JavaChangeOperation change) {
@@ -47,8 +49,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor
-	 * #visit(org.mozkito.rcs.model.RCSTransaction)
+	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.rcs.model.RCSTransaction)
 	 */
 	@Override
 	public void visit(final RCSTransaction rCSTransaction) {

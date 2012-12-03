@@ -13,11 +13,11 @@
 
 package org.mozkito.causeeffect.ctl;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL AG formulas. "AG f" means that "along all paths, globally f"
@@ -28,11 +28,11 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "AG f" formula from a given "f" formula.
-	 * 
-	 * @param formula
-	 *            Formula to surround with AG.
+	 *
+	 * @param formula Formula to surround with AG.
+	 * @return the ctlag
 	 */
-	public static CTLAG get(CTLFormula formula) {
+	public static CTLAG get(final CTLFormula formula) {
 		return new CTLAG(formula);
 	}
 	
@@ -44,9 +44,9 @@ public class CTLAG extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLAG getFromXMLRepresentation(Element element) {
+	public static CTLAG getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-AG");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLAG.get(formula);
 	}
 	
@@ -59,7 +59,7 @@ public class CTLAG extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to surround with AG.
 	 */
-	private CTLAG(CTLFormula formula) {
+	private CTLAG(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -92,7 +92,7 @@ public class CTLAG extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "AG " + this.formula.getTextRepresentation(verbosity);
 	}
 	
@@ -101,8 +101,8 @@ public class CTLAG extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-AG");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-AG");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -112,17 +112,17 @@ public class CTLAG extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		// model check (not EF (not f)) instead
-		CTLFormula sub = CTLNegation.get(CTLEF.get(CTLNegation.get(this.formula)));
+		final CTLFormula sub = CTLNegation.get(CTLEF.get(CTLNegation.get(this.formula)));
 		sub.modelCheckAllStates(kripkeStruct);
 		
 		// mark states where AG f holds
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			kripkeStruct.markEvaluatedFormula(state, this, kripkeStruct.isFormulaTrue(state, sub));
 		}
 		

@@ -18,22 +18,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.core.TransactionChangeGenealogy;
-import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
-import org.mozkito.genealogies.layer.UntanglingMetricsPartitioner;
-import org.mozkito.genealogies.metrics.layer.core.GenealogyCoreMetric;
-import org.mozkito.genealogies.metrics.layer.core.GenealogyMetricMux;
-import org.mozkito.genealogies.metrics.layer.core.GenealogyMetricThread;
-import org.mozkito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
-import org.mozkito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
-import org.mozkito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
-import org.mozkito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
-import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
-import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
-import org.mozkito.genealogies.metrics.utils.MetricLevel;
-import org.mozkito.genealogies.settings.GenealogyOptions;
-
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -51,6 +35,22 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.genealogies.core.CoreChangeGenealogy;
+import org.mozkito.genealogies.core.TransactionChangeGenealogy;
+import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
+import org.mozkito.genealogies.layer.UntanglingMetricsPartitioner;
+import org.mozkito.genealogies.metrics.layer.core.GenealogyCoreMetric;
+import org.mozkito.genealogies.metrics.layer.core.GenealogyMetricMux;
+import org.mozkito.genealogies.metrics.layer.core.GenealogyMetricThread;
+import org.mozkito.genealogies.metrics.layer.partition.GenealogyPartitionMetric;
+import org.mozkito.genealogies.metrics.layer.partition.PartitionGenealogyMetricMux;
+import org.mozkito.genealogies.metrics.layer.partition.PartitionGenealogyMetricThread;
+import org.mozkito.genealogies.metrics.layer.transaction.GenealogyTransactionMetric;
+import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricMux;
+import org.mozkito.genealogies.metrics.layer.transaction.TransactionGenealogyMetricThread;
+import org.mozkito.genealogies.metrics.utils.MetricLevel;
+import org.mozkito.genealogies.settings.GenealogyOptions;
 
 /**
  * The Class GenealogyMetricsToolChain.
@@ -80,18 +80,16 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	/** The granularity. */
 	private MetricLevel                                              granularity;
 	
+	/** The untangling file argument. */
 	private InputFileArgument                                        untanglingFileArgument;
 	
 	/**
 	 * Instantiates a new genealogy metrics tool chain.
-	 * 
-	 * @param setting
-	 *            the setting
-	 * @param granularityOptions
-	 *            the granularity options
-	 * @param genealogyOptions
-	 *            the genealogy options
-	 * @param untanglingPartFileOptions
+	 *
+	 * @param setting the setting
+	 * @param granularityOptions the granularity options
+	 * @param genealogyOptions the genealogy options
+	 * @param untanglingPartFileOptions the untangling part file options
 	 */
 	public GenealogyMetricsToolChain(final Settings setting,
 	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions,

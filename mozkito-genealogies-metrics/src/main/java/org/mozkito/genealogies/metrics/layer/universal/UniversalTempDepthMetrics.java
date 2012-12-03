@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.universal;
@@ -26,11 +23,11 @@ import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.metrics.DayTimeDiff;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 
-
 /**
  * The Class UniversalTempDepthMetrics.
- *
- * @param <T> the generic type
+ * 
+ * @param <T>
+ *            the generic type
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalTempDepthMetrics<T> {
@@ -67,112 +64,112 @@ public class UniversalTempDepthMetrics<T> {
 	
 	/**
 	 * Gets the maxtempdepth1.
-	 *
+	 * 
 	 * @return the maxtempdepth1
 	 */
 	public static String getMaxtempdepth1() {
-		return maxTempDepth1;
+		return UniversalTempDepthMetrics.maxTempDepth1;
 	}
 	
 	/**
 	 * Gets the maxtempdepth10.
-	 *
+	 * 
 	 * @return the maxtempdepth10
 	 */
 	public static String getMaxtempdepth10() {
-		return maxTempDepth10;
+		return UniversalTempDepthMetrics.maxTempDepth10;
 	}
 	
 	/**
 	 * Gets the maxtempdepth14.
-	 *
+	 * 
 	 * @return the maxtempdepth14
 	 */
 	public static String getMaxtempdepth14() {
-		return maxTempDepth14;
+		return UniversalTempDepthMetrics.maxTempDepth14;
 	}
 	
 	/**
 	 * Gets the maxtempdepth2.
-	 *
+	 * 
 	 * @return the maxtempdepth2
 	 */
 	public static String getMaxtempdepth2() {
-		return maxTempDepth2;
+		return UniversalTempDepthMetrics.maxTempDepth2;
 	}
 	
 	/**
 	 * Gets the maxtempdepth5.
-	 *
+	 * 
 	 * @return the maxtempdepth5
 	 */
 	public static String getMaxtempdepth5() {
-		return maxTempDepth5;
+		return UniversalTempDepthMetrics.maxTempDepth5;
 	}
 	
 	/**
 	 * Gets the metric names.
-	 *
+	 * 
 	 * @return the metric names
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> result = new LinkedList<String>();
-		result.add(maxTempDepth1);
-		result.add(maxTempDepth2);
-		result.add(maxTempDepth5);
-		result.add(maxTempDepth10);
-		result.add(maxTempDepth14);
-		result.add(numTempResponses1);
-		result.add(numTempResponses2);
-		result.add(numTempResponses5);
-		result.add(numTempResponses10);
-		result.add(numTempResponses14);
+		result.add(UniversalTempDepthMetrics.maxTempDepth1);
+		result.add(UniversalTempDepthMetrics.maxTempDepth2);
+		result.add(UniversalTempDepthMetrics.maxTempDepth5);
+		result.add(UniversalTempDepthMetrics.maxTempDepth10);
+		result.add(UniversalTempDepthMetrics.maxTempDepth14);
+		result.add(UniversalTempDepthMetrics.numTempResponses1);
+		result.add(UniversalTempDepthMetrics.numTempResponses2);
+		result.add(UniversalTempDepthMetrics.numTempResponses5);
+		result.add(UniversalTempDepthMetrics.numTempResponses10);
+		result.add(UniversalTempDepthMetrics.numTempResponses14);
 		return result;
 	}
 	
 	/**
 	 * Gets the numtempresponses1.
-	 *
+	 * 
 	 * @return the numtempresponses1
 	 */
 	public static String getNumtempresponses1() {
-		return numTempResponses1;
+		return UniversalTempDepthMetrics.numTempResponses1;
 	}
 	
 	/**
 	 * Gets the numtempresponses10.
-	 *
+	 * 
 	 * @return the numtempresponses10
 	 */
 	public static String getNumtempresponses10() {
-		return numTempResponses10;
+		return UniversalTempDepthMetrics.numTempResponses10;
 	}
 	
 	/**
 	 * Gets the numtempresponses14.
-	 *
+	 * 
 	 * @return the numtempresponses14
 	 */
 	public static String getNumtempresponses14() {
-		return numTempResponses14;
+		return UniversalTempDepthMetrics.numTempResponses14;
 	}
 	
 	/**
 	 * Gets the numtempresponses2.
-	 *
+	 * 
 	 * @return the numtempresponses2
 	 */
 	public static String getNumtempresponses2() {
-		return numTempResponses2;
+		return UniversalTempDepthMetrics.numTempResponses2;
 	}
 	
 	/**
 	 * Gets the numtempresponses5.
-	 *
+	 * 
 	 * @return the numtempresponses5
 	 */
 	public static String getNumtempresponses5() {
-		return numTempResponses5;
+		return UniversalTempDepthMetrics.numTempResponses5;
 	}
 	
 	/** The genealogy. */
@@ -198,9 +195,11 @@ public class UniversalTempDepthMetrics<T> {
 	
 	/**
 	 * Instantiates a new universal temp depth metrics.
-	 *
-	 * @param genealogy the genealogy
-	 * @param dayTimeDiff the day time diff
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param dayTimeDiff
+	 *            the day time diff
 	 */
 	public UniversalTempDepthMetrics(final ChangeGenealogy<T> genealogy, final DayTimeDiff<T> dayTimeDiff) {
 		this.genealogy = genealogy;
@@ -209,8 +208,9 @@ public class UniversalTempDepthMetrics<T> {
 	
 	/**
 	 * Handle.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the collection
 	 */
 	public Collection<GenealogyMetricValue> handle(final T node) {
@@ -231,27 +231,35 @@ public class UniversalTempDepthMetrics<T> {
 		
 		final String nodeId = this.genealogy.getNodeId(node);
 		
-		result.add(new GenealogyMetricValue(maxTempDepth1, nodeId, longestPaths[0]));
-		result.add(new GenealogyMetricValue(maxTempDepth2, nodeId, longestPaths[1]));
-		result.add(new GenealogyMetricValue(maxTempDepth5, nodeId, longestPaths[2]));
-		result.add(new GenealogyMetricValue(maxTempDepth10, nodeId, longestPaths[3]));
-		result.add(new GenealogyMetricValue(maxTempDepth14, nodeId, longestPaths[4]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth1, nodeId, longestPaths[0]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth2, nodeId, longestPaths[1]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth5, nodeId, longestPaths[2]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth10, nodeId, longestPaths[3]));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.maxTempDepth14, nodeId, longestPaths[4]));
 		
-		result.add(new GenealogyMetricValue(numTempResponses1, nodeId, this.responses_1.size()));
-		result.add(new GenealogyMetricValue(numTempResponses2, nodeId, this.responses_2.size()));
-		result.add(new GenealogyMetricValue(numTempResponses5, nodeId, this.responses_5.size()));
-		result.add(new GenealogyMetricValue(numTempResponses10, nodeId, this.responses_10.size()));
-		result.add(new GenealogyMetricValue(numTempResponses14, nodeId, this.responses_14.size()));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses1, nodeId,
+		                                    this.responses_1.size()));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses2, nodeId,
+		                                    this.responses_2.size()));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses5, nodeId,
+		                                    this.responses_5.size()));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses10, nodeId,
+		                                    this.responses_10.size()));
+		result.add(new GenealogyMetricValue(UniversalTempDepthMetrics.numTempResponses14, nodeId,
+		                                    this.responses_14.size()));
 		
 		return result;
 	}
 	
 	/**
 	 * Longest path.
-	 *
-	 * @param originalNode the original node
-	 * @param node the node
-	 * @param seen the seen
+	 * 
+	 * @param originalNode
+	 *            the original node
+	 * @param node
+	 *            the node
+	 * @param seen
+	 *            the seen
 	 * @return the int[]
 	 */
 	private int[] longestPath(final T originalNode,

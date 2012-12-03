@@ -23,21 +23,32 @@ import org.mozkito.persistence.PersistenceUtil;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class SerialMethodChangeCoupling.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class SerialMethodChangeCoupling implements Serializable {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8861359294708634130L;
 	
+	/** The premise. */
 	private final Set<Long>   premise          = new HashSet<>();
+	
+	/** The implication. */
 	private Long              implication      = null;
+	
+	/** The support. */
 	private final Integer     support;
+	
+	/** The confidence. */
 	private final Double      confidence;
 	
+	/**
+	 * Instantiates a new serial method change coupling.
+	 *
+	 * @param coupling the coupling
+	 */
 	public SerialMethodChangeCoupling(final MethodChangeCoupling coupling) {
 		for (final JavaMethodDefinition mDef : coupling.getPremise()) {
 			this.premise.add(mDef.getGeneratedId());
@@ -47,6 +58,12 @@ public class SerialMethodChangeCoupling implements Serializable {
 		this.confidence = coupling.getConfidence();
 	}
 	
+	/**
+	 * Unserialize.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @return the method change coupling
+	 */
 	public MethodChangeCoupling unserialize(final PersistenceUtil persistenceUtil) {
 		final Set<JavaMethodDefinition> unserPremise = new HashSet<>();
 		for (final Long id : this.premise) {

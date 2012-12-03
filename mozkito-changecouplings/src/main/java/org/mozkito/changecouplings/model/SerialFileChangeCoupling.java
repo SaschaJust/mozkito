@@ -45,15 +45,8 @@ public class SerialFileChangeCoupling implements Serializable {
 	
 	/**
 	 * Instantiates a new serial file change coupling.
-	 * 
-	 * @param premise
-	 *            the premise
-	 * @param implication
-	 *            the implication
-	 * @param support
-	 *            the support
-	 * @param confidence
-	 *            the confidence
+	 *
+	 * @param coupling the coupling
 	 */
 	public SerialFileChangeCoupling(final FileChangeCoupling coupling) {
 		for (final RCSFile rCSFile : coupling.getPremise()) {
@@ -64,6 +57,12 @@ public class SerialFileChangeCoupling implements Serializable {
 		this.confidence = coupling.getConfidence();
 	}
 	
+	/**
+	 * Unserialize.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @return the file change coupling
+	 */
 	public FileChangeCoupling unserialize(final PersistenceUtil persistenceUtil) {
 		return new FileChangeCoupling(this.premise.toArray(new Long[this.premise.size()]), this.implication,
 		                              this.support, this.confidence, persistenceUtil);

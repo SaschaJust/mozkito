@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
-import org.mozkito.infozilla.model.stacktrace.JavaStacktrace;
-import org.mozkito.infozilla.model.stacktrace.Stacktrace;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+
+import org.mozkito.infozilla.filters.FilterTextRemover;
+import org.mozkito.infozilla.model.stacktrace.JavaStacktrace;
+import org.mozkito.infozilla.model.stacktrace.Stacktrace;
 
 /**
  * The Class JavaStacktraceFilter.
@@ -160,7 +160,7 @@ public class JavaStacktraceFilter extends StackTraceFilter {
 	 *            The CharSequence to look inside for such starting points
 	 * @return an array of possible starting points
 	 */
-	private final int[] findExceptions(final CharSequence s) {
+	private int[] findExceptions(final CharSequence s) {
 		// List<Integer> exceptionList = new ArrayList<Integer>();
 		//
 		// // We match against our well known JAVA_EXCEPTION Pattern that

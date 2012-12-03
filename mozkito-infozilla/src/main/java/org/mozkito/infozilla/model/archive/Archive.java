@@ -22,7 +22,6 @@ import java.util.List;
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 
-
 /**
  * The Class Archive.
  * 

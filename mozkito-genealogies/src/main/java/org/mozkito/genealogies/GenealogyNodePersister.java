@@ -36,7 +36,10 @@ import org.mozkito.genealogies.utils.OperationCollection;
  */
 public class GenealogyNodePersister extends Transformer<OperationCollection, JavaChangeOperationProcessQueue> {
 	
+	/** The counter. */
 	private int counter        = 0;
+	
+	/** The package counter. */
 	private int packageCounter = 0;
 	
 	/**

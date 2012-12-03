@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.transaction;
@@ -28,6 +25,7 @@ import java.util.TreeSet;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
@@ -41,10 +39,9 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class TransactionChangeSizeMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
@@ -117,39 +114,42 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 	
 	/**
 	 * Instantiates a new transaction change size metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public TransactionChangeSizeMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.persistenceUtil = genealogy.getCore().getPersistenceUtil();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(7);
-		metricNames.add(changeSize);
-		metricNames.add(avgDepChangeSize);
-		metricNames.add(maxDepChangeSize);
-		metricNames.add(sumDepChangeSize);
-		metricNames.add(avgParentChangeSize);
-		metricNames.add(maxParentChangeSize);
-		metricNames.add(sumParentChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.changeSize);
+		metricNames.add(TransactionChangeSizeMetrics.avgDepChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.maxDepChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.sumDepChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.avgParentChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.maxParentChangeSize);
+		metricNames.add(TransactionChangeSizeMetrics.sumParentChangeSize);
 		
-		metricNames.add(numChangedFiles);
-		metricNames.add(effectiveNumOperations);
-		metricNames.add(effectiveNumMethDefOperations);
-		metricNames.add(effectiveNumCallOperations);
+		metricNames.add(TransactionChangeSizeMetrics.numChangedFiles);
+		metricNames.add(TransactionChangeSizeMetrics.effectiveNumOperations);
+		metricNames.add(TransactionChangeSizeMetrics.effectiveNumMethDefOperations);
+		metricNames.add(TransactionChangeSizeMetrics.effectiveNumCallOperations);
 		
-		metricNames.add(changedBlocks);
+		metricNames.add(TransactionChangeSizeMetrics.changedBlocks);
 		
 		return metricNames;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override
@@ -168,7 +168,8 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
 		                                                                                               rCSTransaction);
 		
-		metricValues.add(new GenealogyMetricValue(changeSize, nodeId, changeOperations.size()));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.changeSize, nodeId,
+		                                          changeOperations.size()));
 		
 		int numAddOperations = 0;
 		int numDelOperations = 0;
@@ -275,15 +276,15 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(avgDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.avgDepChangeSize, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(maxDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.maxDepChangeSize, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(sumDepChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.sumDepChangeSize, nodeId,
 		                                          (dependantStats.getN() < 1)
 		                                                                     ? 0
 		                                                                     : dependantStats.getSum()));
@@ -293,20 +294,21 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 			parentStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(avgParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.avgParentChangeSize, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMean()));
-		metricValues.add(new GenealogyMetricValue(maxParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.maxParentChangeSize, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getMax()));
-		metricValues.add(new GenealogyMetricValue(sumParentChangeSize, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.sumParentChangeSize, nodeId,
 		                                          (parentStats.getN() < 1)
 		                                                                  ? 0
 		                                                                  : parentStats.getSum()));
 		
-		metricValues.add(new GenealogyMetricValue(numAffectedPackages, nodeId, packageNames.size()));
+		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.numAffectedPackages, nodeId,
+		                                          packageNames.size()));
 		
 		return metricValues;
 	}

@@ -39,14 +39,31 @@ import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.model.RCSTransaction;
 
 
+/**
+ * The Class GenealogyToolChain.
+ */
 public class GenealogyToolChain extends Chain<Settings> {
 	
+	/** The thread pool. */
 	private final Pool                                               threadPool;
+	
+	/** The genealogy args. */
 	private final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgs;
+	
+	/** The genealogy. */
 	private CoreChangeGenealogy                                      genealogy;
+	
+	/** The info argument. */
 	private final BooleanArgument                                    infoArgument;
+	
+	/** The change op reader options. */
 	private Options                                                  changeOpReaderOptions;
 	
+	/**
+	 * Instantiates a new genealogy tool chain.
+	 *
+	 * @param settings the settings
+	 */
 	public GenealogyToolChain(final Settings settings) {
 		super(settings);
 		
@@ -90,6 +107,9 @@ public class GenealogyToolChain extends Chain<Settings> {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.ownhero.dev.andama.model.Chain#setup()
+	 */
 	@Override
 	public void setup() {
 		if (this.infoArgument.getValue()) {

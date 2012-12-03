@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.genealogies.metrics.layer.universal;
 
@@ -20,14 +17,15 @@ import java.util.LinkedList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 
-
 /**
  * The Class UniversalStructuralHolesMetrics.
- *
- * @param <T> the generic type
+ * 
+ * @param <T>
+ *            the generic type
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UniversalStructuralHolesMetrics<T> {
@@ -52,18 +50,18 @@ public class UniversalStructuralHolesMetrics<T> {
 	
 	/**
 	 * Gets the metric names.
-	 *
+	 * 
 	 * @return the metric names
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> result = new LinkedList<String>();
-		result.add(inEffSize);
-		result.add(outEffSize);
-		result.add(effSize);
+		result.add(UniversalStructuralHolesMetrics.inEffSize);
+		result.add(UniversalStructuralHolesMetrics.outEffSize);
+		result.add(UniversalStructuralHolesMetrics.effSize);
 		
-		result.add(inEfficiency);
-		result.add(outEfficiency);
-		result.add(efficiency);
+		result.add(UniversalStructuralHolesMetrics.inEfficiency);
+		result.add(UniversalStructuralHolesMetrics.outEfficiency);
+		result.add(UniversalStructuralHolesMetrics.efficiency);
 		return result;
 	}
 	
@@ -72,8 +70,9 @@ public class UniversalStructuralHolesMetrics<T> {
 	
 	/**
 	 * Instantiates a new universal structural holes metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public UniversalStructuralHolesMetrics(final ChangeGenealogy<T> genealogy) {
 		this.genealogy = genealogy;
@@ -81,8 +80,9 @@ public class UniversalStructuralHolesMetrics<T> {
 	
 	/**
 	 * Handle.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the collection
 	 */
 	public Collection<GenealogyMetricValue> handle(final T node) {
@@ -106,8 +106,9 @@ public class UniversalStructuralHolesMetrics<T> {
 		final double inEffValue = inEgoSize - ((inEffStat.getN() < 1)
 		                                                             ? 0
 		                                                             : inEffStat.getMean());
-		result.add(new GenealogyMetricValue(inEffSize, nodeId, inEffValue));
-		result.add(new GenealogyMetricValue(inEfficiency, nodeId, (inEffValue / (inEgoSize + 1))));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.inEffSize, nodeId, inEffValue));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.inEfficiency, nodeId,
+		                                    (inEffValue / (inEgoSize + 1))));
 		
 		final DescriptiveStatistics outEffStat = new DescriptiveStatistics();
 		for (final T out : outgoing) {
@@ -120,8 +121,9 @@ public class UniversalStructuralHolesMetrics<T> {
 		final double outEffValue = outEgoSize - ((outEffStat.getN() < 1)
 		                                                                ? 0
 		                                                                : outEffStat.getMean());
-		result.add(new GenealogyMetricValue(outEffSize, nodeId, outEffValue));
-		result.add(new GenealogyMetricValue(outEfficiency, nodeId, (outEffValue / (outEgoSize + 1))));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.outEffSize, nodeId, outEffValue));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.outEfficiency, nodeId,
+		                                    (outEffValue / (outEgoSize + 1))));
 		
 		final DescriptiveStatistics effStat = new DescriptiveStatistics();
 		for (final T ego : egoNetwork) {
@@ -134,8 +136,9 @@ public class UniversalStructuralHolesMetrics<T> {
 		final double effValue = egoSize - ((effStat.getN() < 1)
 		                                                       ? 0
 		                                                       : effStat.getMean());
-		result.add(new GenealogyMetricValue(effSize, nodeId, effValue));
-		result.add(new GenealogyMetricValue(efficiency, nodeId, (effValue / (egoSize + 1))));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.effSize, nodeId, effValue));
+		result.add(new GenealogyMetricValue(UniversalStructuralHolesMetrics.efficiency, nodeId,
+		                                    (effValue / (egoSize + 1))));
 		
 		return result;
 	}

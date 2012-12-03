@@ -25,6 +25,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
+
 import org.mozkito.causeeffect.LTCRecommendation.ChangeProperty;
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.causeeffect.kripke.KripkeStructure;
@@ -37,13 +38,19 @@ import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
+ * The Class LTCExperiment.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class LTCExperiment {
 	
+	/**
+	 * Checks if is big change.
+	 *
+	 * @param t the t
+	 * @return true, if is big change
+	 */
 	public static boolean isBigChange(final RCSTransaction t) {
 		if (t.getChangedFiles().size() > 19) {
 			return true;
@@ -51,26 +58,66 @@ public class LTCExperiment {
 		return false;
 	}
 	
+	/**
+	 * Checks if is bug fix.
+	 *
+	 * @param t the t
+	 * @return true, if is bug fix
+	 */
 	public static boolean isBugFix(final RCSTransaction t) {
 		return false;
 	}
 	
+	/** The genealogy. */
 	private final ChangeGenealogy<RCSTransaction> genealogy;
 	
+	/** The formula factory. */
 	private final LTCFormulaFactory               formulaFactory;
+	
+	/** The true positives. */
 	private int                                   truePositives            = 0;
+	
+	/** The false positives. */
 	private int                                   falsePositives           = 0;
+	
+	/** The sum lowest rank. */
 	private int                                   sumLowestRank            = 0;
+	
+	/** The num vertices. */
 	private int                                   numVertices              = 0;
+	
+	/** The num recommendated vertices. */
 	private int                                   numRecommendatedVertices = 0;
+	
+	/** The min confidence. */
 	private final double                          minConfidence;
+	
+	/** The time window. */
 	private final int                             timeWindow;
+	
+	/** The min support. */
 	private final int                             minSupport;
+	
+	/** The change set size stat. */
 	private final DescriptiveStatistics           changeSetSizeStat        = new DescriptiveStatistics();
+	
+	/** The keep formula max days. */
 	private final int                             keepFormulaMaxDays;
 	
+	/** The num recommendations. */
 	private final int                             numRecommendations;
 	
+	/**
+	 * Instantiates a new lTC experiment.
+	 *
+	 * @param genealogy the genealogy
+	 * @param formulaFactory the formula factory
+	 * @param minSupport the min support
+	 * @param minConfidence the min confidence
+	 * @param keepFormulaMaxDays the keep formula max days
+	 * @param timeWindow the time window
+	 * @param numRecommendations the num recommendations
+	 */
 	@NoneNull
 	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
 	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow,
@@ -84,18 +131,40 @@ public class LTCExperiment {
 		this.numRecommendations = numRecommendations;
 	}
 	
+	/**
+	 * Gets the average lowest rank.
+	 *
+	 * @return the average lowest rank
+	 */
 	public double getAverageLowestRank() {
 		return ((double) this.sumLowestRank / ((double) this.numVertices));
 	}
 	
+	/**
+	 * Gets the num recommendated vertices.
+	 *
+	 * @return the num recommendated vertices
+	 */
 	public int getNumRecommendatedVertices() {
 		return this.numRecommendatedVertices;
 	}
 	
+	/**
+	 * Gets the precision.
+	 *
+	 * @return the precision
+	 */
 	public double getPrecision() {
 		return (this.truePositives / (((double) this.truePositives) + ((double) this.falsePositives)));
 	}
 	
+	/**
+	 * Run.
+	 *
+	 * @param trainingSet the training set
+	 * @param testingSet the testing set
+	 * @param includeInnerRules the include inner rules
+	 */
 	@NoneNull
 	public void run(final List<RCSTransaction> trainingSet,
 	                final List<RCSTransaction> testingSet,
@@ -130,6 +199,11 @@ public class LTCExperiment {
 		}
 	}
 	
+	/**
+	 * Test.
+	 *
+	 * @param t the t
+	 */
 	@NoneNull
 	public void test(final RCSTransaction t) {
 		
@@ -237,6 +311,12 @@ public class LTCExperiment {
 		
 	}
 	
+	/**
+	 * Train.
+	 *
+	 * @param t the t
+	 * @param inner the inner
+	 */
 	@NoneNull
 	public void train(final RCSTransaction t,
 	                  final boolean inner) {

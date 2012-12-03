@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import org.mozkito.infozilla.model.Inlineable;
 
-
 /**
  * The Class StepsToReproduce.
  */
@@ -25,7 +24,8 @@ public class StepsToReproduce implements Inlineable {
 	/** The steps. */
 	ArrayList<String> steps;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
 	 */
 	@Override
@@ -34,7 +34,8 @@ public class StepsToReproduce implements Inlineable {
 		return 0;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
 	 */
 	@Override

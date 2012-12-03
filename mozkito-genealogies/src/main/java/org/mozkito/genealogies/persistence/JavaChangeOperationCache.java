@@ -25,16 +25,28 @@ import org.mozkito.persistence.PersistenceUtil;
 
 
 /**
+ * The Class JavaChangeOperationCache.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class JavaChangeOperationCache {
 	
+	/**
+	 * The Class JavaChangeOperationCacheEntry.
+	 */
 	private class JavaChangeOperationCacheEntry implements Comparable<JavaChangeOperationCacheEntry> {
 		
+		/** The operation. */
 		private final JavaChangeOperation operation;
+		
+		/** The last access. */
 		private DateTime                  lastAccess;
 		
+		/**
+		 * Instantiates a new java change operation cache entry.
+		 *
+		 * @param operation the operation
+		 */
 		public JavaChangeOperationCacheEntry(final JavaChangeOperation operation) {
 			this.operation = operation;
 			this.lastAccess = new DateTime();
@@ -49,13 +61,20 @@ public class JavaChangeOperationCache {
 			return DateTimeComparator.getInstance().compare(this.lastAccess, o.lastAccess);
 		}
 		
+		/**
+		 * Gets the operation.
+		 *
+		 * @return the operation
+		 */
 		public JavaChangeOperation getOperation() {
 			this.lastAccess = new DateTime();
 			return this.operation;
 		}
 		
 		/**
-		 * @return
+		 * Gets the operation id.
+		 *
+		 * @return the operation id
 		 */
 		public long getOperationId() {
 			this.lastAccess = new DateTime();
@@ -63,13 +82,27 @@ public class JavaChangeOperationCache {
 		}
 	}
 	
+	/** The cache. */
 	private final Map<Long, JavaChangeOperationCacheEntry> cache = new ConcurrentHashMap<>();
+	
+	/** The persistence util. */
 	private final PersistenceUtil                          persistenceUtil;
 	
+	/**
+	 * Instantiates a new java change operation cache.
+	 *
+	 * @param persistenceUtil the persistence util
+	 */
 	public JavaChangeOperationCache(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;
 	}
 	
+	/**
+	 * Load by id.
+	 *
+	 * @param id the id
+	 * @return the java change operation
+	 */
 	public JavaChangeOperation loadById(final long id) {
 		if (this.cache.containsKey(id)) {
 			return this.cache.get(id).getOperation();

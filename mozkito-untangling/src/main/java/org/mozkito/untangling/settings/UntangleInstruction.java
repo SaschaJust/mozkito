@@ -15,15 +15,27 @@ package org.mozkito.untangling.settings;
 import org.mozkito.untangling.blob.ChangeSet;
 
 /**
+ * The Class UntangleInstruction.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class UntangleInstruction {
 	
+	/** The change set. */
 	private final ChangeSet changeSet;
+	
+	/** The num partitions. */
 	private int             numPartitions = 0;
+	
+	/** The threshold. */
 	private double          threshold     = 0.0d;
 	
+	/**
+	 * Instantiates a new untangle instruction.
+	 *
+	 * @param changeSet the change set
+	 * @param value the value
+	 */
 	public UntangleInstruction(final ChangeSet changeSet, final double value) {
 		this.changeSet = changeSet;
 		if (value >= 1) {
@@ -33,18 +45,36 @@ public class UntangleInstruction {
 		}
 	}
 	
+	/**
+	 * Gets the change set.
+	 *
+	 * @return the change set
+	 */
 	public ChangeSet getChangeSet() {
 		return this.changeSet;
 	}
 	
+	/**
+	 * Gets the num partitions.
+	 *
+	 * @return the num partitions
+	 */
 	public int getNumPartitions() {
 		return this.numPartitions;
 	}
 	
+	/**
+	 * Gets the treshold.
+	 *
+	 * @return the treshold
+	 */
 	public double getTreshold() {
 		return this.threshold;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

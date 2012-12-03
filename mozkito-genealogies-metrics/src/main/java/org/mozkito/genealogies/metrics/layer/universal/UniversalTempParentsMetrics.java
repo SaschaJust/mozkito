@@ -69,16 +69,16 @@ public class UniversalTempParentsMetrics<T> {
 	 */
 	public static Collection<String> getMetricNames() {
 		final Collection<String> result = new LinkedList<String>();
-		result.add(maxTempParentDepth1);
-		result.add(maxTempParentDepth2);
-		result.add(maxTempParentDepth5);
-		result.add(maxTempParentDepth10);
-		result.add(maxTempParentDepth14);
-		result.add(numTempParents1);
-		result.add(numTempParents2);
-		result.add(numTempParents5);
-		result.add(numTempParents10);
-		result.add(numTempParents14);
+		result.add(UniversalTempParentsMetrics.maxTempParentDepth1);
+		result.add(UniversalTempParentsMetrics.maxTempParentDepth2);
+		result.add(UniversalTempParentsMetrics.maxTempParentDepth5);
+		result.add(UniversalTempParentsMetrics.maxTempParentDepth10);
+		result.add(UniversalTempParentsMetrics.maxTempParentDepth14);
+		result.add(UniversalTempParentsMetrics.numTempParents1);
+		result.add(UniversalTempParentsMetrics.numTempParents2);
+		result.add(UniversalTempParentsMetrics.numTempParents5);
+		result.add(UniversalTempParentsMetrics.numTempParents10);
+		result.add(UniversalTempParentsMetrics.numTempParents14);
 		return result;
 	}
 	
@@ -141,17 +141,19 @@ public class UniversalTempParentsMetrics<T> {
 		
 		final String nodeId = this.genealogy.getNodeId(node);
 		
-		result.add(new GenealogyMetricValue(maxTempParentDepth1, nodeId, longestPaths[0]));
-		result.add(new GenealogyMetricValue(maxTempParentDepth2, nodeId, longestPaths[1]));
-		result.add(new GenealogyMetricValue(maxTempParentDepth5, nodeId, longestPaths[2]));
-		result.add(new GenealogyMetricValue(maxTempParentDepth10, nodeId, longestPaths[3]));
-		result.add(new GenealogyMetricValue(maxTempParentDepth14, nodeId, longestPaths[4]));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.maxTempParentDepth1, nodeId, longestPaths[0]));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.maxTempParentDepth2, nodeId, longestPaths[1]));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.maxTempParentDepth5, nodeId, longestPaths[2]));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.maxTempParentDepth10, nodeId, longestPaths[3]));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.maxTempParentDepth14, nodeId, longestPaths[4]));
 		
-		result.add(new GenealogyMetricValue(numTempParents1, nodeId, this.parents_1.size()));
-		result.add(new GenealogyMetricValue(numTempParents2, nodeId, this.parents_2.size()));
-		result.add(new GenealogyMetricValue(numTempParents5, nodeId, this.parents_5.size()));
-		result.add(new GenealogyMetricValue(numTempParents10, nodeId, this.parents_10.size()));
-		result.add(new GenealogyMetricValue(numTempParents14, nodeId, this.parents_14.size()));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.numTempParents1, nodeId, this.parents_1.size()));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.numTempParents2, nodeId, this.parents_2.size()));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.numTempParents5, nodeId, this.parents_5.size()));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.numTempParents10, nodeId,
+		                                    this.parents_10.size()));
+		result.add(new GenealogyMetricValue(UniversalTempParentsMetrics.numTempParents14, nodeId,
+		                                    this.parents_14.size()));
 		
 		return result;
 	}

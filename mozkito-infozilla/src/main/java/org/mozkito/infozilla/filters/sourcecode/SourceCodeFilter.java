@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.mozkito.infozilla.filters.InfozillaFilter;
 
-
 /**
  * The Class SourceCodeFilter.
  * 

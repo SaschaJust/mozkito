@@ -35,8 +35,15 @@ import org.mozkito.persistence.PersistenceUtil;
  */
 public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
+	/** The partition generator. */
 	private final PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionGenerator;
 	
+	/**
+	 * Instantiates a new partition change genealogy.
+	 *
+	 * @param coreGenealogy the core genealogy
+	 * @param partitionGenerator the partition generator
+	 */
 	public PartitionChangeGenealogy(
 	        final CoreChangeGenealogy coreGenealogy,
 	        final PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionGenerator) {
@@ -46,13 +53,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/**
 	 * Instantiates a new partition change genealogy.
-	 * 
-	 * @param graphDBDir
-	 *            the graph db dir
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @param existingPartitions
-	 *            the existing partitions
+	 *
+	 * @param graphDBDir the graph db dir
+	 * @param persistenceUtil the persistence util
+	 * @param partitionGenerator the partition generator
 	 */
 	public PartitionChangeGenealogy(
 	        final File graphDBDir,
@@ -62,6 +66,12 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		this.partitionGenerator = partitionGenerator;
 	}
 	
+	/**
+	 * Builds the partitions.
+	 *
+	 * @param input the input
+	 * @return the collection
+	 */
 	public Collection<ChangeGenealogyLayerNode> buildPartitions(final Collection<JavaChangeOperation> input) {
 		return this.partitionGenerator.partition(input);
 	}
@@ -138,6 +148,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	}
 	
 	/**
+	 * Gets the node id.
+	 *
+	 * @param t the t
+	 * @return the node id
 	 * @deprecated You can call <code>ChangeGenealogyLayerNode.getNodeId()</code> directly.
 	 */
 	@Override
@@ -164,6 +178,9 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return buildPartitions(result);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
+	 */
 	@Override
 	public Collection<ChangeGenealogyLayerNode> getRoots() {
 		final Collection<ChangeGenealogyLayerNode> roots = new LinkedList<ChangeGenealogyLayerNode>();
@@ -181,11 +198,17 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return roots;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
+	 */
 	@Override
 	public int inDegree(final ChangeGenealogyLayerNode node) {
 		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public int inDegree(final ChangeGenealogyLayerNode node,
 	                    final GenealogyEdgeType... edgeTypes) {
@@ -196,11 +219,17 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return numEdges;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
+	 */
 	@Override
 	public int outDegree(final ChangeGenealogyLayerNode node) {
 		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	 */
 	@Override
 	public int outDegree(final ChangeGenealogyLayerNode node,
 	                     final GenealogyEdgeType... edgeTypes) {

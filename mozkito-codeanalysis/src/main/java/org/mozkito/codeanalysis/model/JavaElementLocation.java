@@ -99,15 +99,16 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	public static JavaElementLocation fromXMLRepresentation(final Element element,
 	                                                        final JavaElementFactory elementFactory) {
 		
-		if (!element.getName().equals(JAVA_ELEMENT_LOCATION_TAG)) {
+		if (!element.getName().equals(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG)) {
 			if (Logger.logWarn()) {
-				Logger.warn("Unrecognized JavaElementLocation tag. Expected <" + JAVA_ELEMENT_LOCATION_TAG
-				        + "> but got <" + element.getName() + ">. Retuning null.");
+				Logger.warn("Unrecognized JavaElementLocation tag. Expected <"
+				        + JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG + "> but got <" + element.getName()
+				        + ">. Retuning null.");
 			}
 			return null;
 		}
 		
-		final Attribute idAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR);
+		final Attribute idAttr = element.getAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_ID_ATTR);
 		if (idAttr == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.id from XML. Returning null.");
@@ -124,7 +125,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final Attribute slAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR);
+		final Attribute slAttr = element.getAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_START_LINE_ATTR);
 		Integer startline = -1;
 		if (slAttr == null) {
 			if (Logger.logWarn()) {
@@ -141,7 +142,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final Attribute elAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR);
+		final Attribute elAttr = element.getAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_END_LINE_ATTR);
 		Integer endline = -1;
 		if (elAttr == null) {
 			if (Logger.logWarn()) {
@@ -158,7 +159,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final Attribute posAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR);
+		final Attribute posAttr = element.getAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_POSITION_ATTR);
 		Integer position = -1;
 		if (posAttr == null) {
 			if (Logger.logWarn()) {
@@ -175,7 +176,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final Attribute bsAttr = element.getAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR);
+		final Attribute bsAttr = element.getAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_BODY_START_ATTR);
 		Integer bodystart = -1;
 		if (bsAttr == null) {
 			if (Logger.logWarn()) {
@@ -192,7 +193,7 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 			return null;
 		}
 		
-		final Element pathElement = element.getChild(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		final Element pathElement = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_PATH_TAG);
 		if (pathElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaElementLocation.path from XML. Returning null.");
@@ -574,15 +575,15 @@ public class JavaElementLocation implements Comparable<JavaElementLocation>, Ann
 	@NoneNull
 	@Transient
 	public Element getXMLRepresentation() {
-		final Element thisElement = new Element(JAVA_ELEMENT_LOCATION_TAG);
+		final Element thisElement = new Element(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
 		
-		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_ID_ATTR, "" + getId());
-		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_START_LINE_ATTR, "" + getStartLine());
-		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_END_LINE_ATTR, "" + getEndLine());
-		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_POSITION_ATTR, "" + getPosition());
-		thisElement.setAttribute(JAVA_ELEMENT_LOCATION_BODY_START_ATTR, "" + getBodyStartLine());
+		thisElement.setAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_ID_ATTR, "" + getId());
+		thisElement.setAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_START_LINE_ATTR, "" + getStartLine());
+		thisElement.setAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_END_LINE_ATTR, "" + getEndLine());
+		thisElement.setAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_POSITION_ATTR, "" + getPosition());
+		thisElement.setAttribute(JavaElementLocation.JAVA_ELEMENT_LOCATION_BODY_START_ATTR, "" + getBodyStartLine());
 		
-		final Element filePathElement = new Element(JAVA_ELEMENT_LOCATION_PATH_TAG);
+		final Element filePathElement = new Element(JavaElementLocation.JAVA_ELEMENT_LOCATION_PATH_TAG);
 		filePathElement.setText(getFilePath());
 		thisElement.addContent(filePathElement);
 		

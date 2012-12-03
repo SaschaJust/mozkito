@@ -15,7 +15,6 @@ package org.mozkito.codeanalysis.internal.visitors;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Interface ChangeOperationVisitor.
  * 

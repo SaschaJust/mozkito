@@ -14,10 +14,10 @@
 package org.mozkito.genealogies.metrics.utils;
 
 import org.joda.time.Days;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class DaysBetweenUtils.
@@ -26,6 +26,13 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class DaysBetweenUtils {
 	
+	/**
+	 * Gets the days between.
+	 *
+	 * @param p1 the p1
+	 * @param p2 the p2
+	 * @return the days between
+	 */
 	public static int getDaysBetween(final ChangeGenealogyLayerNode p1,
 	                                 final ChangeGenealogyLayerNode p2) {
 		final int diff = Math.abs(Days.daysBetween(p1.getLatestTimestamp(), p2.getEarliestTimestamp()).getDays());

@@ -25,7 +25,6 @@ import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 
-
 /**
  * The Class PartitionAuthorMetrics.
  * 
@@ -56,8 +55,8 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(numDepAuthors);
-		metricNames.add(numParentAuthors);
+		metricNames.add(PartitionAuthorMetrics.numDepAuthors);
+		metricNames.add(PartitionAuthorMetrics.numParentAuthors);
 		return metricNames;
 	}
 	
@@ -79,7 +78,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 			}
 		}
 		
-		metricValues.add(new GenealogyMetricValue(numDepAuthors, nodeId, depAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(PartitionAuthorMetrics.numDepAuthors, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
 		for (final ChangeGenealogyLayerNode parent : this.genealogy.getAllParents(pNode)) {
@@ -88,7 +87,7 @@ public class PartitionAuthorMetrics extends GenealogyPartitionMetric {
 			}
 		}
 		
-		metricValues.add(new GenealogyMetricValue(numParentAuthors, nodeId, parentAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(PartitionAuthorMetrics.numParentAuthors, nodeId, parentAuthors.size()));
 		
 		return metricValues;
 	}

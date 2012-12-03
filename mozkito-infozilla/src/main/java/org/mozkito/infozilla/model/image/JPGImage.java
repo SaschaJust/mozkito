@@ -17,7 +17,7 @@ package org.mozkito.infozilla.model.image;
 
 /**
  * The Class JPGImage.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class JPGImage extends Image {

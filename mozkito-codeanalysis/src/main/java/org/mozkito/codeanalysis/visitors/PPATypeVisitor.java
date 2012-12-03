@@ -41,10 +41,10 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+
 import org.mozkito.codeanalysis.model.JavaElementLocation;
 import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.model.JavaTypeDefinition;
-
 
 /**
  * The Class PPATypeVisitor.
@@ -96,10 +96,8 @@ public class PPATypeVisitor extends ASTVisitor {
 	 * 
 	 * @param cu
 	 *            the cu
-	 * @param file
-	 *            the file
-	 * @param filePathPrefix
-	 *            the file path prefix
+	 * @param relativeFilePath
+	 *            the relative file path
 	 * @param packageFilter
 	 *            the package filter
 	 * @param locationSet
@@ -118,11 +116,11 @@ public class PPATypeVisitor extends ASTVisitor {
 		if (packageDecl != null) {
 			this.packageName = packageDecl.getName().toString();
 		} else {
-			this.packageName = UNKNOWN_PACKAGE;
+			this.packageName = PPATypeVisitor.UNKNOWN_PACKAGE;
 		}
 		
 		this.primitives = new HashSet<String>();
-		this.primitives.addAll(Arrays.asList(primTypes));
+		this.primitives.addAll(Arrays.asList(PPATypeVisitor.primTypes));
 	}
 	
 	/**

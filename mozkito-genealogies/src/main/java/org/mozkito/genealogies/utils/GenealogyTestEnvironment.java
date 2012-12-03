@@ -30,26 +30,84 @@ import org.mozkito.versions.model.RCSTransaction;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+/**
+ * The Class GenealogyTestEnvironment.
+ */
 public class GenealogyTestEnvironment {
 	
+	/**
+	 * The Enum TestEnvironmentOperation.
+	 */
 	public static enum TestEnvironmentOperation {
-		T1F1, T1F2, T2F3, T3F1D, T3F1A, T3F2, T4F3D, T4F3A, T4F4, T5F4, T6F2, T7F2, T8F2, T9F1, T10F3, T10F4, T3F2M;
+		
+		/** The T1 f1. */
+		T1F1, 
+ /** The T1 f2. */
+ T1F2, 
+ /** The T2 f3. */
+ T2F3, 
+ /** The T3 f1 d. */
+ T3F1D, 
+ /** The T3 f1 a. */
+ T3F1A, 
+ /** The T3 f2. */
+ T3F2, 
+ /** The T4 f3 d. */
+ T4F3D, 
+ /** The T4 f3 a. */
+ T4F3A, 
+ /** The T4 f4. */
+ T4F4, 
+ /** The T5 f4. */
+ T5F4, 
+ /** The T6 f2. */
+ T6F2, 
+ /** The T7 f2. */
+ T7F2, 
+ /** The T8 f2. */
+ T8F2, 
+ /** The T9 f1. */
+ T9F1, 
+ /** The T10 f3. */
+ T10F3, 
+ /** The T10 f4. */
+ T10F4, 
+ /** The T3 f2 m. */
+ T3F2M;
 	}
 	
+	/** The persistence util. */
 	private final PersistenceUtil                                    persistenceUtil;
 	
+	/** The transaction map. */
 	private final Map<RCSTransaction, Set<JavaChangeOperation>>      transactionMap;
 	
+	/** The environment transactions. */
 	private final Map<Integer, RCSTransaction>                       environmentTransactions;
 	
+	/** The environment operations. */
 	private final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations;
 	
+	/** The repository. */
 	private final Repository                                         repository;
 	
+	/** The change genealogy. */
 	private final CoreChangeGenealogy                                changeGenealogy;
 	
+	/** The tmp graph db file. */
 	private final File                                               tmpGraphDBFile;
 	
+	/**
+	 * Instantiates a new genealogy test environment.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @param transactionMap the transaction map
+	 * @param environmentTransactions the environment transactions
+	 * @param environmentOperations the environment operations
+	 * @param repository the repository
+	 * @param changeGenealogy the change genealogy
+	 * @param tmpGraphDBFile the tmp graph db file
+	 */
 	GenealogyTestEnvironment(PersistenceUtil persistenceUtil,
 	        Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap,
 	        Map<Integer, RCSTransaction> environmentTransactions,
@@ -65,6 +123,9 @@ public class GenealogyTestEnvironment {
 		this.tmpGraphDBFile = tmpGraphDBFile;
 	}
 	
+	/**
+	 * Check consistency.
+	 */
 	public void checkConsistency() {
 		
 		CompareCondition.equals(41, this.changeGenealogy.vertexSize(), "GenealogyTestEnvironment.consistenceCheck");
@@ -137,30 +198,65 @@ public class GenealogyTestEnvironment {
 		                                        GenealogyEdgeType.DeletedCallOnCall), "");
 	}
 	
+	/**
+	 * Gets the change genealogy.
+	 *
+	 * @return the change genealogy
+	 */
 	public CoreChangeGenealogy getChangeGenealogy() {
 		return this.changeGenealogy;
 	}
 	
+	/**
+	 * Gets the environment operations.
+	 *
+	 * @return the environment operations
+	 */
 	public Map<TestEnvironmentOperation, JavaChangeOperation> getEnvironmentOperations() {
 		return this.environmentOperations;
 	}
 	
+	/**
+	 * Gets the environment transactions.
+	 *
+	 * @return the environment transactions
+	 */
 	public Map<Integer, RCSTransaction> getEnvironmentTransactions() {
 		return this.environmentTransactions;
 	}
 	
+	/**
+	 * Gets the persistence util.
+	 *
+	 * @return the persistence util
+	 */
 	public PersistenceUtil getPersistenceUtil() {
 		return this.persistenceUtil;
 	}
 	
+	/**
+	 * Gets the repository.
+	 *
+	 * @return the repository
+	 */
 	public Repository getRepository() {
 		return this.repository;
 	}
 	
+	/**
+	 * Gets the tmp graph db file.
+	 *
+	 * @return the tmp graph db file
+	 */
 	public File getTmpGraphDBFile() {
 		return this.tmpGraphDBFile;
 	}
 	
+	/**
+	 * Gets the transaction map.
+	 *
+	 * @return the transaction map
+	 */
 	public Map<RCSTransaction, Set<JavaChangeOperation>> getTransactionMap() {
 		return this.transactionMap;
 	}

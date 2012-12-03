@@ -16,11 +16,11 @@ package org.mozkito.causeeffect.ctl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL EF formulas. "EF f" means that "along at least one path, eventually f"
@@ -31,11 +31,11 @@ public class CTLEF extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "EF f" formula from a given "f" formula.
-	 * 
-	 * @param formula
-	 *            Formula to surround with EF.
+	 *
+	 * @param formula Formula to surround with EF.
+	 * @return the ctlef
 	 */
-	public static CTLEF get(CTLFormula formula) {
+	public static CTLEF get(final CTLFormula formula) {
 		return new CTLEF(formula);
 	}
 	
@@ -47,14 +47,14 @@ public class CTLEF extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLEF getFromXMLRepresentation(Element element) {
+	public static CTLEF getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-EF");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLEF.get(formula);
 	}
 	
 	/** Encapsulated formula. */
-	private CTLFormula formula;
+	private final CTLFormula formula;
 	
 	/**
 	 * Creates an "EF f" formula from a given "f" formula.
@@ -62,7 +62,7 @@ public class CTLEF extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to surround with EF.
 	 */
-	private CTLEF(CTLFormula formula) {
+	private CTLEF(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -95,7 +95,7 @@ public class CTLEF extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "EF " + this.formula.getTextRepresentation(verbosity);
 	}
 	
@@ -104,8 +104,8 @@ public class CTLEF extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-EF");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-EF");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -115,17 +115,17 @@ public class CTLEF extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.formula.modelCheckAllStates(kripkeStruct);
 		
-		Set<State> allTrueStates = new HashSet<State>();
+		final Set<State> allTrueStates = new HashSet<State>();
 		
 		Set<State> trueStates = new HashSet<State>();
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			if (kripkeStruct.isFormulaTrue(state, this.formula)) {
 				trueStates.add(state);
 				kripkeStruct.markEvaluatedFormula(state, this, true);
@@ -134,10 +134,10 @@ public class CTLEF extends CTLComposedFormula {
 		allTrueStates.addAll(trueStates);
 		
 		while (!trueStates.isEmpty()) {
-			Set<State> newTrueStates = new HashSet<State>();
-			for (State trueState : trueStates) {
-				Set<State> pres = kripkeStruct.getPredecessors(trueState);
-				for (State pre : pres) {
+			final Set<State> newTrueStates = new HashSet<State>();
+			for (final State trueState : trueStates) {
+				final Set<State> pres = kripkeStruct.getPredecessors(trueState);
+				for (final State pre : pres) {
 					newTrueStates.add(pre);
 					kripkeStruct.markEvaluatedFormula(pre, this, true);
 				}
@@ -146,9 +146,9 @@ public class CTLEF extends CTLComposedFormula {
 			allTrueStates.addAll(newTrueStates);
 		}
 		
-		Set<State> falseStates = new HashSet<State>(kripkeStruct.getAllStates());
+		final Set<State> falseStates = new HashSet<State>(kripkeStruct.getAllStates());
 		falseStates.removeAll(allTrueStates);
-		for (State falseState : falseStates) {
+		for (final State falseState : falseStates) {
 			kripkeStruct.markEvaluatedFormula(falseState, this, false);
 		}
 		

@@ -37,8 +37,15 @@ public class JavaElementLocationSet {
 	/** The method call locations. */
 	private final List<JavaElementLocation> methodCallLocations = new LinkedList<JavaElementLocation>();
 	
+	/** The element factory. */
 	private final JavaElementFactory        elementFactory;
 	
+	/**
+	 * Instantiates a new java element location set.
+	 * 
+	 * @param factory
+	 *            the factory
+	 */
 	public JavaElementLocationSet(final JavaElementFactory factory) {
 		this.elementFactory = factory;
 	}
@@ -108,14 +115,21 @@ public class JavaElementLocationSet {
 	}
 	
 	/**
-	 * @param string
+	 * Adds the interface definition.
+	 * 
+	 * @param fullQualifiedName
+	 *            the full qualified name
 	 * @param relativeFilePath
+	 *            the relative file path
 	 * @param startLine
-	 * @param The
-	 *            last line of the interface definition (inclusive)
+	 *            the start line
+	 * @param endLine
+	 *            the end line
 	 * @param startPosition
+	 *            the start position
 	 * @param bodyStartLine
-	 * @return
+	 *            the body start line
+	 * @return the java element location
 	 */
 	public JavaElementLocation addInterfaceDefinition(final String fullQualifiedName,
 	                                                  final String relativeFilePath,
@@ -168,14 +182,14 @@ public class JavaElementLocationSet {
 	/**
 	 * Add a method definition.
 	 * 
-	 * @param fullQualifiedName
-	 *            the full qualified name
+	 * @param objectName
+	 *            the object name
+	 * @param methodName
+	 *            the method name
 	 * @param signature
 	 *            the signature
 	 * @param file
 	 *            the file
-	 * @param parent
-	 *            the parent
 	 * @param startLine
 	 *            the start line
 	 * @param endLine
@@ -185,6 +199,7 @@ public class JavaElementLocationSet {
 	 * @param bodyStartLine
 	 *            the body start line
 	 * @param override
+	 *            the override
 	 * @return the method definition added
 	 */
 	public JavaElementLocation addMethodDefinition(@NotNull final String objectName,

@@ -27,8 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.BackrefEngine;
-import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.engines.master.Environment;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Feature;
@@ -63,7 +61,7 @@ public class BackrefEngineTest extends DatabaseTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		finder = Environment.setup("/engines.backref.test.properties");
+		BackrefEngineTest.finder = Environment.setup("/engines.backref.test.properties");
 		
 	}
 	
@@ -99,7 +97,7 @@ public class BackrefEngineTest extends DatabaseTest {
 		final Relation relation = Environment.relation(rCSTransaction, report);
 		assertNotNull("Failed creating relation from " + rCSTransaction + " and " + report, relation);
 		
-		finder.score(this.engine, relation);
+		BackrefEngineTest.finder.score(this.engine, relation);
 		
 		return relation;
 	}
@@ -109,7 +107,7 @@ public class BackrefEngineTest extends DatabaseTest {
 	 */
 	@Before
 	public void setUp() {
-		this.engines = finder.getEngines();
+		this.engines = BackrefEngineTest.finder.getEngines();
 		this.engine = this.engines.get(BackrefEngine.class);
 	}
 	

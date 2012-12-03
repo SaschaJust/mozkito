@@ -33,9 +33,6 @@ package org.mozkito.infozilla.filters.sourcecode;
  * 
  * @author Nicolas Bettenburg
  * @see org.mozkito.infozilla.filters.sourcecode.JavaSourceCodeFilter
- * @see org.mozkito.infozilla.filters.chain.FilterChain
- * @see org.mozkito.infozilla.Ressources.Java_CodeDB.txt
- * @see org.mozkito.infozilla.Ressources.Java_Keywords.txt
  */
 public class CodeRegion implements Comparable<CodeRegion> {
 	
@@ -49,8 +46,7 @@ public class CodeRegion implements Comparable<CodeRegion> {
 	public String text;
 	
 	/**
-	 * Stores the type of source code region as defined in
-	 * org.mozkito.infozilla.Ressources.Java_CodeDB.txt
+	 * Stores the type of source code region as defined in org.mozkito.infozilla.Ressources.Java_CodeDB.txt
 	 */
 	public String keyword;
 	

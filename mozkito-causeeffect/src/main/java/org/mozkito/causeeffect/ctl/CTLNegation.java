@@ -13,11 +13,11 @@
 
 package org.mozkito.causeeffect.ctl;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent negations of CTL formulas.
@@ -28,11 +28,11 @@ public class CTLNegation extends CTLComposedFormula {
 	
 	/**
 	 * Returns a negation of a given CTL formula.
-	 * 
-	 * @param formula
-	 *            Formula to create negation of.
+	 *
+	 * @param formula Formula to create negation of.
+	 * @return the cTL negation
 	 */
-	public static CTLNegation get(CTLFormula formula) {
+	public static CTLNegation get(final CTLFormula formula) {
 		return new CTLNegation(formula);
 	}
 	
@@ -44,9 +44,9 @@ public class CTLNegation extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLNegation getFromXMLRepresentation(Element element) {
+	public static CTLNegation getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-not");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLNegation.get(formula);
 	}
 	
@@ -59,7 +59,7 @@ public class CTLNegation extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to create negation of.
 	 */
-	private CTLNegation(CTLFormula formula) {
+	private CTLNegation(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -92,7 +92,7 @@ public class CTLNegation extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "(not " + this.formula.getTextRepresentation(verbosity) + ")";
 	}
 	
@@ -101,8 +101,8 @@ public class CTLNegation extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-not");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-not");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -112,15 +112,15 @@ public class CTLNegation extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.formula.modelCheckAllStates(kripkeStruct);
-		for (State state : kripkeStruct.getAllStates()) {
-			boolean formulaHolds = kripkeStruct.isFormulaTrue(state, this.formula);
-			boolean thisHolds = !formulaHolds;
+		for (final State state : kripkeStruct.getAllStates()) {
+			final boolean formulaHolds = kripkeStruct.isFormulaTrue(state, this.formula);
+			final boolean thisHolds = !formulaHolds;
 			kripkeStruct.markEvaluatedFormula(state, this, thisHolds);
 		}
 		

@@ -89,6 +89,13 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		return result;
 	}
 	
+	/**
+	 * Creates the instance.
+	 *
+	 * @param untangling the untangling
+	 * @param trainFraction the train fraction
+	 * @return the sVM aggregation
+	 */
 	public static SVMAggregation createInstance(final Untangling untangling,
 	                                            @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
 		TRAIN_FRACTION = trainFraction;

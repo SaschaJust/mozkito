@@ -62,13 +62,31 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/**
+	 * The Class Factory.
+	 */
 	public static class Factory extends MultilevelClusteringScoreVisitorFactory<ChangeCouplingVoter> {
 		
+		/** The min support. */
 		private final int             minSupport;
+		
+		/** The min confidence. */
 		private final double          minConfidence;
+		
+		/** The persistence util. */
 		private final PersistenceUtil persistenceUtil;
+		
+		/** The cache dir. */
 		private final File            cacheDir;
 		
+		/**
+		 * Instantiates a new factory.
+		 *
+		 * @param minSupport the min support
+		 * @param minConfidence the min confidence
+		 * @param persistenceUtil the persistence util
+		 * @param cacheDir the cache dir
+		 */
 		protected Factory(final int minSupport, final double minConfidence,
 		        @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 			this.minSupport = minSupport;
@@ -77,6 +95,9 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			this.cacheDir = cacheDir;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		 */
 		@Override
 		public ChangeCouplingVoter createVoter(final RCSTransaction rCSTransaction) {
 			return new ChangeCouplingVoter(rCSTransaction, this.minSupport, this.minConfidence, this.persistenceUtil,
@@ -106,16 +127,24 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	public static class Options extends
 	        ArgumentSetOptions<ChangeCouplingVoter.Factory, ArgumentSet<ChangeCouplingVoter.Factory, Options>> {
 		
+		/** The min support options. */
 		private net.ownhero.dev.hiari.settings.LongArgument.Options      minSupportOptions;
+		
+		/** The min confidence options. */
 		private net.ownhero.dev.hiari.settings.DoubleArgument.Options    minConfidenceOptions;
+		
+		/** The cache dir options. */
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options cacheDirOptions;
+		
+		/** The database options. */
 		private final DatabaseOptions                                    databaseOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
+		 * @param databaseOptions the database options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final DatabaseOptions databaseOptions) {

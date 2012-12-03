@@ -16,13 +16,17 @@ package org.mozkito.causeeffect.ctl;
 import java.util.Collection;
 
 /**
+ * The Class CTLComposedFormula.
+ *
  * @author Kim Herzig <kim@mozkito.org>
- * 
  */
 public abstract class CTLComposedFormula extends CTLFormula {
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.causeeffect.ctl.CTLFormula#equals(java.lang.Object)
+	 */
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -32,7 +36,7 @@ public abstract class CTLComposedFormula extends CTLFormula {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		CTLComposedFormula other = (CTLComposedFormula) obj;
+		final CTLComposedFormula other = (CTLComposedFormula) obj;
 		if (this.getSubformula() == null) {
 			if (other.getSubformula() != null) {
 				return false;
@@ -43,10 +47,18 @@ public abstract class CTLComposedFormula extends CTLFormula {
 		return true;
 	}
 	
+	/**
+	 * Gets the subformula.
+	 *
+	 * @return the subformula
+	 */
 	public abstract CTLFormula getSubformula();
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
+	 */
 	@Override
-	public void putAttomicFormulas(Collection<CTLAtomicFormula> atomicFormulas) {
+	public void putAttomicFormulas(final Collection<CTLAtomicFormula> atomicFormulas) {
 		this.getSubformula().putAttomicFormulas(atomicFormulas);
 	}
 	

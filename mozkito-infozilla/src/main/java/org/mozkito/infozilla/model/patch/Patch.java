@@ -21,12 +21,13 @@ import org.mozkito.infozilla.model.attachment.Attachment;
 
 /**
  * The Class Patch.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public abstract class Patch implements Attachable, Inlineable {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
 	 */
 	@Override

@@ -13,13 +13,13 @@
 
 package org.mozkito.causeeffect.ctl;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent implications of CTL formulas.
@@ -30,14 +30,13 @@ public class CTLImplication extends CTLBilateralFormula {
 	
 	/**
 	 * Returns an implication between two given CTL formulas.
-	 * 
-	 * @param left
-	 *            Left side of the implication.
-	 * @param right
-	 *            Right side of the implication.
+	 *
+	 * @param f the f
+	 * @param g the g
+	 * @return the cTL implication
 	 */
-	public static CTLImplication get(CTLFormula f,
-	                                 CTLFormula g) {
+	public static CTLImplication get(final CTLFormula f,
+	                                 final CTLFormula g) {
 		return new CTLImplication(f, g);
 	}
 	
@@ -49,15 +48,15 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLImplication getFromXMLRepresentation(Element element) {
+	public static CTLImplication getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-if");
 		CTLFormula left = null;
 		CTLFormula right = null;
-		NodeList formulaNodes = element.getChildNodes();
+		final NodeList formulaNodes = element.getChildNodes();
 		for (int i = 0; i < formulaNodes.getLength(); i++) {
-			Node node = formulaNodes.item(i);
+			final Node node = formulaNodes.item(i);
 			if (node instanceof Element) {
-				Element subformulaXML = (Element) node;
+				final Element subformulaXML = (Element) node;
 				if (subformulaXML.getTagName().equals("left")) {
 					assert left == null;
 					left = getCTLFormulaFromXMLs(subformulaXML.getChildNodes());
@@ -71,10 +70,10 @@ public class CTLImplication extends CTLBilateralFormula {
 	}
 	
 	/** Left side of the implication. */
-	private CTLFormula left;
+	private final CTLFormula left;
 	
 	/** Right side of the implication. */
-	private CTLFormula right;
+	private final CTLFormula right;
 	
 	/**
 	 * Creates an implication between two given CTL formulas.
@@ -84,7 +83,7 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * @param right
 	 *            Right side of the implication.
 	 */
-	private CTLImplication(CTLFormula left, CTLFormula right) {
+	private CTLImplication(final CTLFormula left, final CTLFormula right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -131,7 +130,7 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "(" + this.left.getTextRepresentation(verbosity) + " => " + this.right.getTextRepresentation(verbosity)
 		        + ")";
 	}
@@ -141,12 +140,12 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-if");
-		Element leftXML = xml.createElement("left");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-if");
+		final Element leftXML = xml.createElement("left");
 		leftXML.appendChild(this.left.getXMLRepresentation(xml));
 		ctlXML.appendChild(leftXML);
-		Element rightXML = xml.createElement("right");
+		final Element rightXML = xml.createElement("right");
 		rightXML.appendChild(this.right.getXMLRepresentation(xml));
 		ctlXML.appendChild(rightXML);
 		return ctlXML;
@@ -157,17 +156,17 @@ public class CTLImplication extends CTLBilateralFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.left.modelCheckAllStates(kripkeStruct);
 		this.right.modelCheckAllStates(kripkeStruct);
-		for (State state : kripkeStruct.getAllStates()) {
-			boolean leftHolds = kripkeStruct.isFormulaTrue(state, this.left);
-			boolean rightHolds = kripkeStruct.isFormulaTrue(state, this.right);
-			boolean thisHolds = !leftHolds | rightHolds;
+		for (final State state : kripkeStruct.getAllStates()) {
+			final boolean leftHolds = kripkeStruct.isFormulaTrue(state, this.left);
+			final boolean rightHolds = kripkeStruct.isFormulaTrue(state, this.right);
+			final boolean thisHolds = !leftHolds | rightHolds;
 			kripkeStruct.markEvaluatedFormula(state, this, thisHolds);
 		}
 		

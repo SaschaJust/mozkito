@@ -18,8 +18,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.mozkito.versions.model.RCSFile;
 
+import org.mozkito.versions.model.RCSFile;
 
 /**
  * Instances of this class represent labels used by Kripke structures to label the states.
@@ -39,23 +39,22 @@ public class Label {
 	 *            Content to be associated with the label.
 	 * @return Label associated with the given content.
 	 */
-	public static Label getLabel(RCSFile content) {
-		if (!content2label.containsKey(content.toString())) {
-			content2label.put(content.toString(), new Label(content));
+	public static Label getLabel(final RCSFile content) {
+		if (!Label.content2label.containsKey(content.toString())) {
+			Label.content2label.put(content.toString(), new Label(content));
 		}
-		return content2label.get(content.toString());
+		return Label.content2label.get(content.toString());
 	}
 	
 	/** Content of this label. Different labels have different contents. */
-	private Long content;
+	private final Long content;
 	
 	/**
 	 * Creates a new label and associates it with the given content.
-	 * 
-	 * @param event
-	 *            Content to attach to the label created.
+	 *
+	 * @param content the content
 	 */
-	private Label(RCSFile content) {
+	private Label(final RCSFile content) {
 		this.content = content.getGeneratedId();
 	}
 	
@@ -64,12 +63,12 @@ public class Label {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
 		}
 		if (o instanceof Label) {
-			Label other = (Label) o;
+			final Label other = (Label) o;
 			return new EqualsBuilder().append(this.content, other.content).isEquals();
 		}
 		return false;

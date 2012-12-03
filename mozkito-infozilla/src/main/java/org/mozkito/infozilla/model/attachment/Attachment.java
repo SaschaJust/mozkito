@@ -60,6 +60,16 @@ import org.mozkito.persistence.Annotated;
 @Entity
 public class Attachment implements Annotated {
 	
+	/**
+     * 
+     */
+	private static final int  SHA1_SIZE        = 32;
+	
+	/**
+     * 
+     */
+	private static final int  MD5_SIZE         = 16;
+	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3626906010864829890L;
 	
@@ -181,7 +191,7 @@ public class Attachment implements Annotated {
 	 */
 	public static Attachment fetch(final AttachmentEntry entry) throws FetchException {
 		try {
-			final byte data[] = IOUtils.binaryfetch(entry.toURI());
+			final byte[] data = IOUtils.binaryfetch(entry.toURI());
 			
 			final Attachment attachment = new Attachment(entry, data);
 			
@@ -293,10 +303,10 @@ public class Attachment implements Annotated {
 	private AttachmentType  type = AttachmentType.UNKNOWN;
 	
 	/** The md5. */
-	private byte[]          md5  = new byte[16];
+	private byte[]          md5  = new byte[MD5_SIZE];
 	
 	/** The sha1. */
-	private byte[]          sha1 = new byte[32];
+	private byte[]          sha1 = new byte[SHA1_SIZE];
 	
 	/** The attachable. */
 	private Attachable      attachable;

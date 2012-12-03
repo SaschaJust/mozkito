@@ -30,11 +30,8 @@ public class GenealogyPartitionNode {
 	
 	/**
 	 * Instantiates a new genealogy partition node.
-	 * 
-	 * @param t
-	 *            the t
-	 * @param nodeId
-	 *            the node id
+	 *
+	 * @param t the t
 	 */
 	public GenealogyPartitionNode(final ChangeGenealogyLayerNode t) {
 		this.t = t;
@@ -43,13 +40,9 @@ public class GenealogyPartitionNode {
 	
 	/**
 	 * Instantiates a new genealogy partition node.
-	 * 
-	 * @param t
-	 *            the t
-	 * @param nodeId
-	 *            the node id
-	 * @param lastNode
-	 *            the last node
+	 *
+	 * @param t the t
+	 * @param lastNode the last node
 	 */
 	public GenealogyPartitionNode(final ChangeGenealogyLayerNode t, final boolean lastNode) {
 		this.t = t;

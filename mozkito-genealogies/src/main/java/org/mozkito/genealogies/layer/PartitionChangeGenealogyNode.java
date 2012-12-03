@@ -18,15 +18,20 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
 
 /**
+ * The Class PartitionChangeGenealogyNode.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class PartitionChangeGenealogyNode extends ChangeGenealogyLayerNode {
 	
+	/** The partition id. */
 	private final String partitionId;
 	
 	/**
-	 * @param partition
+	 * Instantiates a new partition change genealogy node.
+	 *
+	 * @param partitionId the partition id
+	 * @param partition the partition
 	 */
 	public PartitionChangeGenealogyNode(final String partitionId, final Collection<JavaChangeOperation> partition) {
 		super(partition);

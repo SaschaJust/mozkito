@@ -18,35 +18,37 @@ package org.mozkito.infozilla.model.archive;
 import java.io.File;
 import java.io.IOException;
 
-import org.mozkito.infozilla.model.attachment.Attachment;
-
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
+import org.mozkito.infozilla.model.attachment.Attachment;
+
 /**
  * The Class Bzip2Archive.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Bzip2Archive extends Archive {
 	
 	/**
 	 * Instantiates a new bzip2 archive.
-	 *
-	 * @param attachment the attachment
+	 * 
+	 * @param attachment
+	 *            the attachment
 	 */
 	public Bzip2Archive(final Attachment attachment) {
 		super(attachment);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.archive.Archive#extract()
 	 */
 	@Override
 	public File extract() throws IOException {
-		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		FileUtils.dump(getAttachment().getData(), file);
-		File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+		final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
 		FileUtils.bunzip2(file, dir);
 		return dir;
 	}

@@ -28,6 +28,11 @@ import net.ownhero.dev.regex.Regex;
  */
 public class UnifiedDiff extends Patch {
 	
+	/**
+     * 
+     */
+	private static final int      INDEX_OFFSET = 7;
+	
 	/** The index. */
 	private String                index        = "";
 	
@@ -126,8 +131,8 @@ public class UnifiedDiff extends Patch {
 	 * @return the index
 	 */
 	public String getIndex() {
-		if (this.index.length() > 7) {
-			return (this.index.substring(7, this.index.length()));
+		if (this.index.length() > INDEX_OFFSET) {
+			return (this.index.substring(INDEX_OFFSET, this.index.length()));
 		}
 		return this.index;
 	}

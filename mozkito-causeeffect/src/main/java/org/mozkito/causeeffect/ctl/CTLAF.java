@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL AF formulas. "AF f" means that "along all paths, finally f"
@@ -30,15 +30,16 @@ import org.w3c.dom.Element;
  */
 public class CTLAF extends CTLComposedFormula {
 	
+	/** The logger. */
 	private static Logger logger = Logger.getLogger(CTLAF.class);
 	
 	/**
 	 * Returns an "AF f" formula from a given "f" formula.
-	 * 
-	 * @param formula
-	 *            Formula to surround with AF.
+	 *
+	 * @param formula Formula to surround with AF.
+	 * @return the ctlaf
 	 */
-	public static CTLAF get(CTLFormula formula) {
+	public static CTLAF get(final CTLFormula formula) {
 		return new CTLAF(formula);
 	}
 	
@@ -50,9 +51,9 @@ public class CTLAF extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLAF getFromXMLRepresentation(Element element) {
+	public static CTLAF getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-AF");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLAF.get(formula);
 	}
 	
@@ -65,7 +66,7 @@ public class CTLAF extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to surround with AF.
 	 */
-	private CTLAF(CTLFormula formula) {
+	private CTLAF(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -84,18 +85,21 @@ public class CTLAF extends CTLComposedFormula {
 	}
 	
 	/**
-	 * @param trueStates
-	 * @return
+	 * Gets the parent states.
+	 *
+	 * @param <V> the value type
+	 * @param kripkeStruct the kripke struct
+	 * @param states the states
+	 * @return the parent states
 	 * @author Kim Herzig <kim@mozkito.org>
-	 * @param <V>
 	 */
-	private <V> Set<State> getParentStates(KripkeStructure<V> kripkeStruct,
-	                                       Set<State> states) {
-		Set<State> parents = new HashSet<State>();
+	private <V> Set<State> getParentStates(final KripkeStructure<V> kripkeStruct,
+	                                       final Set<State> states) {
+		final Set<State> parents = new HashSet<State>();
 		Set<State> children = states;
 		while (!children.isEmpty()) {
-			Set<State> newChildren = new HashSet<State>();
-			for (State child : children) {
+			final Set<State> newChildren = new HashSet<State>();
+			for (final State child : children) {
 				parents.addAll(kripkeStruct.getPredecessors(child));
 				newChildren.addAll(kripkeStruct.getPredecessors(child));
 			}
@@ -119,7 +123,7 @@ public class CTLAF extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "AF " + this.formula.getTextRepresentation(verbosity);
 	}
 	
@@ -128,8 +132,8 @@ public class CTLAF extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-AF");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-AF");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -139,17 +143,17 @@ public class CTLAF extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.formula.modelCheckAllStates(kripkeStruct);
 		
-		Set<State> trueStates = new HashSet<State>();
-		Set<State> seenStates = new HashSet<State>();
+		final Set<State> trueStates = new HashSet<State>();
+		final Set<State> seenStates = new HashSet<State>();
 		
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			if (kripkeStruct.isFormulaTrue(state, this.formula)) {
 				trueStates.add(state);
 				seenStates.add(state);
@@ -158,9 +162,9 @@ public class CTLAF extends CTLComposedFormula {
 		}
 		Set<State> trueParentStates = this.getParentStates(kripkeStruct, trueStates);
 		while (!trueParentStates.isEmpty()) {
-			Set<State> newTrueParentStates = new HashSet<State>();
-			for (State parent : trueParentStates) {
-				Set<State> parentChildren = kripkeStruct.getSuccessors(parent);
+			final Set<State> newTrueParentStates = new HashSet<State>();
+			for (final State parent : trueParentStates) {
+				final Set<State> parentChildren = kripkeStruct.getSuccessors(parent);
 				
 				if (trueStates.containsAll(parentChildren)) {
 					// if all children are true the formula holds
@@ -176,18 +180,18 @@ public class CTLAF extends CTLComposedFormula {
 				}
 			}
 			if (trueParentStates.size() == newTrueParentStates.size()) {
-				logger.fatal("CTLAF would end up in an endless loop. Abort!");
+				CTLAF.logger.fatal("CTLAF would end up in an endless loop. Abort!");
 				throw new RuntimeException();
 			}
 			trueParentStates = newTrueParentStates;
 		}
 		
-		for (State trueState : trueStates) {
+		for (final State trueState : trueStates) {
 			kripkeStruct.markEvaluatedFormula(trueState, this, true);
 		}
-		Set<State> falseStates = kripkeStruct.getAllStates();
+		final Set<State> falseStates = kripkeStruct.getAllStates();
 		falseStates.removeAll(trueStates);
-		for (State falseState : falseStates) {
+		for (final State falseState : falseStates) {
 			kripkeStruct.markEvaluatedFormula(falseState, this, false);
 		}
 		

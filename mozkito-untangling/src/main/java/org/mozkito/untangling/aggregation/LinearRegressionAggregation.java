@@ -108,6 +108,12 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		}
 	}
 	
+	/**
+	 * Instantiates a new linear regression aggregation.
+	 *
+	 * @param untangling the untangling
+	 * @param trainFraction the train fraction
+	 */
 	public LinearRegressionAggregation(final Untangling untangling,
 	        @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
 		super();

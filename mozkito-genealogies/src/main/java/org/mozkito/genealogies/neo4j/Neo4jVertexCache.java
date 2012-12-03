@@ -27,23 +27,41 @@ import org.neo4j.graphdb.index.IndexHits;
 
 
 /**
+ * The Class Neo4jVertexCache.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class Neo4jVertexCache {
 	
+	/**
+	 * The Class Neo4jVertexCacheEntry.
+	 */
 	private class Neo4jVertexCacheEntry implements Comparable<Neo4jVertexCacheEntry> {
 		
+		/** The last acccess. */
 		private DateTime   lastAcccess;
+		
+		/** The nodeid. */
 		private final Long nodeid;
+		
+		/** The node. */
 		private final Node node;
 		
+		/**
+		 * Instantiates a new neo4j vertex cache entry.
+		 *
+		 * @param nodeid the nodeid
+		 * @param node the node
+		 */
 		public Neo4jVertexCacheEntry(final long nodeid, final Node node) {
 			this.nodeid = nodeid;
 			this.lastAcccess = new DateTime();
 			this.node = node;
 		}
 		
+		/**
+		 * Access.
+		 */
 		public void access() {
 			this.lastAcccess = new DateTime();
 		}
@@ -62,11 +80,21 @@ public class Neo4jVertexCache {
 			return 0;
 		}
 		
+		/**
+		 * Gets the node.
+		 *
+		 * @return the node
+		 */
 		public Node getNode() {
 			access();
 			return this.node;
 		}
 		
+		/**
+		 * Gets the node id.
+		 *
+		 * @return the node id
+		 */
 		public long getNodeId() {
 			access();
 			return this.nodeid;
@@ -74,13 +102,27 @@ public class Neo4jVertexCache {
 		
 	}
 	
+	/** The node index. */
 	private final Index<Node>                      nodeIndex;
+	
+	/** The cache. */
 	private final Map<Long, Neo4jVertexCacheEntry> cache = new HashMap<>();
 	
+	/**
+	 * Instantiates a new neo4j vertex cache.
+	 *
+	 * @param nodeIndex the node index
+	 */
 	public Neo4jVertexCache(final Index<Node> nodeIndex) {
 		this.nodeIndex = nodeIndex;
 	}
 	
+	/**
+	 * Gets the node.
+	 *
+	 * @param op the op
+	 * @return the node
+	 */
 	public Node getNode(final JavaChangeOperation op) {
 		final Neo4jVertexCacheEntry cacheEntry = this.cache.get(op.getId());
 		if (cacheEntry != null) {

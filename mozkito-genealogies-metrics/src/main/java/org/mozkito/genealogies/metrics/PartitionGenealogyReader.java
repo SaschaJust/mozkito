@@ -15,15 +15,15 @@ package org.mozkito.genealogies.metrics;
 
 import java.util.Iterator;
 
-import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
-import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
+import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 
 /**
  * The Class PartitionGenealogyReader.

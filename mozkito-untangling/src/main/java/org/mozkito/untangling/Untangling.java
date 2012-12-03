@@ -48,6 +48,8 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
+import org.uncommons.maths.combinatorics.PermutationGenerator;
+
 import org.mozkito.clustering.AvgCollapseVisitor;
 import org.mozkito.clustering.MaxCollapseVisitor;
 import org.mozkito.clustering.MultilevelClustering;
@@ -75,8 +77,6 @@ import org.mozkito.untangling.voters.FileDistanceVoter;
 import org.mozkito.untangling.voters.LineDistanceVoter;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
 import org.mozkito.versions.model.RCSTransaction;
-import org.uncommons.maths.combinatorics.PermutationGenerator;
-
 
 /**
  * The Class Untangling.
@@ -431,6 +431,9 @@ public class Untangling {
 		}
 	}
 	
+	/**
+	 * Run precision experiment.
+	 */
 	public void runPrecisionExperiment() {
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		

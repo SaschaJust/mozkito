@@ -13,13 +13,32 @@
 
 package org.mozkito.causeeffect.kripke;
 
+/**
+ * The Class Triple.
+ *
+ * @param <A> the generic type
+ * @param <B> the generic type
+ * @param <C> the generic type
+ */
 public class Triple<A, B, C> {
 	
+	/** The a. */
 	public A a;
+	
+	/** The b. */
 	public B b;
+	
+	/** The c. */
 	public C c;
 	
-	public Triple(A a, B b, C c) {
+	/**
+	 * Instantiates a new triple.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @param c the c
+	 */
+	public Triple(final A a, final B b, final C c) {
 		this.a = a;
 		this.b = b;
 		this.c = c;

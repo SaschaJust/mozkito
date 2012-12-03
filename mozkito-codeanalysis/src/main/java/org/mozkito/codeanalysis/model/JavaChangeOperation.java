@@ -81,7 +81,7 @@ public class JavaChangeOperation implements Annotated {
 			return null;
 		}
 		
-		final Attribute revAttribute = element.getAttribute(TRANSACTION_TAG_NAME);
+		final Attribute revAttribute = element.getAttribute(JavaChangeOperation.TRANSACTION_TAG_NAME);
 		final String transaction_id = revAttribute.getValue();
 		
 		final Element javaElementChild = element.getChild(JavaElementLocation.JAVA_ELEMENT_LOCATION_TAG);
@@ -262,7 +262,7 @@ public class JavaChangeOperation implements Annotated {
 	@Transient
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(getChangeType().toString());
-		thisElement.setAttribute(TRANSACTION_TAG_NAME, getRevision().getTransaction().getId());
+		thisElement.setAttribute(JavaChangeOperation.TRANSACTION_TAG_NAME, getRevision().getTransaction().getId());
 		thisElement.addContent(getChangedElementLocation().getXMLRepresentation());
 		return thisElement;
 	}

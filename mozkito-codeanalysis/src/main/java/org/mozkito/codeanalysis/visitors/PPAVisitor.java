@@ -17,9 +17,9 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import org.mozkito.codeanalysis.model.JavaElementLocation;
 import org.mozkito.codeanalysis.model.JavaElementLocationSet;
-
 
 /**
  * The Interface PPAVisitor.

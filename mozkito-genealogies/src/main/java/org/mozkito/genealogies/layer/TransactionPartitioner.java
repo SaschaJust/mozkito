@@ -25,9 +25,15 @@ import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.versions.model.RCSTransaction;
 
 
+/**
+ * The Class TransactionPartitioner.
+ */
 public class TransactionPartitioner implements
         PartitionGenerator<Collection<JavaChangeOperation>, Collection<PartitionChangeGenealogyNode>> {
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.PartitionGenerator#partition(java.lang.Object)
+	 */
 	@Override
 	public Collection<PartitionChangeGenealogyNode> partition(final Collection<JavaChangeOperation> input) {
 		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();

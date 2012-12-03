@@ -13,11 +13,19 @@
 package org.mozkito.genealogies.utils;
 
 /**
+ * The Interface VertexSelector.
+ *
+ * @param <T> the generic type
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public interface VertexSelector<T> {
 	
+	/**
+	 * Select vertex.
+	 *
+	 * @param vertex the vertex
+	 * @return true, if successful
+	 */
 	public boolean selectVertex(T vertex);
 	
 }

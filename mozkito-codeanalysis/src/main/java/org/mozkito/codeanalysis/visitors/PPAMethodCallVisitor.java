@@ -31,11 +31,11 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
+
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
 import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.model.JavaMethodCall;
-
 
 /**
  * The Class PPAMethodCallVisitor generated MethodCalls(Locations) for the given compilation unit. Instances must be
@@ -50,10 +50,9 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#endVisit(de.
-	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit,
-	 * org.eclipse.jdt.core.dom.ASTNode, org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#endVisit(de. unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation,
 	 * org.mozkito.ppa.model.JavaElementCache)
 	 */
 	@Override
@@ -77,10 +76,9 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#postVisit(de.
-	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit,
-	 * org.eclipse.jdt.core.dom.ASTNode, org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation, int,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#postVisit(de. unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation, int,
 	 * org.mozkito.ppa.model.JavaElementCache)
 	 */
 	@Override
@@ -167,8 +165,8 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 		
 		final ITypeBinding[] args = mBinding.getParameterTypes();
 		final List<String> arguments = new ArrayList<String>();
-		for (int i = 0; i < args.length; ++i) {
-			arguments.add(args[i].getName());
+		for (final ITypeBinding arg : args) {
+			arguments.add(arg.getName());
 		}
 		
 		JavaElement parent = classContext.getElement();
@@ -191,10 +189,9 @@ public class PPAMethodCallVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#preVisit(de.
-	 * unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit,
-	 * org.eclipse.jdt.core.dom.ASTNode, org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation, int, int,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#preVisit(de. unisaarland.cs.st.reposuite.ppa.visitors.PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation, int, int,
 	 * org.mozkito.ppa.model.JavaElementCache)
 	 */
 	@Override

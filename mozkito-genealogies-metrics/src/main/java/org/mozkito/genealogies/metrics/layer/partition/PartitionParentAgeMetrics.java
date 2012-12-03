@@ -23,7 +23,6 @@ import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalParentAgeMetrics;
 import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
 
-
 /**
  * The Class PartitionParentAgeMetrics.
  * 

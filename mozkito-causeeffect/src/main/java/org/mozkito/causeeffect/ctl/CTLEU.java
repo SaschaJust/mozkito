@@ -18,13 +18,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL EU formulas. "E (f U g)" means that
@@ -37,14 +37,13 @@ public class CTLEU extends CTLBilateralFormula {
 	
 	/**
 	 * Returns an "E (f U g)" formula from given "f" and "g" formulas.
-	 * 
-	 * @param f
-	 *            Formula before "U"
-	 * @param g
-	 *            Formula after "U"
+	 *
+	 * @param f Formula before "U"
+	 * @param g Formula after "U"
+	 * @return the ctleu
 	 */
-	public static CTLEU get(CTLFormula f,
-	                        CTLFormula g) {
+	public static CTLEU get(final CTLFormula f,
+	                        final CTLFormula g) {
 		return new CTLEU(f, g);
 	}
 	
@@ -56,15 +55,15 @@ public class CTLEU extends CTLBilateralFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLEU getFromXMLRepresentation(Element element) {
+	public static CTLEU getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-EU");
 		CTLFormula left = null;
 		CTLFormula right = null;
-		NodeList formulaNodes = element.getChildNodes();
+		final NodeList formulaNodes = element.getChildNodes();
 		for (int i = 0; i < formulaNodes.getLength(); i++) {
-			Node node = formulaNodes.item(i);
+			final Node node = formulaNodes.item(i);
 			if (node instanceof Element) {
-				Element subformulaXML = (Element) node;
+				final Element subformulaXML = (Element) node;
 				if (subformulaXML.getTagName().equals("left")) {
 					assert left == null;
 					left = getCTLFormulaFromXMLs(subformulaXML.getChildNodes());
@@ -78,10 +77,10 @@ public class CTLEU extends CTLBilateralFormula {
 	}
 	
 	/** "f" --- formula before "U". */
-	private CTLFormula f;
+	private final CTLFormula f;
 	
 	/** "g" --- formula after "U". */
-	private CTLFormula g;
+	private final CTLFormula g;
 	
 	/**
 	 * Creates an "E (f U g)" formula from given "f" and "g" formulas.
@@ -91,7 +90,7 @@ public class CTLEU extends CTLBilateralFormula {
 	 * @param g
 	 *            Formula after "U"
 	 */
-	private CTLEU(CTLFormula f, CTLFormula g) {
+	private CTLEU(final CTLFormula f, final CTLFormula g) {
 		this.f = f;
 		this.g = g;
 	}
@@ -138,7 +137,7 @@ public class CTLEU extends CTLBilateralFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "E (" + this.f.getTextRepresentation(verbosity) + " U " + this.g.getTextRepresentation(verbosity) + ")";
 	}
 	
@@ -147,12 +146,12 @@ public class CTLEU extends CTLBilateralFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-EU");
-		Element leftXML = xml.createElement("left");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-EU");
+		final Element leftXML = xml.createElement("left");
 		leftXML.appendChild(this.f.getXMLRepresentation(xml));
 		ctlXML.appendChild(leftXML);
-		Element rightXML = xml.createElement("right");
+		final Element rightXML = xml.createElement("right");
 		rightXML.appendChild(this.g.getXMLRepresentation(xml));
 		ctlXML.appendChild(rightXML);
 		return ctlXML;
@@ -163,7 +162,7 @@ public class CTLEU extends CTLBilateralFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
@@ -177,18 +176,18 @@ public class CTLEU extends CTLBilateralFormula {
 		// holds, too. Iterate through all predecessors recursively and mark all
 		// of them, for which f holds, as states where E (f U g) holds. When
 		// done, all marked states are those where E (f U g) holds.
-		Set<State> trueStates = new HashSet<State>();
-		Set<State> falseStates = new HashSet<State>(kripkeStruct.getAllStates());
-		Queue<State> statesToConsider = new LinkedList<State>();
-		for (State state : kripkeStruct.getAllStates()) {
+		final Set<State> trueStates = new HashSet<State>();
+		final Set<State> falseStates = new HashSet<State>(kripkeStruct.getAllStates());
+		final Queue<State> statesToConsider = new LinkedList<State>();
+		for (final State state : kripkeStruct.getAllStates()) {
 			if (kripkeStruct.isFormulaTrue(state, this.g)) {
 				statesToConsider.add(state);
 				trueStates.add(state);
 			}
 		}
 		while (!statesToConsider.isEmpty()) {
-			State state = statesToConsider.poll();
-			for (State pred : kripkeStruct.getPredecessors(state)) {
+			final State state = statesToConsider.poll();
+			for (final State pred : kripkeStruct.getPredecessors(state)) {
 				if (kripkeStruct.isFormulaTrue(pred, this.f) && !trueStates.contains(pred)) {
 					statesToConsider.add(pred);
 					trueStates.add(pred);
@@ -198,10 +197,10 @@ public class CTLEU extends CTLBilateralFormula {
 		falseStates.removeAll(trueStates);
 		
 		// mark states in the Kripke structure according to the results
-		for (State state : trueStates) {
+		for (final State state : trueStates) {
 			kripkeStruct.markEvaluatedFormula(state, this, true);
 		}
-		for (State state : falseStates) {
+		for (final State state : falseStates) {
 			kripkeStruct.markEvaluatedFormula(state, this, false);
 		}
 		

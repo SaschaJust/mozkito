@@ -20,11 +20,19 @@ import org.mozkito.versions.model.RCSTransaction;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 /**
+ * The Class AtomicTransactionImporter.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class AtomicTransactionImporter {
 	
+	/**
+	 * Mark transaction as atomic.
+	 *
+	 * @param rCSTransaction the r cs transaction
+	 * @param persistenceUtil the persistence util
+	 * @return true, if successful
+	 */
 	public static synchronized boolean markTransactionAsAtomic(final RCSTransaction rCSTransaction,
 	                                                           final PersistenceUtil persistenceUtil) {
 		rCSTransaction.setAtomic(true);
@@ -32,6 +40,13 @@ public class AtomicTransactionImporter {
 		return true;
 	}
 	
+	/**
+	 * Mark transaction id as atomic.
+	 *
+	 * @param transactionId the transaction id
+	 * @param persistenceUtil the persistence util
+	 * @return true, if successful
+	 */
 	public static synchronized boolean markTransactionIdAsAtomic(final String transactionId,
 	                                                             final PersistenceUtil persistenceUtil) {
 		final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
@@ -43,6 +58,13 @@ public class AtomicTransactionImporter {
 		return true;
 	}
 	
+	/**
+	 * Mark transaction ids as atomic.
+	 *
+	 * @param transactionIds the transaction ids
+	 * @param persistenceUtil the persistence util
+	 * @return true, if successful
+	 */
 	@NoneNull
 	public static synchronized boolean markTransactionIdsAsAtomic(final Collection<String> transactionIds,
 	                                                              final PersistenceUtil persistenceUtil) {
@@ -58,6 +80,13 @@ public class AtomicTransactionImporter {
 		return true;
 	}
 	
+	/**
+	 * Mark transactions as atomic.
+	 *
+	 * @param rCSTransactions the r cs transactions
+	 * @param persistenceUtil the persistence util
+	 * @return true, if successful
+	 */
 	public static synchronized boolean markTransactionsAsAtomic(final Collection<RCSTransaction> rCSTransactions,
 	                                                            final PersistenceUtil persistenceUtil) {
 		persistenceUtil.beginTransaction();

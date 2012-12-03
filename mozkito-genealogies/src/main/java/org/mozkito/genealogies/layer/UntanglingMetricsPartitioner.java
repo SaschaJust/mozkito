@@ -36,14 +36,27 @@ import org.mozkito.versions.model.RCSTransaction;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
+/**
+ * The Class UntanglingMetricsPartitioner.
+ */
 public class UntanglingMetricsPartitioner implements
         PartitionGenerator<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> {
 	
+	/** The partitions. */
 	Map<Long, Collection<JavaChangeOperation>>                                 partitions     = new HashMap<>();
+	
+	/** The partition names. */
 	Map<Collection<JavaChangeOperation>, String>                               partitionNames = new HashMap<>();
 	
+	/** The partition cache. */
 	Map<Collection<JavaChangeOperation>, Collection<ChangeGenealogyLayerNode>> partitionCache = new ConcurrentHashMap<>();
 	
+	/**
+	 * Instantiates a new untangling metrics partitioner.
+	 *
+	 * @param partitionFile the partition file
+	 * @param coreGenealogy the core genealogy
+	 */
 	public UntanglingMetricsPartitioner(final File partitionFile, final CoreChangeGenealogy coreGenealogy) {
 		
 		final PersistenceUtil persistenceUtil = coreGenealogy.getPersistenceUtil();
@@ -105,6 +118,11 @@ public class UntanglingMetricsPartitioner implements
 		}
 	}
 	
+	/**
+	 * Gets the untangling partitions.
+	 *
+	 * @return the untangling partitions
+	 */
 	public Collection<ChangeGenealogyLayerNode> getUntanglingPartitions() {
 		final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
 		for (final Entry<Collection<JavaChangeOperation>, String> entry : this.partitionNames.entrySet()) {
@@ -115,6 +133,9 @@ public class UntanglingMetricsPartitioner implements
 		return result;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.PartitionGenerator#partition(java.lang.Object)
+	 */
 	@Override
 	public Collection<ChangeGenealogyLayerNode> partition(final Collection<JavaChangeOperation> input) {
 		

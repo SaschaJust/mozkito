@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.transaction;
@@ -22,16 +19,16 @@ import java.util.Comparator;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.Days;
+
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class TransactionDwReachMetric.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionDwReachMetric extends GenealogyTransactionMetric {
@@ -44,8 +41,9 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 	
 	/**
 	 * Instantiates a new transaction dw reach metric.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public TransactionDwReachMetric(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
@@ -55,13 +53,16 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 			public int compare(final RCSTransaction original,
 			                   final RCSTransaction t) {
 				final Days daysBetween = Days.daysBetween(original.getTimestamp(), t.getTimestamp());
-				if (daysBetween.getDays() > dayDiffSize) { return 1; }
+				if (daysBetween.getDays() > TransactionDwReachMetric.dayDiffSize) {
+					return 1;
+				}
 				return -1;
 			}
 		});
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
@@ -69,7 +70,8 @@ public class TransactionDwReachMetric extends GenealogyTransactionMetric {
 		return UniversalDwReachMetric.getMetricNames();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override

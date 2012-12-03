@@ -22,7 +22,8 @@ public class ExpectedBehavior implements Inlineable {
 	/** The text. */
 	String text;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
 	 */
 	@Override
@@ -31,7 +32,8 @@ public class ExpectedBehavior implements Inlineable {
 		return 0;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
 	 */
 	@Override

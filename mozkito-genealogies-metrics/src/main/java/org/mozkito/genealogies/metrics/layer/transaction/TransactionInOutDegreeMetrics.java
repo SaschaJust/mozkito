@@ -1,22 +1,21 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.transaction;
 
 import java.util.Collection;
+
+import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
@@ -24,11 +23,9 @@ import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalInOutDegreeMetrics;
 import org.mozkito.versions.model.RCSTransaction;
 
-import net.ownhero.dev.kisa.Logger;
-
 /**
  * The Class TransactionInOutDegreeMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionInOutDegreeMetrics extends GenealogyTransactionMetric {
@@ -38,15 +35,17 @@ public class TransactionInOutDegreeMetrics extends GenealogyTransactionMetric {
 	
 	/**
 	 * Instantiates a new transaction in out degree metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public TransactionInOutDegreeMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		this.universalMetric = new UniversalInOutDegreeMetrics<RCSTransaction>(genealogy);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
@@ -54,7 +53,8 @@ public class TransactionInOutDegreeMetrics extends GenealogyTransactionMetric {
 		return UniversalInOutDegreeMetrics.getMetricNames();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override

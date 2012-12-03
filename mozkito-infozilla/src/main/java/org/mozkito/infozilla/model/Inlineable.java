@@ -17,21 +17,21 @@ package org.mozkito.infozilla.model;
 
 /**
  * The Interface Inlineable.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Inlineable {
 	
 	/**
 	 * Gets the end position.
-	 *
+	 * 
 	 * @return the end position
 	 */
 	int getEndPosition();
 	
 	/**
 	 * Gets the start position.
-	 *
+	 * 
 	 * @return the start position
 	 */
 	int getStartPosition();

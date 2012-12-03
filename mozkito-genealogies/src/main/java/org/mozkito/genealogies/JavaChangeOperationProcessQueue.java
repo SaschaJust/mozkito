@@ -25,27 +25,67 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
+/**
+ * The Class JavaChangeOperationProcessQueue.
+ */
 public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOperation> {
 	
+	/**
+	 * The Enum IteratorMode.
+	 */
 	protected static enum IteratorMode {
-		DD, MD, AD, DC, MC, AC;
+		
+		/** The dd. */
+		DD, 
+ /** The md. */
+ MD, 
+ /** The ad. */
+ AD, 
+ /** The dc. */
+ DC, 
+ /** The mc. */
+ MC, 
+ /** The ac. */
+ AC;
 	}
 	
+	/** The deleted definitions. */
 	private final List<JavaChangeOperation> deletedDefinitions  = new LinkedList<JavaChangeOperation>();
+	
+	/** The modified definitions. */
 	private final List<JavaChangeOperation> modifiedDefinitions = new LinkedList<JavaChangeOperation>();
+	
+	/** The added definitions. */
 	private final List<JavaChangeOperation> addedDefinitions    = new LinkedList<JavaChangeOperation>();
 	
+	/** The deleted calls. */
 	private final List<JavaChangeOperation> deletedCalls        = new LinkedList<JavaChangeOperation>();
+	
+	/** The modified calls. */
 	private final List<JavaChangeOperation> modifiedCalls       = new LinkedList<JavaChangeOperation>();
+	
+	/** The added calls. */
 	private final List<JavaChangeOperation> addedCalls          = new LinkedList<JavaChangeOperation>();
 	
+	/** The iterator. */
 	private Iterator<JavaChangeOperation>   iterator            = null;
+	
+	/** The iterator mode. */
 	private IteratorMode                    iteratorMode        = IteratorMode.DD;
 	
+	/**
+	 * Instantiates a new java change operation process queue.
+	 */
 	public JavaChangeOperationProcessQueue() {
 		
 	}
 	
+	/**
+	 * Adds the.
+	 *
+	 * @param operation the operation
+	 * @return true, if successful
+	 */
 	@NoneNull
 	public boolean add(final JavaChangeOperation operation) {
 		if (operation.getChangedElementLocation() == null) {
@@ -101,6 +141,9 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	@Override
 	public boolean hasNext() {
 		if (this.iterator == null) {
@@ -138,11 +181,17 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		return hasNext();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	@Override
 	public JavaChangeOperation next() {
 		return this.iterator.next();
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
 	@Override
 	public void remove() {
 		this.iterator.remove();

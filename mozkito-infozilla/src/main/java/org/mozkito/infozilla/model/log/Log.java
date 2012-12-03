@@ -15,10 +15,10 @@ package org.mozkito.infozilla.model.log;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
-
 
 /**
  * The Class Log.
@@ -34,7 +34,8 @@ public class Log implements Attachable, Inlineable {
 	/** The entities. */
 	ArrayList<LogEntry> entities;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
 	 */
 	@Override
@@ -45,14 +46,15 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the end.
-	 *
+	 * 
 	 * @return the end
 	 */
 	public DateTime getEnd() {
 		return this.end;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
 	 */
 	@Override
@@ -63,7 +65,7 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the entities.
-	 *
+	 * 
 	 * @return the entities
 	 */
 	public ArrayList<LogEntry> getEntities() {
@@ -72,14 +74,15 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the start.
-	 *
+	 * 
 	 * @return the start
 	 */
 	public DateTime getStart() {
 		return this.start;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
 	 */
 	@Override
@@ -90,12 +93,12 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the text.
-	 *
+	 * 
 	 * @return the text
 	 */
 	public String getText() {
-		StringBuilder builder = new StringBuilder();
-		for (LogEntry entry : getEntities()) {
+		final StringBuilder builder = new StringBuilder();
+		for (final LogEntry entry : getEntities()) {
 			builder.append(entry.getLine());
 		}
 		return builder.toString();
@@ -103,8 +106,9 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the end.
-	 *
-	 * @param end the end to set
+	 * 
+	 * @param end
+	 *            the end to set
 	 */
 	public void setEnd(final DateTime end) {
 		this.end = end;
@@ -112,8 +116,9 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the entities.
-	 *
-	 * @param entities the entities to set
+	 * 
+	 * @param entities
+	 *            the entities to set
 	 */
 	public void setEntities(final ArrayList<LogEntry> entities) {
 		this.entities = entities;
@@ -121,8 +126,9 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the start.
-	 *
-	 * @param start the start to set
+	 * 
+	 * @param start
+	 *            the start to set
 	 */
 	public void setStart(final DateTime start) {
 		this.start = start;
@@ -130,7 +136,7 @@ public class Log implements Attachable, Inlineable {
 	
 	/**
 	 * Size.
-	 *
+	 * 
 	 * @return the int
 	 */
 	public int size() {

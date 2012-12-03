@@ -5,9 +5,6 @@ package org.mozkito.codeanalysis;
 
 import java.util.concurrent.Semaphore;
 
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.persistence.PersistenceUtil;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
@@ -16,16 +13,32 @@ import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.persistence.PersistenceUtil;
+
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PPAPersister.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PPAPersister extends Sink<JavaChangeOperation> {
 	
+	/** The Constant available. */
 	protected static final Semaphore available = new Semaphore(1, true);
 	
+	/** The i. */
 	private Integer                  i         = 0;
 	
+	/**
+	 * Instantiates a new pPA persister.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param persistenceUtil
+	 *            the persistence util
+	 */
 	public PPAPersister(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
 		
@@ -48,9 +61,9 @@ public class PPAPersister extends Sink<JavaChangeOperation> {
 				}
 				
 				try {
-					available.acquire();
+					PPAPersister.available.acquire();
 				} catch (final InterruptedException e) {
-					available.release();
+					PPAPersister.available.release();
 				}
 				if ((++PPAPersister.this.i % 5000) == 0) {
 					persistenceUtil.commitTransaction();
@@ -58,7 +71,7 @@ public class PPAPersister extends Sink<JavaChangeOperation> {
 				}
 				
 				persistenceUtil.save(data);
-				available.release();
+				PPAPersister.available.release();
 			}
 		};
 		

@@ -77,6 +77,12 @@ public class ChangeGenealogyUtils {
 	/** The genealogies. */
 	private static Map<CoreChangeGenealogy, File> genealogies = new HashMap<CoreChangeGenealogy, File>();
 	
+	/**
+	 * Export to graph ml.
+	 *
+	 * @param genealogy the genealogy
+	 * @param outFile the out file
+	 */
 	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
 	                                   final File outFile) {
 		try {
@@ -90,6 +96,13 @@ public class ChangeGenealogyUtils {
 		}
 	}
 	
+	/**
+	 * Gets the genealogy test environment.
+	 *
+	 * @param tmpGraphDBFile the tmp graph db file
+	 * @param branchFactory the branch factory
+	 * @return the genealogy test environment
+	 */
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
 	                                                                   final BranchFactory branchFactory) {
 		
@@ -405,6 +418,11 @@ public class ChangeGenealogyUtils {
 		return genealogy;
 	}
 	
+	/**
+	 * Register shutdown hook.
+	 *
+	 * @param graphDb the graph db
+	 */
 	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
 		// Registers a shutdown hook for the Neo4j instance so that it
 		// shuts down nicely when the VM exits (even if you "Ctrl-C" the

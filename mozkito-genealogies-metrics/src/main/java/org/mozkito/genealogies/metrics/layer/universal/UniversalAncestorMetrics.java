@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.universal;
@@ -26,10 +23,10 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
-
 
 /**
  * The Class UniversalDependencyMetrics. Returns a set of metric values indicating the number of
@@ -93,25 +90,25 @@ public class UniversalAncestorMetrics<T> {
 	 * @return the metric names
 	 */
 	public static Collection<String> getMetricNames() {
-		if ((metricNames != null) && (!metricNames.isEmpty())) {
-			return metricNames;
+		if ((UniversalAncestorMetrics.metricNames != null) && (!UniversalAncestorMetrics.metricNames.isEmpty())) {
+			return UniversalAncestorMetrics.metricNames;
 		}
-		metricNames = new LinkedList<String>();
-		metricNames.add(allDependants);
+		UniversalAncestorMetrics.metricNames = new LinkedList<String>();
+		UniversalAncestorMetrics.metricNames.add(UniversalAncestorMetrics.allDependants);
 		// metricNames.add(allDependantsD2);
 		// metricNames.add(allDependantsD3);
-		metricNames.add(definitionDependants);
+		UniversalAncestorMetrics.metricNames.add(UniversalAncestorMetrics.definitionDependants);
 		// metricNames.add(definitionDependantsD2);
 		// metricNames.add(definitionDependantsD3);
-		metricNames.add(callDependants);
+		UniversalAncestorMetrics.metricNames.add(UniversalAncestorMetrics.callDependants);
 		// metricNames.add(callDependantsD2);
 		// metricNames.add(callDependantsD3);
 		for (final GenealogyEdgeType eType : GenealogyEdgeType.values()) {
-			metricNames.add(composeMetricName(eType, 1));
+			UniversalAncestorMetrics.metricNames.add(composeMetricName(eType, 1));
 			// metricNames.add(composeMetricName(eType, 2));
 			// metricNames.add(composeMetricName(eType, 3));
 		}
-		return metricNames;
+		return UniversalAncestorMetrics.metricNames;
 	}
 	
 	/** The genealogy. */
@@ -190,7 +187,8 @@ public class UniversalAncestorMetrics<T> {
 		
 		// NumDependencies
 		final int numAllDependants = getNumDependants(node, 1, GenealogyEdgeType.values());
-		result.add(new GenealogyMetricValue(allDependants, this.genealogy.getNodeId(node), numAllDependants));
+		result.add(new GenealogyMetricValue(UniversalAncestorMetrics.allDependants, this.genealogy.getNodeId(node),
+		                                    numAllDependants));
 		
 		// numAllDependants = getNumDependants(node, 2, GenealogyEdgeType.values());
 		// result.add(new GenealogyMetricValue(allDependantsD2, this.genealogy.getNodeId(node), numAllDependants));
@@ -215,8 +213,8 @@ public class UniversalAncestorMetrics<T> {
 		final int numDefinitionDependants = getNumDependants(node, 1, GenealogyEdgeType.DefinitionOnDefinition,
 		                                                     GenealogyEdgeType.DefinitionOnDeletedDefinition,
 		                                                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
-		result.add(new GenealogyMetricValue(definitionDependants, this.genealogy.getNodeId(node),
-		                                    numDefinitionDependants));
+		result.add(new GenealogyMetricValue(UniversalAncestorMetrics.definitionDependants,
+		                                    this.genealogy.getNodeId(node), numDefinitionDependants));
 		// numDefinitionDependants = getNumDependants(node, 2, GenealogyEdgeType.DefinitionOnDefinition,
 		// GenealogyEdgeType.DefinitionOnDeletedDefinition,
 		// GenealogyEdgeType.DeletedDefinitionOnDefinition);
@@ -232,7 +230,8 @@ public class UniversalAncestorMetrics<T> {
 		final int numCallDependants = getNumDependants(node, 1, GenealogyEdgeType.CallOnDefinition,
 		                                               GenealogyEdgeType.DeletedCallOnCall,
 		                                               GenealogyEdgeType.DeletedCallOnDeletedDefinition);
-		result.add(new GenealogyMetricValue(callDependants, this.genealogy.getNodeId(node), numCallDependants));
+		result.add(new GenealogyMetricValue(UniversalAncestorMetrics.callDependants, this.genealogy.getNodeId(node),
+		                                    numCallDependants));
 		// numCallDependants = getNumDependants(node, 2, GenealogyEdgeType.CallOnDefinition,
 		// GenealogyEdgeType.DeletedCallOnCall,
 		// GenealogyEdgeType.DeletedCallOnDeletedDefinition);

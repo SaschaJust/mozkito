@@ -45,13 +45,14 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	public static class Options extends
 	        ArgumentSetOptions<PackageDistanceCombineOperator, ArgumentSet<PackageDistanceCombineOperator, Options>> {
 		
+		/** The max package distance options. */
 		private net.ownhero.dev.hiari.settings.LongArgument.Options maxPackageDistanceOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
@@ -138,11 +139,8 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	
 	/**
 	 * Instantiates a new blob transaction combine operator.
-	 * 
-	 * @param maxPackageDistance
-	 *            the max package distance
-	 * @param timeWindowSize
-	 *            the time window size
+	 *
+	 * @param maxPackageDistance the max package distance
 	 */
 	protected PackageDistanceCombineOperator(final Long maxPackageDistance) {
 		this.maxPackageDistance = maxPackageDistance;

@@ -63,18 +63,36 @@ import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
  */
 public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/**
+	 * The Class Factory.
+	 */
 	public static class Factory extends MultilevelClusteringScoreVisitorFactory<CallGraphVoter> {
 		
+		/** The eclipse dir. */
 		private final File     eclipseDir;
+		
+		/** The cache dir. */
 		private final File     cacheDir;
+		
+		/** The eclipse arguments. */
 		private final String[] eclipseArguments;
 		
+		/**
+		 * Instantiates a new factory.
+		 *
+		 * @param eclipseDir the eclipse dir
+		 * @param eclipseArguments the eclipse arguments
+		 * @param cacheDir the cache dir
+		 */
 		protected Factory(final File eclipseDir, final String[] eclipseArguments, final File cacheDir) {
 			this.eclipseDir = eclipseDir;
 			this.cacheDir = cacheDir;
 			this.eclipseArguments = eclipseArguments;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		 */
 		@Override
 		public CallGraphVoter createVoter(final RCSTransaction rCSTransaction) {
 			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, rCSTransaction, this.cacheDir);
@@ -103,16 +121,24 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	public static class Options extends
 	        ArgumentSetOptions<CallGraphVoter.Factory, ArgumentSet<CallGraphVoter.Factory, Options>> {
 		
+		/** The callgraph eclipse options. */
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callgraphEclipseOptions;
+		
+		/** The call graph cache dir options. */
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options callGraphCacheDirOptions;
+		
+		/** The repository options. */
 		private final RepositoryOptions                                  repositoryOptions;
+		
+		/** The negative filename list argument. */
 		private net.ownhero.dev.hiari.settings.ListArgument.Options      negativeFilenameListArgument;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
+		 * @param repositoryOptions the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {

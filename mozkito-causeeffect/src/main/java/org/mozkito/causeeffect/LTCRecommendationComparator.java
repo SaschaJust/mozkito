@@ -16,15 +16,21 @@ import java.util.Comparator;
 
 import org.mozkito.causeeffect.LTCRecommendation.ChangeProperty;
 
-
 /**
+ * The Class LTCRecommendationComparator.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class LTCRecommendationComparator implements Comparator<LTCRecommendation> {
 	
+	/** The property. */
 	private final ChangeProperty property;
 	
+	/**
+	 * Instantiates a new lTC recommendation comparator.
+	 *
+	 * @param property the property
+	 */
 	public LTCRecommendationComparator(final ChangeProperty property) {
 		this.property = property;
 	}

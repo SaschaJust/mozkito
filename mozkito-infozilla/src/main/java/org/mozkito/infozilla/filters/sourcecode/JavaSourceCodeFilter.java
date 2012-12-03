@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
+import com.Ostermiller.util.CSVParser;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -46,8 +46,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
-import com.Ostermiller.util.CSVParser;
-
+import org.mozkito.infozilla.filters.FilterTextRemover;
 
 /**
  * The JavaSourceCodeFilter class implements the InfozillaFilter interface for JAVA source code structural elements.
@@ -97,6 +96,8 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 	
 	/** The classes own textRemover. */
 	private FilterTextRemover              textRemover;
+	
+	private final int                      OPTION_LENGTH = 3;
 	
 	/**
 	 * Standard Constructor.
@@ -280,13 +281,12 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 		while ((inputLine = fileInput.readLine()) != null) {
 			// Input comes in the format: "keyword","PATTERN","OPTIONS"
 			// A line can be commented out by using //
-			if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
+			if (!"//".equalsIgnoreCase(inputLine.substring(0, 2))) {
 				// we use Ostermillers CSV Parser for sake of ease
 				final String[][] parsedLine = CSVParser.parse(inputLine);
 				final String keyword = parsedLine[0][0];
 				final String pattern = parsedLine[0][1];
-				// Check if we have some options
-				if (parsedLine[0].length == 3) {
+				if (parsedLine[0].length == this.OPTION_LENGTH) {
 					final String options = parsedLine[0][2];
 					this.codePatternOptions.put(keyword, options);
 				} else {
@@ -313,13 +313,13 @@ public class JavaSourceCodeFilter extends SourceCodeFilter {
 			while ((inputLine = fileInput.readLine()) != null) {
 				// Input comes in the format: "keyword","PATTERN","OPTIONS"
 				// A line can be commented out by using //
-				if (!inputLine.substring(0, 2).equalsIgnoreCase("//")) {
+				if (!"//".equalsIgnoreCase(inputLine.substring(0, 2))) {
 					// we use ostermillers CSV Parser for sake of ease
 					final String[][] parsedLine = CSVParser.parse(inputLine);
 					final String keyword = parsedLine[0][0];
 					final String pattern = parsedLine[0][1];
 					// Check if we have some options
-					if (parsedLine[0].length == 3) {
+					if (parsedLine[0].length == this.OPTION_LENGTH) {
 						final String options = parsedLine[0][2];
 						this.codePatternOptions.put(keyword, options);
 					} else {

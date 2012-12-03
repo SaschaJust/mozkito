@@ -215,7 +215,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					Repository repository = null;
 					try {
 						repository = RepositoryFactory.getRepositoryHandler(repositorySetting.type()).newInstance();
-					} catch (InstantiationException | IllegalAccessException | UnregisteredRepositoryTypeException e) {
+					} catch (final InstantiationException | IllegalAccessException
+					        | UnregisteredRepositoryTypeException e) {
 						throw new TestSettingsError(e);
 					}
 					

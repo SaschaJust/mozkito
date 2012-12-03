@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.genealogies.metrics.layer.transaction;
 
@@ -21,16 +18,16 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class TransactionDependencyDiversityMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TransactionDependencyDiversityMetrics extends GenealogyTransactionMetric {
@@ -55,30 +52,33 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 	
 	/**
 	 * Instantiates a new transaction dependency diversity metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
 	public TransactionDependencyDiversityMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
 		genealogy.getCore().getPersistenceUtil();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
-		result.add(avgParentsFileDiversityName);
-		result.add(maxParentsFileDiversityName);
-		result.add(minParentsFileDiversityName);
-		result.add(avgDependantsFileDiversityName);
-		result.add(maxDependantsFileDiversityName);
-		result.add(minDependantsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.avgParentsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.maxParentsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.minParentsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.avgDependantsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.maxDependantsFileDiversityName);
+		result.add(TransactionDependencyDiversityMetrics.minDependantsFileDiversityName);
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override
@@ -102,31 +102,31 @@ public class TransactionDependencyDiversityMetrics extends GenealogyTransactionM
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		
-		result.add(new GenealogyMetricValue(avgParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.avgParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMean()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(maxParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.maxParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMax()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(minParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.minParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMin()
 		                                                           : -1));
 		
-		result.add(new GenealogyMetricValue(avgDependantsFileDiversityName, nodeId,
-		                                    (dependantStat.getN() > 0)
-		                                                              ? dependantStat.getMean()
-		                                                              : -1));
-		result.add(new GenealogyMetricValue(maxDependantsFileDiversityName, nodeId,
-		                                    (dependantStat.getN() > 0)
-		                                                              ? dependantStat.getMax()
-		                                                              : -1));
-		result.add(new GenealogyMetricValue(minDependantsFileDiversityName, nodeId,
-		                                    (dependantStat.getN() > 0)
-		                                                              ? dependantStat.getMin()
-		                                                              : -1));
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.avgDependantsFileDiversityName,
+		                                    nodeId, (dependantStat.getN() > 0)
+		                                                                      ? dependantStat.getMean()
+		                                                                      : -1));
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.maxDependantsFileDiversityName,
+		                                    nodeId, (dependantStat.getN() > 0)
+		                                                                      ? dependantStat.getMax()
+		                                                                      : -1));
+		result.add(new GenealogyMetricValue(TransactionDependencyDiversityMetrics.minDependantsFileDiversityName,
+		                                    nodeId, (dependantStat.getN() > 0)
+		                                                                      ? dependantStat.getMin()
+		                                                                      : -1));
 		
 		return result;
 	}

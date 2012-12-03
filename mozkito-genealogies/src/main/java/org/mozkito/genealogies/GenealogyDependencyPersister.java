@@ -37,10 +37,19 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class GenealogyDependencyPersister extends Sink<JavaChangeOperationProcessQueue> {
 	
+	/** The registry. */
 	private final JavaMethodRegistry  registry;
+	
+	/** The genealogy. */
 	private final CoreChangeGenealogy genealogy;
+	
+	/** The counter. */
 	private int                       counter        = 0;
+	
+	/** The dep counter. */
 	private int                       depCounter     = 0;
+	
+	/** The package counter. */
 	private int                       packageCounter = 0;
 	
 	/**

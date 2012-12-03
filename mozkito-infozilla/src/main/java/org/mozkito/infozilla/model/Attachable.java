@@ -19,15 +19,15 @@ import org.mozkito.infozilla.model.attachment.Attachment;
 
 /**
  * The Interface Attachable.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface Attachable {
 	
 	/**
 	 * Gets the attachment.
-	 *
+	 * 
 	 * @return the attachment
 	 */
-	public Attachment getAttachment();
+	Attachment getAttachment();
 }

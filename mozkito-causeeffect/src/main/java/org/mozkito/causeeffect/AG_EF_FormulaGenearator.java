@@ -22,10 +22,10 @@ import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.causeeffect.ctl.CTLImplication;
 import org.mozkito.versions.model.RCSFile;
 
-
 /**
+ * The Class AG_EF_FormulaGenearator.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class AG_EF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {
 	

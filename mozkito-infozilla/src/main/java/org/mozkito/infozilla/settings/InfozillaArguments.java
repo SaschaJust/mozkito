@@ -20,15 +20,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.infozilla.filters.InfozillaFilter;
-import org.mozkito.infozilla.filters.InfozillaFilterChain;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
+import org.mozkito.infozilla.filters.InfozillaFilter;
+import org.mozkito.infozilla.filters.InfozillaFilterChain;
 
 /**
  * The Class InfozillaArguments.

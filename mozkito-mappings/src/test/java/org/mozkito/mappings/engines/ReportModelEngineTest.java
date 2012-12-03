@@ -27,8 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.CodeFragmentsEngine;
-import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.engines.master.Environment;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Feature;
@@ -63,7 +61,7 @@ public class ReportModelEngineTest extends DatabaseTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		finder = Environment.setup("/engines.codeFragments.test.properties");
+		ReportModelEngineTest.finder = Environment.setup("/engines.codeFragments.test.properties");
 		
 	}
 	
@@ -99,7 +97,7 @@ public class ReportModelEngineTest extends DatabaseTest {
 		final Relation relation = Environment.relation(rCSTransaction, report);
 		assertNotNull("Failed creating relation from " + rCSTransaction + " and " + report, relation);
 		
-		finder.score(this.engine, relation);
+		ReportModelEngineTest.finder.score(this.engine, relation);
 		
 		return relation;
 	}
@@ -109,7 +107,7 @@ public class ReportModelEngineTest extends DatabaseTest {
 	 */
 	@Before
 	public void setUp() {
-		this.engines = finder.getEngines();
+		this.engines = ReportModelEngineTest.finder.getEngines();
 		this.engine = this.engines.get(CodeFragmentsEngine.class);
 	}
 	

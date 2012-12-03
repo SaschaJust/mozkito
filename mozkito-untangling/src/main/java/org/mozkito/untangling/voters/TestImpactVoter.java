@@ -43,14 +43,26 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
  */
 public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/**
+	 * The Class Factory.
+	 */
 	public static class Factory extends MultilevelClusteringScoreVisitorFactory<TestImpactVoter> {
 		
+		/** The test coverage in. */
 		private final File testCoverageIn;
 		
+		/**
+		 * Instantiates a new factory.
+		 *
+		 * @param testCoverageIn the test coverage in
+		 */
 		protected Factory(final File testCoverageIn) {
 			this.testCoverageIn = testCoverageIn;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		 */
 		@Override
 		public TestImpactVoter createVoter(final RCSTransaction rCSTransaction) {
 			return new TestImpactVoter(this.testCoverageIn);
@@ -79,13 +91,15 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	public static class Options extends
 	        ArgumentSetOptions<TestImpactVoter.Factory, ArgumentSet<TestImpactVoter.Factory, Options>> {
 		
+		/** The test impact file options. */
 		private net.ownhero.dev.hiari.settings.InputFileArgument.Options testImpactFileOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
+		 * @param repositoryOptions the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {
@@ -129,13 +143,8 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	
 	/**
 	 * Instantiates a new test impact voter.
-	 * 
-	 * @param testCoverageIn
-	 *            the test coverage in
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws ClassNotFoundException
-	 *             the class not found exception
+	 *
+	 * @param testCoverageIn the test coverage in
 	 */
 	public TestImpactVoter(final File testCoverageIn) {
 		try (final ObjectInputStream in = new ObjectInputStream(new FileInputStream(testCoverageIn));) {

@@ -18,13 +18,13 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 import org.mozkito.versions.model.RCSFile;
-
 
 /**
  * The Class TransactionDependencyDiversityMetrics.
@@ -69,12 +69,12 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
-		result.add(avgParentsFileDiversityName);
-		result.add(maxParentsFileDiversityName);
-		result.add(minParentsFileDiversityName);
-		result.add(avgDependantsFileDiversityName);
-		result.add(maxDependantsFileDiversityName);
-		result.add(minDependantsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.avgParentsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.maxParentsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.minParentsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.avgDependantsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.maxDependantsFileDiversityName);
+		result.add(PartitionDependencyDiversityMetrics.minDependantsFileDiversityName);
 		return result;
 	}
 	
@@ -116,28 +116,28 @@ public class PartitionDependencyDiversityMetrics extends GenealogyPartitionMetri
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		
-		result.add(new GenealogyMetricValue(avgParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.avgParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMean()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(maxParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.maxParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMax()
 		                                                           : -1));
-		result.add(new GenealogyMetricValue(minParentsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.minParentsFileDiversityName, nodeId,
 		                                    (parentStat.getN() > 0)
 		                                                           ? parentStat.getMin()
 		                                                           : -1));
 		
-		result.add(new GenealogyMetricValue(avgDependantsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.avgDependantsFileDiversityName, nodeId,
 		                                    (dependantStat.getN() > 0)
 		                                                              ? dependantStat.getMean()
 		                                                              : -1));
-		result.add(new GenealogyMetricValue(maxDependantsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.maxDependantsFileDiversityName, nodeId,
 		                                    (dependantStat.getN() > 0)
 		                                                              ? dependantStat.getMax()
 		                                                              : -1));
-		result.add(new GenealogyMetricValue(minDependantsFileDiversityName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionDependencyDiversityMetrics.minDependantsFileDiversityName, nodeId,
 		                                    (dependantStat.getN() > 0)
 		                                                              ? dependantStat.getMin()
 		                                                              : -1));

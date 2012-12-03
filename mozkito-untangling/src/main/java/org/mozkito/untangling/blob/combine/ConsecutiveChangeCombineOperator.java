@@ -43,13 +43,14 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 	        extends
 	        ArgumentSetOptions<ConsecutiveChangeCombineOperator, ArgumentSet<ConsecutiveChangeCombineOperator, Options>> {
 		
+		/** The time window options. */
 		private net.ownhero.dev.hiari.settings.LongArgument.Options timeWindowOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, "consecCombineOp", "ConsecutiveChangeCombineOperator options.", requirements);
@@ -86,8 +87,14 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 		}
 	}
 	
+	/** The time window. */
 	private final int timeWindow;
 	
+	/**
+	 * Instantiates a new consecutive change combine operator.
+	 *
+	 * @param timeWindow the time window
+	 */
 	protected ConsecutiveChangeCombineOperator(final int timeWindow) {
 		this.timeWindow = timeWindow;
 	}

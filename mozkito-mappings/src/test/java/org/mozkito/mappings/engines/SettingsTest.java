@@ -23,13 +23,12 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Assert;
 
-import org.mozkito.mappings.engines.Engine;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.settings.MappingOptions;
 
 /**
  * The Class SettingsTest.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SettingsTest {

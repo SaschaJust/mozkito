@@ -89,10 +89,10 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	 */
 	@NoneNull
 	public static JavaMethodDefinition fromXMLRepresentation(final Element element) {
-		StringCondition.equals(element.getName(), JAVA_METHOD_DEFINITION,
+		StringCondition.equals(element.getName(), JavaMethodDefinition.JAVA_METHOD_DEFINITION,
 		                       Messages.JavaMethodDefinition_unrecognized_root_element, element.getName());
 		
-		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(JavaMethodDefinition.FULL_QUALIFIED_NAME);
 		Condition.notNull(nameElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
 		final String name = nameElement.getText();
@@ -108,7 +108,7 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 		CompareCondition.greater(dotIndex, 0, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		CompareCondition.less(dotIndex, index, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
-		final Element overrideElement = element.getChild(ANNOTATED_OVERRIDE);
+		final Element overrideElement = element.getChild(JavaMethodDefinition.ANNOTATED_OVERRIDE);
 		Condition.notNull(overrideElement, Messages.JavaMethodDefinition_fullQualifiedName_extract_error);
 		
 		final boolean override = Boolean.valueOf(overrideElement.getText());
@@ -237,9 +237,9 @@ public class JavaMethodDefinition extends JavaElement implements Annotated, Seri
 	@Override
 	@Transient
 	public Element getXMLRepresentation() {
-		final Element thisElement = new Element(JAVA_METHOD_DEFINITION);
-		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		final Element overrideElement = new Element(ANNOTATED_OVERRIDE);
+		final Element thisElement = new Element(JavaMethodDefinition.JAVA_METHOD_DEFINITION);
+		final Element nameElement = new Element(JavaMethodDefinition.FULL_QUALIFIED_NAME);
+		final Element overrideElement = new Element(JavaMethodDefinition.ANNOTATED_OVERRIDE);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		overrideElement.setText(String.valueOf(isAnnotatedOverride()));

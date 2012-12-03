@@ -60,18 +60,36 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<JavaChangeOperation> {
 	
+	/**
+	 * The Class Factory.
+	 */
 	public static class Factory extends MultilevelClusteringScoreVisitorFactory<DataDependencyVoter> {
 		
+		/** The cache dir. */
 		private final File       cacheDir;
+		
+		/** The eclipse dir. */
 		private final File       eclipseDir;
+		
+		/** The repository. */
 		private final Repository repository;
 		
+		/**
+		 * Instantiates a new factory.
+		 *
+		 * @param eclipseDir the eclipse dir
+		 * @param repository the repository
+		 * @param cacheDir the cache dir
+		 */
 		protected Factory(@NotNull final File eclipseDir, @NotNull final Repository repository, final File cacheDir) {
 			this.eclipseDir = eclipseDir;
 			this.repository = repository;
 			this.cacheDir = cacheDir;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		 */
 		@Override
 		public DataDependencyVoter createVoter(final RCSTransaction rCSTransaction) {
 			return new DataDependencyVoter(this.eclipseDir, this.repository, rCSTransaction, this.cacheDir);
@@ -100,15 +118,21 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	public static class Options extends
 	        ArgumentSetOptions<DataDependencyVoter.Factory, ArgumentSet<DataDependencyVoter.Factory, Options>> {
 		
+		/** The cache dir options. */
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options cacheDirOptions;
+		
+		/** The eclipse home options. */
 		private net.ownhero.dev.hiari.settings.DirectoryArgument.Options eclipseHomeOptions;
+		
+		/** The repository options. */
 		private final RepositoryOptions                                  repositoryOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
+		 * @param repositoryOptions the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {
@@ -175,6 +199,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	/** The cache. */
 	private Map<String, Set<Set<Integer>>> cache       = new HashMap<>();
 	
+	/** The cache file. */
 	private final File                     cacheFile;
 	
 	/**

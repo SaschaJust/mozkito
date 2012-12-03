@@ -20,6 +20,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.mcgill.cs.swevo.ppa.SnippetUtil;
+import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -28,9 +31,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.PPABindingsUtil;
-
-import ca.mcgill.cs.swevo.ppa.SnippetUtil;
-import ca.mcgill.cs.swevo.ppa.ValidatorUtil;
 
 /**
  * The Class PPAResourceUtil.
@@ -279,7 +279,7 @@ public class PPAResourceUtil {
 				isEmpty = (members == null) || (members.length == 0);
 			}
 		} catch (final CoreException ce) {
-			logger.error("Error while checking if folder is empty.", ce);
+			PPAResourceUtil.logger.error("Error while checking if folder is empty.", ce);
 		}
 		
 		return isEmpty;

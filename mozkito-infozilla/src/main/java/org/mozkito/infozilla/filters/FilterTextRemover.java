@@ -52,19 +52,21 @@ public class FilterTextRemover {
 		
 		/**
 		 * Instantiates a new cut point.
-		 *
-		 * @param start the start
-		 * @param end the end
+		 * 
+		 * @param start
+		 *            the start
+		 * @param end
+		 *            the end
 		 */
 		public CutPoint(final int start, final int end) {
 			super();
-			this.setStart(start);
-			this.setEnd(end);
+			setStart(start);
+			setEnd(end);
 		}
 		
 		/**
 		 * Gets the end.
-		 *
+		 * 
 		 * @return the end
 		 */
 		@SuppressWarnings ("unused")
@@ -74,7 +76,7 @@ public class FilterTextRemover {
 		
 		/**
 		 * Gets the start.
-		 *
+		 * 
 		 * @return the start
 		 */
 		@SuppressWarnings ("unused")
@@ -84,8 +86,9 @@ public class FilterTextRemover {
 		
 		/**
 		 * Sets the end.
-		 *
-		 * @param end the end to set
+		 * 
+		 * @param end
+		 *            the end to set
 		 */
 		public void setEnd(final int end) {
 			this.end = end;
@@ -93,8 +96,9 @@ public class FilterTextRemover {
 		
 		/**
 		 * Sets the start.
-		 *
-		 * @param start the start to set
+		 * 
+		 * @param start
+		 *            the start to set
 		 */
 		public void setStart(final int start) {
 			this.start = start;
@@ -112,8 +116,9 @@ public class FilterTextRemover {
 	
 	/**
 	 * Instantiates a new filter text remover.
-	 *
-	 * @param originalText the original text
+	 * 
+	 * @param originalText
+	 *            the original text
 	 */
 	public FilterTextRemover(final String originalText) {
 		// Set the Text
@@ -132,11 +137,11 @@ public class FilterTextRemover {
 	
 	/**
 	 * Do delete.
-	 *
+	 * 
 	 * @return the string
 	 */
 	public String doDelete() {
-		StringBuilder myStringBuilder = new StringBuilder();
+		final StringBuilder myStringBuilder = new StringBuilder();
 		
 		for (int i = 0; i < this.originalText.length(); i++) {
 			if (!this.deletionMask[i]) {
@@ -148,7 +153,7 @@ public class FilterTextRemover {
 	
 	/**
 	 * Gets the text.
-	 *
+	 * 
 	 * @return the text
 	 */
 	public String getText() {
@@ -157,9 +162,11 @@ public class FilterTextRemover {
 	
 	/**
 	 * Mark for deletion.
-	 *
-	 * @param start the start
-	 * @param end the end
+	 * 
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
 	 */
 	public void markForDeletion(final int start,
 	                            final int end) {

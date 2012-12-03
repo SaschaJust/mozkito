@@ -13,11 +13,11 @@
 
 package org.mozkito.causeeffect.ctl;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL AX formulas. "AX f" means that "along all paths, next f"
@@ -28,11 +28,11 @@ public class CTLAX extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "AX f" formula from a given "f" formula.
-	 * 
-	 * @param formula
-	 *            Formula to surround with AX.
+	 *
+	 * @param formula Formula to surround with AX.
+	 * @return the ctlax
 	 */
-	public static CTLAX get(CTLFormula formula) {
+	public static CTLAX get(final CTLFormula formula) {
 		return new CTLAX(formula);
 	}
 	
@@ -44,9 +44,9 @@ public class CTLAX extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLAX getFromXMLRepresentation(Element element) {
+	public static CTLAX getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-AX");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLAX.get(formula);
 	}
 	
@@ -59,7 +59,7 @@ public class CTLAX extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to surround with AX.
 	 */
-	private CTLAX(CTLFormula formula) {
+	private CTLAX(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -92,7 +92,7 @@ public class CTLAX extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "AX " + this.formula.getTextRepresentation(verbosity);
 	}
 	
@@ -101,8 +101,8 @@ public class CTLAX extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-AX");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-AX");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -112,16 +112,16 @@ public class CTLAX extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.formula.modelCheckAllStates(kripkeStruct);
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			boolean thisHolds = true;
-			for (State succ : kripkeStruct.getSuccessors(state)) {
-				boolean formulaHolds = kripkeStruct.isFormulaTrue(succ, this.formula);
+			for (final State succ : kripkeStruct.getSuccessors(state)) {
+				final boolean formulaHolds = kripkeStruct.isFormulaTrue(succ, this.formula);
 				thisHolds &= formulaHolds;
 			}
 			kripkeStruct.markEvaluatedFormula(state, this, thisHolds);

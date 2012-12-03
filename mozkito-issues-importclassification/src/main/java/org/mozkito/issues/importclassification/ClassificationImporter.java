@@ -37,11 +37,15 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class ClassificationImporter.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class ClassificationImporter {
 	
+	/**
+	 * Run.
+	 */
 	@SuppressWarnings ("deprecation")
 	public static void run() {
 		PersistenceUtil persistenceUtil = null;

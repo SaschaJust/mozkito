@@ -21,12 +21,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.mozkito.codeanalysis.model.JavaElementFactory;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.Repository;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.andama.model.Chain;
 import net.ownhero.dev.andama.model.Pool;
@@ -45,6 +39,12 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.codeanalysis.model.JavaElementFactory;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.versions.Repository;
 
 /**
  * The Class PPAToolChain.
@@ -71,15 +71,20 @@ public class PPAToolChain extends Chain<Settings> {
 	/** The package filter arg. */
 	private ListArgument                                  packageFilterArgument;
 	
+	/** The database options. */
 	private DatabaseOptions                               databaseOptions;
 	
+	/** The repository arguments. */
 	private ArgumentSet<Repository, RepositoryOptions>    repositoryArguments;
 	
+	/** The database arguments. */
 	private ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments;
 	
 	/**
 	 * Instantiates a new pPA tool chain.
 	 * 
+	 * @param settings
+	 *            the settings
 	 */
 	public PPAToolChain(final Settings settings) {
 		super(settings);

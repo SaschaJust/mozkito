@@ -16,13 +16,21 @@ import java.util.Collection;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
 
-
 /**
+ * The Class CTLFormulaGenerator.
+ *
+ * @param <T> the generic type
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public abstract class CTLFormulaGenerator<T> {
 	
+	/**
+	 * Generate.
+	 *
+	 * @param premises the premises
+	 * @param implications the implications
+	 * @return the collection
+	 */
 	public abstract Collection<CTLFormula> generate(Collection<T> premises,
 	                                                Collection<T> implications);
 	

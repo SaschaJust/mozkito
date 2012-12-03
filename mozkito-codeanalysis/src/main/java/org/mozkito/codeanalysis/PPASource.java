@@ -9,6 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.PreExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Source;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -20,23 +27,34 @@ import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PreExecutionHook;
-import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Source;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kisa.Logger;
-
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class PPASource.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class PPASource extends Source<RCSTransaction> {
 	
+	/** The branch iterator. */
 	private Iterator<RCSBranch>      branchIterator   = null;
+	
+	/** The t iterator. */
 	private Iterator<RCSTransaction> tIterator        = null;
+	
+	/** The transaction limit. */
 	private Set<String>              transactionLimit = null;
 	
+	/**
+	 * Instantiates a new pPA source.
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param transactionLimit
+	 *            the transaction limit
+	 */
 	public PPASource(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil,
 	        final HashSet<String> transactionLimit) {
 		super(threadGroup, settings, false);
@@ -128,7 +146,8 @@ public class PPASource extends Source<RCSTransaction> {
 						boolean skip = false;
 						for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
 							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
-							                                                                  .eq("revision", rCSRevision);
+							                                                                  .eq("revision",
+							                                                                      rCSRevision);
 							if (!persistenceUtil.load(skipCriteria).isEmpty()) {
 								skip = true;
 								if (Logger.logDebug()) {

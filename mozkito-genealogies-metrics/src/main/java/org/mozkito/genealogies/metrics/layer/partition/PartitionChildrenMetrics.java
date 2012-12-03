@@ -21,7 +21,6 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalChildrenMetrics;
 
-
 /**
  * The Class PartitionChildrenMetrics.
  * 

@@ -97,14 +97,14 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	 * @return the java method call is successful, <code>null</code> otherwise.
 	 */
 	public static JavaMethodCall fromXMLRepresentation(final Element element) {
-		if (!element.getName().equals(JAVA_METHOD_CALL)) {
+		if (!element.getName().equals(JavaMethodCall.JAVA_METHOD_CALL)) {
 			if (Logger.logWarn()) {
 				Logger.warn("Unrecognized root element <" + element.getName() + ">. Returning null.");
 			}
 			return null;
 		}
 		
-		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(JavaMethodCall.FULL_QUALIFIED_NAME);
 		if (nameElement == null) {
 			if (Logger.logWarn()) {
 				Logger.warn("Could not extract JavaMethodCall.fullQualifidName. Returning null.");
@@ -287,8 +287,8 @@ public class JavaMethodCall extends JavaElement implements Annotated {
 	@NoneNull
 	@Transient
 	public Element getXMLRepresentation() {
-		final Element thisElement = new Element(JAVA_METHOD_CALL);
-		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
+		final Element thisElement = new Element(JavaMethodCall.JAVA_METHOD_CALL);
+		final Element nameElement = new Element(JavaMethodCall.FULL_QUALIFIED_NAME);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		return thisElement;

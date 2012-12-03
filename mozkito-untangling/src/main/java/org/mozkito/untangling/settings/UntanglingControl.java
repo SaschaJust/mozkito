@@ -38,6 +38,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
  */
 public class UntanglingControl {
 	
+	/** The measure precision. */
 	private final boolean                                                                                                       measurePrecision;
 	
 	/** The change coupling combine operator. */
@@ -79,12 +80,20 @@ public class UntanglingControl {
 	/** The dry run. */
 	private Boolean                                                                                                             dryRun;
 	
+	/** The artificial blob cache dir. */
 	private File                                                                                                                artificialBlobCacheDir = null;
 	
+	/** The change sets to untangle. */
 	private Collection<UntangleInstruction>                                                                                     changeSetsToUntangle;
 	
+	/** The model cache dir. */
 	private File                                                                                                                modelCacheDir;
 	
+	/**
+	 * Instantiates a new untangling control.
+	 *
+	 * @param measurePrecision the measure precision
+	 */
 	public UntanglingControl(final boolean measurePrecision) {
 		this.measurePrecision = measurePrecision;
 	}
@@ -103,7 +112,9 @@ public class UntanglingControl {
 	}
 	
 	/**
-	 * @return
+	 * Gets the artificial blob cache dir.
+	 *
+	 * @return the artificial blob cache dir
 	 */
 	public File getArtificialBlobCacheDir() {
 		return this.artificialBlobCacheDir;
@@ -127,6 +138,11 @@ public class UntanglingControl {
 		return this.blobWindowSize.intValue();
 	}
 	
+	/**
+	 * Gets the change sets to untangle.
+	 *
+	 * @return the change sets to untangle
+	 */
 	public Collection<UntangleInstruction> getChangeSetsToUntangle() {
 		return this.changeSetsToUntangle;
 	}
@@ -184,6 +200,11 @@ public class UntanglingControl {
 		return this.minBlobSize.intValue();
 	}
 	
+	/**
+	 * Gets the model cache dir.
+	 *
+	 * @return the model cache dir
+	 */
 	public File getModelCacheDir() {
 		return this.modelCacheDir;
 	}
@@ -242,12 +263,19 @@ public class UntanglingControl {
 		return this.dryRun;
 	}
 	
+	/**
+	 * Measure precision.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean measurePrecision() {
 		return this.measurePrecision;
 	}
 	
 	/**
-	 * @param artificialBlobCache
+	 * Sets the artificial blob cache dir.
+	 *
+	 * @param artificialBlobCache the new artificial blob cache dir
 	 */
 	public void setArtificialBlobCacheDir(final File artificialBlobCache) {
 		// PRECONDITIONS
@@ -292,7 +320,9 @@ public class UntanglingControl {
 	}
 	
 	/**
-	 * @param changeSetsToUntangle
+	 * Sets the change sets to untangle.
+	 *
+	 * @param changeSetsToUntangle the new change sets to untangle
 	 */
 	public void setChangeSetsToUntangle(final Collection<UntangleInstruction> changeSetsToUntangle) {
 		// PRECONDITIONS
@@ -389,7 +419,9 @@ public class UntanglingControl {
 	}
 	
 	/**
-	 * @param value
+	 * Sets the serial model.
+	 *
+	 * @param value the new serial model
 	 */
 	public void setSerialModel(final File value) {
 		// PRECONDITIONS

@@ -13,11 +13,11 @@
 
 package org.mozkito.causeeffect.ctl;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * Instances of this class represent CTL EX formulas. "EX f" means that "along at least one path, next f"
@@ -28,11 +28,11 @@ public class CTLEX extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "EX f" formula from a given "f" formula.
-	 * 
-	 * @param formula
-	 *            Formula to surround with EX.
+	 *
+	 * @param formula Formula to surround with EX.
+	 * @return the ctlex
 	 */
-	public static CTLEX get(CTLFormula formula) {
+	public static CTLEX get(final CTLFormula formula) {
 		return new CTLEX(formula);
 	}
 	
@@ -44,14 +44,14 @@ public class CTLEX extends CTLComposedFormula {
 	 * @return CTL formula, as represented by the given XML element, or <code>null</code>, if the element was not
 	 *         recognized.
 	 */
-	public static CTLEX getFromXMLRepresentation(Element element) {
+	public static CTLEX getFromXMLRepresentation(final Element element) {
 		assert element.getNodeName().equals("CTL-EX");
-		CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
+		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLEX.get(formula);
 	}
 	
 	/** Encapsulated formula. */
-	private CTLFormula formula;
+	private final CTLFormula formula;
 	
 	/**
 	 * Creates an "EX f" formula from a given "f" formula.
@@ -59,7 +59,7 @@ public class CTLEX extends CTLComposedFormula {
 	 * @param formula
 	 *            Formula to surround with EX.
 	 */
-	private CTLEX(CTLFormula formula) {
+	private CTLEX(final CTLFormula formula) {
 		this.formula = formula;
 	}
 	
@@ -92,7 +92,7 @@ public class CTLEX extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getTextRepresentation(org.softevo .tikanga.ops.OutputVerbosity)
 	 */
 	@Override
-	public String getTextRepresentation(OutputVerbosity verbosity) {
+	public String getTextRepresentation(final OutputVerbosity verbosity) {
 		return "EX " + this.formula.getTextRepresentation(verbosity);
 	}
 	
@@ -101,8 +101,8 @@ public class CTLEX extends CTLComposedFormula {
 	 * @see org.softevo.tikanga.ops.ctl.CTLFormula#getXMLRepresentation(org.w3c.dom .Document)
 	 */
 	@Override
-	public Element getXMLRepresentation(Document xml) {
-		Element ctlXML = xml.createElement("CTL-EX");
+	public Element getXMLRepresentation(final Document xml) {
+		final Element ctlXML = xml.createElement("CTL-EX");
 		ctlXML.appendChild(this.formula.getXMLRepresentation(xml));
 		return ctlXML;
 	}
@@ -112,16 +112,16 @@ public class CTLEX extends CTLComposedFormula {
 	 * @see org.softevo.ctl.ctl.CTLFormula#modelCheckAllStates(org.softevo.ctl.kripke .KripkeStructure)
 	 */
 	@Override
-	public <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct) {
+	public <V> void modelCheckAllStates(final KripkeStructure<V> kripkeStruct) {
 		if (kripkeStruct.wasFormulaEvaluated(this)) {
 			return;
 		}
 		
 		this.formula.modelCheckAllStates(kripkeStruct);
-		for (State state : kripkeStruct.getAllStates()) {
+		for (final State state : kripkeStruct.getAllStates()) {
 			boolean thisHolds = false;
-			for (State succ : kripkeStruct.getSuccessors(state)) {
-				boolean formulaHolds = kripkeStruct.isFormulaTrue(succ, this.formula);
+			for (final State succ : kripkeStruct.getSuccessors(state)) {
+				final boolean formulaHolds = kripkeStruct.isFormulaTrue(succ, this.formula);
 				thisHolds |= formulaHolds;
 				if (thisHolds) {
 					break;

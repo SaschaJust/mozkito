@@ -23,16 +23,34 @@ import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
 
+/**
+ * The Class DataDependencyVisitor.
+ */
 public class DataDependencyVisitor extends ASTVisitor {
 	
+	/** The line fields. */
 	private final Map<Integer, Set<Integer>> lineFields    = new HashMap<Integer, Set<Integer>>();
+	
+	/** The line variables. */
 	private final Map<Integer, Set<Integer>> lineVariables = new HashMap<Integer, Set<Integer>>();
+	
+	/** The cu. */
 	private final CompilationUnit            cu;
 	
+	/**
+	 * Instantiates a new data dependency visitor.
+	 * 
+	 * @param cu
+	 *            the cu
+	 */
 	public DataDependencyVisitor(final CompilationUnit cu) {
 		this.cu = cu;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.SimpleName)
+	 */
 	@Override
 	public void endVisit(final SimpleName sn) {
 		final IBinding binding = sn.resolveBinding();
@@ -58,10 +76,20 @@ public class DataDependencyVisitor extends ASTVisitor {
 		}
 	}
 	
+	/**
+	 * Gets the field accesses per line.
+	 * 
+	 * @return the field accesses per line
+	 */
 	public Map<Integer, Set<Integer>> getFieldAccessesPerLine() {
 		return this.lineFields;
 	}
 	
+	/**
+	 * Gets the variable accesses per line.
+	 * 
+	 * @return the variable accesses per line
+	 */
 	public Map<Integer, Set<Integer>> getVariableAccessesPerLine() {
 		return this.lineVariables;
 	}

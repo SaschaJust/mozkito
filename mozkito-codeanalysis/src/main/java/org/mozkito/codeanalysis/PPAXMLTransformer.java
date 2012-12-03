@@ -41,6 +41,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.persistence.ModelStorage;
@@ -53,15 +54,25 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	
+	/** The root element name. */
 	public static String ROOT_ELEMENT_NAME = "javaChangeOperations";
 	
+	/**
+	 * Read operations.
+	 * 
+	 * @param element
+	 *            the element
+	 * @param transactionStorage
+	 *            the transaction storage
+	 * @return the list
+	 */
 	public static List<JavaChangeOperation> readOperations(final Element element,
 	                                                       final ModelStorage<String, RCSTransaction> transactionStorage) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
-		if (!element.getName().equals(ROOT_ELEMENT_NAME)) {
+		if (!element.getName().equals(PPAXMLTransformer.ROOT_ELEMENT_NAME)) {
 			if (Logger.logError()) {
-				Logger.error("RootElement for JavaChangeOperations must have be <" + ROOT_ELEMENT_NAME + "> but was <"
-				        + element.getName() + ">");
+				Logger.error("RootElement for JavaChangeOperations must have be <"
+				        + PPAXMLTransformer.ROOT_ELEMENT_NAME + "> but was <" + element.getName() + ">");
 			}
 			return result;
 		}
@@ -80,6 +91,15 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 		return result;
 	}
 	
+	/**
+	 * Read operations.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param transactionStorage
+	 *            the transaction storage
+	 * @return the list
+	 */
 	public static List<JavaChangeOperation> readOperations(final File file,
 	                                                       final ModelStorage<String, RCSTransaction> transactionStorage) {
 		try {
@@ -119,7 +139,7 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 	public PPAXMLTransformer(final Group threadGroup, final Settings settings, final OutputStream outStream)
 	        throws ParserConfigurationException {
 		super(threadGroup, settings, false);
-		final Element operationsElement = new Element(ROOT_ELEMENT_NAME);
+		final Element operationsElement = new Element(PPAXMLTransformer.ROOT_ELEMENT_NAME);
 		final Document document = new Document(operationsElement);
 		final Map<String, Element> transactionElements = new HashMap<String, Element>();
 		

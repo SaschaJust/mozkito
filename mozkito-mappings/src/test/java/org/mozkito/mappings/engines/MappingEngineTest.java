@@ -48,10 +48,6 @@ import org.mozkito.issues.tracker.elements.Type;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.issues.tracker.model.Report;
-import org.mozkito.mappings.engines.AuthorEqualityEngine;
-import org.mozkito.mappings.engines.BackrefEngine;
-import org.mozkito.mappings.engines.Engine;
-import org.mozkito.mappings.engines.TimestampEngine;
 import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.mappable.model.MappableReport;
@@ -83,7 +79,7 @@ public class MappingEngineTest {
 	static Relation            score;
 	
 	/** The transaction. */
-	static RCSTransaction         rCSTransaction;
+	static RCSTransaction      rCSTransaction;
 	
 	/**
 	 * Setup class.
@@ -146,9 +142,9 @@ public class MappingEngineTest {
 		MappingEngineTest.report.setLastUpdateTimestamp(new DateTime(2012, 01, 16, 19, 56, 35, 0));
 		
 		MappingEngineTest.rCSTransaction = new RCSTransaction("673fdbf2f792c8c81fd9d398194cc0eb1dab8938",
-		                                                "Fixing bug 84698384.", new DateTime(2012, 01, 16, 19, 32, 12,
-		                                                                                     0), developer,
-		                                                "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
+		                                                      "Fixing bug 84698384.", new DateTime(2012, 01, 16, 19,
+		                                                                                           32, 12, 0),
+		                                                      developer, "673fdbf2f792c8c81fd9d398194cc0eb1dab8938");
 		MappingEngineTest.mappableTransaction = new MappableTransaction(MappingEngineTest.rCSTransaction);
 	}
 	
@@ -281,7 +277,8 @@ public class MappingEngineTest {
 					}
 				});
 				put(new TimestampEngine(new Interval(MappingEngineTest.rCSTransaction.getTimestamp().getMillis()
-				            - (1000 * 3600), MappingEngineTest.rCSTransaction.getTimestamp().getMillis() + (1000 * 3600))),
+				            - (1000 * 3600), MappingEngineTest.rCSTransaction.getTimestamp().getMillis()
+				            + (1000 * 3600))),
 				    new ArrayList<Tuple<MappableEntity, MappableEntity>>(1) {
 					    
 					    {

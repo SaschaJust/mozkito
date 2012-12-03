@@ -26,9 +26,9 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.genealogies.metrics.GenealogyCoreNode;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
-
 
 /**
  * The Class GenealogyMetricThread.
@@ -61,13 +61,14 @@ public class GenealogyMetricThread extends Transformer<GenealogyCoreNode, Geneal
 		
 		this.metricName = StringUtils.join(metric.getMetricNames().toArray(new String[metric.getMetricNames().size()]));
 		for (final String mName : metric.getMetricNames()) {
-			if (registeredMetrics.containsKey(mName)) {
+			if (GenealogyMetricThread.registeredMetrics.containsKey(mName)) {
 				throw new UnrecoverableError("You cannot declare the same method thread twice. A metric with name `"
 				        + mName + "` is already registered by class `"
-				        + registeredMetrics.get(mName).getClass().getCanonicalName() + "`. Class `"
-				        + this.getClass().getCanonicalName() + "` cannot be registered. Please resolve conflict.");
+				        + GenealogyMetricThread.registeredMetrics.get(mName).getClass().getCanonicalName()
+				        + "`. Class `" + this.getClass().getCanonicalName()
+				        + "` cannot be registered. Please resolve conflict.");
 			}
-			registeredMetrics.put(mName, this);
+			GenealogyMetricThread.registeredMetrics.put(mName, this);
 		}
 		
 		new ProcessHook<GenealogyCoreNode, GenealogyMetricValue>(this) {

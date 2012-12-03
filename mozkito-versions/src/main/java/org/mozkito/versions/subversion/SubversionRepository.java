@@ -42,18 +42,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.UnsupportedProtocolType;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.ProtocolType;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -76,6 +64,19 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+
+import org.mozkito.exceptions.InvalidProtocolType;
+import org.mozkito.exceptions.InvalidRepositoryURI;
+import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.IRevDependencyGraph;
+import org.mozkito.versions.ProtocolType;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
 
 /**
  * Subversion connector extending the {@link Repository} base class.
@@ -155,11 +156,11 @@ public class SubversionRepository extends Repository {
 	
 	/**
 	 * Converts a given string to the corresponding SVNRevision. This requires
-	 *
-	 * @param revision the string representing an SVN revision. This is either a numeric of type long or a case insensitive
-	 * version of the alias string versions. This may not be null.
-	 * @return the corresponding SVNRevision
-	 * {@link Repository#setup(URI, String, String)} to be executed.
+	 * 
+	 * @param revision
+	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
+	 *            version of the alias string versions. This may not be null.
+	 * @return the corresponding SVNRevision {@link Repository#setup(URI, String, String)} to be executed.
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
@@ -308,7 +309,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#gatherToolInformation()
 	 */
 	@Override
@@ -374,7 +376,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getEndRevision()
 	 */
 	@Override
@@ -431,7 +434,9 @@ public class SubversionRepository extends Repository {
 								return copyPath
 								        + pathName.substring(logEntryPath.getPath().length(), pathName.length());
 							}
+							break;
 						default:
+							// FIXME
 							break;
 					}
 					
@@ -473,7 +478,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
@@ -487,7 +493,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
 	 */
 	@Override
@@ -530,7 +537,8 @@ public class SubversionRepository extends Repository {
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
@@ -546,7 +554,8 @@ public class SubversionRepository extends Repository {
 		return index;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -594,7 +603,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#setEndRevision(java.lang.String)
 	 */
 	@Override
@@ -611,7 +621,8 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#setStartRevision(java.lang.String)
 	 */
 	@Override

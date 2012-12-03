@@ -33,12 +33,27 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class ArtificialBlobGenerator {
 	
+	/**
+	 * The Enum ArtificialBlobGeneratorStrategy.
+	 */
 	public enum ArtificialBlobGeneratorStrategy {
-		PACKAGE, CONSECUTIVE, COUPLINGS;
+		
+		/** The package. */
+		PACKAGE, 
+ /** The consecutive. */
+ CONSECUTIVE, 
+ /** The couplings. */
+ COUPLINGS;
 	}
 	
+	/** The combine operator. */
 	private final CombineOperator<ChangeSet> combineOperator;
 	
+	/**
+	 * Instantiates a new artificial blob generator.
+	 *
+	 * @param combineOperator the combine operator
+	 */
 	public ArtificialBlobGenerator(final CombineOperator<ChangeSet> combineOperator) {
 		this.combineOperator = combineOperator;
 	}

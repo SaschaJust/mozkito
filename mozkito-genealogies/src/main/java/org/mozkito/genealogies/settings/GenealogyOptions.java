@@ -30,21 +30,28 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 /**
+ * The Class GenealogyOptions.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class GenealogyOptions extends
         ArgumentSetOptions<CoreChangeGenealogy, ArgumentSet<CoreChangeGenealogy, GenealogyOptions>> {
 	
+	/** The database options. */
 	private final DatabaseOptions databaseOptions;
+	
+	/** The graph db option. */
 	private Options               graphDbOption;
+	
+	/** The persistence util. */
 	private PersistenceUtil       persistenceUtil;
 	
 	/**
-	 * @param argumentSet
-	 * @param name
-	 * @param description
-	 * @param requirements
+	 * Instantiates a new genealogy options.
+	 *
+	 * @param argumentSet the argument set
+	 * @param requirements the requirements
+	 * @param databaseOptions the database options
 	 */
 	public GenealogyOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 	        final DatabaseOptions databaseOptions) {

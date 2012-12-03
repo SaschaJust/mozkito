@@ -23,70 +23,106 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
+ * The Class LTCRecommendation.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class LTCRecommendation {
 	
+	/**
+	 * The Enum ChangeProperty.
+	 */
 	public enum ChangeProperty {
-		FIX, BIGCHANGE, NONE;
+		
+		/** The fix. */
+		FIX, 
+ /** The bigchange. */
+ BIGCHANGE, 
+ /** The none. */
+ NONE;
 	}
 	
+	/** The recommendations. */
 	private static Map<Long, Map<CTLFormula, LTCRecommendation>> recommendations = new HashMap<>();
 	
 	/**
-	 * @param changedFile
+	 * Adds the change.
+	 *
+	 * @param changedFile the changed file
+	 * @param rCSTransaction the r cs transaction
 	 */
 	public static void addChange(final RCSFile changedFile,
 	                             final RCSTransaction rCSTransaction) {
-		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
+		if (!LTCRecommendation.recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
-		for (final LTCRecommendation r : recommendations.get(changedFile.getGeneratedId()).values()) {
+		for (final LTCRecommendation r : LTCRecommendation.recommendations.get(changedFile.getGeneratedId()).values()) {
 			r.fileChanged(changedFile, rCSTransaction);
 		}
 	}
 	
+	/**
+	 * Gets the recommendation.
+	 *
+	 * @param premise the premise
+	 * @param formula the formula
+	 * @return the recommendation
+	 */
 	public static LTCRecommendation getRecommendation(final RCSFile premise,
 	                                                  final CTLFormula formula) {
-		if (!recommendations.containsKey(premise.getGeneratedId())) {
-			recommendations.put(premise.getGeneratedId(), new HashMap<CTLFormula, LTCRecommendation>());
+		if (!LTCRecommendation.recommendations.containsKey(premise.getGeneratedId())) {
+			LTCRecommendation.recommendations.put(premise.getGeneratedId(),
+			                                      new HashMap<CTLFormula, LTCRecommendation>());
 		}
-		if (!recommendations.get(premise.getGeneratedId()).containsKey(formula)) {
-			recommendations.get(premise.getGeneratedId()).put(formula, new LTCRecommendation(premise, formula));
+		if (!LTCRecommendation.recommendations.get(premise.getGeneratedId()).containsKey(formula)) {
+			LTCRecommendation.recommendations.get(premise.getGeneratedId())
+			                                 .put(formula, new LTCRecommendation(premise, formula));
 		}
-		return recommendations.get(premise.getGeneratedId()).get(formula);
+		return LTCRecommendation.recommendations.get(premise.getGeneratedId()).get(formula);
 	}
 	
+	/**
+	 * Gets the recommendations.
+	 *
+	 * @param changedFile the changed file
+	 * @param property the property
+	 * @return the recommendations
+	 */
 	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
 	                                                              final ChangeProperty property) {
 		
-		if (!recommendations.containsKey(changedFile.getGeneratedId())) {
+		if (!LTCRecommendation.recommendations.containsKey(changedFile.getGeneratedId())) {
 			return new TreeSet<LTCRecommendation>();
 		}
 		
 		final SortedSet<LTCRecommendation> treeSet = new TreeSet<>(new LTCRecommendationComparator(property));
-		treeSet.addAll(recommendations.get(changedFile.getGeneratedId()).values());
+		treeSet.addAll(LTCRecommendation.recommendations.get(changedFile.getGeneratedId()).values());
 		return treeSet;
 	}
 	
+	/** The premise. */
 	private final Long                                                premise;
 	
+	/** The formula. */
 	private final CTLFormula                                          formula;
 	
+	/** The support. */
 	private final Map<ChangeProperty, Queue<Tuple<String, DateTime>>> support        = new HashMap<>();
 	
+	/** The premise changes. */
 	private final Queue<Tuple<String, DateTime>>                      premiseChanges = new LinkedList<>();
 	
 	/**
-	 * @param premise
-	 * @param formula
+	 * Instantiates a new lTC recommendation.
+	 *
+	 * @param premise the premise
+	 * @param formula the formula
 	 */
 	@NoneNull
 	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
@@ -95,6 +131,13 @@ public class LTCRecommendation {
 		this.support.put(ChangeProperty.NONE, new LinkedList<Tuple<String, DateTime>>());
 	}
 	
+	/**
+	 * Adds the support.
+	 *
+	 * @param rCSTransaction the r cs transaction
+	 * @param property the property
+	 * @param expiry the expiry
+	 */
 	public void addSupport(final RCSTransaction rCSTransaction,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
@@ -114,8 +157,8 @@ public class LTCRecommendation {
 		}
 		
 		if (!property.equals(ChangeProperty.NONE)) {
-			this.support.get(property)
-			            .add(new Tuple<String, DateTime>(rCSTransaction.getId(), rCSTransaction.getTimestamp()));
+			this.support.get(property).add(new Tuple<String, DateTime>(rCSTransaction.getId(),
+			                                                           rCSTransaction.getTimestamp()));
 			supportEntry = this.support.get(property).peek();
 			while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 				supportEntry = this.support.get(property).poll();
@@ -123,6 +166,12 @@ public class LTCRecommendation {
 		}
 	}
 	
+	/**
+	 * File changed.
+	 *
+	 * @param rCSFile the r cs file
+	 * @param rCSTransaction the r cs transaction
+	 */
 	public void fileChanged(final RCSFile rCSFile,
 	                        final RCSTransaction rCSTransaction) {
 		if (this.premise.equals(rCSFile.getGeneratedId())) {
@@ -131,7 +180,10 @@ public class LTCRecommendation {
 	}
 	
 	/**
-	 * @return
+	 * Gets the confidence.
+	 *
+	 * @param property the property
+	 * @return the confidence
 	 */
 	public double getConfidence(final ChangeProperty property) {
 		if (this.premiseChanges.isEmpty()) {
@@ -140,12 +192,20 @@ public class LTCRecommendation {
 		return (getSupport(property) / (double) this.premiseChanges.size());
 	}
 	
+	/**
+	 * Gets the formula.
+	 *
+	 * @return the formula
+	 */
 	public CTLFormula getFormula() {
 		return this.formula;
 	}
 	
 	/**
-	 * @return
+	 * Gets the support.
+	 *
+	 * @param property the property
+	 * @return the support
 	 */
 	public int getSupport(final ChangeProperty property) {
 		if (!this.support.containsKey(property)) {

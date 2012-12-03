@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics.layer.core;
@@ -27,10 +24,9 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyCoreNode;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 
-
 /**
  * The Class CoreAuthorMetrics.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CoreAuthorMetrics extends GenealogyCoreMetric {
@@ -43,46 +39,49 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 	
 	/**
 	 * Instantiates a new core author metrics.
-	 *
-	 * @param genealogy the genealogy
+	 * 
+	 * @param genealogy
+	 *            the genealogy
 	 */
-	public CoreAuthorMetrics(CoreChangeGenealogy genealogy) {
+	public CoreAuthorMetrics(final CoreChangeGenealogy genealogy) {
 		super(genealogy);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#getMetricNames()
 	 */
 	@Override
 	public Collection<String> getMetricNames() {
-		List<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(numDepAuthors);
-		metricNames.add(numParentAuthors);
+		final List<String> metricNames = new ArrayList<String>(2);
+		metricNames.add(CoreAuthorMetrics.numDepAuthors);
+		metricNames.add(CoreAuthorMetrics.numParentAuthors);
 		return metricNames;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.metrics.GenealogyMetric#handle(java.lang.Object)
 	 */
 	@Override
-	public Collection<GenealogyMetricValue> handle(GenealogyCoreNode item) {
-		Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
+	public Collection<GenealogyMetricValue> handle(final GenealogyCoreNode item) {
+		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
-		JavaChangeOperation operation = item.getNode();
-		String nodeId = this.genealogy.getNodeId(operation);
+		final JavaChangeOperation operation = item.getNode();
+		final String nodeId = this.genealogy.getNodeId(operation);
 		
-		Set<Long> depAuthors = new HashSet<Long>();
-		for (JavaChangeOperation dependant : this.genealogy.getAllDependants(operation)) {
+		final Set<Long> depAuthors = new HashSet<Long>();
+		for (final JavaChangeOperation dependant : this.genealogy.getAllDependants(operation)) {
 			depAuthors.add(dependant.getRevision().getTransaction().getPersons().getGeneratedId());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(numDepAuthors, nodeId, depAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.numDepAuthors, nodeId, depAuthors.size()));
 		
-		Set<Long> parentAuthors = new HashSet<Long>();
-		for (JavaChangeOperation parent : this.genealogy.getAllParents(operation)) {
+		final Set<Long> parentAuthors = new HashSet<Long>();
+		for (final JavaChangeOperation parent : this.genealogy.getAllParents(operation)) {
 			parentAuthors.add(parent.getRevision().getTransaction().getPersons().getGeneratedId());
 		}
-		metricValues.add(new GenealogyMetricValue(numParentAuthors, nodeId, parentAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.numParentAuthors, nodeId, parentAuthors.size()));
 		
 		return metricValues;
 	}

@@ -24,7 +24,7 @@ import org.joda.time.DateTime;
 
 /**
  * The Class LogEntry.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class LogEntry {
@@ -40,13 +40,15 @@ public class LogEntry {
 	
 	/**
 	 * Instantiates a new log entry.
-	 *
-	 * @param regex the regex
-	 * @param string the string
+	 * 
+	 * @param regex
+	 *            the regex
+	 * @param string
+	 *            the string
 	 */
 	public LogEntry(final Regex regex, final String string) {
 		regex.find(string);
-		for (String groupName : regex.getGroupNames()) {
+		for (final String groupName : regex.getGroupNames()) {
 			this.tokens.put(groupName, regex.getGroup(groupName));
 		}
 		setTimestamp(buildTimestamp(regex));
@@ -55,8 +57,9 @@ public class LogEntry {
 	
 	/**
 	 * Builds the timestamp.
-	 *
-	 * @param regex the regex
+	 * 
+	 * @param regex
+	 *            the regex
 	 * @return the date time
 	 */
 	private DateTime buildTimestamp(final Regex regex) {
@@ -66,7 +69,7 @@ public class LogEntry {
 	
 	/**
 	 * Gets the line.
-	 *
+	 * 
 	 * @return the line
 	 */
 	public String getLine() {
@@ -75,7 +78,7 @@ public class LogEntry {
 	
 	/**
 	 * Gets the timestamp.
-	 *
+	 * 
 	 * @return the timestamp
 	 */
 	public DateTime getTimestamp() {
@@ -84,7 +87,7 @@ public class LogEntry {
 	
 	/**
 	 * Gets the tokens.
-	 *
+	 * 
 	 * @return the tokens
 	 */
 	public Map<String, String> getTokens() {
@@ -93,8 +96,9 @@ public class LogEntry {
 	
 	/**
 	 * Sets the line.
-	 *
-	 * @param line the line to set
+	 * 
+	 * @param line
+	 *            the line to set
 	 */
 	public void setLine(final String line) {
 		this.line = line;
@@ -102,8 +106,9 @@ public class LogEntry {
 	
 	/**
 	 * Sets the timestamp.
-	 *
-	 * @param timestamp the timestamp to set
+	 * 
+	 * @param timestamp
+	 *            the timestamp to set
 	 */
 	public void setTimestamp(final DateTime timestamp) {
 		this.timestamp = timestamp;
@@ -111,8 +116,9 @@ public class LogEntry {
 	
 	/**
 	 * Sets the tokens.
-	 *
-	 * @param tokens the tokens to set
+	 * 
+	 * @param tokens
+	 *            the tokens to set
 	 */
 	public void setTokens(final Map<String, String> tokens) {
 		this.tokens = tokens;

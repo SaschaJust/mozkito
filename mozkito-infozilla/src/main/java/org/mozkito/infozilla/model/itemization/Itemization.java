@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.mozkito.infozilla.model.Inlineable;
 
-
 /**
  * This class encapsulates an Itemization as created by FilterEnumerations filter.
  * 

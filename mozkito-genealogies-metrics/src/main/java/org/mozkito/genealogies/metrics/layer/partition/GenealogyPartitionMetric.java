@@ -19,7 +19,6 @@ import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetric;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 
-
 /**
  * The Class GenealogyPartitionMetric.
  * 

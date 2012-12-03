@@ -12,42 +12,14 @@
  ******************************************************************************/
 package org.mozkito.utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import difflib.Chunk;
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.Patch;
 
 /**
  * The Class DiffUtils.
  */
 public class DiffUtils {
-	
-	/**
-	 * File to lines.
-	 * 
-	 * @param filename
-	 *            the filename
-	 * @return the list
-	 */
-	private static List<String> fileToLines(final String filename) {
-		final List<String> lines = new LinkedList<String>();
-		String line = "";
-		try (BufferedReader in = new BufferedReader(new FileReader(filename));) {
-			while ((line = in.readLine()) != null) {
-				lines.add(line);
-			}
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		return lines;
-	}
 	
 	/**
 	 * Gets the line numbers.
@@ -65,23 +37,4 @@ public class DiffUtils {
 		return result;
 	}
 	
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 */
-	public static void main(final String[] args) {
-		final List<String> original = fileToLines("/Users/kim/Downloads/1.txt");
-		final List<String> revised = fileToLines("/Users/kim/Downloads/2.txt");
-		
-		// Compute diff. Get the Patch object. Patch is the container for computed deltas.
-		final Patch patch = difflib.DiffUtils.diff(original, revised);
-		
-		for (final Delta delta : patch.getDeltas()) {
-			System.out.println(delta);
-			System.out.println(delta instanceof DeleteDelta);
-			System.out.println(delta.getRevised().getSize());
-		}
-	}
 }

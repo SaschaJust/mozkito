@@ -23,14 +23,28 @@ import java.util.List;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
 
+/**
+ * The Class OperationCollection.
+ */
 public class OperationCollection {
 	
+	/** The collection. */
 	private List<JavaChangeOperation> collection = new LinkedList<JavaChangeOperation>();
 	
+	/**
+	 * Instantiates a new operation collection.
+	 *
+	 * @param collection the collection
+	 */
 	public OperationCollection(Collection<JavaChangeOperation> collection) {
 		this.collection.addAll(collection);
 	}
 	
+	/**
+	 * Unpack.
+	 *
+	 * @return the collection
+	 */
 	public Collection<JavaChangeOperation> unpack() {
 		return this.collection;
 	}

@@ -29,6 +29,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.Tuple;
@@ -55,18 +56,23 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+
+import difflib.DeleteDelta;
+import difflib.Delta;
+import difflib.InsertDelta;
+
 import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.ChangeOperations;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
+import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 import org.mozkito.codeanalysis.model.JavaElementLocationSet;
 import org.mozkito.codeanalysis.model.JavaElementLocation_;
 import org.mozkito.codeanalysis.model.JavaElement_;
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 import org.mozkito.codeanalysis.visitors.PPAMethodCallVisitor;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.persistence.Criteria;
@@ -77,11 +83,6 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.InsertDelta;
-
 /**
  * The Class PPAUtils.
  * 
@@ -89,16 +90,46 @@ import difflib.InsertDelta;
  */
 public class PPAUtils {
 	
+	/**
+	 * The Class CopyThread.
+	 */
 	private static class CopyThread extends Thread {
 		
+		/** The project. */
 		private final IProject   project;
+		
+		/** The file. */
 		private final File       file;
+		
+		/** The packagename. */
 		private final String     packagename;
+		
+		/** The filename. */
 		private final String     filename;
+		
+		/** The options. */
 		private final PPAOptions options;
+		
+		/** The cu. */
 		private CompilationUnit  cu;
+		
+		/** The i file. */
 		private IFile            iFile;
 		
+		/**
+		 * Instantiates a new copy thread.
+		 * 
+		 * @param project
+		 *            the project
+		 * @param file
+		 *            the file
+		 * @param packagename
+		 *            the packagename
+		 * @param filename
+		 *            the filename
+		 * @param options
+		 *            the options
+		 */
 		public CopyThread(final IProject project, final File file, final String packagename, final String filename,
 		        final PPAOptions options) {
 			this.project = project;
@@ -108,14 +139,28 @@ public class PPAUtils {
 			this.options = options;
 		}
 		
+		/**
+		 * Gets the compilation unit.
+		 * 
+		 * @return the compilation unit
+		 */
 		public CompilationUnit getCompilationUnit() {
 			return this.cu;
 		}
 		
+		/**
+		 * Gets the i file.
+		 * 
+		 * @return the i file
+		 */
 		public IFile getIFile() {
 			return this.iFile;
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		@Override
 		public void run() {
 			try {
@@ -141,6 +186,12 @@ public class PPAUtils {
 		
 	}
 	
+	/**
+	 * Cleanup workspace.
+	 * 
+	 * @throws CoreException
+	 *             the core exception
+	 */
 	public static void cleanupWorkspace() throws CoreException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
@@ -302,7 +353,10 @@ public class PPAUtils {
 	 *            the transaction
 	 * @param visitors
 	 *            the visitors
-	 * @param usePPA
+	 * @param elementFactory
+	 *            the element factory
+	 * @param packageFilter
+	 *            the package filter
 	 */
 	public static void generateChangeOperations(final Repository repository,
 	                                            final RCSTransaction rCSTransaction,
@@ -388,9 +442,9 @@ public class PPAUtils {
 			}
 			for (final Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 				final CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
-				generateChangeOperationsForDeletedFile(repository, rCSTransaction, entry.getKey(), cu, entry.getValue()
-				                                                                                         .getSecond(),
-				                                       visitors, elementFactory, packageFilter);
+				generateChangeOperationsForDeletedFile(repository, rCSTransaction, entry.getKey(), cu,
+				                                       entry.getValue().getSecond(), visitors, elementFactory,
+				                                       packageFilter);
 			}
 		}
 		
@@ -426,7 +480,7 @@ public class PPAUtils {
 		for (final Entry<RCSRevision, Tuple<IFile, String>> entry : iFiles.entrySet()) {
 			final CompilationUnit cu = getCU(entry.getValue().getFirst(), new PPAOptions());
 			generateChangeOperationsForAddedFile(repository, rCSTransaction, entry.getKey(), cu, entry.getValue()
-			                                                                                       .getSecond(),
+			                                                                                          .getSecond(),
 			                                     visitors, elementFactory, packageFilter);
 		}
 		
@@ -462,6 +516,26 @@ public class PPAUtils {
 		}
 	}
 	
+	/**
+	 * Generate change operations for added file.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param rCSRevision
+	 *            the r cs revision
+	 * @param cu
+	 *            the cu
+	 * @param changedPath
+	 *            the changed path
+	 * @param visitors
+	 *            the visitors
+	 * @param elementFactory
+	 *            the element factory
+	 * @param packageFilter
+	 *            the package filter
+	 */
 	private static void generateChangeOperationsForAddedFile(final Repository repository,
 	                                                         final RCSTransaction rCSTransaction,
 	                                                         final RCSRevision rCSRevision,
@@ -494,6 +568,26 @@ public class PPAUtils {
 		
 	}
 	
+	/**
+	 * Generate change operations for deleted file.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param rCSRevision
+	 *            the r cs revision
+	 * @param cu
+	 *            the cu
+	 * @param changedPath
+	 *            the changed path
+	 * @param visitors
+	 *            the visitors
+	 * @param elementFactory
+	 *            the element factory
+	 * @param packageFilter
+	 *            the package filter
+	 */
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
 	                                                             final RCSTransaction rCSTransaction,
 	                                                             final RCSRevision rCSRevision,
@@ -533,8 +627,16 @@ public class PPAUtils {
 	 * 
 	 * @param repository
 	 *            the repository
+	 * @param rCSTransaction
+	 *            the r cs transaction
 	 * @param rCSRevision
 	 *            the revision
+	 * @param oldElems
+	 *            the old elems
+	 * @param newElems
+	 *            the new elems
+	 * @param changedPath
+	 *            the changed path
 	 * @param visitors
 	 *            the visitors
 	 */
@@ -731,6 +833,20 @@ public class PPAUtils {
 		}
 	}
 	
+	/**
+	 * Generate change operations noppa.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param visitors
+	 *            the visitors
+	 * @param elementFactory
+	 *            the element factory
+	 * @param packageFilter
+	 *            the package filter
+	 */
 	public static void generateChangeOperationsNOPPA(final Repository repository,
 	                                                 final RCSTransaction rCSTransaction,
 	                                                 final Collection<ChangeOperationVisitor> visitors,
@@ -1098,6 +1214,17 @@ public class PPAUtils {
 		return cus;
 	}
 	
+	/**
+	 * Gets the c us for transaction.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param changeType
+	 *            the change type
+	 * @return the c us for transaction
+	 */
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction rCSTransaction,
 	                                                                        final ChangeType changeType) {
@@ -1233,12 +1360,14 @@ public class PPAUtils {
 	/**
 	 * Gets the java element locations by file.
 	 * 
-	 * @param file
-	 *            the file
-	 * @param filePrefixPath
-	 *            the file prefix path
+	 * @param cu
+	 *            the cu
+	 * @param relativePath
+	 *            the relative path
 	 * @param packageFilter
 	 *            the package filter
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java element locations by file
 	 */
 	@NoneNull
@@ -1272,6 +1401,8 @@ public class PPAUtils {
 	 *            the file prefix path
 	 * @param packageFilter
 	 *            the package filter
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java element locations by file
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File file,
@@ -1317,6 +1448,8 @@ public class PPAUtils {
 	 *            the source dir
 	 * @param packageFilter
 	 *            the package filter
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final File sourceDir,
@@ -1344,6 +1477,8 @@ public class PPAUtils {
 	 *            the file prefix path
 	 * @param packageFilter
 	 *            the package filter
+	 * @param elementFactory
+	 *            the element factory
 	 * @return the java method elements
 	 */
 	public static JavaElementLocations getJavaElementLocationsByFile(final Iterator<File> fileIterator,
@@ -1385,6 +1520,19 @@ public class PPAUtils {
 		return locationSet.getJavaElementLocations();
 	}
 	
+	/**
+	 * Gets the last operation on element.
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param searchElement
+	 *            the search element
+	 * @param opTransaction
+	 *            the op transaction
+	 * @param notMatch
+	 *            the not match
+	 * @return the last operation on element
+	 */
 	private static JavaChangeOperation getLastOperationOnElement(final PersistenceUtil persistenceUtil,
 	                                                             final JavaElement searchElement,
 	                                                             final RCSTransaction opTransaction,

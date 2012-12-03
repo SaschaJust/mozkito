@@ -68,7 +68,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		finder = Environment.setup("/engines.authorEquality.test.properties");
+		AuthorEqualityEngineTest.finder = Environment.setup("/engines.authorEquality.test.properties");
 		
 	}
 	
@@ -104,7 +104,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 		final Relation relation = Environment.relation(rCSTransaction, report);
 		assertNotNull("Failed creating relation from " + rCSTransaction + " and " + report, relation);
 		
-		finder.score(this.engine, relation);
+		AuthorEqualityEngineTest.finder.score(this.engine, relation);
 		
 		return relation;
 	}
@@ -114,7 +114,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	 */
 	@Before
 	public void setUp() {
-		this.engines = finder.getEngines();
+		this.engines = AuthorEqualityEngineTest.finder.getEngines();
 		this.engine = this.engines.get(AuthorEqualityEngine.class);
 	}
 	

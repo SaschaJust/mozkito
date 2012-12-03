@@ -24,10 +24,10 @@ import org.mozkito.causeeffect.ctl.CTLEF;
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.versions.model.RCSFile;
 
-
 /**
+ * The Class EF_and_FormulaGenearator.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class EF_and_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {
 	

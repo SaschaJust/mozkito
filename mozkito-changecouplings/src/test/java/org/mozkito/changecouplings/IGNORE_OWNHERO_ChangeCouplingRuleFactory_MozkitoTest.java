@@ -48,6 +48,9 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	/** The persistence util. */
 	private static PersistenceUtil persistenceUtil = null;
 	
+	/**
+	 * Instantiates a new iGNOR e_ ownher o_ change coupling rule factory_ mozkito test.
+	 */
 	public IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
 		try {
 			

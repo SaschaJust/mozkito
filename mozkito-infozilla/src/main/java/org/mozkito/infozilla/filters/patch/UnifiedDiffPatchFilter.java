@@ -14,13 +14,13 @@ package org.mozkito.infozilla.filters.patch;
 
 import java.util.List;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
-import org.mozkito.infozilla.model.patch.Patch;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+
+import org.mozkito.infozilla.filters.FilterTextRemover;
+import org.mozkito.infozilla.model.patch.Patch;
 
 /**
  * This InfozillaFilter class acts as an interface for the PatchParser class that has to be instantiated before using

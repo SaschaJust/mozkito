@@ -20,7 +20,8 @@ import org.mozkito.infozilla.model.attachment.Attachment;
  */
 public abstract class Image implements Attachable {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
 	 */
 	@Override

@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mozkito.infozilla.filters.FilterTextRemover;
-import org.mozkito.infozilla.model.stacktrace.TalkbackEntry;
-import org.mozkito.infozilla.model.stacktrace.TalkbackTrace;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
@@ -28,6 +24,10 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
+
+import org.mozkito.infozilla.filters.FilterTextRemover;
+import org.mozkito.infozilla.model.stacktrace.TalkbackEntry;
+import org.mozkito.infozilla.model.stacktrace.TalkbackTrace;
 
 /**
  * The Class TalkBackFilter.

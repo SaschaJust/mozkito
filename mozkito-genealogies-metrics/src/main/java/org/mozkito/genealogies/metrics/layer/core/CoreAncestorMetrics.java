@@ -21,7 +21,6 @@ import org.mozkito.genealogies.metrics.GenealogyCoreNode;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalParentsMetrics;
 
-
 /**
  * The Class CoreDependencyMetrics.
  * 

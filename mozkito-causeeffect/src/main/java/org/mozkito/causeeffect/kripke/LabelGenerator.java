@@ -15,8 +15,19 @@ package org.mozkito.causeeffect.kripke;
 
 import java.util.Collection;
 
+/**
+ * The Interface LabelGenerator.
+ *
+ * @param <T> the generic type
+ */
 public interface LabelGenerator<T> {
 	
+	/**
+	 * Gets the labels.
+	 *
+	 * @param t the t
+	 * @return the labels
+	 */
 	public Collection<Label> getLabels(T t);
 	
 }

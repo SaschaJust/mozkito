@@ -25,11 +25,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 /**
  * The Class ChangeGenealogy.
- * 
- * @param <T>
- *            The type of objects accepted as input arguments
- * @param <K>
- *            the type of objects method results will be based on
+ *
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGenealogyLayerNode> {
@@ -118,6 +114,9 @@ public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGene
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
+	 */
 	@Override
 	public final CoreChangeGenealogy getCore() {
 		return this.core;

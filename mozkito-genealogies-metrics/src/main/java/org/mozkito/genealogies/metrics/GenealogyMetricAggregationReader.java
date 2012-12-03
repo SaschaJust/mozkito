@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.genealogies.metrics;
 
@@ -21,10 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
@@ -32,9 +25,13 @@ import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.RCSTransaction;
+
 /**
  * The Class GenealogyMetricAggregationReader.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValue> {
@@ -47,11 +44,15 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 	
 	/**
 	 * Instantiates a new genealogy metric aggregation reader.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param metricValues the metric values
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param metricValues
+	 *            the metric values
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public GenealogyMetricAggregationReader(final Group threadGroup, final Settings settings,
 	        final Map<String, Map<String, Double>> metricValues, final PersistenceUtil persistenceUtil) {
@@ -86,7 +87,8 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 						
 						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
 							for (final RCSFile rCSFile : changedFiles) {
-								output.add(new GenealogyMetricValue(metricSet.getKey(), rCSFile.getPath(rCSTransaction),
+								output.add(new GenealogyMetricValue(metricSet.getKey(),
+								                                    rCSFile.getPath(rCSTransaction),
 								                                    metricSet.getValue()));
 							}
 						}

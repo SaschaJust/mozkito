@@ -18,35 +18,37 @@ package org.mozkito.infozilla.model.archive;
 import java.io.File;
 import java.io.IOException;
 
-import org.mozkito.infozilla.model.attachment.Attachment;
-
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
+import org.mozkito.infozilla.model.attachment.Attachment;
+
 /**
  * The Class LZMAArchive.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class LZMAArchive extends Archive {
 	
 	/**
 	 * Instantiates a new lZMA archive.
-	 *
-	 * @param attachment the attachment
+	 * 
+	 * @param attachment
+	 *            the attachment
 	 */
 	public LZMAArchive(final Attachment attachment) {
 		super(attachment);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.archive.Archive#extract()
 	 */
 	@Override
 	public File extract() throws IOException {
-		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		FileUtils.dump(getAttachment().getData(), file);
-		File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
+		final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);
 		FileUtils.unlzma(file, dir);
 		return dir;
 	}

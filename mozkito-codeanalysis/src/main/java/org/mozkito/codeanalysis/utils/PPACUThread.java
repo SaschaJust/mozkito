@@ -12,6 +12,7 @@
  ******************************************************************************/
 package org.mozkito.codeanalysis.utils;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.core.resources.IFile;
@@ -26,8 +27,6 @@ import org.eclipse.jdt.core.dom.PPAASTParser;
 import org.eclipse.jdt.core.dom.PPAEngine;
 import org.eclipse.jdt.core.dom.PPATypeRegistry;
 import org.eclipse.jdt.internal.core.JavaProject;
-
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 
 /**
  * The Class PPACUThread.

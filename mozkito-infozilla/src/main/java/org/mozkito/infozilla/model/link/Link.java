@@ -15,12 +15,12 @@ package org.mozkito.infozilla.model.link;
 import java.net.URL;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.issues.tracker.model.TextElement;
 import org.mozkito.persistence.model.Person;
-
 
 /**
  * The Class Link.
@@ -33,11 +33,11 @@ public class Link implements Attachable, Inlineable {
 	private enum Kind {
 		
 		/** The WEB. */
-		WEB, 
- /** The REPOSITORY. */
- REPOSITORY, 
- /** The TRACKER. */
- TRACKER;
+		WEB,
+		/** The REPOSITORY. */
+		REPOSITORY,
+		/** The TRACKER. */
+		TRACKER;
 	}
 	
 	/** The url. */
@@ -61,7 +61,8 @@ public class Link implements Attachable, Inlineable {
 	/** The posted in. */
 	private TextElement   postedIn;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Attachable#getAttachment()
 	 */
 	@Override
@@ -70,7 +71,8 @@ public class Link implements Attachable, Inlineable {
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
 	 */
 	@Override
@@ -81,7 +83,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the kind.
-	 *
+	 * 
 	 * @return the kind
 	 */
 	public Kind getKind() {
@@ -90,7 +92,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the posted by.
-	 *
+	 * 
 	 * @return the postedBy
 	 */
 	public Person getPostedBy() {
@@ -99,7 +101,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the posted in.
-	 *
+	 * 
 	 * @return the postedIn
 	 */
 	public TextElement getPostedIn() {
@@ -108,14 +110,15 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the posted on.
-	 *
+	 * 
 	 * @return the postedOn
 	 */
 	public DateTime getPostedOn() {
 		return this.postedOn;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
 	 */
 	@Override
@@ -126,7 +129,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the string representation.
-	 *
+	 * 
 	 * @return the stringRepresentation
 	 */
 	public String getStringRepresentation() {
@@ -135,7 +138,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Gets the url.
-	 *
+	 * 
 	 * @return the url
 	 */
 	public URL getUrl() {
@@ -144,7 +147,7 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Checks if is valid.
-	 *
+	 * 
 	 * @return the valid
 	 */
 	public boolean isValid() {
@@ -153,8 +156,9 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the posted by.
-	 *
-	 * @param postedBy the postedBy to set
+	 * 
+	 * @param postedBy
+	 *            the postedBy to set
 	 */
 	public void setPostedBy(final Person postedBy) {
 		this.postedBy = postedBy;
@@ -162,8 +166,9 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the posted in.
-	 *
-	 * @param postedIn the postedIn to set
+	 * 
+	 * @param postedIn
+	 *            the postedIn to set
 	 */
 	public void setPostedIn(final TextElement postedIn) {
 		this.postedIn = postedIn;
@@ -171,8 +176,9 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the posted on.
-	 *
-	 * @param postedOn the postedOn to set
+	 * 
+	 * @param postedOn
+	 *            the postedOn to set
 	 */
 	public void setPostedOn(final DateTime postedOn) {
 		this.postedOn = postedOn;
@@ -180,8 +186,9 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the string representation.
-	 *
-	 * @param stringRepresentation the stringRepresentation to set
+	 * 
+	 * @param stringRepresentation
+	 *            the stringRepresentation to set
 	 */
 	public void setStringRepresentation(final String stringRepresentation) {
 		this.stringRepresentation = stringRepresentation;
@@ -189,8 +196,9 @@ public class Link implements Attachable, Inlineable {
 	
 	/**
 	 * Sets the url.
-	 *
-	 * @param url the url to set
+	 * 
+	 * @param url
+	 *            the url to set
 	 */
 	public void setUrl(final URL url) {
 		this.url = url;

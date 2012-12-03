@@ -53,15 +53,21 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 	public static class Options extends
 	        ArgumentSetOptions<ChangeCouplingCombineOperator, ArgumentSet<ChangeCouplingCombineOperator, Options>> {
 		
+		/** The database options. */
 		private final DatabaseOptions                                 databaseOptions;
+		
+		/** The min support options. */
 		private net.ownhero.dev.hiari.settings.LongArgument.Options   minSupportOptions;
+		
+		/** The min confidence options. */
 		private net.ownhero.dev.hiari.settings.DoubleArgument.Options minConfidenceOptions;
 		
 		/**
-		 * @param argumentSet
-		 * @param name
-		 * @param description
-		 * @param requirements
+		 * Instantiates a new options.
+		 *
+		 * @param argumentSet the argument set
+		 * @param requirements the requirements
+		 * @param databaseOptions the database options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final DatabaseOptions databaseOptions) {
@@ -111,10 +117,22 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 		}
 	}
 	
+	/** The persistence util. */
 	private final PersistenceUtil persistenceUtil;
+	
+	/** The min confidence. */
 	private final double          minConfidence;
+	
+	/** The min support. */
 	private final int             minSupport;
 	
+	/**
+	 * Instantiates a new change coupling combine operator.
+	 *
+	 * @param minSupport the min support
+	 * @param minConfidence the min confidence
+	 * @param persistenceUtil the persistence util
+	 */
 	protected ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
 	        final PersistenceUtil persistenceUtil) {
 		this.minSupport = minSupport;

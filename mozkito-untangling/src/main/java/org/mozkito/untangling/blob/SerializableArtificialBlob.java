@@ -20,24 +20,35 @@ import org.mozkito.persistence.PersistenceUtil;
 
 
 /**
+ * The Class SerializableArtificialBlob.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class SerializableArtificialBlob implements Serializable {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long                serialVersionUID = 9034567768975977141L;
 	
+	/** The change sets. */
 	private final Set<SerializableChangeSet> changeSets       = new HashSet<>();
 	
+	/**
+	 * Instantiates a new serializable artificial blob.
+	 *
+	 * @param blob the blob
+	 */
 	public SerializableArtificialBlob(final ArtificialBlob blob) {
 		for (final ChangeSet changeSet : blob.getAtomicTransactions()) {
 			this.changeSets.add(new SerializableChangeSet(changeSet));
 		}
 	}
 	
+	/**
+	 * Unserialize.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @return the artificial blob
+	 */
 	public ArtificialBlob unserialize(final PersistenceUtil persistenceUtil) {
 		final Set<ChangeSet> unserChangeSets = new HashSet<>();
 		for (final SerializableChangeSet sChangeSet : this.changeSets) {

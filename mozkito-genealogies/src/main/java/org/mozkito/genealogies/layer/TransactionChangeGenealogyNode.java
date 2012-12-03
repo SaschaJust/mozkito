@@ -20,15 +20,20 @@ import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
+ * The Class TransactionChangeGenealogyNode.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode {
 	
+	/** The r cs transaction. */
 	private final RCSTransaction rCSTransaction;
 	
 	/**
-	 * @param partition
+	 * Instantiates a new transaction change genealogy node.
+	 *
+	 * @param rCSTransaction the r cs transaction
+	 * @param partition the partition
 	 */
 	public TransactionChangeGenealogyNode(final RCSTransaction rCSTransaction,
 	        final Collection<JavaChangeOperation> partition) {
@@ -36,11 +41,17 @@ public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode
 		this.rCSTransaction = rCSTransaction;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.layer.ChangeGenealogyLayerNode#getEarliestTimestamp()
+	 */
 	@Override
 	public DateTime getEarliestTimestamp() {
 		return this.rCSTransaction.getTimestamp();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.genealogies.layer.ChangeGenealogyLayerNode#getLatestTimestamp()
+	 */
 	@Override
 	public DateTime getLatestTimestamp() {
 		return this.rCSTransaction.getTimestamp();

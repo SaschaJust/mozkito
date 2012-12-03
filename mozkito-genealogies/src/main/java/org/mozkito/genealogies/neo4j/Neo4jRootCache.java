@@ -25,15 +25,26 @@ import org.neo4j.graphdb.index.IndexHits;
 
 
 /**
+ * The Class Neo4jRootCache.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class Neo4jRootCache implements Iterable<Node> {
 	
+	/** The cache. */
 	private final Set<Node>            cache = new HashSet<>();
+	
+	/** The graph. */
 	private final GraphDatabaseService graph;
+	
+	/** The root index. */
 	private final Index<Node>          rootIndex;
 	
+	/**
+	 * Instantiates a new neo4j root cache.
+	 *
+	 * @param graph the graph
+	 */
 	public Neo4jRootCache(final GraphDatabaseService graph) {
 		this.graph = graph;
 		this.rootIndex = graph.index().forNodes(CoreChangeGenealogy.ROOT_VERTICES);
@@ -45,7 +56,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	}
 	
 	/**
-	 * @param node
+	 * Adds the.
+	 *
+	 * @param node the node
 	 */
 	public void add(final Node node) {
 		this.rootIndex.add(node, CoreChangeGenealogy.ROOT_VERTICES, 1);
@@ -53,8 +66,10 @@ public class Neo4jRootCache implements Iterable<Node> {
 	}
 	
 	/**
-	 * @param node
-	 * @return
+	 * Checks if is root.
+	 *
+	 * @param node the node
+	 * @return true, if is root
 	 */
 	public boolean isRoot(final Node node) {
 		// PRECONDITIONS
@@ -82,7 +97,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	}
 	
 	/**
-	 * @param node
+	 * Removes the.
+	 *
+	 * @param node the node
 	 */
 	public void remove(final Node node) {
 		final Transaction tx2 = this.graph.beginTx();

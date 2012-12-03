@@ -22,18 +22,26 @@ import org.mozkito.versions.model.RCSTransaction;
 
 
 /**
+ * The Class SerializableChangeSet.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class SerializableChangeSet implements Serializable {
 	
-	/**
-     * 
-     */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 5508693461764140540L;
+	
+	/** The transaction id. */
 	private final String      transactionId;
+	
+	/** The operation ids. */
 	private final Set<Long>   operationIds     = new HashSet<>();
 	
+	/**
+	 * Instantiates a new serializable change set.
+	 *
+	 * @param changeSet the change set
+	 */
 	public SerializableChangeSet(final ChangeSet changeSet) {
 		this.transactionId = changeSet.getTransaction().getId();
 		for (final JavaChangeOperation operation : changeSet.getOperations()) {
@@ -41,6 +49,12 @@ public class SerializableChangeSet implements Serializable {
 		}
 	}
 	
+	/**
+	 * Unserialize.
+	 *
+	 * @param persistenceUtil the persistence util
+	 * @return the change set
+	 */
 	public ChangeSet unserialize(final PersistenceUtil persistenceUtil) {
 		final RCSTransaction rCSTransaction = persistenceUtil.loadById(this.transactionId, RCSTransaction.class);
 		final Set<JavaChangeOperation> operations = new HashSet<>();

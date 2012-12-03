@@ -72,30 +72,30 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	public static JavaTypeDefinition fromXMLRepresentation(final Element element,
 	                                                       final JavaElementFactory factory) {
 		
-		if (!element.getName().equals(JAVA_CLASS_DEFINITION)) {
+		if (!element.getName().equals(JavaTypeDefinition.JAVA_CLASS_DEFINITION)) {
 			throw new UnrecoverableError(String.format("Unrecognized root element <%s>. Returning null.",
 			                                           element.getName()));
 			
 		}
 		
-		final Element nameElement = element.getChild(FULL_QUALIFIED_NAME);
+		final Element nameElement = element.getChild(JavaTypeDefinition.FULL_QUALIFIED_NAME);
 		Condition.notNull(nameElement, "Could not extract JavaClassDefinfition.fullQualifidName. Returning null.");
 		
 		final String name = nameElement.getText();
 		
-		final Element anonElement = element.getChild(JAVA_CLASS_ANONYMOUS);
+		final Element anonElement = element.getChild(JavaTypeDefinition.JAVA_CLASS_ANONYMOUS);
 		Condition.notNull(anonElement, "Could not extract JavaClassDefinfition.anonymous.");
 		
 		final Boolean anonymous = Boolean.valueOf(anonElement.getText());
 		
-		final Element interfaceElement = element.getChild(JAVA_CLASS_INTERFACE);
+		final Element interfaceElement = element.getChild(JavaTypeDefinition.JAVA_CLASS_INTERFACE);
 		Condition.notNull(interfaceElement, "Could not extract JavaClassDefinfition.interface.");
 		
 		final Boolean isInterface = Boolean.valueOf(interfaceElement.getText());
 		
-		final Element parentElement = element.getChild(JAVA_CLASS_PARENT);
+		final Element parentElement = element.getChild(JavaTypeDefinition.JAVA_CLASS_PARENT);
 		if (parentElement != null) {
-			final JavaTypeDefinition parent = JavaTypeDefinition.fromXMLRepresentation(parentElement.getChild(JAVA_CLASS_DEFINITION),
+			final JavaTypeDefinition parent = JavaTypeDefinition.fromXMLRepresentation(parentElement.getChild(JavaTypeDefinition.JAVA_CLASS_DEFINITION),
 			                                                                           factory);
 			if (anonymous) {
 				return factory.getAnonymousClassDefinition(parent, name);
@@ -149,7 +149,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
 		setParent(parent);
@@ -169,7 +169,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	protected JavaTypeDefinition(final JavaTypeDefinition parent, final String fullQualifiedName,
 	        final boolean isInterface) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
 			this.anonymClass = true;
 		}
 		setParent(parent);
@@ -185,7 +185,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
 	}
@@ -201,7 +201,7 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	protected JavaTypeDefinition(final String fullQualifiedName, final boolean isInterface) {
 		super(fullQualifiedName, JavaTypeDefinition.class.getCanonicalName());
-		if (Pattern.matches(anonCheck, fullQualifiedName)) {
+		if (Pattern.matches(JavaTypeDefinition.anonCheck, fullQualifiedName)) {
 			throw new UnrecoverableError("Anonymous class must have parent!");
 		}
 		setInterfaze(isInterface);
@@ -252,11 +252,11 @@ public class JavaTypeDefinition extends JavaElement implements Annotated {
 	@NoneNull
 	@Transient
 	public Element getXMLRepresentation() {
-		final Element thisElement = new Element(JAVA_CLASS_DEFINITION);
-		final Element nameElement = new Element(FULL_QUALIFIED_NAME);
-		final Element anonElement = new Element(JAVA_CLASS_ANONYMOUS);
-		final Element interfaceElement = new Element(JAVA_CLASS_INTERFACE);
-		final Element parentElement = new Element(JAVA_CLASS_PARENT);
+		final Element thisElement = new Element(JavaTypeDefinition.JAVA_CLASS_DEFINITION);
+		final Element nameElement = new Element(JavaTypeDefinition.FULL_QUALIFIED_NAME);
+		final Element anonElement = new Element(JavaTypeDefinition.JAVA_CLASS_ANONYMOUS);
+		final Element interfaceElement = new Element(JavaTypeDefinition.JAVA_CLASS_INTERFACE);
+		final Element parentElement = new Element(JavaTypeDefinition.JAVA_CLASS_PARENT);
 		nameElement.setText(getFullQualifiedName());
 		thisElement.addContent(nameElement);
 		anonElement.setText(String.valueOf(isAnonymClass()));

@@ -16,13 +16,17 @@ package org.mozkito.causeeffect.ctl;
 import java.util.Collection;
 
 /**
+ * The Class CTLBilateralFormula.
+ *
  * @author Kim Herzig <kim@mozkito.org>
- * 
  */
 public abstract class CTLBilateralFormula extends CTLFormula {
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.causeeffect.ctl.CTLFormula#equals(java.lang.Object)
+	 */
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -32,7 +36,7 @@ public abstract class CTLBilateralFormula extends CTLFormula {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		CTLBilateralFormula other = (CTLBilateralFormula) obj;
+		final CTLBilateralFormula other = (CTLBilateralFormula) obj;
 		if (this.getLeft() == null) {
 			if (other.getLeft() != null) {
 				return false;
@@ -50,12 +54,25 @@ public abstract class CTLBilateralFormula extends CTLFormula {
 		return true;
 	}
 	
+	/**
+	 * Gets the left.
+	 *
+	 * @return the left
+	 */
 	public abstract CTLFormula getLeft();
 	
+	/**
+	 * Gets the right.
+	 *
+	 * @return the right
+	 */
 	public abstract CTLFormula getRight();
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
+	 */
 	@Override
-	public void putAttomicFormulas(Collection<CTLAtomicFormula> atomicFormulas) {
+	public void putAttomicFormulas(final Collection<CTLAtomicFormula> atomicFormulas) {
 		this.getLeft().putAttomicFormulas(atomicFormulas);
 		this.getRight().putAttomicFormulas(atomicFormulas);
 	}

@@ -3,6 +3,7 @@ package org.mozkito;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
 import org.mozkito.versions.RepositoryFactoryTest;
 import org.mozkito.versions.collections.TransactionSetTest;
 import org.mozkito.versions.elements.RCSFileManagerTest;
@@ -26,5 +27,5 @@ import org.mozkito.versions.subversion.SubversionRepositoryTest;
         RCSTransactionTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class,
         SubversionRepositoryTest.class, RCSFileManagerTest.class, RevDependencyTest.class })
 public class AllTests {
-	
+	// stub
 }

@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics;
@@ -36,7 +33,7 @@ import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class GenealogyMetricSink.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
@@ -52,10 +49,13 @@ public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
 	
 	/**
 	 * Instantiates a new genealogy metric sink.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param outputFile the output file
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param outputFile
+	 *            the output file
 	 */
 	public GenealogyMetricSink(final Group threadGroup, final Settings settings, final File outputFile) {
 		super(threadGroup, settings, false);
@@ -117,7 +117,7 @@ public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
 	
 	/**
 	 * Gets the metric values.
-	 *
+	 * 
 	 * @return the metric values
 	 */
 	public Map<String, Map<String, Double>> getMetricValues() {
@@ -126,7 +126,7 @@ public class GenealogyMetricSink extends Sink<GenealogyMetricValue> {
 	
 	/**
 	 * Checks if is consistent.
-	 *
+	 * 
 	 * @return true, if is consistent
 	 */
 	public boolean isConsistent() {

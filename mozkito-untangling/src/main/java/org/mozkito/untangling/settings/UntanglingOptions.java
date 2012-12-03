@@ -138,10 +138,13 @@ public class UntanglingOptions extends
 	/** The test impact voter options. */
 	private org.mozkito.untangling.voters.TestImpactVoter.Options                         testImpactVoterOptions;
 	
+	/** The artificial blob cache options. */
 	private net.ownhero.dev.hiari.settings.DirectoryArgument.Options                      artificialBlobCacheOptions;
 	
+	/** The precision experiment options. */
 	private net.ownhero.dev.hiari.settings.BooleanArgument.Options                        precisionExperimentOptions;
 	
+	/** The to untangle options. */
 	private net.ownhero.dev.hiari.settings.InputFileArgument.Options                      toUntangleOptions;
 	
 	/**
@@ -156,6 +159,12 @@ public class UntanglingOptions extends
 		super(argumentSet, "untangling", "Options to configure the untangling process details.", requirements);
 	}
 	
+	/**
+	 * Adds the option.
+	 *
+	 * @param options the options
+	 * @param map the map
+	 */
 	private void addOption(final IOptions<?, ?> options,
 	                       final Map<String, IOptions<?, ?>> map) {
 		map.put(options.getName(), options);

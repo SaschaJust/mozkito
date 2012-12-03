@@ -15,13 +15,32 @@ package org.mozkito.genealogies.core;
 
 import org.neo4j.graphdb.RelationshipType;
 
+/**
+ * The Enum GenealogyEdgeType.
+ */
 public enum GenealogyEdgeType implements RelationshipType {
+	
+	/** The Definition on definition. */
 	DefinitionOnDefinition,
+	
+	/** The Definition on deleted definition. */
 	DefinitionOnDeletedDefinition,
+	
+	/** The Call on definition. */
 	CallOnDefinition,
+	
+	/** The Deleted definition on definition. */
 	DeletedDefinitionOnDefinition,
+	
+	/** The Deleted call on call. */
 	DeletedCallOnCall,
+	
+	/** The Deleted call on deleted definition. */
 	DeletedCallOnDeletedDefinition,
+	
+	/** The unknown. */
 	UNKNOWN,
+	
+	/** The Modified definition on definition. */
 	ModifiedDefinitionOnDefinition
 }

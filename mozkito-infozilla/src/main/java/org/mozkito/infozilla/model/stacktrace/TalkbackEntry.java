@@ -19,19 +19,19 @@ public class TalkbackEntry {
 	
 	// Types definitions
 	/** The Constant CLASSMETHODLINE. */
-	public final static int CLASSMETHODLINE = 1;
+	public static final int CLASSMETHODLINE = 1;
 	
 	/** The Constant METHODCALLLINE. */
-	public final static int METHODCALLLINE  = 2;
+	public static final int METHODCALLLINE  = 2;
 	
 	/** The Constant METHODLINE. */
-	public final static int METHODLINE      = 3;
+	public static final int METHODLINE      = 3;
 	
 	/** The Constant LIBRARYLINE. */
-	public final static int LIBRARYLINE     = 4;
+	public static final int LIBRARYLINE     = 4;
 	
 	/** The Constant ADDRESSLINE. */
-	public final static int ADDRESSLINE     = 5;
+	public static final int ADDRESSLINE     = 5;
 	
 	// The name
 	/** The name. */

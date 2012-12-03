@@ -23,7 +23,7 @@ import org.mozkito.versions.Repository;
 
 /**
  * The Class LogIterator.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class LogIterator implements Iterator<LogEntry> {
@@ -45,7 +45,8 @@ public class LogIterator implements Iterator<LogEntry> {
 		this.logIterator = repository.log(startRevision, endRevision).iterator();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
@@ -53,7 +54,8 @@ public class LogIterator implements Iterator<LogEntry> {
 		return this.logIterator.hasNext();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -61,12 +63,13 @@ public class LogIterator implements Iterator<LogEntry> {
 		return this.logIterator.next();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override
 	public void remove() {
-		
+		throw new UnsupportedOperationException();
 	}
 	
 }

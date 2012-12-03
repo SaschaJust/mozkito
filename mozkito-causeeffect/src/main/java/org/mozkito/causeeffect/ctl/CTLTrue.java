@@ -15,11 +15,11 @@ package org.mozkito.causeeffect.ctl;
 
 import java.util.Collection;
 
-import org.mozkito.causeeffect.kripke.KripkeStructure;
-import org.mozkito.causeeffect.kripke.State;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.mozkito.causeeffect.kripke.KripkeStructure;
+import org.mozkito.causeeffect.kripke.State;
 
 /**
  * This is a singleton class, whose only instance represents the "true" CTL literal.
@@ -33,9 +33,11 @@ public class CTLTrue extends CTLFormula {
 	
 	/**
 	 * Returns the "true" CTL literal.
+	 *
+	 * @return the cTL true
 	 */
 	public static CTLTrue get() {
-		return instance;
+		return CTLTrue.instance;
 	}
 	
 	/**
@@ -114,6 +116,9 @@ public class CTLTrue extends CTLFormula {
 		kripkeStruct.markEvaluatedFormula(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
+	 */
 	@Override
 	public void putAttomicFormulas(final Collection<CTLAtomicFormula> atomicFormulas) {
 		return;

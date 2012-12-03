@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
@@ -24,25 +27,33 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
-
 /**
- * @author kim
+ * The Class JavaMethodRegistry.
  * 
+ * @author kim
  */
 public class JavaMethodRegistry {
 	
 	// map signature <-> definitions
+	/** The method definitions. */
 	protected HashMap<String, JavaChangeOperation>                             methodDefinitions;
 	
+	/** The method definition deletions. */
 	protected HashMap<String, ArrayList<JavaChangeOperation>>                  methodDefinitionDeletions;
 	
 	// map calling class name . signature <-> invocations
+	/** The method invocations. */
 	protected HashMap<String, HashMap<String, ArrayList<JavaChangeOperation>>> methodInvocations;
 	
+	/** The method invocation deletions. */
 	protected HashMap<String, HashMap<String, ArrayList<JavaChangeOperation>>> methodInvocationDeletions;
 	
+	/**
+	 * Instantiates a new java method registry.
+	 * 
+	 * @param coreGenealogy
+	 *            the core genealogy
+	 */
 	public JavaMethodRegistry(final CoreChangeGenealogy coreGenealogy) {
 		
 		// TODO fill collections with data from change genealogy
@@ -56,12 +67,12 @@ public class JavaMethodRegistry {
 	/**
 	 * Adds a method invocation to the list of active invocations.
 	 * 
-	 * @param inv
-	 *            the invocation to add
+	 * @param call
+	 *            the call
 	 * @return <code>true</code> if element could be added; <code>false</code> if invocation with same signature in same
 	 *         line exists
 	 */
-	public void addCall(final JavaChangeOperation call) {
+	public boolean addCall(final JavaChangeOperation call) {
 		final JavaElement element = call.getChangedElementLocation().getElement();
 		
 		Condition.check(element instanceof JavaMethodCall,
@@ -77,7 +88,7 @@ public class JavaMethodRegistry {
 			if (Logger.logWarn()) {
 				Logger.warn("Ignoring method call containing UNKNOWN name segments.");
 			}
-			return;
+			return false;
 		}
 		if (!this.methodInvocations.containsKey(callingPosition)) {
 			this.methodInvocations.put(callingPosition, new HashMap<String, ArrayList<JavaChangeOperation>>());
@@ -97,7 +108,7 @@ public class JavaMethodRegistry {
 		// }
 		// return;
 		// }
-		invList.add(call);
+		return invList.add(call);
 	}
 	
 	/**
@@ -120,8 +131,8 @@ public class JavaMethodRegistry {
 	/**
 	 * Checks for a registered method definition that matches the signature of the given definition.
 	 * 
-	 * @param exp
-	 *            The definition that is used as basis for searching the definition
+	 * @param element
+	 *            the element
 	 * @param includeDeletions
 	 *            Set to <code>true</code> if you want to search for definition deletions too.
 	 * @return <code>true</code> when coresponding method definition was found.
@@ -664,6 +675,9 @@ public class JavaMethodRegistry {
 		return toDelete;
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		this.methodDefinitions.clear();
 		this.methodDefinitionDeletions.clear();

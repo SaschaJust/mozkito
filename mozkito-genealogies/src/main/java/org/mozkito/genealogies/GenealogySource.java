@@ -21,11 +21,19 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 /**
+ * The Class GenealogySource.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class GenealogySource extends Source<OperationCollection> {
 	
+	/**
+	 * Instantiates a new genealogy source.
+	 *
+	 * @param threadGroup the thread group
+	 * @param settings the settings
+	 * @param reader the reader
+	 */
 	public GenealogySource(final Group threadGroup, final Settings settings, final ChangeOperationReader reader) {
 		super(threadGroup, settings, false);
 		

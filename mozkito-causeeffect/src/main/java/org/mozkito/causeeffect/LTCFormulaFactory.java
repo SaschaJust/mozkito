@@ -19,21 +19,31 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
+ * A factory for creating LTCFormula objects.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class LTCFormulaFactory {
 	
+	/** The generators. */
 	private final Set<CTLFormulaGenerator<RCSFile>> generators = new HashSet<>();
 	
+	/**
+	 * Generate formulas.
+	 *
+	 * @param genealogy the genealogy
+	 * @param rootVertex the root vertex
+	 * @param vertexSelector the vertex selector
+	 * @return the collection
+	 */
 	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
 	                                               final RCSTransaction rootVertex,
 	                                               final VertexSelector<RCSTransaction> vertexSelector) {
@@ -60,6 +70,13 @@ public class LTCFormulaFactory {
 		return formulas;
 	}
 	
+	/**
+	 * Generate inner transaction formulas.
+	 *
+	 * @param genealogy the genealogy
+	 * @param rCSTransaction the r cs transaction
+	 * @return the collection
+	 */
 	@SuppressWarnings ("unchecked")
 	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
 	                                                               final RCSTransaction rCSTransaction) {
@@ -77,6 +94,12 @@ public class LTCFormulaFactory {
 		return formulas;
 	}
 	
+	/**
+	 * Register.
+	 *
+	 * @param generator the generator
+	 * @return true, if successful
+	 */
 	public boolean register(final CTLFormulaGenerator<RCSFile> generator) {
 		return this.generators.add(generator);
 	}

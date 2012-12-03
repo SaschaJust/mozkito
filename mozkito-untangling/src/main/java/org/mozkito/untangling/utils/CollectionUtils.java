@@ -24,25 +24,19 @@ import org.mozkito.untangling.blob.combine.CombineOperator;
 
 
 /**
+ * The Class CollectionUtils.
+ *
  * @author Kim Herzig <herzig@mozkito.org>
- * 
  */
 public class CollectionUtils {
 	
 	/**
 	 * Gets the all combinations.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param elements
-	 *            the elements
-	 * @param operators
-	 *            the operators used to check if two entities can be combines. All combineOperators must return true in
-	 *            order to combine entities.
-	 * @param maxBlobSize
-	 *            the max blob size
-	 * @param blobWindowSize
-	 *            the blob window size
+	 *
+	 * @param <T> the generic type
+	 * @param elements the elements
+	 * @param operator the operator
+	 * @param maxBlobSize the max blob size
 	 * @return the all combinations
 	 */
 	@SuppressWarnings ("unchecked")

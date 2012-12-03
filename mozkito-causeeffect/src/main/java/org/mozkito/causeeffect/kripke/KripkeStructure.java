@@ -27,7 +27,6 @@ import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 
-
 /**
  * Instances of this class represent Kripke structures. Basically, Kripke structure is a nondeterministic finite state
  * machine with a labeling function. The labeling function maps each state to a set of properties that hold in that
@@ -38,7 +37,8 @@ import org.mozkito.genealogies.utils.VertexSelector;
  * to transform them into Kripke structures, where each state will be labeled by the event that happened most recently
  * (e.g., a method call, a field access, etc.). Thus, the set of properties is essentially a set of all events that
  * occur in the object usage model. Kripke structures can then be used for model checking.
- * 
+ *
+ * @param <V> the value type
  * @author Andrzej Wasylkowski
  */
 public class KripkeStructure<V> {
@@ -54,11 +54,12 @@ public class KripkeStructure<V> {
 	
 	/**
 	 * This factory method creates a Kripke structure out of a given object usage model.
-	 * 
-	 * @param oum
-	 *            Object usage model to create a Kripke structure out of.
-	 * @param finalTransition
-	 *            Transition that should be the final one.
+	 *
+	 * @param <T> the generic type
+	 * @param changeGenealogy the change genealogy
+	 * @param rootVertex the root vertex
+	 * @param labelGenerator the label generator
+	 * @param selector the selector
 	 * @return Kripke structure created from the given object usage model.
 	 */
 	public static <T> KripkeStructure<T> createFrom(final ChangeGenealogy<T> changeGenealogy,
@@ -149,6 +150,7 @@ public class KripkeStructure<V> {
 	/** Set of formulas that were evaluated on all states in this structure. */
 	private final Set<CTLFormula>             evaluatedFormulas;
 	
+	/** The states2vertices. */
 	private final HashMap<State, V>           states2vertices;
 	
 	/**
@@ -203,7 +205,8 @@ public class KripkeStructure<V> {
 	}
 	
 	/**
-	 * 
+	 * Clear.
+	 *
 	 * @author Kim Herzig <kim@mozkito.org>
 	 */
 	public void clear() {
@@ -216,6 +219,12 @@ public class KripkeStructure<V> {
 		this.evaluatedFormulas.clear();
 	}
 	
+	/**
+	 * Contains vertex for state.
+	 *
+	 * @param state the state
+	 * @return true, if successful
+	 */
 	public boolean containsVertexForState(final State state) {
 		return this.states2vertices.containsKey(state);
 	}
@@ -223,7 +232,8 @@ public class KripkeStructure<V> {
 	/**
 	 * Creates a new, unique state, and adds it to this Kripke structure. This method should not be used directly,
 	 * because it violates important Kripke structure invariants that have to be repaired later.
-	 * 
+	 *
+	 * @param vertex the vertex
 	 * @return The state that was created.
 	 */
 	public State createNewState(final V vertex) {
@@ -340,6 +350,12 @@ public class KripkeStructure<V> {
 		return result;
 	}
 	
+	/**
+	 * Gets the states formula is true.
+	 *
+	 * @param formula the formula
+	 * @return the states formula is true
+	 */
 	public Set<State> getStatesFormulaIsTrue(final CTLFormula formula) {
 		final Set<State> result = new HashSet<State>();
 		for (final State state : this.trueFormulas.keySet()) {
@@ -361,6 +377,12 @@ public class KripkeStructure<V> {
 		return Collections.unmodifiableSet(this.state2successors.get(state));
 	}
 	
+	/**
+	 * Gets the vertex for state.
+	 *
+	 * @param state the state
+	 * @return the vertex for state
+	 */
 	public V getVertexForState(final State state) {
 		return this.states2vertices.get(state);
 	}
@@ -369,12 +391,8 @@ public class KripkeStructure<V> {
 	 * Checks if this Kripke structure is isomorphic with the given one, provided the mapping from states of this
 	 * structure to states of other structure. This method assumes that both structures have the same number of states,
 	 * the mapping is both left- and right-total, and that the mapping maps only pairs of states with the same labels.
-	 * 
-	 * @param other
-	 *            Kripke structure to check isomorphism with.
-	 * @param this2other
-	 *            Mapping from states of this structure to stats of other structure. This mapping must be left- and
-	 *            right-total, and must map only pairs of states with the same labels.
+	 *
+	 * @param formula the formula
 	 * @return <code>true</code> if both structures are isomorphic; <code>false</code> otherwise.
 	 */
 	// private boolean isomorphicWith(KripkeStructure other,
@@ -575,7 +593,8 @@ public class KripkeStructure<V> {
 	
 	/**
 	 * Marks the given state as an initial one.
-	 * 
+	 *
+	 * @param state the state
 	 * @state State to be marked as an initial one.
 	 */
 	public void markStateAsInitial(final State state) {
@@ -609,6 +628,11 @@ public class KripkeStructure<V> {
 		this.trueFormulas.remove(state);
 	}
 	
+	/**
+	 * Size.
+	 *
+	 * @return the int
+	 */
 	public int size() {
 		return this.states2vertices.size();
 	}

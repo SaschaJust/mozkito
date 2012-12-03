@@ -18,12 +18,12 @@ import java.util.Comparator;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
 import org.mozkito.genealogies.layer.PartitionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyPartitionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
-
 
 /**
  * The Class PartitionDwReachMetric.
@@ -58,7 +58,7 @@ public class PartitionDwReachMetric extends GenealogyPartitionMetric {
 				                                                                            
 				                                                                            final Days daysBetween = Days.daysBetween(latestOriginal,
 				                                                                                                                      earliestT);
-				                                                                            if (daysBetween.getDays() > dayDiffSize) {
+				                                                                            if (daysBetween.getDays() > PartitionDwReachMetric.dayDiffSize) {
 					                                                                            return 1;
 				                                                                            }
 				                                                                            return -1;
