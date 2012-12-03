@@ -269,7 +269,7 @@ public class UntanglingOptions extends
 						                                                                                             rCSTransaction)),
 						                                         Double.valueOf(lineParts[1])));
 					}
-				} catch (NumberFormatException | IOException e) {
+				} catch (final NumberFormatException | IOException e) {
 					if (Logger.logError()) {
 						Logger.error(e);
 					}

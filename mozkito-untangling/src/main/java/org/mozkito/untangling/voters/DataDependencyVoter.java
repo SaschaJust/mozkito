@@ -242,7 +242,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				}
 				objIn.close();
 				
-			} catch (IOException | ClassNotFoundException ignore) {
+			} catch (final IOException | ClassNotFoundException ignore) {
 				// ignore
 			}
 		} else {
