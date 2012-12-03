@@ -46,7 +46,7 @@ public class CTLEG extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLEG getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-EG");
+		assert "CTL-EG".equals(element.getNodeName());
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLEG.get(formula);
 	}

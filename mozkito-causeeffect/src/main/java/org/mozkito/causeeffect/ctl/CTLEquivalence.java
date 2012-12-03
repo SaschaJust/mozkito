@@ -51,7 +51,7 @@ public class CTLEquivalence extends CTLBilateralFormula {
 	 *         recognized.
 	 */
 	public static CTLEquivalence getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-iff");
+		assert "CTL-iff".equals(element.getNodeName());
 		CTLFormula left = null;
 		CTLFormula right = null;
 		final NodeList formulaNodes = element.getChildNodes();
@@ -59,10 +59,10 @@ public class CTLEquivalence extends CTLBilateralFormula {
 			final Node node = formulaNodes.item(i);
 			if (node instanceof Element) {
 				final Element subformulaXML = (Element) node;
-				if (subformulaXML.getTagName().equals("left")) {
+				if ("left".equals(subformulaXML.getTagName())) {
 					assert left == null;
 					left = getCTLFormulaFromXMLs(subformulaXML.getChildNodes());
-				} else if (subformulaXML.getTagName().equals("right")) {
+				} else if ("right".equals(subformulaXML.getTagName())) {
 					assert right == null;
 					right = getCTLFormulaFromXMLs(subformulaXML.getChildNodes());
 				}

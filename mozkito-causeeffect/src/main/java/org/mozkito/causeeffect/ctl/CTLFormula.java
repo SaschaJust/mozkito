@@ -62,37 +62,37 @@ public abstract class CTLFormula {
 	 *         recognized.
 	 */
 	public static CTLFormula getFromXMLRepresentation(final Element element) {
-		if (element.getNodeName().equals("CTL-AF")) {
+		if ("CTL-AF".equals(element.getNodeName())) {
 			return CTLAF.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-AG")) {
+		} else if ("CTL-AG".equals(element.getNodeName())) {
 			return CTLAG.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-atomic")) {
+		} else if ("CTL-atomic".equals(element.getNodeName())) {
 			return CTLAtomicFormula.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-AU")) {
+		} else if ("CTL-AU".equals(element.getNodeName())) {
 			return CTLAU.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-AX")) {
+		} else if ("CTL-AX".equals(element.getNodeName())) {
 			return CTLAX.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-and")) {
+		} else if ("CTL-and".equals(element.getNodeName())) {
 			return CTLConjunction.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-or")) {
+		} else if ("CTL-or".equals(element.getNodeName())) {
 			return CTLDisjunction.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-EF")) {
+		} else if ("CTL-EF".equals(element.getNodeName())) {
 			return CTLEF.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-EG")) {
+		} else if ("CTL-EG".equals(element.getNodeName())) {
 			return CTLEG.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-iff")) {
+		} else if ("CTL-iff".equals(element.getNodeName())) {
 			return CTLEquivalence.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-EU")) {
+		} else if ("CTL-EU".equals(element.getNodeName())) {
 			return CTLEU.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-EX")) {
+		} else if ("CTL-EX".equals(element.getNodeName())) {
 			return CTLEX.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-false")) {
+		} else if ("CTL-false".equals(element.getNodeName())) {
 			return CTLFalse.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-if")) {
+		} else if ("CTL-if".equals(element.getNodeName())) {
 			return CTLImplication.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-not")) {
+		} else if ("CTL-not".equals(element.getNodeName())) {
 			return CTLNegation.getFromXMLRepresentation(element);
-		} else if (element.getNodeName().equals("CTL-true")) {
+		} else if ("CTL-true".equals(element.getNodeName())) {
 			return CTLTrue.getFromXMLRepresentation(element);
 		} else {
 			return null;
@@ -138,7 +138,7 @@ public abstract class CTLFormula {
 	 */
 	@Override
 	public final int hashCode() {
-		return this.calculateHashCode();
+		return calculateHashCode();
 	}
 	
 	/**
@@ -187,6 +187,6 @@ public abstract class CTLFormula {
 	 */
 	@Override
 	public final String toString() {
-		return this.getTextRepresentation(OutputVerbosity.FULL);
+		return getTextRepresentation(OutputVerbosity.FULL);
 	}
 }

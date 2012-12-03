@@ -184,7 +184,7 @@ public class Main {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}
-		} catch (ArgumentRegistrationException | ArgumentSetRegistrationException e) {
+		} catch (final ArgumentRegistrationException | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}

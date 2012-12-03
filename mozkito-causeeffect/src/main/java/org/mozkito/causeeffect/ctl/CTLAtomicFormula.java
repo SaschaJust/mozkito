@@ -56,12 +56,12 @@ public class CTLAtomicFormula extends CTLFormula {
 	 *         recognized.
 	 */
 	public static CTLAtomicFormula getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-atomic");
+		assert "CTL-atomic".equals(element.getNodeName());
 		final NodeList formulaNodes = element.getChildNodes();
 		Long id = null;
 		for (int i = 0; i < formulaNodes.getLength(); i++) {
 			final Node node = formulaNodes.item(i);
-			if (node.getNodeName().equals("id")) {
+			if ("id".equals(node.getNodeName())) {
 				if (node.getChildNodes().getLength() < 1) {
 					CTLAtomicFormula.logger.fatal("Could not get CTLAtmoicFormula from XML! Wrong XML format!");
 					throw new RuntimeException();

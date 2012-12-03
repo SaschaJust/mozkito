@@ -53,7 +53,7 @@ public class CTLAF extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLAF getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-AF");
+		assert "CTL-AF".equals(element.getNodeName());
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLAF.get(formula);
 	}

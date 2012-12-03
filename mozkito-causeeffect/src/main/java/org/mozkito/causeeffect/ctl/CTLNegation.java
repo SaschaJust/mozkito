@@ -46,7 +46,7 @@ public class CTLNegation extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLNegation getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-not");
+		assert "CTL-not".equals(element.getNodeName());
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLNegation.get(formula);
 	}

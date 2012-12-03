@@ -49,7 +49,7 @@ public class CTLTrue extends CTLFormula {
 	 *         recognized.
 	 */
 	public static CTLTrue getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-true");
+		assert "CTL-true".equals(element.getNodeName());
 		return CTLTrue.get();
 	}
 	

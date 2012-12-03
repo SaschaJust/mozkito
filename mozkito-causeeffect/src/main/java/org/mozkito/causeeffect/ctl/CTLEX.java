@@ -46,7 +46,7 @@ public class CTLEX extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLEX getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-EX");
+		assert "CTL-EX".equals(element.getNodeName());
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLEX.get(formula);
 	}

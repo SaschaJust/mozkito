@@ -49,7 +49,7 @@ public class CTLFalse extends CTLFormula {
 	 *         recognized.
 	 */
 	public static CTLFalse getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-false");
+		assert "CTL-false".equals(element.getNodeName());
 		return CTLFalse.get();
 	}
 	

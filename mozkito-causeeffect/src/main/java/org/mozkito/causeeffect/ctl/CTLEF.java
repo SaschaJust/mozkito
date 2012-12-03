@@ -49,7 +49,7 @@ public class CTLEF extends CTLComposedFormula {
 	 *         recognized.
 	 */
 	public static CTLEF getFromXMLRepresentation(final Element element) {
-		assert element.getNodeName().equals("CTL-EF");
+		assert "CTL-EF".equals(element.getNodeName());
 		final CTLFormula formula = getCTLFormulaFromXMLs(element.getChildNodes());
 		return CTLEF.get(formula);
 	}
