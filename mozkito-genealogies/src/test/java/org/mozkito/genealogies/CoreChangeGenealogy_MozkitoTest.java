@@ -14,6 +14,7 @@ package org.mozkito.genealogies;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -353,7 +354,7 @@ public class CoreChangeGenealogy_MozkitoTest extends DatabaseTest {
 		final Iterator<JavaChangeOperation> iterator = changeGenealogy.vertexIterator();
 		while (iterator.hasNext()) {
 			final JavaChangeOperation tmp = iterator.next();
-			assertTrue(tmp != null);
+			assertNotNull(tmp);
 			if (environmentOperations.containsValue(tmp)) {
 				++hitCounter;
 			}

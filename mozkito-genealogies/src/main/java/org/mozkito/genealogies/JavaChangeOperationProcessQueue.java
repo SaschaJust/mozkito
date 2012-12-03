@@ -179,6 +179,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 				break;
 			case AC:
 				return false;
+			default:
+				throw new UnsupportedOperationException(String.format("Enum '%s' is not supported.", this.iteratorMode));
 		}
 		return hasNext();
 	}

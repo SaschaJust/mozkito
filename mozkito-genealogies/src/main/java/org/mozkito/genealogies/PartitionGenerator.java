@@ -30,6 +30,6 @@ public interface PartitionGenerator<I, O> {
 	 *            the input
 	 * @return the o
 	 */
-	public O partition(I input);
+	O partition(I input);
 	
 }

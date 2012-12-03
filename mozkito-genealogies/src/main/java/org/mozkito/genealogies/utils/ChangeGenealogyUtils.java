@@ -212,25 +212,25 @@ public class ChangeGenealogyUtils {
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
 		System.err.println(JavaUtils.collectionToString(transactionList));
 		for (final RCSTransaction transaction : transactionList) {
-			if (transaction.getId().equals("a64df287a21f8a7b0690d13c1561171cbf48a0e1")) {
+			if ("a64df287a21f8a7b0690d13c1561171cbf48a0e1".equals(transaction.getId())) {
 				environmentTransactions.put(1, transaction);
-			} else if (transaction.getId().equals("a10344533c2b442235aa3bf3dc87dd0ac37cb0af")) {
+			} else if ("a10344533c2b442235aa3bf3dc87dd0ac37cb0af".equals(transaction.getId())) {
 				environmentTransactions.put(2, transaction);
-			} else if (transaction.getId().equals("f281d550d264f53c7e5fd8c7390627c2aaaf2b8a")) {
+			} else if ("f281d550d264f53c7e5fd8c7390627c2aaaf2b8a".equals(transaction.getId())) {
 				environmentTransactions.put(3, transaction);
-			} else if (transaction.getId().equals("b38a68d16490c120920fe2281c40317fae960f86")) {
+			} else if ("b38a68d16490c120920fe2281c40317fae960f86".equals(transaction.getId())) {
 				environmentTransactions.put(4, transaction);
-			} else if (transaction.getId().equals("47e6e4206b716af283f583e4d1963a32bef38a92")) {
+			} else if ("47e6e4206b716af283f583e4d1963a32bef38a92".equals(transaction.getId())) {
 				environmentTransactions.put(5, transaction);
-			} else if (transaction.getId().equals("2005a1a45c9d28a03166d2f61df82552e9b9d502")) {
+			} else if ("2005a1a45c9d28a03166d2f61df82552e9b9d502".equals(transaction.getId())) {
 				environmentTransactions.put(6, transaction);
-			} else if (transaction.getId().equals("f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0")) {
+			} else if ("f3cb1d5a03f6ecda2ce67e2f716f8b0c2d2842f0".equals(transaction.getId())) {
 				environmentTransactions.put(7, transaction);
-			} else if (transaction.getId().equals("0c078d2b779e24fe341028ee132f9613e58763c2")) {
+			} else if ("0c078d2b779e24fe341028ee132f9613e58763c2".equals(transaction.getId())) {
 				environmentTransactions.put(8, transaction);
-			} else if (transaction.getId().equals("3039e34e53c1bfecfac2e21544b041c890bac8b4")) {
+			} else if ("3039e34e53c1bfecfac2e21544b041c890bac8b4".equals(transaction.getId())) {
 				environmentTransactions.put(9, transaction);
-			} else if (transaction.getId().equals("5658606e2f80c30d0b835ed4216e9f8e0cc996fb")) {
+			} else if ("5658606e2f80c30d0b835ed4216e9f8e0cc996fb".equals(transaction.getId())) {
 				environmentTransactions.put(10, transaction);
 			} else {
 				throw new UnrecoverableError("Got unexpected Transaction from database: " + transaction.getId());

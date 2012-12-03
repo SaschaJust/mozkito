@@ -94,11 +94,13 @@ public class GenealogyToolChain extends Chain<Settings> {
 			ArgumentSetFactory.create(this.changeOpReaderOptions);
 			
 			if (getSettings().helpRequested()) {
-				System.err.println(getSettings().getHelpString());
+				if (Logger.logAlways()) {
+					Logger.always(getSettings().getHelpString());
+				}
 				throw new Shutdown();
 			}
 			
-		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
+		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
 			}

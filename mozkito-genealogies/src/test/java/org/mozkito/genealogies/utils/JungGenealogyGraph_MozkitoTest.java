@@ -110,7 +110,8 @@ public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 				
 				final Collection<GenealogyEdgeType> edgeTypes = changeGenealogy.getEdges(op, parent);
 				for (final GenealogyEdgeType eType : edgeTypes) {
-					assertTrue(jungGraph.containsEdge(new Edge<JavaChangeOperation>(op, parent, eType)));
+					final Edge<JavaChangeOperation> edge = new Edge<JavaChangeOperation>(op, parent, eType);
+					assertTrue(jungGraph.containsEdge(edge));
 				}
 				assertTrue(edgeTypes.contains(jungGraph.findEdge(op, parent).type));
 				final Collection<Edge<JavaChangeOperation>> jungEdgeSet = jungGraph.findEdgeSet(op, parent);

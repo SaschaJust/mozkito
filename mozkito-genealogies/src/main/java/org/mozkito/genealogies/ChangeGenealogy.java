@@ -34,7 +34,7 @@ public interface ChangeGenealogy<T> {
 	/**
 	 * Close.
 	 */
-	public void close();
+	void close();
 	
 	/**
 	 * Contains edge.
@@ -45,8 +45,8 @@ public interface ChangeGenealogy<T> {
 	 *            the to
 	 * @return true, if successful
 	 */
-	public boolean containsEdge(final T from,
-	                            final T to);
+	boolean containsEdge(final T from,
+	                     final T to);
 	
 	/**
 	 * Contains vertex.
@@ -55,14 +55,14 @@ public interface ChangeGenealogy<T> {
 	 *            the vertex
 	 * @return true, if successful
 	 */
-	public boolean containsVertex(final T vertex);
+	boolean containsVertex(final T vertex);
 	
 	/**
 	 * Edge size.
 	 * 
 	 * @return the int
 	 */
-	public int edgeSize();
+	int edgeSize();
 	
 	/**
 	 * Gets the all dependents.
@@ -71,7 +71,7 @@ public interface ChangeGenealogy<T> {
 	 *            the t
 	 * @return the all dependents
 	 */
-	public Collection<T> getAllDependants(T t);
+	Collection<T> getAllDependants(T t);
 	
 	/**
 	 * Gets the all parents.
@@ -80,14 +80,14 @@ public interface ChangeGenealogy<T> {
 	 *            the t
 	 * @return the all parents
 	 */
-	public Collection<T> getAllParents(T t);
+	Collection<T> getAllParents(T t);
 	
 	/**
 	 * Gets the core.
 	 * 
 	 * @return the core
 	 */
-	public CoreChangeGenealogy getCore();
+	CoreChangeGenealogy getCore();
 	
 	/**
 	 * Gets the dependents.
@@ -98,8 +98,8 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the dependents
 	 */
-	public Collection<T> getDependants(T t,
-	                                   GenealogyEdgeType... edgeTypes);
+	Collection<T> getDependants(T t,
+	                            GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the edges.
@@ -110,29 +110,29 @@ public interface ChangeGenealogy<T> {
 	 *            the to
 	 * @return the edges
 	 */
-	public Collection<GenealogyEdgeType> getEdges(final T from,
-	                                              final T to);
+	Collection<GenealogyEdgeType> getEdges(final T from,
+	                                       final T to);
 	
 	/**
 	 * Gets the existing edge types.
 	 * 
 	 * @return the existing edge types
 	 */
-	public Set<GenealogyEdgeType> getExistingEdgeTypes();
+	Set<GenealogyEdgeType> getExistingEdgeTypes();
 	
 	/**
 	 * Gets the graph db dir.
 	 * 
 	 * @return the graph db dir
 	 */
-	public File getGraphDBDir();
+	File getGraphDBDir();
 	
 	/**
 	 * Gets the graph db service.
 	 * 
 	 * @return the graph db service
 	 */
-	public GraphDatabaseService getGraphDBService();
+	GraphDatabaseService getGraphDBService();
 	
 	/**
 	 * Gets the id of the node represented within this change genealogy.
@@ -141,7 +141,7 @@ public interface ChangeGenealogy<T> {
 	 *            the t
 	 * @return the node id if node within this genealogy vertex. Returns null otherwise.
 	 */
-	public String getNodeId(T t);
+	String getNodeId(T t);
 	
 	/**
 	 * Gets the parents.
@@ -152,15 +152,15 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the parents
 	 */
-	public Collection<T> getParents(T t,
-	                                GenealogyEdgeType... edgeTypes);
+	Collection<T> getParents(T t,
+	                         GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Gets the roots.
 	 * 
 	 * @return the roots
 	 */
-	public Collection<T> getRoots();
+	Collection<T> getRoots();
 	
 	/**
 	 * In degree.
@@ -169,7 +169,7 @@ public interface ChangeGenealogy<T> {
 	 *            the node
 	 * @return the int
 	 */
-	public int inDegree(T node);
+	int inDegree(T node);
 	
 	/**
 	 * In degree.
@@ -180,8 +180,8 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the int
 	 */
-	public int inDegree(T node,
-	                    GenealogyEdgeType... edgeTypes);
+	int inDegree(T node,
+	             GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Out degree.
@@ -190,7 +190,7 @@ public interface ChangeGenealogy<T> {
 	 *            the node
 	 * @return the int
 	 */
-	public int outDegree(T node);
+	int outDegree(T node);
 	
 	/**
 	 * Out degree.
@@ -201,20 +201,20 @@ public interface ChangeGenealogy<T> {
 	 *            the edge types
 	 * @return the int
 	 */
-	public int outDegree(T node,
-	                     GenealogyEdgeType... edgeTypes);
+	int outDegree(T node,
+	              GenealogyEdgeType... edgeTypes);
 	
 	/**
 	 * Vertex set.
 	 * 
 	 * @return the iterator
 	 */
-	public Iterable<T> vertexSet();
+	Iterable<T> vertexSet();
 	
 	/**
 	 * Vertex size.
 	 * 
 	 * @return the int
 	 */
-	public int vertexSize();
+	int vertexSize();
 }

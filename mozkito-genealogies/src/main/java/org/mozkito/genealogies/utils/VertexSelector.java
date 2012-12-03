@@ -28,6 +28,6 @@ public interface VertexSelector<T> {
 	 *            the vertex
 	 * @return true, if successful
 	 */
-	public boolean selectVertex(T vertex);
+	boolean selectVertex(T vertex);
 	
 }
