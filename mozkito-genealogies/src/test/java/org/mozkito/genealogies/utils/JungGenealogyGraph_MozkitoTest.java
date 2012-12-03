@@ -41,7 +41,7 @@ import org.mozkito.versions.BranchFactory;
                    hostname = "grid1.st.cs.uni-saarland.de",
                    password = "miner",
                    username = "miner",
-                   type = "POSTGRES",
+                   type = "POSTGRESQL",
                    driver = "org.postgresql.Driver",
                    remote = true)
 public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
