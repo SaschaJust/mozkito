@@ -17,7 +17,7 @@ package org.mozkito.exceptions;
 
 /**
  * The Class InvalidRepositoryURI.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InvalidRepositoryURI extends Exception {

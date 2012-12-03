@@ -157,7 +157,9 @@ public class TextMetadata {
 		strings.add("The rings of Uranus were discovered on March 10, 1977, by James L. Elliot, Edward W. Dunham, and Douglas J. Mink. Two additional rings were discovered in 1986 by the Voyager 2 spacecraft, and two outer rings were found in 2003–2005 by the Hubble Space Telescope. A number of faint dust bands and incomplete arcs may exist between the main rings. The rings are extremely dark—the Bond albedo of the rings' particles does not exceed 2%. They are likely composed of water ice with the addition of some dark radiation-processed organics. The majority of Uranus's rings are opaque and only a few kilometres wide. The ring system contains little dust overall; it consists mostly of large bodies 0.2–20 m in diameter. The relative lack of dust in the ring system is due to aerodynamic drag from the extended Uranian exosphere—corona. The rings of Uranus are thought to be relatively young, at not more than 600 million years. The mechanism that confines the narrow rings is not well understood. The Uranian ring system probably originated from the collisional fragmentation of a number of moons that once existed around the planet. After colliding, the moons broke up into numerous particles, which survived as narrow and optically dense rings only in strictly confined zones of maximum stability.");
 		
 		final ParallelTopicModel topics = topics(strings.iterator());
-		System.err.println(topics.getNumTopics());
+		if (Logger.logAlways()) {
+			Logger.always(topics.getNumTopics() + "");
+		}
 	}
 	
 	/**
@@ -213,14 +215,14 @@ public class TextMetadata {
 			
 			final InstanceList instances = new InstanceList(new SerialPipes(pipeList));
 			
+			// Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
+			// Note that the first parameter is passed as the sum over topics, while
+			// the second is the parameter for a single dimension of the Dirichlet prior.
+			final int numTopics = 10;
+			final ParallelTopicModel model = new ParallelTopicModel(numTopics, 1.0, 0.01);
+			
 			try {
 				instances.addThruPipe(new StringInstanceIterator(text)); // data, label, name fields
-				
-				// Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
-				// Note that the first parameter is passed as the sum over topics, while
-				// the second is the parameter for a single dimension of the Dirichlet prior.
-				final int numTopics = 10;
-				final ParallelTopicModel model = new ParallelTopicModel(numTopics, 1.0, 0.01);
 				
 				model.addInstances(instances);
 				
@@ -246,7 +248,10 @@ public class TextMetadata {
 					out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), //$NON-NLS-1$
 					           topics.getIndexAtPosition(position));
 				}
-				System.out.println(out);
+				
+				if (Logger.logDebug()) {
+					Logger.debug(out.toString());
+				}
 				
 				// Estimate the topic distribution of the first instance,
 				// given the current Gibbs state.
@@ -268,7 +273,9 @@ public class TextMetadata {
 						           idCountPair.getWeight());
 						rank++;
 					}
-					System.out.println(out);
+					if (Logger.logDebug()) {
+						Logger.debug(out.toString());
+					}
 				}
 				
 				// Create a new instance with high probability of topic 0
@@ -288,13 +295,16 @@ public class TextMetadata {
 				
 				final TopicInferencer inferencer = model.getInferencer();
 				final double[] testProbabilities = inferencer.getSampledDistribution(testing.get(0), 10, 1, 5);
-				System.out.println("0\t" + testProbabilities[0]); //$NON-NLS-1$
+				if (Logger.logDebug()) {
+					Logger.debug("0\t" + testProbabilities[0]);//$NON-NLS-1$
+				}
+				
+				out.close();
 				
 				return model;
 			} catch (final IOException e) {
 				throw new UnrecoverableError(e);
 			}
-			
 		} finally {
 			// POSTCONDITIONS
 		}

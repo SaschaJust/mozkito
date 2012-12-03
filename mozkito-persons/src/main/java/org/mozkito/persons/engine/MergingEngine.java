@@ -35,7 +35,6 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
@@ -58,10 +57,10 @@ public abstract class MergingEngine implements SettingsProvider {
 	        ArgumentSetOptions<Set<MergingEngine>, ArgumentSet<Set<MergingEngine>, Options>> {
 		
 		/** The Constant tag. */
-		protected static final String tag         = "persons";                                             //$NON-NLS-1$
+		protected static final String TAG         = "persons";                                             //$NON-NLS-1$
 		                                                                                                    
 		/** The Constant description. */
-		private static final String   description = Messages.getString("MergingEngine.optionsDescription"); //$NON-NLS-1$
+		private static final String   DESCRIPTION = Messages.getString("MergingEngine.optionsDescription"); //$NON-NLS-1$
 		                                                                                                    
 		/** The persons option. */
 		private SetArgument.Options   personsOption;
@@ -75,7 +74,7 @@ public abstract class MergingEngine implements SettingsProvider {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, tag, description, requirements);
+			super(argumentSet, Options.TAG, Options.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -91,7 +90,6 @@ public abstract class MergingEngine implements SettingsProvider {
 				
 				final SetArgument argument = getSettings().getArgument(this.personsOption);
 				final HashSet<String> value = argument.getValue();
-				System.err.println(JavaUtils.collectionToString(value));
 				
 				for (final String name : value) {
 					className = name;

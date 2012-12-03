@@ -42,7 +42,7 @@ import org.mozkito.persistence.Annotated;
 
 /**
  * The Class Person.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
@@ -54,9 +54,11 @@ public class Person implements Annotated {
 	
 	/**
 	 * Merge.
-	 *
-	 * @param keeper the keeper
-	 * @param collisions the collisions
+	 * 
+	 * @param keeper
+	 *            the keeper
+	 * @param collisions
+	 *            the collisions
 	 * @return the person
 	 */
 	@NoneNull ("When merging multiple Person entities into one person, neither the target person nor the persons under suspect may be null.")
@@ -71,9 +73,11 @@ public class Person implements Annotated {
 	
 	/**
 	 * Merge.
-	 *
-	 * @param keeper the keeper
-	 * @param from the from
+	 * 
+	 * @param keeper
+	 *            the keeper
+	 * @param from
+	 *            the from
 	 * @return the person
 	 */
 	@NoneNull ("When merging two Person entities, neither target nor merged person may be null.")
@@ -106,10 +110,13 @@ public class Person implements Annotated {
 	
 	/**
 	 * Instantiates a new person.
-	 *
-	 * @param username the username
-	 * @param fullname the fullname
-	 * @param email the email
+	 * 
+	 * @param username
+	 *            the username
+	 * @param fullname
+	 *            the fullname
+	 * @param email
+	 *            the email
 	 */
 	public Person(@Trimmed final String username, @Trimmed final String fullname, @Trimmed final String email) {
 		Condition.check((username != null) || (fullname != null) || (email != null),
@@ -121,8 +128,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the all emails.
-	 *
-	 * @param emails the emails
+	 * 
+	 * @param emails
+	 *            the emails
 	 * @return true, if successful
 	 */
 	@Transient
@@ -140,8 +148,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the all fullnames.
-	 *
-	 * @param fullnames the fullnames
+	 * 
+	 * @param fullnames
+	 *            the fullnames
 	 * @return true, if successful
 	 */
 	@Transient
@@ -155,8 +164,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the all usernames.
-	 *
-	 * @param usernames the usernames
+	 * 
+	 * @param usernames
+	 *            the usernames
 	 * @return true, if successful
 	 */
 	@Transient
@@ -170,8 +180,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the email.
-	 *
-	 * @param email the email
+	 * 
+	 * @param email
+	 *            the email
 	 * @return true, if successful
 	 */
 	@Transient
@@ -187,8 +198,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the fullname.
-	 *
-	 * @param fullname the fullname
+	 * 
+	 * @param fullname
+	 *            the fullname
 	 * @return true, if successful
 	 */
 	@Transient
@@ -204,8 +216,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Adds the username.
-	 *
-	 * @param username the username
+	 * 
+	 * @param username
+	 *            the username
 	 * @return true, if successful
 	 */
 	@Transient
@@ -261,7 +274,7 @@ public class Person implements Annotated {
 	
 	/**
 	 * Gets the email addresses.
-	 *
+	 * 
 	 * @return the email addresses
 	 */
 	@ElementCollection
@@ -271,7 +284,7 @@ public class Person implements Annotated {
 	
 	/**
 	 * Gets the fullnames.
-	 *
+	 * 
 	 * @return the name
 	 */
 	@ElementCollection
@@ -281,7 +294,7 @@ public class Person implements Annotated {
 	
 	/**
 	 * Gets the generated id.
-	 *
+	 * 
 	 * @return the generatedId
 	 */
 	@Id
@@ -302,7 +315,7 @@ public class Person implements Annotated {
 	
 	/**
 	 * Gets the usernames.
-	 *
+	 * 
 	 * @return the usernames
 	 */
 	@ElementCollection
@@ -332,8 +345,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Matches.
-	 *
-	 * @param person the person
+	 * 
+	 * @param person
+	 *            the person
 	 * @return true, if successful
 	 */
 	@Transient
@@ -353,8 +367,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Sets the email addresses.
-	 *
-	 * @param emailAddresses the new email addresses
+	 * 
+	 * @param emailAddresses
+	 *            the new email addresses
 	 */
 	protected void setEmailAddresses(final Set<String> emailAddresses) {
 		this.emailAddresses = emailAddresses;
@@ -362,8 +377,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Sets the fullnames.
-	 *
-	 * @param fullnames the fullnames to set
+	 * 
+	 * @param fullnames
+	 *            the fullnames to set
 	 */
 	protected void setFullnames(final Set<String> fullnames) {
 		this.fullnames = fullnames;
@@ -371,8 +387,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Sets the generated id.
-	 *
-	 * @param generatedId the generatedId to set
+	 * 
+	 * @param generatedId
+	 *            the generatedId to set
 	 */
 	protected void setGeneratedId(final long generatedId) {
 		this.generatedId = generatedId;
@@ -380,8 +397,9 @@ public class Person implements Annotated {
 	
 	/**
 	 * Sets the usernames.
-	 *
-	 * @param usernames the new usernames
+	 * 
+	 * @param usernames
+	 *            the new usernames
 	 */
 	protected void setUsernames(final Set<String> usernames) {
 		this.usernames = usernames;

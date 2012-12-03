@@ -22,7 +22,7 @@ import org.mozkito.versions.model.RCSFile;
 
 /**
  * The Class EF_FormulaGenearator.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class EF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {

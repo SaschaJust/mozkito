@@ -24,11 +24,10 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.sourceforge.SourceforgeTracker;
-
 
 // TODO: Auto-generated Javadoc
 /**

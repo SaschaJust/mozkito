@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -41,7 +40,6 @@ import org.mozkito.mappings.model.Mapping;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.mappings.settings.MappingOptions;
 import org.mozkito.persistence.Annotated;
-import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 

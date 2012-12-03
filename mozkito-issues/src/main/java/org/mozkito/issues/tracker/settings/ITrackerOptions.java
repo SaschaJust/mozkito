@@ -18,18 +18,22 @@ import net.ownhero.dev.ioda.ProxyConfig;
 
 /**
  * The Interface ITrackerOptions.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public interface ITrackerOptions {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param trackerUri the tracker uri
-	 * @param trackerUser the tracker user
-	 * @param trackerPassword the tracker password
-	 * @param proxyConfig the proxy config
+	 * 
+	 * @param trackerUri
+	 *            the tracker uri
+	 * @param trackerUser
+	 *            the tracker user
+	 * @param trackerPassword
+	 *            the tracker password
+	 * @param proxyConfig
+	 *            the proxy config
 	 */
 	void setup(URI trackerUri,
 	           String trackerUser,

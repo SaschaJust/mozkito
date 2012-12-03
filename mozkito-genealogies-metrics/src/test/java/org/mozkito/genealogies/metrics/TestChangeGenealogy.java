@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 
 package org.mozkito.genealogies.metrics;
@@ -28,9 +25,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.genealogies.ChangeGenealogy;
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -43,18 +37,22 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.tooling.GlobalGraphOperations;
 
+import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.core.CoreChangeGenealogy;
+import org.mozkito.genealogies.core.GenealogyEdgeType;
 
 /**
  * The Class TestChangeGenealogy.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Read from db.
-	 *
-	 * @param dbFile the db file
+	 * 
+	 * @param dbFile
+	 *            the db file
 	 * @return the test change genealogy
 	 */
 	public static TestChangeGenealogy readFromDB(final File dbFile) {
@@ -80,9 +78,11 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Instantiates a new test change genealogy.
-	 *
-	 * @param graph the graph
-	 * @param dbFile the db file
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param dbFile
+	 *            the db file
 	 */
 	private TestChangeGenealogy(final GraphDatabaseService graph, final File dbFile) {
 		this.graph = graph;
@@ -94,10 +94,13 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Adds the edge.
-	 *
-	 * @param dependent the dependent
-	 * @param target the target
-	 * @param edgeType the edge type
+	 * 
+	 * @param dependent
+	 *            the dependent
+	 * @param target
+	 *            the target
+	 * @param edgeType
+	 *            the edge type
 	 * @return true, if successful
 	 */
 	public boolean addEdge(@NotEmpty final String dependent,
@@ -140,8 +143,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Adds the vertex.
-	 *
-	 * @param v the v
+	 * 
+	 * @param v
+	 *            the v
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -171,7 +175,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#close()
 	 */
 	@Override
@@ -179,7 +184,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		this.graph.shutdown();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#containsEdge(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -189,7 +195,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result != null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#containsVertex(java.lang.Object)
 	 */
 	@Override
@@ -197,7 +204,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#edgeSize()
 	 */
 	@Override
@@ -211,7 +219,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getAllDependants(java.lang.Object)
 	 */
 	@Override
@@ -224,8 +233,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the all dependents.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return the all dependents
 	 */
 	private Collection<Node> getAllDependents(final Node node) {
@@ -235,7 +245,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                     GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getAllParents(java.lang.Object)
 	 */
 	@Override
@@ -246,7 +257,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
 	 */
 	@Override
@@ -255,8 +267,10 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#getDependants(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#getDependants(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public Collection<String> getDependants(final String t,
@@ -278,9 +292,11 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the dependents.
-	 *
-	 * @param node the node
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the dependents
 	 */
 	private Collection<Node> getDependents(final Node node,
@@ -295,9 +311,11 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the edge.
-	 *
-	 * @param from the from
-	 * @param to the to
+	 * 
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
 	 * @return the edge
 	 */
 	private GenealogyEdgeType getEdge(final String from,
@@ -328,7 +346,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getEdges(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -339,7 +358,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getExistingEdgeTypes()
 	 */
 	@Override
@@ -357,7 +377,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBDir()
 	 */
 	@Override
@@ -365,7 +386,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return this.dbFile;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBService()
 	 */
 	@Override
@@ -375,8 +397,9 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the node for vertex.
-	 *
-	 * @param from the from
+	 * 
+	 * @param from
+	 *            the from
 	 * @return the node for vertex
 	 */
 	private Node getNodeForVertex(final String from) {
@@ -389,7 +412,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return node;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getNodeId(java.lang.Object)
 	 */
 	@Override
@@ -402,9 +426,11 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the parents.
-	 *
-	 * @param node the node
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the parents
 	 */
 	private Collection<Node> getParents(final Node node,
@@ -417,8 +443,10 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parents;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#getParents(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#getParents(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public Collection<String> getParents(final String t,
@@ -438,7 +466,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return parentOperations;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
 	 */
 	@Override
@@ -453,15 +482,17 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 	
 	/**
 	 * Gets the vertex for node.
-	 *
-	 * @param dependentNode the dependent node
+	 * 
+	 * @param dependentNode
+	 *            the dependent node
 	 * @return the vertex for node
 	 */
 	private String getVertexForNode(final Node dependentNode) {
 		return dependentNode.getProperty(CoreChangeGenealogy.NODE_ID).toString();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
 	 */
 	@Override
@@ -469,8 +500,10 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return inDegree(s, GenealogyEdgeType.values());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int inDegree(final String s,
@@ -494,7 +527,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
 	 */
 	@Override
@@ -502,8 +536,10 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return outDegree(s, GenealogyEdgeType.values());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int outDegree(final String s,
@@ -518,7 +554,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return numEdges;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#vertexSet()
 	 */
 	@Override
@@ -533,7 +570,8 @@ public class TestChangeGenealogy implements ChangeGenealogy<String> {
 		return operations;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#vertexSize()
 	 */
 	@Override

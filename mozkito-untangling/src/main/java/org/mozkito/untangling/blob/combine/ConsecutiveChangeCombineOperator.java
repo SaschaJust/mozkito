@@ -25,9 +25,9 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
+
 import org.mozkito.untangling.blob.ChangeSet;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class ChangeCouplingCombineOperator.
@@ -48,9 +48,11 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, "consecCombineOp", "ConsecutiveChangeCombineOperator options.", requirements);
@@ -92,8 +94,9 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 	
 	/**
 	 * Instantiates a new consecutive change combine operator.
-	 *
-	 * @param timeWindow the time window
+	 * 
+	 * @param timeWindow
+	 *            the time window
 	 */
 	protected ConsecutiveChangeCombineOperator(final int timeWindow) {
 		this.timeWindow = timeWindow;
@@ -101,8 +104,7 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean canBeCombined(final ChangeSet cl1,

@@ -33,8 +33,8 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(),
-		                                      new Person("kim", null, null), "143");
+		this.rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null,
+		                                                                                                 null), "143");
 		this.rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", this.rCSTransaction);
 		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
 		                                  new RCSRevision(this.rCSTransaction, this.rcsFile, ChangeType.Added));

@@ -20,7 +20,6 @@ import java.util.Set;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSFile;
 
-
 /**
  * The Class SerialFileChangeCoupling.
  * 
@@ -45,8 +44,9 @@ public class SerialFileChangeCoupling implements Serializable {
 	
 	/**
 	 * Instantiates a new serial file change coupling.
-	 *
-	 * @param coupling the coupling
+	 * 
+	 * @param coupling
+	 *            the coupling
 	 */
 	public SerialFileChangeCoupling(final FileChangeCoupling coupling) {
 		for (final RCSFile rCSFile : coupling.getPremise()) {
@@ -59,8 +59,9 @@ public class SerialFileChangeCoupling implements Serializable {
 	
 	/**
 	 * Unserialize.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the file change coupling
 	 */
 	public FileChangeCoupling unserialize(final PersistenceUtil persistenceUtil) {

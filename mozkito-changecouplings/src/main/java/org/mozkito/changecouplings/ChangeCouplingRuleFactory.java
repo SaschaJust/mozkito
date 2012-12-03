@@ -31,6 +31,7 @@ import net.ownhero.dev.kanuni.annotations.simple.Positive;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
@@ -79,7 +80,8 @@ public class ChangeCouplingRuleFactory {
 		tablename = "mozkito_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		final String query = "select mozkito_file_changecouplings('" + rCSTransaction.getId() + "','" + tablename + "')";
+		final String query = "select mozkito_file_changecouplings('" + rCSTransaction.getId() + "','" + tablename
+		        + "')";
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Selecting file change couplings: " + query);
@@ -211,7 +213,7 @@ public class ChangeCouplingRuleFactory {
 	 *            the persistence util
 	 */
 	private static void updateProcedures(final PersistenceUtil persistenceUtil) {
-		if (!updatedQueries) {
+		if (!ChangeCouplingRuleFactory.updatedQueries) {
 			try {
 				BufferedReader reader = new BufferedReader(
 				                                           new InputStreamReader(
@@ -246,7 +248,7 @@ public class ChangeCouplingRuleFactory {
 					        + e.getMessage());
 				}
 			}
-			updatedQueries = true;
+			ChangeCouplingRuleFactory.updatedQueries = true;
 		}
 	}
 }

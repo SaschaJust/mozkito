@@ -31,6 +31,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
@@ -107,7 +108,7 @@ public class JiraHistoryParser {
 		try {
 			try {
 				final RawContent rawContent = IOUtils.fetch(this.uri);
-				final MultiMatch findAll = skipRegex.findAll(rawContent.getContent());
+				final MultiMatch findAll = JiraHistoryParser.skipRegex.findAll(rawContent.getContent());
 				if (findAll != null) {
 					return true;
 				}
@@ -163,7 +164,7 @@ public class JiraHistoryParser {
 							if (href != null) {
 								final int index = href.indexOf("name=");
 								if (index > -1) {
-									username = href.substring(index + NAME_TAG_LENGTH);
+									username = href.substring(index + JiraHistoryParser.NAME_TAG_LENGTH);
 								}
 							}
 							final String fullname = aTag.text();
@@ -174,7 +175,7 @@ public class JiraHistoryParser {
 					final Elements dateElems = header.getElementsByTag("time");
 					if (!dateElems.isEmpty()) {
 						when = DateTimeUtils.parseDate(dateElems.get(0).attr("datetime"),
-						                               new Regex(HISTORY_DATE_TIME_PATTERN));
+						                               new Regex(JiraHistoryParser.HISTORY_DATE_TIME_PATTERN));
 					}
 					if ((who != null) && (when != null)) {
 						final HistoryElement historyElement = new HistoryElement(this.reportId, who, when);
@@ -191,7 +192,7 @@ public class JiraHistoryParser {
 							continue;
 						}
 						for (final Element tr : trs) {
-							if (tr.childNodes().size() < MIN_CHILD_NODE_SIZE) {
+							if (tr.childNodes().size() < JiraHistoryParser.MIN_CHILD_NODE_SIZE) {
 								if (Logger.logError()) {
 									Logger.error("Cannot handle history table row with less than three columns: reportId="
 									        + this.reportId);

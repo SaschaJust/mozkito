@@ -35,12 +35,13 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.mozkito.issues.tracker.OverviewParser;
-import org.mozkito.issues.tracker.ReportLink;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import org.mozkito.issues.tracker.OverviewParser;
+import org.mozkito.issues.tracker.ReportLink;
 
 /**
  * The Class SourceforgeOverviewParser.

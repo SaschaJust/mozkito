@@ -150,7 +150,7 @@ public class LibSVMTrainer extends Trainer {
 			int entry = 0;
 			while ((line = reader.readNext()) != null) {
 				++entry;
-				if (line.length < MIN_TOKENS) {
+				if (line.length < LibSVMTrainer.MIN_TOKENS) {
 					if (Logger.logError()) {
 						Logger.error("There has to be at least one confidence value in addition to 2 IDs, but got: %s", JavaUtils.arrayToString(line)); //$NON-NLS-1$
 					}
@@ -246,14 +246,14 @@ public class LibSVMTrainer extends Trainer {
 		final svm_parameter param = new svm_parameter();
 		param.svm_type = 0;
 		param.kernel_type = 2;
-		param.degree = DEGREE;
+		param.degree = LibSVMTrainer.DEGREE;
 		param.gamma = 1 / vectorLength;
 		param.coef0 = 0d;
-		param.nu = NU;
-		param.cache_size = CACHE_SIZE;
+		param.nu = LibSVMTrainer.NU;
+		param.cache_size = LibSVMTrainer.CACHE_SIZE;
 		param.C = 1d;
-		param.eps = EPS;
-		param.p = P;
+		param.eps = LibSVMTrainer.EPS;
+		param.p = LibSVMTrainer.P;
 		param.shrinking = 1;
 		param.probability = 0;
 		param.nr_weight = 0;

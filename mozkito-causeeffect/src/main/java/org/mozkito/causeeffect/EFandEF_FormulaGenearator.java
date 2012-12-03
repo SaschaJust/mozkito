@@ -26,7 +26,7 @@ import org.mozkito.versions.model.RCSFile;
 
 /**
  * The Class EFandEF_FormulaGenearator.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class EFandEF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {

@@ -50,6 +50,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
@@ -57,10 +62,6 @@ import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * The Class MercurialRepository.
@@ -101,10 +102,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Write a specific Mercurial log style into a temporary file. (should always be
-	 *
-	 * @param dir the directory the template file will be written to (
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * {@link MercurialRepository#cloneDir}, not null)
+	 * 
+	 * @param dir
+	 *            the directory the template file will be written to (
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred. {@link MercurialRepository#cloneDir}, not null)
 	 */
 	@NoneNull
 	private static void writeLogStyle(final File dir) throws IOException {
@@ -325,7 +327,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return patch.getDeltas();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
 	 */
 	@Override
@@ -333,7 +336,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return hgLog(revision);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -420,24 +424,24 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		}
 		final String line = lines.get(0);
 		final String[] lineParts = line.split("\\+~\\+");
-		if (lineParts.length < HG_MAX_LINE_PARTS_LENGTH) {
+		if (lineParts.length < MercurialRepository.HG_MAX_LINE_PARTS_LENGTH) {
 			if (Logger.logError()) {
 				Logger.error("hg log could not be parsed. Too less columns in logfile.");
 				return null;
 			}
 		}
-		if (lineParts.length > HG_MAX_LINE_PARTS_LENGTH) {
+		if (lineParts.length > MercurialRepository.HG_MAX_LINE_PARTS_LENGTH) {
 			final StringBuilder s = new StringBuilder();
-			s.append(lineParts[HG_MAX_LINE_PARTS_LENGTH - 1]);
-			for (int i = HG_MAX_LINE_PARTS_LENGTH; i < lineParts.length; ++i) {
+			s.append(lineParts[MercurialRepository.HG_MAX_LINE_PARTS_LENGTH - 1]);
+			for (int i = MercurialRepository.HG_MAX_LINE_PARTS_LENGTH; i < lineParts.length; ++i) {
 				s.append(":");
 				s.append(lineParts[i]);
 			}
-			lineParts[HG_MAX_LINE_PARTS_LENGTH - 1] = s.toString();
+			lineParts[MercurialRepository.HG_MAX_LINE_PARTS_LENGTH - 1] = s.toString();
 		}
-		final String[] addedPaths = lineParts[HG_ADDED_PATHS_INDEX].split(";");
-		final String[] deletedPaths = lineParts[HG_DELETED_PATHS_INDEX].split(";");
-		final String[] modifiedPaths = lineParts[HG_MODIFIED_PATHS_INDEX].split(";");
+		final String[] addedPaths = lineParts[MercurialRepository.HG_ADDED_PATHS_INDEX].split(";");
+		final String[] deletedPaths = lineParts[MercurialRepository.HG_DELETED_PATHS_INDEX].split(";");
+		final String[] modifiedPaths = lineParts[MercurialRepository.HG_MODIFIED_PATHS_INDEX].split(";");
 		
 		final Map<String, ChangeType> result = new HashMap<String, ChangeType>();
 		
@@ -543,7 +547,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return getEndRevision();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#getLogParser()
 	 */
 	@Override
@@ -551,7 +556,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return new MercurialLogParser();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
@@ -565,7 +571,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
 	 */
 	@Override
@@ -619,7 +626,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		return response.getSecond().get(0).trim();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
@@ -641,8 +649,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Hg log.
-	 *
-	 * @param revisionSelection the revision selection
+	 * 
+	 * @param revisionSelection
+	 *            the revision selection
 	 * @return the tuple
 	 */
 	private Tuple<Integer, List<String>> hgLog(@NotNull @MinLength (min = 1) final String revisionSelection) {
@@ -665,12 +674,17 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * main setup method.
-	 *
-	 * @param address the address
-	 * @param inputStream the input stream
-	 * @param branchFactory the branch factory
-	 * @param tmpDir the tmp dir
-	 * @param mainBranchName the main branch name
+	 * 
+	 * @param address
+	 *            the address
+	 * @param inputStream
+	 *            the input stream
+	 * @param branchFactory
+	 *            the branch factory
+	 * @param tmpDir
+	 *            the tmp dir
+	 * @param mainBranchName
+	 *            the main branch name
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -39,6 +40,7 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.visitor.CallGraphPPAVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
@@ -48,8 +50,6 @@ import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 
 /**
  * The Class CallGraphToolChain.
@@ -97,7 +97,8 @@ public class CallGraphToolChain {
 		
 		try {
 			
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "codeanalysis");
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "codeanalysis");
 			ArgumentSetFactory.create(databaseOptions);
 			final RepositoryOptions repositoryOptions = new RepositoryOptions(settings.getRoot(), Requirement.required,
 			                                                                  databaseOptions);

@@ -66,7 +66,8 @@ public class DescriptionSearchEngine extends SearchEngine {
 	public void score(final MappableEntity from,
 	                  final MappableEntity to,
 	                  final Relation score) {
-		CompareCondition.equals(to.getBaseType(), TAG, "The target type has to be a report, but is %s.", //$NON-NLS-1$
+		CompareCondition.equals(to.getBaseType(), DescriptionSearchEngine.TAG,
+		                        "The target type has to be a report, but is %s.", //$NON-NLS-1$
 		                        to.getBaseType());
 		double confidence = 0d;
 		String toContent = null;

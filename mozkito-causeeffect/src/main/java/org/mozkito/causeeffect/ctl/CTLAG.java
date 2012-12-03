@@ -28,8 +28,9 @@ public class CTLAG extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "AG f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with AG.
+	 * 
+	 * @param formula
+	 *            Formula to surround with AG.
 	 * @return the ctlag
 	 */
 	public static CTLAG get(final CTLFormula formula) {

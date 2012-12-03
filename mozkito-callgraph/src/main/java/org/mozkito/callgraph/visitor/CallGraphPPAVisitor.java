@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.model.ClassVertex;
 import org.mozkito.callgraph.model.MethodVertex;
@@ -38,7 +39,6 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.codeanalysis.model.JavaTypeDefinition;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
 import org.mozkito.codeanalysis.visitors.PPAVisitor;
-
 
 /**
  * The Class CallGraphPPAVisitor.
@@ -108,10 +108,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#endVisit(org.mozkito.ppa.visitors.
-	 * PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
-	 * org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#endVisit(org.mozkito.ppa.visitors. PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation,
 	 * org.mozkito.ppa.model.JavaElementLocationSet)
 	 */
 	@Override
@@ -219,8 +218,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 		final ITypeBinding[] args = mBinding.getParameterTypes();
 		final List<String> arguments = new ArrayList<String>();
-		for (int i = 0; i < args.length; ++i) {
-			arguments.add(args[i].getName());
+		for (final ITypeBinding arg : args) {
+			arguments.add(arg.getName());
 		}
 		final String methodName = mBinding.getName().toString();
 		
@@ -326,8 +325,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 		final ITypeBinding[] args = mBinding.getParameterTypes();
 		final List<String> arguments = new ArrayList<String>();
-		for (int i = 0; i < args.length; ++i) {
-			arguments.add(args[i].getName());
+		for (final ITypeBinding arg : args) {
+			arguments.add(arg.getName());
 		}
 		final String methodName = mi.getName().toString();
 		
@@ -454,8 +453,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 		final ITypeBinding[] args = mBinding.getParameterTypes();
 		final List<String> arguments = new ArrayList<String>();
-		for (int i = 0; i < args.length; ++i) {
-			arguments.add(args[i].getName());
+		for (final ITypeBinding arg : args) {
+			arguments.add(arg.getName());
 		}
 		final String methodName = mBinding.getName().toString();
 		
@@ -554,8 +553,8 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 		
 		final ITypeBinding[] args = mBinding.getParameterTypes();
 		final List<String> arguments = new ArrayList<String>();
-		for (int i = 0; i < args.length; ++i) {
-			arguments.add(args[i].getName());
+		for (final ITypeBinding arg : args) {
+			arguments.add(arg.getName());
 		}
 		final String methodName = smi.getName().toString();
 		
@@ -583,10 +582,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#postVisit(org.mozkito.ppa.visitors.
-	 * PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
-	 * org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation, int,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#postVisit(org.mozkito.ppa.visitors. PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation, int,
 	 * org.mozkito.ppa.model.JavaElementLocationSet)
 	 */
 	@Override
@@ -627,10 +625,9 @@ public class CallGraphPPAVisitor implements PPAVisitor {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.visitors.PPAVisitor#preVisit(org.mozkito.ppa.visitors.
-	 * PPATypeVisitor, org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
-	 * org.mozkito.ppa.model.JavaElementLocation,
-	 * org.mozkito.ppa.model.JavaElementLocation, int, int,
+	 * @see org.mozkito.ppa.visitors.PPAVisitor#preVisit(org.mozkito.ppa.visitors. PPATypeVisitor,
+	 * org.eclipse.jdt.core.dom.CompilationUnit, org.eclipse.jdt.core.dom.ASTNode,
+	 * org.mozkito.ppa.model.JavaElementLocation, org.mozkito.ppa.model.JavaElementLocation, int, int,
 	 * org.mozkito.ppa.model.JavaElementLocationSet)
 	 */
 	@Override

@@ -68,7 +68,7 @@ public class LuceneStorage extends Storage {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, LuceneStorage.TAG, LuceneStorage.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -173,7 +173,7 @@ public class LuceneStorage extends Storage {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return LuceneStorage.DESCRIPTION;
 	}
 	
 	/**

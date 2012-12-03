@@ -285,8 +285,9 @@ public class PersistenceManager {
 	                                                 final String id) {
 		final String databaseType = util.getType().toLowerCase();
 		
-		if (NATIVE_QUERIES.containsKey(databaseType) && NATIVE_QUERIES.get(databaseType).containsKey(id)) {
-			return NATIVE_QUERIES.get(databaseType).get(id);
+		if (PersistenceManager.NATIVE_QUERIES.containsKey(databaseType)
+		        && PersistenceManager.NATIVE_QUERIES.get(databaseType).containsKey(id)) {
+			return PersistenceManager.NATIVE_QUERIES.get(databaseType).get(id);
 		}
 		return null;
 	}
@@ -305,7 +306,7 @@ public class PersistenceManager {
 	@SuppressWarnings ("unchecked")
 	public static synchronized <T> Criteria<T> getStoredQuery(final String id,
 	                                                          final Class<T> clazz) {
-		return (Criteria<T>) STORED_QUERIES.get(clazz).get(id);
+		return (Criteria<T>) PersistenceManager.STORED_QUERIES.get(clazz).get(id);
 	}
 	
 	/**
@@ -323,11 +324,11 @@ public class PersistenceManager {
 	                                                      final String id,
 	                                                      final String query) {
 		final String databaseType = type.toLowerCase();
-		if (!NATIVE_QUERIES.containsKey(databaseType)) {
-			NATIVE_QUERIES.put(databaseType, new HashMap<String, String>());
+		if (!PersistenceManager.NATIVE_QUERIES.containsKey(databaseType)) {
+			PersistenceManager.NATIVE_QUERIES.put(databaseType, new HashMap<String, String>());
 		}
 		
-		final Map<String, String> map = NATIVE_QUERIES.get(databaseType);
+		final Map<String, String> map = PersistenceManager.NATIVE_QUERIES.get(databaseType);
 		return map.put(id, query);
 	}
 	
@@ -364,10 +365,10 @@ public class PersistenceManager {
 			actualRawTypeArgument = (Class<T>) actualTypeArgument;
 		}
 		
-		if (!STORED_QUERIES.containsKey(actualRawTypeArgument)) {
-			STORED_QUERIES.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
+		if (!PersistenceManager.STORED_QUERIES.containsKey(actualRawTypeArgument)) {
+			PersistenceManager.STORED_QUERIES.put(actualRawTypeArgument, new HashMap<String, Criteria<?>>());
 		}
 		
-		STORED_QUERIES.get(actualRawTypeArgument).put(id, criteria);
+		PersistenceManager.STORED_QUERIES.get(actualRawTypeArgument).put(id, criteria);
 	}
 }

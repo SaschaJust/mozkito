@@ -91,7 +91,7 @@ public abstract class Engine extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, Engine.TAG, DESCRIPTION, requirements);
+			super(argumentSet, Engine.TAG, Engine.DESCRIPTION, requirements);
 		}
 		
 		/*

@@ -30,9 +30,11 @@ public class CTLConjunction extends CTLBilateralFormula {
 	
 	/**
 	 * Returns a conjunction of two given CTL formulas.
-	 *
-	 * @param f the f
-	 * @param g the g
+	 * 
+	 * @param f
+	 *            the f
+	 * @param g
+	 *            the g
 	 * @return the cTL conjunction
 	 */
 	public static CTLConjunction get(final CTLFormula f,

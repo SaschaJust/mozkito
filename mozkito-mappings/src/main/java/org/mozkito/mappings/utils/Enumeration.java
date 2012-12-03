@@ -67,7 +67,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 	
 	/** The Constant typomap. */
 	@SuppressWarnings ("serial")
-	private static final Map<Character, Set<Character>> typomap           = new TreeMap<Character, Set<Character>>() {
+	private static final Map<Character, Set<Character>> TYPO_MAP          = new TreeMap<Character, Set<Character>>() {
 		                                                                      
 		                                                                      {
 			                                                                      put('a', new TreeSet<Character>() {
@@ -245,7 +245,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 			final Collection<Enumeration> results = new LinkedList<>();
 			int maxIndex = text.length();
 			
-			for (final String pattern : ALPHA_BULLETS) {
+			for (final String pattern : Enumeration.ALPHA_BULLETS) {
 				final Regex bulletRegex = new Regex(pattern);
 				final MultiMatch multiMatch = bulletRegex.findAll(text);
 				
@@ -540,7 +540,7 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 		
 		try {
 			bullet.charAt(0);
-			final Set<Character> set = typomap.get(bullet.charAt(0));
+			final Set<Character> set = Enumeration.TYPO_MAP.get(bullet.charAt(0));
 			
 			if (set != null) {
 				for (final Character character : set) {
@@ -662,7 +662,9 @@ public class Enumeration implements Iterable<EnumerationEntry>, Collection<Enume
 		final String text = writer.toString();
 		final Collection<Enumeration> extract = extract(text, new Type[] { Type.ALPHABETIC });
 		for (final Enumeration enumeration : extract) {
-			System.err.println(enumeration);
+			if (Logger.logAlways()) {
+				Logger.always(enumeration.toString());
+			}
 		}
 	}
 	

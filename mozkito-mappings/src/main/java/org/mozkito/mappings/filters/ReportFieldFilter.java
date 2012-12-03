@@ -57,7 +57,7 @@ public class ReportFieldFilter extends Filter {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, ReportFieldFilter.TAG, ReportFieldFilter.DESCRIPTION, requirements);
 		}
 		
 		/*

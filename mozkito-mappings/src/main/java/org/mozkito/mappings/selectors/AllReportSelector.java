@@ -62,7 +62,7 @@ public class AllReportSelector extends Selector {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, AllReportSelector.TAG, AllReportSelector.DESCRIPTION, requirements);
 		}
 		
 		/*

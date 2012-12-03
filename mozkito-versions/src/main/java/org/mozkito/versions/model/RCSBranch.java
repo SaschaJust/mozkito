@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.apache.openjpa.persistence.jdbc.Index;
+
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -66,7 +67,7 @@ public class RCSBranch implements Annotated {
 	 *            the new master branch name
 	 */
 	public static void setMasterBranchName(final String name) {
-		MASTER_BRANCH_NAME = name;
+		RCSBranch.MASTER_BRANCH_NAME = name;
 	}
 	
 	/**
@@ -226,7 +227,7 @@ public class RCSBranch implements Annotated {
 	 */
 	@Transient
 	public boolean isMasterBranch() {
-		return getName().equals(MASTER_BRANCH_NAME);
+		return getName().equals(RCSBranch.MASTER_BRANCH_NAME);
 	}
 	
 	/**

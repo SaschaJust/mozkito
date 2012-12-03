@@ -38,11 +38,15 @@ public class PartiallyPartitionGenealogyReader extends Source<GenealogyPartition
 	
 	/**
 	 * Instantiates a new partition genealogy reader.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param changeGenealogy the change genealogy
-	 * @param collection the collection
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param changeGenealogy
+	 *            the change genealogy
+	 * @param collection
+	 *            the collection
 	 */
 	public PartiallyPartitionGenealogyReader(final Group threadGroup, final Settings settings,
 	        final PartitionChangeGenealogy changeGenealogy, final Collection<ChangeGenealogyLayerNode> collection) {

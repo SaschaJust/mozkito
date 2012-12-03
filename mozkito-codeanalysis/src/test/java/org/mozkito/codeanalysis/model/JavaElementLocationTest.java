@@ -9,6 +9,7 @@ import java.util.Set;
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 
 public class JavaElementLocationTest {

@@ -58,7 +58,7 @@ public abstract class SearchEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, SearchEngine.TAG, SearchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -123,7 +123,7 @@ public abstract class SearchEngine extends Engine {
 		// replace all non-alphanumeric characters by spaces
 		String modifiedQuery = queryString.replaceAll("[^a-zA-Z0-9]", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (modifiedQuery.replaceAll("[^a-zA-Z0-9]", "").length() < MIN_QUERY_CHARS) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (modifiedQuery.replaceAll("[^a-zA-Z0-9]", "").length() < SearchEngine.MIN_QUERY_CHARS) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 		
@@ -179,7 +179,7 @@ public abstract class SearchEngine extends Engine {
 					j += token.length();
 					
 					// do not build queries with >255 characters
-					if (j > MAX_QUERY_CHARS) {
+					if (j > SearchEngine.MAX_QUERY_CHARS) {
 						break ENOUGH;
 					}
 					

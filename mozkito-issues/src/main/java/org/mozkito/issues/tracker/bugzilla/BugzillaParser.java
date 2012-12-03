@@ -39,6 +39,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
+
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -70,13 +71,13 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	@NoneNull
 	public static BugzillaParser getParser(final String bugzillaVersion) {
-		if (!PARSER_VERSIONS.containsKey(bugzillaVersion)) {
+		if (!BugzillaParser.PARSER_VERSIONS.containsKey(bugzillaVersion)) {
 			if (Logger.logError()) {
 				Logger.error("Bugzilla version " + bugzillaVersion
 				        + " not yet supported! Please contact mozkito dev team.");
 			}
 		}
-		return PARSER_VERSIONS.get(bugzillaVersion);
+		return BugzillaParser.PARSER_VERSIONS.get(bugzillaVersion);
 	}
 	
 	/**
@@ -222,8 +223,8 @@ public abstract class BugzillaParser implements Parser {
 	public BugzillaParser(final Set<String> supportedVersions) {
 		this.supportedVersions = supportedVersions;
 		for (final String supportedVersion : supportedVersions) {
-			if (!PARSER_VERSIONS.containsKey(supportedVersion)) {
-				PARSER_VERSIONS.put(supportedVersion, this);
+			if (!BugzillaParser.PARSER_VERSIONS.containsKey(supportedVersion)) {
+				BugzillaParser.PARSER_VERSIONS.put(supportedVersion, this);
 			}
 		}
 	}

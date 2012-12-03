@@ -17,7 +17,6 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 
-
 /**
  * The Class CallGraphHandler.
  * 
@@ -47,8 +46,7 @@ public class LineDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,

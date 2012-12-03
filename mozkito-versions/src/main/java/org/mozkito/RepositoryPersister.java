@@ -72,7 +72,7 @@ public class RepositoryPersister extends Sink<RCSTransaction> {
 					Logger.debug("Storing " + data);
 				}
 				
-				if (((RepositoryPersister.this.counter = RepositoryPersister.this.counter + 1) % COMMIT_CACHE) == 0) {
+				if (((RepositoryPersister.this.counter = RepositoryPersister.this.counter + 1) % RepositoryPersister.COMMIT_CACHE) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}

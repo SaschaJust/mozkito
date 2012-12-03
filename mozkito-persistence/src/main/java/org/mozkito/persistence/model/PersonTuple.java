@@ -50,9 +50,11 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Instantiates a new person tuple.
-	 *
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	public PersonTuple(final Person oldValue, final Person newValue) {
 		CollectionCondition.notAllNull(Arrays.asList(new Person[] { oldValue, newValue }),
@@ -64,9 +66,11 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Instantiates a new person tuple.
-	 *
-	 * @param oldValue the old value
-	 * @param newValue the new value
+	 * 
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
 	 */
 	@NoneNull
 	public PersonTuple(final PersonContainer oldValue, final PersonContainer newValue) {
@@ -107,7 +111,8 @@ public class PersonTuple implements Annotated {
 		return true;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	public final String getHandle() {
@@ -116,7 +121,7 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Gets the new value.
-	 *
+	 * 
 	 * @return the newValue
 	 */
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -126,7 +131,7 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Gets the old value.
-	 *
+	 * 
 	 * @return the oldValue
 	 */
 	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -153,8 +158,9 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Sets the new value.
-	 *
-	 * @param newValue the newValue to set
+	 * 
+	 * @param newValue
+	 *            the newValue to set
 	 */
 	public void setNewValue(final PersonContainer newValue) {
 		this.newValue = newValue;
@@ -162,9 +168,11 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Sets the new value.
-	 *
-	 * @param key the key
-	 * @param newValue the new value
+	 * 
+	 * @param key
+	 *            the key
+	 * @param newValue
+	 *            the new value
 	 */
 	@Transient
 	public void setNewValue(final String key,
@@ -175,8 +183,9 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Sets the old value.
-	 *
-	 * @param oldValue the oldValue to set
+	 * 
+	 * @param oldValue
+	 *            the oldValue to set
 	 */
 	public void setOldValue(final PersonContainer oldValue) {
 		this.oldValue = oldValue;
@@ -184,9 +193,11 @@ public class PersonTuple implements Annotated {
 	
 	/**
 	 * Sets the old value.
-	 *
-	 * @param key the key
-	 * @param oldValue the old value
+	 * 
+	 * @param key
+	 *            the key
+	 * @param oldValue
+	 *            the old value
 	 */
 	@Transient
 	public void setOldValue(final String key,

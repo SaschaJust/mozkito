@@ -17,14 +17,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.mozkito.untangling.blob.combine.CombineOperator;
-import org.mozkito.untangling.utils.CollectionUtils;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.compare.GreaterOrEqualInt;
 import net.ownhero.dev.kanuni.annotations.simple.NotNegative;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.untangling.blob.combine.CombineOperator;
+import org.mozkito.untangling.utils.CollectionUtils;
 
 /**
  * The Interface ArtificialBlobGenerator.
@@ -39,11 +39,11 @@ public class ArtificialBlobGenerator {
 	public enum ArtificialBlobGeneratorStrategy {
 		
 		/** The package. */
-		PACKAGE, 
- /** The consecutive. */
- CONSECUTIVE, 
- /** The couplings. */
- COUPLINGS;
+		PACKAGE,
+		/** The consecutive. */
+		CONSECUTIVE,
+		/** The couplings. */
+		COUPLINGS;
 	}
 	
 	/** The combine operator. */
@@ -51,8 +51,9 @@ public class ArtificialBlobGenerator {
 	
 	/**
 	 * Instantiates a new artificial blob generator.
-	 *
-	 * @param combineOperator the combine operator
+	 * 
+	 * @param combineOperator
+	 *            the combine operator
 	 */
 	public ArtificialBlobGenerator(final CombineOperator<ChangeSet> combineOperator) {
 		this.combineOperator = combineOperator;

@@ -303,10 +303,10 @@ public class Attachment implements Annotated {
 	private AttachmentType  type = AttachmentType.UNKNOWN;
 	
 	/** The md5. */
-	private byte[]          md5  = new byte[MD5_SIZE];
+	private byte[]          md5  = new byte[Attachment.MD5_SIZE];
 	
 	/** The sha1. */
-	private byte[]          sha1 = new byte[SHA1_SIZE];
+	private byte[]          sha1 = new byte[Attachment.SHA1_SIZE];
 	
 	/** The attachable. */
 	private Attachable      attachable;

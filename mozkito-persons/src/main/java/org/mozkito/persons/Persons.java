@@ -58,6 +58,7 @@ public class Persons extends Chain<Settings> {
 	/**
 	 * Instantiates a new persons.
 	 * 
+	 * @deprecated only to be used in tests
 	 * @param util
 	 *            the util
 	 * @throws SettingsParseError

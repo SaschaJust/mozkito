@@ -90,7 +90,8 @@ public class StringTuple implements Annotated {
 		return true;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
 	public final String getHandle() {
@@ -99,7 +100,7 @@ public class StringTuple implements Annotated {
 	
 	/**
 	 * Gets the new value.
-	 *
+	 * 
 	 * @return the newValue
 	 */
 	@Basic
@@ -110,7 +111,7 @@ public class StringTuple implements Annotated {
 	
 	/**
 	 * Gets the old value.
-	 *
+	 * 
 	 * @return the oldValue
 	 */
 	@Basic
@@ -138,8 +139,9 @@ public class StringTuple implements Annotated {
 	
 	/**
 	 * Sets the new value.
-	 *
-	 * @param newValue the newValue to set
+	 * 
+	 * @param newValue
+	 *            the newValue to set
 	 */
 	public void setNewValue(final String newValue) {
 		this.newValue = newValue;
@@ -147,8 +149,9 @@ public class StringTuple implements Annotated {
 	
 	/**
 	 * Sets the old value.
-	 *
-	 * @param oldValue the oldValue to set
+	 * 
+	 * @param oldValue
+	 *            the oldValue to set
 	 */
 	public void setOldValue(final String oldValue) {
 		this.oldValue = oldValue;

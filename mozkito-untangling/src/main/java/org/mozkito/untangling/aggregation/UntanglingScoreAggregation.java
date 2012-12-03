@@ -23,6 +23,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.conditions.Condition;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.clustering.ScoreAggregation;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -30,10 +34,6 @@ import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.untangling.Untangling;
 import org.mozkito.untangling.blob.ChangeSet;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class UntanglingScoreAggregation.

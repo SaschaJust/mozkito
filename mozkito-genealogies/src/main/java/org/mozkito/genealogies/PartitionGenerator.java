@@ -15,16 +15,19 @@ package org.mozkito.genealogies;
 
 /**
  * The Interface PartitionGenerator.
- *
- * @param <I> the generic type
- * @param <O> the generic type
+ * 
+ * @param <I>
+ *            the generic type
+ * @param <O>
+ *            the generic type
  */
 public interface PartitionGenerator<I, O> {
 	
 	/**
 	 * Partition.
-	 *
-	 * @param input the input
+	 * 
+	 * @param input
+	 *            the input
 	 * @return the o
 	 */
 	public O partition(I input);

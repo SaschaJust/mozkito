@@ -28,6 +28,7 @@ import net.ownhero.dev.regex.Regex;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.elements.Severity;
@@ -57,8 +58,8 @@ public class JiraParserLUCENE2222_NetTest {
 		try {
 			final URI uri = JiraParserLUCENE2222_NetTest.class.getResource(FileUtils.fileSeparator + "LUCENE-2222.xml")
 			                                                  .toURI();
-			parser = new JiraParser();
-			assert (parser.setURI(new ReportLink(uri, "LUCENE-2222")));
+			JiraParserLUCENE2222_NetTest.parser = new JiraParser();
+			assert (JiraParserLUCENE2222_NetTest.parser.setURI(new ReportLink(uri, "LUCENE-2222")));
 		} catch (final URISyntaxException e) {
 			if (Logger.logError()) {
 				Logger.error(e);
@@ -73,7 +74,7 @@ public class JiraParserLUCENE2222_NetTest {
 	 */
 	@Test
 	public void testGetAttachmentEntries() {
-		final List<AttachmentEntry> attachmentEntries = parser.getAttachmentEntries();
+		final List<AttachmentEntry> attachmentEntries = JiraParserLUCENE2222_NetTest.parser.getAttachmentEntries();
 		assertEquals(3, attachmentEntries.size());
 		AttachmentEntry attachmentEntry = attachmentEntries.get(0);
 		assertEquals("LUCENE-2222.patch", attachmentEntry.getFilename());
@@ -124,7 +125,7 @@ public class JiraParserLUCENE2222_NetTest {
 	 */
 	@Test
 	public void testGetHistoryElements() {
-		final SortedSet<HistoryElement> historyElements = parser.getHistoryElements();
+		final SortedSet<HistoryElement> historyElements = JiraParserLUCENE2222_NetTest.parser.getHistoryElements();
 		assertEquals(3, historyElements.size());
 		
 		int counter = 0;

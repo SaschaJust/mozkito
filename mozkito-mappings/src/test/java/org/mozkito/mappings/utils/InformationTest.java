@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kisa.Logger;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -25,15 +26,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author Sascha Just <sascha.just@mozkito.org>
+ * The Class InformationTest.
  * 
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InformationTest {
 	
+	/** The text. */
 	public static String text = null;
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Sets the up before class.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -53,15 +59,20 @@ public class InformationTest {
 	}
 	
 	/**
-	 * @throws java.lang.Exception
+	 * Tear down after class.
+	 * 
+	 * @throws Exception
+	 *             the exception
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.err.println(InformationTest.class.getSimpleName() + " completed."); //$NON-NLS-1$
+		if (Logger.logInfo()) {
+			Logger.info(InformationTest.class.getSimpleName() + " completed."); //$NON-NLS-1$
+		}
 	}
 	
 	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#enumerations(java.lang.String)}.
+	 * Test enumerations.
 	 */
 	@Test
 	public final void testEnumerations() {
@@ -69,78 +80,19 @@ public class InformationTest {
 		int i = 0;
 		
 		for (final Enumeration map : enumerations) {
-			System.err.println(String.format("===== Set number (%s) =====", ++i));
+			if (Logger.logInfo()) {
+				Logger.info(String.format("===== Set number (%s) =====", ++i));
+			}
 			
 			int j = 0;
 			
 			for (final EnumerationEntry bullet : map) {
-				System.err.println(String.format("Item %3s - Bullet: %s", ++j, bullet));
+				if (Logger.logInfo()) {
+					Logger.info(String.format("Item %3s - Bullet: %s", ++j, bullet));
+				}
 			}
 		}
 		Assert.fail("Not yet implemented");
 	}
 	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#hyperlinks(java.lang.String)}.
-	 */
-	@Test
-	public final void testHyperlinks() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#itemizations(java.lang.String)}.
-	 */
-	@Test
-	public final void testItemizations() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#language(java.lang.String)}.
-	 */
-	@Test
-	public final void testLanguage() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#lineCount(java.lang.String)}.
-	 */
-	@Test
-	public final void testLineCount() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#sentenceCount(java.lang.String)}.
-	 */
-	@Test
-	public final void testSentenceCount() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#sentences(java.lang.String)}.
-	 */
-	@Test
-	public final void testSentences() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#topics(java.lang.String)}.
-	 */
-	@Test
-	public final void testTopics() {
-		Assert.fail("Not yet implemented");
-	}
-	
-	/**
-	 * Test method for {@link org.mozkito.mappings.utils.Information#wordCount(java.lang.String)}.
-	 */
-	@Test
-	public final void testWordCount() {
-		Assert.fail("Not yet implemented");
-	}
 }

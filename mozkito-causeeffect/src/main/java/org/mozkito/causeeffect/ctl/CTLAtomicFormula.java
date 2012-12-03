@@ -38,8 +38,9 @@ public class CTLAtomicFormula extends CTLFormula {
 	
 	/**
 	 * Returns an atomic formula that represents the given proposition.
-	 *
-	 * @param proposition Proposition to be represented by the atomic formula.
+	 * 
+	 * @param proposition
+	 *            Proposition to be represented by the atomic formula.
 	 * @return the cTL atomic formula
 	 */
 	public static CTLAtomicFormula get(final Long proposition) {
@@ -80,8 +81,9 @@ public class CTLAtomicFormula extends CTLFormula {
 	
 	/**
 	 * Creates a new atomic formula that represents the given proposition.
-	 *
-	 * @param file the file
+	 * 
+	 * @param file
+	 *            the file
 	 */
 	private CTLAtomicFormula(final Long file) {
 		this.id = file;
@@ -89,15 +91,18 @@ public class CTLAtomicFormula extends CTLFormula {
 	
 	/**
 	 * Instantiates a new cTL atomic formula.
-	 *
-	 * @param id the id
-	 * @param path the path
+	 * 
+	 * @param id
+	 *            the id
+	 * @param path
+	 *            the path
 	 */
 	private CTLAtomicFormula(final Long id, final String path) {
 		this.id = id;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#calculateHashCode()
 	 */
 	@Override
@@ -110,7 +115,8 @@ public class CTLAtomicFormula extends CTLFormula {
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#equals(java.lang.Object)
 	 */
 	@Override
@@ -191,7 +197,8 @@ public class CTLAtomicFormula extends CTLFormula {
 		kripkeStruct.markEvaluatedFormula(this);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
 	 */
 	@Override

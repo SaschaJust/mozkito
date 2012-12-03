@@ -55,6 +55,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -1121,7 +1122,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find any row in open relationship table.");
 					}
 					final Elements openTdTags = openTrTag.getElementsByTag("td");
-					if (openTdTags.isEmpty() || (openTdTags.size() < MIN_OPEN_TD_TAGS)) {
+					if (openTdTags.isEmpty() || (openTdTags.size() < MantisParser.MIN_OPEN_TD_TAGS)) {
 						// throw new UnrecoverableError("Could not find any column in open relationship table row.");
 						continue;
 					}
@@ -1150,7 +1151,7 @@ public class MantisParser implements Parser {
 						throw new UnrecoverableError("Could not find any row in closed relationship table.");
 					}
 					final Elements closedTdTags = closedTrTag.getElementsByTag("td");
-					if (closedTdTags.isEmpty() || (closedTdTags.size() < MIN_CLOSED_TD_TAGS)) {
+					if (closedTdTags.isEmpty() || (closedTdTags.size() < MantisParser.MIN_CLOSED_TD_TAGS)) {
 						throw new UnrecoverableError("Could not find any column in closed relationship table row.");
 					}
 					final Element closedTdTag = closedTdTags.get(2);

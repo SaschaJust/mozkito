@@ -37,9 +37,11 @@ public class CTLEU extends CTLBilateralFormula {
 	
 	/**
 	 * Returns an "E (f U g)" formula from given "f" and "g" formulas.
-	 *
-	 * @param f Formula before "U"
-	 * @param g Formula after "U"
+	 * 
+	 * @param f
+	 *            Formula before "U"
+	 * @param g
+	 *            Formula after "U"
 	 * @return the ctleu
 	 */
 	public static CTLEU get(final CTLFormula f,

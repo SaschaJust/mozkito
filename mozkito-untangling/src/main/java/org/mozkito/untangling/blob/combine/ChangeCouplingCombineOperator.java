@@ -30,6 +30,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
@@ -38,7 +39,6 @@ import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.untangling.blob.ChangeSet;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class ChangeCouplingCombineOperator.
@@ -64,10 +64,13 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
-		 * @param databaseOptions the database options
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 * @param databaseOptions
+		 *            the database options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final DatabaseOptions databaseOptions) {
@@ -128,10 +131,13 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 	
 	/**
 	 * Instantiates a new change coupling combine operator.
-	 *
-	 * @param minSupport the min support
-	 * @param minConfidence the min confidence
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	protected ChangeCouplingCombineOperator(final int minSupport, final double minConfidence,
 	        final PersistenceUtil persistenceUtil) {
@@ -143,8 +149,7 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean canBeCombined(final ChangeSet cl1,

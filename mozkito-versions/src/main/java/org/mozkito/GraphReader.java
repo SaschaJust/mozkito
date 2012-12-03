@@ -30,7 +30,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class GraphReader.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class GraphReader extends Source<RCSTransaction> {

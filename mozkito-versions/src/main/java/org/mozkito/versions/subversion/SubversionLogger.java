@@ -24,7 +24,7 @@ import org.tmatesoft.svn.util.SVNLogType;
 
 /**
  * Log wrapper class for tmatesofts svnkit to redirect logging to our wrapper.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SubversionLogger extends SVNDebugLogAdapter {
@@ -41,7 +41,7 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	                final String message,
 	                final byte[] data) {
 		if (Logger.logTrace()) {
-			Logger.trace(message, SVN_MAGIC_LOG_NUMBER);
+			Logger.trace(message, SubversionLogger.SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	                final String message,
 	                final Level logLevel) {
 		if (Logger.logTrace()) {
-			Logger.trace(message, SVN_MAGIC_LOG_NUMBER);
+			Logger.trace(message, SubversionLogger.SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class SubversionLogger extends SVNDebugLogAdapter {
 	                final Throwable th,
 	                final Level logLevel) {
 		if (Logger.logTrace()) {
-			Logger.trace(th.getMessage(), SVN_MAGIC_LOG_NUMBER);
+			Logger.trace(th.getMessage(), SubversionLogger.SVN_MAGIC_LOG_NUMBER);
 		}
 	}
 }

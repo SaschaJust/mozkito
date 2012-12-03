@@ -113,7 +113,7 @@ public class GraphBuilder implements Runnable {
 				this.persistenceUtil.saveOrUpdate(rCSBranch);
 			}
 			this.persistenceUtil.saveOrUpdate(rcsTransaction);
-			if ((++counter % COMMIT_LIMIT) == 0) {
+			if ((++counter % GraphBuilder.COMMIT_LIMIT) == 0) {
 				this.persistenceUtil.commitTransaction();
 				this.persistenceUtil.beginTransaction();
 			}
@@ -150,7 +150,7 @@ public class GraphBuilder implements Runnable {
 					final RCSBranch rCSBranch = this.persistenceUtil.loadById(branchName, RCSBranch.class);
 					rCSBranch.addMergedIn(hash);
 					this.persistenceUtil.saveOrUpdate(rCSBranch);
-					if ((++counter % COMMIT_LIMIT) == 0) {
+					if ((++counter % GraphBuilder.COMMIT_LIMIT) == 0) {
 						this.persistenceUtil.commitTransaction();
 						this.persistenceUtil.beginTransaction();
 					}
@@ -188,11 +188,12 @@ public class GraphBuilder implements Runnable {
 			for (final String transactionId : this.revDepGraph.getBranchTransactions(rCSBranch.getName())) {
 				final RCSTransaction rCSTransaction = this.persistenceUtil.loadById(transactionId, RCSTransaction.class);
 				if (!rCSTransaction.addBranch(rCSBranch, index)) {
-					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName() + " to transaction: "
-					        + rCSTransaction.getId() + ". It appreas to be set before. Fatal error.");
+					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName()
+					        + " to transaction: " + rCSTransaction.getId()
+					        + ". It appreas to be set before. Fatal error.");
 				}
 				--index;
-				if ((index % COMMIT_LIMIT) == 0) {
+				if ((index % GraphBuilder.COMMIT_LIMIT) == 0) {
 					this.persistenceUtil.commitTransaction();
 					this.persistenceUtil.beginTransaction();
 				}
@@ -205,7 +206,8 @@ public class GraphBuilder implements Runnable {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override

@@ -49,7 +49,7 @@ public final class TextSeparator {
 	 * 
 	 * @return the simple name of the class.
 	 */
-	public static final String getHandle() {
+	public static String getHandle() {
 		return JavaUtils.getHandle(TextSeparator.class);
 	}
 	
@@ -60,7 +60,7 @@ public final class TextSeparator {
 	 *            the text
 	 * @return the string[]
 	 */
-	public static final String[] indentationBlocks(final String text) {
+	public static String[] indentationBlocks(final String text) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -72,7 +72,7 @@ public final class TextSeparator {
 	 * @return the list
 	 */
 	@SuppressWarnings ("unchecked")
-	public static final List<String> lines(final String text) {
+	public static List<String> lines(final String text) {
 		return Arrays.asList(text.split(FileUtils.lineSeparator));
 	}
 	
@@ -84,7 +84,7 @@ public final class TextSeparator {
 	 * @return the list
 	 */
 	@SuppressWarnings ("unchecked")
-	public static final List<String> paragraphs(final String text) {
+	public static List<String> paragraphs(final String text) {
 		final Regex regex = new Regex(FileUtils.lineSeparator + "\\s*" + FileUtils.lineSeparator, REFlags.MULTILINE);
 		return Arrays.asList(regex.tokenize(text));
 	}
@@ -96,19 +96,19 @@ public final class TextSeparator {
 	 *            the text
 	 * @return the list
 	 */
-	public static final List<String> sentences(final String text) {
+	public static List<String> sentences(final String text) {
 		final List<String> sentences = new LinkedList<>();
 		
 		final List<String> tokenList = new ArrayList<String>();
 		final List<String> whiteList = new ArrayList<String>();
-		final Tokenizer tokenizer = TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
+		final Tokenizer tokenizer = TextSeparator.TOKENIZER_FACTORY.tokenizer(text.toCharArray(), 0, text.length());
 		tokenizer.tokenize(tokenList, whiteList);
 		
 		final String[] tokens = new String[tokenList.size()];
 		final String[] whites = new String[whiteList.size()];
 		tokenList.toArray(tokens);
 		whiteList.toArray(whites);
-		final int[] sentenceBoundaries = SENTENCE_MODEL.boundaryIndices(tokens, whites);
+		final int[] sentenceBoundaries = TextSeparator.SENTENCE_MODEL.boundaryIndices(tokens, whites);
 		
 		int sentStartTok = 0;
 		int sentEndTok = 0;
@@ -136,7 +136,7 @@ public final class TextSeparator {
 	 *            the text
 	 * @return the string[]
 	 */
-	public static final List<String> words(final String text) {
+	public static List<String> words(final String text) {
 		final List<String> list = new LinkedList<>();
 		final Regex regex = new Regex("\\w");
 		final MultiMatch multiMatch = regex.findAll(text);

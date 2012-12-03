@@ -72,7 +72,7 @@ public class TrackerPersister extends Sink<Report> {
 					Logger.debug("Storing " + bugReport);
 				}
 				
-				if ((++TrackerPersister.this.i % COMMIT_SIZE) == 0) {
+				if ((++TrackerPersister.this.i % TrackerPersister.COMMIT_SIZE) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}

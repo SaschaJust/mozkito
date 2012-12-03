@@ -22,12 +22,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.issues.exceptions.UnregisteredTrackerTypeException;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.exceptions.UnregisteredTrackerTypeException;
 
 /**
  * A factory for creating Tracker objects.
@@ -85,16 +85,16 @@ public class TrackerFactory {
 	                                      final Class<? extends Tracker> trackerClass) {
 		assert (trackerIdentifier != null);
 		assert (trackerClass != null);
-		assert (trackerHandlers.get(trackerIdentifier) == null);
+		assert (TrackerFactory.trackerHandlers.get(trackerIdentifier) == null);
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Adding new TrackerType handler " + trackerIdentifier.toString() + ".");
 		}
 		
-		trackerHandlers.put(trackerIdentifier, trackerClass);
+		TrackerFactory.trackerHandlers.put(trackerIdentifier, trackerClass);
 		
-		assert (trackerHandlers.get(trackerIdentifier) != null);
-		assert (trackerHandlers.get(trackerIdentifier) == trackerClass);
+		assert (TrackerFactory.trackerHandlers.get(trackerIdentifier) != null);
+		assert (TrackerFactory.trackerHandlers.get(trackerIdentifier) == trackerClass);
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class TrackerFactory {
 			Logger.info("Requesting tracker handler for " + trackerIdentifier.toString() + ".");
 		}
 		
-		final Class<? extends Tracker> trackerClass = trackerHandlers.get(trackerIdentifier);
+		final Class<? extends Tracker> trackerClass = TrackerFactory.trackerHandlers.get(trackerIdentifier);
 		
 		if (trackerClass == null) {
 			throw new UnregisteredTrackerTypeException("Unsupported repository type `" + trackerIdentifier.toString()

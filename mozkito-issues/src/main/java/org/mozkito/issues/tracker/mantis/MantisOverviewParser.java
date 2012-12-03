@@ -33,6 +33,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 
@@ -64,7 +65,7 @@ public class MantisOverviewParser implements OverviewParser {
 		sb.append("view.php?id=");
 		sb.append(bugId);
 		final StringBuilder bugIdBuilder = new StringBuilder();
-		for (int i = 0; i < (MANTIS_BUG_ID_LENGTH - bugId.length()); ++i) {
+		for (int i = 0; i < (MantisOverviewParser.MANTIS_BUG_ID_LENGTH - bugId.length()); ++i) {
 			bugIdBuilder.append("0");
 		}
 		bugIdBuilder.append(bugId);
@@ -269,7 +270,7 @@ public class MantisOverviewParser implements OverviewParser {
 							
 							final String bugId = regexGroup.getMatch();
 							final StringBuilder bugIdBuilder = new StringBuilder();
-							for (int j = 0; j < (MANTIS_BUG_ID_LENGTH - bugId.length()); ++j) {
+							for (int j = 0; j < (MantisOverviewParser.MANTIS_BUG_ID_LENGTH - bugId.length()); ++j) {
 								bugIdBuilder.append("0");
 							}
 							bugIdBuilder.append(bugId);

@@ -51,8 +51,9 @@ public class Label {
 	
 	/**
 	 * Creates a new label and associates it with the given content.
-	 *
-	 * @param content the content
+	 * 
+	 * @param content
+	 *            the content
 	 */
 	private Label(final RCSFile content) {
 		this.content = content.getGeneratedId();

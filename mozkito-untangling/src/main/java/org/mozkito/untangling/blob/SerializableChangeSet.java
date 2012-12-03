@@ -20,10 +20,9 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class SerializableChangeSet.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SerializableChangeSet implements Serializable {
@@ -39,8 +38,9 @@ public class SerializableChangeSet implements Serializable {
 	
 	/**
 	 * Instantiates a new serializable change set.
-	 *
-	 * @param changeSet the change set
+	 * 
+	 * @param changeSet
+	 *            the change set
 	 */
 	public SerializableChangeSet(final ChangeSet changeSet) {
 		this.transactionId = changeSet.getTransaction().getId();
@@ -51,8 +51,9 @@ public class SerializableChangeSet implements Serializable {
 	
 	/**
 	 * Unserialize.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the change set
 	 */
 	public ChangeSet unserialize(final PersistenceUtil persistenceUtil) {

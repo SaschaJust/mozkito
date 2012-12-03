@@ -114,7 +114,7 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/** The file. */
-	RCSFile        rCSFile;
+	RCSFile     rCSFile;
 	
 	/** The reports. */
 	Set<Report> reports;

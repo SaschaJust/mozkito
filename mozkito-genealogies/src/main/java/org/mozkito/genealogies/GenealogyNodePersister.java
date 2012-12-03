@@ -24,10 +24,10 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.utils.OperationCollection;
-
 
 /**
  * The Class GenealogyNodePersister.

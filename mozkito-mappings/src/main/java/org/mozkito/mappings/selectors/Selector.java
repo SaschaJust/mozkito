@@ -77,7 +77,7 @@ public abstract class Selector extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Selector.TAG, Selector.DESCRIPTION, requirements);
 		}
 		
 		/*

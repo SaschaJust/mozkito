@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.callgraph.model;
 
@@ -21,23 +18,18 @@ import static org.junit.Assert.assertNull;
 
 import java.io.File;
 
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.callgraph.model.CallGraph;
-import org.mozkito.callgraph.model.CallGraphEdge;
-import org.mozkito.callgraph.model.ClassVertex;
-import org.mozkito.callgraph.model.MethodVertex;
-import org.mozkito.callgraph.model.VertexFactory;
 
-
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 
 /**
  * The Class TestCallGraphs.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TestCallGraphs {
@@ -217,7 +209,7 @@ public class TestCallGraphs {
 		assertNull(this.cg.findEdge(this.Cb, this.Ca));
 		assertNull(this.cg.findEdge(this.Cb, this.Cb));
 		
-		DirectedSparseGraph<ClassVertex, CallGraphEdge> ccg = this.cg.getClassCallGraph();
+		final DirectedSparseGraph<ClassVertex, CallGraphEdge> ccg = this.cg.getClassCallGraph();
 		
 		assertEquals(3, ccg.getVertices().size());
 		assertEquals(6, ccg.getEdges().size());
@@ -257,9 +249,9 @@ public class TestCallGraphs {
 	 */
 	@Test
 	public void testSerialize() {
-		File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		this.cg.serialize(file);
-		CallGraph scg = CallGraph.unserialize(file);
+		final CallGraph scg = CallGraph.unserialize(file);
 		assertEquals(this.cg, scg);
 		file.delete();
 	}

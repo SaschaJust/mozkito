@@ -1,17 +1,14 @@
 /*******************************************************************************
  * Copyright 2012 Kim Herzig, Sascha Just
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  *******************************************************************************/
 package org.mozkito.callgraph.model;
 
@@ -25,17 +22,20 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 
 /**
  * The Class Tarjan.
- *
- * @param <V> the value type
- * @param <E> the element type
+ * 
+ * @param <V>
+ *            the value type
+ * @param <E>
+ *            the element type
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Tarjan<V, E> {
 	
 	/**
 	 * The Class Node.
-	 *
-	 * @param <V> the value type
+	 * 
+	 * @param <V>
+	 *            the value type
 	 * @author Kim Herzig <herzig@mozkito.org>
 	 */
 	private static class Node<V> {
@@ -51,8 +51,9 @@ public class Tarjan<V, E> {
 		
 		/**
 		 * Instantiates a new node.
-		 *
-		 * @param v the v
+		 * 
+		 * @param v
+		 *            the v
 		 */
 		public Node(final V v) {
 			this.inner = v;
@@ -84,8 +85,9 @@ public class Tarjan<V, E> {
 	
 	/**
 	 * Gets the node.
-	 *
-	 * @param v the v
+	 * 
+	 * @param v
+	 *            the v
 	 * @return the node
 	 */
 	private Node<V> getNode(final V v) {
@@ -97,15 +99,16 @@ public class Tarjan<V, E> {
 	
 	/**
 	 * Gets the strongly connected components.
-	 *
-	 * @param graph the graph
+	 * 
+	 * @param graph
+	 *            the graph
 	 * @return the strongly connected components
 	 */
 	public Set<Set<V>> getStronglyConnectedComponents(final DirectedGraph<V, E> graph) {
-		Set<Set<V>> result = new HashSet<Set<V>>();
+		final Set<Set<V>> result = new HashSet<Set<V>>();
 		
-		for (V v : graph.getVertices()) {
-			Set<Set<V>> tmpResult = tarjan(getNode(v), graph);
+		for (final V v : graph.getVertices()) {
+			final Set<Set<V>> tmpResult = tarjan(getNode(v), graph);
 			result.addAll(tmpResult);
 		}
 		clear();
@@ -114,9 +117,11 @@ public class Tarjan<V, E> {
 	
 	/**
 	 * Tarjan.
-	 *
-	 * @param v the v
-	 * @param graph the graph
+	 * 
+	 * @param v
+	 *            the v
+	 * @param graph
+	 *            the graph
 	 * @return the sets the
 	 */
 	public Set<Set<V>> tarjan(final Node<V> v,
@@ -127,8 +132,8 @@ public class Tarjan<V, E> {
 		this.index++;
 		this.stack.add(0, v);
 		
-		for (V vPrime : graph.getSuccessors(v.inner)) {
-			Node<V> n = getNode(vPrime);
+		for (final V vPrime : graph.getSuccessors(v.inner)) {
+			final Node<V> n = getNode(vPrime);
 			if (n.index == -1) {
 				tarjan(n, graph);
 				v.lowlink = Math.min(v.lowlink, n.lowlink);
@@ -139,7 +144,7 @@ public class Tarjan<V, E> {
 		
 		if (v.lowlink == v.index) {
 			Node<V> n;
-			Set<V> component = new HashSet<V>();
+			final Set<V> component = new HashSet<V>();
 			do {
 				n = this.stack.remove(0);
 				component.add(n.inner);

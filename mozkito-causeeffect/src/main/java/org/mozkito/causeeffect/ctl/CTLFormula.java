@@ -144,9 +144,11 @@ public abstract class CTLFormula {
 	/**
 	 * Model-checks this formula against a given Kripke structure. Returns the result of model-checking (i.e.,
 	 * <code>true</code> if the formula is true in the given structure and <code>false</code> if it is not).
-	 *
-	 * @param <V> the value type
-	 * @param kripkeStruct Kripke structure to model-check the formula against.
+	 * 
+	 * @param <V>
+	 *            the value type
+	 * @param kripkeStruct
+	 *            Kripke structure to model-check the formula against.
 	 * @return <code>true</code> if the formula is true in the given structure; <code>false</code> otherwise.
 	 */
 	public final <V> boolean modelCheck(final KripkeStructure<V> kripkeStruct) {
@@ -163,16 +165,19 @@ public abstract class CTLFormula {
 	/**
 	 * Model-checks this formula against all states in the given Kripke structure. This updates the states with
 	 * information on whether the formula holds in them or not.
-	 *
-	 * @param <V> the value type
-	 * @param kripkeStruct Kripke structure to model-check the formula against.
+	 * 
+	 * @param <V>
+	 *            the value type
+	 * @param kripkeStruct
+	 *            Kripke structure to model-check the formula against.
 	 */
 	public abstract <V> void modelCheckAllStates(KripkeStructure<V> kripkeStruct);
 	
 	/**
 	 * Put attomic formulas.
-	 *
-	 * @param atomicFormulas the atomic formulas
+	 * 
+	 * @param atomicFormulas
+	 *            the atomic formulas
 	 */
 	public abstract void putAttomicFormulas(Collection<CTLAtomicFormula> atomicFormulas);
 	

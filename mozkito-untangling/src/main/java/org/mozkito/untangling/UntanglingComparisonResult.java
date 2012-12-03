@@ -16,7 +16,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * The Class UntanglingComparisonResult.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class UntanglingComparisonResult {
@@ -41,13 +41,19 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Instantiates a new untangling comparison result.
-	 *
-	 * @param diff the diff
-	 * @param minJaccarIndex the min jaccar index
-	 * @param numCorrectPartition the num correct partition
-	 * @param numFalsePartition the num false partition
-	 * @param blobSize the blob size
-	 * @param fileError the file error
+	 * 
+	 * @param diff
+	 *            the diff
+	 * @param minJaccarIndex
+	 *            the min jaccar index
+	 * @param numCorrectPartition
+	 *            the num correct partition
+	 * @param numFalsePartition
+	 *            the num false partition
+	 * @param blobSize
+	 *            the blob size
+	 * @param fileError
+	 *            the file error
 	 */
 	public UntanglingComparisonResult(final int diff, final double minJaccarIndex, final int numCorrectPartition,
 	        final int numFalsePartition, final int blobSize, final double fileError) {
@@ -61,7 +67,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the blob size.
-	 *
+	 * 
 	 * @return the blob size
 	 */
 	public int getBlobSize() {
@@ -77,7 +83,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the diff.
-	 *
+	 * 
 	 * @return the diff
 	 */
 	public int getDiff() {
@@ -93,7 +99,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the file error.
-	 *
+	 * 
 	 * @return the file error
 	 */
 	public double getFileError() {
@@ -102,7 +108,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the max jaccar index.
-	 *
+	 * 
 	 * @return the max jaccar index
 	 */
 	public double getMaxJaccarIndex() {
@@ -118,7 +124,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the num correct partition.
-	 *
+	 * 
 	 * @return the num correct partition
 	 */
 	public int getNumCorrectPartition() {
@@ -135,7 +141,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the num false partition.
-	 *
+	 * 
 	 * @return the num false partition
 	 */
 	public int getNumFalsePartition() {
@@ -152,7 +158,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the precision.
-	 *
+	 * 
 	 * @return the precision
 	 */
 	public double getPrecision() {
@@ -163,7 +169,7 @@ public class UntanglingComparisonResult {
 	
 	/**
 	 * Gets the relative diff.
-	 *
+	 * 
 	 * @return the relative diff
 	 */
 	public double getRelativeDiff() {

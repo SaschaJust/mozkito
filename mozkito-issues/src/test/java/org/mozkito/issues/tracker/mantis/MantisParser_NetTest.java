@@ -16,6 +16,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.model.AttachmentEntry;
 

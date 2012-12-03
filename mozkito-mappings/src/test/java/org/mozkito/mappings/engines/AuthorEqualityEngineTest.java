@@ -21,7 +21,6 @@ import java.util.Queue;
 
 import net.ownhero.dev.ioda.JavaUtils;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,17 +68,6 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		AuthorEqualityEngineTest.finder = Environment.setup("/engines.authorEquality.test.properties");
-		
-	}
-	
-	/**
-	 * Tear down after class.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
 	}
 	
 	/**
@@ -128,8 +116,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	public final void testScore_9be47462f004ba9a9f729a46448fde9e304fe848_21() throws Exception {
 		final Relation relation = score("9be47462f004ba9a9f729a46448fde9e304fe848", "JRUBY-21");
 		final Queue<Feature> features = relation.getFeatures();
-		System.err.println(JavaUtils.collectionToString(features));
 		
-		fail("Not yet implemented");
+		fail(JavaUtils.collectionToString(features));
 	}
 }

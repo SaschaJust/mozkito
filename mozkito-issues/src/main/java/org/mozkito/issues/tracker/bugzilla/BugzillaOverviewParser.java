@@ -31,6 +31,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.OverviewParser;
 import org.mozkito.issues.tracker.ReportLink;
 

@@ -28,18 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
-import org.mozkito.changecouplings.model.MethodChangeCoupling;
-import org.mozkito.changecouplings.model.SerialMethodChangeCoupling;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
@@ -54,6 +42,18 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.changecouplings.ChangeCouplingRuleFactory;
+import org.mozkito.changecouplings.model.MethodChangeCoupling;
+import org.mozkito.changecouplings.model.SerialMethodChangeCoupling;
+import org.mozkito.clustering.MultilevelClustering;
+import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.codeanalysis.model.JavaElement;
+import org.mozkito.codeanalysis.model.JavaMethodDefinition;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -81,11 +81,15 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		/**
 		 * Instantiates a new factory.
-		 *
-		 * @param minSupport the min support
-		 * @param minConfidence the min confidence
-		 * @param persistenceUtil the persistence util
-		 * @param cacheDir the cache dir
+		 * 
+		 * @param minSupport
+		 *            the min support
+		 * @param minConfidence
+		 *            the min confidence
+		 * @param persistenceUtil
+		 *            the persistence util
+		 * @param cacheDir
+		 *            the cache dir
 		 */
 		protected Factory(final int minSupport, final double minConfidence,
 		        @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
@@ -95,8 +99,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			this.cacheDir = cacheDir;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
+		 * .RCSTransaction)
 		 */
 		@Override
 		public ChangeCouplingVoter createVoter(final RCSTransaction rCSTransaction) {
@@ -141,10 +148,13 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
-		 * @param databaseOptions the database options
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 * @param databaseOptions
+		 *            the database options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final DatabaseOptions databaseOptions) {
@@ -246,8 +256,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId()
-			        + ".cc");
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
+			        + rCSTransaction.getId() + ".cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
@@ -328,8 +338,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	@NoneNull

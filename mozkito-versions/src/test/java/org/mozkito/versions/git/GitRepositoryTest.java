@@ -34,12 +34,13 @@ import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-
-import difflib.Delta;
 
 // TODO: Auto-generated Javadoc
 /**

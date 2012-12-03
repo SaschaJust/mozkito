@@ -49,7 +49,7 @@ public class TopicMatchEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, TopicMatchEngine.DESCRIPTION, requirements);
+			super(argumentSet, TopicMatchEngine.TAG, TopicMatchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

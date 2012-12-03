@@ -16,22 +16,21 @@ package org.mozkito.codeanalysis.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.mozkito.codeanalysis.model.JavaMethodCall;
-import org.mozkito.codeanalysis.utils.PPAUtils;
 
+import org.mozkito.codeanalysis.model.JavaMethodCall;
 
 public class PPAUtilsTest {
 	
 	@Test
 	public void getDefinitionNamesForCallNametest() {
-		String orgName = "src.com.google.gwt.sample.kitchensink.client.Popups.MyPopup.<init>()";
+		final String orgName = "src.com.google.gwt.sample.kitchensink.client.Popups.MyPopup.<init>()";
 		
 		@SuppressWarnings ("deprecation")
-		JavaMethodCall call = new JavaMethodCall();
+		final JavaMethodCall call = new JavaMethodCall();
 		call.setElementType(JavaMethodCall.class.getCanonicalName());
 		call.setFullQualifiedName(orgName);
 		
-		String[] possibleNames = PPAUtils.getDefinitionNamesForCallName(call);
+		final String[] possibleNames = PPAUtils.getDefinitionNamesForCallName(call);
 		assertEquals("Too less or too many names produced!", 4, possibleNames.length);
 		
 		assertEquals("com.google.gwt.sample.kitchensink.client.Popups.MyPopup.MyPopup()", possibleNames[0]);

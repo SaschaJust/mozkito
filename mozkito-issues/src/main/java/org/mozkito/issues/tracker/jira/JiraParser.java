@@ -48,6 +48,12 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.joda.time.DateTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -61,11 +67,6 @@ import org.mozkito.issues.tracker.model.AttachmentEntry;
 import org.mozkito.issues.tracker.model.Comment;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * The Class JiraParser.
@@ -485,7 +486,8 @@ public class JiraParser implements Parser {
 		try {
 			final NodeList nodeList = this.document.getElementsByTagName("created");
 			if (nodeList.getLength() > 0) {
-				return DateTimeUtils.parseDate(nodeList.item(0).getTextContent(), new Regex(DATE_TIME_PATTERN));
+				return DateTimeUtils.parseDate(nodeList.item(0).getTextContent(),
+				                               new Regex(JiraParser.DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {
@@ -615,7 +617,7 @@ public class JiraParser implements Parser {
 				if (dateString.isEmpty()) {
 					return null;
 				}
-				return DateTimeUtils.parseDate(dateString, new Regex(DATE_TIME_PATTERN));
+				return DateTimeUtils.parseDate(dateString, new Regex(JiraParser.DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {
@@ -697,7 +699,7 @@ public class JiraParser implements Parser {
 				if (dateString.isEmpty()) {
 					return null;
 				}
-				return DateTimeUtils.parseDate(dateString, new Regex(DATE_TIME_PATTERN));
+				return DateTimeUtils.parseDate(dateString, new Regex(JiraParser.DATE_TIME_PATTERN));
 			}
 			return null;
 		} finally {

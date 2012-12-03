@@ -26,6 +26,7 @@ import net.ownhero.dev.regex.Regex;
 import net.ownhero.dev.regex.util.Patterns;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;
@@ -58,9 +59,11 @@ class GitLogParser implements LogParser {
 	
 	/**
 	 * Gets the author.
-	 *
-	 * @param line the line
-	 * @param lineCounter the line counter
+	 * 
+	 * @param line
+	 *            the line
+	 * @param lineCounter
+	 *            the line counter
 	 * @return the author
 	 */
 	protected static Person getAuthor(final String line,
@@ -73,8 +76,8 @@ class GitLogParser implements LogParser {
 		String fullname = null;
 		String email = null;
 		
-		final Regex emailRegex = new Regex(emailBaseRegex.getPattern());
-		final Regex usernameRegex = new Regex(usernameBaseRegex.getPattern());
+		final Regex emailRegex = new Regex(GitLogParser.emailBaseRegex.getPattern());
+		final Regex usernameRegex = new Regex(GitLogParser.usernameBaseRegex.getPattern());
 		
 		String authorString = authorParts[1].trim();
 		authorParts = authorString.split(" ");
@@ -170,7 +173,7 @@ class GitLogParser implements LogParser {
 			if (line.startsWith("commit")) {
 				if (currentID != null) {
 					DateTime dateTime = new DateTime();
-					dateTime = DateTimeUtils.parseDate(date, gitLogDateFormatRegex);
+					dateTime = DateTimeUtils.parseDate(date, GitLogParser.gitLogDateFormatRegex);
 					LogEntry previous = null;
 					if (result.size() > 0) {
 						previous = result.get(result.size() - 1);
@@ -206,9 +209,9 @@ class GitLogParser implements LogParser {
 			} else if (line.startsWith(" ")) {
 				if (line.trim().startsWith("git-svn-id")) {
 					
-					originalIdRegex.find(line);
-					if (originalIdRegex.getGroup("hit") != null) {
-						original_id = originalIdRegex.getGroup("hit").trim();
+					GitLogParser.originalIdRegex.find(line);
+					if (GitLogParser.originalIdRegex.getGroup("hit") != null) {
+						original_id = GitLogParser.originalIdRegex.getGroup("hit").trim();
 					} else {
 						if (Logger.logDebug()) {
 							Logger.debug("Could not extract original if from line: " + line.trim());
@@ -237,7 +240,7 @@ class GitLogParser implements LogParser {
 		}
 		if (currentID != null) {
 			DateTime dateTime;
-			dateTime = DateTimeUtils.parseDate(date, gitLogDateFormatRegex);
+			dateTime = DateTimeUtils.parseDate(date, GitLogParser.gitLogDateFormatRegex);
 			LogEntry previous = null;
 			if (result.size() > 0) {
 				previous = result.get(result.size() - 1);

@@ -20,16 +20,16 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
 
-import org.mozkito.issues.exceptions.InvalidParameterException;
-import org.mozkito.issues.tracker.Parser;
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.Tracker;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.issues.exceptions.InvalidParameterException;
+import org.mozkito.issues.tracker.Parser;
+import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.Tracker;
 
 /**
  * The Class BugzillaTracker.
@@ -123,14 +123,21 @@ public class BugzillaTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 *
-	 * @param fetchURI the fetch uri
-	 * @param username the username
-	 * @param password the password
-	 * @param overviewURI the overview uri
-	 * @param bugzillaVersion the bugzilla version
-	 * @param proxyConfig the proxy config
-	 * @throws InvalidParameterException the invalid parameter exception
+	 * 
+	 * @param fetchURI
+	 *            the fetch uri
+	 * @param username
+	 *            the username
+	 * @param password
+	 *            the password
+	 * @param overviewURI
+	 *            the overview uri
+	 * @param bugzillaVersion
+	 *            the bugzilla version
+	 * @param proxyConfig
+	 *            the proxy config
+	 * @throws InvalidParameterException
+	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
@@ -148,8 +155,9 @@ public class BugzillaTracker extends Tracker {
 	
 	/**
 	 * Sets the uri.
-	 *
-	 * @param uri the new uri
+	 * 
+	 * @param uri
+	 *            the new uri
 	 */
 	protected void setUri(final URI uri) {
 		this.trackerURI = uri;

@@ -23,26 +23,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.Tuple;
-import net.ownhero.dev.kanuni.conditions.CollectionCondition;
-import net.ownhero.dev.kisa.Logger;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.mozkito.issues.tracker.Parser;
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.Tracker;
-import org.mozkito.issues.tracker.elements.Priority;
-import org.mozkito.issues.tracker.elements.Resolution;
-import org.mozkito.issues.tracker.elements.Severity;
-import org.mozkito.issues.tracker.elements.Status;
-import org.mozkito.issues.tracker.elements.Type;
-import org.mozkito.issues.tracker.model.AttachmentEntry;
-import org.mozkito.issues.tracker.model.Comment;
-import org.mozkito.issues.tracker.model.HistoryElement;
-import org.mozkito.persistence.model.Person;
-
 import com.google.gdata.client.projecthosting.IssuesQuery;
 import com.google.gdata.client.projecthosting.ProjectHostingService;
 import com.google.gdata.data.HtmlTextConstruct;
@@ -58,6 +38,27 @@ import com.google.gdata.data.projecthosting.Label;
 import com.google.gdata.data.projecthosting.Owner;
 import com.google.gdata.data.projecthosting.Updates;
 import com.google.gdata.util.ServiceException;
+
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.kanuni.conditions.CollectionCondition;
+import net.ownhero.dev.kisa.Logger;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
+import org.mozkito.issues.tracker.Parser;
+import org.mozkito.issues.tracker.ReportLink;
+import org.mozkito.issues.tracker.Tracker;
+import org.mozkito.issues.tracker.elements.Priority;
+import org.mozkito.issues.tracker.elements.Resolution;
+import org.mozkito.issues.tracker.elements.Severity;
+import org.mozkito.issues.tracker.elements.Status;
+import org.mozkito.issues.tracker.elements.Type;
+import org.mozkito.issues.tracker.model.AttachmentEntry;
+import org.mozkito.issues.tracker.model.Comment;
+import org.mozkito.issues.tracker.model.HistoryElement;
+import org.mozkito.persistence.model.Person;
 
 /**
  * The Class GoogleParser.

@@ -23,9 +23,8 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.mantis.MantisOverviewParser;
 
+import org.mozkito.issues.tracker.ReportLink;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -60,7 +60,7 @@ public class SVMStrategy extends Strategy {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, SVMStrategy.TAG, SVMStrategy.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -133,7 +133,7 @@ public class SVMStrategy extends Strategy {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return SVMStrategy.DESCRIPTION;
 	}
 	
 	/*

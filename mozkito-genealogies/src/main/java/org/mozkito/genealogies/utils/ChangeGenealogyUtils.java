@@ -65,8 +65,8 @@ public class ChangeGenealogyUtils {
 			
 			@Override
 			public void run() {
-				for (final CoreChangeGenealogy genealogy : genealogies.keySet()) {
-					if (genealogies.get(genealogy).exists()) {
+				for (final CoreChangeGenealogy genealogy : ChangeGenealogyUtils.genealogies.keySet()) {
+					if (ChangeGenealogyUtils.genealogies.get(genealogy).exists()) {
 						genealogy.close();
 					}
 				}
@@ -79,9 +79,11 @@ public class ChangeGenealogyUtils {
 	
 	/**
 	 * Export to graph ml.
-	 *
-	 * @param genealogy the genealogy
-	 * @param outFile the out file
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param outFile
+	 *            the out file
 	 */
 	public static void exportToGraphML(final CoreChangeGenealogy genealogy,
 	                                   final File outFile) {
@@ -98,9 +100,11 @@ public class ChangeGenealogyUtils {
 	
 	/**
 	 * Gets the genealogy test environment.
-	 *
-	 * @param tmpGraphDBFile the tmp graph db file
-	 * @param branchFactory the branch factory
+	 * 
+	 * @param tmpGraphDBFile
+	 *            the tmp graph db file
+	 * @param branchFactory
+	 *            the branch factory
 	 * @return the genealogy test environment
 	 */
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
@@ -414,14 +418,15 @@ public class ChangeGenealogyUtils {
 		final GraphDatabaseService graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		registerShutdownHook(graph);
 		final CoreChangeGenealogy genealogy = new CoreChangeGenealogy(graph, dbFile, persistenceUtil);
-		genealogies.put(genealogy, dbFile);
+		ChangeGenealogyUtils.genealogies.put(genealogy, dbFile);
 		return genealogy;
 	}
 	
 	/**
 	 * Register shutdown hook.
-	 *
-	 * @param graphDb the graph db
+	 * 
+	 * @param graphDb
+	 *            the graph db
 	 */
 	private static void registerShutdownHook(final GraphDatabaseService graphDb) {
 		// Registers a shutdown hook for the Neo4j instance so that it

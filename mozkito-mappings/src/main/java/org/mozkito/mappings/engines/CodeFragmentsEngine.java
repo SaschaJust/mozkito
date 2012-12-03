@@ -49,7 +49,7 @@ public class CodeFragmentsEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, CodeFragmentsEngine.DESCRIPTION, requirements);
+			super(argumentSet, CodeFragmentsEngine.TAG, CodeFragmentsEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

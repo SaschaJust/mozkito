@@ -28,9 +28,9 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.untangling.blob.ChangeSet;
 import org.mozkito.versions.model.RCSRevision;
-
 
 /**
  * The Class BlobTransactionCombineOperator.
@@ -50,9 +50,11 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 			super(argumentSet, "ccCombineOp", "ChangeCouplingCombineOperator options.", requirements);
@@ -139,8 +141,9 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	
 	/**
 	 * Instantiates a new blob transaction combine operator.
-	 *
-	 * @param maxPackageDistance the max package distance
+	 * 
+	 * @param maxPackageDistance
+	 *            the max package distance
 	 */
 	protected PackageDistanceCombineOperator(final Long maxPackageDistance) {
 		this.maxPackageDistance = maxPackageDistance;
@@ -148,8 +151,7 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.untangling.blob.CombineOperator#canBeCombined (java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.untangling.blob.CombineOperator#canBeCombined (java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean canBeCombined(final ChangeSet t1,

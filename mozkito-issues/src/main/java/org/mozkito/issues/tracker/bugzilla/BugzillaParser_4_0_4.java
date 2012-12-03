@@ -39,6 +39,7 @@ import noNamespace.WhoDocument.Who;
 
 import org.jdom2.Element;
 import org.joda.time.DateTime;
+
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.XmlReport;
 import org.mozkito.issues.tracker.elements.Priority;
@@ -559,7 +560,7 @@ public class BugzillaParser_4_0_4 extends BugzillaParser {
 			final LongDesc[] longDescArray = getXmlBug().getLongDescArray();
 			for (final LongDesc dec : longDescArray) {
 				final String comment = dec.getThetext();
-				final MultiMatch groupsList = siblingRegex.findAll(comment);
+				final MultiMatch groupsList = BugzillaParser_4_0_4.siblingRegex.findAll(comment);
 				if (groupsList != null) {
 					for (final Match groups : groupsList) {
 						for (final Group group : groups) {

@@ -28,10 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.untangling.Untangling;
-import org.mozkito.untangling.blob.ChangeSet;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -39,6 +35,11 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.clustering.MultilevelClustering;
+import org.mozkito.untangling.Untangling;
+import org.mozkito.untangling.blob.ChangeSet;
+
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -110,9 +111,11 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	
 	/**
 	 * Instantiates a new linear regression aggregation.
-	 *
-	 * @param untangling the untangling
-	 * @param trainFraction the train fraction
+	 * 
+	 * @param untangling
+	 *            the untangling
+	 * @param trainFraction
+	 *            the train fraction
 	 */
 	public LinearRegressionAggregation(final Untangling untangling,
 	        @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
@@ -204,7 +207,8 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 		
 		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION,
+		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet,
+		                                                                     LinearRegressionAggregation.TRAIN_FRACTION,
 		                                                                     this.untangling);
 		final List<List<Double>> trainValues = new LinkedList<List<Double>>();
 		for (final List<Double> value : samples.get(SampleType.POSITIVE)) {

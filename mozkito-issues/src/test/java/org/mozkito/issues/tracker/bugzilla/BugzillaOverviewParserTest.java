@@ -24,9 +24,8 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.Test;
-import org.mozkito.issues.tracker.ReportLink;
-import org.mozkito.issues.tracker.bugzilla.BugzillaOverviewParser;
 
+import org.mozkito.issues.tracker.ReportLink;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,7 +42,8 @@ public class BugzillaOverviewParserTest {
 	public void testEclipse() {
 		try {
 			final BugzillaOverviewParser parser = new BugzillaOverviewParser(
-			                                                                 new URI("https://issues.eclipse.org/issues/"),
+			                                                                 new URI(
+			                                                                         "https://issues.eclipse.org/issues/"),
 			                                                                 this.getClass()
 			                                                                     .getResource(FileUtils.fileSeparator
 			                                                                                          + "bugzilla_eclipse_overview.html")

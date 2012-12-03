@@ -33,7 +33,7 @@ public class CTLFalse extends CTLFormula {
 	
 	/**
 	 * Returns the "false" CTL literal.
-	 *
+	 * 
 	 * @return the cTL false
 	 */
 	public static CTLFalse get() {
@@ -116,7 +116,8 @@ public class CTLFalse extends CTLFormula {
 		kripkeStruct.markEvaluatedFormula(this);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
 	 */
 	@Override

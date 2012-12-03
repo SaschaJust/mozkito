@@ -59,7 +59,7 @@ public class ClassifiedReportSelector extends Selector {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, ClassifiedReportSelector.TAG, ClassifiedReportSelector.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -111,7 +111,7 @@ public class ClassifiedReportSelector extends Selector {
 		// PRECONDITIONS
 		
 		try {
-			return DESCRIPTION;
+			return ClassifiedReportSelector.DESCRIPTION;
 		} finally {
 			// POSTCONDITIONS
 		}

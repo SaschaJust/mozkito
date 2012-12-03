@@ -40,7 +40,7 @@ public class Messages {
 	 */
 	public static String getString(final String key) {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			return Messages.RESOURCE_BUNDLE.getString(key);
 		} catch (final MissingResourceException e) {
 			return '!' + key + '!';
 		}
@@ -54,14 +54,14 @@ public class Messages {
 	private static ResourceBundle loadBundle() {
 		final Locale locale = Locale.getDefault();
 		try {
-			return ResourceBundle.getBundle(BUNDLE_NAME, locale);
+			return ResourceBundle.getBundle(Messages.BUNDLE_NAME, locale);
 		} catch (final MissingResourceException e) {
 			if (Logger.logWarn()) {
 				Logger.warn(String.format("Couldn't find property file for locale '%s'. Falling back to default.",
 				                          locale));
 			}
 			
-			return ResourceBundle.getBundle(BUNDLE_NAME, Locale.US);
+			return ResourceBundle.getBundle(Messages.BUNDLE_NAME, Locale.US);
 		}
 	}
 	

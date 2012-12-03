@@ -63,7 +63,7 @@ public class ReportTypeEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, ReportTypeEngine.TAG, ReportTypeEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

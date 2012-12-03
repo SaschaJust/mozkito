@@ -16,15 +16,15 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.PersistenceUtil;
 
-import net.ownhero.dev.kisa.Logger;
-
 /**
  * The Class SerialMethodChangeCoupling.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SerialMethodChangeCoupling implements Serializable {
@@ -46,8 +46,9 @@ public class SerialMethodChangeCoupling implements Serializable {
 	
 	/**
 	 * Instantiates a new serial method change coupling.
-	 *
-	 * @param coupling the coupling
+	 * 
+	 * @param coupling
+	 *            the coupling
 	 */
 	public SerialMethodChangeCoupling(final MethodChangeCoupling coupling) {
 		for (final JavaMethodDefinition mDef : coupling.getPremise()) {
@@ -60,8 +61,9 @@ public class SerialMethodChangeCoupling implements Serializable {
 	
 	/**
 	 * Unserialize.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the method change coupling
 	 */
 	public MethodChangeCoupling unserialize(final PersistenceUtil persistenceUtil) {

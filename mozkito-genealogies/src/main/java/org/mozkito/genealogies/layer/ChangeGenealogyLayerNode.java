@@ -17,12 +17,12 @@ import java.util.Iterator;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
 
 /**
  * The Class ChangeGenealogyLayerNode.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOperation> {
@@ -38,8 +38,9 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Instantiates a new change genealogy layer node.
-	 *
-	 * @param partition the partition
+	 * 
+	 * @param partition
+	 *            the partition
 	 */
 	public ChangeGenealogyLayerNode(final Collection<JavaChangeOperation> partition) {
 		this.partition = partition;
@@ -47,15 +48,17 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Contains.
-	 *
-	 * @param dependent the dependent
+	 * 
+	 * @param dependent
+	 *            the dependent
 	 * @return true, if successful
 	 */
 	public boolean contains(final JavaChangeOperation dependent) {
 		return this.partition.contains(dependent);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -82,7 +85,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Gets the earliest timestamp.
-	 *
+	 * 
 	 * @return the earliest timestamp
 	 */
 	public DateTime getEarliestTimestamp() {
@@ -100,7 +103,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Gets the latest timestamp.
-	 *
+	 * 
 	 * @return the latest timestamp
 	 */
 	public DateTime getLatestTimestamp() {
@@ -118,21 +121,22 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Gets the node id.
-	 *
+	 * 
 	 * @return the node id
 	 */
 	public abstract String getNodeId();
 	
 	/**
 	 * Gets the partition.
-	 *
+	 * 
 	 * @return the partition
 	 */
 	public Collection<JavaChangeOperation> getPartition() {
 		return this.partition;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -147,7 +151,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Checks if is empty.
-	 *
+	 * 
 	 * @return true, if is empty
 	 */
 	public boolean isEmpty() {
@@ -165,7 +169,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 	
 	/**
 	 * Size.
-	 *
+	 * 
 	 * @return the double
 	 */
 	public double size() {

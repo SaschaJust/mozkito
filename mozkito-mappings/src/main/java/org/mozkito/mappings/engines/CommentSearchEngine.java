@@ -59,7 +59,7 @@ public class CommentSearchEngine extends SearchEngine {
 		 * @param requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, CommentSearchEngine.TAG, CommentSearchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -152,7 +152,7 @@ public class CommentSearchEngine extends SearchEngine {
 				final IndexSearcher indexSearcher = luceneStorage.getIsearcherReports();
 				
 				if (indexSearcher != null) {
-					final ScoreDoc[] hits = indexSearcher.search(query, null, TOP_X).scoreDocs;
+					final ScoreDoc[] hits = indexSearcher.search(query, null, CommentSearchEngine.TOP_X).scoreDocs;
 					// Iterate through the results:
 					for (final ScoreDoc hit : hits) {
 						final Document hitDoc = luceneStorage.getIsearcherReports().doc(hit.doc);

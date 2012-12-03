@@ -52,10 +52,10 @@ public class RCSRevision implements Annotated {
 	private ChangeType        changeType;
 	
 	/** The transaction. */
-	private RCSTransaction       transaction;
+	private RCSTransaction    transaction;
 	
 	/** The changed file. */
-	private RCSFile              changedFile;
+	private RCSFile           changedFile;
 	
 	/** The revision id. */
 	private long              revisionId;

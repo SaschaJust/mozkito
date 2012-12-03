@@ -44,6 +44,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.Parser;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.Tracker;
@@ -343,8 +344,10 @@ public class SourceforgeParser implements Parser {
 				if (tds.size() < TD_SIZE) {
 					continue;
 				}
-				final String filename = htmlCommentRegex.removeAll(tds.get(0).text()).replaceAll("\"", "").trim();
-				final String description = htmlCommentRegex.removeAll(tds.get(1).text()).replaceAll("\"", "").trim();
+				final String filename = SourceforgeParser.htmlCommentRegex.removeAll(tds.get(0).text())
+				                                                          .replaceAll("\"", "").trim();
+				final String description = SourceforgeParser.htmlCommentRegex.removeAll(tds.get(1).text())
+				                                                             .replaceAll("\"", "").trim();
 				final Element linkTd = tds.get(2);
 				final Elements aTags = linkTd.getElementsByTag("a");
 				if (aTags.isEmpty()) {
@@ -352,7 +355,7 @@ public class SourceforgeParser implements Parser {
 				}
 				String link = aTags.get(0).attr("href");
 				String attachId = null;
-				for (final Group group : fileIdPattern.find(link)) {
+				for (final Group group : SourceforgeParser.fileIdPattern.find(link)) {
 					if ((group.getName() != null) && ("fileid".equals(group.getName()))) {
 						attachId = group.getMatch().trim();
 					}
@@ -463,8 +466,9 @@ public class SourceforgeParser implements Parser {
 				final Element yui_u = yui_u_first.nextElementSibling();
 				
 				final String leftColumm = yui_u_first.text().replaceAll("\"", "").trim();
-				final String rightColumm = htmlCommentRegex.removeAll(yui_u.text()).replaceAll("\"", "").trim();
-				final Match find = commentRegex.find(leftColumm);
+				final String rightColumm = SourceforgeParser.htmlCommentRegex.removeAll(yui_u.text())
+				                                                             .replaceAll("\"", "").trim();
+				final Match find = SourceforgeParser.commentRegex.find(leftColumm);
 				DateTime timestamp = null;
 				Person sender = null;
 				for (final Group group : find) {
@@ -545,7 +549,7 @@ public class SourceforgeParser implements Parser {
 			for (final Element child : this.gBox.children()) {
 				if ("label".equals(child.tag().getName()) && "Details:".equals(child.text().trim())) {
 					final String description = child.nextElementSibling().text().trim();
-					return htmlCommentRegex.removeAll(description);
+					return SourceforgeParser.htmlCommentRegex.removeAll(description);
 				}
 			}
 			return null;

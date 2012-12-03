@@ -17,12 +17,13 @@ import java.util.Collection;
 
 /**
  * The Class CTLBilateralFormula.
- *
+ * 
  * @author Kim Herzig <kim@mozkito.org>
  */
 public abstract class CTLBilateralFormula extends CTLFormula {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#equals(java.lang.Object)
 	 */
 	@Override
@@ -56,19 +57,20 @@ public abstract class CTLBilateralFormula extends CTLFormula {
 	
 	/**
 	 * Gets the left.
-	 *
+	 * 
 	 * @return the left
 	 */
 	public abstract CTLFormula getLeft();
 	
 	/**
 	 * Gets the right.
-	 *
+	 * 
 	 * @return the right
 	 */
 	public abstract CTLFormula getRight();
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
 	 */
 	@Override

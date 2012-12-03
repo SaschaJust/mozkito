@@ -27,14 +27,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * The Class UntanglingMetricsPartitioner.
@@ -53,9 +53,11 @@ public class UntanglingMetricsPartitioner implements
 	
 	/**
 	 * Instantiates a new untangling metrics partitioner.
-	 *
-	 * @param partitionFile the partition file
-	 * @param coreGenealogy the core genealogy
+	 * 
+	 * @param partitionFile
+	 *            the partition file
+	 * @param coreGenealogy
+	 *            the core genealogy
 	 */
 	public UntanglingMetricsPartitioner(final File partitionFile, final CoreChangeGenealogy coreGenealogy) {
 		
@@ -120,7 +122,7 @@ public class UntanglingMetricsPartitioner implements
 	
 	/**
 	 * Gets the untangling partitions.
-	 *
+	 * 
 	 * @return the untangling partitions
 	 */
 	public Collection<ChangeGenealogyLayerNode> getUntanglingPartitions() {
@@ -133,7 +135,8 @@ public class UntanglingMetricsPartitioner implements
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.PartitionGenerator#partition(java.lang.Object)
 	 */
 	@Override

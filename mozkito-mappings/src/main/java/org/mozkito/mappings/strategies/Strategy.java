@@ -80,7 +80,7 @@ public abstract class Strategy extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Strategy.TAG, Strategy.DESCRIPTION, requirements);
 		}
 		
 		/*

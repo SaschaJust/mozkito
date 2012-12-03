@@ -30,9 +30,11 @@ public class CTLImplication extends CTLBilateralFormula {
 	
 	/**
 	 * Returns an implication between two given CTL formulas.
-	 *
-	 * @param f the f
-	 * @param g the g
+	 * 
+	 * @param f
+	 *            the f
+	 * @param g
+	 *            the g
 	 * @return the cTL implication
 	 */
 	public static CTLImplication get(final CTLFormula f,

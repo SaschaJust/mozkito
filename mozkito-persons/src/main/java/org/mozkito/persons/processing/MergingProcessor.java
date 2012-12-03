@@ -20,13 +20,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.engine.MergingEngine;
-
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -64,21 +64,21 @@ public class MergingProcessor {
 		
 		// step through every Person:person in the PersonContainer:container
 		// and apply the algorithm
-		for (Person person : container.getPersons()) {
+		for (final Person person : container.getPersons()) {
 			if (Logger.logDebug()) {
 				Logger.debug("Performing merging algorithm on " + person);
 			}
 			
 			// provide a container to add target buckets returned by merging
 			// engines
-			Set<PersonBucket> targetBuckets = new HashSet<PersonBucket>();
+			final Set<PersonBucket> targetBuckets = new HashSet<PersonBucket>();
 			
 			// the main target bucket
 			PersonBucket mainTargetBucket = null;
 			
 			// get all target buckets from all MergingEngine:engines and add
 			// them to the PersonBucket container
-			for (MergingEngine engine : this.engines.values()) {
+			for (final MergingEngine engine : this.engines.values()) {
 				targetBuckets.addAll(engine.collides(person, container, this.manager));
 			}
 			
@@ -101,7 +101,7 @@ public class MergingProcessor {
 				
 				// if there are further target buckets merge them
 				// with the first one
-				for (PersonBucket bucket : targetBuckets) {
+				for (final PersonBucket bucket : targetBuckets) {
 					PersonBucket.merge(bucket, mainTargetBucket, this.manager);
 				}
 			} else {

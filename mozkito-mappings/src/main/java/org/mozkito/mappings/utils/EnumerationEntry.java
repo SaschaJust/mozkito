@@ -89,7 +89,7 @@ public class EnumerationEntry {
 	 *            the enumeration
 	 * @return true, if successful
 	 */
-	public boolean add(final @NotNull Enumeration enumeration) {
+	public boolean add(@NotNull final Enumeration enumeration) {
 		// PRECONDITIONS
 		Condition.notNull(this.childEnumerations, "Field '%s' in '%s'.", "childEnumerations", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -109,7 +109,7 @@ public class EnumerationEntry {
 	 *            the itemization
 	 * @return true, if successful
 	 */
-	public boolean add(final @NotNull Itemization itemization) {
+	public boolean add(@NotNull final Itemization itemization) {
 		// PRECONDITIONS
 		Condition.notNull(this.childItemizations, "Field '%s' in '%s'.", "childEnumerations", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		

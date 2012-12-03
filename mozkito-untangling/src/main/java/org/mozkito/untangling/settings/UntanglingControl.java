@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
@@ -26,10 +30,6 @@ import org.mozkito.untangling.Untangling.UntanglingCollapse;
 import org.mozkito.untangling.blob.ChangeSet;
 import org.mozkito.untangling.blob.combine.CombineOperator;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
-
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
-import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
  * The Class UntanglingControl.
@@ -91,8 +91,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Instantiates a new untangling control.
-	 *
-	 * @param measurePrecision the measure precision
+	 * 
+	 * @param measurePrecision
+	 *            the measure precision
 	 */
 	public UntanglingControl(final boolean measurePrecision) {
 		this.measurePrecision = measurePrecision;
@@ -113,7 +114,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the artificial blob cache dir.
-	 *
+	 * 
 	 * @return the artificial blob cache dir
 	 */
 	public File getArtificialBlobCacheDir() {
@@ -140,7 +141,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the change sets to untangle.
-	 *
+	 * 
 	 * @return the change sets to untangle
 	 */
 	public Collection<UntangleInstruction> getChangeSetsToUntangle() {
@@ -202,7 +203,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Gets the model cache dir.
-	 *
+	 * 
 	 * @return the model cache dir
 	 */
 	public File getModelCacheDir() {
@@ -265,7 +266,7 @@ public class UntanglingControl {
 	
 	/**
 	 * Measure precision.
-	 *
+	 * 
 	 * @return true, if successful
 	 */
 	public boolean measurePrecision() {
@@ -274,8 +275,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the artificial blob cache dir.
-	 *
-	 * @param artificialBlobCache the new artificial blob cache dir
+	 * 
+	 * @param artificialBlobCache
+	 *            the new artificial blob cache dir
 	 */
 	public void setArtificialBlobCacheDir(final File artificialBlobCache) {
 		// PRECONDITIONS
@@ -321,8 +323,9 @@ public class UntanglingControl {
 	
 	/**
 	 * Sets the change sets to untangle.
-	 *
-	 * @param changeSetsToUntangle the new change sets to untangle
+	 * 
+	 * @param changeSetsToUntangle
+	 *            the new change sets to untangle
 	 */
 	public void setChangeSetsToUntangle(final Collection<UntangleInstruction> changeSetsToUntangle) {
 		// PRECONDITIONS
@@ -419,21 +422,6 @@ public class UntanglingControl {
 	}
 	
 	/**
-	 * Sets the serial model.
-	 *
-	 * @param value the new serial model
-	 */
-	public void setSerialModel(final File value) {
-		// PRECONDITIONS
-		
-		try {
-			this.modelCacheDir = value;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/**
 	 * Sets the n.
 	 * 
 	 * @param n
@@ -508,6 +496,22 @@ public class UntanglingControl {
 		
 		try {
 			this.seed = seed;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Sets the serial model.
+	 * 
+	 * @param value
+	 *            the new serial model
+	 */
+	public void setSerialModel(final File value) {
+		// PRECONDITIONS
+		
+		try {
+			this.modelCacheDir = value;
 		} finally {
 			// POSTCONDITIONS
 		}

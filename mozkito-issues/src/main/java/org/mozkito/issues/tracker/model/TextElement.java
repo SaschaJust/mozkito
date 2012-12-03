@@ -16,6 +16,7 @@
 package org.mozkito.issues.tracker.model;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.persistence.model.Person;
 
 /**

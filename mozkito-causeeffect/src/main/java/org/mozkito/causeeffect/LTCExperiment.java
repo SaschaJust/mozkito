@@ -40,15 +40,16 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class LTCExperiment.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LTCExperiment {
 	
 	/**
 	 * Checks if is big change.
-	 *
-	 * @param t the t
+	 * 
+	 * @param t
+	 *            the t
 	 * @return true, if is big change
 	 */
 	public static boolean isBigChange(final RCSTransaction t) {
@@ -60,8 +61,9 @@ public class LTCExperiment {
 	
 	/**
 	 * Checks if is bug fix.
-	 *
-	 * @param t the t
+	 * 
+	 * @param t
+	 *            the t
 	 * @return true, if is bug fix
 	 */
 	public static boolean isBugFix(final RCSTransaction t) {
@@ -109,14 +111,21 @@ public class LTCExperiment {
 	
 	/**
 	 * Instantiates a new lTC experiment.
-	 *
-	 * @param genealogy the genealogy
-	 * @param formulaFactory the formula factory
-	 * @param minSupport the min support
-	 * @param minConfidence the min confidence
-	 * @param keepFormulaMaxDays the keep formula max days
-	 * @param timeWindow the time window
-	 * @param numRecommendations the num recommendations
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param formulaFactory
+	 *            the formula factory
+	 * @param minSupport
+	 *            the min support
+	 * @param minConfidence
+	 *            the min confidence
+	 * @param keepFormulaMaxDays
+	 *            the keep formula max days
+	 * @param timeWindow
+	 *            the time window
+	 * @param numRecommendations
+	 *            the num recommendations
 	 */
 	@NoneNull
 	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
@@ -133,7 +142,7 @@ public class LTCExperiment {
 	
 	/**
 	 * Gets the average lowest rank.
-	 *
+	 * 
 	 * @return the average lowest rank
 	 */
 	public double getAverageLowestRank() {
@@ -142,7 +151,7 @@ public class LTCExperiment {
 	
 	/**
 	 * Gets the num recommendated vertices.
-	 *
+	 * 
 	 * @return the num recommendated vertices
 	 */
 	public int getNumRecommendatedVertices() {
@@ -151,7 +160,7 @@ public class LTCExperiment {
 	
 	/**
 	 * Gets the precision.
-	 *
+	 * 
 	 * @return the precision
 	 */
 	public double getPrecision() {
@@ -160,10 +169,13 @@ public class LTCExperiment {
 	
 	/**
 	 * Run.
-	 *
-	 * @param trainingSet the training set
-	 * @param testingSet the testing set
-	 * @param includeInnerRules the include inner rules
+	 * 
+	 * @param trainingSet
+	 *            the training set
+	 * @param testingSet
+	 *            the testing set
+	 * @param includeInnerRules
+	 *            the include inner rules
 	 */
 	@NoneNull
 	public void run(final List<RCSTransaction> trainingSet,
@@ -201,8 +213,9 @@ public class LTCExperiment {
 	
 	/**
 	 * Test.
-	 *
-	 * @param t the t
+	 * 
+	 * @param t
+	 *            the t
 	 */
 	@NoneNull
 	public void test(final RCSTransaction t) {
@@ -313,9 +326,11 @@ public class LTCExperiment {
 	
 	/**
 	 * Train.
-	 *
-	 * @param t the t
-	 * @param inner the inner
+	 * 
+	 * @param t
+	 *            the t
+	 * @param inner
+	 *            the inner
 	 */
 	@NoneNull
 	public void train(final RCSTransaction t,

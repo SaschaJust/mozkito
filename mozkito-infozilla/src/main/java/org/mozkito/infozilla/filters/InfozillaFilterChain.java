@@ -17,7 +17,6 @@ import java.util.List;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.issues.tracker.model.Report;
 
-
 /**
  * The Class InfozillaFilterChain.
  * 

@@ -24,6 +24,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -439,7 +440,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Set#toArray(T[])
 	 */
 	@SuppressWarnings ("unchecked")

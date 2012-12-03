@@ -17,7 +17,7 @@ package org.mozkito.infozilla.exceptions;
 
 /**
  * The Class MIMETypeDeterminationException.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class MIMETypeDeterminationException extends Exception {
@@ -33,8 +33,9 @@ public class MIMETypeDeterminationException extends Exception {
 	
 	/**
 	 * Instantiates a new mIME type determination exception.
-	 *
-	 * @param arg0 the arg0
+	 * 
+	 * @param arg0
+	 *            the arg0
 	 */
 	public MIMETypeDeterminationException(final String arg0) {
 		super(arg0);
@@ -42,9 +43,11 @@ public class MIMETypeDeterminationException extends Exception {
 	
 	/**
 	 * Instantiates a new mIME type determination exception.
-	 *
-	 * @param arg0 the arg0
-	 * @param arg1 the arg1
+	 * 
+	 * @param arg0
+	 *            the arg0
+	 * @param arg1
+	 *            the arg1
 	 */
 	public MIMETypeDeterminationException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
@@ -52,8 +55,9 @@ public class MIMETypeDeterminationException extends Exception {
 	
 	/**
 	 * Instantiates a new mIME type determination exception.
-	 *
-	 * @param arg0 the arg0
+	 * 
+	 * @param arg0
+	 *            the arg0
 	 */
 	public MIMETypeDeterminationException(final Throwable arg0) {
 		super(arg0);

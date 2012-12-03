@@ -175,9 +175,9 @@ public class Untangling {
 			if (this.untanglingControl.getSeed() != null) {
 				this.seed = this.untanglingControl.getSeed();
 			} else {
-				this.seed = random.nextLong();
+				this.seed = Untangling.random.nextLong();
 			}
-			random.setSeed(this.seed);
+			Untangling.random.setSeed(this.seed);
 			
 		} catch (final ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
 			if (Logger.logError()) {
@@ -656,7 +656,7 @@ public class Untangling {
 				}
 				final List<ArtificialBlob> selectedArtificialBlobs = new LinkedList<ArtificialBlob>();
 				for (int i = 0; i < this.untanglingControl.getN(); ++i) {
-					final int r = random.nextInt(artificialBlobs.size());
+					final int r = Untangling.random.nextInt(artificialBlobs.size());
 					selectedArtificialBlobs.add(artificialBlobs.remove(r));
 				}
 				artificialBlobs = selectedArtificialBlobs;

@@ -85,11 +85,15 @@ public class GenealogyMetricsToolChain extends Chain<Settings> {
 	
 	/**
 	 * Instantiates a new genealogy metrics tool chain.
-	 *
-	 * @param setting the setting
-	 * @param granularityOptions the granularity options
-	 * @param genealogyOptions the genealogy options
-	 * @param untanglingPartFileOptions the untangling part file options
+	 * 
+	 * @param setting
+	 *            the setting
+	 * @param granularityOptions
+	 *            the granularity options
+	 * @param genealogyOptions
+	 *            the genealogy options
+	 * @param untanglingPartFileOptions
+	 *            the untangling part file options
 	 */
 	public GenealogyMetricsToolChain(final Settings setting,
 	        final EnumArgument.Options<MetricLevel> granularityOptions, final GenealogyOptions genealogyOptions,

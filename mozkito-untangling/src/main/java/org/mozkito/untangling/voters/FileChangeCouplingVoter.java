@@ -49,7 +49,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final RCSTransaction              rCSTransaction;
+	private final RCSTransaction           rCSTransaction;
 	
 	/** The min support. */
 	private final int                      minSupport;

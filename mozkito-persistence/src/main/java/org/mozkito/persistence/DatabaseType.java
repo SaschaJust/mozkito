@@ -17,15 +17,15 @@ package org.mozkito.persistence;
 
 /**
  * The Enum DatabaseType.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public enum DatabaseType {
 	
 	/** The postgresql. */
-	POSTGRESQL, 
- /** The mysql. */
- MYSQL, 
- /** The derby. */
- DERBY;
+	POSTGRESQL,
+	/** The mysql. */
+	MYSQL,
+	/** The derby. */
+	DERBY;
 }

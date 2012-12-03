@@ -17,7 +17,7 @@ package org.mozkito.exceptions;
 
 /**
  * The Class InvalidProtocolType.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InvalidProtocolType extends Exception {
@@ -34,8 +34,9 @@ public class InvalidProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new invalid protocol type.
-	 *
-	 * @param arg0 the arg0
+	 * 
+	 * @param arg0
+	 *            the arg0
 	 */
 	public InvalidProtocolType(final String arg0) {
 		super(arg0);
@@ -43,9 +44,11 @@ public class InvalidProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new invalid protocol type.
-	 *
-	 * @param arg0 the arg0
-	 * @param arg1 the arg1
+	 * 
+	 * @param arg0
+	 *            the arg0
+	 * @param arg1
+	 *            the arg1
 	 */
 	public InvalidProtocolType(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
@@ -53,8 +56,9 @@ public class InvalidProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new invalid protocol type.
-	 *
-	 * @param arg0 the arg0
+	 * 
+	 * @param arg0
+	 *            the arg0
 	 */
 	public InvalidProtocolType(final Throwable arg0) {
 		super(arg0);

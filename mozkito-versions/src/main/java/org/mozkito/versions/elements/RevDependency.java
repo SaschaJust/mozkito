@@ -19,6 +19,7 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mozkito.versions.model.RCSBranch;
 
 /**

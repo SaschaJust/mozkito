@@ -21,13 +21,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.mozkito.versions.elements.AnnotationEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.ISVNAnnotateHandler;
 
+import org.mozkito.versions.elements.AnnotationEntry;
+
 /**
  * The Class SubversionAnnotationHandler.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
@@ -37,7 +38,7 @@ public class SubversionAnnotationHandler implements ISVNAnnotateHandler {
 	
 	/**
 	 * Gets the results.
-	 *
+	 * 
 	 * @return the resulting list of {@link AnnotationEntry}s
 	 */
 	public List<AnnotationEntry> getResults() {

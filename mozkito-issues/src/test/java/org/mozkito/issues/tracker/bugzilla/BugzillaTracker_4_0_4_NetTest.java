@@ -17,6 +17,7 @@ import static org.junit.Assert.fail;
 import java.net.URI;
 
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 
 // TODO: Auto-generated Javadoc

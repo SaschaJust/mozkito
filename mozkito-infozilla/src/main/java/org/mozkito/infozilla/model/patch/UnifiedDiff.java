@@ -131,8 +131,8 @@ public class UnifiedDiff extends Patch {
 	 * @return the index
 	 */
 	public String getIndex() {
-		if (this.index.length() > INDEX_OFFSET) {
-			return (this.index.substring(INDEX_OFFSET, this.index.length()));
+		if (this.index.length() > UnifiedDiff.INDEX_OFFSET) {
+			return (this.index.substring(UnifiedDiff.INDEX_OFFSET, this.index.length()));
 		}
 		return this.index;
 	}

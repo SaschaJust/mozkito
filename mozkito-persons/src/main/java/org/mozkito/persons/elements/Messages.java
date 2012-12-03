@@ -23,10 +23,10 @@ import java.util.ResourceBundle;
 public class Messages {
 	
 	/** The Constant BUNDLE_NAME. */
-	private static final String         BUNDLE_NAME     = "org.mozkito.persons.messages";       //$NON-NLS-1$
-	                                                                                             
+	private static final String         BUNDLE_NAME     = "org.mozkito.persons.messages";                //$NON-NLS-1$
+	                                                                                                      
 	/** The Constant RESOURCE_BUNDLE. */
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Messages.BUNDLE_NAME);
 	
 	/**
 	 * Gets the string.
@@ -37,7 +37,7 @@ public class Messages {
 	 */
 	public static String getString(final String key) {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			return Messages.RESOURCE_BUNDLE.getString(key);
 		} catch (final MissingResourceException e) {
 			return '!' + key + '!';
 		}

@@ -17,12 +17,13 @@ import java.util.Collection;
 
 /**
  * The Class CTLComposedFormula.
- *
+ * 
  * @author Kim Herzig <kim@mozkito.org>
  */
 public abstract class CTLComposedFormula extends CTLFormula {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#equals(java.lang.Object)
 	 */
 	@Override
@@ -49,12 +50,13 @@ public abstract class CTLComposedFormula extends CTLFormula {
 	
 	/**
 	 * Gets the subformula.
-	 *
+	 * 
 	 * @return the subformula
 	 */
 	public abstract CTLFormula getSubformula();
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.ctl.CTLFormula#putAttomicFormulas(java.util.Collection)
 	 */
 	@Override

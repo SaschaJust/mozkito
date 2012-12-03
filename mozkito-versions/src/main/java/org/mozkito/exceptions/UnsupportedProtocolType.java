@@ -17,7 +17,7 @@ package org.mozkito.exceptions;
 
 /**
  * The Class UnsupportedProtocolType.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class UnsupportedProtocolType extends Exception {
@@ -34,8 +34,9 @@ public class UnsupportedProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new unsupported protocol type.
-	 *
-	 * @param message the message
+	 * 
+	 * @param message
+	 *            the message
 	 */
 	public UnsupportedProtocolType(final String message) {
 		super(message);
@@ -43,9 +44,11 @@ public class UnsupportedProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new unsupported protocol type.
-	 *
-	 * @param message the message
-	 * @param cause the cause
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
 	 */
 	public UnsupportedProtocolType(final String message, final Throwable cause) {
 		super(message, cause);
@@ -53,8 +56,9 @@ public class UnsupportedProtocolType extends Exception {
 	
 	/**
 	 * Instantiates a new unsupported protocol type.
-	 *
-	 * @param cause the cause
+	 * 
+	 * @param cause
+	 *            the cause
 	 */
 	public UnsupportedProtocolType(final Throwable cause) {
 		super(cause);

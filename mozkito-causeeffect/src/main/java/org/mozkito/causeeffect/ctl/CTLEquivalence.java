@@ -30,9 +30,11 @@ public class CTLEquivalence extends CTLBilateralFormula {
 	
 	/**
 	 * Returns an equivalence of two given CTL formulas.
-	 *
-	 * @param f the f
-	 * @param g the g
+	 * 
+	 * @param f
+	 *            the f
+	 * @param g
+	 *            the g
 	 * @return the cTL equivalence
 	 */
 	public static CTLEquivalence get(final CTLFormula f,

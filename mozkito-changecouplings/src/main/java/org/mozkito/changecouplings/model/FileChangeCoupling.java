@@ -19,11 +19,11 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSFile;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * The Class FileChangeCoupling.

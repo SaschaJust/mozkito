@@ -68,7 +68,7 @@ public class Persister extends Sink<Mapping> {
 					Logger.debug(Messages.getString("Persister.storing", mapping)); //$NON-NLS-1$
 				}
 				
-				if ((++Persister.this.i % PERSIST_COUNT_THRESHOLD) == 0) {
+				if ((++Persister.this.i % Persister.PERSIST_COUNT_THRESHOLD) == 0) {
 					persistenceUtil.commitTransaction();
 					persistenceUtil.beginTransaction();
 				}

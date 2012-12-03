@@ -49,7 +49,7 @@ public class LogEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, LogEngine.DESCRIPTION, requirements);
+			super(argumentSet, LogEngine.TAG, LogEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

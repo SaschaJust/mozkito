@@ -14,7 +14,7 @@ package org.mozkito.exceptions;
 
 /**
  * The Class UnregisteredRepositoryTypeException.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class UnregisteredRepositoryTypeException extends Exception {

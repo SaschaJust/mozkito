@@ -31,8 +31,9 @@ public class CTLEF extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "EF f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with EF.
+	 * 
+	 * @param formula
+	 *            Formula to surround with EF.
 	 * @return the ctlef
 	 */
 	public static CTLEF get(final CTLFormula formula) {

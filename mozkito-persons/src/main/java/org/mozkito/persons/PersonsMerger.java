@@ -15,16 +15,16 @@
  */
 package org.mozkito.persons;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.PersonContainer;
-import org.mozkito.persons.processing.MergingProcessor;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PostExecutionHook;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Sink;
 import net.ownhero.dev.hiari.settings.Settings;
+
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.processing.MergingProcessor;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

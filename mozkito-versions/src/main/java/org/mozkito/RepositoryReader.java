@@ -17,15 +17,15 @@ package org.mozkito;
 
 import java.util.Iterator;
 
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.elements.LogEntry;
-
 import net.ownhero.dev.andama.threads.Group;
 import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.elements.LogEntry;
 
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.
@@ -40,10 +40,13 @@ public class RepositoryReader extends Source<LogEntry> {
 	
 	/**
 	 * Instantiates a new repository reader.
-	 *
-	 * @param threadGroup the thread group
-	 * @param settings the settings
-	 * @param repository the repository
+	 * 
+	 * @param threadGroup
+	 *            the thread group
+	 * @param settings
+	 *            the settings
+	 * @param repository
+	 *            the repository
 	 */
 	public RepositoryReader(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);

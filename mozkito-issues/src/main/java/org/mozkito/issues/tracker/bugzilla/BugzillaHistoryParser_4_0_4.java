@@ -30,6 +30,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.elements.Resolution;
 import org.mozkito.issues.tracker.model.HistoryElement;
@@ -142,7 +143,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 		try {
 			final RawContent rawContent = IOUtils.fetch(this.historyUri);
 			
-			final MultiMatch multiMatch = skipRegex.findAll(rawContent.getContent());
+			final MultiMatch multiMatch = BugzillaHistoryParser_4_0_4.skipRegex.findAll(rawContent.getContent());
 			if (multiMatch != null) {
 				if (Logger.logDebug()) {
 					Logger.debug("Skipping history for bug report " + this.reportId
@@ -173,7 +174,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 			for (int i = 1; i < trs.size(); ++i) {
 				final Element tr = trs.get(i);
 				final Elements tds = tr.getElementsByTag("td");
-				if (tds.size() < MIN_NUMBER_BODY_TABLE_COLUMNS) {
+				if (tds.size() < BugzillaHistoryParser_4_0_4.MIN_NUMBER_BODY_TABLE_COLUMNS) {
 					if (Logger.logError()) {
 						Logger.error(errorHeader
 						        + "at least 3 columns in a mozilla body table are expected in every row.");
@@ -186,7 +187,7 @@ public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 				                                 : 0;
 				
 				if (rowspan < 2) {
-					if (tds.size() < MIN_HISTORY_ELEMENT_TABLE_COLUMNS) {
+					if (tds.size() < BugzillaHistoryParser_4_0_4.MIN_HISTORY_ELEMENT_TABLE_COLUMNS) {
 						if (Logger.logError()) {
 							Logger.error(errorHeader
 							        + "at least 5 columns in a mozilla body table are expected in new history element rows.");

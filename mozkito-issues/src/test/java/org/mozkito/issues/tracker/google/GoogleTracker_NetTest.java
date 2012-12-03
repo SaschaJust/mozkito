@@ -20,6 +20,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.Regex;
 
 import org.junit.Test;
+
 import org.mozkito.issues.exceptions.InvalidParameterException;
 import org.mozkito.issues.tracker.ReportLink;
 import org.mozkito.issues.tracker.elements.Resolution;
@@ -83,7 +84,8 @@ public class GoogleTracker_NetTest {
 			}
 			
 			assertEquals(null, report.getComponent());
-			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z", dateTimeHistoryFormatRegex)
+			assertTrue(DateTimeUtils.parseDate("2009-12-19T15:38:51.000Z",
+			                                   GoogleTracker_NetTest.dateTimeHistoryFormatRegex)
 			                        .isEqual(report.getCreationTimestamp()));
 			
 			assertTrue(report.getHistory() != null);
@@ -92,7 +94,8 @@ public class GoogleTracker_NetTest {
 			assertEquals(null, report.getPriority());
 			assertEquals(new Report("0").getProduct(), report.getProduct());
 			assertEquals(Resolution.RESOLVED, report.getResolution());
-			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z", dateTimeHistoryFormatRegex)
+			assertTrue(DateTimeUtils.parseDate("2010-02-02T00:07:22.000Z",
+			                                   GoogleTracker_NetTest.dateTimeHistoryFormatRegex)
 			                        .isEqual(report.getResolutionTimestamp()));
 			assertTrue(report.getResolver() != null);
 			assertEquals(1, report.getResolver().getEmailAddresses().size());

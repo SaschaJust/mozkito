@@ -100,7 +100,7 @@ public class Report implements Annotated, Comparable<Report> {
 	private String                description;
 	
 	/** The hash. */
-	private byte[]                hash              = new byte[HASH_SIZE];
+	private byte[]                hash              = new byte[Report.HASH_SIZE];
 	
 	/** The history. */
 	private History               history;

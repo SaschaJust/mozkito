@@ -44,7 +44,7 @@ public class ChangeOperationsTest {
 		                                                                 methodDefinitionLocation.getElement(), 34, 56,
 		                                                                 7854);
 		final RCSTransaction rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(),
-		                                                      new Person("kim", null, null), "143");
+		                                                         new Person("kim", null, null), "143");
 		final RCSFile rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", rCSTransaction);
 		final JavaChangeOperation addAnonClassDefOp = new JavaChangeOperation(ChangeType.Added, anonymousClassLocation,
 		                                                                      new RCSRevision(rCSTransaction, rcsFile,

@@ -54,21 +54,21 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	public IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
 		try {
 			
-			persistenceUtil = getPersistenceUtil();
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil = getPersistenceUtil();
 			URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
 			java.io.File sqlFile = new java.io.File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
-			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
-			persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
-			persistenceUtil.executeNativeQuery(query);
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query);
 			sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql");
 			
 			sqlFile = new java.io.File(sqlURL.toURI());
 			query = FileUtils.readFileToString(sqlFile);
-			persistenceUtil.executeNativeQuery(query);
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query);
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
 				Logger.warn(e, "Could not set or update change coupling functions. Trying to continue ... ");
@@ -78,7 +78,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 				Logger.warn(e, "Could not set or update change coupling functions. Trying to continue ... ");
 			}
 		} finally {
-			persistenceUtil.commitTransaction();
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.commitTransaction();
 		}
 		
 	}
@@ -89,7 +89,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	@Test
 	public void testChangeCouplings() {
 		
-		persistenceUtil.beginTransaction();
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.beginTransaction();
 		
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", "", "");
@@ -110,7 +110,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		fileC.assignTransaction(rcsTransaction, "C.java");
 		new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
 		
-		persistenceUtil.saveOrUpdate(rcsTransaction);
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction);
 		
 		// ### transaction 2
 		
@@ -120,7 +120,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
 		// fileC.assignTransaction(rcsTransaction2, "D.java");
 		new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
-		persistenceUtil.saveOrUpdate(rcsTransaction2);
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction2);
 		
 		// ### transaction 3
 		
@@ -130,7 +130,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		fileC.assignTransaction(rcsTransaction3, "C.java");
 		new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
-		persistenceUtil.saveOrUpdate(rcsTransaction3);
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction3);
 		
 		// ### transaction 4
 		
@@ -138,13 +138,14 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
-		persistenceUtil.saveOrUpdate(rcsTransaction4);
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction4);
 		
-		persistenceUtil.commitTransaction();
+		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.commitTransaction();
 		
 		final List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
-		                                                                                                      1, 0,
-		                                                                                                      persistenceUtil);
+		                                                                                                      1,
+		                                                                                                      0,
+		                                                                                                      IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil);
 		assertEquals(9, changeCouplingRules.size());
 		FileChangeCoupling rule = changeCouplingRules.get(0);
 		assertEquals(1, rule.getPremise().size());

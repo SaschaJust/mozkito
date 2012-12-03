@@ -35,8 +35,9 @@ public class CTLAF extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "AF f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with AF.
+	 * 
+	 * @param formula
+	 *            Formula to surround with AF.
 	 * @return the ctlaf
 	 */
 	public static CTLAF get(final CTLFormula formula) {
@@ -86,10 +87,13 @@ public class CTLAF extends CTLComposedFormula {
 	
 	/**
 	 * Gets the parent states.
-	 *
-	 * @param <V> the value type
-	 * @param kripkeStruct the kripke struct
-	 * @param states the states
+	 * 
+	 * @param <V>
+	 *            the value type
+	 * @param kripkeStruct
+	 *            the kripke struct
+	 * @param states
+	 *            the states
 	 * @return the parent states
 	 * @author Kim Herzig <kim@mozkito.org>
 	 */

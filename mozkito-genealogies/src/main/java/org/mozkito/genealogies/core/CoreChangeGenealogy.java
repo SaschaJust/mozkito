@@ -25,16 +25,6 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.codeanalysis.model.JavaMethodCall;
-import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-import org.mozkito.genealogies.ChangeGenealogy;
-import org.mozkito.genealogies.neo4j.Neo4jRootCache;
-import org.mozkito.genealogies.neo4j.Neo4jVertexCache;
-import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.elements.ChangeType;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -47,6 +37,16 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.tooling.GlobalGraphOperations;
 
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.codeanalysis.model.JavaElement;
+import org.mozkito.codeanalysis.model.JavaMethodCall;
+import org.mozkito.codeanalysis.model.JavaMethodDefinition;
+import org.mozkito.genealogies.ChangeGenealogy;
+import org.mozkito.genealogies.neo4j.Neo4jRootCache;
+import org.mozkito.genealogies.neo4j.Neo4jVertexCache;
+import org.mozkito.genealogies.persistence.JavaChangeOperationCache;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.elements.ChangeType;
 
 /**
  * The Class ChangeGenealogy.
@@ -90,10 +90,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Instantiates a new change genealogy.
-	 *
-	 * @param graph the graph
-	 * @param dbFile the db file
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param dbFile
+	 *            the db file
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public CoreChangeGenealogy(@NotNull final GraphDatabaseService graph, @NotNull final File dbFile,
 	        final PersistenceUtil persistenceUtil) {
@@ -101,7 +104,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		this.dbFile = dbFile;
 		this.persistenceUtil = persistenceUtil;
 		this.indexManager = graph.index();
-		this.nodeIndex = this.indexManager.forNodes(NODE_ID);
+		this.nodeIndex = this.indexManager.forNodes(CoreChangeGenealogy.NODE_ID);
 		
 		this.rootCache = new Neo4jRootCache(graph);
 		this.operationCache = new JavaChangeOperationCache(persistenceUtil);
@@ -126,10 +129,13 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	/**
 	 * Adds a directed edge between target <--type-- dependent of type edgeType. Adds missing vertices before adding
 	 * edge, if necessary.
-	 *
-	 * @param dependent the dependent
-	 * @param target The collection of JavaChangeOperations that represent the edge target vertex.
-	 * @param edgeType the GenealogyEdgeType of the edge to be added
+	 * 
+	 * @param dependent
+	 *            the dependent
+	 * @param target
+	 *            The collection of JavaChangeOperations that represent the edge target vertex.
+	 * @param edgeType
+	 *            the GenealogyEdgeType of the edge to be added
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -382,9 +388,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			tx.finish();
 			return false;
 		}
-		node.setProperty(NODE_ID, v.getId());
+		node.setProperty(CoreChangeGenealogy.NODE_ID, v.getId());
 		
-		this.nodeIndex.add(node, NODE_ID, node.getProperty(NODE_ID));
+		this.nodeIndex.add(node, CoreChangeGenealogy.NODE_ID, node.getProperty(CoreChangeGenealogy.NODE_ID));
 		this.rootCache.add(node);
 		
 		tx.success();
@@ -421,7 +427,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return result != null;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#containsVertex(java.lang.Object)
 	 */
 	@Override
@@ -429,7 +436,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return hasVertex(vertex);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#edgeSize()
 	 */
 	@Override
@@ -445,8 +453,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Returns a collection containing nodes that depend on node <code>node</code> (incoming edges).
-	 *
-	 * @param operation the operation
+	 * 
+	 * @param operation
+	 *            the operation
 	 * @return all dependents
 	 */
 	@Override
@@ -459,8 +468,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Returns a collection containing nodes that depend on node <code>node</code> (incoming edges).
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return all dependents
 	 */
 	private Collection<Node> getAllDependents(final Node node) {
@@ -472,8 +482,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Returns a collection containing nodes that are connected through an outgoing edge.
-	 *
-	 * @param operation the operation
+	 * 
+	 * @param operation
+	 *            the operation
 	 * @return all dependents
 	 */
 	@Override
@@ -484,7 +495,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
 	 */
 	@Override
@@ -495,9 +507,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
 	 * within the specified edge type array. (incoming edges)
-	 *
-	 * @param operation the operation
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param operation
+	 *            the operation
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the dependents
 	 */
 	@Override
@@ -522,9 +536,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	/**
 	 * Returns a collection containing nodes depending on node <code>node</code> via an edge of a type is contained
 	 * within the specified edge type array. (incoming edges)
-	 *
-	 * @param node the node
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the dependents
 	 */
 	@NoneNull
@@ -564,9 +580,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Gets the edge.
-	 *
-	 * @param fromNode the from node
-	 * @param toNode the to node
+	 * 
+	 * @param fromNode
+	 *            the from node
+	 * @param toNode
+	 *            the to node
 	 * @return the edge
 	 */
 	@NoneNull
@@ -591,7 +609,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	// /////////////
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getEdges(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -611,9 +630,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Gets the edges.
-	 *
-	 * @param fromNode the from node
-	 * @param toNode the to node
+	 * 
+	 * @param fromNode
+	 *            the from node
+	 * @param toNode
+	 *            the to node
 	 * @return the edges
 	 */
 	@NoneNull
@@ -638,7 +659,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return result;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getExistingEdgeTypes()
 	 */
 	@Override
@@ -665,7 +687,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return this.graph;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBDir()
 	 */
 	@Override
@@ -673,7 +696,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return this.dbFile;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getGraphDBService()
 	 */
 	@Override
@@ -683,15 +707,17 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Gets the node for vertex.
-	 *
-	 * @param op the op
+	 * 
+	 * @param op
+	 *            the op
 	 * @return the node for vertex
 	 */
 	private Node getNodeForVertex(final JavaChangeOperation op) {
 		return this.vertexCache.getNode(op);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getNodeId(java.lang.Object)
 	 */
 	@Override
@@ -704,9 +730,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Returns a collection containing nodes connected though outgoing edges.
-	 *
-	 * @param operation the operation
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param operation
+	 *            the operation
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the dependents
 	 */
 	@Override
@@ -729,9 +757,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Returns a collection containing nodes connected though outgoing edges.
-	 *
-	 * @param node the node
-	 * @param edgeTypes the edge types
+	 * 
+	 * @param node
+	 *            the node
+	 * @param edgeTypes
+	 *            the edge types
 	 * @return the dependents
 	 */
 	private Collection<Node> getParents(final Node node,
@@ -753,7 +783,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return this.persistenceUtil;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
 	 */
 	@Override
@@ -767,7 +798,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Gets the transaction layer.
-	 *
+	 * 
 	 * @return the transaction layer
 	 */
 	public TransactionChangeGenealogy getTransactionLayer() {
@@ -776,26 +807,29 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Gets the vertex for node.
-	 *
-	 * @param dependentNode the dependent node
+	 * 
+	 * @param dependentNode
+	 *            the dependent node
 	 * @return the vertex for node
 	 */
 	private JavaChangeOperation getVertexForNode(final Node dependentNode) {
-		final Long operationId = (Long) dependentNode.getProperty(NODE_ID);
+		final Long operationId = (Long) dependentNode.getProperty(CoreChangeGenealogy.NODE_ID);
 		return this.operationCache.loadById(operationId);
 	}
 	
 	/**
 	 * Checks for vertex.
-	 *
-	 * @param vertex the vertex
+	 * 
+	 * @param vertex
+	 *            the vertex
 	 * @return true, if successful
 	 */
 	public boolean hasVertex(final JavaChangeOperation vertex) {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
 	 */
 	@Override
@@ -811,8 +845,10 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int inDegree(final JavaChangeOperation op,
@@ -829,8 +865,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Checks if is root.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return true, if is root
 	 */
 	private boolean isRoot(final Node node) {
@@ -843,10 +880,11 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 * @return the genealogy vertex iterator
 	 */
 	protected IndexHits<Node> nodes() {
-		return this.nodeIndex.query(NODE_ID, "*");
+		return this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
 	 */
 	@Override
@@ -862,8 +900,10 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		return numEdges;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int outDegree(final JavaChangeOperation op,
@@ -880,15 +920,15 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	
 	/**
 	 * Vertex iterator.
-	 *
+	 * 
 	 * @return the iterator
 	 */
 	public Iterator<JavaChangeOperation> vertexIterator() {
-		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
+		final IndexHits<Node> indexHits = this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 		
 		final Set<Long> operations = new HashSet<Long>();
 		for (final Node node : indexHits) {
-			operations.add((Long) node.getProperty(NODE_ID));
+			operations.add((Long) node.getProperty(CoreChangeGenealogy.NODE_ID));
 		}
 		indexHits.close();
 		return new Iterator<JavaChangeOperation>() {
@@ -912,7 +952,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		};
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#vertexSet()
 	 */
 	@Override
@@ -934,7 +975,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 	 */
 	@Override
 	public int vertexSize() {
-		final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
+		final IndexHits<Node> indexHits = this.nodeIndex.query(CoreChangeGenealogy.NODE_ID, "*");
 		final int result = indexHits.size();
 		indexHits.close();
 		return result;

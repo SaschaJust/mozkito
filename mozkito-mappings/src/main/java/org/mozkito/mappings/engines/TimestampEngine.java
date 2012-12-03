@@ -75,7 +75,7 @@ public class TimestampEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, TimestampEngine.TAG, TimestampEngine.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -105,7 +105,8 @@ public class TimestampEngine extends Engine {
 					Logger.info(Messages.getString("TimestampEngine.usingInterval") + " [", start + ", " + end + "]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				
-				return new TimestampEngine(new Interval(start * MS_IN_SECONDS, end * MS_IN_SECONDS));
+				return new TimestampEngine(new Interval(start * TimestampEngine.MS_IN_SECONDS, end
+				        * TimestampEngine.MS_IN_SECONDS));
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -130,9 +131,9 @@ public class TimestampEngine extends Engine {
 				                   Messages.getString("TimestampEngine.invalidInterval") + string + " " + Messages.getString("TimestampEngine.usingRegex") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				                           + regex.getPattern());
 			} else {
-				value += Integer.parseInt(regex.getGroup("days")) * SECONDS_IN_DAYS; //$NON-NLS-1$
-				value += Integer.parseInt(regex.getGroup("hours")) * SECONDS_IN_HOURS; //$NON-NLS-1$
-				value += Integer.parseInt(regex.getGroup("minutes")) * SECONDS_IN_MINUTES; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("days")) * TimestampEngine.SECONDS_IN_DAYS; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("hours")) * TimestampEngine.SECONDS_IN_HOURS; //$NON-NLS-1$
+				value += Integer.parseInt(regex.getGroup("minutes")) * TimestampEngine.SECONDS_IN_MINUTES; //$NON-NLS-1$
 				value += Integer.parseInt(regex.getGroup("seconds")); //$NON-NLS-1$
 			}
 			
@@ -177,10 +178,10 @@ public class TimestampEngine extends Engine {
 	private static final int                   SECONDS_IN_MINUTES = 60;
 	
 	/** The Constant SECONDS_IN_HOURS. */
-	private static final int                   SECONDS_IN_HOURS   = 60 * SECONDS_IN_MINUTES;
+	private static final int                   SECONDS_IN_HOURS   = 60 * TimestampEngine.SECONDS_IN_MINUTES;
 	
 	/** The Constant SECONDS_IN_DAYS. */
-	private static final int                   SECONDS_IN_DAYS    = 24 * SECONDS_IN_HOURS;
+	private static final int                   SECONDS_IN_DAYS    = 24 * TimestampEngine.SECONDS_IN_HOURS;
 	
 	/** The Constant defaultInterval. */
 	private static final Tuple<String, String> DEFAULT_INTERVAL   = new Tuple<String, String>("-0d 2h 0m 0s", //$NON-NLS-1$
@@ -311,7 +312,7 @@ public class TimestampEngine extends Engine {
 							} else if (element.getTimestamp().isAfter(element1Timestamp)) {
 								value = Math.max(value,
 								                 1.0d / (1.0d + ((element.getTimestamp().getMillis() - element1Timestamp.getMillis())
-								                         / MS_IN_SECONDS / SECONDS_IN_DAYS)));
+								                         / TimestampEngine.MS_IN_SECONDS / TimestampEngine.SECONDS_IN_DAYS)));
 								if (Logger.logDebug()) {
 									Logger.debug(Messages.getString("TimestampEngine.resolutionBehindWindow"), value); //$NON-NLS-1$
 								}
@@ -328,7 +329,7 @@ public class TimestampEngine extends Engine {
 					} else if (element2ResolutionTimestamp.isAfter(element1Timestamp)) {
 						value = Math.max(value,
 						                 1.0d / (1.0d + ((element2ResolutionTimestamp.getMillis() - element1Timestamp.getMillis())
-						                         / MS_IN_SECONDS / SECONDS_IN_DAYS)));
+						                         / TimestampEngine.MS_IN_SECONDS / TimestampEngine.SECONDS_IN_DAYS)));
 						if (Logger.logDebug()) {
 							Logger.debug("Resolution is later than specified, value: %s", value); //$NON-NLS-1$
 						}

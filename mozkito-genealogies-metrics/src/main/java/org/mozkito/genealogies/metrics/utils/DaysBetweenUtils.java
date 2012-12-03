@@ -28,9 +28,11 @@ public class DaysBetweenUtils {
 	
 	/**
 	 * Gets the days between.
-	 *
-	 * @param p1 the p1
-	 * @param p2 the p2
+	 * 
+	 * @param p1
+	 *            the p1
+	 * @param p2
+	 *            the p2
 	 * @return the days between
 	 */
 	public static int getDaysBetween(final ChangeGenealogyLayerNode p1,

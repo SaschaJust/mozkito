@@ -36,6 +36,9 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
+
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
+
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.model.CallGraphEdge;
 import org.mozkito.callgraph.model.MethodVertex;
@@ -52,7 +55,6 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.model.RCSTransaction;
 
 import serp.util.Strings;
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 
 /**
  * The Class CallGraphHandler.
@@ -79,10 +81,13 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		
 		/**
 		 * Instantiates a new factory.
-		 *
-		 * @param eclipseDir the eclipse dir
-		 * @param eclipseArguments the eclipse arguments
-		 * @param cacheDir the cache dir
+		 * 
+		 * @param eclipseDir
+		 *            the eclipse dir
+		 * @param eclipseArguments
+		 *            the eclipse arguments
+		 * @param cacheDir
+		 *            the cache dir
 		 */
 		protected Factory(final File eclipseDir, final String[] eclipseArguments, final File cacheDir) {
 			this.eclipseDir = eclipseDir;
@@ -90,8 +95,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			this.eclipseArguments = eclipseArguments;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
+		 * .RCSTransaction)
 		 */
 		@Override
 		public CallGraphVoter createVoter(final RCSTransaction rCSTransaction) {
@@ -135,10 +143,13 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
-		 * @param repositoryOptions the repository options
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 * @param repositoryOptions
+		 *            the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {
@@ -244,11 +255,12 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final RCSTransaction rCSTransaction,
-	        final File cacheDir) {
+	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments,
+	        final RCSTransaction rCSTransaction, final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
-			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId() + ".cg");
+			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId()
+			        + ".cg");
 			if (callGraphFile.exists()) {
 				this.callGraph = CallGraph.unserialize(callGraphFile);
 				this.usedGraphFile = callGraphFile;
@@ -370,7 +382,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		
 		final DijkstraShortestPath<MethodVertex, CallGraphEdge> dijkstra = new DijkstraShortestPath<MethodVertex, CallGraphEdge>(
 		                                                                                                                         this.callGraph,
-		                                                                                                                         dijkstraTransformer);
+		                                                                                                                         CallGraphVoter.dijkstraTransformer);
 		
 		final List<CallGraphEdge> sp1 = dijkstra.getPath(v1, v2);
 		double d1 = Double.MAX_VALUE;
@@ -396,8 +408,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,

@@ -172,7 +172,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 					});
 					// wait for proxy to settle
 					try {
-						Thread.sleep(PROXY_WAIT_TIMEOUT);
+						Thread.sleep(ProxyOptions.PROXY_WAIT_TIMEOUT);
 					} catch (final InterruptedException ignore) {
 						// ignore
 					}
@@ -268,7 +268,7 @@ public class ProxyOptions extends ArgumentSetOptions<ProxyConfig, ArgumentSet<Pr
 			
 			this.portOptions = new PortArgument.Options(
 			                                            set,
-			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), DEFAULT_PROXY_PORT, //$NON-NLS-1$ //$NON-NLS-2$
+			                                            "port", Messages.getString("ProxyOptions.proxyPort_description"), ProxyOptions.DEFAULT_PROXY_PORT, //$NON-NLS-1$ //$NON-NLS-2$
 			                                            Requirement.equals(this.internalOptions, false), true);
 			req(this.portOptions, map);
 			

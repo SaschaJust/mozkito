@@ -114,7 +114,8 @@ public class DummyEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			addFeature(score, 1.0d, DESCRIPTION, DESCRIPTION, DESCRIPTION, DESCRIPTION, DESCRIPTION, DESCRIPTION);
+			addFeature(score, 1.0d, DummyEngine.DESCRIPTION, DummyEngine.DESCRIPTION, DummyEngine.DESCRIPTION,
+			           DummyEngine.DESCRIPTION, DummyEngine.DESCRIPTION, DummyEngine.DESCRIPTION);
 		} finally {
 			// POSTCONDITIONS
 		}

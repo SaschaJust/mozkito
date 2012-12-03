@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.junit.Test;
+
 import org.mozkito.codeanalysis.utils.JavaElementLocations;
 
 public class JavaElementLocationSetTest {

@@ -13,6 +13,13 @@
 
 package org.mozkito.genealogies;
 
+import net.ownhero.dev.andama.threads.Group;
+import net.ownhero.dev.andama.threads.PostExecutionHook;
+import net.ownhero.dev.andama.threads.ProcessHook;
+import net.ownhero.dev.andama.threads.Sink;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaElementLocation;
@@ -22,13 +29,6 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.JavaMethodRegistry;
 import org.mozkito.versions.elements.ChangeType;
-
-import net.ownhero.dev.andama.threads.Group;
-import net.ownhero.dev.andama.threads.PostExecutionHook;
-import net.ownhero.dev.andama.threads.ProcessHook;
-import net.ownhero.dev.andama.threads.Sink;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class GenealogyDependencyPersister.

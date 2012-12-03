@@ -28,7 +28,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * A factory for creating LTCFormula objects.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LTCFormulaFactory {
@@ -38,10 +38,13 @@ public class LTCFormulaFactory {
 	
 	/**
 	 * Generate formulas.
-	 *
-	 * @param genealogy the genealogy
-	 * @param rootVertex the root vertex
-	 * @param vertexSelector the vertex selector
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param rootVertex
+	 *            the root vertex
+	 * @param vertexSelector
+	 *            the vertex selector
 	 * @return the collection
 	 */
 	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
@@ -72,9 +75,11 @@ public class LTCFormulaFactory {
 	
 	/**
 	 * Generate inner transaction formulas.
-	 *
-	 * @param genealogy the genealogy
-	 * @param rCSTransaction the r cs transaction
+	 * 
+	 * @param genealogy
+	 *            the genealogy
+	 * @param rCSTransaction
+	 *            the r cs transaction
 	 * @return the collection
 	 */
 	@SuppressWarnings ("unchecked")
@@ -96,8 +101,9 @@ public class LTCFormulaFactory {
 	
 	/**
 	 * Register.
-	 *
-	 * @param generator the generator
+	 * 
+	 * @param generator
+	 *            the generator
 	 * @return true, if successful
 	 */
 	public boolean register(final CTLFormulaGenerator<RCSFile> generator) {

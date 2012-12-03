@@ -16,6 +16,22 @@ package causeeffect;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.andama.exceptions.Shutdown;
+import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
+import net.ownhero.dev.hiari.settings.BooleanArgument;
+import net.ownhero.dev.hiari.settings.DoubleArgument;
+import net.ownhero.dev.hiari.settings.LongArgument;
+import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.StringArgument;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.causeeffect.AG_EF_FormulaGenearator;
 import org.mozkito.causeeffect.EF_FormulaGenearator;
 import org.mozkito.causeeffect.EF_and_FormulaGenearator;
@@ -33,22 +49,6 @@ import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
-import net.ownhero.dev.hiari.settings.ArgumentFactory;
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
-import net.ownhero.dev.hiari.settings.BooleanArgument;
-import net.ownhero.dev.hiari.settings.DoubleArgument;
-import net.ownhero.dev.hiari.settings.LongArgument;
-import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.StringArgument;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
-import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kisa.Logger;
-
 /**
  * The Class Main.
  * 
@@ -65,7 +65,8 @@ public class Main {
 	public static void main(final String[] args) {
 		try {
 			final Settings settings = new Settings();
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "codeanalysis");
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "codeanalysis");
 			final PersistenceUtil persistenceUtil = ArgumentSetFactory.create(databaseOptions).getValue();
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);

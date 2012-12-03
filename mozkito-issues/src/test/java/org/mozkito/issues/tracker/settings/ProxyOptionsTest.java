@@ -37,15 +37,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mozkito.issues.tracker.settings.Messages;
-
 
 import scala.actors.threadpool.Arrays;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProxyOptionsTest.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class ProxyOptionsTest {
@@ -63,11 +61,12 @@ public class ProxyOptionsTest {
 	 */
 	@BeforeClass
 	public static void beforeClass() {
-		for (final String key : keys) {
+		for (final String key : ProxyOptionsTest.keys) {
 			assert (System.getProperty(key) == null);
 		}
-		cacheDir = FileUtils.createRandomDir(ProxyOptionsTest.class.getSimpleName(),
-		                                     ProxyOptionsTest.class.getSimpleName(), FileShutdownAction.DELETE);
+		ProxyOptionsTest.cacheDir = FileUtils.createRandomDir(ProxyOptionsTest.class.getSimpleName(),
+		                                                      ProxyOptionsTest.class.getSimpleName(),
+		                                                      FileShutdownAction.DELETE);
 	}
 	
 	/**
@@ -75,13 +74,13 @@ public class ProxyOptionsTest {
 	 */
 	@After
 	public void after() {
-		for (final String key : keys) {
+		for (final String key : ProxyOptionsTest.keys) {
 			if (System.getProperty(key) != null) {
 				System.clearProperty(key);
 			}
 		}
 		try {
-			FileUtils.deleteDirectory(cacheDir);
+			FileUtils.deleteDirectory(ProxyOptionsTest.cacheDir);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +91,7 @@ public class ProxyOptionsTest {
 	 */
 	@Before
 	public void before() {
-		for (final String key : keys) {
+		for (final String key : ProxyOptionsTest.keys) {
 			if (System.getProperty(key) != null) {
 				System.clearProperty(key);
 			}

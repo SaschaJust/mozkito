@@ -15,18 +15,18 @@
  */
 package versions;
 
-import org.mozkito.GraphBuilder;
-import org.mozkito.RepositoryToolchain;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.GraphBuilder;
+import org.mozkito.RepositoryToolchain;
+
 /**
  * The Class Main.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class Main {
@@ -37,8 +37,9 @@ public class Main {
 	
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
+	 * 
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		try {

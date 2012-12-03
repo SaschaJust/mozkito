@@ -71,7 +71,7 @@ public class ReportRegexSelector extends Selector {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, ReportRegexSelector.TAG, ReportRegexSelector.DESCRIPTION, requirements);
 		}
 		
 		/*

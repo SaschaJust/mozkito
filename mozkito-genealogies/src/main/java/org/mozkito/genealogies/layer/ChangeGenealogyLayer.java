@@ -17,15 +17,15 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
-import org.neo4j.graphdb.GraphDatabaseService;
-
 
 /**
  * The Class ChangeGenealogy.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGenealogyLayerNode> {
@@ -114,7 +114,8 @@ public abstract class ChangeGenealogyLayer implements ChangeGenealogy<ChangeGene
 		                  GenealogyEdgeType.DeletedDefinitionOnDefinition);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getCore()
 	 */
 	@Override

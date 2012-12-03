@@ -30,9 +30,6 @@ import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.model.RCSBranch;
 import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.Direction;
@@ -48,6 +45,10 @@ import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.Traversal;
+
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.IRevDependencyGraph;
+import org.mozkito.versions.model.RCSBranch;
 
 /**
  * The Class GitRevDependencyGraph.
@@ -107,7 +108,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		final File dbFile = FileUtils.createRandomDir("moskito", "git_rev_dep_graph", FileShutdownAction.DELETE);
 		this.graph = new EmbeddedGraphDatabase(dbFile.getAbsolutePath());
 		this.indexManager = this.graph.index();
-		this.nodeIndex = this.indexManager.forNodes(NODE_ID);
+		this.nodeIndex = this.indexManager.forNodes(GitRevDependencyGraph.NODE_ID);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			
@@ -138,7 +139,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				return false;
 			}
 			final Transaction tx = this.graph.beginTx();
-			node.setProperty(BRANCH, branchName);
+			node.setProperty(GitRevDependencyGraph.BRANCH, branchName);
 			tx.success();
 			tx.finish();
 			return true;
@@ -225,9 +226,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				tx.finish();
 				return false;
 			}
-			node.setProperty(NODE_ID, v);
+			node.setProperty(GitRevDependencyGraph.NODE_ID, v);
 			
-			this.nodeIndex.add(node, NODE_ID, node.getProperty(NODE_ID));
+			this.nodeIndex.add(node, GitRevDependencyGraph.NODE_ID, node.getProperty(GitRevDependencyGraph.NODE_ID));
 			
 			tx.success();
 			tx.finish();
@@ -237,7 +238,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.IRevDependencyGraph#close()
 	 */
 	@Override
@@ -294,12 +296,12 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 					Logger.debug("Found branch reference: " + branchName);
 				}
 				if (branchName.startsWith("refs/heads/")) {
-					branchName = branchName.substring(REFS_HEAD_LENGTH);
+					branchName = branchName.substring(GitRevDependencyGraph.REFS_HEAD_LENGTH);
 					if ("master".equals(branchName)) {
 						continue;
 					}
 				} else if (branchName.startsWith("refs/remotes/")) {
-					branchName = branchName.substring(REFS_REMOTES_LENGTH);
+					branchName = branchName.substring(GitRevDependencyGraph.REFS_REMOTES_LENGTH);
 					if ("origin/HEAD".equals(branchName)) {
 						continue;
 					}
@@ -307,9 +309,9 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 						branchName = RCSBranch.MASTER_BRANCH_NAME;
 					}
 				} else if (branchName.startsWith("refs/pull/")) {
-					branchName = branchName.substring(REFS_PULL_LENGTH);
+					branchName = branchName.substring(GitRevDependencyGraph.REFS_PULL_LENGTH);
 				} else if (branchName.startsWith("refs/tags/")) {
-					branchName = branchName.substring(REFS_TAGS_LENGTH).replace("^{}", "");
+					branchName = branchName.substring(GitRevDependencyGraph.REFS_TAGS_LENGTH).replace("^{}", "");
 					if (!this.tags.containsKey(lineParts[0])) {
 						this.tags.put(lineParts[0], new HashSet<String>());
 					}
@@ -362,7 +364,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.IRevDependencyGraph#existsPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -400,7 +403,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			String result = null;
 			for (final Relationship relation : relationships) {
 				if (result == null) {
-					result = relation.getStartNode().getProperty(NODE_ID).toString();
+					result = relation.getStartNode().getProperty(GitRevDependencyGraph.NODE_ID).toString();
 				}
 				++counter;
 			}
@@ -414,7 +417,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.IRevDependencyGraph#getBranchTransactions(java.lang.String)
 	 */
 	@Override
@@ -488,7 +492,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			String result = null;
 			for (final Relationship relation : relationships) {
 				if (result == null) {
-					result = relation.getStartNode().getProperty(NODE_ID).toString();
+					result = relation.getStartNode().getProperty(GitRevDependencyGraph.NODE_ID).toString();
 				}
 				++counter;
 			}
@@ -517,7 +521,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			if (Logger.logDebug()) {
 				Logger.debug("Querying for node %s in neo4j graph.", node);
 			}
-			final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, node);
+			final IndexHits<Node> indexHits = this.nodeIndex.query(GitRevDependencyGraph.NODE_ID, node);
 			if (!indexHits.hasNext()) {
 				indexHits.close();
 				return null;
@@ -530,7 +534,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.IRevDependencyGraph#getPreviousTransactions(java.lang.String)
 	 */
 	@Override
@@ -564,8 +569,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 				throw new UnrecoverableError("Requsting branch parent of node not contained by GitRevDependencyGraph.");
 			}
 			final Set<String> resultSet = new HashSet<String>();
-			if (node.hasProperty(TAG)) {
-				final String[] result = (String[]) node.getProperty(TAG);
+			if (node.hasProperty(GitRevDependencyGraph.TAG)) {
+				final String[] result = (String[]) node.getProperty(GitRevDependencyGraph.TAG);
 				for (final String r : result) {
 					resultSet.add(r);
 				}
@@ -576,7 +581,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.IRevDependencyGraph#getVertices()
 	 */
 	@Override
@@ -584,11 +590,11 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 		// PRECONDITIONS
 		
 		try {
-			final IndexHits<Node> indexHits = this.nodeIndex.query(NODE_ID, "*");
+			final IndexHits<Node> indexHits = this.nodeIndex.query(GitRevDependencyGraph.NODE_ID, "*");
 			
 			final Set<String> result = new HashSet<String>();
 			for (final Node node : indexHits) {
-				result.add(node.getProperty(NODE_ID).toString());
+				result.add(node.getProperty(GitRevDependencyGraph.NODE_ID).toString());
 			}
 			indexHits.close();
 			return new Iterable<String>() {
@@ -640,8 +646,8 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			if (node == null) {
 				throw new UnrecoverableError("Requsting branch parent of node not contained by GitRevDependencyGraph.");
 			}
-			if (node.hasProperty(BRANCH)) {
-				return node.getProperty(BRANCH).toString();
+			if (node.hasProperty(GitRevDependencyGraph.BRANCH)) {
+				return node.getProperty(GitRevDependencyGraph.BRANCH).toString();
 			}
 			return null;
 		} finally {
@@ -683,7 +689,7 @@ class GitRevDependencyGraph implements IRevDependencyGraph {
 			return false;
 		}
 		final Transaction tx = this.graph.beginTx();
-		node.setProperty(TAG, tagNames);
+		node.setProperty(GitRevDependencyGraph.TAG, tagNames);
 		tx.success();
 		tx.finish();
 		return true;

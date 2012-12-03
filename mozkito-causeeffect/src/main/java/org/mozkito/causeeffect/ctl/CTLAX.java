@@ -28,8 +28,9 @@ public class CTLAX extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "AX f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with AX.
+	 * 
+	 * @param formula
+	 *            Formula to surround with AX.
 	 * @return the ctlax
 	 */
 	public static CTLAX get(final CTLFormula formula) {

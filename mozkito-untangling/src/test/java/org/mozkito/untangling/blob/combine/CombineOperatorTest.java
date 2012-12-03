@@ -20,10 +20,8 @@ import java.util.Set;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.Test;
-import org.mozkito.untangling.blob.combine.CombineOperator;
-import org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator;
-import org.mozkito.untangling.utils.CollectionUtils;
 
+import org.mozkito.untangling.utils.CollectionUtils;
 
 /**
  * The Class ArtificialBlobGeneratorTest.
@@ -109,8 +107,7 @@ public class CombineOperatorTest {
 		
 		/*
 		 * (non-Javadoc)
-		 * @see org.mozkito.untangling.blob.CombineOperator#canBeCombined(java.lang.Object,
-		 * java.lang.Object)
+		 * @see org.mozkito.untangling.blob.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
 		 */
 		@Override
 		public boolean canBeCombined(final TestObject t1,

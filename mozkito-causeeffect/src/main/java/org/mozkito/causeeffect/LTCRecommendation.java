@@ -30,7 +30,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class LTCRecommendation.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LTCRecommendation {
@@ -41,11 +41,11 @@ public class LTCRecommendation {
 	public enum ChangeProperty {
 		
 		/** The fix. */
-		FIX, 
- /** The bigchange. */
- BIGCHANGE, 
- /** The none. */
- NONE;
+		FIX,
+		/** The bigchange. */
+		BIGCHANGE,
+		/** The none. */
+		NONE;
 	}
 	
 	/** The recommendations. */
@@ -53,9 +53,11 @@ public class LTCRecommendation {
 	
 	/**
 	 * Adds the change.
-	 *
-	 * @param changedFile the changed file
-	 * @param rCSTransaction the r cs transaction
+	 * 
+	 * @param changedFile
+	 *            the changed file
+	 * @param rCSTransaction
+	 *            the r cs transaction
 	 */
 	public static void addChange(final RCSFile changedFile,
 	                             final RCSTransaction rCSTransaction) {
@@ -69,9 +71,11 @@ public class LTCRecommendation {
 	
 	/**
 	 * Gets the recommendation.
-	 *
-	 * @param premise the premise
-	 * @param formula the formula
+	 * 
+	 * @param premise
+	 *            the premise
+	 * @param formula
+	 *            the formula
 	 * @return the recommendation
 	 */
 	public static LTCRecommendation getRecommendation(final RCSFile premise,
@@ -89,9 +93,11 @@ public class LTCRecommendation {
 	
 	/**
 	 * Gets the recommendations.
-	 *
-	 * @param changedFile the changed file
-	 * @param property the property
+	 * 
+	 * @param changedFile
+	 *            the changed file
+	 * @param property
+	 *            the property
 	 * @return the recommendations
 	 */
 	public static SortedSet<LTCRecommendation> getRecommendations(final RCSFile changedFile,
@@ -120,9 +126,11 @@ public class LTCRecommendation {
 	
 	/**
 	 * Instantiates a new lTC recommendation.
-	 *
-	 * @param premise the premise
-	 * @param formula the formula
+	 * 
+	 * @param premise
+	 *            the premise
+	 * @param formula
+	 *            the formula
 	 */
 	@NoneNull
 	private LTCRecommendation(final RCSFile premise, final CTLFormula formula) {
@@ -133,10 +141,13 @@ public class LTCRecommendation {
 	
 	/**
 	 * Adds the support.
-	 *
-	 * @param rCSTransaction the r cs transaction
-	 * @param property the property
-	 * @param expiry the expiry
+	 * 
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param property
+	 *            the property
+	 * @param expiry
+	 *            the expiry
 	 */
 	public void addSupport(final RCSTransaction rCSTransaction,
 	                       final ChangeProperty property,
@@ -168,9 +179,11 @@ public class LTCRecommendation {
 	
 	/**
 	 * File changed.
-	 *
-	 * @param rCSFile the r cs file
-	 * @param rCSTransaction the r cs transaction
+	 * 
+	 * @param rCSFile
+	 *            the r cs file
+	 * @param rCSTransaction
+	 *            the r cs transaction
 	 */
 	public void fileChanged(final RCSFile rCSFile,
 	                        final RCSTransaction rCSTransaction) {
@@ -181,8 +194,9 @@ public class LTCRecommendation {
 	
 	/**
 	 * Gets the confidence.
-	 *
-	 * @param property the property
+	 * 
+	 * @param property
+	 *            the property
 	 * @return the confidence
 	 */
 	public double getConfidence(final ChangeProperty property) {
@@ -194,7 +208,7 @@ public class LTCRecommendation {
 	
 	/**
 	 * Gets the formula.
-	 *
+	 * 
 	 * @return the formula
 	 */
 	public CTLFormula getFormula() {
@@ -203,8 +217,9 @@ public class LTCRecommendation {
 	
 	/**
 	 * Gets the support.
-	 *
-	 * @param property the property
+	 * 
+	 * @param property
+	 *            the property
 	 * @return the support
 	 */
 	public int getSupport(final ChangeProperty property) {

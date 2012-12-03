@@ -27,18 +27,16 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.issues.tracker.bugzilla.BugzillaHistoryParser_4_0_4;
-import org.mozkito.issues.tracker.bugzilla.BugzillaParser;
+
 import org.mozkito.issues.tracker.elements.Priority;
 import org.mozkito.issues.tracker.model.History;
 import org.mozkito.issues.tracker.model.HistoryElement;
 import org.mozkito.persistence.model.Person;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class BugzillaHistoryParser_4_0_4_Test.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class BugzillaHistoryParser_4_0_4_Test {

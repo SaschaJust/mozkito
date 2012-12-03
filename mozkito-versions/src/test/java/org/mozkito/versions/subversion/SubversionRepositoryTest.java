@@ -21,13 +21,14 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.git.GitRepositoryTest;
-
-import difflib.Delta;
 
 // TODO: Auto-generated Javadoc
 /**

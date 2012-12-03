@@ -63,7 +63,7 @@ public class UniqueUsernameEngine extends MergingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return UniqueUsernameEngine.DESCRIPTION;
 	}
 	
 	/*

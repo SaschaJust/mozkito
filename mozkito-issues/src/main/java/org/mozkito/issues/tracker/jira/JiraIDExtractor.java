@@ -50,7 +50,7 @@ public class JiraIDExtractor extends DefaultHandler {
 		if ("item".equals(localName)) {
 			this.inItem = false;
 		} else if ("title".equals(localName) && this.inItem) {
-			final Match groups = idRegex.find(this.content.toString().trim());
+			final Match groups = JiraIDExtractor.idRegex.find(this.content.toString().trim());
 			final Group group = groups.getGroup("bugid");
 			if (group == null) {
 				if (Logger.logError()) {

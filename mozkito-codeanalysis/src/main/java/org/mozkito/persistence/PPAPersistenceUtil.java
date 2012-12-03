@@ -34,13 +34,11 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.persistence.Criteria;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class PPAPersistenceUtil.
@@ -99,8 +97,8 @@ public class PPAPersistenceUtil {
 	}
 	
 	/**
-	 * Gets ChangeOperations for a Transaction but ignore test cases. Test cases are all files that contain the
-	 * string `test` in it's lower case path name. This might not be 100% accurate but is a good approximation.
+	 * Gets ChangeOperations for a Transaction but ignore test cases. Test cases are all files that contain the string
+	 * `test` in it's lower case path name. This might not be 100% accurate but is a good approximation.
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
@@ -296,7 +294,7 @@ public class PPAPersistenceUtil {
 	 *            the persistence util
 	 */
 	private static void updateProcedures(@NotNull final PersistenceUtil persistenceUtil) {
-		if (!updatedQueries) {
+		if (!PPAPersistenceUtil.updatedQueries) {
 			try {
 				BufferedReader reader = new BufferedReader(
 				                                           new InputStreamReader(
@@ -341,7 +339,7 @@ public class PPAPersistenceUtil {
 					        + e.getMessage());
 				}
 			}
-			updatedQueries = true;
+			PPAPersistenceUtil.updatedQueries = true;
 		}
 	}
 }

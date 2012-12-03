@@ -20,13 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class JavaChangeOperationCache.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class JavaChangeOperationCache {
@@ -44,8 +44,9 @@ public class JavaChangeOperationCache {
 		
 		/**
 		 * Instantiates a new java change operation cache entry.
-		 *
-		 * @param operation the operation
+		 * 
+		 * @param operation
+		 *            the operation
 		 */
 		public JavaChangeOperationCacheEntry(final JavaChangeOperation operation) {
 			this.operation = operation;
@@ -63,7 +64,7 @@ public class JavaChangeOperationCache {
 		
 		/**
 		 * Gets the operation.
-		 *
+		 * 
 		 * @return the operation
 		 */
 		public JavaChangeOperation getOperation() {
@@ -73,7 +74,7 @@ public class JavaChangeOperationCache {
 		
 		/**
 		 * Gets the operation id.
-		 *
+		 * 
 		 * @return the operation id
 		 */
 		public long getOperationId() {
@@ -90,8 +91,9 @@ public class JavaChangeOperationCache {
 	
 	/**
 	 * Instantiates a new java change operation cache.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 */
 	public JavaChangeOperationCache(final PersistenceUtil persistenceUtil) {
 		this.persistenceUtil = persistenceUtil;
@@ -99,8 +101,9 @@ public class JavaChangeOperationCache {
 	
 	/**
 	 * Load by id.
-	 *
-	 * @param id the id
+	 * 
+	 * @param id
+	 *            the id
 	 * @return the java change operation
 	 */
 	public JavaChangeOperation loadById(final long id) {

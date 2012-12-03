@@ -48,7 +48,7 @@ public class ByPassFilter extends Filter {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, ByPassFilter.TAG, ByPassFilter.DESCRIPTION, requirements);
 		}
 		
 		/*

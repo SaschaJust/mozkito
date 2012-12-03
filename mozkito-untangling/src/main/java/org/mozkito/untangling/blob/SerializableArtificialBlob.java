@@ -18,10 +18,9 @@ import java.util.Set;
 
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class SerializableArtificialBlob.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class SerializableArtificialBlob implements Serializable {
@@ -34,8 +33,9 @@ public class SerializableArtificialBlob implements Serializable {
 	
 	/**
 	 * Instantiates a new serializable artificial blob.
-	 *
-	 * @param blob the blob
+	 * 
+	 * @param blob
+	 *            the blob
 	 */
 	public SerializableArtificialBlob(final ArtificialBlob blob) {
 		for (final ChangeSet changeSet : blob.getAtomicTransactions()) {
@@ -45,8 +45,9 @@ public class SerializableArtificialBlob implements Serializable {
 	
 	/**
 	 * Unserialize.
-	 *
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return the artificial blob
 	 */
 	public ArtificialBlob unserialize(final PersistenceUtil persistenceUtil) {

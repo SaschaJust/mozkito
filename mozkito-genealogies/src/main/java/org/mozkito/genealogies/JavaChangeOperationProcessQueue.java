@@ -17,13 +17,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
-
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kisa.Logger;
 
 /**
  * The Class JavaChangeOperationProcessQueue.
@@ -36,17 +36,17 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 	protected static enum IteratorMode {
 		
 		/** The dd. */
-		DD, 
- /** The md. */
- MD, 
- /** The ad. */
- AD, 
- /** The dc. */
- DC, 
- /** The mc. */
- MC, 
- /** The ac. */
- AC;
+		DD,
+		/** The md. */
+		MD,
+		/** The ad. */
+		AD,
+		/** The dc. */
+		DC,
+		/** The mc. */
+		MC,
+		/** The ac. */
+		AC;
 	}
 	
 	/** The deleted definitions. */
@@ -82,8 +82,9 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 	
 	/**
 	 * Adds the.
-	 *
-	 * @param operation the operation
+	 * 
+	 * @param operation
+	 *            the operation
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -141,7 +142,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		return false;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
@@ -181,7 +183,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		return hasNext();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -189,7 +192,8 @@ public class JavaChangeOperationProcessQueue implements Iterator<JavaChangeOpera
 		return this.iterator.next();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override

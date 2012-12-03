@@ -79,7 +79,7 @@ public class Bugs extends Chain<Settings> {
 			                                                settings.getRoot(),
 			                                                "cacheSize",
 			                                                "determines the cache size (number of logs) that are prefetched during reading",
-			                                                DEFAULT_CACHE_SIZE, Requirement.required));
+			                                                Bugs.DEFAULT_CACHE_SIZE, Requirement.required));
 			Logger.always(settings.toString());
 		} catch (final ArgumentRegistrationException e) {
 			if (Logger.logError()) {

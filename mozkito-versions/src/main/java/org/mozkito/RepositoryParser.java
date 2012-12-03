@@ -36,8 +36,9 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced.
- *
+ * 
  * {@link RCSTransaction} in the output storage.
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {

@@ -65,7 +65,7 @@ public class UniqueEmailEngine extends MergingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return UniqueEmailEngine.DESCRIPTION;
 	}
 	
 	/*

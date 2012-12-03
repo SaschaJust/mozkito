@@ -16,17 +16,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import org.mozkito.genealogies.core.CoreChangeGenealogy;
 
 /**
  * The Class Neo4jRootCache.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Neo4jRootCache implements Iterable<Node> {
@@ -42,8 +42,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	
 	/**
 	 * Instantiates a new neo4j root cache.
-	 *
-	 * @param graph the graph
+	 * 
+	 * @param graph
+	 *            the graph
 	 */
 	public Neo4jRootCache(final GraphDatabaseService graph) {
 		this.graph = graph;
@@ -57,8 +58,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	
 	/**
 	 * Adds the.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 */
 	public void add(final Node node) {
 		this.rootIndex.add(node, CoreChangeGenealogy.ROOT_VERTICES, 1);
@@ -67,8 +69,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	
 	/**
 	 * Checks if is root.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 * @return true, if is root
 	 */
 	public boolean isRoot(final Node node) {
@@ -98,8 +101,9 @@ public class Neo4jRootCache implements Iterable<Node> {
 	
 	/**
 	 * Removes the.
-	 *
-	 * @param node the node
+	 * 
+	 * @param node
+	 *            the node
 	 */
 	public void remove(final Node node) {
 		final Transaction tx2 = this.graph.beginTx();

@@ -65,7 +65,7 @@ public class TransactionRegexSelector extends Selector {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, TransactionRegexSelector.TAG, TransactionRegexSelector.DESCRIPTION, requirements);
 		}
 		
 		/*

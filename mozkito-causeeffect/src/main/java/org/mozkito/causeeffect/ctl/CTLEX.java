@@ -28,8 +28,9 @@ public class CTLEX extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "EX f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with EX.
+	 * 
+	 * @param formula
+	 *            Formula to surround with EX.
 	 * @return the ctlex
 	 */
 	public static CTLEX get(final CTLFormula formula) {

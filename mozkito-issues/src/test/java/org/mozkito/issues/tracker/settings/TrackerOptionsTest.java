@@ -27,15 +27,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mozkito.issues.tracker.settings.TrackerOptions;
-
 
 import scala.actors.threadpool.Arrays;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class TrackerOptionsTest.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class TrackerOptionsTest {
@@ -51,7 +49,7 @@ public class TrackerOptionsTest {
 	 */
 	@BeforeClass
 	public static void beforeClass() {
-		for (final String key : keys) {
+		for (final String key : TrackerOptionsTest.keys) {
 			assert (System.getProperty(key) == null);
 		}
 	}
@@ -82,8 +80,9 @@ public class TrackerOptionsTest {
 	
 	/**
 	 * Test.
-	 *
-	 * @throws ArgumentRegistrationException the argument registration exception
+	 * 
+	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	@Test (expected = ArgumentRegistrationException.class)
 	public void test() throws ArgumentRegistrationException {

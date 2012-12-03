@@ -19,11 +19,11 @@ import java.util.Set;
 
 import javax.persistence.Id;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 /**
  * The Class MethodChangeCoupling.

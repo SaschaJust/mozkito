@@ -69,7 +69,7 @@ public abstract class Splitter extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Splitter.TAG, Splitter.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -85,7 +85,6 @@ public abstract class Splitter extends Node {
 			try {
 				
 				final SetArgument argument = getSettings().getArgument(this.enabledSplittersOption);
-				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {

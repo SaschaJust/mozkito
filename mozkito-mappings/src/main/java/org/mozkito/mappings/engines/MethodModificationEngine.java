@@ -75,7 +75,7 @@ public class MethodModificationEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, MethodModificationEngine.TAG, MethodModificationEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

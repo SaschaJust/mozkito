@@ -28,8 +28,9 @@ public class CTLNegation extends CTLComposedFormula {
 	
 	/**
 	 * Returns a negation of a given CTL formula.
-	 *
-	 * @param formula Formula to create negation of.
+	 * 
+	 * @param formula
+	 *            Formula to create negation of.
 	 * @return the cTL negation
 	 */
 	public static CTLNegation get(final CTLFormula formula) {

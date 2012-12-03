@@ -49,7 +49,7 @@ public class TotalAggreementStrategy extends Strategy {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, TotalAggreementStrategy.TAG, TotalAggreementStrategy.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -91,7 +91,7 @@ public class TotalAggreementStrategy extends Strategy {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return TotalAggreementStrategy.DESCRIPTION;
 	}
 	
 	/*

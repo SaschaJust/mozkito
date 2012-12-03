@@ -27,7 +27,6 @@ import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
 import org.mozkito.persistence.PersistenceUtil;
 
-
 /**
  * The Class PartitionChangeGenealogy.
  * 
@@ -40,9 +39,11 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/**
 	 * Instantiates a new partition change genealogy.
-	 *
-	 * @param coreGenealogy the core genealogy
-	 * @param partitionGenerator the partition generator
+	 * 
+	 * @param coreGenealogy
+	 *            the core genealogy
+	 * @param partitionGenerator
+	 *            the partition generator
 	 */
 	public PartitionChangeGenealogy(
 	        final CoreChangeGenealogy coreGenealogy,
@@ -53,10 +54,13 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/**
 	 * Instantiates a new partition change genealogy.
-	 *
-	 * @param graphDBDir the graph db dir
-	 * @param persistenceUtil the persistence util
-	 * @param partitionGenerator the partition generator
+	 * 
+	 * @param graphDBDir
+	 *            the graph db dir
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @param partitionGenerator
+	 *            the partition generator
 	 */
 	public PartitionChangeGenealogy(
 	        final File graphDBDir,
@@ -68,8 +72,9 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/**
 	 * Builds the partitions.
-	 *
-	 * @param input the input
+	 * 
+	 * @param input
+	 *            the input
 	 * @return the collection
 	 */
 	public Collection<ChangeGenealogyLayerNode> buildPartitions(final Collection<JavaChangeOperation> input) {
@@ -78,8 +83,7 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#containsEdge (java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.genealogies.layer.ChangeGenealogy#containsEdge (java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public boolean containsEdge(final ChangeGenealogyLayerNode from,
@@ -149,8 +153,9 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 	
 	/**
 	 * Gets the node id.
-	 *
-	 * @param t the t
+	 * 
+	 * @param t
+	 *            the t
 	 * @return the node id
 	 * @deprecated You can call <code>ChangeGenealogyLayerNode.getNodeId()</code> directly.
 	 */
@@ -178,7 +183,8 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return buildPartitions(result);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
 	 */
 	@Override
@@ -198,7 +204,8 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return roots;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
 	 */
 	@Override
@@ -206,8 +213,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return inDegree(node, GenealogyEdgeType.values());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int inDegree(final ChangeGenealogyLayerNode node,
@@ -219,7 +228,8 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return numEdges;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
 	 */
 	@Override
@@ -227,8 +237,10 @@ public class PartitionChangeGenealogy extends ChangeGenealogyLayer {
 		return outDegree(node, GenealogyEdgeType.values());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object, org.mozkito.genealogies.core.GenealogyEdgeType[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object,
+	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
 	public int outDegree(final ChangeGenealogyLayerNode node,

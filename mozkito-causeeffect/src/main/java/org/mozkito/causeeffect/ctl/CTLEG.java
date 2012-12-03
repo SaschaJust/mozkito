@@ -28,8 +28,9 @@ public class CTLEG extends CTLComposedFormula {
 	
 	/**
 	 * Returns an "EG f" formula from a given "f" formula.
-	 *
-	 * @param formula Formula to surround with EG.
+	 * 
+	 * @param formula
+	 *            Formula to surround with EG.
 	 * @return the ctleg
 	 */
 	public static CTLEG get(final CTLFormula formula) {

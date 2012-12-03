@@ -15,26 +15,27 @@ package org.mozkito.untangling.voters;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * A factory for creating MultilevelClusteringScoreVisitor objects.
- *
- * @param <T> the generic type
+ * 
+ * @param <T>
+ *            the generic type
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public abstract class MultilevelClusteringScoreVisitorFactory<T extends MultilevelClusteringScoreVisitor<?>> {
 	
 	/**
 	 * Creates a new MultilevelClusteringScoreVisitor object.
-	 *
-	 * @param rCSTransaction the r cs transaction
+	 * 
+	 * @param rCSTransaction
+	 *            the r cs transaction
 	 * @return the t
 	 */
 	public abstract T createVoter(final RCSTransaction rCSTransaction);
 	
 	/**
 	 * Gets the voter name.
-	 *
+	 * 
 	 * @return the voter name
 	 */
 	public abstract String getVoterName();

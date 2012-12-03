@@ -24,14 +24,14 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.versions.model.RCSTransaction;
 
-
 /**
  * The Class TransactionPartitioner.
  */
 public class TransactionPartitioner implements
         PartitionGenerator<Collection<JavaChangeOperation>, Collection<PartitionChangeGenealogyNode>> {
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.genealogies.PartitionGenerator#partition(java.lang.Object)
 	 */
 	@Override

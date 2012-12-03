@@ -48,7 +48,7 @@ public class PatchEngine extends Engine {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, PatchEngine.DESCRIPTION, requirements);
+			super(argumentSet, PatchEngine.TAG, PatchEngine.DESCRIPTION, requirements);
 		}
 		
 		/*

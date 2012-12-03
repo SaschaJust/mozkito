@@ -16,9 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-
 
 /**
  * The Class CallGraphHandler.
@@ -49,8 +49,7 @@ public class FileDistanceVoter implements MultilevelClusteringScoreVisitor<JavaC
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,

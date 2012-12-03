@@ -22,21 +22,24 @@ import java.util.Set;
 
 import org.mozkito.untangling.blob.combine.CombineOperator;
 
-
 /**
  * The Class CollectionUtils.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class CollectionUtils {
 	
 	/**
 	 * Gets the all combinations.
-	 *
-	 * @param <T> the generic type
-	 * @param elements the elements
-	 * @param operator the operator
-	 * @param maxBlobSize the max blob size
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param elements
+	 *            the elements
+	 * @param operator
+	 *            the operator
+	 * @param maxBlobSize
+	 *            the max blob size
 	 * @return the all combinations
 	 */
 	@SuppressWarnings ("unchecked")

@@ -15,9 +15,11 @@ package org.mozkito.causeeffect.kripke;
 
 /**
  * The Class Tuple.
- *
- * @param <A> the generic type
- * @param <B> the generic type
+ * 
+ * @param <A>
+ *            the generic type
+ * @param <B>
+ *            the generic type
  */
 public class Tuple<A, B> {
 	
@@ -29,16 +31,19 @@ public class Tuple<A, B> {
 	
 	/**
 	 * Instantiates a new tuple.
-	 *
-	 * @param first the first
-	 * @param second the second
+	 * 
+	 * @param first
+	 *            the first
+	 * @param second
+	 *            the second
 	 */
 	public Tuple(final A first, final B second) {
 		this.first = first;
 		this.second = second;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@SuppressWarnings ("rawtypes")
@@ -71,7 +76,8 @@ public class Tuple<A, B> {
 		return true;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

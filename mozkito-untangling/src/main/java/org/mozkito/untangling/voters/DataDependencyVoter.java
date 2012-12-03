@@ -27,14 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
@@ -50,6 +42,14 @@ import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.clustering.MultilevelClustering;
+import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
+import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class CallGraphHandler.
@@ -76,10 +76,13 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		/**
 		 * Instantiates a new factory.
-		 *
-		 * @param eclipseDir the eclipse dir
-		 * @param repository the repository
-		 * @param cacheDir the cache dir
+		 * 
+		 * @param eclipseDir
+		 *            the eclipse dir
+		 * @param repository
+		 *            the repository
+		 * @param cacheDir
+		 *            the cache dir
 		 */
 		protected Factory(@NotNull final File eclipseDir, @NotNull final Repository repository, final File cacheDir) {
 			this.eclipseDir = eclipseDir;
@@ -87,8 +90,11 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			this.cacheDir = cacheDir;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
+		 * .RCSTransaction)
 		 */
 		@Override
 		public DataDependencyVoter createVoter(final RCSTransaction rCSTransaction) {
@@ -129,10 +135,13 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
-		 * @param repositoryOptions the repository options
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 * @param repositoryOptions
+		 *            the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {
@@ -276,8 +285,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor #getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op1,

@@ -43,8 +43,8 @@ public class URIUtilsTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
-			originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
+			URIUtilsTest.originalUser = new URI("http://user@www.st.cs.uni-saarland.de");
+			URIUtilsTest.originalNoUser = new URI("http://www.st.cs.uni-saarland.de");
 		} catch (final URISyntaxException e) {
 			fail();
 		}
@@ -56,16 +56,16 @@ public class URIUtilsTest {
 	 */
 	@Test
 	public void testDifferentUsername() {
-		final URI encoded = URIUtils.encodeUsername(originalUser, "kim");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
+		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "kim");
+		assertFalse(encoded.equals(URIUtilsTest.originalUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
-		assertEquals(originalUser.getScheme(), encoded.getScheme());
-		assertEquals(originalUser.getPath(), encoded.getPath());
-		assertEquals(originalUser.getQuery(), encoded.getQuery());
-		assertEquals(originalUser.getFragment(), encoded.getFragment());
-		assertEquals(originalUser.getHost(), encoded.getHost());
-		assertEquals(originalUser.getPort(), encoded.getPort());
+		assertEquals(URIUtilsTest.originalUser.getScheme(), encoded.getScheme());
+		assertEquals(URIUtilsTest.originalUser.getPath(), encoded.getPath());
+		assertEquals(URIUtilsTest.originalUser.getQuery(), encoded.getQuery());
+		assertEquals(URIUtilsTest.originalUser.getFragment(), encoded.getFragment());
+		assertEquals(URIUtilsTest.originalUser.getHost(), encoded.getHost());
+		assertEquals(URIUtilsTest.originalUser.getPort(), encoded.getPort());
 	}
 	
 	/**
@@ -73,16 +73,16 @@ public class URIUtilsTest {
 	 */
 	@Test
 	public void testEmptyUsername() {
-		final URI encoded = URIUtils.encodeUsername(originalUser, "");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
+		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "");
+		assertFalse(encoded.equals(URIUtilsTest.originalUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("", encoded.getUserInfo());
-		assertEquals(originalUser.getScheme(), encoded.getScheme());
-		assertEquals(originalUser.getPath(), encoded.getPath());
-		assertEquals(originalUser.getQuery(), encoded.getQuery());
-		assertEquals(originalUser.getFragment(), encoded.getFragment());
-		assertEquals(originalUser.getHost(), encoded.getHost());
-		assertEquals(originalUser.getPort(), encoded.getPort());
+		assertEquals(URIUtilsTest.originalUser.getScheme(), encoded.getScheme());
+		assertEquals(URIUtilsTest.originalUser.getPath(), encoded.getPath());
+		assertEquals(URIUtilsTest.originalUser.getQuery(), encoded.getQuery());
+		assertEquals(URIUtilsTest.originalUser.getFragment(), encoded.getFragment());
+		assertEquals(URIUtilsTest.originalUser.getHost(), encoded.getHost());
+		assertEquals(URIUtilsTest.originalUser.getPort(), encoded.getPort());
 	}
 	
 	/**
@@ -90,16 +90,16 @@ public class URIUtilsTest {
 	 */
 	@Test
 	public void testNoUsername() {
-		final URI encoded = URIUtils.encodeUsername(originalNoUser, "kim");
-		assertFalse(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
+		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalNoUser, "kim");
+		assertFalse(encoded.equals(URIUtilsTest.originalUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
-		assertEquals(originalNoUser.getScheme(), encoded.getScheme());
-		assertEquals(originalNoUser.getPath(), encoded.getPath());
-		assertEquals(originalNoUser.getQuery(), encoded.getQuery());
-		assertEquals(originalNoUser.getFragment(), encoded.getFragment());
-		assertEquals(originalNoUser.getHost(), encoded.getHost());
-		assertEquals(originalNoUser.getPort(), encoded.getPort());
+		assertEquals(URIUtilsTest.originalNoUser.getScheme(), encoded.getScheme());
+		assertEquals(URIUtilsTest.originalNoUser.getPath(), encoded.getPath());
+		assertEquals(URIUtilsTest.originalNoUser.getQuery(), encoded.getQuery());
+		assertEquals(URIUtilsTest.originalNoUser.getFragment(), encoded.getFragment());
+		assertEquals(URIUtilsTest.originalNoUser.getHost(), encoded.getHost());
+		assertEquals(URIUtilsTest.originalNoUser.getPort(), encoded.getPort());
 	}
 	
 	/**
@@ -107,13 +107,13 @@ public class URIUtilsTest {
 	 */
 	@Test
 	public void testNullUsername() {
-		URI encoded = URIUtils.encodeUsername(originalNoUser, null);
-		assertTrue(encoded.equals(originalNoUser));
-		assertFalse(encoded.equals(originalUser));
+		URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalNoUser, null);
+		assertTrue(encoded.equals(URIUtilsTest.originalNoUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalUser));
 		
-		encoded = URIUtils.encodeUsername(originalUser, null);
-		assertTrue(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
+		encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, null);
+		assertTrue(encoded.equals(URIUtilsTest.originalUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
 	/**
@@ -121,9 +121,9 @@ public class URIUtilsTest {
 	 */
 	@Test
 	public void testSameUsername() {
-		final URI encoded = URIUtils.encodeUsername(originalUser, "user");
-		assertTrue(encoded.equals(originalUser));
-		assertFalse(encoded.equals(originalNoUser));
+		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "user");
+		assertTrue(encoded.equals(URIUtilsTest.originalUser));
+		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
 	/**

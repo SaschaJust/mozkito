@@ -14,6 +14,7 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 
@@ -47,10 +48,10 @@ public class GitRevDependencyGraphTest {
 			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
 				fail();
 			}
-			branchFactory = new BranchFactory(null);
-			repo = new GitRepository();
-			repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
-			           branchFactory, null, "master");
+			GitRevDependencyGraphTest.branchFactory = new BranchFactory(null);
+			GitRevDependencyGraphTest.repo = new GitRepository();
+			GitRevDependencyGraphTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath()
+			        + FileUtils.fileSeparator + "testGit"), GitRevDependencyGraphTest.branchFactory, null, "master");
 		} catch (final Exception e) {
 			fail();
 		}
@@ -240,7 +241,7 @@ public class GitRevDependencyGraphTest {
 	 */
 	@Test
 	public void test() {
-		final IRevDependencyGraph graph = repo.getRevDependencyGraph();
+		final IRevDependencyGraph graph = GitRevDependencyGraphTest.repo.getRevDependencyGraph();
 		
 		String hash = "e52def97ebc1f78c9286b1e7c36783aa67604439";
 		assertTrue(graph.hasVertex(hash));

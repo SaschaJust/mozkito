@@ -31,13 +31,13 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.Days;
+
 import org.mozkito.genealogies.ChangeOperationReader.Options;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.model.RCSTransaction;
-
 
 /**
  * The Class GenealogyToolChain.
@@ -61,8 +61,9 @@ public class GenealogyToolChain extends Chain<Settings> {
 	
 	/**
 	 * Instantiates a new genealogy tool chain.
-	 *
-	 * @param settings the settings
+	 * 
+	 * @param settings
+	 *            the settings
 	 */
 	public GenealogyToolChain(final Settings settings) {
 		super(settings);
@@ -82,7 +83,8 @@ public class GenealogyToolChain extends Chain<Settings> {
 			                                                   "Set to FALSE if you want to include test cases into the genealogy graph.",
 			                                                   true, Requirement.required));
 			
-			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required, "codeanalysis");
+			final DatabaseOptions databaseOptions = new DatabaseOptions(settings.getRoot(), Requirement.required,
+			                                                            "codeanalysis");
 			ArgumentSetFactory.create(databaseOptions);
 			final GenealogyOptions genealogyOptions = new GenealogyOptions(settings.getRoot(), Requirement.required,
 			                                                               databaseOptions);
@@ -107,7 +109,8 @@ public class GenealogyToolChain extends Chain<Settings> {
 		
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see net.ownhero.dev.andama.model.Chain#setup()
 	 */
 	@Override

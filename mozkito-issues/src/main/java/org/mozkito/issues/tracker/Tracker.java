@@ -48,14 +48,14 @@ import org.mozkito.persistence.model.Person;
 public abstract class Tracker {
 	
 	/** The type. */
-	protected final TrackerType       type          = TrackerType.valueOf(this.getClass()
-	                                                                          .getSimpleName()
-	                                                                          .substring(0,
-	                                                                                     this.getClass()
-	                                                                                         .getSimpleName().length()
-	                                                                                             - Tracker.class.getSimpleName()
-	                                                                                                            .length())
-	                                                                          .toUpperCase());
+	protected final TrackerType       type           = TrackerType.valueOf(this.getClass()
+	                                                                           .getSimpleName()
+	                                                                           .substring(0,
+	                                                                                      this.getClass()
+	                                                                                          .getSimpleName().length()
+	                                                                                              - Tracker.class.getSimpleName()
+	                                                                                                             .length())
+	                                                                           .toUpperCase());
 	
 	/** The tracker uri. */
 	protected URI                     trackerURI;
@@ -67,14 +67,14 @@ public abstract class Tracker {
 	private String                    password;
 	
 	/** The report links. */
-	private BlockingQueue<ReportLink> reportLinks   = new LinkedBlockingQueue<ReportLink>();
+	private BlockingQueue<ReportLink> reportLinks    = new LinkedBlockingQueue<ReportLink>();
 	
 	/** The proxy config. */
 	private ProxyConfig               proxyConfig;
 	
 	/** The Constant unknownPerson. */
 	public static final Person        UNKNOWN_PERSON = new Person("<unknown>", null, null);    //$NON-NLS-1$
-	                                                                                           
+	                                                                                            
 	/**
 	 * Instantiates a new tracker.
 	 */

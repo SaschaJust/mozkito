@@ -20,13 +20,6 @@ import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.changeimpact.ImpactMatrix;
-import org.mozkito.clustering.MultilevelClustering;
-import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.settings.RepositoryOptions;
-import org.mozkito.versions.model.RCSTransaction;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
@@ -35,6 +28,13 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+
+import org.mozkito.changeimpact.ImpactMatrix;
+import org.mozkito.clustering.MultilevelClustering;
+import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.settings.RepositoryOptions;
+import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class TestImpactVoter.
@@ -53,15 +53,19 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		
 		/**
 		 * Instantiates a new factory.
-		 *
-		 * @param testCoverageIn the test coverage in
+		 * 
+		 * @param testCoverageIn
+		 *            the test coverage in
 		 */
 		protected Factory(final File testCoverageIn) {
 			this.testCoverageIn = testCoverageIn;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model.RCSTransaction)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
+		 * .RCSTransaction)
 		 */
 		@Override
 		public TestImpactVoter createVoter(final RCSTransaction rCSTransaction) {
@@ -96,10 +100,13 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		
 		/**
 		 * Instantiates a new options.
-		 *
-		 * @param argumentSet the argument set
-		 * @param requirements the requirements
-		 * @param repositoryOptions the repository options
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param requirements
+		 *            the requirements
+		 * @param repositoryOptions
+		 *            the repository options
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 		        final RepositoryOptions repositoryOptions) {
@@ -143,8 +150,9 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	
 	/**
 	 * Instantiates a new test impact voter.
-	 *
-	 * @param testCoverageIn the test coverage in
+	 * 
+	 * @param testCoverageIn
+	 *            the test coverage in
 	 */
 	public TestImpactVoter(final File testCoverageIn) {
 		try (final ObjectInputStream in = new ObjectInputStream(new FileInputStream(testCoverageIn));) {
@@ -174,8 +182,7 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getScore(java.lang.Object,
-	 * java.lang.Object)
+	 * @see org.mozkito.clustering.MultilevelClusteringScoreVisitor#getScore(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public double getScore(final JavaChangeOperation op0,

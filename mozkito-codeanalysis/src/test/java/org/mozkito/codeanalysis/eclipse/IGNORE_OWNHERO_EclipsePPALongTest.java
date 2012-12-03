@@ -54,7 +54,7 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	@AfterClass
 	public static void afterClass() {
 		try {
-			FileUtils.deleteDirectory(tmpDir);
+			FileUtils.deleteDirectory(IGNORE_OWNHERO_EclipsePPALongTest.tmpDir);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -64,39 +64,48 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	public static void beforeClass() {
 		
 		if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-			mac = true;
+			IGNORE_OWNHERO_EclipsePPALongTest.mac = true;
 		}
 		
 		try {
-			repoZip = new File(
-			                   IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                               + "reposuite_28_01_2011.git.zip")
-			                                                          .toURI());
-			compXML = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                               + "ppa_comp.xml").toURI());
-			compXML2 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                                + "ppa_comp_2.xml").toURI());
-			compXML2_altern = new File(
-			                           IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                                       + "ppa_comp_2_altern.xml")
-			                                                                  .toURI());
-			compXML3 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                                + "ppa_comp_3.xml").toURI());
-			compXML4 = new File(IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
-			                                                                                + "ppa_comp_4.xml").toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.repoZip = new File(
+			                                                     IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                 + "reposuite_28_01_2011.git.zip")
+			                                                                                            .toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.compXML = new File(
+			                                                     IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                 + "ppa_comp.xml")
+			                                                                                            .toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.compXML2 = new File(
+			                                                      IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                  + "ppa_comp_2.xml")
+			                                                                                             .toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.compXML2_altern = new File(
+			                                                             IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                         + "ppa_comp_2_altern.xml")
+			                                                                                                    .toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.compXML3 = new File(
+			                                                      IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                  + "ppa_comp_3.xml")
+			                                                                                             .toURI());
+			IGNORE_OWNHERO_EclipsePPALongTest.compXML4 = new File(
+			                                                      IGNORE_OWNHERO_EclipsePPALongTest.class.getResource(FileUtils.fileSeparator
+			                                                                                                                  + "ppa_comp_4.xml")
+			                                                                                             .toURI());
 		} catch (final URISyntaxException e) {
 			e.printStackTrace();
 			fail();
 		}
-		repoZip.getParentFile();
-		final File reposuiteBaseDir = repoZip.getParentFile().getParentFile().getParentFile().getParentFile();
+		IGNORE_OWNHERO_EclipsePPALongTest.repoZip.getParentFile();
+		final File reposuiteBaseDir = IGNORE_OWNHERO_EclipsePPALongTest.repoZip.getParentFile().getParentFile()
+		                                                                       .getParentFile().getParentFile();
 		
 		final StringBuilder eclipsePath = new StringBuilder();
 		eclipsePath.append(reposuiteBaseDir.getAbsolutePath());
 		eclipsePath.append(FileUtils.fileSeparator);
 		eclipsePath.append("eclipse-apps");
 		eclipsePath.append(FileUtils.fileSeparator);
-		if (mac) {
+		if (IGNORE_OWNHERO_EclipsePPALongTest.mac) {
 			eclipsePath.append("mac");
 		} else {
 			eclipsePath.append("linux");
@@ -112,13 +121,14 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 		}
 		
 		// unzip the eclipse app to tmp-directory
-		tmpDir = FileUtils.createRandomDir("reposuite_ppa_test", "", FileShutdownAction.DELETE);
-		FileUtils.unzip(eclipseFile, tmpDir);
+		IGNORE_OWNHERO_EclipsePPALongTest.tmpDir = FileUtils.createRandomDir("reposuite_ppa_test", "",
+		                                                                     FileShutdownAction.DELETE);
+		FileUtils.unzip(eclipseFile, IGNORE_OWNHERO_EclipsePPALongTest.tmpDir);
 		
 		final StringBuilder eclipseBinDirPath = new StringBuilder();
-		eclipseBinDirPath.append(tmpDir.getAbsolutePath());
+		eclipseBinDirPath.append(IGNORE_OWNHERO_EclipsePPALongTest.tmpDir.getAbsolutePath());
 		eclipseBinDirPath.append(FileUtils.fileSeparator);
-		if (mac) {
+		if (IGNORE_OWNHERO_EclipsePPALongTest.mac) {
 			eclipseBinDirPath.append("eclipse");
 			eclipseBinDirPath.append(FileUtils.fileSeparator);
 			eclipseBinDirPath.append("Eclipse.app");
@@ -132,25 +142,26 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 			eclipseBinDirPath.append(FileUtils.fileSeparator);
 		}
 		
-		eclipseBinDir = new File(eclipseBinDirPath.toString());
+		IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir = new File(eclipseBinDirPath.toString());
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("chmod",
 		                                                                      new String[] { "+x", "eclipse" },
-		                                                                      eclipseBinDir, null, null);
+		                                                                      IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir,
+		                                                                      null, null);
 		
 		if (response.getFirst() != 0) {
 			if (Logger.logError()) {
-				Logger.error("Could not make eclipse executable in dir `" + eclipseBinDir.getAbsolutePath()
-				        + "` with arguments. Abort");
+				Logger.error("Could not make eclipse executable in dir `"
+				        + IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir.getAbsolutePath() + "` with arguments. Abort");
 			}
 			fail();
 		}
 		
 		final File repoDir = FileUtils.createRandomDir("reposuite_ppa_test", "repo", FileShutdownAction.DELETE);
-		FileUtils.unzip(repoZip, repoDir);
+		FileUtils.unzip(IGNORE_OWNHERO_EclipsePPALongTest.repoZip, repoDir);
 		final String repoPath = repoDir.getAbsolutePath() + FileUtils.fileSeparator + "reposuite_28_01_2011.git";
 		
-		BASIC_VMARGS += " -Drepository.uri=" + repoPath;
+		IGNORE_OWNHERO_EclipsePPALongTest.BASIC_VMARGS += " -Drepository.uri=" + repoPath;
 		
 	}
 	
@@ -174,12 +185,18 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	}
 	
 	private static Tuple<Integer, List<String>> runEclipse(final String[] args) {
-		CommandExecutor.execute("chmod", new String[] { "+x", "eclipse" }, eclipseBinDir, null, null);
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute(eclipseBinDir + FileUtils.fileSeparator
-		        + "eclipse", args, eclipseBinDir, null, null);
+		CommandExecutor.execute("chmod", new String[] { "+x", "eclipse" },
+		                        IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir, null, null);
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute(IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir
+		                                                                              + FileUtils.fileSeparator
+		                                                                              + "eclipse",
+		                                                                      args,
+		                                                                      IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir,
+		                                                                      null, null);
 		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not execute eclipse in directory `" + eclipseBinDir.getAbsolutePath()
-			        + "` with arguments `" + StringUtils.join(args, " ") + "`. Abort");
+			throw new UnrecoverableError("Could not execute eclipse in directory `"
+			        + IGNORE_OWNHERO_EclipsePPALongTest.eclipseBinDir.getAbsolutePath() + "` with arguments `"
+			        + StringUtils.join(args, " ") + "`. Abort");
 		}
 		return response;
 	}
@@ -187,11 +204,11 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	@Test
 	@Ignore
 	public void testEclipseApp1() {
-		final String VMARGS = BASIC_VMARGS
+		final String VMARGS = IGNORE_OWNHERO_EclipsePPALongTest.BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/codeanalysis.xml -DtestCaseTransactions=f99a3ff4615653855c254874f3d4fe0d084f34d2";
 		runEclipse(VMARGS.split(" "));
 		final File tmpFile = new File("/tmp/codeanalysis.xml");
-		assertTrue(compareXML(compXML, tmpFile));
+		assertTrue(compareXML(IGNORE_OWNHERO_EclipsePPALongTest.compXML, tmpFile));
 		tmpFile.delete();
 	}
 	
@@ -211,22 +228,22 @@ public class IGNORE_OWNHERO_EclipsePPALongTest {
 	@Test
 	@Ignore
 	public void testEclipseApp3() {
-		final String VMARGS = BASIC_VMARGS
+		final String VMARGS = IGNORE_OWNHERO_EclipsePPALongTest.BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa3.xml -DtestCaseTransactions=0309f53f798d178aaf519333755c0f62500fcca9";
 		runEclipse(VMARGS.split(" "));
 		final File tmpFile = new File("/tmp/ppa3.xml");
-		assertTrue(compareXML(compXML3, tmpFile));
+		assertTrue(compareXML(IGNORE_OWNHERO_EclipsePPALongTest.compXML3, tmpFile));
 		tmpFile.delete();
 	}
 	
 	@Test
 	@Ignore
 	public void testEclipseApp4() {
-		final String VMARGS = BASIC_VMARGS
+		final String VMARGS = IGNORE_OWNHERO_EclipsePPALongTest.BASIC_VMARGS
 		        + " -Doutput.xml=/tmp/ppa4.xml -DtestCaseTransactions=ff1ba504345e9df2b9feb0c678779945017236cc";
 		runEclipse(VMARGS.split(" "));
 		final File tmpFile = new File("/tmp/ppa4.xml");
-		assertTrue(compareXML(compXML4, tmpFile));
+		assertTrue(compareXML(IGNORE_OWNHERO_EclipsePPALongTest.compXML4, tmpFile));
 		tmpFile.delete();
 	}
 }

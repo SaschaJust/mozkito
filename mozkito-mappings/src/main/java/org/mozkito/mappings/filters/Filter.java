@@ -69,7 +69,7 @@ public abstract class Filter extends Node {
 		 *            the requirements
 		 */
 		public Options(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
-			super(argumentSet, TAG, DESCRIPTION, requirements);
+			super(argumentSet, Filter.TAG, Filter.DESCRIPTION, requirements);
 		}
 		
 		/*
@@ -85,7 +85,6 @@ public abstract class Filter extends Node {
 			try {
 				
 				final SetArgument argument = getSettings().getArgument(this.enabledFiltersOption);
-				System.err.println(argument);
 				final HashSet<String> value = argument.getValue();
 				
 				for (final String name : value) {

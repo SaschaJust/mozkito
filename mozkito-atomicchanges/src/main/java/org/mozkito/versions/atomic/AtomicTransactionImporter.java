@@ -14,23 +14,25 @@ package org.mozkito.versions.atomic;
 
 import java.util.Collection;
 
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSTransaction;
 
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-
 /**
  * The Class AtomicTransactionImporter.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class AtomicTransactionImporter {
 	
 	/**
 	 * Mark transaction as atomic.
-	 *
-	 * @param rCSTransaction the r cs transaction
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param rCSTransaction
+	 *            the r cs transaction
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return true, if successful
 	 */
 	public static synchronized boolean markTransactionAsAtomic(final RCSTransaction rCSTransaction,
@@ -42,9 +44,11 @@ public class AtomicTransactionImporter {
 	
 	/**
 	 * Mark transaction id as atomic.
-	 *
-	 * @param transactionId the transaction id
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param transactionId
+	 *            the transaction id
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return true, if successful
 	 */
 	public static synchronized boolean markTransactionIdAsAtomic(final String transactionId,
@@ -60,9 +64,11 @@ public class AtomicTransactionImporter {
 	
 	/**
 	 * Mark transaction ids as atomic.
-	 *
-	 * @param transactionIds the transaction ids
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param transactionIds
+	 *            the transaction ids
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return true, if successful
 	 */
 	@NoneNull
@@ -82,9 +88,11 @@ public class AtomicTransactionImporter {
 	
 	/**
 	 * Mark transactions as atomic.
-	 *
-	 * @param rCSTransactions the r cs transactions
-	 * @param persistenceUtil the persistence util
+	 * 
+	 * @param rCSTransactions
+	 *            the r cs transactions
+	 * @param persistenceUtil
+	 *            the persistence util
 	 * @return true, if successful
 	 */
 	public static synchronized boolean markTransactionsAsAtomic(final Collection<RCSTransaction> rCSTransactions,

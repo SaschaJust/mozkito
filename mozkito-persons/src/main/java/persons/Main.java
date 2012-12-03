@@ -15,11 +15,11 @@
  */
 package persons;
 
-import org.mozkito.persons.Persons;
-
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.persons.Persons;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>

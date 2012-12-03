@@ -1,3 +1,16 @@
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
+
 package org.mozkito.persistence;
 
 import static org.junit.Assert.assertEquals;
@@ -101,13 +114,16 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		long index = 0;
 		
 		final RCSBranch otherBranch = branchFactory.getBranch("otherBranch");
-		final RCSTransaction otherT = new RCSTransaction("280b1b8695286699770c5da85204e1718fXXXXXX", "", now, person, null);
+		final RCSTransaction otherT = new RCSTransaction("280b1b8695286699770c5da85204e1718fXXXXXX", "", now, person,
+		                                                 null);
 		otherT.addBranch(otherBranch, 0l);
 		otherBranch.setHead(otherT);
-		final RCSTransaction otherT2 = new RCSTransaction("702abfed3f8ca043b2636efd31c14ba75XXXXXX", "", now, person, null);
+		final RCSTransaction otherT2 = new RCSTransaction("702abfed3f8ca043b2636efd31c14ba75XXXXXX", "", now, person,
+		                                                  null);
 		otherT2.addBranch(otherBranch, -1l);
 		
-		final RCSTransaction otherT3 = new RCSTransaction("cce07fdcb9f3a0efcd67c75de60d5608c6XXXXXX", "", now, person, null);
+		final RCSTransaction otherT3 = new RCSTransaction("cce07fdcb9f3a0efcd67c75de60d5608c6XXXXXX", "", now, person,
+		                                                  null);
 		otherT3.addBranch(otherBranch, -1l);
 		
 		persistenceUtil.beginTransaction();
@@ -181,8 +197,9 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
 		final Iterator<RCSTransaction> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
-		                                                                          branchFactory.getMasterBranch(),
-		                                                                          TransactionSetOrder.ASC).iterator();
+		                                                                             branchFactory.getMasterBranch(),
+		                                                                             TransactionSetOrder.ASC)
+		                                                            .iterator();
 		int gindex = tList.size();
 		
 		assertTrue(iterator.hasNext());
@@ -221,8 +238,9 @@ public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		
 		final Iterator<RCSTransaction> iterator = RCSPersistenceUtil.getTransactions(getPersistenceUtil(),
-		                                                                          branchFactory.getMasterBranch(),
-		                                                                          TransactionSetOrder.DESC).iterator();
+		                                                                             branchFactory.getMasterBranch(),
+		                                                                             TransactionSetOrder.DESC)
+		                                                            .iterator();
 		int gindex = -1;
 		
 		assertTrue(iterator.hasNext());

@@ -49,7 +49,7 @@ public class FileUtilsTest {
 		if (!this.nameDir.mkdirs()) {
 			fail();
 		}
-		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
+		final File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(this.nameDir.getAbsolutePath(), newDir.getAbsolutePath());
 		assertEquals(this.nameDir, newDir);
 	}
@@ -64,11 +64,11 @@ public class FileUtilsTest {
 			if (!this.nameDir.createNewFile()) {
 				fail();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			fail();
 		}
-		File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
+		final File newDir = FileUtils.createDir(this.tmpDir, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(null, newDir);
 	}
 	
@@ -78,11 +78,11 @@ public class FileUtilsTest {
 	@Test
 	public void parentDirNoDir() {
 		
-		File file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, chars));
+		File file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, FileUtilsTest.chars));
 		while (file.exists()) {
-			file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, chars));
+			file = new File(FileUtils.fileSeparator + RandomStringUtils.random(10, FileUtilsTest.chars));
 		}
-		File newDir = FileUtils.createDir(file, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
+		final File newDir = FileUtils.createDir(file, "reposuiteFileUtilsTestDir", FileShutdownAction.DELETE);
 		assertEquals(null, newDir);
 	}
 	

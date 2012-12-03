@@ -22,6 +22,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.LogEntry;

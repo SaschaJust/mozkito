@@ -23,9 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.mozkito.untangling.Untangling;
-import org.mozkito.untangling.blob.ChangeSet;
-
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -35,6 +32,9 @@ import net.ownhero.dev.kanuni.annotations.compare.GreaterDouble;
 import net.ownhero.dev.kanuni.annotations.compare.LessOrEqualDouble;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+
+import org.mozkito.untangling.Untangling;
+import org.mozkito.untangling.blob.ChangeSet;
 
 /**
  * The Class SVMAggregation.
@@ -91,14 +91,16 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	
 	/**
 	 * Creates the instance.
-	 *
-	 * @param untangling the untangling
-	 * @param trainFraction the train fraction
+	 * 
+	 * @param untangling
+	 *            the untangling
+	 * @param trainFraction
+	 *            the train fraction
 	 * @return the sVM aggregation
 	 */
 	public static SVMAggregation createInstance(final Untangling untangling,
 	                                            @LessOrEqualDouble (ref = 1d) @GreaterDouble (ref = 0) final double trainFraction) {
-		TRAIN_FRACTION = trainFraction;
+		SVMAggregation.TRAIN_FRACTION = trainFraction;
 		SVMAggregation result = null;
 		if (System.getProperty("svmModel") != null) {
 			final File serialFile = new File(System.getProperty("svmModel"));
@@ -198,7 +200,8 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 		if (Logger.logInfo()) {
 			Logger.info("Creating SVM training samples ...");
 		}
-		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet, TRAIN_FRACTION,
+		final Map<SampleType, List<List<Double>>> samples = super.getSamples(transactionSet,
+		                                                                     SVMAggregation.TRAIN_FRACTION,
 		                                                                     this.untangling);
 		if (Logger.logInfo()) {
 			Logger.info("SVM training samples created.");

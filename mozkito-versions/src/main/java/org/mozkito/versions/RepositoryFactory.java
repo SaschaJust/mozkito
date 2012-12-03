@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
@@ -30,9 +28,11 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
+
 /**
  * A factory for creating Repository objects.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public final class RepositoryFactory {
@@ -90,33 +90,37 @@ public final class RepositoryFactory {
 	
 	/**
 	 * registers a repository to the factory keyed by the {@link RepositoryType} and version string.
-	 *
-	 * @param repositoryIdentifier not null
-	 * @param repositoryClass class object implementing {@link Repository}, not null
+	 * 
+	 * @param repositoryIdentifier
+	 *            not null
+	 * @param repositoryClass
+	 *            class object implementing {@link Repository}, not null
 	 */
 	private static void addRepositoryHandler(@NotNull final RepositoryType repositoryIdentifier,
 	                                         @NotNull final Class<? extends Repository> repositoryClass) {
-		Condition.isNull(repositoryHandlers.get(repositoryIdentifier),
+		Condition.isNull(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier),
 		                 "The should not be a reposiotry with the same identifier already");
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 		}
 		
-		repositoryHandlers.put(repositoryIdentifier, repositoryClass);
+		RepositoryFactory.repositoryHandlers.put(repositoryIdentifier, repositoryClass);
 		
-		Condition.notNull(repositoryHandlers.get(repositoryIdentifier),
+		Condition.notNull(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier),
 		                  "The must be a repository with the identifier just been created and assigned.");
-		CompareCondition.equals(repositoryHandlers.get(repositoryIdentifier), repositoryClass,
+		CompareCondition.equals(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier), repositoryClass,
 		                        "The must be a repository with the identifier just been created and assigned.");
 	}
 	
 	/**
 	 * returns a repository class object to the corresponding repositoryIdentifier and version (=default if null).
-	 *
-	 * @param repositoryIdentifier not null
+	 * 
+	 * @param repositoryIdentifier
+	 *            not null
 	 * @return the corresponding {@link Repository} class object
-	 * @throws UnregisteredRepositoryTypeException if no matching repository class object could be found in the registry
+	 * @throws UnregisteredRepositoryTypeException
+	 *             if no matching repository class object could be found in the registry
 	 */
 	@NoneNull
 	public static Class<? extends Repository> getRepositoryHandler(final RepositoryType repositoryIdentifier) throws UnregisteredRepositoryTypeException {
@@ -124,7 +128,7 @@ public final class RepositoryFactory {
 			Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 		}
 		
-		final Class<? extends Repository> repositoryClass = repositoryHandlers.get(repositoryIdentifier);
+		final Class<? extends Repository> repositoryClass = RepositoryFactory.repositoryHandlers.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
@@ -141,7 +145,7 @@ public final class RepositoryFactory {
 	
 	/**
 	 * Gets the handle.
-	 *
+	 * 
 	 * @return the simple class name
 	 */
 	public String getHandle() {

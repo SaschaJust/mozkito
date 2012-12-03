@@ -20,7 +20,7 @@ import org.mozkito.versions.model.RCSTransaction;
 
 /**
  * The Class RCSFileManager.
- *
+ * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class RCSFileManager {

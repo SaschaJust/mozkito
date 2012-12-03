@@ -48,6 +48,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
@@ -55,10 +60,6 @@ import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.LogParser;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * The Class GitRepository. This class is _not_ thread safe.
@@ -77,7 +78,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	protected static Charset                 charset           = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
-			charset = Charset.forName("UTF8");
+			GitRepository.charset = Charset.forName("UTF8");
 		}
 	}
 	
@@ -129,8 +130,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		
 		for (final String line : response.getSecond()) {
-			String sha = line.substring(0, GIT_HASH_LENGTH);
-			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, GIT_HASH_LENGTH)))) {
+			String sha = line.substring(0, GitRepository.GIT_HASH_LENGTH);
+			if (line.startsWith("^") && (firstRev.startsWith(line.substring(1, GitRepository.GIT_HASH_LENGTH)))) {
 				sha = firstRev;
 			}
 			
@@ -143,10 +144,10 @@ public class GitRepository extends DistributedCommandLineRepository {
 			DateTime date = new DateTime();
 			
 			String lineContent = "<unkown>";
-			if (REGEX.matchesFull(line)) {
-				author = REGEX.getGroup("author");
-				date = new DateTime(DTF.parseDateTime(REGEX.getGroup("date")));
-				lineContent = REGEX.getGroup("codeline");
+			if (GitRepository.REGEX.matchesFull(line)) {
+				author = GitRepository.REGEX.getGroup("author");
+				date = new DateTime(GitRepository.DTF.parseDateTime(GitRepository.REGEX.getGroup("date")));
+				lineContent = GitRepository.REGEX.getGroup("codeline");
 			} else {
 				
 				throw new UnrecoverableError("Could not extract author and date info from log entry for revision `"
@@ -278,7 +279,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return patch.getDeltas();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String)
 	 */
 	@Override
@@ -286,7 +288,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return gitLog(revision);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#executeLog(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -469,14 +472,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 		}
 		for (final String line : response.getSecond()) {
 			if (((line.startsWith("R")) || (line.startsWith("C"))) && line.contains(pathName)) {
-				final Match found = FORMER_PATH_REGEX.find(line);
+				final Match found = GitRepository.FORMER_PATH_REGEX.find(line);
 				if (!found.hasGroups()) {
 					if (Logger.logWarn()) {
 						Logger.warn("Former path regex in Gitrepository did not match but should match.");
 					}
 					return null;
 				}
-				return FORMER_PATH_REGEX.getGroup("result");
+				return GitRepository.FORMER_PATH_REGEX.getGroup("result");
 			}
 		}
 		return null;
@@ -500,7 +503,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return response.getSecond().get(0).trim();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.DistributedCommandLineRepository#getLogParser()
 	 */
 	@Override
@@ -612,7 +616,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 		return this.transactionIDs.get(Long.valueOf(index).intValue());
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
@@ -638,8 +643,9 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/**
 	 * Git log.
-	 *
-	 * @param revisionSelection the revision selection
+	 * 
+	 * @param revisionSelection
+	 *            the revision selection
 	 * @return the tuple
 	 */
 	private Tuple<Integer, List<String>> gitLog(@MinLength (min = 4) @NotNull final String revisionSelection) {

@@ -19,16 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
-import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 
+import org.mozkito.codeanalysis.model.JavaChangeOperation;
+import org.mozkito.genealogies.core.CoreChangeGenealogy;
 
 /**
  * The Class Neo4jVertexCache.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Neo4jVertexCache {
@@ -49,9 +49,11 @@ public class Neo4jVertexCache {
 		
 		/**
 		 * Instantiates a new neo4j vertex cache entry.
-		 *
-		 * @param nodeid the nodeid
-		 * @param node the node
+		 * 
+		 * @param nodeid
+		 *            the nodeid
+		 * @param node
+		 *            the node
 		 */
 		public Neo4jVertexCacheEntry(final long nodeid, final Node node) {
 			this.nodeid = nodeid;
@@ -82,7 +84,7 @@ public class Neo4jVertexCache {
 		
 		/**
 		 * Gets the node.
-		 *
+		 * 
 		 * @return the node
 		 */
 		public Node getNode() {
@@ -92,7 +94,7 @@ public class Neo4jVertexCache {
 		
 		/**
 		 * Gets the node id.
-		 *
+		 * 
 		 * @return the node id
 		 */
 		public long getNodeId() {
@@ -110,8 +112,9 @@ public class Neo4jVertexCache {
 	
 	/**
 	 * Instantiates a new neo4j vertex cache.
-	 *
-	 * @param nodeIndex the node index
+	 * 
+	 * @param nodeIndex
+	 *            the node index
 	 */
 	public Neo4jVertexCache(final Index<Node> nodeIndex) {
 		this.nodeIndex = nodeIndex;
@@ -119,8 +122,9 @@ public class Neo4jVertexCache {
 	
 	/**
 	 * Gets the node.
-	 *
-	 * @param op the op
+	 * 
+	 * @param op
+	 *            the op
 	 * @return the node
 	 */
 	public Node getNode(final JavaChangeOperation op) {

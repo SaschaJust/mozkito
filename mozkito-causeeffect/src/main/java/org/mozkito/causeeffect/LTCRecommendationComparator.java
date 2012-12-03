@@ -18,7 +18,7 @@ import org.mozkito.causeeffect.LTCRecommendation.ChangeProperty;
 
 /**
  * The Class LTCRecommendationComparator.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class LTCRecommendationComparator implements Comparator<LTCRecommendation> {
@@ -28,8 +28,9 @@ public class LTCRecommendationComparator implements Comparator<LTCRecommendation
 	
 	/**
 	 * Instantiates a new lTC recommendation comparator.
-	 *
-	 * @param property the property
+	 * 
+	 * @param property
+	 *            the property
 	 */
 	public LTCRecommendationComparator(final ChangeProperty property) {
 		this.property = property;

@@ -36,10 +36,10 @@ import org.mozkito.persistence.Annotated;
 public class Feature implements Annotated {
 	
 	/** The Constant cache. */
-	private static final Map<String, Class<? extends Engine>> ENGINE_LOOKUP_TABLE            = new HashMap<String, Class<? extends Engine>>();
+	private static final Map<String, Class<? extends Engine>> ENGINE_LOOKUP_TABLE = new HashMap<String, Class<? extends Engine>>();
 	
 	/** The Constant serialVersionUID. */
-	private static final long                                 serialVersionUID = 4097360257338824107L;
+	private static final long                                 serialVersionUID    = 4097360257338824107L;
 	
 	/** The confidence. */
 	private double                                            confidence;

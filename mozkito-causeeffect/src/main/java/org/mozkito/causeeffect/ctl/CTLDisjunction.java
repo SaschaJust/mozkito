@@ -30,9 +30,11 @@ public class CTLDisjunction extends CTLBilateralFormula {
 	
 	/**
 	 * Returns a disjunction of two given CTL formulas.
-	 *
-	 * @param f the f
-	 * @param g the g
+	 * 
+	 * @param f
+	 *            the f
+	 * @param g
+	 *            the g
 	 * @return the cTL disjunction
 	 */
 	public static CTLDisjunction get(final CTLFormula f,

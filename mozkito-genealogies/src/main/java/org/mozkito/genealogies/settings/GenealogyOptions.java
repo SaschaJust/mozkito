@@ -15,11 +15,6 @@ package org.mozkito.genealogies.settings;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozkito.genealogies.core.CoreChangeGenealogy;
-import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.settings.DatabaseOptions;
-
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.DirectoryArgument;
@@ -29,9 +24,14 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
+import org.mozkito.genealogies.core.CoreChangeGenealogy;
+import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
+
 /**
  * The Class GenealogyOptions.
- *
+ * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class GenealogyOptions extends
@@ -48,10 +48,13 @@ public class GenealogyOptions extends
 	
 	/**
 	 * Instantiates a new genealogy options.
-	 *
-	 * @param argumentSet the argument set
-	 * @param requirements the requirements
-	 * @param databaseOptions the database options
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param requirements
+	 *            the requirements
+	 * @param databaseOptions
+	 *            the database options
 	 */
 	public GenealogyOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements,
 	        final DatabaseOptions databaseOptions) {

@@ -18,14 +18,14 @@ package org.mozkito.persons.engine;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
+import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
 import org.mozkito.persons.processing.PersonManager;
-
-import net.ownhero.dev.hiari.settings.ArgumentSet;
-import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationException;
-import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -40,10 +40,8 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 	                                                                                                        
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.persons.engine.MergingEngine#collides(
-	 * org.mozkito.persistence.model.Person,
-	 * org.mozkito.persistence.model.PersonContainer,
-	 * org.mozkito.persons.processing.PersonManager, java.util.Map)
+	 * @see org.mozkito.persons.engine.MergingEngine#collides( org.mozkito.persistence.model.Person,
+	 * org.mozkito.persistence.model.PersonContainer, org.mozkito.persons.processing.PersonManager, java.util.Map)
 	 */
 	@Override
 	public List<PersonBucket> collides(final Person person,
@@ -98,7 +96,7 @@ public class NonAmbigiousFullnameEngine extends MergingEngine {
 	 */
 	@Override
 	public String getDescription() {
-		return DESCRIPTION;
+		return NonAmbigiousFullnameEngine.DESCRIPTION;
 	}
 	
 	/*

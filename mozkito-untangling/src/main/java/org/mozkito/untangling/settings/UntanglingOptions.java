@@ -161,9 +161,11 @@ public class UntanglingOptions extends
 	
 	/**
 	 * Adds the option.
-	 *
-	 * @param options the options
-	 * @param map the map
+	 * 
+	 * @param options
+	 *            the options
+	 * @param map
+	 *            the map
 	 */
 	private void addOption(final IOptions<?, ?> options,
 	                       final Map<String, IOptions<?, ?>> map) {
@@ -251,7 +253,8 @@ public class UntanglingOptions extends
 								            line);
 							}
 						}
-						final RCSTransaction rCSTransaction = persistenceUtil.loadById(lineParts[0], RCSTransaction.class);
+						final RCSTransaction rCSTransaction = persistenceUtil.loadById(lineParts[0],
+						                                                               RCSTransaction.class);
 						if (rCSTransaction == null) {
 							if (Logger.logWarn()) {
 								Logger.warn("Could not find change set with ID %s. Ignoring corresponding line in change set file.",

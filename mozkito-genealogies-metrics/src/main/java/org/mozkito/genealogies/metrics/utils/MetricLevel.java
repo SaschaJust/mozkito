@@ -24,7 +24,7 @@ public enum MetricLevel {
 	/** The TRANSACTION. */
 	TRANSACTION,
 	/** The CHANGEOPERATIONPARTITION. */
-	CHANGEOPERATIONPARTITION, 
- /** The untanglingpartition. */
- UNTANGLINGPARTITION;
+	CHANGEOPERATIONPARTITION,
+	/** The untanglingpartition. */
+	UNTANGLINGPARTITION;
 }
