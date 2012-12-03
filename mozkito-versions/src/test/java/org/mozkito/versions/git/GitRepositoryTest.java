@@ -41,7 +41,6 @@ import org.mozkito.versions.elements.LogEntry;
 
 import difflib.Delta;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GitRepositoryTest.
  */

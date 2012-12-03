@@ -26,14 +26,12 @@ import java.util.SortedSet;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TransactionSetTest.
  */

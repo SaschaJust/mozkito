@@ -20,12 +20,10 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RCSFileManagerTest.
  */

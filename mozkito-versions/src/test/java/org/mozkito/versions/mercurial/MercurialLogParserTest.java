@@ -26,7 +26,6 @@ import net.ownhero.dev.regex.Regex;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MercurialLogParserTest.
  */

@@ -30,14 +30,12 @@ import net.ownhero.dev.ioda.FileUtils;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GitTransactionIteratorTest.
  */

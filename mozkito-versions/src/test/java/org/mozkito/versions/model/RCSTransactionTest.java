@@ -19,11 +19,9 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RCSTransactionTest.
  */

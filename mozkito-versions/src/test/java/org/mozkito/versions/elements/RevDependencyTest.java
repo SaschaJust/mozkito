@@ -24,10 +24,8 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
-
 import org.mozkito.versions.model.RCSBranch;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RevDependencyTest.
  */

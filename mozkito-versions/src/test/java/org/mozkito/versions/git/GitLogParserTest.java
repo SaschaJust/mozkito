@@ -21,7 +21,6 @@ import net.ownhero.dev.regex.Regex;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GitLogParserTest.
  */

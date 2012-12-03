@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -32,7 +31,6 @@ import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RCSPersistenceUtilTest.
  */

@@ -13,7 +13,6 @@
 package org.mozkito.utilities;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -56,8 +55,8 @@ public class URIUtilsTest {
 	@Test
 	public void testDifferentUsername() {
 		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "kim");
-		assertFalse(encoded.equals(URIUtilsTest.originalUser));
-		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
 		assertEquals(URIUtilsTest.originalUser.getScheme(), encoded.getScheme());
 		assertEquals(URIUtilsTest.originalUser.getPath(), encoded.getPath());
@@ -73,8 +72,8 @@ public class URIUtilsTest {
 	@Test
 	public void testEmptyUsername() {
 		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "");
-		assertFalse(encoded.equals(URIUtilsTest.originalUser));
-		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("", encoded.getUserInfo());
 		assertEquals(URIUtilsTest.originalUser.getScheme(), encoded.getScheme());
 		assertEquals(URIUtilsTest.originalUser.getPath(), encoded.getPath());
@@ -90,8 +89,8 @@ public class URIUtilsTest {
 	@Test
 	public void testNoUsername() {
 		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalNoUser, "kim");
-		assertFalse(encoded.equals(URIUtilsTest.originalUser));
-		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalNoUser));
 		assertEquals("kim", encoded.getUserInfo());
 		assertEquals(URIUtilsTest.originalNoUser.getScheme(), encoded.getScheme());
 		assertEquals(URIUtilsTest.originalNoUser.getPath(), encoded.getPath());
@@ -108,11 +107,11 @@ public class URIUtilsTest {
 	public void testNullUsername() {
 		URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalNoUser, null);
 		assertEquals(URIUtilsTest.originalNoUser, encoded);
-		assertFalse(encoded.equals(URIUtilsTest.originalUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalUser));
 		
 		encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, null);
 		assertEquals(URIUtilsTest.originalUser, encoded);
-		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
 	/**
@@ -122,7 +121,7 @@ public class URIUtilsTest {
 	public void testSameUsername() {
 		final URI encoded = URIUtils.encodeUsername(URIUtilsTest.originalUser, "user");
 		assertEquals(URIUtilsTest.originalUser, encoded);
-		assertFalse(encoded.equals(URIUtilsTest.originalNoUser));
+		assertEquals(false, encoded.equals(URIUtilsTest.originalNoUser));
 	}
 	
 	/**
