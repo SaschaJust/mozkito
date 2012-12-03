@@ -23,7 +23,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
@@ -42,8 +41,9 @@ import org.mozkito.versions.BranchFactory;
                    hostname = "grid1.st.cs.uni-saarland.de",
                    password = "miner",
                    username = "miner",
-                   type = "POSTGRES",
-                   driver = "org.postgresql.Driver")
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver",
+                   remote = true)
 public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
 	/**

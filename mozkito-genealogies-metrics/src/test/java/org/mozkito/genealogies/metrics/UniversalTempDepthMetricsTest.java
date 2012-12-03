@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.junit.Test;
-
 import org.mozkito.genealogies.metrics.layer.universal.UniversalTempDepthMetrics;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalTestTempDepthMetric;
 

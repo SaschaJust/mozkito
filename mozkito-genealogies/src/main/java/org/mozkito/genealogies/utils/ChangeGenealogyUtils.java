@@ -25,18 +25,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.pgm.Graph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
-
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
-
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
@@ -51,6 +45,12 @@ import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
+
+import com.tinkerpop.blueprints.pgm.Graph;
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.blueprints.pgm.util.io.graphml.GraphMLWriter;
 
 /**
  * The Class ChangeGenealogyUtils.
@@ -209,7 +209,9 @@ public class ChangeGenealogyUtils {
 		                                                                  .createCriteria(RCSTransaction.class);
 		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
-		
+		if (Logger.logDebug()) {
+			Logger.debug(JavaUtils.collectionToString(transactionList));
+		}
 		for (final RCSTransaction transaction : transactionList) {
 			if ("a64df287a21f8a7b0690d13c1561171cbf48a0e1".equals(transaction.getId())) {
 				environmentTransactions.put(1, transaction);
@@ -242,8 +244,9 @@ public class ChangeGenealogyUtils {
 				                                                                     .createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
 				final List<JavaChangeOperation> changeOps = branchFactory.getPersistenceUtil().load(operationCriteria);
-				CollectionCondition.size(changeOps, 17, "Manually validated.");
-				
+				if (Logger.logDebug()) {
+					Logger.debug(JavaUtils.collectionToString(changeOps));
+				}
 				operations.addAll(changeOps);
 				for (final JavaChangeOperation op : changeOps) {
 					switch ((int) op.getId()) {

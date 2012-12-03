@@ -22,7 +22,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
 import org.mozkito.genealogies.layer.ChangeGenealogyLayerNode;
@@ -44,25 +43,25 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 	private final PersistenceUtil persistenceUtil;
 	
 	/** The Constant avgLastModifiedName. */
-	private final static String   avgLastModifiedName    = "AvgLastModified";
+	private static final String   AVG_LAST_MODIFIED_NAME = "AvgLastModified";
 	
 	/** The Constant minLastModifiedName. */
-	private final static String   minLastModifiedName    = "MinLastModified";
+	private static final String   MIN_LAST_MODIFIED_NAME = "MinLastModified";
 	
 	/** The Constant avgAgeName. */
-	private final static String   avgAgeName             = "AvgAge";
+	private static final String   AVG_AGE_NAME           = "AvgAge";
 	
 	/** The Constant minAgeName. */
-	private final static String   minAgeName             = "MinAge";
+	private static final String   MIN_AGE_NAME           = "MinAge";
 	
 	/** The Constant maxAgeName. */
-	private final static String   maxAgeName             = "MaxAge";
+	private static final String   MAX_AGE_NAME             = "MaxAge";
 	
 	/** The Constant avgNumChangesLastMonth. */
-	private final static String   avgNumChangesLastMonth = "AvgNumChangesLastMonth";
+	private static final String   AVG_NUM_CHANGES_LAST_MONTH = "AvgNumChangesLastMonth";
 	
 	/** The Constant maxNumChangesLastMonth. */
-	private final static String   maxNumChangesLastMonth = "MaxNumChangesLastMonth";
+	private static final String   MAX_NUM_CHANGES_LAST_MONTH = "MaxNumChangesLastMonth";
 	
 	/**
 	 * Instantiates a new transaction code age metrics.
@@ -82,13 +81,13 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final Set<String> result = new HashSet<String>();
-		result.add(PartitionCodeAgeMetrics.avgLastModifiedName);
-		result.add(PartitionCodeAgeMetrics.minLastModifiedName);
-		result.add(PartitionCodeAgeMetrics.avgAgeName);
-		result.add(PartitionCodeAgeMetrics.minAgeName);
-		result.add(PartitionCodeAgeMetrics.maxAgeName);
-		result.add(PartitionCodeAgeMetrics.avgNumChangesLastMonth);
-		result.add(PartitionCodeAgeMetrics.maxNumChangesLastMonth);
+		result.add(PartitionCodeAgeMetrics.AVG_LAST_MODIFIED_NAME);
+		result.add(PartitionCodeAgeMetrics.MIN_LAST_MODIFIED_NAME);
+		result.add(PartitionCodeAgeMetrics.AVG_AGE_NAME);
+		result.add(PartitionCodeAgeMetrics.MIN_AGE_NAME);
+		result.add(PartitionCodeAgeMetrics.MAX_AGE_NAME);
+		result.add(PartitionCodeAgeMetrics.AVG_NUM_CHANGES_LAST_MONTH);
+		result.add(PartitionCodeAgeMetrics.MAX_NUM_CHANGES_LAST_MONTH);
 		return result;
 	}
 	
@@ -136,31 +135,31 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();
 		final String nodeId = item.getNodeId();
 		
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.avgLastModifiedName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.AVG_LAST_MODIFIED_NAME, nodeId,
 		                                    lastModifiedStats.getN() > 0
 		                                                                ? lastModifiedStats.getMean()
 		                                                                : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.minLastModifiedName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.MIN_LAST_MODIFIED_NAME, nodeId,
 		                                    lastModifiedStats.getN() > 0
 		                                                                ? lastModifiedStats.getMin()
 		                                                                : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.avgAgeName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.AVG_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMean()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.minAgeName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.MIN_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMin()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.maxAgeName, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.MAX_AGE_NAME, nodeId,
 		                                    ageStats.getN() > 0
 		                                                       ? ageStats.getMax()
 		                                                       : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.avgNumChangesLastMonth, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.AVG_NUM_CHANGES_LAST_MONTH, nodeId,
 		                                    numChangesStats.getN() > 0
 		                                                              ? numChangesStats.getMean()
 		                                                              : 0));
-		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.maxNumChangesLastMonth, nodeId,
+		result.add(new GenealogyMetricValue(PartitionCodeAgeMetrics.MAX_NUM_CHANGES_LAST_MONTH, nodeId,
 		                                    numChangesStats.getN() > 0
 		                                                              ? numChangesStats.getMax()
 		                                                              : 0));

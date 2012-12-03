@@ -16,7 +16,6 @@ package org.mozkito.codeanalysis.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 import org.mozkito.codeanalysis.model.JavaMethodCall;
 
 /**
@@ -26,6 +25,7 @@ public class PPAUtilsTest {
 	
 	/**
 	 * Gets the definition names for call nametest.
+	 * 
 	 */
 	@Test
 	public void getDefinitionNamesForCallNametest() {

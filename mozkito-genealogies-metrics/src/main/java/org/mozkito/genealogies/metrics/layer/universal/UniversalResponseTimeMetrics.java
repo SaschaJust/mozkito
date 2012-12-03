@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.metrics.DayTimeDiff;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;

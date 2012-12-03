@@ -34,10 +34,10 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 	
 	/** The Constant numDepAuthors. */
-	private static final String numDepAuthors    = "NumDepAuthors";
+	private static final String NUM_DEP_AUTHORS    = "NumDepAuthors";
 	
 	/** The Constant numParentAuthors. */
-	private static final String numParentAuthors = "NumParentAuthors";
+	private static final String NUM_PARENT_AUHTORS = "NumParentAuthors";
 	
 	// private static final String avgAuthorPackageDistance = "avgAuthorPackageDistance";
 	// private static final String maxAuthorPackageDistance = "maxAuthorPackageDistance";
@@ -60,8 +60,8 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 	@Override
 	public Collection<String> getMetricNames() {
 		final List<String> metricNames = new ArrayList<String>(2);
-		metricNames.add(TransactionAuthorMetrics.numDepAuthors);
-		metricNames.add(TransactionAuthorMetrics.numParentAuthors);
+		metricNames.add(TransactionAuthorMetrics.NUM_DEP_AUTHORS);
+		metricNames.add(TransactionAuthorMetrics.NUM_PARENT_AUHTORS);
 		// metricNames.add(avgAuthorPackageDistance);
 		// metricNames.add(maxAuthorPackageDistance);
 		// metricNames.add(minAuthorPackageDistance);
@@ -87,14 +87,14 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 			depAuthors.add(dependant.getPersons().getGeneratedId());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(TransactionAuthorMetrics.numDepAuthors, nodeId, depAuthors.size()));
+		metricValues.add(new GenealogyMetricValue(TransactionAuthorMetrics.NUM_DEP_AUTHORS, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
 		for (final RCSTransaction parent : this.genealogy.getAllParents(rCSTransaction)) {
 			parentAuthors.add(parent.getPersons().getGeneratedId());
 		}
 		
-		metricValues.add(new GenealogyMetricValue(TransactionAuthorMetrics.numParentAuthors, nodeId,
+		metricValues.add(new GenealogyMetricValue(TransactionAuthorMetrics.NUM_PARENT_AUHTORS, nodeId,
 		                                          parentAuthors.size()));
 		
 		// final PersistenceUtil persistenceUtil = this.genealogy.getCore().getPersistenceUtil();
