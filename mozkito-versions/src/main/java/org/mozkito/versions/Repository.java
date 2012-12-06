@@ -215,7 +215,10 @@ public abstract class Repository {
 	 *            the persistence util
 	 * @return the rev dependency graph
 	 */
-	public abstract RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
+	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+		// TODO implement this method
+		return null;
+	}
 	
 	/**
 	 * Gets the start revision.

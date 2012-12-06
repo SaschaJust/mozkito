@@ -45,7 +45,6 @@ import org.joda.time.DateTimeUtils;
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
-import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.ProtocolType;
@@ -483,22 +482,6 @@ public class SubversionRepository extends Repository {
 	 */
 	@Override
 	public RevDependencyGraph getRevDependencyGraph() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO implement support
-			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
-	 */
-	@Override
-	public RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
 		
 		try {
