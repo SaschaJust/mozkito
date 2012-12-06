@@ -33,7 +33,6 @@ import javax.persistence.Transient;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.apache.openjpa.persistence.jdbc.Index;
-
 import org.mozkito.persistence.Annotated;
 
 /**
@@ -169,13 +168,14 @@ public class RCSBranch implements Annotated {
 	 * 
 	 * @return the handle
 	 */
+	@Override
 	@Transient
 	public String getHandle() {
 		return RCSBranch.class.getSimpleName();
 	}
 	
 	/**
-	 * Gets the end.
+	 * Returns the head transaction of the branch.
 	 * 
 	 * @return the end
 	 */
