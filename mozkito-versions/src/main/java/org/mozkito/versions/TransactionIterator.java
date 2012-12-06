@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-package org.mozkito.versions.git;
+package org.mozkito.versions;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,29 +19,27 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.versions.IRevDependencyGraph;
-
 /**
  * The Class TransactionIterator.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class GitTransactionIterator implements Iterator<String>, Iterable<String> {
+public class TransactionIterator implements Iterator<String>, Iterable<String> {
 	
 	/** The root. */
-	private final String              root;
+	private final String             root;
 	
 	/** The current. */
-	private String                    current;
+	private String                   current;
 	
 	/** The delegate. */
-	private GitTransactionIterator    delegate        = null;
+	private TransactionIterator      delegate        = null;
 	
 	/** The rev graph. */
-	private final IRevDependencyGraph revGraph;
+	private final RevDependencyGraph revGraph;
 	
 	/** The before delegates. */
-	private Set<String>               beforeDelegates = null;
+	private Set<String>              beforeDelegates = null;
 	
 	/**
 	 * Instantiates a new iterator iterating across all transactions that were visible before this transaction.
@@ -52,7 +50,7 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	 *            the rev graph
 	 */
 	@NoneNull
-	public GitTransactionIterator(final String root, final IRevDependencyGraph revGraph) {
+	public TransactionIterator(final String root, final RevDependencyGraph revGraph) {
 		this.root = root;
 		this.current = this.root;
 		this.revGraph = revGraph;
@@ -69,8 +67,7 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 	 * @param beforeDelegates
 	 *            the before delegates
 	 */
-	public GitTransactionIterator(final String root, final IRevDependencyGraph revGraph,
-	        final Set<String> beforeDelegates) {
+	public TransactionIterator(final String root, final RevDependencyGraph revGraph, final Set<String> beforeDelegates) {
 		this.root = root;
 		this.current = this.root;
 		this.revGraph = revGraph;
@@ -135,7 +132,7 @@ public class GitTransactionIterator implements Iterator<String>, Iterable<String
 		if (mergeParent != null) {
 			final Set<String> stopAt = new HashSet<String>();
 			stopAt.addAll(this.beforeDelegates);
-			this.delegate = new GitTransactionIterator(mergeParent, this.revGraph, stopAt);
+			this.delegate = new TransactionIterator(mergeParent, this.revGraph, stopAt);
 		}
 		
 		if (Logger.logDebug()) {

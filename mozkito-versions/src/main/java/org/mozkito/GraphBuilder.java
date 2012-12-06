@@ -24,8 +24,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.IRevDependencyGraph;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -37,16 +37,16 @@ import org.mozkito.versions.model.RCSTransaction;
 public class GraphBuilder implements Runnable {
 	
 	/** The Constant COMMIT_LIMIT. */
-	private static final int          COMMIT_LIMIT = 15;
+	private static final int         COMMIT_LIMIT = 15;
 	
 	/** The counter. */
-	private final IRevDependencyGraph revDepGraph;
+	private final RevDependencyGraph revDepGraph;
 	
 	/** The persistence util. */
-	private final PersistenceUtil     persistenceUtil;
+	private final PersistenceUtil    persistenceUtil;
 	
 	/** The branch factory. */
-	private final BranchFactory       branchFactory;
+	private final BranchFactory      branchFactory;
 	
 	/**
 	 * Instantiates a new graph builder.
@@ -79,7 +79,7 @@ public class GraphBuilder implements Runnable {
 				throw new UnrecoverableError("Could not load transaction " + hash + " from database.");
 			}
 			
-			if (!this.revDepGraph.hasVertex(hash)) {
+			if (!this.revDepGraph.existsVertex(hash)) {
 				throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
 			}
 			

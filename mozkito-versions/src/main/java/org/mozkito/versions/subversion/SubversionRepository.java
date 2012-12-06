@@ -42,6 +42,18 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.mozkito.exceptions.InvalidProtocolType;
+import org.mozkito.exceptions.InvalidRepositoryURI;
+import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.ProtocolType;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -64,19 +76,6 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.UnsupportedProtocolType;
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.ProtocolType;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
 
 /**
  * Subversion connector extending the {@link Repository} base class.
@@ -483,10 +482,11 @@ public class SubversionRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
 		
 		try {
+			// TODO implement support
 			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
 		} finally {
 			// POSTCONDITIONS
@@ -498,10 +498,11 @@ public class SubversionRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+	public RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
 		
 		try {
+			// TODO implement support
 			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
 		} finally {
 			// POSTCONDITIONS

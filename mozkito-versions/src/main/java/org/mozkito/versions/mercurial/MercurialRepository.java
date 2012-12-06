@@ -50,18 +50,17 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.DistributedCommandLineRepository;
+import org.mozkito.versions.LogParser;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
 
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.DistributedCommandLineRepository;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.LogParser;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
 
 /**
  * The Class MercurialRepository.
@@ -561,10 +560,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
 		
 		try {
+			// TODO implement support
 			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
 		} finally {
 			// POSTCONDITIONS
@@ -576,10 +576,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+	public RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
 		// PRECONDITIONS
 		
 		try {
+			// TODO implement support
 			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
 		} finally {
 			// POSTCONDITIONS

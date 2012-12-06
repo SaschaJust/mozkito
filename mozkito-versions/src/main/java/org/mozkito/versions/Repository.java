@@ -206,7 +206,7 @@ public abstract class Repository {
 	 * 
 	 * @return the rev dependency graph
 	 */
-	public abstract IRevDependencyGraph getRevDependencyGraph();
+	public abstract RevDependencyGraph getRevDependencyGraph();
 	
 	/**
 	 * Gets the rev dependency graph.
@@ -215,7 +215,7 @@ public abstract class Repository {
 	 *            the persistence util
 	 * @return the rev dependency graph
 	 */
-	public abstract IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
+	public abstract RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
 	
 	/**
 	 * Gets the start revision.
