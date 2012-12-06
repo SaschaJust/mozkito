@@ -20,15 +20,20 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.git.GitRepository;
+
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class RevDependencyGraphTest.
@@ -40,10 +45,20 @@ public class RevDependencyGraphTest {
 	}
 	
 	/** The branch factory. */
-	private static BranchFactory branchFactory;
+	private static BranchFactory      branchFactory;
 	
 	/** The repo. */
-	private static GitRepository repo;
+	private static GitRepository      repo;
+	
+	private static RevDependencyGraph graph;
+	
+	/**
+	 * After class.
+	 */
+	@AfterClass
+	public static void afterClass() {
+		graph.close();
+	}
 	
 	/**
 	 * Before class.
@@ -67,6 +82,7 @@ public class RevDependencyGraphTest {
 			RevDependencyGraphTest.repo = new GitRepository();
 			RevDependencyGraphTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator
 			        + "testGit"), RevDependencyGraphTest.branchFactory, null, "master");
+			graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
 		} catch (final Exception e) {
 			fail();
 		}
@@ -117,6 +133,7 @@ public class RevDependencyGraphTest {
 		//@formatter:on
 		
 		final RevDependencyGraph revGraph = new RevDependencyGraph();
+		
 		revGraph.addEdge("8222f6b8a291bf938f96d9560fd1d61638c1689c", "17d6198f9c31d608d985ff4c9ce1dcc162dc8133",
 		                 EdgeType.BRANCH_EDGE);
 		revGraph.addEdge("8e98f10673bae3345844c36eee2e9b21e8fed2d0", "8222f6b8a291bf938f96d9560fd1d61638c1689c",
@@ -175,7 +192,7 @@ public class RevDependencyGraphTest {
 		assertTrue(iterator.hasNext());
 		assertEquals("34195982cb52661e5498ff880dd7b5b5b3230790", iterator.next());
 		assertFalse(iterator.hasNext());
-		
+		revGraph.close();
 	}
 	
 	/**
@@ -259,6 +276,7 @@ public class RevDependencyGraphTest {
 		assertTrue(iterator.hasNext());
 		assertEquals("d522956171853fc2d7ca106d9c8d2b93e82df9d3", iterator.next());
 		assertFalse(iterator.hasNext());
+		revGraph.close();
 	}
 	
 	/**
@@ -266,7 +284,6 @@ public class RevDependencyGraphTest {
 	 */
 	@Test
 	public void test() {
-		final RevDependencyGraph graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
 		
 		String hash = "e52def97ebc1f78c9286b1e7c36783aa67604439";
 		assertTrue(graph.existsVertex(hash));
@@ -435,12 +452,43 @@ public class RevDependencyGraphTest {
 	}
 	
 	/**
+	 * Test add change set twice.
+	 */
+	@Test
+	public void testAddBranchTwice() {
+		final RevDependencyGraph graph = new RevDependencyGraph();
+		graph.addChangeSet("changeSet");
+		final Vertex branchV = graph.addBranch("hubba", "changeSet");
+		assertEquals(branchV, graph.addBranch("hubba", "changeSet"));
+		
+	}
+	
+	/**
+	 * Test add change set twice.
+	 */
+	@Test
+	public void testAddChangeSetTwice() {
+		final RevDependencyGraph graph = new RevDependencyGraph();
+		final Vertex vertex = graph.addChangeSet("hubba");
+		assertEquals(vertex, graph.addChangeSet("hubba"));
+	}
+	
+	/**
+	 * Test add edge twice.
+	 */
+	@Test
+	public void testAddEdgeTwice() {
+		final RevDependencyGraph graph = new RevDependencyGraph();
+		assertEquals(true, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));
+		assertEquals(false, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));
+	}
+	
+	/**
 	 * Test exist path success.
 	 */
 	@Test
 	public void testExistPathFail() {
 		
-		final RevDependencyGraph graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
 		assertEquals(false, graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
 		                                     "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
 	}
@@ -451,7 +499,6 @@ public class RevDependencyGraphTest {
 	@Test
 	public void testExistPathSuccess() {
 		
-		final RevDependencyGraph graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
 		assertEquals(true, graph.containsEdge("ae94d7fa81437cbbd723049e3951f9daaa62a7c0",
 		                                      "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
 		assertEquals(false, graph.containsEdge("cbcc33d919a27b9450d117f211a5f4f45615cab9",
@@ -467,10 +514,42 @@ public class RevDependencyGraphTest {
 	 */
 	@Test
 	public void testExistSimplePath() {
-		
-		final RevDependencyGraph graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
 		assertEquals(true, graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
 		                                    "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
+	}
+	
+	/**
+	 * Test get vertices.
+	 */
+	@Test
+	public void testGetVertices() {
+		final Set<String> transactionIDs = new HashSet<>();
+		for (final String v : graph.getVertices()) {
+			transactionIDs.add(v);
+		}
+		// 21 because we add one extra transaction for the TAG (tags in git have their own hash)
+		assertEquals(21, transactionIDs.size());
+		assertEquals(true, transactionIDs.contains("96a9f105774b50f1fa3361212c4d12ae057a4285"));
+		assertEquals(true, transactionIDs.contains("fe56f365f798c3742bac5e56f5ff30eca4f622c6"));
+		assertEquals(true, transactionIDs.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
+		assertEquals(true, transactionIDs.contains("637acf68104e7bdff8235fb2e1a254300ffea3cb"));
+		assertEquals(true, transactionIDs.contains("376adc0f9371129a76766f8030f2e576165358c1"));
+		assertEquals(true, transactionIDs.contains("41a40fb23b54a49e91eb4cee510533eef810ec68"));
+		assertEquals(true, transactionIDs.contains("1ac6aaa05eb6d55939b20e70ec818bb413417757"));
+		assertEquals(true, transactionIDs.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
+		assertEquals(true, transactionIDs.contains("8273c1e51992a4d7a1da012dbb416864c2749a7f"));
+		assertEquals(true, transactionIDs.contains("ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
+		assertEquals(true, transactionIDs.contains("cbcc33d919a27b9450d117f211a5f4f45615cab9"));
+		assertEquals(true, transactionIDs.contains("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8"));
+		assertEquals(true, transactionIDs.contains("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
+		assertEquals(true, transactionIDs.contains("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
+		assertEquals(true, transactionIDs.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
+		assertEquals(true, transactionIDs.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
+		assertEquals(true, transactionIDs.contains("e52def97ebc1f78c9286b1e7c36783aa67604439"));
+		assertEquals(true, transactionIDs.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
+		assertEquals(true, transactionIDs.contains("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2"));
+		assertEquals(true, transactionIDs.contains("67635fe9efeb2fd3751df9ea67650c71e59e3df1"));
+		
 	}
 	
 }

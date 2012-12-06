@@ -124,8 +124,9 @@ public class RevDependencyGraph {
 				}
 				return null;
 			}
-			if (existsBranch(branchName)) {
-				return null;
+			final Vertex branchVertex = getBranch(branchName);
+			if (branchVertex != null) {
+				return branchVertex;
 			}
 			final TitanTransaction titanTransaction = this.graph.startTransaction();
 			final Vertex vertex = this.graph.addVertex(null);
@@ -533,14 +534,17 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Returns all transaction hashes.
+	 * Returns all transaction hashes. No specified order
 	 * 
 	 * @return the vertices
 	 */
 	public Iterable<String> getVertices() {
 		final Set<String> result = new HashSet<String>();
 		for (final Vertex node : this.graph.getVertices()) {
-			result.add(node.getProperty(RevDependencyGraph.NODE_ID).toString());
+			final Object property = node.getProperty(RevDependencyGraph.NODE_ID);
+			if (property != null) {
+				result.add(property.toString());
+			}
 		}
 		return new Iterable<String>() {
 			
