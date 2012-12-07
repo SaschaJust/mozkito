@@ -57,6 +57,7 @@ import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -100,7 +101,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	protected static final Regex             REGEX                        = new Regex(MercurialRepository.PATTERN);
 	
 	private static final String              FIELD_SPLITTER               = "+~+";
-	private static final String              UNNAMED_BRANCH_NAME_TEMPLATE = "branch_%s";
+	protected static final String            UNNAMED_BRANCH_NAME_TEMPLATE = "branch_%s";
 	
 	private static final Regex               REVISION_NODE_REGEX          = new Regex(
 	                                                                                  "[+-]({revision}\\d+):({hash}[a-zA-Z0-9]{40})");
@@ -572,9 +573,21 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		if (this.revDepGraph != null) {
 			this.revDepGraph = new RevDependencyGraph();
 			
+			// run hg tip --template {node}\n to get tip and to determine master branch
+			String[] arguments = new String[] { "tip", "--template", "{node}" + FileUtils.lineSeparator };
+			final Tuple<Integer, List<String>> tipResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+			                                                                       null, null);
+			if (tipResult.getFirst() != 0) {
+				if (Logger.logError()) {
+					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
+				}
+			}
+			
+			final String tip = tipResult.getSecond().get(0);
+			
 			// run hg heads --template {node}:{branches}\n to retrieve the open branches.
 			// if {branches} is empty, it means that the branch in not names. generate name using that head hash
-			String[] arguments = new String[] { "heads", "--template",
+			arguments = new String[] { "heads", "--template",
 			        "{node}" + FIELD_SPLITTER + "{branches}" + FileUtils.lineSeparator };
 			final Tuple<Integer, List<String>> headsResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
 			                                                                         null, null);
@@ -595,8 +608,12 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 				final String node = lineParts[0];
 				String branchName = lineParts[1];
 				if (branchName.isEmpty()) {
-					// unnamed branch. Genrating a branch name using the head commit hash as name
-					branchName = String.format(UNNAMED_BRANCH_NAME_TEMPLATE, node);
+					if (!node.equals(tip)) {
+						// unnamed branch. Genrating a branch name using the head commit hash as name
+						branchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE, node);
+					} else {
+						branchName = String.format(RCSBranch.MASTER_BRANCH_NAME, node);
+					}
 				}
 				this.revDepGraph.addBranch(branchName, node);
 			}
