@@ -335,6 +335,10 @@ public abstract class Repository {
 		return new LogIterator(this, fromRevision, toRevision);
 	}
 	
+	protected void resetRevDependencyGraph() {
+		this.revDepGraph = null;
+	}
+	
 	/**
 	 * Sets the end revision.
 	 * 
