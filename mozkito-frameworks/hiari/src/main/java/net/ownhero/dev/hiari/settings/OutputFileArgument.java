@@ -28,16 +28,29 @@ import net.ownhero.dev.kisa.Logger;
  */
 public class OutputFileArgument extends Argument<File, OutputFileArgument.Options> {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static class Options extends ArgumentOptions<File, OutputFileArgument> {
 		
+		/** The overwrite. */
 		private final boolean overwrite;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
+		 *            the argument set
 		 * @param name
+		 *            the name
 		 * @param description
+		 *            the description
 		 * @param defaultValue
+		 *            the default value
 		 * @param requirements
+		 *            the requirements
+		 * @param overwrite
+		 *            the overwrite
 		 */
 		public Options(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
 		        @NotNull @NotEmptyString final String description, final File defaultValue,
@@ -47,6 +60,8 @@ public class OutputFileArgument extends Argument<File, OutputFileArgument.Option
 		}
 		
 		/**
+		 * Checks if is overwrite.
+		 * 
 		 * @return the overwrite
 		 */
 		public final boolean isOverwrite() {
@@ -55,26 +70,17 @@ public class OutputFileArgument extends Argument<File, OutputFileArgument.Option
 		
 	}
 	
+	/** The overwrite. */
 	private boolean overwrite = false;
 	
 	/**
 	 * Constructor for FileArgument. Besides the obvious and general RepoSuiteArgument parameters, FileArguments can be
 	 * configures using two special parameters: <code>overwrite</code> and <code>mustExist</code>.
 	 * 
-	 * @param settings
-	 *            The RepoSuiteSetting instance this argument will register for
-	 * @param name
-	 *            Name of the Argument
-	 * @param description
-	 *            The help string description
-	 * @param defaultValue
-	 *            The default value given as string will be interpreted as path
-	 * @param isRequired
-	 *            Set to <code>true</code> if this argument will be required
-	 * @param overwrite
-	 *            Set to <code>true</code> if you want the RepoSuite tool to attempt overwriting the file located at
-	 *            given path if possible.
+	 * @param options
+	 *            the options
 	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	protected OutputFileArgument(@NotNull final Options options) throws ArgumentRegistrationException {
 		super(options);
@@ -82,8 +88,11 @@ public class OutputFileArgument extends Argument<File, OutputFileArgument.Option
 	}
 	
 	/**
+	 * Creates the file.
+	 * 
 	 * @param file
-	 * @return
+	 *            the file
+	 * @return true, if successful
 	 */
 	private final boolean createFile(final File file) {
 		boolean ret = false;
@@ -237,6 +246,8 @@ public class OutputFileArgument extends Argument<File, OutputFileArgument.Option
 	}
 	
 	/**
+	 * Checks if is overwrite.
+	 * 
 	 * @return the overwrite
 	 */
 	private final boolean isOverwrite() {

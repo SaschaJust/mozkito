@@ -1,6 +1,15 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings.exceptions;
 
 import java.io.File;
@@ -10,23 +19,37 @@ import java.lang.reflect.Modifier;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
+ * The Class InstantiationError.
+ *
  * @author just
- * 
  */
 public class InstantiationError extends UnrecoverableError {
 	
+	/** The Constant serialVersionUID. */
 	private static final long    serialVersionUID = 7635237323775156093L;
+	
+	/** The Constant defaultMessage. */
 	private static final String  defaultMessage   = "";
+	
+	/** The clazz. */
 	private final Class<?>       clazz;
+	
+	/** The constructor. */
 	private final Constructor<?> constructor;
+	
+	/** The arguments. */
 	private final Object[]       arguments;
+	
+	/** The Constant contextSize. */
 	static final private int     contextSize      = 3;
 	
 	/**
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -34,10 +57,12 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -45,11 +70,13 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final String message, final IllegalArgumentException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -60,11 +87,13 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @param message
-	 * @param cause
-	 * @param clazz
-	 * @param constructor
-	 * @param arguments
+	 * Instantiates a new instantiation error.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 * @param clazz the clazz
+	 * @param constructor the constructor
+	 * @param arguments the arguments
 	 */
 	public InstantiationError(final String message, final InstantiationException cause, final Class<?> clazz,
 	        final Constructor<?> constructor, final Object... arguments) {
@@ -133,21 +162,27 @@ public class InstantiationError extends UnrecoverableError {
 	}
 	
 	/**
-	 * @return
+	 * Gets the arguments.
+	 *
+	 * @return the arguments
 	 */
 	public Object[] getArguments() {
 		return this.arguments;
 	}
 	
 	/**
-	 * @return
+	 * Gets the clazz.
+	 *
+	 * @return the clazz
 	 */
 	public Class<?> getClazz() {
 		return this.clazz;
 	}
 	
 	/**
-	 * @return
+	 * Gets the constructor.
+	 *
+	 * @return the constructor
 	 */
 	public Constructor<?> getConstructor() {
 		return this.constructor;

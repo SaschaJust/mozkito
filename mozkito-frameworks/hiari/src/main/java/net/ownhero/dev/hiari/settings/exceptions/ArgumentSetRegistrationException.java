@@ -1,6 +1,15 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings.exceptions;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -25,23 +34,15 @@ public class ArgumentSetRegistrationException extends Exception {
 	/** The options. */
 	private final ArgumentSetOptions<?, ?> options;
 	
+	/** The message. */
 	private final String                   message;
 	
 	/**
 	 * Instantiates a new argument set registration exception.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param <X>
-	 *            the generic type
-	 * @param message
-	 *            the message
-	 * @param argument
-	 *            the argument
-	 * @param options
-	 *            the options
-	 * @param configurator
-	 *            the configurator
+	 *
+	 * @param message the message
+	 * @param argument the argument
+	 * @param options the options
 	 */
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options) {
@@ -58,21 +59,11 @@ public class ArgumentSetRegistrationException extends Exception {
 	
 	/**
 	 * Instantiates a new argument registration exception.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param <X>
-	 *            the generic type
-	 * @param message
-	 *            the message
-	 * @param argument
-	 *            the argument
-	 * @param options
-	 *            the options
-	 * @param configurator
-	 *            the configurator
-	 * @param t
-	 *            the t
+	 *
+	 * @param message the message
+	 * @param argument the argument
+	 * @param options the options
+	 * @param t the t
 	 */
 	public ArgumentSetRegistrationException(@NotNull final String message, final ArgumentSet<?, ?> argument,
 	        final ArgumentSetOptions<?, ?> options, final Throwable t) {

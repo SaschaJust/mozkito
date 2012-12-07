@@ -48,6 +48,50 @@ public class BooleanArgument extends Argument<Boolean, BooleanArgument.Options> 
 			super(argumentSet, name, description, defaultValue, requirements);
 		}
 		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param name
+		 *            the name
+		 * @param description
+		 *            the description
+		 * @param longDescription
+		 *            the long description
+		 * @param defaultValue
+		 *            the default value
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final String name, final String description,
+		        final String longDescription, final Boolean defaultValue, final Requirement requirements) {
+			super(argumentSet, name, description, longDescription, defaultValue, requirements);
+		}
+		
+		/**
+		 * Instantiates a new options.
+		 * 
+		 * @param argumentSet
+		 *            the argument set
+		 * @param name
+		 *            the name
+		 * @param description
+		 *            the description
+		 * @param longDescription
+		 *            the long description
+		 * @param examples
+		 *            the examples
+		 * @param defaultValue
+		 *            the default value
+		 * @param requirements
+		 *            the requirements
+		 */
+		public Options(final ArgumentSet<?, ?> argumentSet, final String name, final String description,
+		        final String longDescription, final String[] examples, final Boolean defaultValue,
+		        final Requirement requirements) {
+			super(argumentSet, name, description, longDescription, examples, defaultValue, requirements);
+		}
 	}
 	
 	/**

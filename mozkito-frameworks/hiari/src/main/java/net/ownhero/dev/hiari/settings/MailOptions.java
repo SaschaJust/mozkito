@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings;
 
 import java.net.InetAddress;
@@ -25,34 +25,51 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class MailOptions.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Properties, MailOptions>> {
 	
+	/** The host option. */
 	private Options hostOption;
+	
+	/** The to option. */
 	private Options toOption;
+	
+	/** The subject option. */
 	private Options subjectOption;
+	
+	/** The sender name option. */
 	private Options senderNameOption;
+	
+	/** The sender address option. */
 	private Options senderAddressOption;
+	
+	/** The password option. */
 	private Options passwordOption;
 	
+	/** The username option. */
 	private Options usernameOption;
 	
+	/** The sender host option. */
 	private Options senderHostOption;
 	
 	/**
+	 * Instantiates a new mail options.
+	 * 
 	 * @param argumentSet
-	 * @param name
-	 * @param description
+	 *            the argument set
 	 * @param requirements
-	 * @param configurator
+	 *            the requirements
 	 */
 	public MailOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirements) {
 		super(argumentSet, "mail", "Configures the settings for the crash mailer.", requirements);
 	}
 	
 	/**
+	 * Gets the host option.
+	 * 
 	 * @return the hostOption
 	 */
 	public final Options getHostOption() {
@@ -67,6 +84,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the password option.
+	 * 
 	 * @return the passwordOption
 	 */
 	public final Options getPasswordOption() {
@@ -81,6 +100,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the sender address option.
+	 * 
 	 * @return the senderAddressOption
 	 */
 	public final Options getSenderAddressOption() {
@@ -96,6 +117,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the sender host option.
+	 * 
 	 * @return the senderHostOption
 	 */
 	public final Options getSenderHostOption() {
@@ -111,6 +134,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the sender name option.
+	 * 
 	 * @return the senderNameOption
 	 */
 	public final Options getSenderNameOption() {
@@ -126,6 +151,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the subject option.
+	 * 
 	 * @return the subjectOption
 	 */
 	public final Options getSubjectOption() {
@@ -140,6 +167,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the to option.
+	 * 
 	 * @return the toOption
 	 */
 	public final Options getToOption() {
@@ -154,6 +183,8 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 	}
 	
 	/**
+	 * Gets the username option.
+	 * 
 	 * @return the usernameOption
 	 */
 	public final Options getUsernameOption() {
@@ -201,6 +232,14 @@ public class MailOptions extends ArgumentSetOptions<Properties, ArgumentSet<Prop
 		return properties;
 	}
 	
+	/**
+	 * Req.
+	 * 
+	 * @param option
+	 *            the option
+	 * @param map
+	 *            the map
+	 */
 	private void req(final IOptions<?, ?> option,
 	                 final Map<String, IOptions<?, ?>> map) {
 		map.put(option.getName(), option);

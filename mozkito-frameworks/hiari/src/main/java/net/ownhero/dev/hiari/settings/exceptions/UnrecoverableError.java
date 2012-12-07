@@ -1,6 +1,15 @@
-/**
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings.exceptions;
 
 import java.io.BufferedReader;
@@ -15,52 +24,100 @@ import java.lang.reflect.Type;
 import net.ownhero.dev.ioda.FileUtils;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class UnrecoverableError.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public class UnrecoverableError extends Error {
 	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8156028538555027087L;
 	
 	/**
-     * 
-     */
+	 * Format.
+	 * 
+	 * @param formatString
+	 *            the format string
+	 * @param args
+	 *            the args
+	 * @return the unrecoverable error
+	 */
+	public static UnrecoverableError format(final String formatString,
+	                                        final Object... args) {
+		return new UnrecoverableError(String.format(formatString, args));
+	}
+	
+	/**
+	 * Format.
+	 * 
+	 * @param t
+	 *            the t
+	 * @param formatString
+	 *            the format string
+	 * @param args
+	 *            the args
+	 * @return the unrecoverable error
+	 */
+	public static UnrecoverableError format(final Throwable t,
+	                                        final String formatString,
+	                                        final Object... args) {
+		return new UnrecoverableError(String.format(formatString, args), t);
+	}
+	
+	/**
+	 * Instantiates a new unrecoverable error.
+	 */
 	public UnrecoverableError() {
 		super();
 	}
 	
 	/**
+	 * Instantiates a new unrecoverable error.
+	 * 
 	 * @param arg0
+	 *            the arg0
 	 */
 	public UnrecoverableError(final String arg0) {
 		super(arg0);
 	}
 	
 	/**
+	 * Instantiates a new unrecoverable error.
+	 * 
 	 * @param arg0
+	 *            the arg0
 	 * @param arg1
+	 *            the arg1
 	 */
 	public UnrecoverableError(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
 	}
 	
 	/**
+	 * Instantiates a new unrecoverable error.
+	 * 
 	 * @param arg0
+	 *            the arg0
 	 */
 	public UnrecoverableError(final Throwable arg0) {
 		super(arg0);
 	}
 	
 	/**
+	 * Analyze failure cause.
 	 * 
+	 * @return the string
 	 */
 	public String analyzeFailureCause() {
 		return null;
 	}
 	
 	/**
+	 * Gets the argument string.
+	 * 
 	 * @param types
-	 * @return
+	 *            the types
+	 * @return the argument string
 	 */
 	protected String getArgumentString(final Class<?>[] types) {
 		final StringBuilder builder = new StringBuilder();
@@ -76,8 +133,11 @@ public class UnrecoverableError extends Error {
 	}
 	
 	/**
+	 * Gets the argument string.
+	 * 
 	 * @param types
-	 * @return
+	 *            the types
+	 * @return the argument string
 	 */
 	protected String getArgumentString(final Object[] types) {
 		final StringBuilder builder = new StringBuilder();
@@ -93,8 +153,11 @@ public class UnrecoverableError extends Error {
 	}
 	
 	/**
+	 * Gets the argument string.
+	 * 
 	 * @param types
-	 * @return
+	 *            the types
+	 * @return the argument string
 	 */
 	protected String getArgumentString(final Type[] types) {
 		final StringBuilder builder = new StringBuilder();
@@ -110,8 +173,11 @@ public class UnrecoverableError extends Error {
 	}
 	
 	/**
+	 * Gets the constructor string.
+	 * 
 	 * @param constructor
-	 * @return
+	 *            the constructor
+	 * @return the constructor string
 	 */
 	protected String getConstructorString(final Constructor<?> constructor) {
 		final StringBuilder builder = new StringBuilder();
@@ -134,10 +200,15 @@ public class UnrecoverableError extends Error {
 	}
 	
 	/**
+	 * Gets the constructor string.
+	 * 
 	 * @param name
+	 *            the name
 	 * @param modifier
+	 *            the modifier
 	 * @param arguments
-	 * @return
+	 *            the arguments
+	 * @return the constructor string
 	 */
 	protected String getConstructorString(final String name,
 	                                      final String modifier,
@@ -155,6 +226,13 @@ public class UnrecoverableError extends Error {
 		return builder.toString();
 	}
 	
+	/**
+	 * Gets the modifier string.
+	 * 
+	 * @param modifiers
+	 *            the modifiers
+	 * @return the modifier string
+	 */
 	protected String getModifierString(final int modifiers) {
 		final StringBuilder builder = new StringBuilder();
 		
@@ -197,13 +275,22 @@ public class UnrecoverableError extends Error {
 		return builder.toString();
 	}
 	
+	/**
+	 * Gets the source code.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param lineNumber
+	 *            the line number
+	 * @param contextSize
+	 *            the context size
+	 * @return the source code
+	 */
 	protected String getSourceCode(final File file,
 	                               final int lineNumber,
 	                               final int contextSize) {
 		final StringBuilder builder = new StringBuilder();
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			
 			builder.append("Source code: ").append(FileUtils.lineSeparator);
 			
@@ -231,6 +318,8 @@ public class UnrecoverableError extends Error {
 				                           : "(null)").append(FileUtils.lineSeparator);
 			}
 		} catch (final FileNotFoundException ignore) { // ignore
+		} catch (final IOException ignore) {
+			// ignore
 		}
 		
 		return builder.toString();

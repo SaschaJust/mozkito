@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,14 +9,19 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings;
 
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Interface IOptions.
  * 
+ * @param <T>
+ *            the generic type
+ * @param <X>
+ *            the generic type
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public interface IOptions<T, X> extends Comparable<IOptions<?, ?>> {
 	
@@ -51,6 +56,8 @@ public interface IOptions<T, X> extends Comparable<IOptions<?, ?>> {
 	/**
 	 * Gets the help string.
 	 * 
+	 * @param keyWidth
+	 *            the key width
 	 * @return the help string
 	 */
 	String getHelpString(final int keyWidth);
@@ -58,6 +65,8 @@ public interface IOptions<T, X> extends Comparable<IOptions<?, ?>> {
 	/**
 	 * Gets the help string.
 	 * 
+	 * @param keyWidth
+	 *            the key width
 	 * @param indentation
 	 *            the indentation
 	 * @return the help string

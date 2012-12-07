@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 package net.ownhero.dev.hiari.settings;
 
 import java.io.IOException;
@@ -23,21 +23,35 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 /**
- * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
+ * The Class PortArgument.
  * 
+ * @author Sascha Just <sascha.just@st.cs.uni-saarland.de>
  */
 public final class PortArgument extends Argument<Integer, PortArgument.Options> {
 	
+	/**
+	 * The Class Options.
+	 */
 	public static class Options extends ArgumentOptions<Integer, PortArgument> {
 		
+		/** The can bind. */
 		private final boolean canBind;
 		
 		/**
+		 * Instantiates a new options.
+		 * 
 		 * @param argumentSet
+		 *            the argument set
 		 * @param name
+		 *            the name
 		 * @param description
+		 *            the description
 		 * @param defaultValue
+		 *            the default value
 		 * @param requirements
+		 *            the requirements
+		 * @param canBind
+		 *            the can bind
 		 */
 		public Options(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
 		        @NotNull @NotEmptyString final String description, @NotNull final Integer defaultValue,
@@ -47,6 +61,8 @@ public final class PortArgument extends Argument<Integer, PortArgument.Options> 
 		}
 		
 		/**
+		 * Can bind.
+		 * 
 		 * @return the free
 		 */
 		public final boolean canBind() {
@@ -63,8 +79,12 @@ public final class PortArgument extends Argument<Integer, PortArgument.Options> 
 	}
 	
 	/**
+	 * Instantiates a new port argument.
+	 * 
 	 * @param options
+	 *            the options
 	 * @throws ArgumentRegistrationException
+	 *             the argument registration exception
 	 */
 	PortArgument(final Options options) throws ArgumentRegistrationException {
 		super(options);

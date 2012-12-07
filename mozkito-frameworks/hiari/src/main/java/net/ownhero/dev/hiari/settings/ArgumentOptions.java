@@ -64,6 +64,123 @@ public abstract class ArgumentOptions<T, X extends Argument<T, ? extends Argumen
 	 *            the name
 	 * @param description
 	 *            the description
+	 * @param longDescription
+	 *            the long description
+	 * @param examples
+	 *            the examples
+	 * @param defaultValue
+	 *            the default value
+	 * @param requirements
+	 *            the requirements
+	 */
+	public ArgumentOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String longDescription, final String[] examples,
+	        final T defaultValue, @NotNull final Requirement requirements) {
+		this(argumentSet, name, description, longDescription, examples, defaultValue, requirements, false);
+		
+	}
+	
+	/**
+	 * Instantiates a new argument options.
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 * @param longDescription
+	 *            the long description
+	 * @param examples
+	 *            the examples
+	 * @param defaultValue
+	 *            the default value
+	 * @param requirements
+	 *            the requirements
+	 * @param mask
+	 *            the mask
+	 */
+	public ArgumentOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String longDescription, final String[] examples,
+	        final T defaultValue, @NotNull final Requirement requirements, final boolean mask) {
+		// PRECONDITIONS
+		
+		try {
+			this.name = name;
+			this.description = description;
+			this.requirements = requirements;
+			this.stringValue = defaultValue != null
+			                                       ? defaultValue.toString()
+			                                       : null;
+			this.defaultValue = defaultValue;
+			this.argumentSet = argumentSet;
+			this.masked = mask;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.argumentSet, "Field '%s' in %s.", "argumentSet", getHandle());
+			Condition.notNull(this.name, "Field '%s' in %s.", "name", getHandle());
+			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
+			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
+		}
+	}
+	
+	/**
+	 * Instantiates a new argument options.
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 * @param longDescription
+	 *            the long description
+	 * @param defaultValue
+	 *            the default value
+	 * @param requirements
+	 *            the requirements
+	 */
+	public ArgumentOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String longDescription, final T defaultValue,
+	        @NotNull final Requirement requirements) {
+		this(argumentSet, name, description, longDescription, null, defaultValue, requirements, false);
+		
+	}
+	
+	/**
+	 * Instantiates a new argument options.
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 * @param longDescription
+	 *            the long description
+	 * @param defaultValue
+	 *            the default value
+	 * @param requirements
+	 *            the requirements
+	 * @param mask
+	 *            the mask
+	 */
+	public ArgumentOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
+	        @NotNull @NotEmptyString final String description, final String longDescription, final T defaultValue,
+	        @NotNull final Requirement requirements, final boolean mask) {
+		this(argumentSet, name, description, longDescription, null, defaultValue, requirements, mask);
+		
+	}
+	
+	/**
+	 * Instantiates a new argument options.
+	 * 
+	 * @param argumentSet
+	 *            the argument set
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
 	 * @param defaultValue
 	 *            the default value
 	 * @param requirements
@@ -94,25 +211,7 @@ public abstract class ArgumentOptions<T, X extends Argument<T, ? extends Argumen
 	public ArgumentOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull @NotEmptyString final String name,
 	        @NotNull @NotEmptyString final String description, final T defaultValue,
 	        @NotNull final Requirement requirements, final boolean mask) {
-		// PRECONDITIONS
-		
-		try {
-			this.name = name;
-			this.description = description;
-			this.requirements = requirements;
-			this.stringValue = defaultValue != null
-			                                       ? defaultValue.toString()
-			                                       : null;
-			this.defaultValue = defaultValue;
-			this.argumentSet = argumentSet;
-			this.masked = mask;
-		} finally {
-			// POSTCONDITIONS
-			Condition.notNull(this.argumentSet, "Field '%s' in %s.", "argumentSet", getHandle());
-			Condition.notNull(this.name, "Field '%s' in %s.", "name", getHandle());
-			Condition.notNull(this.description, "Field '%s' in %s.", "description", getHandle());
-			Condition.notNull(this.requirements, "Field '%s' in %s.", "requirements", getHandle());
-		}
+		this(argumentSet, name, description, null, null, defaultValue, requirements, mask);
 	}
 	
 	/*
