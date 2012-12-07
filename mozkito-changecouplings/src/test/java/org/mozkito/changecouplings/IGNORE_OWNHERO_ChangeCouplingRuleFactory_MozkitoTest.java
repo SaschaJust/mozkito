@@ -25,8 +25,8 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.changecouplings.model.FileChangeCoupling;
+import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
@@ -42,7 +42,14 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-@DatabaseSettings (unit = "versions")
+@DatabaseSettings (unit = "versions",
+                   options = ConnectOptions.DB_DROP_CREATE,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   password = "miner",
+                   username = "miner",
+                   type = "POSTGRESQL",
+                   driver = "org.postgresql.Driver",
+                   remote = true)
 public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends DatabaseTest {
 	
 	/** The persistence util. */
