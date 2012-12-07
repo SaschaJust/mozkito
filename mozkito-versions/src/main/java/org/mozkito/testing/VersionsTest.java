@@ -24,7 +24,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
-
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -62,7 +61,7 @@ public class VersionsTest extends DatabaseTest {
 	}
 	
 	/**
-	 * Gets the repositories.
+	 * Returns a map from RepositorySettingsID to Repositories.
 	 * 
 	 * @return the repositories
 	 */
