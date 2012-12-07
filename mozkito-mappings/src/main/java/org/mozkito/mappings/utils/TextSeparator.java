@@ -14,23 +14,22 @@
 package org.mozkito.mappings.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import jregex.REFlags;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
 
 import com.aliasi.sentences.MedlineSentenceModel;
 import com.aliasi.sentences.SentenceModel;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
-
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.MultiMatch;
-import net.ownhero.dev.regex.Regex;
-import scala.actors.threadpool.Arrays;
 
 /**
  * The Class TextSeparator.
@@ -71,7 +70,6 @@ public final class TextSeparator {
 	 *            the text
 	 * @return the list
 	 */
-	@SuppressWarnings ("unchecked")
 	public static List<String> lines(final String text) {
 		return Arrays.asList(text.split(FileUtils.lineSeparator));
 	}
@@ -83,7 +81,6 @@ public final class TextSeparator {
 	 *            the text
 	 * @return the list
 	 */
-	@SuppressWarnings ("unchecked")
 	public static List<String> paragraphs(final String text) {
 		final Regex regex = new Regex(FileUtils.lineSeparator + "\\s*" + FileUtils.lineSeparator, REFlags.MULTILINE);
 		return Arrays.asList(regex.tokenize(text));
