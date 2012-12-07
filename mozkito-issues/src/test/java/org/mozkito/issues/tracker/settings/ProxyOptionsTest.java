@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -38,8 +39,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import scala.actors.threadpool.Arrays;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class ProxyOptionsTest.
@@ -49,7 +48,6 @@ import scala.actors.threadpool.Arrays;
 public class ProxyOptionsTest {
 	
 	/** The keys. */
-	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "proxy.cacheDir", "proxy.host", "proxy.internal",
 	        "proxy.password", "proxy.port", "useProxy", "tracker.proxy.username", "useProxy" });
 	

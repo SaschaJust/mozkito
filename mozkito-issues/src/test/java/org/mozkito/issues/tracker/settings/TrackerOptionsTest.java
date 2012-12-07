@@ -14,6 +14,7 @@ package org.mozkito.issues.tracker.settings;
 
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
@@ -28,8 +29,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import scala.actors.threadpool.Arrays;
-
 /**
  * The Class TrackerOptionsTest.
  * 
@@ -38,7 +37,6 @@ import scala.actors.threadpool.Arrays;
 public class TrackerOptionsTest {
 	
 	/** The keys. */
-	@SuppressWarnings ("unchecked")
 	private static List<String> keys = Arrays.asList(new String[] { "tracker.password", "tracker.proxy.cacheDir",
 	        "tracker.proxy.host", "tracker.proxy.internal", "tracker.proxy.password", "tracker.proxy.port",
 	        "tracker.useProxy", "tracker.proxy.username", "tracker.type", "tracker.uri", "tracker.user" });
