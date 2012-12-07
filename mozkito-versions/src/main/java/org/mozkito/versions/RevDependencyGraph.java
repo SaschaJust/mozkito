@@ -28,6 +28,8 @@ import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
 import net.ownhero.dev.kanuni.conditions.StringCondition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanTransaction;
@@ -358,6 +360,22 @@ public class RevDependencyGraph {
 		return getNode(BRANCH_ID, nodeID);
 	}
 	
+	/**
+	 * Returns the names of all containing branches.
+	 * 
+	 * @return the branches
+	 */
+	public Set<String> getBranches() {
+		final Set<String> result = new HashSet<String>();
+		for (final Vertex node : this.graph.getVertices()) {
+			final Object property = node.getProperty(RevDependencyGraph.BRANCH_ID);
+			if (property != null) {
+				result.add(property.toString());
+			}
+		}
+		return result;
+	}
+	
 	@NoneNull
 	private Vertex getBranchHead(@NotEmptyString final String branchName) {
 		final Vertex branchVertex = getBranch(branchName);
@@ -378,6 +396,23 @@ public class RevDependencyGraph {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns the names of all containing branches.
+	 * 
+	 * @return the branches
+	 */
+	private Set<String> getBranchHeads() {
+		final Set<String> branchHeads = new HashSet<>();
+		final Set<String> branches = getBranches();
+		for (final String branchName : branches) {
+			final Vertex branchHead = getBranchHead(branchName);
+			if (branchHead != null) {
+				branchHeads.add(branchHead.getProperty(NODE_ID).toString());
+			}
+		}
+		return branchHeads;
 	}
 	
 	/**
@@ -588,5 +623,46 @@ public class RevDependencyGraph {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Checks if this RevDependencyGraph contains the same RevDepdendecy structure as the provided other
+	 * RevDependencyGraph
+	 * 
+	 * @param other
+	 *            the other
+	 * @return true, if is equals to
+	 */
+	public boolean isEqualsTo(final RevDependencyGraph other) {
+		if (!CollectionUtils.isEqualCollection(this.tags.keySet(), other.tags.keySet())) {
+			return false;
+		}
+		for (final String key : this.tags.keySet()) {
+			if (!CollectionUtils.isEqualCollection(this.tags.get(key), other.tags.get(key))) {
+				return false;
+			}
+		}
+		final Set<String> thisBranchHeads = getBranchHeads();
+		final Set<String> otherBranchHeads = other.getBranchHeads();
+		
+		if (!CollectionUtils.isEqualCollection(thisBranchHeads, otherBranchHeads)) {
+			return false;
+		}
+		for (final String branchHead : thisBranchHeads) {
+			final Iterator<String> thisIter = getPreviousTransactions(branchHead).iterator();
+			final Iterator<String> otherIter = other.getPreviousTransactions(branchHead).iterator();
+			while (thisIter.hasNext()) {
+				if (!otherIter.hasNext()) {
+					return false;
+				}
+				if (!thisIter.next().equals(otherIter.next())) {
+					return false;
+				}
+			}
+			if (otherIter.hasNext()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
