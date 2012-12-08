@@ -23,11 +23,13 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 
 import org.junit.Test;
+
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.utils.JungGenealogyGraph.Edge;
 import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
@@ -37,12 +39,11 @@ import org.mozkito.versions.BranchFactory;
  */
 @DatabaseSettings (unit = "codeanalysis",
                    database = "moskito_genealogies_test_environment",
-                   options = ConnectOptions.CREATE,
+                   options = ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
                    hostname = "grid1.st.cs.uni-saarland.de",
                    password = "miner",
                    username = "miner",
-                   type = "POSTGRESQL",
-                   driver = "org.postgresql.Driver",
+                   type = DatabaseType.POSTGRESQL,
                    remote = true)
 public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
