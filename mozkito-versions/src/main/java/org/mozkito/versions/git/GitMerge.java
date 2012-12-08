@@ -18,6 +18,8 @@ import java.util.Set;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
+
 /**
  * The Class GitMerge.
  */
@@ -73,14 +75,14 @@ public class GitMerge {
 	 * @return the edge type
 	 */
 	@NoneNull
-	public GitRevDependencyType getEdgeType(final String parent) {
+	public EdgeType getEdgeType(final String parent) {
 		// PRECONDITIONS
 		
 		try {
 			if ((this.branchParent != null) && this.branchParent.equals(parent)) {
-				return GitRevDependencyType.BRANCH_EDGE;
+				return EdgeType.BRANCH_EDGE;
 			} else if (this.otherParents.contains(parent)) {
-				return GitRevDependencyType.MERGE_EDGE;
+				return EdgeType.MERGE_EDGE;
 			} else {
 				return null;
 			}

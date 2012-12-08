@@ -48,18 +48,18 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.DistributedCommandLineRepository;
+import org.mozkito.versions.LogParser;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.DistributedCommandLineRepository;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.LogParser;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
 
 /**
  * The Class GitRepository. This class is _not_ thread safe.
@@ -68,14 +68,26 @@ import org.mozkito.versions.elements.ChangeType;
  */
 public class GitRepository extends DistributedCommandLineRepository {
 	
+	/** The Constant REFS_TAGS_LENGTH. */
+	private static final int                 REFS_TAGS_LENGTH    = 10;
+	
+	/** The Constant REFS_PULL_LENGTH. */
+	private static final int                 REFS_PULL_LENGTH    = 10;
+	
+	/** The Constant REFS_REMOTES_LENGTH. */
+	private static final int                 REFS_REMOTES_LENGTH = 13;
+	
+	/** The Constant REFS_HEAD_LENGTH. */
+	private static final int                 REFS_HEAD_LENGTH    = 11;
+	
 	/** The Constant GIT_HASH_LENGTH. */
-	private static final int                 GIT_HASH_LENGTH   = 40;
+	private static final int                 GIT_HASH_LENGTH     = 40;
 	
 	/** The current revision. */
-	private String                           currentRevision   = null;
+	private String                           currentRevision     = null;
 	
 	/** The charset. */
-	protected static Charset                 charset           = Charset.defaultCharset();
+	protected static Charset                 charset             = Charset.defaultCharset();
 	static {
 		if (Charset.isSupported("UTF8")) {
 			GitRepository.charset = Charset.forName("UTF8");
@@ -83,26 +95,27 @@ public class GitRepository extends DistributedCommandLineRepository {
 	}
 	
 	/** The Constant dtf. */
-	protected static final DateTimeFormatter DTF               = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
+	protected static final DateTimeFormatter DTF                 = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z");
 	
 	/** The Constant regex. */
-	protected static final Regex             REGEX             = new Regex(
-	                                                                       ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
+	protected static final Regex             REGEX               = new Regex(
+	                                                                         ".*\\(({author}.*)\\s+({date}\\d{4}-\\d{2}-\\d{2}\\s+[^ ]+\\s+[+-]\\d{4})\\s+[^)]*\\)\\s+({codeline}.*)");
 	
 	/** The Constant formerPathRegex. */
-	protected static final Regex             FORMER_PATH_REGEX = new Regex("^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
+	protected static final Regex             FORMER_PATH_REGEX   = new Regex(
+	                                                                         "^[^\\s]+\\s+({result}[^\\s]+)\\s+[^\\s]+.*");
 	
 	/** The clone dir. */
 	private File                             cloneDir;
 	
 	/** The transaction i ds. */
-	private final List<String>               transactionIDs    = new LinkedList<String>();
+	private final List<String>               transactionIDs      = new LinkedList<String>();
 	
 	/** The branch factory. */
 	private BranchFactory                    branchFactory;
 	
 	/** The rev dep graph. */
-	private GitRevDependencyGraph            revDepGraph;
+	private RevDependencyGraph               revDepGraph;
 	
 	/**
 	 * Instantiates a new git repository.
@@ -533,32 +546,86 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() {
 		// PRECONDITIONS
 		
 		try {
 			if (this.revDepGraph == null) {
-				this.revDepGraph = new GitRevDependencyGraph(this);
-				this.revDepGraph.createFromRepository();
-			}
-			return this.revDepGraph;
-		} finally {
-			// POSTCONDITIONS
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence. PersistenceUtil)
-	 */
-	@Override
-	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
-		// PRECONDITIONS
-		
-		try {
-			if (this.revDepGraph == null) {
-				this.revDepGraph = new GitRevDependencyGraph(this);
-				this.revDepGraph.readFromDB(persistenceUtil);
+				this.revDepGraph = new RevDependencyGraph();
+				
+				// use `git ls-remote .` to get all branches and their HEADs
+				final List<String> lsRemote = getLsRemote();
+				for (final String line : lsRemote) {
+					final String[] lineParts = line.split("\\s+");
+					final String clHash = lineParts[0];
+					String remoteName = lineParts[1];
+					if (Logger.logDebug()) {
+						Logger.debug("Found branch reference: " + remoteName);
+					}
+					if (remoteName.startsWith("refs/heads/")) {
+						remoteName = remoteName.substring(REFS_HEAD_LENGTH);
+						if ("master".equals(remoteName)) {
+							continue;
+						}
+					} else if (remoteName.startsWith("refs/remotes/")) {
+						remoteName = remoteName.substring(REFS_REMOTES_LENGTH);
+						if ("origin/HEAD".equals(remoteName)) {
+							continue;
+						}
+						if ("origin/master".equals(remoteName)) {
+							remoteName = RCSBranch.MASTER_BRANCH_NAME;
+						}
+					} else if (remoteName.startsWith("refs/pull/")) {
+						remoteName = remoteName.substring(REFS_PULL_LENGTH);
+					} else if (remoteName.startsWith("refs/tags/")) {
+						remoteName = remoteName.substring(REFS_TAGS_LENGTH).replace("^{}", "");
+						this.revDepGraph.addTag(remoteName, clHash);
+						continue;
+					} else {
+						continue;
+					}
+					if (Logger.logDebug()) {
+						Logger.debug("Adding branch head for branch %s: %s.", remoteName, clHash);
+					}
+					this.revDepGraph.addBranch(remoteName, clHash);
+				}
+				
+				// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
+				final List<String> revListParents = getRevListParents();
+				for (final String line : revListParents) {
+					final String[] lineParts = line.split("\\s+");
+					if (lineParts.length < 1) {
+						throw new UnrecoverableError(
+						                             "Cannot process rev-list --parents. Detected line with no entires.");
+					}
+					final String child = lineParts[0];
+					if (!this.revDepGraph.existsVertex(child)) {
+						if (this.revDepGraph.addChangeSet(child) != null) {
+							if (Logger.logError()) {
+								Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+								             child);
+							}
+						}
+					}
+					
+					if (lineParts.length > 1) {
+						final String branchParent = lineParts[1];
+						if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
+							if (Logger.logError()) {
+								Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+								             branchParent, child);
+							}
+						}
+						for (int i = 2; i < lineParts.length; ++i) {
+							if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
+								if (Logger.logError()) {
+									Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+									             branchParent, child);
+								}
+							}
+						}
+					}
+				}
 			}
 			return this.revDepGraph;
 		} finally {

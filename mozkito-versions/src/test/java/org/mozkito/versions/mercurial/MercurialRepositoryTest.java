@@ -23,8 +23,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
@@ -34,9 +36,11 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
 
@@ -294,6 +298,98 @@ public class MercurialRepositoryTest {
 		assertTrue(logEntry.getDateTime().isEqual(DateTimeUtils.parseDate("2011-01-20 12:03:59 +0100")));
 		assertEquals("changing 1.txt", logEntry.getMessage());
 		assertTrue(logEntry.getOriginalId().isEmpty());
+	}
+	
+	/**
+	 * Test get rev dependency graph.
+	 */
+	@Test
+	public void testGetRevDependencyGraph() {
+		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
+		final Set<String> branches = revDepG.getBranches();
+		final String maintenanceBranchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE,
+		                                                   "2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9");
+		assertEquals(true, branches.contains(maintenanceBranchName));
+		assertEquals(true, branches.contains(RCSBranch.MASTER_BRANCH_NAME));
+		final Iterator<String> masterIter = revDepG.getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		
+		assertTrue(masterIter.hasNext());
+		assertEquals("d9a5542fe1b5a755502320ba38fdf180011b40df", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("f899af794ecaad48a4c910d72b003cbe69e3aabe", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("b01759380f692e073bdb63d79f5238f1982d0bbd", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("afd81d6ab25074bbb813a0005dcde880e3acacd0", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("e17ec8036b3bf49667ec1bb7fe474e65451a98b0", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("c6b358dfd0e99376c15038d4f90d8fe2c1a766af", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("ffaaa326e3b8cd68c2396b21eb49b26a1cb3835c", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("ef28e5ceba3b2d8d30999c4fea4301771802d550", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("bc67c4d57423730912fda92ff8849d0e78d44c6f", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("df6bde3bc282ec4815e98877e150a6881efc059e", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("c601aab93720e3062c7335f970ccfafcae9d1822", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("2398c6b6da51e317c951dba74e9d205db17fce02", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("3347390341d7039fd3ef4f86170b1c46165ea3c5", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("f0da088d852301db341d77810ec88f488a2a64e8", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("7014dcc2a3857d3c824d3593cdb582be01bbf8e1", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("6c01477a1cf2d9a952370c1208d43065feab9552", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("caac84e3edc88a6f3ec2b71bbcd6ad78445ef985", masterIter.next());
+		assertFalse(masterIter.hasNext());
+		
+		final Iterator<String> maintenanceIter = revDepG.getBranchTransactions(maintenanceBranchName).iterator();
+		
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("d0051f69e5e8b14a798d9a71e6abe41fc44a0af8", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("5be9fd4d8b5653706de0f21bf0c481515890c329", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("ffaaa326e3b8cd68c2396b21eb49b26a1cb3835c", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("ef28e5ceba3b2d8d30999c4fea4301771802d550", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("df6bde3bc282ec4815e98877e150a6881efc059e", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("c601aab93720e3062c7335f970ccfafcae9d1822", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("2398c6b6da51e317c951dba74e9d205db17fce02", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("3347390341d7039fd3ef4f86170b1c46165ea3c5", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("f0da088d852301db341d77810ec88f488a2a64e8", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("7014dcc2a3857d3c824d3593cdb582be01bbf8e1", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("6c01477a1cf2d9a952370c1208d43065feab9552", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("caac84e3edc88a6f3ec2b71bbcd6ad78445ef985", maintenanceIter.next());
+		assertFalse(maintenanceIter.hasNext());
 	}
 	
 	/**

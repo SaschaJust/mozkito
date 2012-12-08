@@ -23,6 +23,35 @@ import org.junit.Test;
 public class JavaClassDefinitionTest {
 	
 	/**
+	 * Test protected constructor.
+	 */
+	@Test
+	public void testProtectedConstructor() {
+		final JavaTypeDefinition def = new JavaTypeDefinition(JavaTypeDefinition.class.getName(), true);
+		assertEquals(JavaTypeDefinition.class.getName(), def.getElementType());
+		assertEquals(JavaTypeDefinition.class.getName(), def.getFullQualifiedName());
+		assertEquals(JavaTypeDefinition.class.getPackage().getName(), def.getPackageName());
+		assertEquals(true, def.getParent() == null);
+		assertEquals(JavaTypeDefinition.class.getSimpleName(), def.getShortName());
+		assertEquals(true, def.isInterface());
+		assertEquals(true, def.getSuperClassName() == null);
+		assertEquals(false, def.isAnonymClass());
+		
+		final JavaTypeDefinition def2 = new JavaTypeDefinition(def, JavaClassDefinitionTest.class.getName() + "$2",
+		                                                       false);
+		assertEquals(JavaTypeDefinition.class.getName(), def2.getElementType());
+		assertEquals(JavaClassDefinitionTest.class.getName() + "$2", def2.getFullQualifiedName());
+		assertEquals(JavaClassDefinitionTest.class.getPackage().getName(), def2.getPackageName());
+		assertEquals(def, def2.getParent());
+		assertEquals(JavaClassDefinitionTest.class.getSimpleName() + "$2", def2.getShortName());
+		assertEquals(false, def2.isInterface());
+		assertEquals(null, def2.getSuperClassName());
+		assertEquals(true, def2.isAnonymClass());
+		def2.setSuperClassName(JavaClassDefinitionTest.class.getName());
+		assertEquals(JavaClassDefinitionTest.class.getName(), def2.getSuperClassName());
+	}
+	
+	/**
 	 * Test xml.
 	 */
 	@Test

@@ -31,13 +31,15 @@ import net.ownhero.dev.ioda.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.IRevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraphTest;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
- * The Class GitTransactionIteratorTest.
+ * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
+ * 
  */
 public class GitTransactionIteratorTest {
 	
@@ -59,7 +61,7 @@ public class GitTransactionIteratorTest {
 	@BeforeClass
 	public static void beforeClass() {
 		try {
-			final URL zipURL = GitRevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
+			final URL zipURL = RevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
 			assert (zipURL != null);
 			
 			final File bareDir = new File(
@@ -90,11 +92,11 @@ public class GitTransactionIteratorTest {
 			GitTransactionIteratorTest.transactionMap.put(logEntry.getRevision(), rcsTransaction);
 		}
 		
-		final IRevDependencyGraph revDepGraph = GitTransactionIteratorTest.repo.getRevDependencyGraph();
+		final RevDependencyGraph revDepGraph = GitTransactionIteratorTest.repo.getRevDependencyGraph();
 		for (final RCSTransaction rcsTransaction : GitTransactionIteratorTest.transactionMap.values()) {
 			final String hash = rcsTransaction.getId();
 			
-			if (!revDepGraph.hasVertex(hash)) {
+			if (!revDepGraph.existsVertex(hash)) {
 				throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
 			}
 			

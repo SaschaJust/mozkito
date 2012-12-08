@@ -61,13 +61,13 @@ public class DataDependencyVisitor extends ASTVisitor {
 			final IVariableBinding vBinding = (IVariableBinding) binding;
 			if (vBinding.isField()) {
 				// FIELDS and LOCAL VARIABLES
-				final int currentLine = this.cu.getLineNumber(sn.getStartPosition());
+				final int currentLine = this.cu.lineNumber(sn.getStartPosition());
 				if (!this.lineFields.containsKey(vBinding.getVariableId())) {
 					this.lineFields.put(vBinding.getVariableId(), new HashSet<Integer>());
 				}
 				this.lineFields.get(vBinding.getVariableId()).add(currentLine);
 			} else if (!vBinding.isParameter()) {
-				final int currentLine = this.cu.getLineNumber(sn.getStartPosition());
+				final int currentLine = this.cu.lineNumber(sn.getStartPosition());
 				if (!this.lineVariables.containsKey(vBinding.getVariableId())) {
 					this.lineVariables.put(vBinding.getVariableId(), new HashSet<Integer>());
 				}

@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
@@ -46,22 +45,23 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.Regex;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.DistributedCommandLineRepository;
+import org.mozkito.versions.LogParser;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-
-import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.DistributedCommandLineRepository;
-import org.mozkito.versions.IRevDependencyGraph;
-import org.mozkito.versions.LogParser;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
 
 /**
  * The Class MercurialRepository.
@@ -71,34 +71,40 @@ import org.mozkito.versions.elements.ChangeType;
 public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/** The Constant HG_MODIFIED_PATHS_INDEX. */
-	private static final int                 HG_MODIFIED_PATHS_INDEX  = 5;
+	private static final int                 HG_MODIFIED_PATHS_INDEX      = 5;
 	
 	/** The Constant HG_DELETED_PATHS_INDEX. */
-	private static final int                 HG_DELETED_PATHS_INDEX   = 4;
+	private static final int                 HG_DELETED_PATHS_INDEX       = 4;
 	
 	/** The Constant HG_ADDED_PATHS_INDEX. */
-	private static final int                 HG_ADDED_PATHS_INDEX     = 3;
+	private static final int                 HG_ADDED_PATHS_INDEX         = 3;
 	
 	/** The Constant HG_MAX_LINE_PARTS_LENGTH. */
-	protected static final int               HG_MAX_LINE_PARTS_LENGTH = 7;
+	protected static final int               HG_MAX_LINE_PARTS_LENGTH     = 7;
 	
 	/** The Constant AUTHOR_REGEX. */
-	protected static final Regex             AUTHOR_REGEX             = new Regex(
-	                                                                              "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
+	protected static final Regex             AUTHOR_REGEX                 = new Regex(
+	                                                                                  "^(({plain}[a-zA-Z]+)|({name}[^\\s<]+)?\\s*({lastname}[^\\s<]+\\s+)?(<({email}[^>]+)>)?)");
 	
 	/** The Constant HG_ANNOTATE_DATE_FORMAT. */
-	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT  = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
+	protected static final DateTimeFormatter HG_ANNOTATE_DATE_FORMAT      = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss yyyy Z");
 	// protected static DateTimeFormatter hgLogDateFormat =
 	// DateTimeFormat.forPattern("yyyy-MM-dd HH:mm Z");
 	
 	/** The Constant FORMER_PATH_REGEX. */
-	protected static final Regex             FORMER_PATH_REGEX        = new Regex("[^(]*\\(({result}[^(]+)\\)");
+	protected static final Regex             FORMER_PATH_REGEX            = new Regex("[^(]*\\(({result}[^(]+)\\)");
 	
 	/** The Constant PATTERN. */
-	protected static final String            PATTERN                  = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
+	protected static final String            PATTERN                      = "^\\s*({author}[^ ]+)\\s+({hash}[^ ]+)\\s+({date}[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+[^ ]+\\s+\\+[0-9]{4})\\s+({file}[^:]+):\\s({codeline}.*)$";
 	
 	/** The Constant REGEX. */
-	protected static final Regex             REGEX                    = new Regex(MercurialRepository.PATTERN);
+	protected static final Regex             REGEX                        = new Regex(MercurialRepository.PATTERN);
+	
+	private static final String              FIELD_SPLITTER               = "+~+";
+	protected static final String            UNNAMED_BRANCH_NAME_TEMPLATE = "branch_%s";
+	
+	private static final Regex               REVISION_NODE_REGEX          = new Regex(
+	                                                                                  "[+-]({revision}\\d+):({hash}[a-zA-Z0-9]{40})");
 	
 	/**
 	 * Write a specific Mercurial log style into a temporary file. (should always be
@@ -132,6 +138,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/** The transaction i ds. */
 	private final List<String> transactionIDs = new LinkedList<String>();
+	
+	private RevDependencyGraph revDepGraph;
 	
 	/*
 	 * (non-Javadoc)
@@ -561,29 +569,129 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public IRevDependencyGraph getRevDependencyGraph() {
-		// PRECONDITIONS
-		
-		try {
-			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
-		} finally {
-			// POSTCONDITIONS
+	public RevDependencyGraph getRevDependencyGraph() {
+		if (this.revDepGraph != null) {
+			this.revDepGraph = new RevDependencyGraph();
+			
+			// run hg tip --template {node}\n to get tip and to determine master branch
+			String[] arguments = new String[] { "tip", "--template", "{node}" + FileUtils.lineSeparator };
+			final Tuple<Integer, List<String>> tipResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+			                                                                       null, null);
+			if (tipResult.getFirst() != 0) {
+				if (Logger.logError()) {
+					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
+				}
+			}
+			
+			final String tip = tipResult.getSecond().get(0);
+			
+			// run hg heads --template {node}:{branches}\n to retrieve the open branches.
+			// if {branches} is empty, it means that the branch in not names. generate name using that head hash
+			arguments = new String[] { "heads", "--template",
+			        "{node}" + FIELD_SPLITTER + "{branches}" + FileUtils.lineSeparator };
+			final Tuple<Integer, List<String>> headsResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+			                                                                         null, null);
+			if (headsResult.getFirst() != 0) {
+				if (Logger.logError()) {
+					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
+				}
+			}
+			for (final String line : headsResult.getSecond()) {
+				final String[] lineParts = line.split(FIELD_SPLITTER);
+				if (lineParts.length < 2) {
+					if (Logger.logError()) {
+						Logger.error("Malformatted line in hg heads output: %s. Retunning null! Further parsing might lead to data inconsistency.",
+						             line);
+					}
+					return null;
+				}
+				final String node = lineParts[0];
+				String branchName = lineParts[1];
+				if (branchName.isEmpty()) {
+					if (!node.equals(tip)) {
+						// unnamed branch. Genrating a branch name using the head commit hash as name
+						branchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE, node);
+					} else {
+						branchName = String.format(RCSBranch.MASTER_BRANCH_NAME, node);
+					}
+				}
+				this.revDepGraph.addBranch(branchName, node);
+			}
+			
+			// run hg log --template {node}+~+{parents}+~+{tags}\n --debug to retrieve change sets, patents and tags
+			arguments = new String[] { "log", "--template",
+			        "{node}" + FIELD_SPLITTER + "{parents}" + FIELD_SPLITTER + "{tags}" + FileUtils.lineSeparator,
+			        "--debug" };
+			final Tuple<Integer, List<String>> logResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+			                                                                       null, null);
+			if (logResult.getFirst() != 0) {
+				if (Logger.logError()) {
+					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
+				}
+			}
+			for (final String line : headsResult.getSecond()) {
+				final String[] lineParts = line.split(FIELD_SPLITTER);
+				if (lineParts.length < 3) {
+					if (Logger.logError()) {
+						Logger.error("Malformatted line in hg log output: %s. Returning null! Further parsing might lead to data inconsistency.",
+						             line);
+					}
+					return null;
+				}
+				
+				final String node = lineParts[0];
+				final String parents = lineParts[1];
+				
+				final String[] parentsParts = parents.split(" ");
+				if (parentsParts.length != 2) {
+					if (Logger.logError()) {
+						Logger.error("A change set must have exactly TWO parents in hg log. Returning null. Further parsing might lead to data inconsistency. Line: %s",
+						             line);
+					}
+					return null;
+				}
+				if (!REVISION_NODE_REGEX.matches(parentsParts[0])) {
+					if (Logger.logError()) {
+						Logger.error("Found line in hg log that cannot be parsed. Returning null. Further parsing might lead to data inconsistency. Line: %s",
+						             line);
+					}
+					return null;
+				}
+				final Tuple<String, String> parentNames = new Tuple<String, String>(
+				                                                                    REVISION_NODE_REGEX.getGroup("hash"),
+				                                                                    null);
+				if (!REVISION_NODE_REGEX.matches(parentsParts[1])) {
+					if (Logger.logError()) {
+						Logger.error("Found line in hg log that cannot be parsed. Returning null. Further parsing might lead to data inconsistency. Line: %s",
+						             line);
+					}
+					return null;
+				}
+				final String mergeParentName = REVISION_NODE_REGEX.getGroup("hash");
+				if (!"0000000000000000000000000000000000000000".equals(mergeParentName)) {
+					parentNames.setSecond(mergeParentName);
+				}
+				
+				final String tags = lineParts[2];
+				final String[] tagNames = tags.split(" ");
+				
+				if (this.revDepGraph.addChangeSet(node) == null) {
+					if (Logger.logError()) {
+						Logger.error("An error occured while adding a node to the graph DB. Please see earlier warning and error messages. Returning null.");
+					}
+					return null;
+				}
+				for (final String tagName : tagNames) {
+					this.revDepGraph.addTag(tagName, node);
+				}
+				
+				this.revDepGraph.addEdge(parentNames.getFirst(), node, EdgeType.BRANCH_EDGE);
+				if (parentNames.getSecond() != null) {
+					this.revDepGraph.addEdge(parentNames.getSecond(), node, EdgeType.MERGE_EDGE);
+				}
+			}
 		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph(org.mozkito.persistence.PersistenceUtil)
-	 */
-	@Override
-	public IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
-		// PRECONDITIONS
-		
-		try {
-			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
-		} finally {
-			// POSTCONDITIONS
-		}
+		return this.revDepGraph;
 	}
 	
 	/*
@@ -594,7 +702,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	public long getTransactionCount() {
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
-		        "--template", "{rev}\\n" }, this.cloneDir, null, null);
+		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
 			return -1;
 		}

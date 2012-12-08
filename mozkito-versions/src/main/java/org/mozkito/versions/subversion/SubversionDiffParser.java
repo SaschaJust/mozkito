@@ -23,6 +23,7 @@ import java.util.List;
 
 import net.ownhero.dev.ioda.FileUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.wc.ISVNDiffGenerator;
@@ -63,12 +64,7 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 	 * @return the string
 	 */
 	public static String linesToString(final List<String> lines) {
-		final StringBuilder sbuilder = new StringBuilder();
-		for (int i = 0; i < lines.size(); ++i) {
-			sbuilder.append(lines.get(i));
-			sbuilder.append("\n");
-		}
-		return sbuilder.toString();
+		return StringUtils.join(lines, FileUtils.lineSeparator);
 	}
 	
 	/** The deltas. */

@@ -43,6 +43,67 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
+	private static final RCSFileManager FILE_MANAGER    = new RCSFileManager();
+	private static final Set<String>    TRANSACTION_IDS = new HashSet<String>();
+	
+	/**
+	 * Parses the log entry assuming that it was extracted from the provided repository and returns the corresponding
+	 * RCSTransaction.
+	 * 
+	 * @param repository
+	 *            the repository
+	 * @param data
+	 *            the data
+	 * @return the rCS transaction
+	 */
+	public static RCSTransaction parseLogEntry(final Repository repository,
+	                                           final LogEntry data) {
+		if (Logger.logDebug()) {
+			Logger.debug("Parsing " + data);
+		}
+		
+		if (TRANSACTION_IDS.contains(data.getRevision())) {
+			throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
+			        + data.getRevision() + ")");
+		}
+		
+		final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
+		                                                         data.getDateTime(), data.getAuthor(),
+		                                                         data.getOriginalId());
+		TRANSACTION_IDS.add(data.getRevision());
+		final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
+		for (final String fileName : changedPaths.keySet()) {
+			RCSFile file;
+			
+			if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
+				file = FILE_MANAGER.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+				if (file == null) {
+					
+					if (Logger.logWarn()) {
+						Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
+						        + changedPaths.get(fileName));
+					}
+					file = FILE_MANAGER.getFile(fileName);
+					
+					if (file == null) {
+						file = FILE_MANAGER.createFile(fileName, rcsTransaction);
+					}
+				} else {
+					file.assignTransaction(rcsTransaction, fileName);
+				}
+			} else {
+				file = FILE_MANAGER.getFile(fileName);
+				
+				if (file == null) {
+					file = FILE_MANAGER.createFile(fileName, rcsTransaction);
+				}
+			}
+			
+			new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
+		}
+		return rcsTransaction;
+	}
+	
 	/**
 	 * Instantiates a new repository parser.
 	 * 
@@ -55,59 +116,13 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 */
 	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository) {
 		super(threadGroup, settings, false);
-		final RCSFileManager fileManager = new RCSFileManager();
-		final Set<String> tids = new HashSet<String>();
 		
 		new ProcessHook<LogEntry, RCSTransaction>(this) {
 			
 			@Override
 			public void process() {
 				final LogEntry data = getInputData();
-				
-				if (Logger.logDebug()) {
-					Logger.debug("Parsing " + data);
-				}
-				
-				if (tids.contains(data.getRevision())) {
-					throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
-					        + data.getRevision() + ")");
-				}
-				
-				final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
-				                                                         data.getDateTime(), data.getAuthor(),
-				                                                         data.getOriginalId());
-				tids.add(data.getRevision());
-				final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
-				for (final String fileName : changedPaths.keySet()) {
-					RCSFile file;
-					
-					if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-						file = fileManager.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-						if (file == null) {
-							
-							if (Logger.logWarn()) {
-								Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-								        + changedPaths.get(fileName));
-							}
-							file = fileManager.getFile(fileName);
-							
-							if (file == null) {
-								file = fileManager.createFile(fileName, rcsTransaction);
-							}
-						} else {
-							file.assignTransaction(rcsTransaction, fileName);
-						}
-					} else {
-						file = fileManager.getFile(fileName);
-						
-						if (file == null) {
-							file = fileManager.createFile(fileName, rcsTransaction);
-						}
-					}
-					
-					new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
-				}
-				
+				final RCSTransaction rcsTransaction = parseLogEntry(repository, data);
 				provideOutputData(rcsTransaction);
 			}
 		};

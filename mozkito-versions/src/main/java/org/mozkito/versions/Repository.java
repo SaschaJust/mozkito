@@ -23,12 +23,15 @@ import java.util.Map;
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
+import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
 
 import difflib.Delta;
@@ -47,19 +50,22 @@ import difflib.Delta;
 public abstract class Repository {
 	
 	/** The uri. */
-	private URI            uri;
+	private URI                uri;
 	
 	/** The start revision. */
-	private String         startRevision;
+	private String             startRevision;
 	
 	/** The end revision. */
-	private String         endRevision;
+	private String             endRevision;
 	
 	/** The start transaction. */
-	private RCSTransaction startTransaction = null;
+	private RCSTransaction     startTransaction = null;
 	
 	/** The main branch name. */
-	private String         mainBranchName;
+	private String             mainBranchName;
+	
+	/** The rev dep graph. */
+	private RevDependencyGraph revDepGraph      = null;
 	
 	/**
 	 * Instantiates a new repository.
@@ -206,7 +212,7 @@ public abstract class Repository {
 	 * 
 	 * @return the rev dependency graph
 	 */
-	public abstract IRevDependencyGraph getRevDependencyGraph();
+	public abstract RevDependencyGraph getRevDependencyGraph();
 	
 	/**
 	 * Gets the rev dependency graph.
@@ -215,7 +221,28 @@ public abstract class Repository {
 	 *            the persistence util
 	 * @return the rev dependency graph
 	 */
-	public abstract IRevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil);
+	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+		if (this.revDepGraph == null) {
+			this.revDepGraph = new RevDependencyGraph();
+			final Criteria<RCSBranch> branchCriteria = persistenceUtil.createCriteria(RCSBranch.class);
+			final List<RCSBranch> branches = persistenceUtil.load(branchCriteria);
+			for (final RCSBranch branch : branches) {
+				this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
+			}
+			final Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
+			final List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
+			for (final RCSTransaction transaction : transactions) {
+				this.revDepGraph.addChangeSet(transaction.getId());
+				for (final String tagName : transaction.getTags()) {
+					this.revDepGraph.addTag(tagName, transaction.getId());
+				}
+				this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
+				                         EdgeType.BRANCH_EDGE);
+				this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(), EdgeType.MERGE_EDGE);
+			}
+		}
+		return this.revDepGraph;
+	}
 	
 	/**
 	 * Gets the start revision.
@@ -306,6 +333,10 @@ public abstract class Repository {
 	                              final String toRevision,
 	                              final int cacheSize) {
 		return new LogIterator(this, fromRevision, toRevision);
+	}
+	
+	protected void resetRevDependencyGraph() {
+		this.revDepGraph = null;
 	}
 	
 	/**
