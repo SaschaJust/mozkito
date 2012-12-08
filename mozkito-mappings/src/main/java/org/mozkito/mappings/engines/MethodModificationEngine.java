@@ -209,7 +209,6 @@ public class MethodModificationEngine extends Engine {
 		int matches = 0;
 		final StringBuilder builder = new StringBuilder();
 		double localConfidence = 0d;
-		// TODO get real PersistenceUtil
 		
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		final Set<String> subjects = new HashSet<>();
