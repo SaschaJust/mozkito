@@ -28,6 +28,7 @@ import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.mappable.model.MappableEntity;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.mappings.model.Relation;
+import org.mozkito.mappings.requirements.And;
 import org.mozkito.mappings.requirements.Atom;
 import org.mozkito.mappings.requirements.Expression;
 import org.mozkito.mappings.requirements.Index;
@@ -185,10 +186,13 @@ public class BackrefEngine extends Engine {
 		final String id = element1.getId();
 		
 		double localConfidence = 0d;
-		if (fullText.contains(id.toString())) {
+		
+		// check if the text representation of the elements contain the others ID
+		if (element2.getText().contains(element1.getId()) && element1.getText().contains(element2.getId())) {
 			localConfidence = getConfidence();
 			
 		}
+		
 		addFeature(score, localConfidence, FieldKey.ID.name(), id, id, "FULLTEXT", fullText, fullText); //$NON-NLS-1$
 	}
 	
@@ -198,6 +202,6 @@ public class BackrefEngine extends Engine {
 	 */
 	@Override
 	public final Expression supported() {
-		return new Atom(Index.FROM, FieldKey.ID);
+		return new And(new Atom(Index.FROM, FieldKey.ID), new Atom(Index.TO, FieldKey.ID));
 	}
 }
