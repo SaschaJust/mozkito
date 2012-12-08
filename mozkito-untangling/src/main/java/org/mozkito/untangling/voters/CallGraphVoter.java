@@ -180,8 +180,6 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			eclipseArgs.add("-Drepository.uri=" + repository.getUri().toASCIIString());
 			eclipseArgs.add("-Ddabase.host=" + databaseArgs.getArgument(databaseOptions.getDatabaseHost()).getValue());
 			eclipseArgs.add("-Ddabase.user=" + databaseArgs.getArgument(databaseOptions.getDatabaseUser()).getValue());
-			eclipseArgs.add("-Ddatabase.driver="
-			        + databaseArgs.getArgument(databaseOptions.getDatabaseDriver()).getValue());
 			eclipseArgs.add("-Ddatabase.middleware="
 			        + databaseArgs.getArgument(databaseOptions.getDatabaseMiddleware()).getValue());
 			eclipseArgs.add("-Ddatabase.name=" + databaseArgs.getArgument(databaseOptions.getDatabaseName()).getValue());
