@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.mozkito.infozilla.model.stacktrace;
 
+import java.util.List;
+
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.Inlineable;
 import org.mozkito.infozilla.model.attachment.Attachment;
@@ -30,5 +32,12 @@ public abstract class Stacktrace implements Attachable, Inlineable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/**
+	 * Gets the entries.
+	 * 
+	 * @return the entries
+	 */
+	public abstract List<? extends StacktraceEntry> getEntries();
 	
 }

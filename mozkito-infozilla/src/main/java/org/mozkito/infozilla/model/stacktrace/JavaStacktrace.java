@@ -101,6 +101,23 @@ public class JavaStacktrace extends Stacktrace {
 		return 0;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.stacktrace.Stacktrace#getEntries()
+	 */
+	@Override
+	public List<StacktraceEntry> getEntries() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getEntries' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Getter for the Exception.
 	 * 

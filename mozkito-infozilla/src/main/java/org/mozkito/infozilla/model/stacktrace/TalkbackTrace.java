@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * The Class TalkbackTrace.
  */
-public class TalkbackTrace {
+public class TalkbackTrace extends Stacktrace {
 	
 	/** The entries. */
 	private List<TalkbackEntry> entries;
@@ -42,13 +42,48 @@ public class TalkbackTrace {
 		this.entries = entries;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.Inlineable#getEndPosition()
+	 */
+	@Override
+	public int getEndPosition() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return 0;
+			throw new RuntimeException("Method 'getEndPosition' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the entries.
 	 * 
 	 * @return the entries
 	 */
+	@Override
 	public List<TalkbackEntry> getEntries() {
 		return this.entries;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.Inlineable#getStartPosition()
+	 */
+	@Override
+	public int getStartPosition() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return 0;
+			throw new RuntimeException("Method 'getStartPosition' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**

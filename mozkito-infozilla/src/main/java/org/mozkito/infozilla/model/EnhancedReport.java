@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import net.ownhero.dev.kanuni.conditions.CompareCondition;
+import net.ownhero.dev.kanuni.conditions.Condition;
+
 import org.mozkito.infozilla.model.attachment.Attachment;
 import org.mozkito.infozilla.model.image.Image;
 import org.mozkito.infozilla.model.itemization.ExpectedBehavior;
@@ -67,6 +70,9 @@ public class EnhancedReport {
 	/** The stacktraces. */
 	Collection<Stacktrace>       stacktraces       = new LinkedList<Stacktrace>();
 	
+	/** The code fragments. */
+	Collection<String>           codeFragments     = new LinkedList<>();
+	
 	/** The logs. */
 	Collection<Log>              logs              = new LinkedList<Log>();
 	
@@ -105,6 +111,22 @@ public class EnhancedReport {
 	 */
 	public Map<String, Attachment> getAttachments() {
 		return this.attachments;
+	}
+	
+	/**
+	 * Gets the code fragments.
+	 * 
+	 * @return the code fragments
+	 */
+	public Collection<String> getCodeFragments() {
+		// PRECONDITIONS
+		
+		try {
+			return this.codeFragments;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.codeFragments, "Field '%s' in '%s'.", "codeFragments", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/**
@@ -214,6 +236,25 @@ public class EnhancedReport {
 	 */
 	public void setAttachments(final Map<String, Attachment> attachments) {
 		this.attachments = attachments;
+	}
+	
+	/**
+	 * Sets the code fragments.
+	 * 
+	 * @param codeFragments
+	 *            the new code fragments
+	 */
+	public void setCodeFragments(final Collection<String> codeFragments) {
+		// PRECONDITIONS
+		Condition.notNull(codeFragments, "Argument '%s' in '%s'.", "codeFragments", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		try {
+			this.codeFragments = codeFragments;
+		} finally {
+			// POSTCONDITIONS
+			CompareCondition.equals(this.codeFragments, codeFragments,
+			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+		}
 	}
 	
 	/**

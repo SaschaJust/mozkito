@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
-import org.mozkito.infozilla.model.patch.UnifiedDiff;
+import org.mozkito.infozilla.model.patch.Patch;
 
 /**
  * The Class RelaxedPatchParser.
@@ -243,7 +243,7 @@ public class RelaxedPatchParser {
 		for (final String potentialPatch : indexPartition) {
 			final String[] lines = potentialPatch.split("[\n\r]");
 			
-			final UnifiedDiff patch = new UnifiedDiff();
+			final Patch patch = new Patch();
 			// Gather Header Information of the Patch
 			final String pIndex = findFirstLineBeginningWithS("Index: ", lines, 0);
 			patch.setIndex(pIndex);
@@ -281,7 +281,7 @@ public class RelaxedPatchParser {
 		
 		// Locate the Patches in the Source Code
 		for (final Patch p : foundPatches) {
-			final UnifiedDiff u = (UnifiedDiff) p;
+			final Patch u = (Patch) p;
 			final int patchStart = text.indexOf(u.getHeader());
 			
 			final int patchEnd = text.lastIndexOf(u.getHunks().get(u.getHunks().size() - 1).getText())

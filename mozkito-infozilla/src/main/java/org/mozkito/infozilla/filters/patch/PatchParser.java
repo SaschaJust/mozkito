@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
-import org.mozkito.infozilla.model.patch.UnifiedDiff;
+import org.mozkito.infozilla.model.patch.Patch;
 
 /**
  * The Class PatchParser.
@@ -231,7 +231,7 @@ public class PatchParser {
 	 */
 	public List<? extends Patch> parseForPatches(final String text) {
 		// Start with an empty list of Patches
-		final List<UnifiedDiff> foundPatches = new ArrayList<UnifiedDiff>();
+		final List<Patch> foundPatches = new ArrayList<Patch>();
 		
 		// First Partition the whole given text into sections starting with
 		// Index:
@@ -243,7 +243,7 @@ public class PatchParser {
 		for (final String potentialPatch : indexPartition) {
 			final String[] lines = potentialPatch.split("[\n\r]");
 			
-			final UnifiedDiff patch = new UnifiedDiff();
+			final Patch patch = new Patch();
 			// Gather Header Information of the Patch
 			final String pIndex = findFirstLineBeginningWithS("Index: ", lines, 0);
 			patch.setIndex(pIndex);
@@ -280,7 +280,7 @@ public class PatchParser {
 		}
 		
 		// Locate the Patches in the Source Code
-		for (final UnifiedDiff p : foundPatches) {
+		for (final Patch p : foundPatches) {
 			final int patchStart = text.indexOf(p.getHeader());
 			
 			final int patchEnd = text.lastIndexOf(p.getHunks().get(p.getHunks().size() - 1).getText())

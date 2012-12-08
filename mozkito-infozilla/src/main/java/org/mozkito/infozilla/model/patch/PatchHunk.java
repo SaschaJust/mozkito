@@ -38,6 +38,24 @@ public class PatchHunk {
 	}
 	
 	/**
+	 * Gets the added.
+	 * 
+	 * @return the added
+	 */
+	public String getAdded() {
+		throw new RuntimeException();
+	}
+	
+	/**
+	 * Gets the deleted.
+	 * 
+	 * @return the deleted
+	 */
+	public String getDeleted() {
+		throw new RuntimeException();
+	}
+	
+	/**
 	 * Gets the text.
 	 * 
 	 * @return the text
@@ -45,5 +63,4 @@ public class PatchHunk {
 	public String getText() {
 		return this.text;
 	}
-	
 }

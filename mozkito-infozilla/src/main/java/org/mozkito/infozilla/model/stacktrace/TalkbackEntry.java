@@ -15,7 +15,7 @@ package org.mozkito.infozilla.model.stacktrace;
 /**
  * The Class TalkbackEntry.
  */
-public class TalkbackEntry {
+public class TalkbackEntry extends StacktraceEntry {
 	
 	// Types definitions
 	/** The Constant CLASSMETHODLINE. */
@@ -62,6 +62,57 @@ public class TalkbackEntry {
 		this.type = type;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.stacktrace.StacktraceEntry#getClassName()
+	 */
+	@Override
+	public String getClassName() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getClassName' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.stacktrace.StacktraceEntry#getFileName()
+	 */
+	@Override
+	public String getFileName() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getFileName' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.stacktrace.StacktraceEntry#getLineNumber()
+	 */
+	@Override
+	public String getLineNumber() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getLineNumber' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
 	/**
 	 * Gets the location.
 	 * 
@@ -69,6 +120,23 @@ public class TalkbackEntry {
 	 */
 	public String getLocation() {
 		return this.location.trim();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.infozilla.model.stacktrace.StacktraceEntry#getMethodName()
+	 */
+	@Override
+	public String getMethodName() {
+		// PRECONDITIONS
+		
+		try {
+			// TODO Auto-generated method stub
+			// return null;
+			throw new RuntimeException("Method 'getMethodName' has not yet been implemented."); //$NON-NLS-1$
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
