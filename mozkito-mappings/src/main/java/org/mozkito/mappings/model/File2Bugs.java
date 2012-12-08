@@ -29,6 +29,7 @@ import net.ownhero.dev.ioda.JavaUtils;
 import org.mozkito.issues.tracker.model.Report;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.Criteria;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.RCSFile;
@@ -45,7 +46,7 @@ public class File2Bugs implements Annotated {
 	private static final long serialVersionUID = -5780165055568852588L;
 	
 	static {
-		PersistenceManager.registerNativeQuery("postgresql", //$NON-NLS-1$
+		PersistenceManager.registerNativeQuery(DatabaseType.POSTGRESQL,
 		                                       "files2bugsarray", //$NON-NLS-1$
 		                                       "SELECT changedfile_id AS file_id, array_length(issues, 1) AS bug_count, issues AS bug_ids           " //$NON-NLS-1$
 		                                               + "FROM (                                                                                " //$NON-NLS-1$
@@ -62,9 +63,10 @@ public class File2Bugs implements Annotated {
 		                                               + "WHERE array_length(issues, 1) > 0                                                       " //$NON-NLS-1$
 		                                               + "GROUP BY file_id, issues;                                                               "); //$NON-NLS-1$
 		
-		PersistenceManager.registerNativeQuery("postgresql", "files2bugs", "SELECT changedfile_id, reportid " //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		        + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping " //$NON-NLS-1$//$NON-NLS-2$
-		        + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id"); //$NON-NLS-1$ //$NON-NLS-2$
+		PersistenceManager.registerNativeQuery(DatabaseType.POSTGRESQL,
+		                                       "files2bugs", "SELECT changedfile_id, reportid " //$NON-NLS-1$//$NON-NLS-2$ 
+		                                               + "FROM rcsrevision AS revision " + "JOIN rcsbugmapping AS mapping " //$NON-NLS-1$//$NON-NLS-2$
+		                                               + "  ON (revision.transaction_id = mapping.transactionid) " + "ORDER BY changedfile_id"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
