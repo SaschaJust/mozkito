@@ -72,7 +72,7 @@ public class ChangeCouplingRuleFactory {
 		
 		final LinkedList<FileChangeCoupling> result = new LinkedList<FileChangeCoupling>();
 		
-		if (!persistenceUtil.getType().equalsIgnoreCase(DatabaseType.POSTGRESQL.name())) {
+		if (!DatabaseType.POSTGRESQL.equals(persistenceUtil.getType())) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
 			        + persistenceUtil.getType() + ").");
 		}
@@ -150,7 +150,7 @@ public class ChangeCouplingRuleFactory {
 		
 		final LinkedList<MethodChangeCoupling> result = new LinkedList<MethodChangeCoupling>();
 		
-		if (!persistenceUtil.getType().equalsIgnoreCase(DatabaseType.POSTGRESQL.name())) {
+		if (!DatabaseType.POSTGRESQL.equals(persistenceUtil.getType())) {
 			throw new UnrecoverableError("ChangeCouplings are currently only supported on Postgres databases! (given: "
 			        + persistenceUtil.getType() + ").");
 		}

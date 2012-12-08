@@ -24,9 +24,12 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.mozkito.changecouplings.model.FileChangeCoupling;
+import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
@@ -42,7 +45,13 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-@DatabaseSettings (unit = "versions")
+@DatabaseSettings (unit = "versions",
+                   type = DatabaseType.POSTGRESQL,
+                   hostname = "grid1.st.cs.uni-saarland.de",
+                   username = "miner",
+                   password = "miner",
+                   options = ConnectOptions.DROP_AND_CREATE_DATABASE,
+                   database = "changecouplings")
 public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends DatabaseTest {
 	
 	/** The persistence util. */
@@ -51,20 +60,22 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	/**
 	 * Instantiates a new iGNOR e_ ownher o_ change coupling rule factory_ mozkito test.
 	 */
-	public IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
+	@Before
+	public void setupIGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
 		try {
 			
 			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil = getPersistenceUtil();
 			URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
-			        + "change_file_couplings.psql");
+			        + "change_file_couplings.psql"); //$NON-NLS-1$
 			
 			java.io.File sqlFile = new java.io.File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;");
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpython2u;");
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;"); //$NON-NLS-1$
+			final String query2 = "CREATE LANGUAGE plpython2u;";
+			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query2);
 			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query);
 			sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
-			        + "change_file_couplings.psql");
+			        + "change_file_couplings.psql"); //$NON-NLS-1$
 			
 			sqlFile = new java.io.File(sqlURL.toURI());
 			query = FileUtils.readFileToString(sqlFile);
