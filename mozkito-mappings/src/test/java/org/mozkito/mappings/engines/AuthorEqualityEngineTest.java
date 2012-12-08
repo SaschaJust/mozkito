@@ -31,6 +31,7 @@ import org.mozkito.mappings.finder.Finder;
 import org.mozkito.mappings.model.Feature;
 import org.mozkito.mappings.model.Relation;
 import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.model.RCSTransaction;
@@ -42,12 +43,11 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 @DatabaseSettings (unit = "mappings",
                    database = "moskito_jruby_july2010",
-                   options = ConnectOptions.CREATE,
+                   options = ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
                    hostname = "grid1.st.cs.uni-saarland.de",
                    password = "miner",
                    username = "miner",
-                   type = "POSTGRESQL",
-                   driver = "org.postgresql.Driver")
+                   type = DatabaseType.POSTGRESQL)
 public class AuthorEqualityEngineTest extends DatabaseTest {
 	
 	/** The engines. */
