@@ -19,8 +19,12 @@ import java.sql.SQLException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.joda.time.DateTime;
+
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseEnvironment;
+import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.DatabaseTest;
@@ -41,12 +45,9 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		final DatabaseSettings settings = (DatabaseSettings) annotation;
 		
 		// system properties overwrite annotation settings
-		final String databaseName = System.getProperty("database.name") != null
-		                                                                       ? System.getProperty("database.name")
-		                                                                       : settings.database();
-		final String databaseDriver = System.getProperty("database.driver") != null
-		                                                                           ? System.getProperty("database.driver")
-		                                                                           : settings.driver();
+		String databaseName = System.getProperty("database.name") != null
+		                                                                 ? System.getProperty("database.name")
+		                                                                 : settings.database();
 		final String databaseHost = (System.getProperty("database.host") != null) && settings.remote()
 		                                                                                              ? System.getProperty("database.host")
 		                                                                                              : settings.hostname();
@@ -57,9 +58,10 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		final String databasePassword = System.getProperty("database.password") != null
 		                                                                               ? System.getProperty("database.password")
 		                                                                               : settings.password();
-		final String databaseType = System.getProperty("database.type") != null
-		                                                                       ? System.getProperty("database.type")
-		                                                                       : settings.type();
+		final DatabaseType databaseType = System.getProperty("database.type") != null
+		                                                                             ? DatabaseType.valueOf(System.getProperty("database.type")
+		                                                                                                          .toUpperCase())
+		                                                                             : settings.type();
 		final String databaseUnit = System.getProperty("database.unit") != null
 		                                                                       ? System.getProperty("database.unit")
 		                                                                       : settings.unit();
@@ -67,65 +69,67 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 		                                                                           ? System.getProperty("database.user")
 		                                                                           : settings.username();
 		
-		final PersistenceUtil util;
-		
-		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
+		if (settings.options().equals(ConnectOptions.DROP_AND_CREATE_DATABASE)) {
 			String tag = ManagementFactory.getRuntimeMXBean().getName().toLowerCase();
 			tag = tag.replaceAll("\\W", "_");
-			tag = tag + "_" + new DateTime().getMillis() + "";
-			final String dbName = databaseName + '_' + tag;
-			test.setDatabaseName(dbName);
+			tag = tag + "_" + new DateTime().getMillis();
+			databaseName = databaseName + '_' + tag;
+		}
+		
+		DatabaseEnvironment options;
+		
+		try {
+			options = new DatabaseEnvironment(databaseType, databaseName, databaseHost, databaseUsername,
+			                                  databasePassword, databaseOptions, databaseUnit);
+		} catch (final ConfigurationException e1) {
+			throw new TestSettingsError(e1);
+		}
+		
+		final PersistenceUtil util;
+		
+		if (settings.options().equals(ConnectOptions.DROP_AND_CREATE_DATABASE)) {
 			
 			if (Logger.logInfo()) {
-				Logger.info("Setting up database test environment: 'name:%s', 'driver:%s', 'host:%s', 'options:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
-				            dbName, databaseDriver, databaseHost, databaseOptions, databaseType, databaseUnit);
+				Logger.info("Setting up database test environment: %s", options);
 			}
 			
 			try {
 				if (Logger.logInfo()) {
-					Logger.always("Dropping database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
-					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
+					Logger.info("Dropping database with options: %s", options);
 				}
-				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
-				                                databaseDriver);
+				PersistenceManager.dropDatabase(options);
 			} catch (final SQLException ignore) {
 				// ignore
 			}
 			
 			try {
 				if (Logger.logInfo()) {
-					Logger.always("Creating database with options: 'name:%s', 'driver:%s', 'host:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
-					              dbName, databaseDriver, databaseHost, databaseType, databaseUnit);
+					Logger.info("Creating database with options: %s", options);
 				}
-				PersistenceManager.createDatabase(databaseHost, dbName, databaseUsername, databasePassword,
-				                                  databaseType, databaseDriver);
+				PersistenceManager.createDatabase(options);
 			} catch (final SQLException e) {
-				throw new TestSettingsError("Could not create database " + dbName, e);
+				throw new TestSettingsError("Could not create database: " + options, e);
 			}
 			
 			try {
-				util = PersistenceManager.createUtil(databaseHost, dbName, databaseUsername, databasePassword,
-				                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
-				                                     settings.util());
+				util = PersistenceManager.createUtil(options, settings.util());
 			} catch (final Throwable t) {
-				throw new TestSettingsError("Could not initialize database connection.", t);
+				throw new TestSettingsError("Could not initialize database connection: " + options, t);
 			}
 		} else {
 			if (Logger.logInfo()) {
-				Logger.info("Setting up database test environment: 'name:%s', 'driver:%s', 'host:%s', 'options:%s', 'password:******', 'type:%s', 'unit:%s', 'user:******'",
-				            databaseName, databaseDriver, databaseHost, databaseOptions, databaseType, databaseUnit);
+				Logger.info("Setting up database test environment: %s", options);
 			}
 			
 			try {
-				util = PersistenceManager.createUtil(databaseHost, databaseName, databaseUsername, databasePassword,
-				                                     databaseType, databaseDriver, databaseUnit, databaseOptions,
-				                                     settings.util());
+				util = PersistenceManager.createUtil(options, settings.util());
 			} catch (final Throwable t) {
 				throw new TestSettingsError("Could not initialize database connection.", t);
 			}
 		}
 		
 		test.setUtil(util);
+		test.setOptions(options);
 	}
 	
 	/*
@@ -136,38 +140,21 @@ public class DatabaseSettingsProcessor implements MozkitoSettingsProcessor {
 	@Override
 	public <T extends DatabaseTest> void tearDown(final T test,
 	                                              final Annotation annotation) {
-		final DatabaseSettings settings = (DatabaseSettings) annotation;
-		final String databaseDriver = System.getProperty("database.driver") != null
-		                                                                           ? System.getProperty("database.driver")
-		                                                                           : settings.driver();
-		final String databaseHost = (System.getProperty("database.host") != null) && settings.remote()
-		                                                                                              ? System.getProperty("database.host")
-		                                                                                              : settings.hostname();
-		final String databasePassword = System.getProperty("database.password") != null
-		                                                                               ? System.getProperty("database.password")
-		                                                                               : settings.password();
-		final String databaseType = System.getProperty("database.type") != null
-		                                                                       ? System.getProperty("database.type")
-		                                                                       : settings.type();
-		final String databaseUsername = System.getProperty("database.user") != null
-		                                                                           ? System.getProperty("database.user")
-		                                                                           : settings.username();
 		
 		if (test.getPersistenceUtil() != null) {
 			test.getPersistenceUtil().shutdown();
-		}
-		
-		if (settings.options().equals(ConnectOptions.DB_DROP_CREATE)) {
-			
-			final String dbName = test.getDatabaseName();
-			try {
-				PersistenceManager.dropDatabase(databaseHost, dbName, databaseUsername, databasePassword, databaseType,
-				                                databaseDriver);
-			} catch (final SQLException e) {
-				throw new TestSettingsError("Could not drop database " + dbName, e);
+			final DatabaseEnvironment options = test.getOptions();
+			if (ConnectOptions.DROP_AND_CREATE_DATABASE.equals(options.getDatabaseOptions())) {
+				
+				final String dbName = test.getDatabaseName();
+				try {
+					PersistenceManager.dropDatabase(options);
+				} catch (final SQLException e) {
+					throw new TestSettingsError("Could not drop database " + dbName, e);
+				}
 			}
+			test.setUtil(null);
 		}
-		test.setUtil(null);
 	}
 	
 }

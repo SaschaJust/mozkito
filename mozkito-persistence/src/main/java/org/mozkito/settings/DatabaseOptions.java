@@ -29,6 +29,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseEnvironment.ConfigurationException;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
@@ -48,9 +49,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 	
 	/** The database middleware. */
 	private StringArgument.Options               databaseMiddleware;
-	
-	/** The database driver. */
-	private StringArgument.Options               databaseDriver;
 	
 	/** The database type. */
 	private EnumArgument.Options<DatabaseType>   databaseType;
@@ -87,15 +85,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 		super(argumentSet, "database", "Specifies connection options for the database connection.", requirement);
 		this.unit = unit;
 		this.settings = argumentSet.getSettings();
-	}
-	
-	/**
-	 * Gets the database driver.
-	 * 
-	 * @return the databaseDriver
-	 */
-	public final StringArgument.Options getDatabaseDriver() {
-		return this.databaseDriver;
 	}
 	
 	/**
@@ -184,19 +173,32 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			final StringArgument userArgument = getSettings().getArgument(this.databaseUser);
 			final StringArgument passwordArgument = getSettings().getArgument(this.databasePassword);
 			final EnumArgument<DatabaseType> typeArgument = getSettings().getArgument(this.databaseType);
-			final StringArgument driverArgument = getSettings().getArgument(this.databaseDriver);
 			final StringArgument unitArgument = getSettings().getArgument(this.databaseUnit);
 			final EnumArgument<ConnectOptions> optionsArgument = getSettings().getArgument(this.databaseOptions);
 			final StringArgument middlewareArgument = getSettings().getArgument(this.databaseMiddleware);
 			
-			if (optionsArgument.getValue().equals(ConnectOptions.DB_DROP_CREATE)) {
+			org.mozkito.persistence.DatabaseEnvironment dbOptions;
+			try {
+				dbOptions = new org.mozkito.persistence.DatabaseEnvironment(typeArgument.getValue(),
+				                                                        nameArgument.getValue(),
+				                                                        hostArgument.getValue(),
+				                                                        userArgument.getValue(),
+				                                                        passwordArgument.getValue(),
+				                                                        optionsArgument.getValue(),
+				                                                        unitArgument.getValue());
+			} catch (final ConfigurationException e1) {
+				throw new UnrecoverableError(e1);
+			}
+			
+			if (ConnectOptions.DROP_AND_CREATE_DATABASE.equals(optionsArgument.getValue())) {
 				try {
-					PersistenceManager.dropDatabase(hostArgument.getValue(), nameArgument.getValue(),
-					                                userArgument.getValue(), passwordArgument.getValue(),
-					                                typeArgument.getValue().name(), driverArgument.getValue());
-					PersistenceManager.createDatabase(hostArgument.getValue(), nameArgument.getValue(),
-					                                  userArgument.getValue(), passwordArgument.getValue(),
-					                                  typeArgument.getValue().name(), driverArgument.getValue());
+					PersistenceManager.dropDatabase(dbOptions);
+				} catch (final SQLException ignore) {
+					// ignore
+				}
+				
+				try {
+					PersistenceManager.createDatabase(dbOptions);
 				} catch (final SQLException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not re-create database.");
@@ -206,15 +208,7 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 				
 			}
 			
-			final PersistenceUtil util = PersistenceManager.createUtil(hostArgument.getValue(),
-			                                                           nameArgument.getValue(),
-			                                                           userArgument.getValue(),
-			                                                           passwordArgument.getValue(),
-			                                                           typeArgument.getValue().name(),
-			                                                           driverArgument.getValue(),
-			                                                           unitArgument.getValue(),
-			                                                           optionsArgument.getValue(),
-			                                                           middlewareArgument.getValue());
+			final PersistenceUtil util = PersistenceManager.createUtil(dbOptions, middlewareArgument.getValue());
 			
 			this.settings.addInformation(middlewareArgument.getValue(), util.getToolInformation());
 			
@@ -253,9 +247,6 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			                                                           "Defines the type of the database.",
 			                                                           DatabaseType.POSTGRESQL, Requirement.required);
 			map.put("type", this.databaseType);
-			this.databaseDriver = new StringArgument.Options(set, "driver", "Default: org.postgresql.Driver",
-			                                                 "org.postgresql.Driver", Requirement.required);
-			map.put("driver", this.databaseDriver);
 			this.databaseMiddleware = new StringArgument.Options(set, "middleware", "Default: OpenJPA", "OpenJPA",
 			                                                     Requirement.required);
 			map.put("middleware", this.databaseMiddleware);
@@ -263,7 +254,8 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			                                               this.unit, Requirement.required);
 			map.put("unit", this.databaseUnit);
 			this.databaseOptions = new EnumArgument.Options<ConnectOptions>(set, "options", "Connection options.",
-			                                                                ConnectOptions.CREATE, Requirement.required);
+			                                                                ConnectOptions.VALIDATE_OR_CREATE_SCHEMA,
+			                                                                Requirement.required);
 			map.put("options", this.databaseOptions);
 			
 			return map;
@@ -271,4 +263,5 @@ public class DatabaseOptions extends ArgumentSetOptions<PersistenceUtil, Argumen
 			// POSTCONDITIONS
 		}
 	}
+	
 }

@@ -23,9 +23,53 @@ package org.mozkito.persistence;
 public enum DatabaseType {
 	
 	/** The postgresql. */
-	POSTGRESQL,
+	POSTGRESQL ("org.postgresql.Driver"), //$NON-NLS-1$
 	/** The mysql. */
-	MYSQL,
+	MYSQL ("com.mysql.jdbc.Driver"), //$NON-NLS-1$
 	/** The derby. */
-	DERBY;
+	DERBY ("org.apache.derby.jdbc.EmbeddedDriver"); //$NON-NLS-1$
+	
+	/** The driver. */
+	private String driver;
+	
+	/**
+	 * Instantiates a new database type.
+	 * 
+	 * @param driver
+	 *            the driver
+	 */
+	private DatabaseType(final String driver) {
+		this.driver = driver;
+	}
+	
+	/**
+	 * Available.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean available() {
+		try {
+			return Class.forName(getDriver()) != null;
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Gets the driver.
+	 * 
+	 * @return the driver
+	 */
+	public String getDriver() {
+		return this.driver;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return name().toLowerCase();
+	}
 }

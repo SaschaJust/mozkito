@@ -16,7 +16,6 @@
 package org.mozkito.persistence;
 
 import java.util.List;
-import java.util.Properties;
 
 import javax.persistence.Query;
 
@@ -81,14 +80,6 @@ public interface PersistenceUtil {
 	/**
 	 * Creates the session factory.
 	 * 
-	 * @param properties
-	 *            the properties
-	 */
-	void createSessionFactory(final Properties properties);
-	
-	/**
-	 * Creates the session factory.
-	 * 
 	 * @param host
 	 *            the host
 	 * @param database
@@ -106,14 +97,7 @@ public interface PersistenceUtil {
 	 * @param options
 	 *            the options
 	 */
-	void createSessionFactory(final String host,
-	                          final String database,
-	                          final String user,
-	                          final String password,
-	                          final String type,
-	                          final String driver,
-	                          final String unit,
-	                          final ConnectOptions options);
+	void createSessionFactory(DatabaseEnvironment options);
 	
 	/**
 	 * Delete.
@@ -174,7 +158,7 @@ public interface PersistenceUtil {
 	 * 
 	 * @return the type
 	 */
-	String getType();
+	DatabaseType getType();
 	
 	/**
 	 * Load.

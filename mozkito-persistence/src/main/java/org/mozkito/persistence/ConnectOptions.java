@@ -17,8 +17,15 @@ package org.mozkito.persistence;
  */
 public enum ConnectOptions {
 	
-	/** The create. */
-	CREATE,
-	/** The db drop create. */
-	DB_DROP_CREATE;
+	/**
+	 * This should be the default option when you connect to an existing database. validates the database schema after
+	 * the connect. Adds/alternates schema (if possible) according to the most recent model.
+	 */
+	VALIDATE_OR_CREATE_SCHEMA,
+	
+	/** drops the whole database (if exists) and creates a new one. Then behaves the same as VALIDATE_OR_CREATE_SCHEMA. */
+	DROP_AND_CREATE_DATABASE,
+	
+	/** behaves the same as VALIDATE_OR_CREATE_SCHEMA but drops already existing table entries. */
+	DROP_CONTENTS;
 }

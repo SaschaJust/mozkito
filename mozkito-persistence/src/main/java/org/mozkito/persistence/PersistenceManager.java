@@ -41,7 +41,7 @@ import org.apache.commons.io.FileUtils;
 public class PersistenceManager {
 	
 	/** The Constant NATIVE_QUERIES. */
-	private static final Map<String, Map<String, String>>        NATIVE_QUERIES = new HashMap<String, Map<String, String>>();
+	private static final Map<DatabaseType, Map<String, String>>  NATIVE_QUERIES = new HashMap<DatabaseType, Map<String, String>>();
 	
 	/** The Constant STORED_QUERIES. */
 	private static final Map<Class<?>, Map<String, Criteria<?>>> STORED_QUERIES = new HashMap<Class<?>, Map<String, Criteria<?>>>();
@@ -49,35 +49,14 @@ public class PersistenceManager {
 	/**
 	 * Creates the database.
 	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
+	 * @param options
+	 *            the options
 	 * @throws SQLException
 	 *             the sQL exception
 	 */
-	public static void createDatabase(final String host,
-	                                  final String database,
-	                                  final String user,
-	                                  final String password,
-	                                  final String type,
-	                                  final String driver) throws SQLException {
-		try {
-			Class.forName(driver);
-		} catch (final ClassNotFoundException e) {
-			throw new SQLException("Could not load JDBC driver " + driver, e);
-		}
-		
-		if ((host == null) || host.isEmpty()) {
-			final File file = new File(database);
+	public static synchronized void createDatabase(final DatabaseEnvironment options) throws SQLException {
+		if (options.isLocal()) {
+			final File file = new File(options.getDatabaseName());
 			if (file.exists()) {
 				if (file.isFile()) {
 					if (Logger.logAlways()) {
@@ -91,23 +70,26 @@ public class PersistenceManager {
 						}
 						FileUtils.deleteDirectory(file);
 					} catch (final IOException e) {
-						throw new UnrecoverableError(e);
-						
+						throw new SQLException("Could not delete database directory: " + file.getAbsolutePath(), e);
 					}
 				}
 			}
-			
 		} else {
-			// FIXME determine default database other than postgres
-			final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			                                                          password);
-			if (connection != null) {
-				final Statement statement = connection.createStatement();
-				if (statement != null) {
-					statement.executeUpdate("CREATE DATABASE " + database + ";"); //$NON-NLS-1$
-					statement.close();
+			if (DatabaseType.POSTGRESQL.equals(options.getDatabaseType())) {
+				try (final Connection connection = DriverManager.getConnection("jdbc:" + options.getDatabaseType() + "://" + options.getDatabaseHost() + "/postgres", options.getDatabaseUsername(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				                                                               options.getDatabasePassword())) {
+					if (connection != null) {
+						final Statement statement = connection.createStatement();
+						if (statement != null) {
+							statement.executeUpdate("CREATE DATABASE " + options.getDatabaseName() + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+							statement.close();
+						}
+					}
+				} finally {
+					// ignore
 				}
-				connection.close();
+			} else {
+				throw new SQLException("CREATE unsupported for remote database: " + options.getDatabaseType());
 			}
 		}
 	}
@@ -115,43 +97,20 @@ public class PersistenceManager {
 	/**
 	 * Creates the util.
 	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
-	 * @param unit
-	 *            the unit
-	 * @param dropContents
-	 *            the drop contents
+	 * @param options
+	 *            the options
 	 * @param middleware
 	 *            the middleware
 	 * @return the persistence util
-	 * @throws UnrecoverableError
-	 *             the unrecoverable error
 	 */
-	public static PersistenceUtil createUtil(final String host,
-	                                         final String database,
-	                                         final String user,
-	                                         final String password,
-	                                         final String type,
-	                                         final String driver,
-	                                         final String unit,
-	                                         final ConnectOptions dropContents,
+	public static PersistenceUtil createUtil(final DatabaseEnvironment options,
 	                                         final Class<?> middleware) {
 		
 		PersistenceUtil instance = null;
 		try {
 			
 			instance = (PersistenceUtil) middleware.newInstance();
-			instance.createSessionFactory(host, database, user, password, type, driver, unit, dropContents);
+			instance.createSessionFactory(options);
 		} catch (final InstantiationException e) {
 			throw new InstantiationError(e, middleware, null, new Object[0]);
 		} catch (final IllegalAccessException e) {
@@ -163,44 +122,21 @@ public class PersistenceManager {
 	/**
 	 * Creates the util.
 	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
-	 * @param unit
-	 *            the unit
 	 * @param options
 	 *            the options
 	 * @param middleware
 	 *            the middleware
 	 * @return the persistence util
-	 * @throws UnrecoverableError
-	 *             the unrecoverable error
 	 */
 	@SuppressWarnings ("unchecked")
-	public static PersistenceUtil createUtil(final String host,
-	                                         final String database,
-	                                         final String user,
-	                                         final String password,
-	                                         final String type,
-	                                         final String driver,
-	                                         final String unit,
-	                                         final ConnectOptions options,
+	public static PersistenceUtil createUtil(final DatabaseEnvironment options,
 	                                         final String middleware) {
 		final String className = PersistenceUtil.class.getPackage().getName() + "." + middleware + "Util";
 		Class<PersistenceUtil> klass = null;
 		try {
 			
 			klass = (Class<PersistenceUtil>) Class.forName(className);
-			return createUtil(host, database, user, password, type, driver, unit, options, klass);
+			return createUtil(options, klass);
 		} catch (final ClassNotFoundException e) {
 			throw new ClassLoadingError(e, className);
 		}
@@ -210,36 +146,15 @@ public class PersistenceManager {
 	/**
 	 * Drop database.
 	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
+	 * @param options
+	 *            the options
 	 * @throws SQLException
 	 *             the sQL exception
 	 */
-	public static void dropDatabase(final String host,
-	                                final String database,
-	                                final String user,
-	                                final String password,
-	                                final String type,
-	                                final String driver) throws SQLException {
+	public static synchronized void dropDatabase(final DatabaseEnvironment options) throws SQLException {
 		
-		try {
-			Class.forName(driver);
-		} catch (final ClassNotFoundException e) {
-			throw new SQLException("Could not load JDBC driver " + driver, e);
-		}
-		
-		if ((host == null) || host.isEmpty()) {
-			final File file = new File(database);
+		if (options.isLocal()) {
+			final File file = new File(options.getDatabaseName());
 			if (file.exists()) {
 				if (file.isFile()) {
 					if (Logger.logAlways()) {
@@ -253,21 +168,27 @@ public class PersistenceManager {
 						}
 						FileUtils.deleteDirectory(file);
 					} catch (final IOException e) {
-						throw new UnrecoverableError(e);
+						throw new SQLException("Could not delete database directory: " + file.getAbsolutePath(), e);
 						
 					}
 				}
 			}
 		} else {
-			final Connection connection = DriverManager.getConnection("jdbc:" + type + "://" + host + "/postgres", user, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			                                                          password);
-			if (connection != null) {
-				final Statement statement = connection.createStatement();
-				if (statement != null) {
-					statement.executeUpdate("DROP DATABASE " + database + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-					statement.close();
+			if (DatabaseType.POSTGRESQL.equals(options.getDatabaseType())) {
+				try (final Connection connection = DriverManager.getConnection("jdbc:" + options.getDatabaseType() + "://" + options.getDatabaseHost() + "/postgres", options.getDatabaseUsername(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				                                                               options.getDatabasePassword())) {
+					if (connection != null) {
+						final Statement statement = connection.createStatement();
+						if (statement != null) {
+							statement.executeUpdate("DROP DATABASE " + options.getDatabaseName() + ";"); //$NON-NLS-1$ //$NON-NLS-2$
+							statement.close();
+						}
+					}
+				} finally {
+					// ignore
 				}
-				connection.close();
+			} else {
+				throw new SQLException("DROP unsupported for remote database: " + options.getDatabaseType());
 			}
 		}
 	}
@@ -283,7 +204,7 @@ public class PersistenceManager {
 	 */
 	public static synchronized String getNativeQuery(final PersistenceUtil util,
 	                                                 final String id) {
-		final String databaseType = util.getType().toLowerCase();
+		final DatabaseType databaseType = util.getType();
 		
 		if (PersistenceManager.NATIVE_QUERIES.containsKey(databaseType)
 		        && PersistenceManager.NATIVE_QUERIES.get(databaseType).containsKey(id)) {
@@ -320,15 +241,14 @@ public class PersistenceManager {
 	 *            the query
 	 * @return the string
 	 */
-	public static synchronized String registerNativeQuery(final String type,
+	public static synchronized String registerNativeQuery(final DatabaseType type,
 	                                                      final String id,
 	                                                      final String query) {
-		final String databaseType = type.toLowerCase();
-		if (!PersistenceManager.NATIVE_QUERIES.containsKey(databaseType)) {
-			PersistenceManager.NATIVE_QUERIES.put(databaseType, new HashMap<String, String>());
+		if (!PersistenceManager.NATIVE_QUERIES.containsKey(type)) {
+			PersistenceManager.NATIVE_QUERIES.put(type, new HashMap<String, String>());
 		}
 		
-		final Map<String, String> map = PersistenceManager.NATIVE_QUERIES.get(databaseType);
+		final Map<String, String> map = PersistenceManager.NATIVE_QUERIES.get(type);
 		return map.put(id, query);
 	}
 	

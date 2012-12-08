@@ -21,6 +21,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.mozkito.persistence.PersistenceUtil;
 
 /**

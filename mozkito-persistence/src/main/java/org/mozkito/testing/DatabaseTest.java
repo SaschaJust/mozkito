@@ -17,7 +17,6 @@ import java.lang.annotation.Annotation;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
@@ -26,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import org.mozkito.exceptions.TestSetupException;
+import org.mozkito.persistence.DatabaseEnvironment;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
@@ -51,8 +51,8 @@ public class DatabaseTest {
 	/** The annotation. */
 	private DatabaseSettings          annotation;
 	
-	/** The database name. */
-	private String                    databaseName;
+	/** The options. */
+	private DatabaseEnvironment       options;
 	
 	/**
 	 * Instantiates a new database test.
@@ -117,10 +117,11 @@ public class DatabaseTest {
 		// PRECONDITIONS
 		
 		try {
-			return this.databaseName;
+			return this.options != null
+			                           ? this.options.getDatabaseName()
+			                           : null;
 		} finally {
 			// POSTCONDITIONS
-			Condition.notNull(this.databaseName, "Field '%s' in '%s'.", "databaseName", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -131,6 +132,21 @@ public class DatabaseTest {
 	 */
 	public final String getHandle() {
 		return JavaUtils.getHandle(DatabaseTest.class);
+	}
+	
+	/**
+	 * Gets the options.
+	 * 
+	 * @return the options
+	 */
+	public final DatabaseEnvironment getOptions() {
+		// PRECONDITIONS
+		
+		try {
+			return this.options;
+		} finally {
+			// POSTCONDITIONS
+		}
 	}
 	
 	/**
@@ -171,22 +187,13 @@ public class DatabaseTest {
 	}
 	
 	/**
-	 * Sets the database name.
+	 * Sets the options.
 	 * 
-	 * @param databaseName
-	 *            the new database name
+	 * @param options
+	 *            the new options
 	 */
-	public final void setDatabaseName(final String databaseName) {
-		// PRECONDITIONS
-		Condition.notNull(databaseName, "Argument '%s' in '%s'.", "databaseName", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		try {
-			this.databaseName = databaseName;
-		} finally {
-			// POSTCONDITIONS
-			CompareCondition.equals(this.databaseName, databaseName,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
-		}
+	public void setOptions(final DatabaseEnvironment options) {
+		this.options = options;
 	}
 	
 	/**

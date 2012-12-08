@@ -15,7 +15,7 @@ package org.mozkito.exceptions;
 /**
  * The Class TestSettingsError.
  */
-public class TestSettingsError extends Error {
+public class TestSettingsError extends AssertionError {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3580812982570823142L;

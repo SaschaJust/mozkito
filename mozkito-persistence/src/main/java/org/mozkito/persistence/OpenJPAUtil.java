@@ -60,7 +60,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	private EntityManager               entityManager;
 	
 	/** The type. */
-	private String                      type;
+	private DatabaseType                type;
 	
 	/**
 	 * Instantiates a new open jpa util.
@@ -135,21 +135,67 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/**
 	 * Creates the session factory.
 	 * 
+	 * @param host
+	 *            the host
+	 * @param database
+	 *            the database
+	 * @param user
+	 *            the user
+	 * @param password
+	 *            the password
+	 * @param type
+	 *            the type
+	 * @param driver
+	 *            the driver
+	 * @param unit
+	 *            the unit
+	 * @param options
+	 *            the options
+	 */
+	@Override
+	public void createSessionFactory(final DatabaseEnvironment options) {
+		if (options.getDatabaseType().available()) {
+			this.type = options.getDatabaseType();
+			
+			final Properties properties = new Properties();
+			
+			properties.put("openjpa.ConnectionURL", options.getUrl()); //$NON-NLS-1$
+			
+			switch (options.getDatabaseOptions()) {
+				case VALIDATE_OR_CREATE_SCHEMA:
+				case DROP_AND_CREATE_DATABASE:
+					properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
+					break;
+				case DROP_CONTENTS:
+					properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema(SchemaAction='add,deleteTableContents')");//$NON-NLS-1$ //$NON-NLS-2$
+					break;
+				default:
+					properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
+					break;
+			}
+			
+			properties.put("openjpa.ConnectionDriverName", options.getDatabaseDriver()); //$NON-NLS-1$
+			properties.put("openjpa.ConnectionUserName", options.getDatabaseUsername()); //$NON-NLS-1$
+			properties.put("openjpa.ConnectionPassword", options.getDatabasePassword()); //$NON-NLS-1$
+			properties.put("openjpa.persistence-unit", options.getDatabaseUnit()); //$NON-NLS-1$
+			
+			createSessionFactory(properties);
+		} else {
+			throw UnrecoverableError.format("Driver for database type '%s' is not available. Please add '%s' to your classpath.", this.type, this.type.getDriver()); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Creates the session factory.
+	 * 
 	 * @param properties
 	 *            the properties
 	 */
-	@Override
-	public void createSessionFactory(final Properties properties) {
+	private void createSessionFactory(final Properties properties) {
 		if (this.factory == null) {
 			
-			if (this.type == null) {
-				final String url = (String) properties.get("openjpa.ConnectionURL"); //$NON-NLS-1$
-				if (url != null) {
-					this.type = url.split(":")[1]; //$NON-NLS-1$
-				} else {
-					this.type = "unknown"; //$NON-NLS-1$
-				}
-			}
+			// this is a bity messy. this means someone called createSessionFactory directly
+			assert this.type != null;
 			
 			String unit = properties.getProperty("openjpa.persistence-unit"); //$NON-NLS-1$
 			
@@ -202,67 +248,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 		}
 		this.entityManager = this.factory.createEntityManager();
 		
-	}
-	
-	/**
-	 * Creates the session factory.
-	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
-	 * @param unit
-	 *            the unit
-	 * @param options
-	 *            the options
-	 */
-	@Override
-	public void createSessionFactory(final String host,
-	                                 final String database,
-	                                 final String user,
-	                                 final String password,
-	                                 final String type,
-	                                 final String driver,
-	                                 final String unit,
-	                                 final ConnectOptions options) {
-		String url = null;
-		
-		if ((host == null) || host.isEmpty()) {
-			url = "jdbc:" + type.toLowerCase() + ":" + database + ";create=true";
-		} else {
-			url = "jdbc:" + type.toLowerCase() + "://" + host + "/" + database; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		
-		final Properties properties = new Properties();
-		properties.put("openjpa.ConnectionURL", url); //$NON-NLS-1$
-		switch (options) {
-			case CREATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
-				break;
-			case DB_DROP_CREATE:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
-				// "buildSchema(SchemaAction='add,deleteTableContents')");
-				break;
-			default:
-				properties.put("openjpa.jdbc.SynchronizeMappings", "buildSchema"); //$NON-NLS-1$ //$NON-NLS-2$
-				break;
-		}
-		
-		properties.put("openjpa.ConnectionDriverName", driver); //$NON-NLS-1$
-		properties.put("openjpa.ConnectionUserName", user); //$NON-NLS-1$
-		properties.put("openjpa.ConnectionPassword", password); //$NON-NLS-1$
-		properties.put("openjpa.persistence-unit", unit); //$NON-NLS-1$
-		this.type = type;
-		
-		createSessionFactory(properties);
 	}
 	
 	/*
@@ -374,7 +359,7 @@ public class OpenJPAUtil implements PersistenceUtil {
 	 * @see org.mozkito.persistence.PersistenceUtil#getType()
 	 */
 	@Override
-	public String getType() {
+	public DatabaseType getType() {
 		return this.type;
 	}
 	

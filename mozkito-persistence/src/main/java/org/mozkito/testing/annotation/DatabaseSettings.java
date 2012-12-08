@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.mozkito.persistence.ConnectOptions;
+import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.annotation.processors.DatabaseSettingsProcessor;
 
@@ -41,13 +42,6 @@ public @interface DatabaseSettings {
 	String database() default "test.db";
 	
 	/**
-	 * Driver.
-	 * 
-	 * @return the string
-	 */
-	String driver() default "org.apache.derby.jdbc.EmbeddedDriver";
-	
-	/**
 	 * Hostname.
 	 * 
 	 * @return the string
@@ -59,7 +53,7 @@ public @interface DatabaseSettings {
 	 * 
 	 * @return the connect options
 	 */
-	ConnectOptions options() default org.mozkito.persistence.ConnectOptions.DB_DROP_CREATE;
+	ConnectOptions options() default ConnectOptions.DROP_AND_CREATE_DATABASE;
 	
 	/**
 	 * Password.
@@ -80,7 +74,7 @@ public @interface DatabaseSettings {
 	 * 
 	 * @return the string
 	 */
-	String type() default "DERBY";
+	DatabaseType type() default DatabaseType.DERBY;
 	
 	/**
 	 * Unit.
