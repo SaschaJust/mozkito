@@ -104,6 +104,12 @@ public class CommentSearchEngine extends SearchEngine {
 	private QueryParser         parser      = null;
 	private static final int    TOP_X       = 1000;
 	
+	/**
+	 * Instantiates a new comment search engine.
+	 * 
+	 * @deprecated will only by called through reflections from the internal configuration class {@link Options}
+	 */
+	@Deprecated
 	CommentSearchEngine() {
 		// PRECONDITIONS
 		
