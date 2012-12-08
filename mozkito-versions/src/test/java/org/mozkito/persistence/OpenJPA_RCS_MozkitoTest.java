@@ -36,7 +36,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class OpenJPA_RCS_MozkitoTest.
  */
-@DatabaseSettings (unit = "versions", options = ConnectOptions.DB_DROP_CREATE)
+@DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
 public class OpenJPA_RCS_MozkitoTest extends DatabaseTest {
 	
 	/** The branch factory. */

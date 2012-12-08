@@ -34,7 +34,7 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class RCSPersistenceUtilTest.
  */
-@DatabaseSettings (unit = "versions", options = ConnectOptions.DB_DROP_CREATE)
+@DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
 public class RCSPersistenceUtil_MozkitoTest extends DatabaseTest {
 	
 	/** The t_280b1b. */
