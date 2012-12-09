@@ -28,6 +28,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.persons.messages.Messages;
 
 /**
  * The Class PersonsReader.

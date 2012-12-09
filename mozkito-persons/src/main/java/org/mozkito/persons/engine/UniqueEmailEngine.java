@@ -25,6 +25,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
 import org.mozkito.persons.elements.PersonBucket;
+import org.mozkito.persons.messages.Messages;
 import org.mozkito.persons.processing.PersonManager;
 
 /**

@@ -32,7 +32,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.mozkito.RepositoryToolchain;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persons.engine.MergingEngine;
-import org.mozkito.persons.engine.Messages;
+import org.mozkito.persons.messages.Messages;
 import org.mozkito.persons.processing.MergingProcessor;
 import org.mozkito.settings.DatabaseOptions;
 
