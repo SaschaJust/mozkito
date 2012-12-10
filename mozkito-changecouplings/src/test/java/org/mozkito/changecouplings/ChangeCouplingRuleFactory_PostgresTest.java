@@ -26,7 +26,6 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
@@ -51,7 +50,8 @@ import org.mozkito.versions.model.RCSTransaction;
                    username = "miner",
                    password = "miner",
                    options = ConnectOptions.DROP_AND_CREATE_DATABASE,
-                   database = "changecouplings")
+                   database = "changecouplings",
+                   remote = true)
 public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 	
 	/** The persistence util. */
