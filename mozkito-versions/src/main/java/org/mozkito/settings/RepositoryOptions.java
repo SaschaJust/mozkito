@@ -27,6 +27,7 @@ import net.ownhero.dev.hiari.settings.StringArgument.Options;
 import net.ownhero.dev.hiari.settings.URIArgument;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -84,8 +85,8 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 	 * @param databaseOptions
 	 *            the database options
 	 */
-	public RepositoryOptions(final ArgumentSet<?, ?> argumentSet, final Requirement requirement,
-	        final DatabaseOptions databaseOptions) {
+	public RepositoryOptions(@NotNull final ArgumentSet<?, ?> argumentSet, @NotNull final Requirement requirement,
+	        @NotNull final DatabaseOptions databaseOptions) {
 		super(argumentSet, "repository", "Options used to setup the repository environment.", requirement);
 		this.settings = argumentSet.getSettings();
 		this.databaseOptions = databaseOptions;
