@@ -751,7 +751,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	@Override
-	public File getWokingCopyLocation() {
+	public File getWorkingCopyLocation() {
 		return this.cloneDir;
 	}
 	

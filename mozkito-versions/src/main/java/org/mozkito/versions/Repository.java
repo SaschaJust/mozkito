@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import difflib.Delta;
+
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
@@ -33,8 +35,6 @@ import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
-import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -304,7 +304,7 @@ public abstract class Repository {
 	 * 
 	 * @return the woking copy location
 	 */
-	public abstract File getWokingCopyLocation();
+	public abstract File getWorkingCopyLocation();
 	
 	/**
 	 * Extract a log from the repository.
