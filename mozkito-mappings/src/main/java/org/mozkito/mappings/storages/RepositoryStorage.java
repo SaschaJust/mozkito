@@ -25,8 +25,10 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.concurrent.ConcurrentRepository;
 
 /**
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -64,7 +66,7 @@ public class RepositoryStorage extends Storage {
 			
 			try {
 				final ArgumentSet<Repository, RepositoryOptions> repositoryArgument = getSettings().getArgumentSet(this.repositoryOptions);
-				return new RepositoryStorage(repositoryArgument.getValue());
+				return new RepositoryStorage(new ConcurrentRepository(repositoryArgument.getValue()));
 			} finally {
 				// POSTCONDITIONS
 			}
@@ -82,8 +84,8 @@ public class RepositoryStorage extends Storage {
 			
 			try {
 				final Map<String, IOptions<?, ?>> ret = new HashMap<>();
-				// FIXME: getSettings().getOption(DatabaseOptions.class)
-				this.repositoryOptions = new RepositoryOptions(argumentSet, Requirement.required, null);
+				this.repositoryOptions = new RepositoryOptions(argumentSet, Requirement.required,
+				                                               getSettings().getSetOptions(DatabaseOptions.class));
 				
 				if (required()) {
 					ret.put(this.repositoryOptions.getName(), this.repositoryOptions);
@@ -109,7 +111,7 @@ public class RepositoryStorage extends Storage {
 	 * @param repository
 	 * 
 	 */
-	public RepositoryStorage(final Repository repository) {
+	public RepositoryStorage(final ConcurrentRepository repository) {
 		// PRECONDITIONS
 		
 		try {
