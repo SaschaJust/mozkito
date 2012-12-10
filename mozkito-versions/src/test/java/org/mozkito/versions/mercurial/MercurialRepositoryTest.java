@@ -306,6 +306,7 @@ public class MercurialRepositoryTest {
 	@Test
 	public void testGetRevDependencyGraph() {
 		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
+		assertNotNull(revDepG);
 		final Set<String> branches = revDepG.getBranches();
 		final String maintenanceBranchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE,
 		                                                   "2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9");
@@ -338,8 +339,6 @@ public class MercurialRepositoryTest {
 		assertTrue(masterIter.hasNext());
 		assertEquals("c601aab93720e3062c7335f970ccfafcae9d1822", masterIter.next());
 		assertTrue(masterIter.hasNext());
-		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", masterIter.next());
-		assertTrue(masterIter.hasNext());
 		assertEquals("8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da", masterIter.next());
 		assertTrue(masterIter.hasNext());
 		assertEquals("2398c6b6da51e317c951dba74e9d205db17fce02", masterIter.next());
@@ -362,6 +361,12 @@ public class MercurialRepositoryTest {
 		assertTrue(maintenanceIter.hasNext());
 		assertEquals("d0051f69e5e8b14a798d9a71e6abe41fc44a0af8", maintenanceIter.next());
 		assertTrue(maintenanceIter.hasNext());
+		assertEquals("e17ec8036b3bf49667ec1bb7fe474e65451a98b0", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("c6b358dfd0e99376c15038d4f90d8fe2c1a766af", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
+		assertEquals("bc67c4d57423730912fda92ff8849d0e78d44c6f", maintenanceIter.next());
+		assertTrue(maintenanceIter.hasNext());
 		assertEquals("5be9fd4d8b5653706de0f21bf0c481515890c329", maintenanceIter.next());
 		assertTrue(maintenanceIter.hasNext());
 		assertEquals("ffaaa326e3b8cd68c2396b21eb49b26a1cb3835c", maintenanceIter.next());
@@ -373,8 +378,6 @@ public class MercurialRepositoryTest {
 		assertEquals("2d60cac0c0f5b8861cba3a9f8e415fbcb99dc28a", maintenanceIter.next());
 		assertTrue(maintenanceIter.hasNext());
 		assertEquals("c601aab93720e3062c7335f970ccfafcae9d1822", maintenanceIter.next());
-		assertTrue(maintenanceIter.hasNext());
-		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", maintenanceIter.next());
 		assertTrue(maintenanceIter.hasNext());
 		assertEquals("8c9bcc8c558d701ae5c091dcad4d12faf3b0b5da", maintenanceIter.next());
 		assertTrue(maintenanceIter.hasNext());

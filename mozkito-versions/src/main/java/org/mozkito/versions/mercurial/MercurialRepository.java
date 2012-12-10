@@ -100,11 +100,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	/** The Constant REGEX. */
 	protected static final Regex             REGEX                        = new Regex(MercurialRepository.PATTERN);
 	
-	private static final String              FIELD_SPLITTER               = "+~+";
+	private static final String              FIELD_SPLITTER               = "%%%";
 	protected static final String            UNNAMED_BRANCH_NAME_TEMPLATE = "branch_%s";
 	
 	private static final Regex               REVISION_NODE_REGEX          = new Regex(
-	                                                                                  "[+-]({revision}\\d+):({hash}[a-zA-Z0-9]{40})");
+	                                                                                  "-?({revision}\\d+):({hash}[a-zA-Z0-9]{40})");
 	
 	/**
 	 * Write a specific Mercurial log style into a temporary file. (should always be
@@ -570,7 +570,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	public RevDependencyGraph getRevDependencyGraph() {
-		if (this.revDepGraph != null) {
+		if (this.revDepGraph == null) {
 			this.revDepGraph = new RevDependencyGraph();
 			
 			// run hg tip --template {node}\n to get tip and to determine master branch
@@ -598,15 +598,18 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			}
 			for (final String line : headsResult.getSecond()) {
 				final String[] lineParts = line.split(FIELD_SPLITTER);
-				if (lineParts.length < 2) {
+				if (lineParts.length < 1) {
 					if (Logger.logError()) {
 						Logger.error("Malformatted line in hg heads output: %s. Retunning null! Further parsing might lead to data inconsistency.",
 						             line);
 					}
 					return null;
 				}
+				String branchName = "";
+				if (lineParts.length > 1) {
+					branchName = lineParts[1];
+				}
 				final String node = lineParts[0];
-				String branchName = lineParts[1];
 				if (branchName.isEmpty()) {
 					if (!node.equals(tip)) {
 						// unnamed branch. Genrating a branch name using the head commit hash as name
@@ -629,9 +632,9 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
 				}
 			}
-			for (final String line : headsResult.getSecond()) {
+			for (final String line : logResult.getSecond()) {
 				final String[] lineParts = line.split(FIELD_SPLITTER);
-				if (lineParts.length < 3) {
+				if (lineParts.length < 2) {
 					if (Logger.logError()) {
 						Logger.error("Malformatted line in hg log output: %s. Returning null! Further parsing might lead to data inconsistency.",
 						             line);
@@ -672,8 +675,10 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 					parentNames.setSecond(mergeParentName);
 				}
 				
-				final String tags = lineParts[2];
-				final String[] tagNames = tags.split(" ");
+				String[] tagNames = new String[0];
+				if (lineParts.length > 2) {
+					tagNames = lineParts[2].split(" ");
+				}
 				
 				if (this.revDepGraph.addChangeSet(node) == null) {
 					if (Logger.logError()) {
@@ -685,9 +690,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 					this.revDepGraph.addTag(tagName, node);
 				}
 				
-				this.revDepGraph.addEdge(parentNames.getFirst(), node, EdgeType.BRANCH_EDGE);
-				if (parentNames.getSecond() != null) {
-					this.revDepGraph.addEdge(parentNames.getSecond(), node, EdgeType.MERGE_EDGE);
+				if (!"0000000000000000000000000000000000000000".equals(parentNames.getFirst())) {
+					this.revDepGraph.addEdge(parentNames.getFirst(), node, EdgeType.BRANCH_EDGE);
+					if (parentNames.getSecond() != null) {
+						this.revDepGraph.addEdge(parentNames.getSecond(), node, EdgeType.MERGE_EDGE);
+					}
 				}
 			}
 		}
