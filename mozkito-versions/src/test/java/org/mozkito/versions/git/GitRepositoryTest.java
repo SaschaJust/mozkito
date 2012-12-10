@@ -17,24 +17,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.versions.BranchFactory;
+import org.mozkito.testing.VersionsTest;
+import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -44,7 +41,8 @@ import difflib.Delta;
 /**
  * The Class GitRepositoryTest.
  */
-public class GitRepositoryTest {
+@RepositorySetting (id = "testGit", type = RepositoryType.GIT, uri = "testGit.zip")
+public class GitRepositoryTest extends VersionsTest {
 	
 	static {
 		KanuniAgent.initialize();
@@ -58,21 +56,8 @@ public class GitRepositoryTest {
 	 */
 	@Before
 	public void setup() {
-		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-		assertNotNull(zipURL);
-		try {
-			final File tmpDir = FileUtils.createRandomDir("mozkito", "testGit", FileShutdownAction.DELETE);
-			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
-			if ((!tmpDir.exists()) || (!tmpDir.isDirectory())) {
-				fail();
-			}
-			final BranchFactory branchFactory = new BranchFactory(null);
-			this.repo = new GitRepository();
-			this.repo.setup(new URI("file://" + tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "testGit"),
-			                branchFactory, null, "master");
-		} catch (final Exception e) {
-			fail();
-		}
+		assertTrue(getRepositories().containsKey("testGit"));
+		this.repo = (GitRepository) getRepositories().get("testGit");
 	}
 	
 	/**

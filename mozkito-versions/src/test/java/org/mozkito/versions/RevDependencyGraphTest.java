@@ -15,77 +15,34 @@ package org.mozkito.versions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mozkito.testing.VersionsTest;
+import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
-import org.mozkito.versions.git.GitRepository;
 
 import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class RevDependencyGraphTest.
  */
-public class RevDependencyGraphTest {
+@RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "testGit") })
+public class RevDependencyGraphTest extends VersionsTest {
+	
+	private Repository         repo;
+	private RevDependencyGraph graph;
 	
 	static {
 		KanuniAgent.initialize();
-	}
-	
-	/** The branch factory. */
-	private static BranchFactory      branchFactory;
-	
-	/** The repo. */
-	private static GitRepository      repo;
-	
-	private static RevDependencyGraph graph;
-	
-	/**
-	 * After class.
-	 */
-	@AfterClass
-	public static void afterClass() {
-		graph.close();
-	}
-	
-	/**
-	 * Before class.
-	 */
-	@BeforeClass
-	public static void beforeClass() {
-		try {
-			final URL zipURL = RevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-			assert (zipURL != null);
-			
-			final File bareDir = new File(
-			                              (new URL(zipURL.toString()
-			                                             .substring(0,
-			                                                        zipURL.toString()
-			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-			FileUtils.unzip(new File(zipURL.toURI()), bareDir);
-			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
-				fail();
-			}
-			RevDependencyGraphTest.branchFactory = new BranchFactory(null);
-			RevDependencyGraphTest.repo = new GitRepository();
-			RevDependencyGraphTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator
-			        + "testGit"), RevDependencyGraphTest.branchFactory, null, "master");
-			graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
-		} catch (final Exception e) {
-			fail();
-		}
 	}
 	
 	/**
@@ -93,7 +50,7 @@ public class RevDependencyGraphTest {
 	 */
 	@Test
 	public void getStrangeTag() {
-		final RevDependencyGraph graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
+		final RevDependencyGraph graph = this.repo.getRevDependencyGraph();
 		assertEquals(1, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").size());
 		assertEquals(true, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").contains("tag_one"));
 	}
@@ -195,6 +152,34 @@ public class RevDependencyGraphTest {
 		revGraph.close();
 	}
 	
+	// /**
+	// * Before class.
+	// */
+	// @BeforeClass
+	// public static void beforeClass() {
+	// try {
+	// final URL zipURL = RevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
+	// assert (zipURL != null);
+	//
+	// final File bareDir = new File(
+	// (new URL(zipURL.toString()
+	// .substring(0,
+	// zipURL.toString()
+	// .lastIndexOf(FileUtils.fileSeparator)))).toURI());
+	// FileUtils.unzip(new File(zipURL.toURI()), bareDir);
+	// if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
+	// fail();
+	// }
+	// RevDependencyGraphTest.branchFactory = new BranchFactory(null);
+	// RevDependencyGraphTest.repo = new GitRepository();
+	// RevDependencyGraphTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath() + FileUtils.fileSeparator
+	// + "testGit"), RevDependencyGraphTest.branchFactory, null, "master");
+	// graph = RevDependencyGraphTest.repo.getRevDependencyGraph();
+	// } catch (final Exception e) {
+	// fail();
+	// }
+	// }
+	
 	/**
 	 * Regression test rhino2.
 	 */
@@ -280,174 +265,192 @@ public class RevDependencyGraphTest {
 	}
 	
 	/**
+	 * After class.
+	 */
+	@After
+	public void setup() {
+		this.graph.close();
+	}
+	
+	/**
+	 * Tear down.
+	 */
+	@Before
+	public void tearDown() {
+		assertTrue(getRepositories().containsKey("testGit"));
+		this.repo = getRepositories().get("testGit");
+		this.graph = this.repo.getRevDependencyGraph();
+	}
+	
+	/**
 	 * Test.
 	 */
 	@Test
 	public void test() {
 		
 		String hash = "e52def97ebc1f78c9286b1e7c36783aa67604439";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) == null);
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) == null);
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "19bc6c11d2d8cff62f911f26bad29690c3cee256";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "9d647acdef18e1bc6137354359ae75e490a7687d";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "98d5c40ef3c14503a472ba4133ae3529c7578e30";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("19bc6c11d2d8cff62f911f26bad29690c3cee256", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("9d647acdef18e1bc6137354359ae75e490a7687d", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "cbcc33d919a27b9450d117f211a5f4f45615cab9";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "ae94d7fa81437cbbd723049e3951f9daaa62a7c0";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) != null);
-		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", graph.getMergeParent(hash));
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("cbcc33d919a27b9450d117f211a5f4f45615cab9", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) != null);
+		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", this.graph.getMergeParent(hash));
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "8273c1e51992a4d7a1da012dbb416864c2749a7f";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) != null);
-		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0", graph.getMergeParent(hash));
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) != null);
+		assertEquals("ae94d7fa81437cbbd723049e3951f9daaa62a7c0", this.graph.getMergeParent(hash));
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "927478915f2d8fb9135eb33d21cb8491c0e655be"; // tag_one
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(1, graph.getTags(hash).size());
-		assertTrue(graph.getTags(hash).contains("tag_one"));
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(1, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getTags(hash).contains("tag_one"));
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("8273c1e51992a4d7a1da012dbb416864c2749a7f", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "1ac6aaa05eb6d55939b20e70ec818bb413417757";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "41a40fb23b54a49e91eb4cee510533eef810ec68";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("927478915f2d8fb9135eb33d21cb8491c0e655be", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "376adc0f9371129a76766f8030f2e576165358c1";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("1ac6aaa05eb6d55939b20e70ec818bb413417757", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "637acf68104e7bdff8235fb2e1a254300ffea3cb";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) != null);
-		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", graph.getMergeParent(hash));
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("41a40fb23b54a49e91eb4cee510533eef810ec68", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) != null);
+		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", this.graph.getMergeParent(hash));
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("376adc0f9371129a76766f8030f2e576165358c1", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "9be561b3657e2b1da2b09d675dddd5f45c47f57c";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("637acf68104e7bdff8235fb2e1a254300ffea3cb", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("637acf68104e7bdff8235fb2e1a254300ffea3cb", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) != null);
-		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", graph.getMergeParent(hash));
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) != null);
+		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", this.graph.getMergeParent(hash));
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "fe56f365f798c3742bac5e56f5ff30eca4f622c6";
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertTrue(graph.isBranchHead(hash) == null);
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("9be561b3657e2b1da2b09d675dddd5f45c47f57c", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertTrue(this.graph.isBranchHead(hash) == null);
 		
 		hash = "96a9f105774b50f1fa3361212c4d12ae057a4285"; // HEAD master
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertEquals("master", graph.isBranchHead(hash));
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertEquals("master", this.graph.isBranchHead(hash));
 		
 		hash = "67635fe9efeb2fd3751df9ea67650c71e59e3df1"; // HEAD maintenance
-		assertTrue(graph.existsVertex(hash));
-		assertEquals(0, graph.getTags(hash).size());
-		assertTrue(graph.getBranchParent(hash) != null);
-		assertEquals("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2", graph.getBranchParent(hash));
-		assertTrue(graph.getMergeParent(hash) == null);
-		assertEquals("origin/maintenance", graph.isBranchHead(hash));
+		assertTrue(this.graph.existsVertex(hash));
+		assertEquals(0, this.graph.getTags(hash).size());
+		assertTrue(this.graph.getBranchParent(hash) != null);
+		assertEquals("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2", this.graph.getBranchParent(hash));
+		assertTrue(this.graph.getMergeParent(hash) == null);
+		assertEquals("origin/maintenance", this.graph.isBranchHead(hash));
 		
 	}
 	
@@ -489,8 +492,8 @@ public class RevDependencyGraphTest {
 	@Test
 	public void testExistPathFail() {
 		
-		assertEquals(false, graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                     "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
+		assertEquals(false, this.graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
+		                                          "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
 	}
 	
 	/**
@@ -499,14 +502,14 @@ public class RevDependencyGraphTest {
 	@Test
 	public void testExistPathSuccess() {
 		
-		assertEquals(true, graph.containsEdge("ae94d7fa81437cbbd723049e3951f9daaa62a7c0",
-		                                      "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
-		assertEquals(false, graph.containsEdge("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                       "ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
-		assertEquals(true, graph.existsPath("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6",
-		                                    "41a40fb23b54a49e91eb4cee510533eef810ec68"));
-		assertEquals(false, graph.existsPath("41a40fb23b54a49e91eb4cee510533eef810ec68",
-		                                     "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
+		assertEquals(true, this.graph.containsEdge("ae94d7fa81437cbbd723049e3951f9daaa62a7c0",
+		                                           "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
+		assertEquals(false, this.graph.containsEdge("cbcc33d919a27b9450d117f211a5f4f45615cab9",
+		                                            "ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
+		assertEquals(true, this.graph.existsPath("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6",
+		                                         "41a40fb23b54a49e91eb4cee510533eef810ec68"));
+		assertEquals(false, this.graph.existsPath("41a40fb23b54a49e91eb4cee510533eef810ec68",
+		                                          "d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
 	}
 	
 	/**
@@ -514,8 +517,8 @@ public class RevDependencyGraphTest {
 	 */
 	@Test
 	public void testExistSimplePath() {
-		assertEquals(true, graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
-		                                    "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
+		assertEquals(true, this.graph.existsPath("cbcc33d919a27b9450d117f211a5f4f45615cab9",
+		                                         "cbcc33d919a27b9450d117f211a5f4f45615cab9"));
 	}
 	
 	/**
@@ -524,7 +527,7 @@ public class RevDependencyGraphTest {
 	@Test
 	public void testGetVertices() {
 		final Set<String> transactionIDs = new HashSet<>();
-		for (final String v : graph.getVertices()) {
+		for (final String v : this.graph.getVertices()) {
 			transactionIDs.add(v);
 		}
 		// 21 because we add one extra transaction for the TAG (tags in git have their own hash)

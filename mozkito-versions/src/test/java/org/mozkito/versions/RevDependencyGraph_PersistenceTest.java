@@ -13,9 +13,9 @@
 package org.mozkito.versions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
@@ -34,7 +34,7 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "GIT") })
 @DatabaseSettings (unit = "versions")
-public class RevDependencyGraph_MozkitoTest extends VersionsTest {
+public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	
 	static {
 		KanuniAgent.initialize();
@@ -46,28 +46,27 @@ public class RevDependencyGraph_MozkitoTest extends VersionsTest {
 	@Test
 	public void testRestoredRevDepGraph() {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
-		final Map<String, Repository> repositories = getRepositories();
 		
-		// I assume that this test runs on ONE REPOSITOTY ONLY
-		for (final Repository repository : repositories.values()) {
-			
-			persistenceUtil.beginTransaction();
-			
-			final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
-			final Iterator<LogEntry> logIterator = repository.log(repository.getFirstRevisionId(),
-			                                                      repository.getEndRevision()).iterator();
-			while (logIterator.hasNext()) {
-				final LogEntry logEntry = logIterator.next();
-				final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, logEntry);
-				persistenceUtil.save(rcsTransaction);
-			}
-			
-			persistenceUtil.commitTransaction();
-			
-			repository.resetRevDependencyGraph();
-			
-			final RevDependencyGraph persistedRevDepGraph = repository.getRevDependencyGraph(persistenceUtil);
-			assertEquals(true, revDepGraph.isEqualsTo(persistedRevDepGraph));
+		assertTrue(getRepositories().containsKey("testGit"));
+		
+		final Repository repository = getRepositories().get("testGit");
+		
+		persistenceUtil.beginTransaction();
+		
+		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
+		final Iterator<LogEntry> logIterator = repository.log(repository.getFirstRevisionId(),
+		                                                      repository.getEndRevision()).iterator();
+		while (logIterator.hasNext()) {
+			final LogEntry logEntry = logIterator.next();
+			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, logEntry);
+			persistenceUtil.save(rcsTransaction);
 		}
+		
+		persistenceUtil.commitTransaction();
+		
+		repository.resetRevDependencyGraph();
+		
+		final RevDependencyGraph persistedRevDepGraph = repository.getRevDependencyGraph(persistenceUtil);
+		assertEquals(true, revDepGraph.isEqualsTo(persistedRevDepGraph));
 	}
 }

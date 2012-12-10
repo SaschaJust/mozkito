@@ -50,7 +50,7 @@ import org.mozkito.versions.elements.LogEntry;
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "repotest.git.zip", id = "GIT"),
         @RepositorySetting (type = RepositoryType.MERCURIAL, uri = "repotest.mercurial.zip", id = "HG"),
         @RepositorySetting (type = RepositoryType.SUBVERSION, uri = "repotest.subversion", id = "SVN") })
-public class Repository_MozkitoTest extends VersionsTest {
+public class RepositoryTest extends VersionsTest {
 	
 	static {
 		KanuniAgent.initialize();

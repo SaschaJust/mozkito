@@ -17,11 +17,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,18 +27,18 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.versions.BranchFactory;
+import org.mozkito.testing.VersionsTest;
+import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.git.GitRepositoryTest;
 import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
@@ -49,7 +46,8 @@ import difflib.Delta;
 /**
  * The Class SubversionRepositoryTest.
  */
-public class SubversionRepositoryTest {
+@RepositorySetting (id = "testSvn", type = RepositoryType.SUBVERSION, uri = "testSvn.zip")
+public class SubversionRepositoryTest extends VersionsTest {
 	
 	static {
 		KanuniAgent.initialize();
@@ -63,21 +61,8 @@ public class SubversionRepositoryTest {
 	 */
 	@Before
 	public void setup() {
-		final URL zipURL = GitRepositoryTest.class.getResource(FileUtils.fileSeparator + "testSvn.zip");
-		assertNotNull(zipURL);
-		try {
-			final File tmpDir = FileUtils.createRandomDir("mozkito", "testSvn", FileShutdownAction.DELETE);
-			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
-			if ((!tmpDir.exists()) || (!tmpDir.isDirectory())) {
-				fail();
-			}
-			final BranchFactory branchFactory = new BranchFactory(null);
-			this.repo = new SubversionRepository();
-			this.repo.setup(new URI("file://" + tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "testSvn"),
-			                branchFactory, null, "master");
-		} catch (final Exception e) {
-			fail();
-		}
+		assertTrue(getRepositories().containsKey("testSvn"));
+		this.repo = (SubversionRepository) getRepositories().get("testSvn");
 	}
 	
 	/**

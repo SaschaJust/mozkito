@@ -17,11 +17,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -29,13 +26,13 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.versions.BranchFactory;
+import org.mozkito.testing.VersionsTest;
+import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
@@ -47,7 +44,8 @@ import difflib.Delta;
 /**
  * The Class MercurialRepositoryTest.
  */
-public class MercurialRepositoryTest {
+@RepositorySetting (id = "testHg", type = RepositoryType.MERCURIAL, uri = "testHg.zip")
+public class MercurialRepositoryTest extends VersionsTest {
 	
 	static {
 		KanuniAgent.initialize();
@@ -107,21 +105,8 @@ public class MercurialRepositoryTest {
 	 */
 	@Before
 	public void setup() {
-		final URL zipURL = MercurialRepositoryTest.class.getResource(FileUtils.fileSeparator + "testHg.zip");
-		assertNotNull(zipURL);
-		try {
-			final File tmpDir = FileUtils.createRandomDir("mozkito", "testHg", FileShutdownAction.DELETE);
-			FileUtils.unzip(new File(zipURL.toURI()), tmpDir);
-			if ((!tmpDir.exists()) || (!tmpDir.isDirectory())) {
-				fail();
-			}
-			final BranchFactory branchFactory = new BranchFactory(null);
-			this.repo = new MercurialRepository();
-			this.repo.setup(new URI("file://" + tmpDir.getAbsolutePath() + FileUtils.fileSeparator + "testHg"),
-			                branchFactory, null, "master");
-		} catch (final Exception e) {
-			fail();
-		}
+		assertTrue(getRepositories().containsKey("testHg"));
+		this.repo = (MercurialRepository) getRepositories().get("testHg");
 	}
 	
 	/**

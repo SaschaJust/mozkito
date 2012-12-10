@@ -15,24 +15,21 @@ package org.mozkito.versions.git;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.mozkito.versions.BranchFactory;
+import org.mozkito.testing.VersionsTest;
+import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.RevDependencyGraphTest;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
@@ -41,59 +38,44 @@ import org.mozkito.versions.model.RCSTransaction;
  * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
  * 
  */
-public class GitTransactionIteratorTest {
+@RepositorySetting (id = "testGit", type = RepositoryType.GIT, uri = "testGit.zip")
+public class GitTransactionIteratorTest extends VersionsTest {
 	
-	/** The branch factory. */
-	private static BranchFactory               branchFactory;
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/** The repo. */
-	private static GitRepository               repo;
+	private GitRepository                     repo;
 	
 	/** The transaction map. */
-	private static Map<String, RCSTransaction> transactionMap = new HashMap<String, RCSTransaction>();
+	private final Map<String, RCSTransaction> transactionMap = new HashMap<String, RCSTransaction>();
 	
 	/** The branch map. */
-	private static Map<String, RCSBranch>      branchMap      = new HashMap<String, RCSBranch>();
+	private final Map<String, RCSBranch>      branchMap      = new HashMap<String, RCSBranch>();
 	
 	/**
 	 * Before class.
 	 */
-	@BeforeClass
-	public static void beforeClass() {
-		try {
-			final URL zipURL = RevDependencyGraphTest.class.getResource(FileUtils.fileSeparator + "testGit.zip");
-			assert (zipURL != null);
-			
-			final File bareDir = new File(
-			                              (new URL(zipURL.toString()
-			                                             .substring(0,
-			                                                        zipURL.toString()
-			                                                              .lastIndexOf(FileUtils.fileSeparator)))).toURI());
-			FileUtils.unzip(new File(zipURL.toURI()), bareDir);
-			if ((!bareDir.exists()) || (!bareDir.isDirectory())) {
-				fail();
-			}
-			GitTransactionIteratorTest.branchFactory = new BranchFactory(null);
-			GitTransactionIteratorTest.repo = new GitRepository();
-			GitTransactionIteratorTest.repo.setup(new URI("file://" + bareDir.getAbsolutePath()
-			        + FileUtils.fileSeparator + "testGit"), GitTransactionIteratorTest.branchFactory, null, "master");
-		} catch (final Exception e) {
-			fail();
-		}
-		final Iterator<LogEntry> log = GitTransactionIteratorTest.repo.log(GitTransactionIteratorTest.repo.getFirstRevisionId(),
-		                                                                   GitTransactionIteratorTest.repo.getEndRevision(),
-		                                                                   100);
+	@Before
+	public void setup() {
+		assertTrue(getRepositories().containsKey("testGit"));
+		this.repo = (GitRepository) getRepositories().get("testGit");
+		this.transactionMap.clear();
+		this.branchMap.clear();
+		
+		final Iterator<LogEntry> log = this.repo.log(this.repo.getFirstRevisionId(), this.repo.getEndRevision(), 100);
 		
 		while (log.hasNext()) {
 			final LogEntry logEntry = log.next();
 			final RCSTransaction rcsTransaction = new RCSTransaction(logEntry.getRevision(), logEntry.getMessage(),
 			                                                         logEntry.getDateTime(), logEntry.getAuthor(),
 			                                                         logEntry.getOriginalId());
-			GitTransactionIteratorTest.transactionMap.put(logEntry.getRevision(), rcsTransaction);
+			this.transactionMap.put(logEntry.getRevision(), rcsTransaction);
 		}
 		
-		final RevDependencyGraph revDepGraph = GitTransactionIteratorTest.repo.getRevDependencyGraph();
-		for (final RCSTransaction rcsTransaction : GitTransactionIteratorTest.transactionMap.values()) {
+		final RevDependencyGraph revDepGraph = this.repo.getRevDependencyGraph();
+		for (final RCSTransaction rcsTransaction : this.transactionMap.values()) {
 			final String hash = rcsTransaction.getId();
 			
 			if (!revDepGraph.existsVertex(hash)) {
@@ -103,12 +85,12 @@ public class GitTransactionIteratorTest {
 			// set parents
 			final String branchParentHash = revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
-				final RCSTransaction branchParent = GitTransactionIteratorTest.transactionMap.get(branchParentHash);
+				final RCSTransaction branchParent = this.transactionMap.get(branchParentHash);
 				rcsTransaction.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final RCSTransaction mergeParent = GitTransactionIteratorTest.transactionMap.get(mergeParentHash);
+				final RCSTransaction mergeParent = this.transactionMap.get(mergeParentHash);
 				rcsTransaction.setMergeParent(mergeParent);
 			}
 			
@@ -121,9 +103,9 @@ public class GitTransactionIteratorTest {
 			// persist branches
 			final String branchName = revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final RCSBranch rCSBranch = GitTransactionIteratorTest.branchFactory.getBranch(branchName);
+				final RCSBranch rCSBranch = this.repo.getBranchFactory().getBranch(branchName);
 				rCSBranch.setHead(rcsTransaction);
-				GitTransactionIteratorTest.branchMap.put(branchName, rCSBranch);
+				this.branchMap.put(branchName, rCSBranch);
 			}
 		}
 		
@@ -134,9 +116,8 @@ public class GitTransactionIteratorTest {
 	 */
 	@Test
 	public void testMaintenanceBranch() {
-		final Iterator<String> transactions = GitTransactionIteratorTest.repo.getRevDependencyGraph()
-		                                                                     .getBranchTransactions("origin/maintenance")
-		                                                                     .iterator();
+		final Iterator<String> transactions = this.repo.getRevDependencyGraph()
+		                                               .getBranchTransactions("origin/maintenance").iterator();
 		
 		assertTrue(transactions.hasNext());
 		assertEquals("67635fe9efeb2fd3751df9ea67650c71e59e3df1", transactions.next());
@@ -182,9 +163,8 @@ public class GitTransactionIteratorTest {
 	 */
 	@Test
 	public void testMasterBranch() {
-		final Iterator<String> transactions = GitTransactionIteratorTest.repo.getRevDependencyGraph()
-		                                                                     .getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME)
-		                                                                     .iterator();
+		final Iterator<String> transactions = this.repo.getRevDependencyGraph()
+		                                               .getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
 		assertTrue(transactions.hasNext());
 		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", transactions.next());
 		assertTrue(transactions.hasNext());
