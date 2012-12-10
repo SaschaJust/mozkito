@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
+import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
@@ -44,7 +45,7 @@ import difflib.Delta;
 /**
  * The Class MercurialRepositoryTest.
  */
-@RepositorySetting (id = "testHg", type = RepositoryType.MERCURIAL, uri = "testHg.zip")
+@RepositorySettings (value = { @RepositorySetting (id = "testHg", type = RepositoryType.MERCURIAL, uri = "testHg.zip") })
 public class MercurialRepositoryTest extends VersionsTest {
 	
 	static {

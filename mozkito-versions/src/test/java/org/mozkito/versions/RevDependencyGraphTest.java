@@ -265,21 +265,21 @@ public class RevDependencyGraphTest extends VersionsTest {
 	}
 	
 	/**
-	 * After class.
-	 */
-	@After
-	public void setup() {
-		this.graph.close();
-	}
-	
-	/**
 	 * Tear down.
 	 */
 	@Before
-	public void tearDown() {
+	public void setup() {
 		assertTrue(getRepositories().containsKey("testGit"));
 		this.repo = getRepositories().get("testGit");
 		this.graph = this.repo.getRevDependencyGraph();
+	}
+	
+	/**
+	 * After class.
+	 */
+	@After
+	public void tearDown() {
+		this.graph.close();
 	}
 	
 	/**

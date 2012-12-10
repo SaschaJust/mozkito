@@ -21,6 +21,7 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
 import org.mozkito.RepositoryParser;
+import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
@@ -32,8 +33,8 @@ import org.mozkito.versions.model.RCSTransaction;
 /**
  * The Class RevDependencyGraphTest.
  */
-@RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "GIT") })
-@DatabaseSettings (unit = "versions")
+@RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "testGit") })
+@DatabaseSettings (unit = "versions", options = ConnectOptions.DROP_AND_CREATE_DATABASE)
 public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	
 	static {
