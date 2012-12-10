@@ -159,8 +159,8 @@ public class RevDependencyGraph {
 				Logger.debug("Adding change set node %s to neo4j graph.", v);
 			}
 			if (existsVertex(v)) {
-				if (Logger.logWarn()) {
-					Logger.warn("Change set node with id `" + v + "` already exists");
+				if (Logger.logDebug()) {
+					Logger.debug("Change set node with id `" + v + "` already exists");
 				}
 				return getChangeSet(v);
 			}
