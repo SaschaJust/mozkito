@@ -52,7 +52,7 @@ import org.mozkito.versions.model.RCSTransaction;
                    password = "miner",
                    options = ConnectOptions.DROP_AND_CREATE_DATABASE,
                    database = "changecouplings")
-public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends DatabaseTest {
+public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 	
 	/** The persistence util. */
 	private static PersistenceUtil persistenceUtil = null;
@@ -64,22 +64,22 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	public void setupIGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest() {
 		try {
 			
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil = getPersistenceUtil();
-			URL sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil = getPersistenceUtil();
+			URL sqlURL = ChangeCouplingRuleFactory_PostgresTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql"); //$NON-NLS-1$
 			
 			java.io.File sqlFile = new java.io.File(sqlURL.toURI());
 			String query = FileUtils.readFileToString(sqlFile);
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;"); //$NON-NLS-1$
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.executeNativeQuery("CREATE LANGUAGE plpythonu;"); //$NON-NLS-1$
 			final String query2 = "CREATE LANGUAGE plpython2u;";
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query2);
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query);
-			sqlURL = IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.class.getResource(FileUtils.fileSeparator
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.executeNativeQuery(query2);
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.executeNativeQuery(query);
+			sqlURL = ChangeCouplingRuleFactory_PostgresTest.class.getResource(FileUtils.fileSeparator
 			        + "change_file_couplings.psql"); //$NON-NLS-1$
 			
 			sqlFile = new java.io.File(sqlURL.toURI());
 			query = FileUtils.readFileToString(sqlFile);
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.executeNativeQuery(query);
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.executeNativeQuery(query);
 		} catch (final IOException e) {
 			if (Logger.logWarn()) {
 				Logger.warn(e, "Could not set or update change coupling functions. Trying to continue ... ");
@@ -89,7 +89,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 				Logger.warn(e, "Could not set or update change coupling functions. Trying to continue ... ");
 			}
 		} finally {
-			IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.commitTransaction();
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();
 		}
 		
 	}
@@ -100,7 +100,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 	@Test
 	public void testChangeCouplings() {
 		
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.beginTransaction();
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.beginTransaction();
 		
 		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", "", "");
@@ -121,7 +121,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		fileC.assignTransaction(rcsTransaction, "C.java");
 		new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
 		
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction);
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction);
 		
 		// ### transaction 2
 		
@@ -131,7 +131,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
 		// fileC.assignTransaction(rcsTransaction2, "D.java");
 		new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction2);
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction2);
 		
 		// ### transaction 3
 		
@@ -141,7 +141,7 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		fileC.assignTransaction(rcsTransaction3, "C.java");
 		new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction3);
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction3);
 		
 		// ### transaction 4
 		
@@ -149,14 +149,14 @@ public class IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest extends Databa
 		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
 		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.saveOrUpdate(rcsTransaction4);
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction4);
 		
-		IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil.commitTransaction();
+		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();
 		
 		final List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
 		                                                                                                      1,
 		                                                                                                      0,
-		                                                                                                      IGNORE_OWNHERO_ChangeCouplingRuleFactory_MozkitoTest.persistenceUtil);
+		                                                                                                      ChangeCouplingRuleFactory_PostgresTest.persistenceUtil);
 		assertEquals(9, changeCouplingRules.size());
 		FileChangeCoupling rule = changeCouplingRules.get(0);
 		assertEquals(1, rule.getPremise().size());
