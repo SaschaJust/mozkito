@@ -28,7 +28,6 @@ import java.util.Map;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -50,6 +49,7 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.ProtocolType;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -85,34 +85,36 @@ import difflib.Patch;
 public class SubversionRepository extends Repository {
 	
 	/** The end revision. */
-	private SVNRevision   endRevision;
+	private SVNRevision        endRevision;
 	
 	/** The initialized. */
-	private boolean       initialized = false;
+	private boolean            initialized = false;
 	
 	/** The password. */
-	private String        password;
+	private String             password;
 	
 	/** The repository. */
-	private SVNRepository repository;
+	private SVNRepository      repository;
 	
 	/** The start revision. */
-	private SVNRevision   startRevision;
+	private SVNRevision        startRevision;
 	
 	/** The svnurl. */
-	private SVNURL        svnurl;
+	private SVNURL             svnurl;
 	
 	/** The type. */
-	private ProtocolType  type;
+	private ProtocolType       type;
 	
 	/** The username. */
-	private String        username;
+	private String             username;
 	
 	/** The working directory. */
-	private File          workingDirectory;
+	private File               workingDirectory;
 	
 	/** The tmp dir. */
-	private File          tmpDir;
+	private File               tmpDir;
+	
+	private RevDependencyGraph revDepGraph;
 	
 	/**
 	 * Instantiates a new subversion repository.
@@ -478,18 +480,30 @@ public class SubversionRepository extends Repository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph() We do not support revDependencyGraphs over multiple
+	 * branches and do not include TAGs. Branches and TAGs are located in their own repository and can be handled by
+	 * choosing an appropriate repository URL.
 	 */
 	@Override
 	public RevDependencyGraph getRevDependencyGraph() {
-		// PRECONDITIONS
-		
-		try {
-			// TODO implement support
-			throw new UnrecoverableError("Support hasn't been implemented yet. " + Settings.getReportThis());
-		} finally {
-			// POSTCONDITIONS
+		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
+		if (this.revDepGraph == null) {
+			this.revDepGraph = new RevDependencyGraph();
+			for (final LogEntry logEntry : this.log("1", "HEAD")) {
+				this.revDepGraph.addChangeSet(logEntry.getRevision());
+				try {
+					Long revNum = Long.valueOf(logEntry.getRevision());
+					--revNum;
+					this.revDepGraph.addEdge(revNum.toString(), logEntry.getRevision(), EdgeType.BRANCH_EDGE);
+				} catch (final NumberFormatException e) {
+					if (Logger.logError()) {
+						Logger.error("Could no  interpret revision ID %s as Long value. Returnin NULL!",
+						             logEntry.getRevision());
+					}
+				}
+			}
 		}
+		return this.revDepGraph;
 	}
 	
 	/*
