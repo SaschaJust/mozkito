@@ -37,6 +37,7 @@ import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
+import net.ownhero.dev.regex.Regex;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
@@ -53,6 +54,7 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.model.RCSBranch;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -88,7 +90,7 @@ public class SubversionRepository extends Repository {
 	private SVNRevision        endRevision;
 	
 	/** The initialized. */
-	private boolean            initialized = false;
+	private boolean            initialized    = false;
 	
 	/** The password. */
 	private String             password;
@@ -115,6 +117,8 @@ public class SubversionRepository extends Repository {
 	private File               tmpDir;
 	
 	private RevDependencyGraph revDepGraph;
+	
+	private static final Regex BRANCH_PATTERN = new Regex("\\/?branches/({branch_name}[^\\/]+)");
 	
 	/**
 	 * Instantiates a new subversion repository.
@@ -488,13 +492,24 @@ public class SubversionRepository extends Repository {
 	public RevDependencyGraph getRevDependencyGraph() {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		if (this.revDepGraph == null) {
+			
+			final String repoPath = this.svnurl.getPath();
+			String branchName = RCSBranch.MASTER_BRANCH_NAME;
+			if (BRANCH_PATTERN.matches(repoPath)) {
+				branchName = BRANCH_PATTERN.getGroup("branch_name");
+			}
+			
 			this.revDepGraph = new RevDependencyGraph();
+			this.revDepGraph.addBranch(branchName, getHEADRevisionId());
+			
 			for (final LogEntry logEntry : this.log("1", "HEAD")) {
 				this.revDepGraph.addChangeSet(logEntry.getRevision());
 				try {
-					Long revNum = Long.valueOf(logEntry.getRevision());
-					--revNum;
-					this.revDepGraph.addEdge(revNum.toString(), logEntry.getRevision(), EdgeType.BRANCH_EDGE);
+					if (!logEntry.getRevision().equals(getHEADRevisionId())) {
+						Long revNum = Long.valueOf(logEntry.getRevision());
+						++revNum;
+						this.revDepGraph.addEdge(logEntry.getRevision(), revNum.toString(), EdgeType.BRANCH_EDGE);
+					}
 				} catch (final NumberFormatException e) {
 					if (Logger.logError()) {
 						Logger.error("Could no  interpret revision ID %s as Long value. Returnin NULL!",

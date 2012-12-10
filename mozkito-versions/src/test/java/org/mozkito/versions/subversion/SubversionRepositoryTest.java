@@ -23,8 +23,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
@@ -35,10 +37,12 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.git.GitRepositoryTest;
+import org.mozkito.versions.model.RCSBranch;
 
 import difflib.Delta;
 
@@ -280,6 +284,55 @@ public class SubversionRepositoryTest {
 	}
 	
 	/**
+	 * Test get rev dependency graph.
+	 */
+	@Test
+	public void testGetRevDependencyGraph() {
+		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
+		assertNotNull(revDepG);
+		final Set<String> branches = revDepG.getBranches();
+		assertEquals(1, branches.size());
+		final Iterator<String> masterIter = revDepG.getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		assertTrue(masterIter.hasNext());
+		assertEquals("18", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("17", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("16", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("15", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("14", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("13", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("12", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("11", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("10", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("9", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("8", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("7", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("6", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("5", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("4", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("3", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("2", masterIter.next());
+		assertTrue(masterIter.hasNext());
+		assertEquals("1", masterIter.next());
+		assertFalse(masterIter.hasNext());
+	}
+	
+	/**
 	 * Test get transaction count.
 	 */
 	@Test
@@ -307,5 +360,4 @@ public class SubversionRepositoryTest {
 		assertEquals(17, this.repo.getTransactionIndex("HEAD"));
 		assertEquals(5, this.repo.getTransactionIndex("6"));
 	}
-	
 }
