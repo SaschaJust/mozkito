@@ -13,12 +13,17 @@
 package org.mozkito.versions;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import net.ownhero.dev.andama.exceptions.ClassLoadingError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
@@ -29,6 +34,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
+import org.mozkito.versions.concurrent.ConcurrentRepository;
 
 /**
  * A factory for creating Repository objects.
@@ -37,55 +43,80 @@ import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
  */
 public final class RepositoryFactory {
 	
+	private static final Set<Class<? extends Repository>>                 OMITTED_REPOSITORIES = new HashSet<Class<? extends Repository>>() {
+		                                                                                           
+		                                                                                           /**
+         * 
+         */
+		                                                                                           private static final long serialVersionUID = 8573860782538109069L;
+		                                                                                           
+		                                                                                           {
+			                                                                                           add(ConcurrentRepository.class);
+		                                                                                           }
+	                                                                                           };
+	
 	/** container for repository connector mappings. */
-	private static Map<RepositoryType, Class<? extends Repository>> repositoryHandlers = new HashMap<RepositoryType, Class<? extends Repository>>();
+	private static final Map<RepositoryType, Class<? extends Repository>> REPOSITORY_HANDLERS  = new HashMap<RepositoryType, Class<? extends Repository>>();
 	
 	/**
 	 * static registration of all modules extending {@link Repository}
 	 */
 	static {
 		// ======== Repository handlers ========
+		final Package package1 = Repository.class.getPackage();
+		Collection<Class<? extends Repository>> classesExtendingClass;
 		try {
-			final Package package1 = Repository.class.getPackage();
-			final Collection<Class<? extends Repository>> classesExtendingClass = ClassFinder.getClassesExtendingClass(package1,
-			                                                                                                           Repository.class,
-			                                                                                                           Modifier.ABSTRACT
-			                                                                                                                   | Modifier.INTERFACE
-			                                                                                                                   | Modifier.PRIVATE);
-			
-			for (final Class<? extends Repository> klass : classesExtendingClass) {
-				addRepositoryHandler((RepositoryType) klass.getMethod("getRepositoryType", new Class<?>[0])
-				                                           .invoke(klass.getConstructor(new Class<?>[0])
-				                                                        .newInstance(new Object[0]), new Object[0]),
-				                     klass);
-			}
-		} catch (final InvocationTargetException e) {
-			if (Logger.logError()) {
-				// check if someone missed to add a corresponding enum entry in
-				// RepositoryType
-				if (e.getCause() instanceof IllegalArgumentException) {
-					Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
-					             RepositoryType.getHandle());
-				}
-			}
-			throw new UnrecoverableError(e);
+			classesExtendingClass = ClassFinder.getClassesExtendingClass(package1, Repository.class, Modifier.ABSTRACT
+			        | Modifier.INTERFACE | Modifier.PRIVATE);
 		} catch (final ClassNotFoundException e) {
-			throw new UnrecoverableError(e);
-		} catch (final WrongClassSearchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IOException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalArgumentException e) {
-			throw new UnrecoverableError(e);
-		} catch (final SecurityException e) {
-			throw new UnrecoverableError(e);
-		} catch (final IllegalAccessException e) {
-			throw new UnrecoverableError(e);
-		} catch (final NoSuchMethodException e) {
-			throw new UnrecoverableError(e);
-		} catch (final InstantiationException e) {
-			throw new UnrecoverableError(e);
+			throw new ClassLoadingError(e, null);
+		} catch (final WrongClassSearchMethodException | IOException e1) {
+			throw new UnrecoverableError(e1);
 		}
+		
+		Method getRepositoryType = null;
+		final Class<?>[] constructorSignature = new Class<?>[0];
+		Constructor<? extends Repository> constructor = null;
+		final Object[] constructorArguments = new Object[0];
+		Repository repository = null;
+		RepositoryType repositoryType = null;
+		
+		REPOSITORY_CLASSES: for (final Class<? extends Repository> klass : classesExtendingClass) {
+			try {
+				// skip omitted repository classes
+				if (OMITTED_REPOSITORIES.contains(klass)) {
+					continue REPOSITORY_CLASSES;
+				}
+				
+				getRepositoryType = klass.getMethod("getRepositoryType", new Class<?>[0]); //$NON-NLS-1$
+				constructor = klass.getConstructor(constructorSignature);
+				repository = constructor.newInstance(constructorArguments);
+				repositoryType = (RepositoryType) getRepositoryType.invoke(repository, new Object[0]);
+				addRepositoryHandler(repositoryType, klass);
+			} catch (final InvocationTargetException e) {
+				if (Logger.logError()) {
+					// check if someone missed to add a corresponding enum entry in
+					// RepositoryType
+					if (e.getCause() instanceof IllegalArgumentException) {
+						Logger.error(e.getCause(), "You probably missed to add an enum constant to '%s'.",
+						             RepositoryType.getHandle());
+					}
+				}
+				throw new UnrecoverableError(e);
+			} catch (final IllegalArgumentException e) {
+				throw new net.ownhero.dev.andama.exceptions.InstantiationError(e, klass, constructor,
+				                                                               constructorArguments);
+			} catch (final SecurityException | IllegalAccessException e) {
+				throw new UnrecoverableError(e);
+			} catch (final NoSuchMethodException e) {
+				throw new net.ownhero.dev.hiari.settings.exceptions.NoSuchConstructorError(e, klass,
+				                                                                           constructorSignature);
+			} catch (final InstantiationException e) {
+				throw new net.ownhero.dev.hiari.settings.exceptions.InstantiationError(e, klass, constructor,
+				                                                                       constructorArguments);
+			}
+		}
+		
 	}
 	
 	/**
@@ -98,18 +129,18 @@ public final class RepositoryFactory {
 	 */
 	private static void addRepositoryHandler(@NotNull final RepositoryType repositoryIdentifier,
 	                                         @NotNull final Class<? extends Repository> repositoryClass) {
-		Condition.isNull(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier),
+		Condition.isNull(RepositoryFactory.REPOSITORY_HANDLERS.get(repositoryIdentifier),
 		                 "The should not be a reposiotry with the same identifier already");
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Adding new RepositoryType handler " + repositoryIdentifier.toString() + ".");
 		}
 		
-		RepositoryFactory.repositoryHandlers.put(repositoryIdentifier, repositoryClass);
+		RepositoryFactory.REPOSITORY_HANDLERS.put(repositoryIdentifier, repositoryClass);
 		
-		Condition.notNull(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier),
+		Condition.notNull(RepositoryFactory.REPOSITORY_HANDLERS.get(repositoryIdentifier),
 		                  "The must be a repository with the identifier just been created and assigned.");
-		CompareCondition.equals(RepositoryFactory.repositoryHandlers.get(repositoryIdentifier), repositoryClass,
+		CompareCondition.equals(RepositoryFactory.REPOSITORY_HANDLERS.get(repositoryIdentifier), repositoryClass,
 		                        "The must be a repository with the identifier just been created and assigned.");
 	}
 	
@@ -128,7 +159,7 @@ public final class RepositoryFactory {
 			Logger.debug("Requesting repository handler for " + repositoryIdentifier.toString() + ".");
 		}
 		
-		final Class<? extends Repository> repositoryClass = RepositoryFactory.repositoryHandlers.get(repositoryIdentifier);
+		final Class<? extends Repository> repositoryClass = RepositoryFactory.REPOSITORY_HANDLERS.get(repositoryIdentifier);
 		
 		if (repositoryClass == null) {
 			throw new UnregisteredRepositoryTypeException("Unsupported repository type `"
