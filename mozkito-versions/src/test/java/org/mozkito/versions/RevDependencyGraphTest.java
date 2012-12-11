@@ -530,8 +530,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 		for (final String v : this.graph.getVertices()) {
 			transactionIDs.add(v);
 		}
-		// 21 because we add one extra transaction for the TAG (tags in git have their own hash)
-		assertEquals(21, transactionIDs.size());
+		assertEquals(20, transactionIDs.size());
 		assertEquals(true, transactionIDs.contains("96a9f105774b50f1fa3361212c4d12ae057a4285"));
 		assertEquals(true, transactionIDs.contains("fe56f365f798c3742bac5e56f5ff30eca4f622c6"));
 		assertEquals(true, transactionIDs.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
