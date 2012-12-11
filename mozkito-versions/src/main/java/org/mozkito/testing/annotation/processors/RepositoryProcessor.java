@@ -16,6 +16,7 @@ package org.mozkito.testing.annotation.processors;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -94,7 +95,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 		
 		try {
 			builder.append(baseDir).append(File.separator).append(setting.type().name().toLowerCase()).append("_")
-			       .append(setting.id()).append("_").append(HashUtils.getMD5(setting.uri()));
+			       .append(setting.id()).append("_")
+			       .append(new BigInteger(1, HashUtils.getMD5(setting.uri())).toString(16));
 		} catch (final NoSuchAlgorithmException e) {
 			throw new TestSettingsError(e);
 		}
@@ -210,11 +212,20 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 									                                                                               + ".subversion",
 									                                                                       repoDir.getAbsolutePath() },
 									                                                               repoDir, null, null);
-									returnValue += execute.getFirst();
+									returnValue = execute.getFirst();
+									if (returnValue != 0) {
+										throw new TestSettingsError("Creating the temporary " + type.name()
+										        + " repository failed with exit code: " + returnValue);
+									}
 									execute = CommandExecutor.execute("svnadmin",
 									                                  new String[] { "load", repoDir.getAbsolutePath() },
 									                                  repoDir, file.toURI().toURL().openStream(), null);
-									returnValue += execute.getFirst();
+									returnValue = execute.getFirst();
+									if (returnValue != 0) {
+										throw new TestSettingsError("Loading the " + type.name()
+										        + " repository failed with exit code: " + returnValue);
+									}
+									
 								} catch (final IOException e1) {
 									throw new TestSettingsError(e);
 								}
