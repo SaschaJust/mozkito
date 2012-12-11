@@ -206,39 +206,6 @@ public class Settings implements ISettings {
 		return reportThis;
 	}
 	
-	/** The argument sets. */
-	private final Map<String, ArgumentSet<?, ?>>          argumentSets         = new HashMap<String, ArgumentSet<?, ?>>();
-	
-	/** The tool information. */
-	private final Map<String, String>                     information          = new HashMap<String, String>();
-	
-	/** The no default value arg. */
-	private BooleanArgument                               noDefaultValueArg;
-	
-	/** The disable crash arg. */
-	private BooleanArgument                               enableCrashArg;
-	
-	/** The settings arg. */
-	private URIArgument                                   settingsArg;
-	
-	/** The mail arguments. */
-	private ArgumentSet<Properties, MailOptions>          mailArguments;
-	
-	/** The root argument set. */
-	private ArgumentSet<Boolean, RootArgumentSet.Options> root;
-	
-	/** The bug report argument. */
-	private StringArgument                                bugReportArgument;
-	
-	/** The properties. */
-	private final Properties                              properties           = new Properties();
-	
-	/** The report this. */
-	private static String                                 reportThis           = "Please file a bug report with this error message here: https://dev.own-hero.net";
-	
-	/** The Constant denyDefaultValuesTag. */
-	public static final String                            denyDefaultValuesTag = "denyDefaultValues";
-	
 	/**
 	 * The main method.
 	 * 
@@ -276,14 +243,47 @@ public class Settings implements ISettings {
 		
 	}
 	
+	/** The argument sets. */
+	private final Map<String, ArgumentSet<?, ?>>          argumentSets         = new HashMap<String, ArgumentSet<?, ?>>();
+	
+	/** The tool information. */
+	private final Map<String, String>                     information          = new HashMap<String, String>();
+	
+	/** The no default value arg. */
+	private BooleanArgument                               noDefaultValueArg;
+	
+	/** The disable crash arg. */
+	private BooleanArgument                               enableCrashArg;
+	
+	/** The settings arg. */
+	private URIArgument                                   settingsArg;
+	
+	/** The mail arguments. */
+	private ArgumentSet<Properties, MailOptions>          mailArguments;
+	
+	/** The root argument set. */
+	private ArgumentSet<Boolean, RootArgumentSet.Options> root;
+	
+	/** The bug report argument. */
+	private StringArgument                                bugReportArgument;
+	
+	/** The properties. */
+	private final Properties                              properties           = new Properties();
+	
+	/** The report this. */
+	private static String                                 reportThis           = "Please file a bug report with this error message here: https://dev.own-hero.net";
+	
+	/** The Constant denyDefaultValuesTag. */
+	public static final String                            denyDefaultValuesTag = "denyDefaultValues";
+	
 	/** The help. */
-	public Help                                 help   = new Help();
+	public Help                                           help                 = new Help();
 	
 	/** The logger args. */
-	private ArgumentSet<Boolean, LoggerOptions> loggerArgs;
+	private ArgumentSet<Boolean, LoggerOptions>           loggerArgs;
 	
 	/** The nohelp. */
-	private boolean                             nohelp = true;
+	private boolean                                       nohelp               = true;
 	
 	/**
 	 * Instantiates a new settings.
@@ -629,6 +629,24 @@ public class Settings implements ISettings {
 	@Override
 	public final ArgumentSet<Boolean, RootArgumentSet.Options> getRoot() {
 		return this.root;
+	}
+	
+	/**
+	 * Gets the sets the options.
+	 * 
+	 * @param klass
+	 *            the klass
+	 * @return the sets the options
+	 */
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
+	public <T extends ArgumentSetOptions> T getSetOptions(final Class<T> klass) {
+		for (final IOptions<?, ?> options : this.help.optionMap.values()) {
+			if (options.getClass().equals(klass)) {
+				return (T) options;
+			}
+		}
+		
+		return null;
 	}
 	
 	/*

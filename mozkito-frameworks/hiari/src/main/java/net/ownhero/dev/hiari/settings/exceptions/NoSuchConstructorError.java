@@ -20,7 +20,7 @@ import net.ownhero.dev.ioda.FileUtils;
 
 /**
  * The Class NoSuchConstructorError.
- *
+ * 
  * @author just
  */
 public class NoSuchConstructorError extends UnrecoverableError {
@@ -32,32 +32,39 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	static private String     defaultMessage   = "";
 	
 	/** The arguments. */
-	private final Object[]    arguments;
+	private final Class<?>[]  arguments;
 	
 	/** The clazz. */
 	private final Class<?>    clazz;
 	
 	/**
 	 * Instantiates a new no such constructor error.
-	 *
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param arguments the arguments
+	 * 
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param arguments
+	 *            the arguments
 	 */
-	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Object... arguments) {
+	public NoSuchConstructorError(final NoSuchMethodException cause, final Class<?> clazz, final Class<?>... arguments) {
 		this(defaultMessage, cause, clazz, arguments);
 	}
 	
 	/**
 	 * Instantiates a new no such constructor error.
-	 *
-	 * @param message the message
-	 * @param cause the cause
-	 * @param clazz the clazz
-	 * @param arguments the arguments
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 * @param clazz
+	 *            the clazz
+	 * @param arguments
+	 *            the arguments
 	 */
 	public NoSuchConstructorError(final String message, final NoSuchMethodException cause, final Class<?> clazz,
-	        final Object... arguments) {
+	        final Class<?>... arguments) {
 		super(message, cause);
 		this.clazz = clazz;
 		this.arguments = arguments;
@@ -118,7 +125,7 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	
 	/**
 	 * Gets the arguments.
-	 *
+	 * 
 	 * @return the arguments
 	 */
 	public Object[] getArguments() {
@@ -127,7 +134,7 @@ public class NoSuchConstructorError extends UnrecoverableError {
 	
 	/**
 	 * Gets the clazz.
-	 *
+	 * 
 	 * @return the clazz
 	 */
 	public Class<?> getClazz() {

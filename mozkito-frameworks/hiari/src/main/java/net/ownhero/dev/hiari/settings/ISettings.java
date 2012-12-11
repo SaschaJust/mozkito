@@ -169,6 +169,13 @@ public interface ISettings {
 	ArgumentSet<Boolean, ?> getRoot();
 	
 	/**
+	 * @param klass
+	 * @return some T
+	 */
+	@SuppressWarnings ("rawtypes")
+	<T extends ArgumentSetOptions> T getSetOptions(final Class<T> klass);
+	
+	/**
 	 * Checks for setting.
 	 * 
 	 * @param name
