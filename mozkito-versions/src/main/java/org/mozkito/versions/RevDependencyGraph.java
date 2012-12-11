@@ -27,7 +27,7 @@ import net.ownhero.dev.kanuni.conditions.StringCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.mozkito.datastructures.ReMapSet;
+import org.mozkito.datastructures.BidirectionalMap;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -78,7 +78,7 @@ public class RevDependencyGraph {
 	/** The Constant BRANCH. */
 	private static final String            BRANCH_ID = "branch_name";
 	
-	private final ReMapSet<String, String> tags      = new ReMapSet<String, String>(HashSet.class, HashSet.class);
+	private final BidirectionalMap<String, String> tags      = new BidirectionalMap<String, String>(HashSet.class, HashSet.class);
 	
 	/** The Constant NODE_TYPE. */
 	private static final String            NODE_TYPE = "type";
