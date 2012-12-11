@@ -24,6 +24,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
+
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -102,6 +103,7 @@ public class VersionsTest extends DatabaseTest {
 				final RepositoryProcessor processor = (RepositoryProcessor) processorAnnotation.value().newInstance();
 				
 				this.processor = processor;
+				processor.setup(this, this.annotation);
 			} catch (final InstantiationException | IllegalAccessException e) {
 				final UnrecoverableError error = new UnrecoverableError(e);
 				if (Logger.logError()) {

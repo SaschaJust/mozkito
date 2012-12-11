@@ -235,8 +235,11 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					
 					Condition.notNull(repository,
 					                  "Variable '%s' in '%s'.", "repository", RepositoryProcessor.class.getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
-					
-					repository.setup(repoDir.toURI(), new BranchFactory(null), null, "master");
+					final File workingDir = FileUtils.createRandomDir("mozkito_versionstest_"
+					                                                          + test.getClass().getSimpleName() + "_"
+					                                                          + repositorySetting.id(), null,
+					                                                  FileShutdownAction.DELETE);
+					repository.setup(repoDir.toURI(), new BranchFactory(null), workingDir, "master");
 					map.put(repositorySetting.id(), repository);
 				} catch (final IOException | URISyntaxException | InvalidProtocolType | InvalidRepositoryURI
 				        | UnsupportedProtocolType e) {
