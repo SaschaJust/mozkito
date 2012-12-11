@@ -15,6 +15,7 @@ package org.mozkito.datastructures;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,16 +33,38 @@ import net.ownhero.dev.ioda.JavaUtils;
 public class ReMapSet<K, V> {
 	
 	/** The from map. */
-	private final Map<K, Set<V>>    fromMap = new HashMap<>();
+	private final Map<K, Set<V>> fromMap = new HashMap<>();
 	
 	/** The to map. */
-	private final Map<V, Set<K>>    toMap   = new HashMap<>();
+	private final Map<V, Set<K>> toMap   = new HashMap<>();
 	
 	/** The k class. */
-	private Class<? extends Set<K>> kClass;
+	@SuppressWarnings ("rawtypes")
+	private Class<? extends Set> kClass;
 	
 	/** The v class. */
-	private Class<? extends Set<V>> vClass;
+	@SuppressWarnings ("rawtypes")
+	private Class<? extends Set> vClass;
+	
+	/**
+     * 
+     */
+	public ReMapSet() {
+		this(HashSet.class);
+	}
+	
+	/**
+	 * Instantiates a new re map set.
+	 * 
+	 * @param <X>
+	 *            the generic type
+	 * @param setClass
+	 *            the set class
+	 */
+	@SuppressWarnings ("rawtypes")
+	public <X extends Set> ReMapSet(final Class<X> setClass) {
+		this(setClass, setClass);
+	}
 	
 	/**
 	 * Instantiates a new re map set.
@@ -55,7 +78,8 @@ public class ReMapSet<K, V> {
 	 * @param vClass
 	 *            the v class
 	 */
-	public <X extends Set<K>, Y extends Set<V>> ReMapSet(final Class<X> kClass, final Class<Y> vClass) {
+	@SuppressWarnings ("rawtypes")
+	public <X extends Set, Y extends Set> ReMapSet(final Class<X> kClass, final Class<Y> vClass) {
 		// PRECONDITIONS
 		
 		try {
@@ -247,6 +271,7 @@ public class ReMapSet<K, V> {
 	 *            the value
 	 * @return true, if successful
 	 */
+	@SuppressWarnings ("unchecked")
 	public boolean put(final K key,
 	                   final V value) {
 		// PRECONDITIONS
@@ -303,14 +328,54 @@ public class ReMapSet<K, V> {
 	 *            the key
 	 * @return the v
 	 */
-	public V remove(final Object key) {
+	public Set<V> removeFrom(final K key) {
 		// PRECONDITIONS
 		
 		try {
 			
-			// TODO Auto-generated method stub
-			// return null;
-			throw new RuntimeException("Method 'remove' has not yet been implemented."); //$NON-NLS-1$
+			final Set<V> set = this.fromMap.get(key);
+			for (final V value : set) {
+				final Set<K> set2 = this.toMap.get(value);
+				if (set2.size() == 1) {
+					this.toMap.remove(value);
+				} else {
+					set2.remove(key);
+				}
+			}
+			
+			this.fromMap.remove(key);
+			
+			return set;
+		} finally {
+			// POSTCONDITIONS
+		}
+	}
+	
+	/**
+	 * Removes the to.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return the sets the
+	 */
+	public Set<K> removeTo(final V value) {
+		// PRECONDITIONS
+		
+		try {
+			
+			final Set<K> set = this.toMap.get(value);
+			for (final K key : set) {
+				final Set<V> set2 = this.fromMap.get(key);
+				if (set2.size() == 1) {
+					this.fromMap.remove(key);
+				} else {
+					set2.remove(value);
+				}
+			}
+			
+			this.toMap.remove(value);
+			
+			return set;
 		} finally {
 			// POSTCONDITIONS
 		}
