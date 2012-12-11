@@ -18,17 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
-import net.ownhero.dev.kanuni.conditions.StringCondition;
-import net.ownhero.dev.kisa.Logger;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.mozkito.datastructures.BidirectionalMap;
-
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanTransaction;
@@ -39,6 +28,18 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle;
+
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+import net.ownhero.dev.kanuni.conditions.StringCondition;
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.collections.CollectionUtils;
+
+import org.mozkito.datastructures.BidirectionalMultiMap;
 
 /**
  * The Interface IRevDependencyGraph.
@@ -73,20 +74,20 @@ public class RevDependencyGraph {
 	}
 	
 	/** The Constant NODE_ID. */
-	private static final String            NODE_ID   = "revhash";
+	private static final String                    NODE_ID   = "revhash";
 	
 	/** The Constant BRANCH. */
-	private static final String            BRANCH_ID = "branch_name";
+	private static final String                    BRANCH_ID = "branch_name";
 	
-	private final BidirectionalMap<String, String> tags      = new BidirectionalMap<String, String>(HashSet.class, HashSet.class);
+	private final BidirectionalMultiMap<String, String> tags      = new BidirectionalMultiMap<String, String>();
 	
 	/** The Constant NODE_TYPE. */
-	private static final String            NODE_TYPE = "type";
+	private static final String                    NODE_TYPE = "type";
 	
 	/** The graph. */
-	private final TitanGraph               graph;
+	private final TitanGraph                       graph;
 	
-	private final File                     dbFile;
+	private final File                             dbFile;
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
