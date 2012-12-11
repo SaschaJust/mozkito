@@ -44,6 +44,7 @@ import net.ownhero.dev.ioda.interfaces.Storable;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -483,8 +484,8 @@ public class IOUtils {
 			
 			reader.close();
 			
-			return new RawContent(uri, HashUtils.getMD5(builder.toString()), new DateTime(file.lastModified()),
-			                      "xhtml", builder.toString());
+			return new RawContent(uri, DigestUtils.md5(builder.toString()), new DateTime(file.lastModified()), "xhtml",
+			                      builder.toString());
 			
 		} catch (final Exception e) {
 			throw new FetchException("Providing the " + RawContent.class.getSimpleName() + " of `" + uri.toString()
