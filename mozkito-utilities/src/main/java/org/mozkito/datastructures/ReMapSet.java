@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -307,11 +308,31 @@ public class ReMapSet<K, V> {
 	 * @param m
 	 *            the m
 	 */
+	@SuppressWarnings ("unchecked")
 	public void putAll(final ReMapSet<K, V> m) {
 		// PRECONDITIONS
 		
 		try {
-			// TODO
+			
+			try {
+				for (final Entry<K, Set<V>> entry : m.fromEntrySet()) {
+					if (this.fromMap.containsKey(entry.getKey())) {
+						this.fromMap.put(entry.getKey(), this.kClass.newInstance());
+					}
+					
+					this.fromMap.get(entry.getKey()).addAll(entry.getValue());
+				}
+				
+				for (final Entry<V, Set<K>> entry : m.toEntrySet()) {
+					if (this.toMap.containsKey(entry.getKey())) {
+						this.toMap.put(entry.getKey(), this.vClass.newInstance());
+					}
+					
+					this.toMap.get(entry.getKey()).addAll(entry.getValue());
+				}
+			} catch (final Exception e) {
+				throw new RuntimeException(e);
+			}
 		} finally {
 			// POSTCONDITIONS
 		}
