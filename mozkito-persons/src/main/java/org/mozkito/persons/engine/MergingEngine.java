@@ -35,6 +35,7 @@ import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
@@ -209,5 +210,14 @@ public abstract class MergingEngine implements SettingsProvider {
 	 * @return the description
 	 */
 	public abstract String getDescription();
+	
+	/**
+	 * Gets the simple name of the class.
+	 * 
+	 * @return the simple name of the class.
+	 */
+	public final String getHandle() {
+		return JavaUtils.getHandle(GravatarEngine.class);
+	}
 	
 }
