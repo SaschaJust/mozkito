@@ -16,11 +16,9 @@ package org.mozkito.testing.annotation.processors;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,13 +27,13 @@ import java.util.Map;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.Tuple;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import org.mozkito.exceptions.InvalidProtocolType;
@@ -94,13 +92,9 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 		
 		final StringBuilder builder = new StringBuilder();
 		
-		try {
-			builder.append(baseDir).append(File.separator).append(test.getClass().getSimpleName()).append('_')
-			       .append(setting.type().name().toLowerCase()).append("_").append(setting.id()).append("_")
-			       .append(new BigInteger(1, HashUtils.getMD5(setting.uri())).toString(16));
-		} catch (final NoSuchAlgorithmException e) {
-			throw new TestSettingsError(e);
-		}
+		builder.append(baseDir).append(File.separator).append(test.getClass().getSimpleName()).append('_')
+		       .append(setting.type().name().toLowerCase()).append("_").append(setting.id()).append("_")
+		       .append(DigestUtils.md5Hex(setting.uri()));
 		
 		return builder.toString();
 		
@@ -167,7 +161,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 				final String[] split = sourceURL.getPath()
 				                                .split("/|" + StringEscapeUtils.escapeJava(File.pathSeparator));
 				
-				final String repoPath = getPathName(repositorySetting);
+				final String repoPath = getPathName(repositorySetting, vTest);
 				File repoDir;
 				try {
 					final File temporarySourceDirectory = new File(repoPath);

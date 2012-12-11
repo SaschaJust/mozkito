@@ -15,7 +15,6 @@ package org.mozkito.issues.tracker.sourceforge;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,7 +25,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -39,6 +37,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -1031,13 +1030,7 @@ public class SourceforgeParser implements Parser {
 			
 			this.fetchTime = new DateTime();
 			
-			try {
-				this.md5 = HashUtils.getMD5(rawContent.getContent());
-			} catch (final NoSuchAlgorithmException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
+			this.md5 = DigestUtils.md5(rawContent.getContent());
 			
 			final Document document = Jsoup.parse(rawContent.getContent());
 			final Elements errorElements = document.getElementsByClass("error");

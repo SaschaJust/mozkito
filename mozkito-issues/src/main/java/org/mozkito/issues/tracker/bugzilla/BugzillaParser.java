@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
@@ -33,6 +32,7 @@ import noNamespace.BugDocument.Bug;
 import noNamespace.BugzillaDocument;
 import noNamespace.BugzillaDocument.Bugzilla;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.xmlbeans.XmlException;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -414,7 +414,7 @@ public abstract class BugzillaParser implements Parser {
 				}
 				return false;
 			}
-			this.md5 = HashUtils.getMD5(rawContent.getContent());
+			this.md5 = DigestUtils.md5(rawContent.getContent());
 			this.xmlReport = createDocument(rawContent);
 			if (this.xmlReport == null) {
 				if (Logger.logError()) {

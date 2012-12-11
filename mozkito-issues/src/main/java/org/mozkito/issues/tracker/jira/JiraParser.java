@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.ProxyConfig;
@@ -44,6 +42,7 @@ import net.ownhero.dev.kisa.Logger;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
@@ -950,13 +949,7 @@ public class JiraParser implements Parser {
 				return false;
 			}
 			
-			try {
-				this.md5 = HashUtils.getMD5(rawContent.getContent());
-			} catch (final NoSuchAlgorithmException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
+			this.md5 = DigestUtils.md5(rawContent.getContent());
 			
 			this.report = createDocument(rawContent);
 			

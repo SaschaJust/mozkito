@@ -19,7 +19,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,7 +32,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.DateTimeUtils;
-import net.ownhero.dev.ioda.HashUtils;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.MimeUtils;
 import net.ownhero.dev.ioda.container.RawContent;
@@ -46,6 +44,7 @@ import net.ownhero.dev.regex.Match;
 import net.ownhero.dev.regex.MultiMatch;
 import net.ownhero.dev.regex.Regex;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jdom2.IllegalDataException;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -1316,13 +1315,7 @@ public class MantisParser implements Parser {
 				return false;
 			}
 			
-			try {
-				this.md5 = HashUtils.getMD5(rawContent.getContent());
-			} catch (final NoSuchAlgorithmException e) {
-				if (Logger.logError()) {
-					Logger.error(e);
-				}
-			}
+			this.md5 = DigestUtils.md5(rawContent.getContent());
 			
 			this.report = createDocument(rawContent);
 			if (this.report == null) {
