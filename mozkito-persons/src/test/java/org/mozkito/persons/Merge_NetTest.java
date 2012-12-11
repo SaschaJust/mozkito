@@ -62,9 +62,9 @@ public class Merge_NetTest extends DatabaseTest {
 		list.size();
 		
 		final Person[] persons = new Person[] { new Person("just", null, null),
-		        new Person(null, null, "sascha.just@own-hero.net"), new Person(null, "Sascha Just", null),
-		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@own-hero.net"),
-		        new Person("just", null, "sascha.just@own-hero.net") };
+		        new Person(null, null, "sascha.just@mozkito.org"), new Person(null, "Sascha Just", null),
+		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
+		        new Person("just", null, "sascha.just@mozkito.org") };
 		
 		RCSTransaction rcsTransaction = null;
 		
