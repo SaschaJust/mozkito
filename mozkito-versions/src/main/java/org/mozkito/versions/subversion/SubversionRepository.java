@@ -197,22 +197,7 @@ public class SubversionRepository extends Repository {
 			throw new RuntimeException();
 		}
 		
-		if (svnRevision.getNumber() < this.startRevision.getNumber()) {
-			
-			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + this.startRevision.getNumber()
-				        + ". Corrected to start revision.");
-			}
-			return this.startRevision;
-		} else if (svnRevision.getNumber() > this.endRevision.getNumber()) {
-			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + this.endRevision.getNumber()
-				        + ". Corrected to end revision.");
-			}
-			return this.endRevision;
-		} else {
-			return svnRevision;
-		}
+		return svnRevision;
 	}
 	
 	/*
