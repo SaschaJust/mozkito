@@ -13,9 +13,12 @@
 
 package org.mozkito.testing;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.conditions.CompareCondition;
@@ -40,13 +43,19 @@ import org.mozkito.versions.Repository;
 public class VersionsTest extends DatabaseTest {
 	
 	/** The repositories. */
-	private Map<String, Repository> repositories = new HashMap<>();
+	private Map<String, Repository> repositories               = new HashMap<>();
 	
 	/** The annotation. */
 	private Annotation              annotation;
 	
 	/** The processor. */
 	private RepositoryProcessor     processor;
+	
+	/** The temporary source directories. */
+	private final Set<File>         temporarySourceDirectories = new HashSet<>();
+	
+	/** The working directories. */
+	private final Set<File>         workingDirectories         = new HashSet<>();
 	
 	/**
 	 * Instantiates a new version test.
@@ -62,6 +71,28 @@ public class VersionsTest extends DatabaseTest {
 	}
 	
 	/**
+	 * Adds the temporary source directory.
+	 * 
+	 * @param dir
+	 *            the dir
+	 * @return true, if successful
+	 */
+	public boolean addTemporarySourceDirectory(final File dir) {
+		return this.temporarySourceDirectories.add(dir);
+	}
+	
+	/**
+	 * Adds the working directory.
+	 * 
+	 * @param dir
+	 *            the dir
+	 * @return true, if successful
+	 */
+	public boolean addWorkingDirectory(final File dir) {
+		return this.workingDirectories.add(dir);
+	}
+	
+	/**
 	 * Returns a map from RepositorySettingsID to Repositories.
 	 * 
 	 * @return the repositories
@@ -74,6 +105,30 @@ public class VersionsTest extends DatabaseTest {
 		} finally {
 			// POSTCONDITIONS
 			Condition.notNull(this.repositories, "Field '%s' in '%s'.", "repositories", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	public final Set<File> getTemporarySourceDirectories() {
+		// PRECONDITIONS
+		
+		try {
+			return this.temporarySourceDirectories;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.temporarySourceDirectories,
+			                  "Field '%s' in '%s'.", "temporarySourceDirectories", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	public final Set<File> getWorkingDirectories() {
+		// PRECONDITIONS
+		
+		try {
+			return this.workingDirectories;
+		} finally {
+			// POSTCONDITIONS
+			Condition.notNull(this.workingDirectories,
+			                  "Field '%s' in '%s'.", "workingDirectories", getClass().getSimpleName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

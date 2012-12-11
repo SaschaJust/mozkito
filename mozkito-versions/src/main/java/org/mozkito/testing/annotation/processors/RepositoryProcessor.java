@@ -67,7 +67,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 	 *            the setting
 	 * @return the path name
 	 */
-	public static String getPathName(@NotNull final RepositorySetting setting) {
+	public static String getPathName(@NotNull final RepositorySetting setting,
+	                                 final VersionsTest test) {
 		if (setting.id().isEmpty()) {
 			throw new TestSettingsError("Empty ID string in " + setting);
 		}
@@ -94,8 +95,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 		final StringBuilder builder = new StringBuilder();
 		
 		try {
-			builder.append(baseDir).append(File.separator).append(setting.type().name().toLowerCase()).append("_")
-			       .append(setting.id()).append("_")
+			builder.append(baseDir).append(File.separator).append(test.getClass().getSimpleName()).append('_')
+			       .append(setting.type().name().toLowerCase()).append("_").append(setting.id()).append("_")
 			       .append(new BigInteger(1, HashUtils.getMD5(setting.uri())).toString(16));
 		} catch (final NoSuchAlgorithmException e) {
 			throw new TestSettingsError(e);
@@ -110,18 +111,12 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 	 * @see org.mozkito.testing.annotation.processors. MoskitoSettingsProcessor#setup(java.lang.annotation.Annotation)
 	 */
 	/**
-	 * Setup.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param test
-	 *            the test
-	 * @param annotation
-	 *            the annotation
+	 * {@inheritDoc}
 	 */
 	@Override
 	public <T extends DatabaseTest> void setup(final T test,
 	                                           final Annotation annotation) {
+		final VersionsTest vTest = (VersionsTest) test;
 		final Map<String, Repository> map = new HashMap<String, Repository>();
 		final List<RepositorySetting> settings = new LinkedList<RepositorySetting>();
 		
@@ -175,7 +170,9 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 				final String repoPath = getPathName(repositorySetting);
 				File repoDir;
 				try {
-					FileUtils.createDir(new File(repoPath), FileShutdownAction.DELETE);
+					final File temporarySourceDirectory = new File(repoPath);
+					vTest.addTemporarySourceDirectory(temporarySourceDirectory);
+					FileUtils.createDir(temporarySourceDirectory, FileShutdownAction.DELETE);
 					repoDir = FileUtils.createDir(new File(repoPath + File.separator
 					                                      + FileUtils.getUnpackedName(new File(sourceURL.toURI()))),
 					                              FileShutdownAction.DELETE);
@@ -250,6 +247,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					                                                          + test.getClass().getSimpleName() + "_"
 					                                                          + repositorySetting.id(), null,
 					                                                  FileShutdownAction.DELETE);
+					vTest.addWorkingDirectory(workingDir);
 					repository.setup(repoDir.toURI(), new BranchFactory(null), workingDir, "master");
 					map.put(repositorySetting.id(), repository);
 				} catch (final IOException | URISyntaxException | InvalidProtocolType | InvalidRepositoryURI
@@ -270,19 +268,31 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 	 * MoskitoSettingsProcessor#tearDown(java.lang.annotation.Annotation)
 	 */
 	/**
-	 * Tear down.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param test
-	 *            the test
-	 * @param annotation
-	 *            the annotation
+	 * {@inheritDoc}
 	 */
 	@Override
 	public <T extends DatabaseTest> void tearDown(final T test,
 	                                              final Annotation annotation) {
-		// stub
+		final VersionsTest vTest = (VersionsTest) test;
+		for (final File workindDir : vTest.getWorkingDirectories()) {
+			try {
+				FileUtils.deleteDirectory(workindDir);
+			} catch (final IOException e) {
+				if (Logger.logWarn()) {
+					Logger.warn(e);
+				}
+			}
+		}
+		
+		for (final File sourceDir : vTest.getTemporarySourceDirectories()) {
+			try {
+				FileUtils.deleteDirectory(sourceDir);
+			} catch (final IOException e) {
+				if (Logger.logWarn()) {
+					Logger.warn(e);
+				}
+			}
+		}
 	}
 	
 }
