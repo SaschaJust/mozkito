@@ -14,10 +14,8 @@ package org.mozkito.versions;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
@@ -29,6 +27,7 @@ import net.ownhero.dev.kanuni.conditions.StringCondition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.mozkito.datastructures.ReMapSet;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -79,7 +78,7 @@ public class RevDependencyGraph {
 	/** The Constant BRANCH. */
 	private static final String            BRANCH_ID = "branch_name";
 	
-	private final Map<String, Set<String>> tags      = new HashMap<>();
+	private final ReMapSet<String, String> tags      = new ReMapSet<String, String>(HashSet.class, HashSet.class);
 	
 	/** The Constant NODE_TYPE. */
 	private static final String            NODE_TYPE = "type";
@@ -223,16 +222,18 @@ public class RevDependencyGraph {
 	}
 	
 	/**
-	 * Adding a tag for a particular change set hash.
+	 * Adding a tag for a particular change set hash. Returns false if tag could not be added. See log messages for
+	 * reason.
 	 * 
 	 * @param tagName
 	 *            the tag name
 	 * @param changeSet
 	 *            the change set
+	 * @return true, if successful
 	 */
 	@NoneNull
-	public void addTag(@NotEmptyString final String tagName,
-	                   @NotEmptyString final String changeSet) {
+	public boolean addTag(@NotEmptyString final String tagName,
+	                      @NotEmptyString final String changeSet) {
 		// PRECONDITIONS
 		
 		try {
@@ -244,13 +245,14 @@ public class RevDependencyGraph {
 				if (Logger.logError()) {
 					Logger.error("Trying to add tag %s for not existing change set %s.", tagName, changeSet);
 				}
-				return;
+				return false;
 			}
-			if (!this.tags.containsKey(changeSet)) {
-				this.tags.put(changeSet, new HashSet<String>());
-			}
-			this.tags.get(changeSet).add(tagName);
 			
+			if (this.tags.containsTo(tagName)) {
+				return false;
+			}
+			this.tags.put(changeSet, tagName);
+			return true;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -561,7 +563,7 @@ public class RevDependencyGraph {
 	 * @return the tags
 	 */
 	public Set<String> getTags(final String hash) {
-		final Set<String> tagNames = this.tags.get(hash);
+		final Set<String> tagNames = this.tags.getTos(hash);
 		if (tagNames == null) {
 			return new HashSet<String>();
 		}
@@ -634,11 +636,11 @@ public class RevDependencyGraph {
 	 * @return true, if is equals to
 	 */
 	public boolean isEqualsTo(final RevDependencyGraph other) {
-		if (!CollectionUtils.isEqualCollection(this.tags.keySet(), other.tags.keySet())) {
+		if (!CollectionUtils.isEqualCollection(this.tags.fromKeySet(), other.tags.fromKeySet())) {
 			return false;
 		}
-		for (final String key : this.tags.keySet()) {
-			if (!CollectionUtils.isEqualCollection(this.tags.get(key), other.tags.get(key))) {
+		for (final String key : this.tags.fromKeySet()) {
+			if (!CollectionUtils.isEqualCollection(this.tags.getTos(key), other.tags.getTos(key))) {
 				return false;
 			}
 		}
