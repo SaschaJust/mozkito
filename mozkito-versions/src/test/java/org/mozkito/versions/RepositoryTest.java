@@ -34,15 +34,14 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+
+import difflib.Delta;
 
 /**
  * The Class RepositoryTest.
@@ -415,7 +414,7 @@ public class RepositoryTest extends VersionsTest {
 				assertTrue(changedPaths.containsKey("/dir_a"));
 				assertTrue(changedPaths.containsKey("/dir_b"));
 				assertEquals(ChangeType.Deleted, changedPaths.get("/dir_a"));
-				assertEquals(ChangeType.Added, changedPaths.get("/dir_b"));
+				assertEquals(ChangeType.Renamed, changedPaths.get("/dir_b"));
 			} else {
 				assertTrue(changedPaths.containsKey("/dir_a/file_2_dir_a"));
 				assertTrue(changedPaths.containsKey("/dir_b/file_2_dir_a"));

@@ -56,6 +56,7 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
@@ -730,7 +731,8 @@ public class SubversionRepository extends Repository {
 				this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
 				
 				this.startRevision = (SVNRevision.create(1));
-				this.endRevision = SVNRevision.HEAD;
+				final SVNDirEntry entry = this.repository.info("/", -1);
+				this.endRevision = SVNRevision.create(entry.getRevision());
 				
 				this.initialized = true;
 				

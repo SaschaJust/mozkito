@@ -20,6 +20,7 @@ import java.util.Iterator;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
+import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryParser;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
@@ -53,17 +54,22 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		final Repository repository = getRepositories().get("testGit");
 		
 		persistenceUtil.beginTransaction();
-		
-		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
 		final Iterator<LogEntry> logIterator = repository.log(repository.getFirstRevisionId(),
 		                                                      repository.getEndRevision()).iterator();
 		while (logIterator.hasNext()) {
 			final LogEntry logEntry = logIterator.next();
 			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, logEntry);
+			System.err.println(rcsTransaction.getId());
 			persistenceUtil.save(rcsTransaction);
 		}
-		
 		persistenceUtil.commitTransaction();
+		
+		final RevDependencyGraph revDepGraph = repository.getRevDependencyGraph();
+		
+		final GraphBuilder graphBuilder = new GraphBuilder(repository, persistenceUtil);
+		graphBuilder.phaseOne();
+		graphBuilder.phaseTwo();
+		graphBuilder.phaseThree();
 		
 		repository.resetRevDependencyGraph();
 		

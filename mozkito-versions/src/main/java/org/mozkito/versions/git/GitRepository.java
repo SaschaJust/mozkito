@@ -721,8 +721,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 			             revisionSelection);
 		}
 		
-		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", revisionSelection },
-		                               this.cloneDir, null, new HashMap<String, String>());
+		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches", "--remotes",
+		        "--topo-order", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
 	}
 	
 	/*
