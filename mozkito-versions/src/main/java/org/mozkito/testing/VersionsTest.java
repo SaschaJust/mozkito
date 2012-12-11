@@ -27,7 +27,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.junit.After;
 import org.junit.Before;
-
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.annotation.EnvironmentProcessor;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -108,6 +107,11 @@ public class VersionsTest extends DatabaseTest {
 		}
 	}
 	
+	/**
+	 * Gets the temporary source directories.
+	 * 
+	 * @return the temporary source directories
+	 */
 	public final Set<File> getTemporarySourceDirectories() {
 		// PRECONDITIONS
 		
@@ -120,6 +124,11 @@ public class VersionsTest extends DatabaseTest {
 		}
 	}
 	
+	/**
+	 * Gets the working directories.
+	 * 
+	 * @return the working directories
+	 */
 	public final Set<File> getWorkingDirectories() {
 		// PRECONDITIONS
 		

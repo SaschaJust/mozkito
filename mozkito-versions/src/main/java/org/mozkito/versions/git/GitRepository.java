@@ -579,8 +579,17 @@ public class GitRepository extends DistributedCommandLineRepository {
 						remoteName = remoteName.substring(REFS_PULL_LENGTH);
 					} else if (remoteName.startsWith("refs/tags/")) {
 						remoteName = remoteName.substring(REFS_TAGS_LENGTH);
-						if (!remoteName.endsWith("^{}")) {
+						if (remoteName.endsWith("^{}")) {
 							remoteName = remoteName.replace("^{}", "");
+							if (!this.revDepGraph.addTag(remoteName, clHash)) {
+								final String hashForTag = this.revDepGraph.getHashForTag(remoteName);
+								if (hashForTag != null) {
+									this.revDepGraph.removeChangeSet(hashForTag);
+								}
+								this.revDepGraph.removeTag(remoteName);
+								this.revDepGraph.addTag(remoteName, clHash);
+							}
+						} else {
 							this.revDepGraph.addTag(remoteName, clHash);
 						}
 						continue;

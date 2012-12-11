@@ -18,6 +18,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
+import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
+import net.ownhero.dev.kanuni.conditions.StringCondition;
+import net.ownhero.dev.kisa.Logger;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.mozkito.datastructures.BidirectionalMultiMap;
+
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanTransaction;
@@ -28,18 +40,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle;
-
-import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
-import net.ownhero.dev.kanuni.annotations.string.NotEmptyString;
-import net.ownhero.dev.kanuni.conditions.StringCondition;
-import net.ownhero.dev.kisa.Logger;
-
-import org.apache.commons.collections.CollectionUtils;
-
-import org.mozkito.datastructures.BidirectionalMultiMap;
 
 /**
  * The Interface IRevDependencyGraph.
@@ -74,20 +74,20 @@ public class RevDependencyGraph {
 	}
 	
 	/** The Constant NODE_ID. */
-	private static final String                    NODE_ID   = "revhash";
+	private static final String                         NODE_ID   = "revhash";
 	
 	/** The Constant BRANCH. */
-	private static final String                    BRANCH_ID = "branch_name";
+	private static final String                         BRANCH_ID = "branch_name";
 	
 	private final BidirectionalMultiMap<String, String> tags      = new BidirectionalMultiMap<String, String>();
 	
 	/** The Constant NODE_TYPE. */
-	private static final String                    NODE_TYPE = "type";
+	private static final String                         NODE_TYPE = "type";
 	
 	/** The graph. */
-	private final TitanGraph                       graph;
+	private final TitanGraph                            graph;
 	
-	private final File                             dbFile;
+	private final File                                  dbFile;
 	
 	/**
 	 * Create a new RevDependencyGraph based on an underlying GraphDB.
@@ -156,7 +156,7 @@ public class RevDependencyGraph {
 		
 		try {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding change set node %s to neo4j graph.", v);
+				Logger.debug("Adding change set node %s to graph.", v);
 			}
 			if (existsVertex(v)) {
 				if (Logger.logDebug()) {
@@ -492,6 +492,30 @@ public class RevDependencyGraph {
 	}
 	
 	/**
+	 * Returns the hash of the ChangeSet that tag with the provided tag name points to. Returns null if no such tag
+	 * exists or if any other error occurs.
+	 * 
+	 * @param tagName
+	 *            the tag name
+	 * @return the hash for tag
+	 */
+	@NoneNull
+	public String getHashForTag(@NotEmptyString final String tagName) {
+		final Set<String> hashes = this.tags.getFroms(tagName);
+		if (hashes.isEmpty()) {
+			return null;
+		}
+		if (hashes.size() > 1) {
+			if (Logger.logError()) {
+				Logger.error("A tag must point to exactly ONE revision, but pointed to %s",
+				             JavaUtils.collectionToString(hashes));
+			}
+			return null;
+		}
+		return hashes.iterator().next();
+	}
+	
+	/**
 	 * Returns the merge parent hash of the transaction with the provided hash. Return null if no such merge parent
 	 * exists.
 	 * 
@@ -667,5 +691,36 @@ public class RevDependencyGraph {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Removes a ChangeSet from the underlying graphDB.
+	 * 
+	 * @param hash
+	 *            the hash
+	 */
+	@NoneNull
+	public void removeChangeSet(@NotEmptyString final String hash) {
+		if (Logger.logDebug()) {
+			Logger.debug("Removing change set node %s from graph.", hash);
+		}
+		final Vertex vertex = getChangeSet(hash);
+		if (vertex != null) {
+			final TitanTransaction titanTransaction = this.graph.startTransaction();
+			this.graph.removeVertex(vertex);
+			titanTransaction.stopTransaction(Conclusion.SUCCESS);
+		}
+	}
+	
+	/**
+	 * Removes a tag
+	 * 
+	 * @param tagName
+	 */
+	@NoneNull
+	public void removeTag(@NotEmptyString final String tagName) {
+		if (this.tags.containsTo(tagName)) {
+			this.tags.removeTo(tagName);
+		}
 	}
 }

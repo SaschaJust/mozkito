@@ -59,7 +59,6 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		while (logIterator.hasNext()) {
 			final LogEntry logEntry = logIterator.next();
 			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, logEntry);
-			System.err.println(rcsTransaction.getId());
 			persistenceUtil.save(rcsTransaction);
 		}
 		persistenceUtil.commitTransaction();
