@@ -578,8 +578,11 @@ public class GitRepository extends DistributedCommandLineRepository {
 					} else if (remoteName.startsWith("refs/pull/")) {
 						remoteName = remoteName.substring(REFS_PULL_LENGTH);
 					} else if (remoteName.startsWith("refs/tags/")) {
-						remoteName = remoteName.substring(REFS_TAGS_LENGTH).replace("^{}", "");
-						this.revDepGraph.addTag(remoteName, clHash);
+						remoteName = remoteName.substring(REFS_TAGS_LENGTH);
+						if (!remoteName.endsWith("^{}")) {
+							remoteName = remoteName.replace("^{}", "");
+							this.revDepGraph.addTag(remoteName, clHash);
+						}
 						continue;
 					} else {
 						continue;
@@ -721,8 +724,8 @@ public class GitRepository extends DistributedCommandLineRepository {
 			             revisionSelection);
 		}
 		
-		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", revisionSelection },
-		                               this.cloneDir, null, new HashMap<String, String>());
+		return CommandExecutor.execute("git", new String[] { "log", "--pretty=fuller", "--branches", "--remotes",
+		        "--topo-order", revisionSelection }, this.cloneDir, null, new HashMap<String, String>());
 	}
 	
 	/*

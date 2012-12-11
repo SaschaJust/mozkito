@@ -35,7 +35,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.TestSettingsError;
@@ -63,6 +62,8 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 	 * 
 	 * @param setting
 	 *            the setting
+	 * @param test
+	 *            the test
 	 * @return the path name
 	 */
 	public static String getPathName(@NotNull final RepositorySetting setting,

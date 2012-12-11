@@ -56,6 +56,7 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
@@ -197,22 +198,7 @@ public class SubversionRepository extends Repository {
 			throw new RuntimeException();
 		}
 		
-		if (svnRevision.getNumber() < this.startRevision.getNumber()) {
-			
-			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is before " + this.startRevision.getNumber()
-				        + ". Corrected to start revision.");
-			}
-			return this.startRevision;
-		} else if (svnRevision.getNumber() > this.endRevision.getNumber()) {
-			if (Logger.logWarn()) {
-				Logger.warn("Revision " + svnRevision.getNumber() + " is after " + this.endRevision.getNumber()
-				        + ". Corrected to end revision.");
-			}
-			return this.endRevision;
-		} else {
-			return svnRevision;
-		}
+		return svnRevision;
 	}
 	
 	/*
@@ -745,7 +731,8 @@ public class SubversionRepository extends Repository {
 				this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
 				
 				this.startRevision = (SVNRevision.create(1));
-				this.endRevision = SVNRevision.HEAD;
+				final SVNDirEntry entry = this.repository.info("/", -1);
+				this.endRevision = SVNRevision.create(entry.getRevision());
 				
 				this.initialized = true;
 				

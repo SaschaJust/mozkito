@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.JavaUtils;
@@ -31,7 +30,7 @@ import net.ownhero.dev.ioda.JavaUtils;
  *            the value type
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class ReMapSet<K, V> {
+public class BidirectionalMap<K, V> {
 	
 	/** The from map. */
 	private final Map<K, Set<V>> fromMap = new HashMap<>();
@@ -50,7 +49,7 @@ public class ReMapSet<K, V> {
 	/**
      * 
      */
-	public ReMapSet() {
+	public BidirectionalMap() {
 		this(HashSet.class);
 	}
 	
@@ -63,7 +62,7 @@ public class ReMapSet<K, V> {
 	 *            the set class
 	 */
 	@SuppressWarnings ("rawtypes")
-	public <X extends Set> ReMapSet(final Class<X> setClass) {
+	public <X extends Set> BidirectionalMap(final Class<X> setClass) {
 		this(setClass, setClass);
 	}
 	
@@ -80,7 +79,7 @@ public class ReMapSet<K, V> {
 	 *            the v class
 	 */
 	@SuppressWarnings ("rawtypes")
-	public <X extends Set, Y extends Set> ReMapSet(final Class<X> kClass, final Class<Y> vClass) {
+	public <X extends Set, Y extends Set> BidirectionalMap(final Class<X> kClass, final Class<Y> vClass) {
 		// PRECONDITIONS
 		
 		try {
@@ -224,7 +223,7 @@ public class ReMapSet<K, V> {
 	 * @return the simple name of the class.
 	 */
 	public final String getHandle() {
-		return JavaUtils.getHandle(ReMapSet.class);
+		return JavaUtils.getHandle(BidirectionalMap.class);
 	}
 	
 	/**
@@ -308,31 +307,11 @@ public class ReMapSet<K, V> {
 	 * @param m
 	 *            the m
 	 */
-	@SuppressWarnings ("unchecked")
-	public void putAll(final ReMapSet<K, V> m) {
+	public void putAll(final BidirectionalMap<K, V> m) {
 		// PRECONDITIONS
 		
 		try {
-			
-			try {
-				for (final Entry<K, Set<V>> entry : m.fromEntrySet()) {
-					if (this.fromMap.containsKey(entry.getKey())) {
-						this.fromMap.put(entry.getKey(), this.kClass.newInstance());
-					}
-					
-					this.fromMap.get(entry.getKey()).addAll(entry.getValue());
-				}
-				
-				for (final Entry<V, Set<K>> entry : m.toEntrySet()) {
-					if (this.toMap.containsKey(entry.getKey())) {
-						this.toMap.put(entry.getKey(), this.vClass.newInstance());
-					}
-					
-					this.toMap.get(entry.getKey()).addAll(entry.getValue());
-				}
-			} catch (final Exception e) {
-				throw new RuntimeException(e);
-			}
+			// TODO
 		} finally {
 			// POSTCONDITIONS
 		}

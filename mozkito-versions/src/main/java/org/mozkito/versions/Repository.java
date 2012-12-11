@@ -236,9 +236,15 @@ public abstract class Repository {
 				for (final String tagName : transaction.getTags()) {
 					this.revDepGraph.addTag(tagName, transaction.getId());
 				}
-				this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
-				                         EdgeType.BRANCH_EDGE);
-				this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(), EdgeType.MERGE_EDGE);
+				if (transaction.getBranchParent() != null) {
+					this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
+					                         EdgeType.BRANCH_EDGE);
+					if (transaction.getMergeParent() != null) {
+						this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(),
+						                         EdgeType.MERGE_EDGE);
+					}
+				}
+				
 			}
 		}
 		return this.revDepGraph;
