@@ -46,7 +46,7 @@ import difflib.Delta;
 /**
  * The Class SubversionRepositoryTest.
  */
-@RepositorySetting (id = "testSvn", type = RepositoryType.SUBVERSION, uri = "testSvn.zip")
+@RepositorySetting (id = "testSvn", type = RepositoryType.SUBVERSION, uri = "testSvn.subversion")
 public class SubversionRepositoryTest extends VersionsTest {
 	
 	static {

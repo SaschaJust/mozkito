@@ -66,7 +66,7 @@ import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNDiffClient;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
@@ -139,7 +139,7 @@ public class SubversionRepository extends Repository {
 		SVNURL relativePath;
 		try {
 			
-			relativePath = SVNURL.parseURIDecoded(this.repository.getRepositoryRoot(true) + "/" + filePath);
+			relativePath = SVNURL.parseURIDecoded(this.svnurl + "/" + filePath);
 			final SVNLogClient logClient = new SVNLogClient(this.repository.getAuthenticationManager(),
 			                                                SVNWCUtil.createDefaultOptions(true));
 			
@@ -741,26 +741,11 @@ public class SubversionRepository extends Repository {
 					this.repository.setAuthenticationManager(authManager);
 				}
 				
-				this.repository = SVNRepositoryFactory.create(this.svnurl);
+				// this.repository = SVNRepositoryFactory.create(this.svnurl);
+				this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
 				
 				this.startRevision = (SVNRevision.create(1));
-				this.endRevision = (SVNRevision.create(this.repository.getLatestRevision()));
-				
-				if (this.startRevision.getNumber() < 0) {
-					if (this.startRevision.equals(SVNRevision.PREVIOUS)) {
-						this.startRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
-					} else {
-						this.startRevision = SVNRevision.create(this.repository.getLatestRevision());
-					}
-				}
-				
-				if (this.endRevision.getNumber() < 0) {
-					if (this.endRevision.equals(SVNRevision.PREVIOUS)) {
-						this.endRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
-					} else {
-						this.endRevision = SVNRevision.create(this.repository.getLatestRevision());
-					}
-				}
+				this.endRevision = SVNRevision.HEAD;
 				
 				this.initialized = true;
 				
