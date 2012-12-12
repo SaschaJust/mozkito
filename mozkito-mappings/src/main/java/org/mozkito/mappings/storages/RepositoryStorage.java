@@ -137,7 +137,9 @@ public class RepositoryStorage extends Storage {
 	}
 	
 	/**
-	 * @return
+	 * Gets the repository.
+	 * 
+	 * @return the repository
 	 */
 	public Repository getRepository() {
 		// PRECONDITIONS
@@ -158,9 +160,7 @@ public class RepositoryStorage extends Storage {
 		// PRECONDITIONS
 		
 		try {
-			// TODO Auto-generated method stub
-			// super.loadData(util);
-			throw new RuntimeException("Method 'loadData' has not yet been implemented."); //$NON-NLS-1$
+			// stub
 		} finally {
 			// POSTCONDITIONS
 		}

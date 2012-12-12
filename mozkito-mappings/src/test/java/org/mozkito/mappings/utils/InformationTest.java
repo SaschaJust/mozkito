@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.junit.AfterClass;
@@ -31,6 +32,10 @@ import org.junit.Test;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 public class InformationTest {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/** The text. */
 	public static String text = null;
