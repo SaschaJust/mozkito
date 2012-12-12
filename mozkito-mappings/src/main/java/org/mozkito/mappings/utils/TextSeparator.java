@@ -19,17 +19,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jregex.REFlags;
-import net.ownhero.dev.ioda.FileUtils;
-import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.regex.Match;
-import net.ownhero.dev.regex.MultiMatch;
-import net.ownhero.dev.regex.Regex;
 
 import com.aliasi.sentences.MedlineSentenceModel;
 import com.aliasi.sentences.SentenceModel;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
+
+import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.regex.Match;
+import net.ownhero.dev.regex.MultiMatch;
+import net.ownhero.dev.regex.Regex;
 
 /**
  * The Class TextSeparator.
@@ -57,10 +57,55 @@ public final class TextSeparator {
 	 * 
 	 * @param text
 	 *            the text
+	 * @return the list
+	 */
+	public static List<String> indentationBlocks(final String text) {
+		return indentationBlocks(text, 4);
+	}
+	
+	/**
+	 * Indentation blocks.
+	 * 
+	 * @param text
+	 *            the text
+	 * @param ts
+	 *            the ts
 	 * @return the string[]
 	 */
-	public static String[] indentationBlocks(final String text) {
-		throw new UnsupportedOperationException();
+	public static List<String> indentationBlocks(final String text,
+	                                             final int ts) {
+		final List<String> ret = new LinkedList<>();
+		final List<String> lines = lines(text);
+		int indent = -1;
+		
+		StringBuilder builder = new StringBuilder();
+		
+		for (final String line : lines) {
+			int newIndent = 0;
+			final byte[] bytes = line.getBytes();
+			int i = 0;
+			for (i = 0; i < line.length(); ++i) {
+				if (bytes[i] == ' ') {
+					++newIndent;
+				} else if (bytes[i] == '\t') {
+					newIndent += ts;
+				} else {
+					if (indent < 0) {
+						indent = newIndent;
+					} else if (newIndent != indent) {
+						indent = newIndent;
+						ret.add(builder.toString());
+						builder = new StringBuilder();
+					}
+					builder.append(line.substring(i));
+					break;
+				}
+			}
+			
+		}
+		
+		ret.add(builder.toString());
+		return ret;
 	}
 	
 	/**
@@ -71,7 +116,7 @@ public final class TextSeparator {
 	 * @return the list
 	 */
 	public static List<String> lines(final String text) {
-		return Arrays.asList(text.split(FileUtils.lineSeparator));
+		return Arrays.asList(text.split("(\r\n|\r|\n)")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -82,7 +127,7 @@ public final class TextSeparator {
 	 * @return the list
 	 */
 	public static List<String> paragraphs(final String text) {
-		final Regex regex = new Regex(FileUtils.lineSeparator + "\\s*" + FileUtils.lineSeparator, REFlags.MULTILINE);
+		final Regex regex = new Regex("({LINEBREAK}\r\n|\r|\n)\\s*{\\LINEBREAK}", REFlags.MULTILINE); //$NON-NLS-1$ 
 		return Arrays.asList(regex.tokenize(text));
 	}
 	
@@ -120,7 +165,7 @@ public final class TextSeparator {
 			
 			sentStartTok = sentEndTok + 1;
 			
-			sentences.add(builder.toString().replaceAll("[\r\n]", " ")); //$NON-NLS-1$//$NON-NLS-2$
+			sentences.add(builder.toString().replaceAll("[\r\n]", " ").trim()); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		
 		return sentences;
@@ -135,7 +180,7 @@ public final class TextSeparator {
 	 */
 	public static List<String> words(final String text) {
 		final List<String> list = new LinkedList<>();
-		final Regex regex = new Regex("\\w");
+		final Regex regex = new Regex("\\w+"); //$NON-NLS-1$
 		final MultiMatch multiMatch = regex.findAll(text);
 		for (final Match match : multiMatch) {
 			list.add(match.getFullMatch().getMatch());
