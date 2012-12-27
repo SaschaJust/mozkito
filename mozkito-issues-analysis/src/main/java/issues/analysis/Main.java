@@ -71,11 +71,11 @@ public class Main {
 				throw new Shutdown();
 			}
 			
-			final Collection<Class<? extends IssuesAnalysis>> classesExtendingClass = ClassFinder.getClassesExtendingClass(IssuesAnalysis.class.getPackage(),
-			                                                                                                               IssuesAnalysis.class,
-			                                                                                                               Modifier.ABSTRACT
-			                                                                                                                       | Modifier.INTERFACE
-			                                                                                                                       | Modifier.PRIVATE);
+			final Collection<Class<IssuesAnalysis>> classesExtendingClass = ClassFinder.getClassesOfInterface(IssuesAnalysis.class.getPackage(),
+			                                                                                                  IssuesAnalysis.class,
+			                                                                                                  Modifier.ABSTRACT
+			                                                                                                          | Modifier.INTERFACE
+			                                                                                                          | Modifier.PRIVATE);
 			
 			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments = ArgumentSetFactory.create(new DatabaseOptions(
 			                                                                                                                      settings.getRoot(),
