@@ -61,6 +61,13 @@ public class Main {
 			                                                                                 null, Requirement.required);
 			final StringArgument analysisClassArg = ArgumentFactory.create(analysisClassArgOption);
 			
+			if (settings.helpRequested()) {
+				if (Logger.logAlways()) {
+					Logger.always(settings.getHelpString());
+				}
+				throw new Shutdown();
+			}
+			
 			final Collection<Class<? extends IssuesAnalysis>> classesExtendingClass = ClassFinder.getClassesExtendingClass(IssuesAnalysis.class.getPackage(),
 			                                                                                                               IssuesAnalysis.class,
 			                                                                                                               Modifier.ABSTRACT
@@ -103,13 +110,6 @@ public class Main {
 			
 			analysisInstance.setup(settings);
 			
-			if (settings.helpRequested()) {
-				if (Logger.logAlways()) {
-					Logger.always(settings.getHelpString());
-				}
-				throw new Shutdown();
-			}
-			
 			analysisInstance.performAnalysis(databaseArguments.getValue());
 			analysisInstance.tearDown();
 			
@@ -117,7 +117,9 @@ public class Main {
 		        | ArgumentRegistrationException | ArgumentSetRegistrationException | InstantiationException
 		        | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
 		        | SecurityException e) {
-			new Shutdown(e.getMessage());
+			if (Logger.logError()) {
+				Logger.error(e);
+			}
 		}
 	}
 }
