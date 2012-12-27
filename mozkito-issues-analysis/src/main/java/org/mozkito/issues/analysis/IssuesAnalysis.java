@@ -2,6 +2,8 @@ package org.mozkito.issues.analysis;
 
 import net.ownhero.dev.hiari.settings.Settings;
 
+import org.mozkito.persistence.PersistenceUtil;
+
 /**
  * The Interface IssuesAnalysis.
  */
@@ -9,8 +11,11 @@ public interface IssuesAnalysis {
 	
 	/**
 	 * Perform the actual analysis.
+	 * 
+	 * @param persistenceUtil
+	 *            the PersistenceUtil
 	 */
-	void performAnalysis();
+	void performAnalysis(PersistenceUtil persistenceUtil);
 	
 	/**
 	 * Method called before calling performAnalysis. Here you can request additional settings.

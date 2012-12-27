@@ -20,6 +20,8 @@ import java.util.Collection;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
+import net.ownhero.dev.hiari.settings.ArgumentSet;
+import net.ownhero.dev.hiari.settings.ArgumentSetFactory;
 import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.StringArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
@@ -31,6 +33,8 @@ import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.analysis.IssuesAnalysis;
+import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.settings.DatabaseOptions;
 
 /**
  * The Class Main.
@@ -63,7 +67,17 @@ public class Main {
 			                                                                                                                       | Modifier.INTERFACE
 			                                                                                                                       | Modifier.PRIVATE);
 			
+			final ArgumentSet<PersistenceUtil, DatabaseOptions> databaseArguments = ArgumentSetFactory.create(new DatabaseOptions(
+			                                                                                                                      settings.getRoot(),
+			                                                                                                                      Requirement.required,
+			                                                                                                                      "issues"));
 			final String analysisClassName = analysisClassArg.getValue();
+			if (analysisClassName == null) {
+				if (Logger.logAlways()) {
+					Logger.always(settings.getHelpString());
+				}
+				return;
+			}
 			
 			Class<? extends IssuesAnalysis> analysisClass = null;
 			for (final Class<? extends IssuesAnalysis> klass : classesExtendingClass) {
@@ -77,6 +91,9 @@ public class Main {
 				if (Logger.logError()) {
 					Logger.error("Could not find any analysis class with full qualified class name %s implementing the interface %s.",
 					             analysisClassName, IssuesAnalysis.class.getName());
+				}
+				if (Logger.logAlways()) {
+					Logger.always(settings.getHelpString());
 				}
 				return;
 			}
@@ -93,7 +110,7 @@ public class Main {
 				throw new Shutdown();
 			}
 			
-			analysisInstance.performAnalysis();
+			analysisInstance.performAnalysis(databaseArguments.getValue());
 			analysisInstance.tearDown();
 			
 		} catch (SettingsParseError | ClassNotFoundException | WrongClassSearchMethodException | IOException
