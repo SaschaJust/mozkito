@@ -52,7 +52,7 @@
 		<module>mozkito-persistence</module>
 		<module>mozkito-versions</module>
 		<module>mozkito-issues</module>
-		<module>mozkito-issues-importclassification</module>
+		<module>mozkito-issues-analysis</module>
 		<module>mozkito-persons</module>
 		<module>mozkito-mappings</module>
 		<module>mozkito-infozilla</module>

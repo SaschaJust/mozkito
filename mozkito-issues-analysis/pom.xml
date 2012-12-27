@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>mozkito-issues-importclassification</artifactId>
 	<packaging>jar</packaging>
-	<name>mozkito-issues-importclassification</name>
+	<name>mozkito-issues-analysis</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.mozkito</groupId>
@@ -29,7 +29,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>issues.importclassification.Main</mainClass>
+							<mainClass>issues.analysis.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
