@@ -17,6 +17,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
@@ -29,6 +31,7 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentSetRegistrationExceptio
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
+import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
 import net.ownhero.dev.kisa.Logger;
 
@@ -86,8 +89,10 @@ public class Main {
 				return;
 			}
 			
+			final Set<String> classedFound = new HashSet<>();
 			Class<? extends IssuesAnalysis> analysisClass = null;
 			for (final Class<? extends IssuesAnalysis> klass : classesExtendingClass) {
+				classedFound.add(klass.getName());
 				if (analysisClassName.equals(klass.getName())) {
 					analysisClass = klass;
 					break;
@@ -96,8 +101,9 @@ public class Main {
 			
 			if (analysisClass == null) {
 				if (Logger.logError()) {
-					Logger.error("Could not find any analysis class with full qualified class name %s implementing the interface %s.",
-					             analysisClassName, IssuesAnalysis.class.getName());
+					Logger.error("Could not find any analysis class with full qualified class name %s implementing the interface %s. Found classes: %s.",
+					             analysisClassName, IssuesAnalysis.class.getName(),
+					             JavaUtils.collectionToString(classedFound));
 				}
 				if (Logger.logAlways()) {
 					Logger.always(settings.getHelpString());

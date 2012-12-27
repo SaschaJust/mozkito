@@ -1,4 +1,4 @@
-package org.mozkito.issues.analysis.filedchanges;
+package org.mozkito.issues.analysis.fieldchanges;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
