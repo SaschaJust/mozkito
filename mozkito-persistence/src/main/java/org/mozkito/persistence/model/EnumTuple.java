@@ -68,6 +68,7 @@ public class EnumTuple implements Annotated {
 	 */
 	@NoneNull
 	public EnumTuple(final Enum<?> oldValue, final Enum<?> newValue) {
+		assert oldValue.getClass() == newValue.getClass();
 		setOldValue(oldValue);
 		setNewValue(newValue);
 		setNewStringValue(newValue.name());
