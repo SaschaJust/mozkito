@@ -29,12 +29,14 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.IOUtils;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.TestSettingsError;
@@ -171,7 +173,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					repoDir = FileUtils.createDir(new File(repoPath + File.separator
 					                                      + FileUtils.getUnpackedName(new File(sourceURL.toURI()))),
 					                              FileShutdownAction.DELETE);
-				} catch (final URISyntaxException e2) {
+				} catch (final URISyntaxException | FilePermissionException e2) {
 					throw new TestSettingsError(e2);
 					
 				}
@@ -184,8 +186,11 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 						                                                 sourceURL.toURI());
 						try {
 							FileUtils.SupportedPackers.valueOf(fileSuffix.replaceFirst(".*\\.", "").toUpperCase());
-							if (!FileUtils.unpack(file, new File(repoPath))) {
-								throw new TestSettingsError("Could not create repository.");
+							
+							try {
+								FileUtils.unpack(file, new File(repoPath));
+							} catch (FilePermissionException | IOException e) {
+								throw new TestSettingsError("Could not create repository.", e);
 							}
 						} catch (final IllegalArgumentException e) {
 							if (type.equals(RepositoryType.SUBVERSION)) {

@@ -16,6 +16,7 @@
 package org.mozkito.versions.subversion;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.CodeSource;
@@ -31,6 +32,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotEmpty;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
@@ -42,19 +44,6 @@ import net.ownhero.dev.regex.Regex;
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.UnsupportedProtocolType;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.ProtocolType;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.model.RCSBranch;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -78,6 +67,20 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
+
+import org.mozkito.exceptions.InvalidProtocolType;
+import org.mozkito.exceptions.InvalidRepositoryURI;
+import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.ProtocolType;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.model.RCSBranch;
 
 /**
  * Subversion connector extending the {@link Repository} base class.
@@ -208,7 +211,7 @@ public class SubversionRepository extends Repository {
 	@Override
 	@NoneNull
 	public File checkoutPath(@NotEmpty final String relativeRepoPath,
-	                         @NotEmpty final String revision) {
+	                         @NotEmpty final String revision) throws FilePermissionException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		if (this.tmpDir == null) {
@@ -254,7 +257,7 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public Collection<Delta> diff(@NotEmpty final String filePath,
 	                              @NotEmpty final String baseRevision,
-	                              @NotEmpty final String revisedRevision) {
+	                              @NotEmpty final String revisedRevision) throws FilePermissionException, IOException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		try {
@@ -486,7 +489,7 @@ public class SubversionRepository extends Repository {
 	 * choosing an appropriate repository URL.
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() throws IOException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		if (this.revDepGraph == null) {
 			

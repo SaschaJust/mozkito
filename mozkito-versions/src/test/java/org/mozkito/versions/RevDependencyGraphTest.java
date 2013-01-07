@@ -16,21 +16,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import com.tinkerpop.blueprints.Vertex;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
-
-import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class RevDependencyGraphTest.
@@ -47,9 +49,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Gets the strange tag.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void getStrangeTag() {
+	public void getStrangeTag() throws IOException {
 		final RevDependencyGraph graph = this.repo.getRevDependencyGraph();
 		assertEquals(1, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").size());
 		assertEquals(true, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").contains("tag_one"));
@@ -57,9 +61,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Regression test rhino.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void regressionTestRhino() {
+	public void regressionTestRhino() throws IOException {
 		/* 
 		 * @formatter:off
 		 *       * 17d6198f9c31d608d985ff4c9ce1dcc162dc8133
@@ -182,9 +188,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Regression test rhino2.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void regressionTestRhino2() {
+	public void regressionTestRhino2() throws IOException {
 		/*
 		 * @formatter:off
 		 * 
@@ -266,9 +274,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Tear down.
+	 * 
+	 * @throws IOException
 	 */
 	@Before
-	public void setup() {
+	public void setup() throws IOException {
 		assertTrue(getRepositories().containsKey("testGit"));
 		this.repo = getRepositories().get("testGit");
 		this.graph = this.repo.getRevDependencyGraph();
@@ -456,9 +466,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Test add change set twice.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testAddBranchTwice() {
+	public void testAddBranchTwice() throws IOException {
 		final RevDependencyGraph graph = new RevDependencyGraph();
 		graph.addChangeSet("changeSet");
 		final Vertex branchV = graph.addBranch("hubba", "changeSet");
@@ -468,9 +480,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Test add change set twice.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testAddChangeSetTwice() {
+	public void testAddChangeSetTwice() throws IOException {
 		final RevDependencyGraph graph = new RevDependencyGraph();
 		final Vertex vertex = graph.addChangeSet("hubba");
 		assertEquals(vertex, graph.addChangeSet("hubba"));
@@ -478,9 +492,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	
 	/**
 	 * Test add edge twice.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testAddEdgeTwice() {
+	public void testAddEdgeTwice() throws IOException {
 		final RevDependencyGraph graph = new RevDependencyGraph();
 		assertEquals(true, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));
 		assertEquals(false, graph.addEdge("a", "b", EdgeType.BRANCH_EDGE));

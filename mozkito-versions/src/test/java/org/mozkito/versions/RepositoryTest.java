@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
@@ -34,14 +36,15 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-
-import difflib.Delta;
 
 /**
  * The Class RepositoryTest.
@@ -116,9 +119,11 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout.
+	 * 
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCheckout() {
+	public void testCheckout() throws FilePermissionException {
 		for (final Repository repository : getRepositories().values()) {
 			final File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
 			
@@ -149,9 +154,11 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout dir.
+	 * 
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCheckoutDir() {
+	public void testCheckoutDir() throws FilePermissionException {
 		for (final Repository repository : getRepositories().values()) {
 			final File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
 			if (Logger.logDebug()) {
@@ -177,9 +184,11 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout file.
+	 * 
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCheckoutFile() {
+	public void testCheckoutFile() throws FilePermissionException {
 		for (final Repository repository : getRepositories().values()) {
 			final File f = repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD());
 			assertNotNull(f);
@@ -190,9 +199,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testDiff() {
+	public void testDiff() throws FilePermissionException, IOException {
 		for (final Repository repository : getRepositories().values()) {
 			final String id = repository.getTransactionId(11);
 			final String parent = repository.getTransactionId(10);
@@ -206,9 +218,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff move.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testDiffMove() {
+	public void testDiffMove() throws FilePermissionException, IOException {
 		for (final Repository repository : getRepositories().values()) {
 			final String id = repository.getTransactionId(3);
 			final String parent = repository.getTransactionId(2);

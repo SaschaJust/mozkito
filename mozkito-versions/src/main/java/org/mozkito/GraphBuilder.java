@@ -15,6 +15,7 @@
  */
 package org.mozkito;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +59,11 @@ public class GraphBuilder implements Runnable {
 	 */
 	@NoneNull
 	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {
-		this.revDepGraph = repository.getRevDependencyGraph();
+		try {
+			this.revDepGraph = repository.getRevDependencyGraph();
+		} catch (final IOException e) {
+			throw new UnrecoverableError(e);
+		}
 		this.persistenceUtil = persistenceUtil;
 		this.branchFactory = new BranchFactory(persistenceUtil);
 	}

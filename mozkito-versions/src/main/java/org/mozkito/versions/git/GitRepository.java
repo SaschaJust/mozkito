@@ -17,6 +17,7 @@ package org.mozkito.versions.git;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -48,6 +49,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -56,10 +62,6 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSBranch;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * The Class GitRepository. This class is _not_ thread safe.
@@ -554,7 +556,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() throws IOException {
 		// PRECONDITIONS
 		
 		try {
@@ -753,7 +755,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) {
+	                  final String mainBranchName) throws IOException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setup(address, null, branchFactory, tmpDir, mainBranchName);
@@ -772,12 +774,13 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 *            the tmp dir
 	 * @param mainBranchName
 	 *            the main branch name
+	 * @throws IOException
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
-	                   @NotNull final String mainBranchName) {
+	                   @NotNull final String mainBranchName) throws IOException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		setMainBranchName(mainBranchName);
 		setUri(address);
@@ -843,7 +846,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) {
+	                  final String mainBranchName) throws IOException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");

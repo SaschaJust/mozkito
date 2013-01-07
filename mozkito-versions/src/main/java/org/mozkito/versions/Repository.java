@@ -13,12 +13,16 @@
 package org.mozkito.versions;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
+import difflib.Delta;
 
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
@@ -33,8 +37,6 @@ import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
-import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -96,9 +98,10 @@ public abstract class Repository {
 	 *            the revision
 	 * @return The file handle to the checked out, corresponding file or directory. Null if no such file exists or if
 	 *         the file could not be checked out.
+	 * @throws FilePermissionException
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
-	                                  String revision);
+	                                  String revision) throws FilePermissionException;
 	
 	/**
 	 * Diff the file in the repository specified by filePath.
@@ -111,10 +114,12 @@ public abstract class Repository {
 	 * @param revisedRevision
 	 *            the revised revision
 	 * @return Collection of deltas found between two revision
+	 * @throws FilePermissionException
+	 * @throws IOException
 	 */
 	public abstract Collection<Delta> diff(String filePath,
 	                                       String baseRevision,
-	                                       String revisedRevision);
+	                                       String revisedRevision) throws FilePermissionException, IOException;
 	
 	/**
 	 * Gather tool information.
@@ -212,8 +217,9 @@ public abstract class Repository {
 	 * Gets the rev dependency graph.
 	 * 
 	 * @return the rev dependency graph
+	 * @throws IOException
 	 */
-	public abstract RevDependencyGraph getRevDependencyGraph();
+	public abstract RevDependencyGraph getRevDependencyGraph() throws IOException;
 	
 	/**
 	 * Gets the rev dependency graph.
@@ -221,8 +227,9 @@ public abstract class Repository {
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return the rev dependency graph
+	 * @throws IOException
 	 */
-	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) {
+	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) throws IOException {
 		if (this.revDepGraph == null) {
 			this.revDepGraph = new RevDependencyGraph();
 			final Criteria<RCSBranch> branchCriteria = persistenceUtil.createCriteria(RCSBranch.class);
@@ -293,6 +300,7 @@ public abstract class Repository {
 	 * @param transactionId
 	 *            the transaction id
 	 * @return the transaction index; return -1 if the transactionId does not exist
+	 * @throws IOException
 	 */
 	public abstract long getTransactionIndex(String transactionId);
 	
@@ -405,6 +413,7 @@ public abstract class Repository {
 	 *             the invalid repository URI
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
+	 * @throws IOException
 	 */
 	public abstract void setup(URI address,
 	                           BranchFactory branchFactory,
@@ -412,7 +421,8 @@ public abstract class Repository {
 	                           String mainBranchName) throws MalformedURLException,
 	                                                 InvalidProtocolType,
 	                                                 InvalidRepositoryURI,
-	                                                 UnsupportedProtocolType;
+	                                                 UnsupportedProtocolType,
+	                                                 IOException;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -437,6 +447,7 @@ public abstract class Repository {
 	 *             the invalid repository URI
 	 * @throws UnsupportedProtocolType
 	 *             the unsupported protocol type
+	 * @throws IOException
 	 */
 	public abstract void setup(URI address,
 	                           String username,
@@ -446,7 +457,8 @@ public abstract class Repository {
 	                           String mainBranchName) throws MalformedURLException,
 	                                                 InvalidProtocolType,
 	                                                 InvalidRepositoryURI,
-	                                                 UnsupportedProtocolType;
+	                                                 UnsupportedProtocolType,
+	                                                 IOException;
 	
 	/**
 	 * Sets the uri.

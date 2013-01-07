@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +28,15 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.DateTimeUtils;
 import net.ownhero.dev.ioda.FileUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -40,8 +45,6 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
-
-import difflib.Delta;
 
 /**
  * The Class SubversionRepositoryTest.
@@ -113,17 +116,21 @@ public class SubversionRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path fail.
+	 * 
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCheckoutPathFail() {
+	public void testCheckoutPathFail() throws FilePermissionException {
 		assertTrue(this.repo.checkoutPath("file_8989", "17") == null);
 	}
 	
 	/**
 	 * Test checkout path success.
+	 * 
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCheckoutPathSuccess() {
+	public void testCheckoutPathSuccess() throws FilePermissionException {
 		final File file = this.repo.checkoutPath("dir_a/file_3_dir_a", "16");
 		assertNotNull(file);
 		assertTrue(file.exists());
@@ -131,9 +138,12 @@ public class SubversionRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testDiff() {
+	public void testDiff() throws FilePermissionException, IOException {
 		final Collection<Delta> diff = this.repo.diff("file_1", "9", "11");
 		assertEquals(1, diff.size());
 		final Delta delta = diff.iterator().next();
@@ -270,9 +280,11 @@ public class SubversionRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get rev dependency graph.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testGetRevDependencyGraph() {
+	public void testGetRevDependencyGraph() throws IOException {
 		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
 		assertNotNull(revDepG);
 		final Set<String> branches = revDepG.getBranches();

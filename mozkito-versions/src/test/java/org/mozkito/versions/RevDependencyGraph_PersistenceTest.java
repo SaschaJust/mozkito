@@ -15,11 +15,13 @@ package org.mozkito.versions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
+
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryParser;
 import org.mozkito.persistence.ConnectOptions;
@@ -44,9 +46,11 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	
 	/**
 	 * Test restored rev dep graph.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testRestoredRevDepGraph() {
+	public void testRestoredRevDepGraph() throws IOException {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		
 		assertTrue(getRepositories().containsKey("testGit"));

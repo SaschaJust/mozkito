@@ -16,6 +16,7 @@
 package org.mozkito.versions.subversion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +25,8 @@ import java.util.List;
 import net.ownhero.dev.ioda.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
+import org.tmatesoft.svn.core.SVNErrorCode;
+import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.wc.ISVNDiffGenerator;
@@ -131,12 +134,17 @@ class SubversionDiffParser implements ISVNDiffGenerator {
 		if ((file1 == null) || (file2 == null)) {
 			return;
 		}
-		final List<String> original = FileUtils.fileToLines(file1);
-		final List<String> revised = FileUtils.fileToLines(file2);
-		final Patch patch = DiffUtils.diff(original, revised);
-		final Iterator<Delta> deltaIter = patch.getDeltas().iterator();
-		while (deltaIter.hasNext()) {
-			this.deltas.add(deltaIter.next());
+		
+		try {
+			final List<String> original = FileUtils.fileToLines(file1);
+			final List<String> revised = FileUtils.fileToLines(file2);
+			final Patch patch = DiffUtils.diff(original, revised);
+			final Iterator<Delta> deltaIter = patch.getDeltas().iterator();
+			while (deltaIter.hasNext()) {
+				this.deltas.add(deltaIter.next());
+			}
+		} catch (final IOException e) {
+			throw new SVNException(SVNErrorMessage.create(SVNErrorCode.IO_ERROR, "Reading files failed."), e); //$NON-NLS-1$
 		}
 		
 	}

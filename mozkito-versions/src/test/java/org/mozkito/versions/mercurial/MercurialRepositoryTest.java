@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,9 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -39,8 +43,6 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.model.RCSBranch;
-
-import difflib.Delta;
 
 /**
  * The Class MercurialRepositoryTest.
@@ -288,9 +290,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get rev dependency graph.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testGetRevDependencyGraph() {
+	public void testGetRevDependencyGraph() throws IOException {
 		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
 		assertNotNull(revDepG);
 		final Set<String> branches = revDepG.getBranches();

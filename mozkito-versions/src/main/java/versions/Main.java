@@ -35,6 +35,16 @@ public class Main {
 		KanuniAgent.initialize();
 	}
 	
+	private static final String moduleName = getModuleName();
+	
+	public static String getModuleName() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(Main.class.getPackage().getName());
+		builder.append('.');
+		builder.append(Main.class.getSimpleName());
+		return builder.toString();
+	}
+	
 	/**
 	 * The main method.
 	 * 
@@ -50,7 +60,7 @@ public class Main {
 			rCS.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("RCS.Main: RepositoryToolChain finished. Starting GraphToolChain ...");
+				Logger.info("%s: %s finished. Starting GraphToolChain ...", moduleName, rCS.getClass().getSimpleName());
 			}
 			
 			final Thread graphBuilderThread = new Thread(
@@ -60,7 +70,7 @@ public class Main {
 			graphBuilderThread.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("RCS.Main: All done. cerio!");
+				Logger.info("%s: All done. Cerio!", moduleName);
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logError()) {

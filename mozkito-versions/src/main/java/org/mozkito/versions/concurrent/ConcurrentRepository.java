@@ -31,6 +31,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -132,11 +133,13 @@ public class ConcurrentRepository extends Repository {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws FilePermissionException
 	 */
 	
 	@Override
 	public File checkoutPath(final String relativeRepoPath,
-	                         final String revision) {
+	                         final String revision) throws FilePermissionException {
 		// PRECONDITIONS
 		
 		try {
@@ -193,12 +196,15 @@ public class ConcurrentRepository extends Repository {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	
 	@Override
 	public Collection<Delta> diff(final String filePath,
 	                              final String baseRevision,
-	                              final String revisedRevision) {
+	                              final String revisedRevision) throws FilePermissionException, IOException {
 		// PRECONDITIONS
 		
 		try {
@@ -318,31 +324,36 @@ public class ConcurrentRepository extends Repository {
 	 * Gets the repository.
 	 * 
 	 * @return the repository
+	 * @throws IOException
 	 */
 	private Repository getRepository() {
 		final Thread thread = Thread.currentThread();
 		
-		if (!this.threadToRevisionMap.containsKey(thread)) {
-			cleanup();
-			final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getHandle().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
-			try {
-				final Repository repoClone = this.repository.getClass().newInstance();
-				repoClone.setup(this.repository.getUri(), null, dir, this.repository.getMainBranchName());
-				
-				this.threadToRevisionMap.put(thread.getId(), repoClone);
-			} catch (final InstantiationException e) {
-				throw new InstantiationError(e, this.repository.getClass(), null, new Object[0]);
-			} catch (final MalformedURLException | InvalidProtocolType | InvalidRepositoryURI | UnsupportedProtocolType
-			        | IllegalAccessException e) {
-				throw new UnrecoverableError(e);
+		try {
+			if (!this.threadToRevisionMap.containsKey(thread)) {
+				cleanup();
+				final File dir = FileUtils.createRandomDir("mozkito_concurrent_" + this.repository.getHandle().toLowerCase() + "_" + thread.getId(), null, FileShutdownAction.DELETE); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					final Repository repoClone = this.repository.getClass().newInstance();
+					repoClone.setup(this.repository.getUri(), null, dir, this.repository.getMainBranchName());
+					
+					this.threadToRevisionMap.put(thread.getId(), repoClone);
+				} catch (final InstantiationException e) {
+					throw new InstantiationError(e, this.repository.getClass(), null, new Object[0]);
+				} catch (final MalformedURLException | InvalidProtocolType | InvalidRepositoryURI
+				        | UnsupportedProtocolType | IllegalAccessException e) {
+					throw new UnrecoverableError(e);
+				}
 			}
+			
+			final Repository threadRepository = this.threadToRevisionMap.get(thread.getId());
+			
+			Condition.notNull(threadRepository, "Local variable '%s' in '%s'.", "threadRepository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			return threadRepository;
+		} catch (final IOException e1) {
+			throw new UnrecoverableError(e1);
 		}
-		
-		final Repository threadRepository = this.threadToRevisionMap.get(thread.getId());
-		
-		Condition.notNull(threadRepository, "Local variable '%s' in '%s'.", "threadRepository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		return threadRepository;
 	}
 	
 	/*
@@ -351,10 +362,12 @@ public class ConcurrentRepository extends Repository {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws IOException
 	 */
 	
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() throws IOException {
 		// PRECONDITIONS
 		
 		try {
@@ -390,6 +403,8 @@ public class ConcurrentRepository extends Repository {
 	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @throws IOException
 	 */
 	
 	@Override

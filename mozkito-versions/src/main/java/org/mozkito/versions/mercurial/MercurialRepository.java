@@ -50,6 +50,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -58,10 +63,6 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.RCSBranch;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 /**
  * The Class MercurialRepository.
@@ -584,7 +585,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() {
+	public RevDependencyGraph getRevDependencyGraph() throws IOException {
 		if (this.revDepGraph == null) {
 			this.revDepGraph = new RevDependencyGraph();
 			
@@ -798,7 +799,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) {
+	                  @NotNull final String mainBranchName) throws IOException {
 		setup(address, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
@@ -815,12 +816,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 *            the tmp dir
 	 * @param mainBranchName
 	 *            the main branch name
+	 * @throws IOException
 	 */
 	private void setup(@NotNull final URI address,
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
-	                   @NotNull final String mainBranchName) {
+	                   @NotNull final String mainBranchName) throws IOException {
 		
 		setMainBranchName(mainBranchName);
 		setUri(address);
@@ -887,7 +889,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) {
+	                  @NotNull final String mainBranchName) throws IOException {
 		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
 		      tmpDir, mainBranchName);
 	}
