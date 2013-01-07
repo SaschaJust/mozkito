@@ -651,7 +651,6 @@ public class PPAUtils {
 	 *            the visitors
 	 */
 	@SuppressWarnings ("unchecked")
-	@NoneNull
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
 	                                                              final RCSTransaction rCSTransaction,
 	                                                              final RCSRevision rCSRevision,
