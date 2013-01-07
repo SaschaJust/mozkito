@@ -334,7 +334,12 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 				return MultilevelClustering.IGNORE_SCORE;
 			}
 			
-			final File eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			File eclipseOutFile = null;
+			try {
+				eclipseOutFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+			} catch (final IOException e1) {
+				throw new UnrecoverableError(e1);
+			}
 			final String[] arguments = new String[] { "-vmargs", "-Din=" + file.getAbsolutePath(),
 			        "-Dout=" + eclipseOutFile.getAbsolutePath() };
 			

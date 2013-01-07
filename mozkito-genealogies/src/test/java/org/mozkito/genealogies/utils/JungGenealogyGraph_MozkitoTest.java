@@ -21,9 +21,9 @@ import java.util.Collection;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 
 import org.junit.Test;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
@@ -49,9 +49,12 @@ public class JungGenealogyGraph_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test core layer.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void testCoreLayer() {
+	public void testCoreLayer() throws IOException, FilePermissionException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.KEEP);
 		

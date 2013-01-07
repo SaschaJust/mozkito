@@ -22,10 +22,10 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.utils.ChangeGenealogyUtils;
@@ -56,9 +56,12 @@ public class JavaChangeOperationProcessQueue_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void test() {
+	public void test() throws IOException, FilePermissionException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());

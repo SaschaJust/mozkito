@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -246,9 +247,11 @@ public class TestCallGraphs {
 	
 	/**
 	 * Test serialize.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testSerialize() {
+	public void testSerialize() throws IOException {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		this.cg.serialize(file);
 		final CallGraph scg = CallGraph.unserialize(file);

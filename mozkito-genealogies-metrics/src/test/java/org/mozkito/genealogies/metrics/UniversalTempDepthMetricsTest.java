@@ -16,6 +16,7 @@ package org.mozkito.genealogies.metrics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -32,9 +33,11 @@ public class UniversalTempDepthMetricsTest extends TestEnvironment {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		setup();
 		final UniversalTestTempDepthMetric metric = new UniversalTestTempDepthMetric(TestEnvironment.genealogy);
 		final Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();

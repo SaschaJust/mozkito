@@ -14,6 +14,7 @@
 package org.mozkito.genealogies.metrics;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
@@ -54,8 +55,10 @@ public class TestEnvironment {
 	
 	/**
 	 * Setup.
+	 * 
+	 * @throws IOException
 	 */
-	public static void setup() {
+	public static void setup() throws IOException {
 		
 		TestEnvironment.tmpGraphDBFile = FileUtils.createRandomDir("moskito", "test_change_genealogy",
 		                                                           FileShutdownAction.DELETE);

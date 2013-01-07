@@ -15,11 +15,11 @@ package org.mozkito.genealogies.metrics;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import org.junit.Test;
-
 import org.mozkito.genealogies.metrics.layer.universal.UniversalDwReachMetric;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalTestDwReachMetric;
 
@@ -32,9 +32,11 @@ public class UniversalDwReachMetricTest extends TestEnvironment {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		setup();
 		final UniversalTestDwReachMetric metric = new UniversalTestDwReachMetric(TestEnvironment.genealogy);
 		final Collection<GenealogyMetricValue> metricValues = new LinkedList<GenealogyMetricValue>();
