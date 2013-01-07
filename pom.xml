@@ -205,7 +205,7 @@
 				<configuration>
 					<enableAssertions>true</enableAssertions>
 					<forkMode>perTest</forkMode>
-					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar</argLine>
+					<argLine>-javaagent:${basedir}/target/kanuni-agent-0.2.jar -Dlog.console.level=ERROR</argLine>
 					<workingDirectory>${basedir}/target</workingDirectory>
 					<excludes>
 						<exclude>**/**/*LongTest.java</exclude>

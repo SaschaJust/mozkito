@@ -100,6 +100,6 @@
 		</plugins>
 	</build>
 	<properties>
-		<moduleName>rcs</moduleName>
+		<moduleName>versions</moduleName>
 	</properties>
 </project>

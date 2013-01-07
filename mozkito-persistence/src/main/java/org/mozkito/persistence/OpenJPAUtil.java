@@ -135,20 +135,6 @@ public class OpenJPAUtil implements PersistenceUtil {
 	/**
 	 * Creates the session factory.
 	 * 
-	 * @param host
-	 *            the host
-	 * @param database
-	 *            the database
-	 * @param user
-	 *            the user
-	 * @param password
-	 *            the password
-	 * @param type
-	 *            the type
-	 * @param driver
-	 *            the driver
-	 * @param unit
-	 *            the unit
 	 * @param options
 	 *            the options
 	 */

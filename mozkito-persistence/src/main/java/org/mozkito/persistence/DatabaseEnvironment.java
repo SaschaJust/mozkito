@@ -194,7 +194,9 @@ public class DatabaseEnvironment {
 	}
 	
 	/**
-	 * @return
+	 * Gets the database driver.
+	 * 
+	 * @return the database driver
 	 */
 	public String getDatabaseDriver() {
 		// PRECONDITIONS
