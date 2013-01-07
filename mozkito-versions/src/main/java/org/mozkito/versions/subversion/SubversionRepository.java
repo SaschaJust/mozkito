@@ -263,9 +263,20 @@ public class SubversionRepository extends Repository {
 			final SVNRevision toRevision = buildRevision(revisedRevision);
 			final SVNDiffClient diffClient = new SVNDiffClient(this.repository.getAuthenticationManager(),
 			                                                   SVNWCUtil.createDefaultOptions(true));
+			
 			diffClient.getDiffGenerator().setDiffDeleted(true);
 			final SubversionDiffParser diffParser = new SubversionDiffParser();
 			diffClient.setDiffGenerator(diffParser);
+			
+			SVNNodeKind nodeKind = this.repository.checkPath(filePath, fromRevision.getNumber());
+			if (nodeKind.equals(SVNNodeKind.NONE)) {
+				nodeKind = this.repository.checkPath(filePath, toRevision.getNumber());
+			}
+			if (!nodeKind.equals(SVNNodeKind.FILE)) {
+				throw new IllegalArgumentException(
+				                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
+				                                                 filePath));
+			}
 			
 			diffClient.doDiff(repoPath, toRevision, fromRevision, toRevision, SVNDepth.FILES, false,
 			                  new NullOutputStream());

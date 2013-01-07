@@ -318,6 +318,21 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			}
 			return null;
 		}
+		
+		final File filePathFileBase = checkoutPath(filePath, baseRevision);
+		if ((filePathFileBase != null) && (filePathFileBase.isDirectory())) {
+			throw new IllegalArgumentException(
+			                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
+			                                                 filePath));
+		} else {
+			final File filePathFileRevised = checkoutPath(filePath, revisedRevision);
+			if ((filePathFileRevised != null) && (filePathFileRevised.isDirectory())) {
+				throw new IllegalArgumentException(
+				                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
+				                                                 filePath));
+			}
+		}
+		
 		Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "cat", "-r", baseRevision,
 		        filePath }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
