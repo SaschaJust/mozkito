@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.exceptions.FilePermissionException;
-import difflib.Delta;
 
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
@@ -37,6 +36,8 @@ import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
+
+import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.

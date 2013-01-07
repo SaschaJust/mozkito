@@ -39,6 +39,7 @@ import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.Tuple;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -247,13 +248,18 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 		} else {
 			if (this.checkoutDir == null) {
-				this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
-				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-					throw new UnrecoverableError("Could not checkout transaction " + rCSTransaction.getId());
+				try {
+					this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
+				} catch (final FilePermissionException e) {
+					throw new UnrecoverableError(e);
 				}
 			}
 		}
-		this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
+		try {
+			this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
+		} catch (final FilePermissionException e) {
+			throw new UnrecoverableError(e);
+		}
 	}
 	
 	/*

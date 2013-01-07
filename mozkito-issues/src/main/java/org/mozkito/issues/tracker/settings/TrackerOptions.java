@@ -18,7 +18,6 @@ import java.util.Map;
 
 import net.ownhero.dev.hiari.settings.ArgumentSet;
 import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
-import net.ownhero.dev.hiari.settings.BooleanArgument;
 import net.ownhero.dev.hiari.settings.EnumArgument;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.StringArgument;
@@ -30,7 +29,6 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
-import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.tracker.Tracker;
 import org.mozkito.issues.tracker.TrackerType;
@@ -68,9 +66,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	
 	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
-	
-	/** The use proxy options. */
-	private BooleanArgument.Options           useProxyOptions;
 	
 	/**
 	 * Instantiates a new tracker options.
@@ -129,7 +124,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			final URI trackerUri = getSettings().getArgument(this.trackerURIOptions).getValue();
 			final String trackerUser = getSettings().getArgument(getTrackerUser()).getValue();
 			final String trackerPassword = getSettings().getArgument(getTrackerPassword()).getValue();
-			final Boolean useProxy = getSettings().getArgument(this.useProxyOptions).getValue();
 			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
@@ -212,16 +206,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			                                                     "password", Messages.getString("TrackerOptions.password_description"), null, //$NON-NLS-1$ //$NON-NLS-2$
 			                                                     Requirement.iff(this.trackerUserArg), true);
 			req(this.trackerPasswordArg, map);
-			
-			this.useProxyOptions = new BooleanArgument.Options(set, "useProxy", "Activates proxy features.", null,
-			                                                   Requirement.required);
-			req(this.useProxyOptions, map);
-			
-			if (Logger.logAlways()) {
-				Logger.always("Requirement.equals(this.useProxyOptions, true) ? required: "
-				        + Requirement.equals(this.useProxyOptions, true).equals(Requirement.required));
-				Logger.always("this.useProxyOptions = " + System.getProperty(this.useProxyOptions.getName()));
-			}
 			
 			// tracker alternatives
 			this.bugzillaOptions = new BugzillaOptions(this, Requirement.equals(this.trackerTypeArg,

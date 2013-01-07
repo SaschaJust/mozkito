@@ -30,6 +30,6 @@ public interface LabelGenerator<T> {
 	 *            the t
 	 * @return the labels
 	 */
-	public Collection<Label> getLabels(T t);
+	Collection<Label> getLabels(T t);
 	
 }
