@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright 2012 Kim Herzig, Sascha Just
+/***********************************************************************************************************************
+ * Copyright 2011 Kim Herzig, Sascha Just
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -9,7 +9,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
- ******************************************************************************/
+ **********************************************************************************************************************/
 
 package net.ownhero.dev.ioda;
 
@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
@@ -158,27 +159,28 @@ public class FileUtils {
 	 * @param bzip2File
 	 * @param directory
 	 * @return
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
-	public static boolean bunzip2(final File bzip2File,
-	                              final File directory) {
+	public static void bunzip2(final File bzip2File,
+	                           final File directory) throws IOException, FilePermissionException {
+		ensureFilePermissions(bzip2File, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
+		FileInputStream fis = null;
+		CBZip2InputStream zis = null;
 		try {
-			ensureFilePermissions(bzip2File, READABLE_FILE);
-			ensureFilePermissions(directory, WRITABLE_DIR);
-			
-			final FileInputStream fis = new FileInputStream(bzip2File);
-			final CBZip2InputStream zis = new CBZip2InputStream(fis);
+			fis = new FileInputStream(bzip2File);
+			zis = new CBZip2InputStream(fis);
 			
 			final int BUFFER = 2048;
 			final byte[] buffer = new byte[BUFFER];
 			String path = bzip2File.getName();
-			final int i = path.lastIndexOf(".");
+			final int i = path.lastIndexOf("."); //$NON-NLS-1$
 			if (i > 0) {
 				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
 			} else {
-				if (Logger.logError()) {
-					Logger.error("Compressed file does not contain a file extension like `.zip`.");
-				}
-				return false;
+				throw new IOException("Compressed file does not contain a file extension like `.zip`.");
+				
 			}
 			
 			final File outputFile = new File(path);
@@ -192,18 +194,23 @@ public class FileUtils {
 			stream.flush();
 			stream.close();
 			zis.close();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+			} catch (final IOException ignore) {
+				// ignore
 			}
-			return false;
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			
+			try {
+				if (zis != null) {
+					zis.close();
+				}
+			} catch (final IOException ignore) {
+				// ignore
 			}
-			return false;
 		}
-		return true;
 	}
 	
 	/**
@@ -278,9 +285,10 @@ public class FileUtils {
 	 * @param directory
 	 * @param shutdownAction
 	 * @return
+	 * @throws FilePermissionException
 	 */
 	public static File createDir(final File directory,
-	                             final FileShutdownAction shutdownAction) {
+	                             final FileShutdownAction shutdownAction) throws FilePermissionException {
 		final String dirName = directory.getAbsolutePath();
 		final int index = dirName.lastIndexOf(FileUtils.fileSeparator);
 		return createDir(new File(dirName.substring(0, index)), dirName.substring(index), shutdownAction);
@@ -296,19 +304,13 @@ public class FileUtils {
 	 *            the name of the new directory to be created
 	 * @return the file handle corresponding to the requested new directory if existed or created. <code>null</code>
 	 *         otherwise.
+	 * @throws FilePermissionException
 	 */
 	public static File createDir(final File parentDir,
 	                             final String name,
-	                             final FileShutdownAction shutdownAction) {
+	                             final FileShutdownAction shutdownAction) throws FilePermissionException {
 		
-		try {
-			ensureFilePermissions(parentDir, WRITABLE_DIR);
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return null;
-		}
+		ensureFilePermissions(parentDir, WRITABLE_DIR);
 		
 		final File newDir = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + name);
 		if (newDir.exists()) {
@@ -352,34 +354,22 @@ public class FileUtils {
 	 * @param suffix
 	 *            the suffix
 	 * @return the file
+	 * @throws IOException
 	 */
 	public static File createRandomDir(final File parentDir,
 	                                   final String prefix,
 	                                   final String suffix,
-	                                   final FileShutdownAction shutdownAction) {
+	                                   final FileShutdownAction shutdownAction) throws IOException {
 		
-		try {
-			final File file = File.createTempFile(prefix, suffix, parentDir);
-			if (!file.delete()) {
-				if (Logger.logError()) {
-					Logger.error("Could not delete random file `" + file.getAbsolutePath() + "`");
-				}
-				return null;
-			}
-			if (!file.mkdirs()) {
-				if (Logger.logError()) {
-					Logger.error("Could not create random directory `" + file.getAbsolutePath() + "`");
-				}
-				return null;
-			}
-			addToFileManager(file, shutdownAction);
-			return file;
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error("Could not create random file in `" + tmpDir.getAbsolutePath() + "`");
-			}
-			return null;
+		final File file = File.createTempFile(prefix, suffix, parentDir);
+		if (!file.delete()) {
+			throw new IOException("Could not delete random file `" + file.getAbsolutePath() + "`");
 		}
+		if (!file.mkdirs()) {
+			throw new IOException("Could not create random directory `" + file.getAbsolutePath() + "`");
+		}
+		addToFileManager(file, shutdownAction);
+		return file;
 	}
 	
 	/**
@@ -389,12 +379,16 @@ public class FileUtils {
 	 *            the prefix
 	 * @param suffix
 	 *            the suffix
+	 * @param shutdownAction
+	 *            the shutdown action
 	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static File createRandomDir(final String prefix,
 	                                   
 	                                   final String suffix,
-	                                   final FileShutdownAction shutdownAction) {
+	                                   final FileShutdownAction shutdownAction) throws IOException {
 		return createRandomDir(tmpDir, prefix, suffix, shutdownAction);
 		
 	}
@@ -402,19 +396,17 @@ public class FileUtils {
 	/**
 	 * Creates a new temporary file.
 	 * 
+	 * @param shutdownAction
+	 *            the shutdown action
 	 * @return the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	public static File createRandomFile(final FileShutdownAction shutdownAction) {
-		try {
-			final File file = File.createTempFile("reposuite", String.valueOf(new DateTime().getMillis()), tmpDir);
-			addToFileManager(file, shutdownAction);
-			return file;
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return null;
-		}
+	public static File createRandomFile(final FileShutdownAction shutdownAction) throws IOException {
+		final File file = File.createTempFile("tempfile", String.valueOf(new DateTime().getMillis()), tmpDir); //$NON-NLS-1$
+		addToFileManager(file, shutdownAction);
+		return file;
+		
 	}
 	
 	/**
@@ -422,20 +414,15 @@ public class FileUtils {
 	 * @param suffix
 	 * @param shutdownAction
 	 * @return
+	 * @throws IOException
 	 */
 	public static File createRandomFile(final String prefix,
 	                                    final String suffix,
-	                                    final FileShutdownAction shutdownAction) {
-		try {
-			final File file = File.createTempFile(prefix, suffix);
-			addToFileManager(file, shutdownAction);
-			return file;
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return null;
-		}
+	                                    final FileShutdownAction shutdownAction) throws IOException {
+		final File file = File.createTempFile(prefix, suffix);
+		addToFileManager(file, shutdownAction);
+		return file;
+		
 	}
 	
 	/**
@@ -512,13 +499,10 @@ public class FileUtils {
 	 * @param file
 	 *            the file
 	 * @return the list
+	 * @throws IOException
 	 */
-	public static List<String> fileToLines(final File file) {
-		try {
-			return org.apache.commons.io.FileUtils.readLines(file);
-		} catch (final IOException e) {
-			return null;
-		}
+	public static List<String> fileToLines(final File file) throws IOException {
+		return org.apache.commons.io.FileUtils.readLines(file);
 	}
 	
 	/**
@@ -762,51 +746,37 @@ public class FileUtils {
 	 * @param gzipFile
 	 * @param directory
 	 * @return
+	 * @throws FilePermissionException
+	 * @throws IOException
 	 */
-	public static boolean gunzip(final File gzipFile,
-	                             final File directory) {
-		try {
-			ensureFilePermissions(gzipFile, READABLE_FILE);
-			ensureFilePermissions(directory, WRITABLE_DIR);
-			
-			final FileInputStream fis = new FileInputStream(gzipFile);
-			final GZIPInputStream zis = new GZIPInputStream(fis);
-			final int BUFFER = 2048;
-			final byte[] buffer = new byte[BUFFER];
-			String path = gzipFile.getName();
-			final int i = path.lastIndexOf(".");
-			if (i > 0) {
-				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Compressed file does not contain a file extension like `.zip`.");
-				}
-				return false;
-			}
-			
-			final File outputFile = new File(path);
-			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
-			
-			while ((zis.read(buffer)) != -1) {
-				stream.write(buffer);
-			}
-			
-			stream.flush();
-			stream.close();
-			zis.close();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return false;
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return false;
+	public static void gunzip(final File gzipFile,
+	                          final File directory) throws FilePermissionException, IOException {
+		ensureFilePermissions(gzipFile, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
+		
+		final FileInputStream fis = new FileInputStream(gzipFile);
+		final GZIPInputStream zis = new GZIPInputStream(fis);
+		final int BUFFER = 2048;
+		final byte[] buffer = new byte[BUFFER];
+		String path = gzipFile.getName();
+		final int i = path.lastIndexOf(".");
+		if (i > 0) {
+			path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+		} else {
+			throw new IOException("Compressed file does not contain a file extension like `.zip`.");
 		}
-		return true;
+		
+		final File outputFile = new File(path);
+		ensureFilePermissions(outputFile, WRITABLE_FILE);
+		final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+		
+		while ((zis.read(buffer)) != -1) {
+			stream.write(buffer);
+		}
+		
+		stream.flush();
+		stream.close();
+		zis.close();
 	}
 	
 	/**
@@ -867,114 +837,81 @@ public class FileUtils {
 	 * @param lzmaFile
 	 * @param directory
 	 * @return
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
-	public static boolean unlzma(final File lzmaFile,
-	                             final File directory) {
-		try {
-			ensureFilePermissions(lzmaFile, READABLE_FILE);
-			ensureFilePermissions(directory, WRITABLE_DIR);
-			
-			final int BUFFER = 2048;
-			final FileInputStream fis = new FileInputStream(lzmaFile);
-			final LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
-			final byte[] buffer = new byte[BUFFER];
-			String path = lzmaFile.getName();
-			final int i = path.lastIndexOf(".");
-			if (i > 0) {
-				path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
-			} else {
-				if (Logger.logError()) {
-					Logger.error("Compressed file does not contain a file extension like `.zip`.");
-				}
-				return false;
-			}
-			
-			final File outputFile = new File(path);
-			ensureFilePermissions(outputFile, WRITABLE_FILE);
-			final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
-			
-			while ((zis.read(buffer)) != -1) {
-				stream.write(buffer);
-			}
-			
-			stream.flush();
-			stream.close();
-			zis.close();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return false;
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return false;
+	public static void unlzma(final File lzmaFile,
+	                          final File directory) throws IOException, FilePermissionException {
+		ensureFilePermissions(lzmaFile, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
+		
+		final int BUFFER = 2048;
+		final FileInputStream fis = new FileInputStream(lzmaFile);
+		final LzmaInputStream zis = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+		final byte[] buffer = new byte[BUFFER];
+		String path = lzmaFile.getName();
+		final int i = path.lastIndexOf(".");
+		if (i > 0) {
+			path = directory.getAbsolutePath() + FileUtils.fileSeparator + path.substring(0, i - 1);
+		} else {
+			throw new IOException("Compressed file does not contain a file extension like `.zip`.");
 		}
-		return true;
+		
+		final File outputFile = new File(path);
+		ensureFilePermissions(outputFile, WRITABLE_FILE);
+		final BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(outputFile));
+		
+		while ((zis.read(buffer)) != -1) {
+			stream.write(buffer);
+		}
+		
+		stream.flush();
+		stream.close();
+		zis.close();
+		
 	}
 	
-	public static boolean unpack(final File packedFile,
-	                             final File directory) {
-		boolean success = false;
+	public static void unpack(final File packedFile,
+	                          final File directory) throws IOException, FilePermissionException {
 		String[] split;
-		try {
-			final String path = packedFile.getCanonicalPath();
-			split = path.split("\\.");
-			String format = null;
-			if (split.length > 0) {
-				format = split[split.length - 1];
-			} else {
-				return false;
-			}
-			if (format.equalsIgnoreCase("ZIP") || format.equalsIgnoreCase("JAR")) {
-				return unzip(packedFile, directory);
-			} else if (format.equalsIgnoreCase("XZ") || format.equalsIgnoreCase("LZMA")
-			        || format.equalsIgnoreCase("XZIP")) {
-				success = unlzma(packedFile, directory);
-				if (success) {
-					if (split.length > 1) {
-						format = split[split.length - 2];
-						if (format.equalsIgnoreCase("TAR")) {
-							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
-							                     - 1)), directory);
-						}
-					}
-				} else {
-					return false;
-				}
-			} else if (format.equalsIgnoreCase("GZ") || format.equalsIgnoreCase("GZIP")) {
-				success = gunzip(packedFile, directory);
-				if (success) {
-					if (split.length > 1) {
-						format = split[split.length - 2];
-						if (format.equalsIgnoreCase("TAR")) {
-							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
-							                     - 1)), directory);
-						}
-					}
-				} else {
-					return false;
-				}
-			} else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP")
-			        || format.equalsIgnoreCase("BZIP2") || format.equalsIgnoreCase("BZ2")) {
-				success = bunzip2(packedFile, directory);
-				if (success) {
-					if (split.length > 1) {
-						format = split[split.length - 2];
-						if (format.equalsIgnoreCase("TAR")) {
-							return untar(new File(path.substring(0, path.length() - split[split.length - 1].length()
-							                     - 1)), directory);
-						}
-					}
-				} else {
-					return false;
-				}
-			}
-		} catch (final IOException e) {
-			return false;
+		
+		final String path = packedFile.getCanonicalPath();
+		split = path.split("\\.");
+		String format = null;
+		if (split.length > 0) {
+			format = split[split.length - 1];
+		} else {
+			throw new IOException("File does not have an extension.");
 		}
-		return success;
+		
+		if (format.equalsIgnoreCase("ZIP") || format.equalsIgnoreCase("JAR")) {
+			unzip(packedFile, directory);
+		} else if (format.equalsIgnoreCase("XZ") || format.equalsIgnoreCase("LZMA") || format.equalsIgnoreCase("XZIP")) {
+			unlzma(packedFile, directory);
+			if (split.length > 1) {
+				format = split[split.length - 2];
+				if (format.equalsIgnoreCase("TAR")) {
+					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+				}
+			}
+		} else if (format.equalsIgnoreCase("GZ") || format.equalsIgnoreCase("GZIP")) {
+			gunzip(packedFile, directory);
+			if (split.length > 1) {
+				format = split[split.length - 2];
+				if (format.equalsIgnoreCase("TAR")) {
+					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+				}
+			}
+		} else if (format.equalsIgnoreCase("BZ") || format.equalsIgnoreCase("BZIP") || format.equalsIgnoreCase("BZIP2")
+		        || format.equalsIgnoreCase("BZ2")) {
+			bunzip2(packedFile, directory);
+			if (split.length > 1) {
+				format = split[split.length - 2];
+				if (format.equalsIgnoreCase("TAR")) {
+					untar(new File(path.substring(0, path.length() - split[split.length - 1].length() - 1)), directory);
+				}
+			}
+		}
 		
 	}
 	
@@ -982,51 +919,41 @@ public class FileUtils {
 	 * @param tarFile
 	 * @param directory
 	 * @return
+	 * @throws FilePermissionException
+	 * @throws IOException
 	 */
-	public static boolean untar(final File tarFile,
-	                            final File directory) {
-		try {
-			ensureFilePermissions(tarFile, READABLE_FILE);
-			ensureFilePermissions(directory, WRITABLE_DIR);
-			
-			final int BUFFER = 2048;
-			BufferedOutputStream dest = null;
-			final FileInputStream fis = new FileInputStream(tarFile);
-			final TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
-			ArchiveEntry entry;
-			while ((entry = zis.getNextEntry()) != null) {
-				if (entry.isDirectory()) {
-					(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
-					continue;
-				}
-				if (Logger.logDebug()) {
-					Logger.debug("Extracting: " + entry);
-				}
-				int count;
-				final byte data[] = new byte[BUFFER];
-				// write the files to the disk
-				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-				        + FileUtils.fileSeparator + entry.getName()));
-				dest = new BufferedOutputStream(fos, BUFFER);
-				while ((count = zis.read(data, 0, BUFFER)) != -1) {
-					dest.write(data, 0, count);
-				}
-				dest.flush();
-				dest.close();
+	public static void untar(final File tarFile,
+	                         final File directory) throws FilePermissionException, IOException {
+		ensureFilePermissions(tarFile, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
+		
+		final int BUFFER = 2048;
+		BufferedOutputStream dest = null;
+		final FileInputStream fis = new FileInputStream(tarFile);
+		final TarArchiveInputStream zis = new TarArchiveInputStream(new BufferedInputStream(fis));
+		ArchiveEntry entry;
+		while ((entry = zis.getNextEntry()) != null) {
+			if (entry.isDirectory()) {
+				(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
+				continue;
 			}
-			zis.close();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			if (Logger.logDebug()) {
+				Logger.debug("Extracting: " + entry);
 			}
-			return false;
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			int count;
+			final byte data[] = new byte[BUFFER];
+			// write the files to the disk
+			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+			        + FileUtils.fileSeparator + entry.getName()));
+			dest = new BufferedOutputStream(fos, BUFFER);
+			while ((count = zis.read(data, 0, BUFFER)) != -1) {
+				dest.write(data, 0, count);
 			}
-			return false;
+			dest.flush();
+			dest.close();
 		}
-		return true;
+		zis.close();
+		
 	}
 	
 	/**
@@ -1037,52 +964,42 @@ public class FileUtils {
 	 * @param directory
 	 *            the target directory, not null
 	 * @return true on success, false otherwise
+	 * @throws FilePermissionException
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	@NoneNull
-	public static boolean unzip(final File zipFile,
-	                            final File directory) {
-		try {
-			ensureFilePermissions(zipFile, READABLE_FILE);
-			ensureFilePermissions(directory, WRITABLE_DIR);
-			
-			final int BUFFER = 2048;
-			BufferedOutputStream dest = null;
-			final FileInputStream fis = new FileInputStream(zipFile);
-			final ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-			ZipEntry entry;
-			while ((entry = zis.getNextEntry()) != null) {
-				if (entry.isDirectory()) {
-					(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
-					continue;
-				}
-				if (Logger.logDebug()) {
-					Logger.debug("Extracting: " + entry);
-				}
-				int count;
-				final byte data[] = new byte[BUFFER];
-				// write the files to the disk
-				final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
-				        + FileUtils.fileSeparator + entry.getName()));
-				dest = new BufferedOutputStream(fos, BUFFER);
-				while ((count = zis.read(data, 0, BUFFER)) != -1) {
-					dest.write(data, 0, count);
-				}
-				dest.flush();
-				dest.close();
+	public static void unzip(final File zipFile,
+	                         final File directory) throws FilePermissionException, FileNotFoundException, IOException {
+		ensureFilePermissions(zipFile, READABLE_FILE);
+		ensureFilePermissions(directory, WRITABLE_DIR);
+		
+		final int BUFFER = 2048;
+		BufferedOutputStream dest = null;
+		final FileInputStream fis = new FileInputStream(zipFile);
+		final ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+		ZipEntry entry;
+		while ((entry = zis.getNextEntry()) != null) {
+			if (entry.isDirectory()) {
+				(new File(directory.getAbsolutePath() + FileUtils.fileSeparator + entry.getName())).mkdir();
+				continue;
 			}
-			zis.close();
-		} catch (final IOException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			if (Logger.logDebug()) {
+				Logger.debug("Extracting: " + entry);
 			}
-			return false;
-		} catch (final FilePermissionException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			int count;
+			final byte data[] = new byte[BUFFER];
+			// write the files to the disk
+			final FileOutputStream fos = new FileOutputStream(new File(directory.getAbsolutePath()
+			        + FileUtils.fileSeparator + entry.getName()));
+			dest = new BufferedOutputStream(fos, BUFFER);
+			while ((count = zis.read(data, 0, BUFFER)) != -1) {
+				dest.write(data, 0, count);
 			}
-			return false;
+			dest.flush();
+			dest.close();
 		}
-		return true;
+		zis.close();
 	}
 	
 	/**
