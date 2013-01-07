@@ -47,7 +47,6 @@ import javax.persistence.Transient;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
-import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
@@ -920,8 +919,8 @@ public class Report implements Annotated, Comparable<Report> {
 			this.keywords = keywords;
 		} finally {
 			// POSTCONDITIONS
-			CompareCondition.equals(this.keywords, keywords,
-			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
+			// CompareCondition.equals(this.keywords, keywords,
+			//			                        "After setting a value, the corresponding field has to hold the same value as used as a parameter within the setter."); //$NON-NLS-1$
 		}
 	}
 	

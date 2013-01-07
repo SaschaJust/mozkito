@@ -173,19 +173,7 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 				                                                               (Person) values.get(fieldName)
 				                                                                              .getSecond()));
 				if (container != null) {
-					ret = (Tuple<T, T>) new Tuple<Person, Person>(
-					                                              container.getOldValue().getPersons().isEmpty()
-					                                                                                            ? null
-					                                                                                            : container.getOldValue()
-					                                                                                                       .getPersons()
-					                                                                                                       .iterator()
-					                                                                                                       .next(),
-					                                              container.getNewValue().getPersons().isEmpty()
-					                                                                                            ? null
-					                                                                                            : container.getNewValue()
-					                                                                                                       .getPersons()
-					                                                                                                       .iterator()
-					                                                                                                       .next());
+					ret = (Tuple<T, T>) new Tuple<Person, Person>(container.getOldValue(), container.getNewValue());
 				}
 				setChangedPersonValues(personValues);
 			} else if (type.isEnum()) {
@@ -378,21 +366,8 @@ public class HistoryElement implements Annotated, TextElement, Comparable<Histor
 			return new Tuple<String, String>(getChangedStringValues().get(lowerFieldName).getOldValue(),
 			                                 getChangedStringValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedPersonValues().containsKey(lowerFieldName)) {
-			return new Tuple<Person, Person>(
-			                                 getChangedPersonValues().get(lowerFieldName).getOldValue().isEmpty()
-			                                                                                                     ? null
-			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
-			                                                                                                                               .getOldValue()
-			                                                                                                                               .getPersons()
-			                                                                                                                               .iterator()
-			                                                                                                                               .next(),
-			                                 getChangedPersonValues().get(lowerFieldName).getNewValue().isEmpty()
-			                                                                                                     ? null
-			                                                                                                     : getChangedPersonValues().get(lowerFieldName)
-			                                                                                                                               .getNewValue()
-			                                                                                                                               .getPersons()
-			                                                                                                                               .iterator()
-			                                                                                                                               .next());
+			return new Tuple<Person, Person>(getChangedPersonValues().get(lowerFieldName).getOldValue(),
+			                                 getChangedPersonValues().get(lowerFieldName).getNewValue());
 		} else if (getChangedEnumValues().containsKey(lowerFieldName)) {
 			return new Tuple<Enum<?>, Enum<?>>(getChangedEnumValues().get(lowerFieldName).getOldValue(),
 			                                   getChangedEnumValues().get(lowerFieldName).getNewValue());
