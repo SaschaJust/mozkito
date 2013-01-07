@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import difflib.Delta;
-
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
 import org.mozkito.exceptions.UnsupportedProtocolType;
@@ -35,6 +33,8 @@ import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
+
+import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -104,7 +104,8 @@ public abstract class Repository {
 	 * Diff the file in the repository specified by filePath.
 	 * 
 	 * @param filePath
-	 *            the file path to be analyzed. This path must be relative.
+	 *            the file path to be analyzed. This path must be relative to the repository root and point to a file
+	 *            but not to a directory.
 	 * @param baseRevision
 	 *            the revision used as basis for comparison.
 	 * @param revisedRevision

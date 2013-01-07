@@ -288,6 +288,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 			newContent = response.getSecond();
 		}
 		
+		if ((!oldContent.isEmpty() && oldContent.get(0).startsWith("tree"))
+		        || (!newContent.isEmpty() && newContent.get(0).startsWith("tree"))) {
+			// filePath points to a directory
+			throw new IllegalArgumentException(
+			                                   String.format("Repository.diff() is only defined on file paths pointing to files not to directories. Supplied file path %s points to a directory.",
+			                                                 filePath));
+		}
+		
 		final Patch patch = DiffUtils.diff(oldContent, newContent);
 		return patch.getDeltas();
 	}
