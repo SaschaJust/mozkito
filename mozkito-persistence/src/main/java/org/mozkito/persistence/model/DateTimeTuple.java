@@ -26,13 +26,13 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.joda.time.DateTime;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistentTuple;
 
 /**
  * The Class DateTimeTuple.
  */
 @Embeddable
-public class DateTimeTuple implements Annotated {
+public class DateTimeTuple implements PersistentTuple<DateTime> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8037500943691455328L;
@@ -236,11 +236,11 @@ public class DateTimeTuple implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("DateTimeTuple [old=");
+		builder.append("DateTimeTuple [old="); //$NON-NLS-1$
 		builder.append(getOldValue());
-		builder.append(", new=");
+		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewValue());
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

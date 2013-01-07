@@ -11,22 +11,51 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.persistence.model;
-
-import javax.persistence.metamodel.MapAttribute;
-import javax.persistence.metamodel.SingularAttribute;
+package org.mozkito.persistence;
 
 /**
- * The Class PersonContainer_.
+ * The Interface PersistentTuple.
+ * 
+ * @param <T>
+ *            the generic type
+ * @author Sascha Just <sascha.just@mozkito.org>
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persistence.model.PersonContainer.class)
-@javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Mon Jan 07 15:24:20 CET 2013")
-public class PersonContainer_ {
+public interface PersistentTuple<T> extends Annotated {
 	
-	/** The generated id. */
-	public static volatile SingularAttribute<PersonContainer, Long>      generatedId;
+	/**
+	 * Gets the handle.
+	 * 
+	 * @return the handle
+	 */
+	String getHandle();
 	
-	/** The map. */
-	public static volatile MapAttribute<PersonContainer, String, Person> map;
+	/**
+	 * Gets the new value.
+	 * 
+	 * @return the new value
+	 */
+	T getNewValue();
+	
+	/**
+	 * Gets the old value.
+	 * 
+	 * @return the old value
+	 */
+	T getOldValue();
+	
+	/**
+	 * Sets the new value.
+	 * 
+	 * @param newValue
+	 *            the new new value
+	 */
+	void setNewValue(T newValue);
+	
+	/**
+	 * Sets the old value.
+	 * 
+	 * @param oldValue
+	 *            the new old value
+	 */
+	void setOldValue(T oldValue);
 }

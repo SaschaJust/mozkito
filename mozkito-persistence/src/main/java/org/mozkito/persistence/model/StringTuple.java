@@ -15,17 +15,18 @@ package org.mozkito.persistence.model;
 import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistentTuple;
 
 /**
  * The Class StringTuple.
  */
 @Embeddable
-public class StringTuple implements Annotated {
+public class StringTuple implements PersistentTuple<String> {
 	
 	/** The old value. */
 	private String            oldValue;
@@ -94,6 +95,7 @@ public class StringTuple implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Transient
 	public final String getHandle() {
 		return JavaUtils.getHandle(StringTuple.class);
 	}
@@ -164,11 +166,11 @@ public class StringTuple implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("StringTuple [old=");
+		builder.append("StringTuple [old="); //$NON-NLS-1$
 		builder.append(getOldValue());
-		builder.append(", new=");
+		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewValue());
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

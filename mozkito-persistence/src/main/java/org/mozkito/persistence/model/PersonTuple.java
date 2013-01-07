@@ -21,25 +21,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistentTuple;
 
 /**
  * The Class PersonTuple.
  */
 @Embeddable
-public class PersonTuple implements Annotated {
+public class PersonTuple implements PersistentTuple<Person> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8692461784697718949L;
 	
 	/** The old value. */
-	private PersonContainer   oldValue;
-	
-	/** The new value. */
-	private PersonContainer   newValue;
+	private PersonContainer   container;
 	
 	/**
 	 * Instantiates a new person tuple.
@@ -58,22 +54,8 @@ public class PersonTuple implements Annotated {
 	 */
 	public PersonTuple(final Person oldValue, final Person newValue) {
 		CollectionCondition.notAllNull(Arrays.asList(new Person[] { oldValue, newValue }),
-		                               "A PersonTuple cannot contain NULL as new and old value. Got newValue=%s, oldValue=%s.",
+		                               "A PersonTuple cannot contain NULL as new and old value. Got newValue=%s, oldValue=%s.", //$NON-NLS-1$
 		                               newValue, oldValue);
-		setOldValue("oldValue", oldValue);
-		setNewValue("newValue", newValue);
-	}
-	
-	/**
-	 * Instantiates a new person tuple.
-	 * 
-	 * @param oldValue
-	 *            the old value
-	 * @param newValue
-	 *            the new value
-	 */
-	@NoneNull
-	public PersonTuple(final PersonContainer oldValue, final PersonContainer newValue) {
 		setOldValue(oldValue);
 		setNewValue(newValue);
 	}
@@ -90,43 +72,18 @@ public class PersonTuple implements Annotated {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof PersonTuple)) {
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		final PersonTuple other = (PersonTuple) obj;
-		if (getNewValue() == null) {
-			if (other.getNewValue() != null) {
+		if (this.container == null) {
+			if (other.container != null) {
 				return false;
 			}
-		} else if (!getNewValue().equals(other.getNewValue())) {
-			return false;
-		}
-		if (getOldValue() == null) {
-			if (other.getOldValue() != null) {
-				return false;
-			}
-		} else if (!getOldValue().equals(other.getOldValue())) {
+		} else if (!this.container.equals(other.container)) {
 			return false;
 		}
 		return true;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.persistence.Annotated#getHandle()
-	 */
-	public final String getHandle() {
-		return JavaUtils.getHandle(PersonTuple.class);
-	}
-	
-	/**
-	 * Gets the new value.
-	 * 
-	 * @return the newValue
-	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public PersonContainer getNewValue() {
-		return this.newValue;
 	}
 	
 	/**
@@ -134,9 +91,38 @@ public class PersonTuple implements Annotated {
 	 * 
 	 * @return the oldValue
 	 */
-	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public PersonContainer getOldValue() {
-		return this.oldValue;
+	@ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	protected PersonContainer getContainer() {
+		return this.container;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.persistence.Annotated#getHandle()
+	 */
+	@Transient
+	public final String getHandle() {
+		return JavaUtils.getHandle(PersonTuple.class);
+	}
+	
+	/**
+	 * Gets the new value.
+	 * 
+	 * @return the new value
+	 */
+	public Person getNewValue() {
+		return this.container != null
+		                             ? this.container.get("new") : null; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Gets the old value.
+	 * 
+	 * @return the old value
+	 */
+	public Person getOldValue() {
+		return this.container != null
+		                             ? this.container.get("old") : null; //$NON-NLS-1$
 	}
 	
 	/*
@@ -147,12 +133,9 @@ public class PersonTuple implements Annotated {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((getNewValue() == null)
-		                                                    ? 0
-		                                                    : getNewValue().hashCode());
-		result = (prime * result) + ((getOldValue() == null)
-		                                                    ? 0
-		                                                    : getOldValue().hashCode());
+		result = (prime * result) + ((this.container == null)
+		                                                     ? 0
+		                                                     : this.container.hashCode());
 		return result;
 	}
 	
@@ -162,23 +145,11 @@ public class PersonTuple implements Annotated {
 	 * @param newValue
 	 *            the newValue to set
 	 */
-	public void setNewValue(final PersonContainer newValue) {
-		this.newValue = newValue;
-	}
-	
-	/**
-	 * Sets the new value.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param newValue
-	 *            the new value
-	 */
-	@Transient
-	public void setNewValue(final String key,
-	                        final Person newValue) {
-		this.newValue = new PersonContainer();
-		getNewValue().add(key, newValue);
+	public void setNewValue(final Person newValue) {
+		if (this.container == null) {
+			this.container = new PersonContainer();
+		}
+		this.container.add("new", newValue); //$NON-NLS-1$
 	}
 	
 	/**
@@ -187,23 +158,11 @@ public class PersonTuple implements Annotated {
 	 * @param oldValue
 	 *            the oldValue to set
 	 */
-	public void setOldValue(final PersonContainer oldValue) {
-		this.oldValue = oldValue;
-	}
-	
-	/**
-	 * Sets the old value.
-	 * 
-	 * @param key
-	 *            the key
-	 * @param oldValue
-	 *            the old value
-	 */
-	@Transient
-	public void setOldValue(final String key,
-	                        final Person oldValue) {
-		this.oldValue = new PersonContainer();
-		getOldValue().add(key, oldValue);
+	public void setOldValue(final Person oldValue) {
+		if (this.container == null) {
+			this.container = new PersonContainer();
+		}
+		this.container.add("old", oldValue); //$NON-NLS-1$
 	}
 	
 	/*
@@ -213,11 +172,11 @@ public class PersonTuple implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("PersonTuple [old=");
+		builder.append("PersonTuple [old="); //$NON-NLS-1$
 		builder.append(getOldValue());
-		builder.append(", new=");
+		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewValue());
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

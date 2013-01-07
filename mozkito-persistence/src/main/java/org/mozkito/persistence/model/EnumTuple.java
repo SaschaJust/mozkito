@@ -22,13 +22,13 @@ import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.mozkito.persistence.Annotated;
+import org.mozkito.persistence.PersistentTuple;
 
 /**
  * The Class EnumTuple.
  */
 @Embeddable
-public class EnumTuple implements Annotated {
+public class EnumTuple implements PersistentTuple<Enum<?>> {
 	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -7376689941623465731L;
@@ -345,13 +345,13 @@ public class EnumTuple implements Annotated {
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("EnumTuple [class=");
+		builder.append("EnumTuple [class="); //$NON-NLS-1$
 		builder.append(getEnumClassName());
-		builder.append(", old=");
+		builder.append(", old="); //$NON-NLS-1$
 		builder.append(getOldStringValue());
-		builder.append(", new=");
+		builder.append(", new="); //$NON-NLS-1$
 		builder.append(getNewStringValue());
-		builder.append("]");
+		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}
 	

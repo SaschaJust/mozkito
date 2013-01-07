@@ -10,6 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
+
 package org.mozkito.persistence.model;
 
 import javax.persistence.metamodel.SingularAttribute;
@@ -19,12 +20,9 @@ import javax.persistence.metamodel.SingularAttribute;
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.persistence.model.PersonTuple.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
-                             date = "Fri Sep 02 15:41:15 CEST 2011")
+                             date = "Mon Jan 07 15:24:20 CET 2013")
 public class PersonTuple_ {
 	
-	/** The new value. */
-	public static volatile SingularAttribute<PersonTuple, PersonContainer> newValue;
-	
-	/** The old value. */
-	public static volatile SingularAttribute<PersonTuple, PersonContainer> oldValue;
+	/** The container. */
+	public static volatile SingularAttribute<PersonTuple, PersonContainer> container;
 }
