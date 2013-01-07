@@ -19,7 +19,6 @@ import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.ClassFinder;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -103,8 +102,7 @@ public class BugzillaTracker extends Tracker {
 		// PRECONDITIONS
 		
 		try {
-			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI,
-			                                                                         getProxyConfig());
+			final BugzillaOverviewParser overviewParser = new BugzillaOverviewParser(this.trackerURI, this.overviewURI);
 			if (!overviewParser.parseOverview()) {
 				throw new UnrecoverableError("Could not parse overview URI.");
 			}
@@ -131,8 +129,6 @@ public class BugzillaTracker extends Tracker {
 	 *            the overview uri
 	 * @param bugzillaVersion
 	 *            the bugzilla version
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
@@ -140,14 +136,13 @@ public class BugzillaTracker extends Tracker {
 	                  final String username,
 	                  final String password,
 	                  final URI overviewURI,
-	                  final String bugzillaVersion,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+	                  final String bugzillaVersion) throws InvalidParameterException {
 		if (Logger.logTrace()) {
-			Logger.trace("Setup");
+			Logger.trace("Setup"); //$NON-NLS-1$
 		}
 		this.overviewURI = overviewURI;
 		this.bugzillaVersion = bugzillaVersion;
-		super.setup(fetchURI, username, password, proxyConfig);
+		super.setup(fetchURI, username, password);
 	}
 	
 	/**

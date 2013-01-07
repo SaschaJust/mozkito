@@ -124,11 +124,7 @@ public class SourceforgeOverviewParser implements OverviewParser {
 				final SourceforgeSummaryParser parseHandler = new SourceforgeSummaryParser();
 				
 				RawContent rawContent = null;
-				if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
-					rawContent = IOUtils.fetch(url.toURI(), this.tracker.getProxyConfig());
-				} else {
-					rawContent = IOUtils.fetch(url.toURI());
-				}
+				rawContent = IOUtils.fetch(url.toURI());
 				
 				final String html = rawContent.getContent();
 				

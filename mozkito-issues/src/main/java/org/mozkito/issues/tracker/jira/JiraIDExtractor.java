@@ -29,11 +29,21 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class JiraIDExtractor extends DefaultHandler {
 	
+	/** The in item. */
 	private boolean            inItem  = false;
+	
+	/** The content. */
 	private final StringBuffer content = new StringBuffer();
+	
+	/** The ids. */
 	private final List<String> ids     = new LinkedList<String>();
+	
+	/** The id regex. */
 	protected static Regex     idRegex = new Regex("^\\[({bugid}[^\\]]+-\\d+)\\]");
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
 	@Override
 	public void characters(final char[] ch,
 	                       final int start,
@@ -43,6 +53,9 @@ public class JiraIDExtractor extends DefaultHandler {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void endElement(final String uri,
 	                       final String localName,
@@ -72,6 +85,9 @@ public class JiraIDExtractor extends DefaultHandler {
 		return this.ids;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 */
 	@Override
 	public void startElement(final String uri,
 	                         final String localName,

@@ -81,8 +81,10 @@ public class MantisParser implements Parser {
 	 * @see org.mozkito.bugs.tracker.Parser#getAssignedTo()
 	 */
 	
+	/** The Constant MIN_CLOSED_TD_TAGS. */
 	private static final int MIN_CLOSED_TD_TAGS = 3;
 	
+	/** The Constant MIN_OPEN_TD_TAGS. */
 	private static final int MIN_OPEN_TD_TAGS   = 3;
 	
 	/**
@@ -271,6 +273,7 @@ public class MantisParser implements Parser {
 	/** The fetch time. */
 	private DateTime                        fetchTime;
 	
+	/** The md5. */
 	private byte[]                          md5;
 	
 	/**
@@ -1016,6 +1019,10 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getResolution()
+	 */
 	@Override
 	public Resolution getResolution() {
 		// PRECONDITIONS
@@ -1087,6 +1094,10 @@ public class MantisParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getSeverity()
+	 */
 	@Override
 	public Severity getSeverity() {
 		// PRECONDITIONS
@@ -1302,11 +1313,8 @@ public class MantisParser implements Parser {
 			
 			final URI uri = reportLink.getUri();
 			RawContent rawContent = null;
-			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
-				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
-			} else {
-				rawContent = IOUtils.fetch(uri);
-			}
+			rawContent = IOUtils.fetch(uri);
+			
 			this.fetchTime = new DateTime();
 			if (!checkRAW(rawContent)) {
 				if (Logger.logWarn()) {

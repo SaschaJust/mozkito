@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
@@ -97,31 +96,21 @@ public class SourceforgeTracker extends Tracker {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param fetchURI
-	 *            the fetch uri
-	 * @param username
-	 *            the username
-	 * @param password
-	 *            the password
-	 * @param groupId
-	 *            the group id
-	 * @param atId
-	 *            the at id
-	 * @param bugType
-	 *            the bug type
-	 * @param proxyConfig
-	 *            the proxy config
-	 * @throws InvalidParameterException
-	 *             the invalid parameter exception
+	 *
+	 * @param fetchURI the fetch uri
+	 * @param username the username
+	 * @param password the password
+	 * @param groupId the group id
+	 * @param atId the at id
+	 * @param bugType the bug type
+	 * @throws InvalidParameterException the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,
 	                  final Long groupId,
 	                  final Long atId,
-	                  final Type bugType,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+	                  final Type bugType) throws InvalidParameterException {
 		throw new UnrecoverableError(
 		                             "Sourceforge changed its interface again. Please update parsers! BUT: bug ids changed. Ergo: do not mine sourceforge before 2020.");
 		// this.groupId = groupId;

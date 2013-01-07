@@ -28,7 +28,6 @@ import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.exceptions.InvalidParameterException;
@@ -44,8 +43,8 @@ import org.mozkito.issues.tracker.Tracker;
 public class GoogleTracker extends Tracker {
 	
 	/** The fetch regex pattern. */
-	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))";
-	
+	protected static String       fetchRegexPattern = "((https?://code.google.com/feeds/issues/p/({=project}\\S+)/issues/full)|(https?://code.google.com/p/({=project}\\S+)/issues/list))"; //$NON-NLS-1$
+	                                                                                                                                                                                        
 	/** The project name. */
 	private String                projectName;
 	
@@ -59,12 +58,16 @@ public class GoogleTracker extends Tracker {
 	 */
 	public String getIssuesFeedUri() {
 		final StringBuilder sb = new StringBuilder();
+		
 		sb.append(getUri().toString());
-		if (!getUri().toString().endsWith("/")) {
-			sb.append("/");
+		
+		if (!getUri().toString().endsWith("/")) { //$NON-NLS-1$
+			sb.append("/"); //$NON-NLS-1$
 		}
+		
 		sb.append(getProjectName());
-		sb.append("/issues/full");
+		sb.append("/issues/full"); //$NON-NLS-1$
+		
 		return sb.toString();
 	}
 	
@@ -150,19 +153,16 @@ public class GoogleTracker extends Tracker {
 	 * 
 	 * @param projectName
 	 *            the project name
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
-	public void setup(final String projectName,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+	public void setup(final String projectName) throws InvalidParameterException {
 		this.projectName = projectName;
 		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
 		
 		try {
 			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
-			super.setup(fetchURI, getUsername(), getPassword(), proxyConfig);
+			super.setup(fetchURI, getUsername(), getPassword());
 		} catch (final URISyntaxException e) {
 			throw new UnrecoverableError(e);
 		}
@@ -178,24 +178,13 @@ public class GoogleTracker extends Tracker {
 	 *            the password
 	 * @param projectName
 	 *            the project name
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
 	public void setup(final String username,
 	                  final String password,
-	                  final String projectName,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
-		this.projectName = projectName;
-		
-		// This should suffice as stated on gdata documents: http://code.google.com/apis/gdata/articles/proxy_setup.html
-		if (proxyConfig != null) {
-			System.setProperty("http.proxyHost", proxyConfig.getHost());
-			System.setProperty("http.proxyPort", String.valueOf(proxyConfig.getPort()));
-		}
-		
-		this.service = new ProjectHostingService("unisaarland-reposuite-0.1");
+	                  final String projectName) throws InvalidParameterException {
+		this.service = new ProjectHostingService("org.mozkito-1.0"); //$NON-NLS-1$
 		
 		try {
 			if ((getUsername() != null) && (getPassword() != null) && (!getUsername().trim().isEmpty())) {
@@ -206,8 +195,8 @@ public class GoogleTracker extends Tracker {
 		}
 		
 		try {
-			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/");
-			super.setup(fetchURI, username, password, proxyConfig);
+			final URI fetchURI = new URI("https://code.google.com/feeds/issues/p/"); //$NON-NLS-1$
+			super.setup(fetchURI, username, password);
 		} catch (final URISyntaxException e) {
 			throw new UnrecoverableError(e);
 		}

@@ -285,6 +285,7 @@ public class SourceforgeParser implements Parser {
 	/** The bug type. */
 	private final Type                                bugType;
 	
+	/** The md5. */
 	private byte[]                                    md5;
 	
 	/**
@@ -733,6 +734,10 @@ public class SourceforgeParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
@@ -1022,11 +1027,8 @@ public class SourceforgeParser implements Parser {
 		
 		try {
 			RawContent rawContent = null;
-			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
-				rawContent = IOUtils.fetch(reportLink.getUri(), this.tracker.getProxyConfig());
-			} else {
-				rawContent = IOUtils.fetch(reportLink.getUri());
-			}
+			
+			rawContent = IOUtils.fetch(reportLink.getUri());
 			
 			this.fetchTime = new DateTime();
 			

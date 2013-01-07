@@ -201,16 +201,22 @@ public class JiraParser implements Parser {
 	/** The resolver. */
 	private Person                          resolver;
 	
+	/** The md5. */
 	private byte[]                          md5;
 	
+	/** The proxy config. */
 	private ProxyConfig                     proxyConfig       = null;
 	
+	/** The report. */
 	private XmlReport                       report;
 	
+	/** The document. */
 	private Document                        document;
 	
+	/** The base uri. */
 	private String                          baseUri;
 	
+	/** The issue id. */
 	private String                          issueId;
 	
 	/** The Constant DATE_TIME_PATTERN. */
@@ -222,8 +228,11 @@ public class JiraParser implements Parser {
 	 */
 	
 	/**
-	 * @param rawContent
-	 * @return
+	 * Check raw.
+	 * 
+	 * @param rawReport
+	 *            the raw report
+	 * @return true, if successful
 	 */
 	private boolean checkRAW(final RawContent rawReport) {
 		// PRECONDITIONS
@@ -258,8 +267,11 @@ public class JiraParser implements Parser {
 	 */
 	
 	/**
-	 * @param rawContent
-	 * @return
+	 * Creates the document.
+	 * 
+	 * @param rawReport
+	 *            the raw report
+	 * @return the xml report
 	 */
 	private XmlReport createDocument(final RawContent rawReport) {
 		// PRECONDITIONS
@@ -293,6 +305,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getAssignedTo()
+	 */
 	@Override
 	public Person getAssignedTo() {
 		// PRECONDITIONS
@@ -624,6 +640,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
@@ -776,6 +796,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getStatus()
+	 */
 	@Override
 	public Status getStatus() {
 		// PRECONDITIONS
@@ -891,7 +915,10 @@ public class JiraParser implements Parser {
 	}
 	
 	/**
+	 * Sets the proxy config.
+	 * 
 	 * @param proxyConfig
+	 *            the new proxy config
 	 */
 	public void setProxyConfig(final ProxyConfig proxyConfig) {
 		// PRECONDITIONS
@@ -922,6 +949,10 @@ public class JiraParser implements Parser {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#setURI(org.mozkito.issues.tracker.ReportLink)
+	 */
 	@Override
 	public boolean setURI(final ReportLink reportLink) {
 		// PRECONDITIONS

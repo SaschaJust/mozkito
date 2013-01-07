@@ -43,8 +43,10 @@ import org.mozkito.persistence.model.Person;
  */
 public class JiraHistoryParser {
 	
+	/** The Constant MIN_CHILD_NODE_SIZE. */
 	private static final int                MIN_CHILD_NODE_SIZE       = 3;
 	
+	/** The Constant NAME_TAG_LENGTH. */
 	private static final int                NAME_TAG_LENGTH           = 5;
 	
 	/** The skip regex. */

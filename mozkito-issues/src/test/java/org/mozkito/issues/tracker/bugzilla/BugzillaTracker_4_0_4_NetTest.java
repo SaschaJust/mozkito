@@ -46,7 +46,7 @@ public class BugzillaTracker_4_0_4_NetTest {
 		this.fetchURI = new URI(
 		                        "https://bugs.eclipse.org/bugs/buglist.cgi?priority=P1;classification=Eclipse;query_format=advanced;version=1.0;product=e4");
 		try {
-			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4", null);
+			this.tracker.setup(this.fetchURI, null, null, this.fetchURI, "4.0.4");
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

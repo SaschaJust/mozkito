@@ -44,6 +44,7 @@ import org.mozkito.issues.tracker.ReportLink;
  */
 public class MantisOverviewParser implements OverviewParser {
 	
+	/** The Constant MANTIS_BUG_ID_LENGTH. */
 	private static final int MANTIS_BUG_ID_LENGTH = 7;
 	
 	/**
@@ -127,11 +128,7 @@ public class MantisOverviewParser implements OverviewParser {
 		
 		try {
 			RawContent firstPage = null;
-			if (this.tracker.getProxyConfig() != null) {
-				firstPage = IOUtils.fetch(uri, this.tracker.getProxyConfig());
-			} else {
-				firstPage = IOUtils.fetch(uri);
-			}
+			firstPage = IOUtils.fetch(uri);
 			
 			final Document document = Jsoup.parse(firstPage.getContent());
 			final Element buglistTable = document.getElementById("buglist");
@@ -233,11 +230,8 @@ public class MantisOverviewParser implements OverviewParser {
 		try {
 			
 			RawContent firstPage = null;
-			if (this.tracker.getProxyConfig() != null) {
-				firstPage = IOUtils.fetch(pageUri, this.tracker.getProxyConfig());
-			} else {
-				firstPage = IOUtils.fetch(pageUri);
-			}
+			firstPage = IOUtils.fetch(pageUri);
+			
 			final Document document = Jsoup.parse(firstPage.getContent());
 			final Element buglistTable = document.getElementById("buglist");
 			if (buglistTable == null) {

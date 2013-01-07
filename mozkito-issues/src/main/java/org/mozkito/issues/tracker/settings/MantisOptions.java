@@ -30,7 +30,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -48,6 +47,8 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	
 	/** The tracker. */
 	private MantisTracker                                            tracker;
+	
+	/** The csv options. */
 	private net.ownhero.dev.hiari.settings.InputFileArgument.Options csvOptions;
 	
 	/**
@@ -158,12 +159,11 @@ public class MantisOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Track
 	@Override
 	public void setup(final URI trackerUri,
 	                  final String trackerUser,
-	                  final String trackerPassword,
-	                  final ProxyConfig proxyConfig) {
+	                  final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
-			this.tracker.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+			this.tracker.setup(trackerUri, trackerUser, trackerPassword);
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);
 			

@@ -45,7 +45,7 @@ public class ReportPersistence_NetTest extends DatabaseTest {
 			try {
 				tracker.setup(new URI("https://bugzilla.mozilla.org/"), null, null,
 				              this.getClass().getResource(FileUtils.fileSeparator + "bugzilla_eclipse_overview.html")
-				                  .toURI(), "4.0.4", null);
+				                  .toURI(), "4.0.4");
 			} catch (final InvalidParameterException e) {
 				e.printStackTrace();
 				fail();

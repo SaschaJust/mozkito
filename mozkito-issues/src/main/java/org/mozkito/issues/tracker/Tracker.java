@@ -21,7 +21,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -66,9 +65,6 @@ public abstract class Tracker {
 	/** The report links. */
 	private BlockingQueue<ReportLink> reportLinks    = new LinkedBlockingQueue<ReportLink>();
 	
-	/** The proxy config. */
-	private ProxyConfig               proxyConfig;
-	
 	/** The Constant unknownPerson. */
 	public static final Person        UNKNOWN_PERSON = new Person("<unknown>", null, null);    //$NON-NLS-1$
 	                                                                                            
@@ -98,7 +94,7 @@ public abstract class Tracker {
 		if (!this.reportLinks.isEmpty()) {
 			final ReportLink next = this.reportLinks.poll();
 			if (Logger.logTrace()) {
-				Logger.trace("Providing next ReportLink %s", next);
+				Logger.trace("Providing next ReportLink %s", next); //$NON-NLS-1$
 			}
 			return next;
 		}
@@ -119,15 +115,6 @@ public abstract class Tracker {
 	 */
 	public String getPassword() {
 		return this.password;
-	}
-	
-	/**
-	 * Gets the proxy password.
-	 * 
-	 * @return the proxy password
-	 */
-	public ProxyConfig getProxyConfig() {
-		return this.proxyConfig;
 	}
 	
 	/**
@@ -285,25 +272,21 @@ public abstract class Tracker {
 	 *            The username to be used to login to a bug tracking system. May be null iff password is null.
 	 * @param password
 	 *            The password to be used to login to a bug tracking system. May be null iff username is null.
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
-	                  final String password,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+	                  final String password) throws InvalidParameterException {
 		Condition.check((username == null) == (password == null),
 		                "Either username and password are set or none at all. username = `%s`, password = `%s`", //$NON-NLS-1$
 		                username, password);
 		if (Logger.logTrace()) {
-			Logger.trace("Setup");
+			Logger.trace("Setup"); //$NON-NLS-1$
 		}
 		this.trackerURI = fetchURI;
 		setUsername(username);
 		setPassword(password);
-		this.proxyConfig = proxyConfig;
 		
 		this.reportLinks = new LinkedBlockingDeque<ReportLink>();
 		this.reportLinks.addAll(getReportLinks());

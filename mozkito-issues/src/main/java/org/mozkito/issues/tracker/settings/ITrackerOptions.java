@@ -14,8 +14,6 @@ package org.mozkito.issues.tracker.settings;
 
 import java.net.URI;
 
-import net.ownhero.dev.ioda.ProxyConfig;
-
 /**
  * The Interface ITrackerOptions.
  * 
@@ -25,19 +23,13 @@ public interface ITrackerOptions {
 	
 	/**
 	 * Setup.
-	 * 
-	 * @param trackerUri
-	 *            the tracker uri
-	 * @param trackerUser
-	 *            the tracker user
-	 * @param trackerPassword
-	 *            the tracker password
-	 * @param proxyConfig
-	 *            the proxy config
+	 *
+	 * @param trackerUri the tracker uri
+	 * @param trackerUser the tracker user
+	 * @param trackerPassword the tracker password
 	 */
 	void setup(URI trackerUri,
 	           String trackerUser,
-	           String trackerPassword,
-	           ProxyConfig proxyConfig);
+	           String trackerPassword);
 	
 }

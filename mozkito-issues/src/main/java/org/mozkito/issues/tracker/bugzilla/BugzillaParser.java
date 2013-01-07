@@ -212,6 +212,7 @@ public abstract class BugzillaParser implements Parser {
 	/** The xml bug. */
 	private Bug               xmlBug;
 	
+	/** The md5. */
 	private byte[]            md5;
 	
 	/**
@@ -339,6 +340,10 @@ public abstract class BugzillaParser implements Parser {
 	 */
 	protected abstract BugzillaHistoryParser getHistoryParser();
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
@@ -402,11 +407,8 @@ public abstract class BugzillaParser implements Parser {
 				return false;
 			}
 			RawContent rawContent = null;
-			if ((this.tracker != null) && (this.tracker.getProxyConfig() != null)) {
-				rawContent = IOUtils.fetch(uri, this.tracker.getProxyConfig());
-			} else {
-				rawContent = IOUtils.fetch(uri);
-			}
+			
+			rawContent = IOUtils.fetch(uri);
 			
 			if (!checkRAW(rawContent.getContent())) {
 				if (Logger.logError()) {

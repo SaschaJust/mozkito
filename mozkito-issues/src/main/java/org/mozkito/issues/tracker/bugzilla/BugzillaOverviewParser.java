@@ -19,7 +19,6 @@ import java.util.Set;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
@@ -51,9 +50,6 @@ public class BugzillaOverviewParser implements OverviewParser {
 	/** The tracker uri. */
 	private final String          trackerURI;
 	
-	/** The proxy config. */
-	private final ProxyConfig     proxyConfig;
-	
 	/**
 	 * Instantiates a new bugzilla overview parser.
 	 * 
@@ -61,14 +57,10 @@ public class BugzillaOverviewParser implements OverviewParser {
 	 *            the tracker uri
 	 * @param overviewURI
 	 *            the overview uri
-	 * @param proxyConfig
-	 *            the proxy config
 	 */
-	public BugzillaOverviewParser(@NotNull final URI trackerURI, @NotNull final URI overviewURI,
-	        final ProxyConfig proxyConfig) {
+	public BugzillaOverviewParser(@NotNull final URI trackerURI, @NotNull final URI overviewURI) {
 		this.overviewURI = overviewURI;
 		this.trackerURI = trackerURI.toASCIIString();
-		this.proxyConfig = proxyConfig;
 	}
 	
 	/**
@@ -140,11 +132,7 @@ public class BugzillaOverviewParser implements OverviewParser {
 				return false;
 			}
 			try {
-				if (this.proxyConfig != null) {
-					content = IOUtils.fetch(this.overviewURI, this.proxyConfig);
-				} else {
-					content = IOUtils.fetch(this.overviewURI);
-				}
+				content = IOUtils.fetch(this.overviewURI);
 			} catch (final UnsupportedProtocolException e1) {
 				if (Logger.logError()) {
 					Logger.error(e1);

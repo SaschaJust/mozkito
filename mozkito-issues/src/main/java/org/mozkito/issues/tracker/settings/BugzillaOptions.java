@@ -26,7 +26,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
@@ -188,13 +187,12 @@ public class BugzillaOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Tra
 	@Override
 	public void setup(final URI trackerUri,
 	                  final String trackerUser,
-	                  final String trackerPassword,
-	                  final ProxyConfig proxyConfig) {
+	                  final String trackerPassword) {
 		// PRECONDITIONS
 		
 		try {
 			this.tracker.setup(trackerUri, trackerUser, trackerPassword, this.overviewArgument.getValue(),
-			                   this.bugzillaVersionArgument.getValue(), proxyConfig);
+			                   this.bugzillaVersionArgument.getValue());
 			
 		} catch (final InvalidParameterException e) {
 			throw new UnrecoverableError(e);

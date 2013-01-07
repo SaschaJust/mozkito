@@ -211,6 +211,7 @@ public class GoogleParser implements Parser {
 	/** The resolution timestamp. */
 	private DateTime                        resolutionTimestamp;
 	
+	/** The md5. */
 	private byte[]                          md5;
 	
 	/**
@@ -753,6 +754,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getMd5()
+	 */
 	@Override
 	public final byte[] getMd5() {
 		return this.md5;
@@ -802,6 +806,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getResolution()
+	 */
 	@Override
 	public Resolution getResolution() {
 		// PRECONDITIONS
@@ -887,6 +894,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getSiblings()
+	 */
 	@Override
 	public Set<String> getSiblings() {
 		// PRECONDITIONS
@@ -933,6 +943,9 @@ public class GoogleParser implements Parser {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.mozkito.issues.tracker.Parser#getSubject()
+	 */
 	@Override
 	public String getSubject() {
 		// PRECONDITIONS

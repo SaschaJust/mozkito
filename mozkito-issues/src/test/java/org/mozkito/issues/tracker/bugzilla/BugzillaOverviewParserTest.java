@@ -47,7 +47,7 @@ public class BugzillaOverviewParserTest {
 			                                                                 this.getClass()
 			                                                                     .getResource(FileUtils.fileSeparator
 			                                                                                          + "bugzilla_eclipse_overview.html")
-			                                                                     .toURI(), null);
+			                                                                     .toURI());
 			assertTrue(parser.parseOverview());
 			
 			int counter = 0;
@@ -79,7 +79,7 @@ public class BugzillaOverviewParserTest {
 			                                                                 this.getClass()
 			                                                                     .getResource(FileUtils.fileSeparator
 			                                                                                          + "bugzilla_mozilla_overview.html")
-			                                                                     .toURI(), null);
+			                                                                     .toURI());
 			assertTrue(parser.parseOverview());
 			
 			int counter = 0;

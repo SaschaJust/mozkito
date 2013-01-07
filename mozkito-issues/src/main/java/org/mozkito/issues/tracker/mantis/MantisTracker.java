@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kisa.Logger;
 
@@ -36,6 +35,7 @@ public class MantisTracker extends Tracker {
 	
 	// URL = https://issues.openbravo.com/print_bug_page.php?bug_id=19779
 	
+	/** The bug ids. */
 	private Collection<String> bugIds = null;
 	
 	/*
@@ -102,9 +102,8 @@ public class MantisTracker extends Tracker {
 	@Override
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
-	                  final String password,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
-		super.setup(fetchURI, username, password, proxyConfig);
+	                  final String password) throws InvalidParameterException {
+		super.setup(fetchURI, username, password);
 	}
 	
 	/**

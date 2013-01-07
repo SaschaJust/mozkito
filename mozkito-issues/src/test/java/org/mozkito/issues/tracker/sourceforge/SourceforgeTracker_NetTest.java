@@ -47,7 +47,7 @@ public class SourceforgeTracker_NetTest {
 		
 		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {
-			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l, Type.BUG, null);
+			tracker.setup(new URI(liveUrl), null, null, 97367l, 617889l, Type.BUG);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();
@@ -184,7 +184,7 @@ public class SourceforgeTracker_NetTest {
 		final SourceforgeTracker tracker = new SourceforgeTracker();
 		try {
 			tracker.setup(getClass().getResource(FileUtils.fileSeparator).toURI(), null, null, 97367l, 617889l,
-			              Type.BUG, null);
+			              Type.BUG);
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

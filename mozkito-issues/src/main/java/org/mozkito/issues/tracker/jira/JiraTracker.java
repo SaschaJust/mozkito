@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.ownhero.dev.ioda.IOUtils;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.ioda.container.RawContent;
 import net.ownhero.dev.ioda.exceptions.FetchException;
 import net.ownhero.dev.ioda.exceptions.UnsupportedProtocolException;
@@ -52,11 +51,19 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	/** The project key. */
 	private String                projectKey;
 	
+	/**
+	 * Fetch.
+	 * 
+	 * @param uri
+	 *            the uri
+	 * @return the raw content
+	 * @throws UnsupportedProtocolException
+	 *             the unsupported protocol exception
+	 * @throws FetchException
+	 *             the fetch exception
+	 */
 	private RawContent fetch(final URI uri) throws UnsupportedProtocolException, FetchException {
-		if (getProxyConfig() == null) {
-			return IOUtils.fetch(uri);
-		}
-		return IOUtils.fetch(uri, getProxyConfig());
+		return IOUtils.fetch(uri);
 	}
 	
 	/*
@@ -68,11 +75,7 @@ public class JiraTracker extends Tracker implements OverviewParser {
 		// PRECONDITIONS
 		
 		try {
-			final JiraParser parser = new JiraParser();
-			if (getProxyConfig() != null) {
-				parser.setProxyConfig(getProxyConfig());
-			}
-			return parser;
+			return new JiraParser();
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -172,28 +175,22 @@ public class JiraTracker extends Tracker implements OverviewParser {
 	 *            the password
 	 * @param projectKey
 	 *            the project key
-	 * @param proxyConfig
-	 *            the proxy config
 	 * @throws InvalidParameterException
 	 *             the invalid parameter exception
 	 */
 	public void setup(@NotNull final URI fetchURI,
 	                  final String username,
 	                  final String password,
-	                  final String projectKey,
-	                  final ProxyConfig proxyConfig) throws InvalidParameterException {
+	                  final String projectKey) throws InvalidParameterException {
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Setting up JiraTracker with fetchURI=%s, username=%s, password=%s, projectKey=%s, proxyConfig=%s",
 			             fetchURI == null
 			                             ? "null"
-			                             : fetchURI.toASCIIString(), username, password, projectKey,
-			             proxyConfig == null
-			                                ? "null"
-			                                : proxyConfig.toString());
+			                             : fetchURI.toASCIIString(), username, password, projectKey);
 		}
 		
 		this.projectKey = projectKey;
-		super.setup(fetchURI, username, password, proxyConfig);
+		super.setup(fetchURI, username, password);
 	}
 }

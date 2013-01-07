@@ -48,7 +48,7 @@ public class JiraTracker_NetTest {
 	public void setUp() throws Exception {
 		this.tracker = new JiraTracker();
 		try {
-			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR", null);
+			this.tracker.setup(new URI("http://jira.codehaus.org"), null, null, "XPR");
 		} catch (final InvalidParameterException e) {
 			e.printStackTrace();
 			fail();

@@ -28,7 +28,6 @@ import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
-import net.ownhero.dev.ioda.ProxyConfig;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
@@ -67,9 +66,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	/** The sourceforge options. */
 	private SourceforgeOptions                sourceforgeOptions;
 	
-	/** The proxy options. */
-	private ProxyOptions                      proxyOptions;
-	
 	/** The tracker uri options. */
 	private Options                           trackerURIOptions;
 	
@@ -91,15 +87,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 	        throws ArgumentRegistrationException {
 		super(argumentSet, "tracker", "Tracker settings.", requirement); //$NON-NLS-1$ //$NON-NLS-2$
 		argumentSet.getSettings();
-	}
-	
-	/**
-	 * Gets the proxy options.
-	 * 
-	 * @return the proxy options
-	 */
-	public final ProxyOptions getProxyOptions() {
-		return this.proxyOptions;
 	}
 	
 	/**
@@ -143,31 +130,27 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 			final String trackerUser = getSettings().getArgument(getTrackerUser()).getValue();
 			final String trackerPassword = getSettings().getArgument(getTrackerPassword()).getValue();
 			final Boolean useProxy = getSettings().getArgument(this.useProxyOptions).getValue();
-			ProxyConfig proxyConfig = null;
-			if (useProxy) {
-				proxyConfig = getSettings().getArgumentSet(this.proxyOptions).getValue();
-			}
 			
 			switch (trackerTypeArgument.getValue()) {
 				case BUGZILLA:
 					tracker = getSettings().getArgumentSet(this.bugzillaOptions).getValue();
-					this.bugzillaOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					this.bugzillaOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
 				case JIRA:
 					tracker = getSettings().getArgumentSet(this.jiraOptions).getValue();
-					this.jiraOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					this.jiraOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
 				case MANTIS:
 					tracker = getSettings().getArgumentSet(this.mantisOptions).getValue();
-					this.mantisOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					this.mantisOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
 				case SOURCEFORGE:
 					tracker = getSettings().getArgumentSet(this.sourceforgeOptions).getValue();
-					this.sourceforgeOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					this.sourceforgeOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
 				case GOOGLE:
 					tracker = getSettings().getArgumentSet(this.googleOptions).getValue();
-					this.googleOptions.setup(trackerUri, trackerUser, trackerPassword, proxyConfig);
+					this.googleOptions.setup(trackerUri, trackerUser, trackerPassword);
 					break;
 				default:
 					throw new UnrecoverableError(String.format("Could not handle %s: %s", trackerTypeArgument.getTag(), //$NON-NLS-1$
@@ -238,11 +221,6 @@ public class TrackerOptions extends ArgumentSetOptions<Tracker, ArgumentSet<Trac
 				Logger.always("Requirement.equals(this.useProxyOptions, true) ? required: "
 				        + Requirement.equals(this.useProxyOptions, true).equals(Requirement.required));
 				Logger.always("this.useProxyOptions = " + System.getProperty(this.useProxyOptions.getName()));
-			}
-			
-			this.proxyOptions = new ProxyOptions(set, Requirement.equals(this.useProxyOptions, true));
-			if (this.proxyOptions.required()) {
-				req(this.proxyOptions, map);
 			}
 			
 			// tracker alternatives

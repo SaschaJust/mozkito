@@ -43,8 +43,10 @@ import org.mozkito.persistence.model.Person;
  */
 public class BugzillaHistoryParser_4_0_4 implements BugzillaHistoryParser {
 	
+	/** The Constant MIN_HISTORY_ELEMENT_TABLE_COLUMNS. */
 	private static final int                MIN_HISTORY_ELEMENT_TABLE_COLUMNS = 5;
 	
+	/** The Constant MIN_NUMBER_BODY_TABLE_COLUMNS. */
 	private static final int                MIN_NUMBER_BODY_TABLE_COLUMNS     = 3;
 	
 	/** The namespace. */
