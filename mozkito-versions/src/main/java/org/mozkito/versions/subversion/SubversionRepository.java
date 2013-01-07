@@ -10,9 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
+
 package org.mozkito.versions.subversion;
 
 import java.io.File;
@@ -27,8 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.URIUtils;
@@ -131,8 +129,9 @@ public class SubversionRepository extends Repository {
 		super();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -155,10 +154,7 @@ public class SubversionRepository extends Repository {
 			logClient.doAnnotate(relativePath, svnRevision, buildRevision("0"), svnRevision, annotateHandler);
 			return annotateHandler.getResults();
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
@@ -169,8 +165,9 @@ public class SubversionRepository extends Repository {
 	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
 	 *            version of the alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision {@link Repository#setup(URI, String, String)} to be executed.
+	 * @throws SVNException
 	 */
-	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) {
+	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) throws SVNException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		SVNRevision svnRevision;
@@ -184,29 +181,22 @@ public class SubversionRepository extends Repository {
 		
 		Condition.notNull(svnRevision, "SVNRevision may never be null at this point.");
 		
-		try {
-			if (svnRevision.getNumber() < 0) {
-				if (svnRevision.equals(SVNRevision.PREVIOUS)) {
-					
-					svnRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
-				} else {
-					svnRevision = SVNRevision.create(this.repository.getLatestRevision());
-				}
+		if (svnRevision.getNumber() < 0) {
+			if (svnRevision.equals(SVNRevision.PREVIOUS)) {
+				
+				svnRevision = SVNRevision.create(this.repository.getLatestRevision() - 1);
+			} else {
+				svnRevision = SVNRevision.create(this.repository.getLatestRevision());
 			}
-		} catch (final SVNException e) {
-			
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
 		}
 		
 		return svnRevision;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#checkoutPath(java.lang. String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#checkoutPath(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -242,15 +232,13 @@ public class SubversionRepository extends Repository {
 			}
 			return result;
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			return null;
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -299,47 +287,56 @@ public class SubversionRepository extends Repository {
 			final String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
 			final String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
 			final File parentDir = checkoutPath(parentPath, baseRevision);
+			
 			if ((parentDir == null) || (!parentDir.exists())) {
 				// checkout failed too. Return null
 				return null;
 			}
+			
 			final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
+			
 			if (!checkedOutFile.exists()) {
 				return null;
 			}
+			
 			final List<String> lines = FileUtils.fileToLines(checkedOutFile);
 			final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
+			
 			return patch.getDeltas();
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#gatherToolInformation()
 	 */
 	@Override
 	public String gatherToolInformation() {
 		final StringBuilder builder = new StringBuilder();
 		final CodeSource codeSource = SVNRepository.class.getProtectionDomain().getCodeSource();
+		
 		builder.append(getHandle()).append(" is using SVNKit from: ").append(codeSource.getLocation().getPath());
 		builder.append(FileUtils.lineSeparator);
+		
 		return builder.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getChangedPaths(java.lang .String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangedPaths(java.lang.String)
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<String, ChangeType> getChangedPaths(@NotNull @NotEmpty final String revision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		final Long revisionNumber = buildRevision(revision).getNumber();
-		final Map<String, ChangeType> map = new HashMap<String, ChangeType>();
-		Collection<SVNLogEntry> logs;
-		
 		try {
+			final Long revisionNumber = buildRevision(revision).getNumber();
+			final Map<String, ChangeType> map = new HashMap<String, ChangeType>();
+			Collection<SVNLogEntry> logs;
+			
 			logs = this.repository.log(new String[] { "" }, null, revisionNumber, revisionNumber, true, true);
 			
 			for (final SVNLogEntry entry : logs) {
@@ -364,24 +361,23 @@ public class SubversionRepository extends Repository {
 							map.put(changedPaths.get(o).getPath(), ChangeType.Renamed);
 							break;
 						default:
-							if (Logger.logError()) {
-								Logger.error("Unsupported change type `" + changedPaths.get(o).getType() + "`. "
-								        + Settings.getReportThis());
-							}
+							throw UnrecoverableError.format("Unsupported change type '%s'. %s", changedPaths.get(o)
+							                                                                                .getType(),
+							                                Settings.getReportThis());
+							
 					}
 				}
 			}
+			
 			return map;
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getEndRevision()
 	 */
 	@Override
@@ -389,8 +385,9 @@ public class SubversionRepository extends Repository {
 		return this.endRevision.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -402,9 +399,10 @@ public class SubversionRepository extends Repository {
 		return this.startRevision.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getFormerPathName(java. lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getFormerPathName(java.lang.String, java.lang.String)
 	 */
 	@Override
 	@NoneNull
@@ -412,9 +410,9 @@ public class SubversionRepository extends Repository {
 	                                @NotEmpty final String pathName) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		final Long revisionNumber = buildRevision(revision).getNumber();
-		
 		try {
+			final Long revisionNumber = buildRevision(revision).getNumber();
+			
 			@SuppressWarnings ("unchecked")
 			final Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null, revisionNumber,
 			                                                         revisionNumber, true, true);
@@ -448,18 +446,16 @@ public class SubversionRepository extends Repository {
 			}
 			
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 		
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getLastRevisionId()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getHEADRevisionId()
 	 */
 	@Override
 	public String getHEADRevisionId() {
@@ -474,19 +470,14 @@ public class SubversionRepository extends Repository {
 			                                                                          : this.repository.getLatestRevision()
 			                                                                                  + "");
 		} catch (final SVNException e) {
-			
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph() We do not support revDependencyGraphs over multiple
-	 * branches and do not include TAGs. Branches and TAGs are located in their own repository and can be handled by
-	 * choosing an appropriate repository URL.
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
 	public RevDependencyGraph getRevDependencyGraph() throws IOException {
@@ -511,18 +502,18 @@ public class SubversionRepository extends Repository {
 						this.revDepGraph.addEdge(logEntry.getRevision(), revNum.toString(), EdgeType.BRANCH_EDGE);
 					}
 				} catch (final NumberFormatException e) {
-					if (Logger.logError()) {
-						Logger.error("Could no  interpret revision ID %s as Long value. Returnin NULL!",
-						             logEntry.getRevision());
-					}
+					throw UnrecoverableError.format(e,
+					                                "Could not interpret revision ID %s as Long value. Returning NULL!",
+					                                logEntry.getRevision());
 				}
 			}
 		}
 		return this.revDepGraph;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
@@ -530,16 +521,13 @@ public class SubversionRepository extends Repository {
 		try {
 			return this.repository.getLatestRevision();
 		} catch (final SVNException e) {
-			
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionId(long)
 	 */
 	@Override
@@ -550,34 +538,41 @@ public class SubversionRepository extends Repository {
 		return null;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
 	public long getTransactionIndex(final String transactionId) {
 		String searchRev = transactionId;
+		
 		if ("HEAD".equals(transactionId.toUpperCase()) || ("TIP".equals(transactionId.toUpperCase()))) {
 			searchRev = getHEADRevisionId();
 		}
+		
 		final long index = Long.valueOf(searchRev).longValue() - 1;
+		
 		if (index < 0) {
 			return -1;
 		}
+		
 		return index;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getWorkingCopyLocation()
 	 */
 	@Override
 	public File getWorkingCopyLocation() {
 		return this.workingDirectory;
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@SuppressWarnings ("unchecked")
@@ -587,15 +582,15 @@ public class SubversionRepository extends Repository {
 	                          @NotEmpty final String toRevision) {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		final SVNRevision fromSVNRevision = buildRevision(fromRevision);
-		final SVNRevision toSVNRevision = buildRevision(toRevision);
-		
-		final List<LogEntry> list = new LinkedList<LogEntry>();
-		
-		Collection<SVNLogEntry> logs;
 		try {
-			logs = this.repository.log(new String[] { "" }, null, fromSVNRevision.getNumber(),
-			                           toSVNRevision.getNumber(), true, true);
+			final SVNRevision fromSVNRevision = buildRevision(fromRevision);
+			final SVNRevision toSVNRevision = buildRevision(toRevision);
+			
+			final List<LogEntry> list = new LinkedList<LogEntry>();
+			
+			final Collection<SVNLogEntry> logs = this.repository.log(new String[] { "" }, null,
+			                                                         fromSVNRevision.getNumber(),
+			                                                         toSVNRevision.getNumber(), true, true);
 			LogEntry buff = null;
 			for (final SVNLogEntry entry : logs) {
 				final LogEntry current = new LogEntry(entry.getRevision() + "", buff,
@@ -609,15 +604,13 @@ public class SubversionRepository extends Repository {
 			}
 			return list;
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new RuntimeException();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#setEndRevision(java.lang.String)
 	 */
 	@Override
@@ -627,15 +620,13 @@ public class SubversionRepository extends Repository {
 			                                       ? SVNRevision.parse(endRevision)
 			                                       : SVNRevision.create(this.repository.getLatestRevision()));
 		} catch (final SVNException e) {
-			if (Logger.logError()) {
-				Logger.error(e);
-			}
-			throw new Shutdown();
+			throw new UnrecoverableError(e);
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.mozkito.versions.Repository#setStartRevision(java.lang.String)
 	 */
 	@Override
@@ -645,9 +636,11 @@ public class SubversionRepository extends Repository {
 		                                           : SVNRevision.create(1));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, org.mozkito.versions.BranchFactory, java.io.File,
+	 *      java.lang.String)
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
@@ -660,9 +653,11 @@ public class SubversionRepository extends Repository {
 		setup(address, null, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String,
+	 *      org.mozkito.versions.BranchFactory, java.io.File, java.lang.String)
 	 */
 	@Override
 	public void setup(@NotNull final URI address,
@@ -720,10 +715,9 @@ public class SubversionRepository extends Repository {
 					}
 					break;
 				default:
-					if (Logger.logError()) {
-						Logger.error("Failed to setup in '" + this.type.name() + "' mode. Unsupported at this time.");
-					}
-					throw new UnsupportedProtocolType(getHandle() + " does not support protocol " + this.type.name());
+					throw new UnsupportedProtocolType("Failed to setup in '" + this.type.name()
+					        + "' mode. Unsupported at this time. " + getHandle() + " does not support protocol "
+					        + this.type.name());
 			}
 			try {
 				if (Logger.logInfo()) {
@@ -741,7 +735,6 @@ public class SubversionRepository extends Repository {
 					this.repository.setAuthenticationManager(authManager);
 				}
 				
-				// this.repository = SVNRepositoryFactory.create(this.svnurl);
 				this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
 				
 				this.startRevision = (SVNRevision.create(1));
@@ -763,18 +756,42 @@ public class SubversionRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "SubversionRepository [password=" + (this.password != null
-		                                                                 ? this.password.replaceAll(".", "*")
-		                                                                 : "(unset)") + ", svnurl=" + this.svnurl
-		        + ", type=" + this.type + ", uri=" + getUri() + ", username=" + (this.username != null
-		                                                                                              ? this.username
-		                                                                                              : "(unset)")
-		        + ", startRevision=" + this.startRevision + ", endRevision=" + this.endRevision + "]";
+		final StringBuilder builder = new StringBuilder();
+		
+		builder.append("SubversionRepository [endRevision=");
+		builder.append(this.endRevision);
+		builder.append(", initialized=");
+		builder.append(this.initialized);
+		builder.append(", password=");
+		builder.append((this.password != null
+		                                     ? "*************"
+		                                     : "(unset)"));
+		builder.append(", repository=");
+		builder.append(this.repository);
+		builder.append(", startRevision=");
+		builder.append(this.startRevision);
+		builder.append(", svnurl=");
+		builder.append(this.svnurl);
+		builder.append(", type=");
+		builder.append(this.type);
+		builder.append(", username=");
+		builder.append((this.username != null
+		                                     ? "*************"
+		                                     : "(unset)"));
+		builder.append(", workingDirectory=");
+		builder.append(this.workingDirectory);
+		builder.append(", tmpDir=");
+		builder.append(this.tmpDir);
+		builder.append("]");
+		
+		return builder.toString();
 	}
+	
 }

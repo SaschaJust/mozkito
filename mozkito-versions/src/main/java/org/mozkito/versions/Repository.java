@@ -300,7 +300,6 @@ public abstract class Repository {
 	 * @param transactionId
 	 *            the transaction id
 	 * @return the transaction index; return -1 if the transactionId does not exist
-	 * @throws IOException
 	 */
 	public abstract long getTransactionIndex(String transactionId);
 	

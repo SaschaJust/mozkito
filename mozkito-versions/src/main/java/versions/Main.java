@@ -37,6 +37,11 @@ public class Main {
 	
 	private static final String moduleName = getModuleName();
 	
+	/**
+	 * Gets the module name.
+	 * 
+	 * @return the module name
+	 */
 	public static String getModuleName() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(Main.class.getPackage().getName());
@@ -73,8 +78,8 @@ public class Main {
 				Logger.info("%s: All done. Cerio!", moduleName);
 			}
 		} catch (final Shutdown e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			if (Logger.logInfo()) {
+				Logger.info(e.getMessage());
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {

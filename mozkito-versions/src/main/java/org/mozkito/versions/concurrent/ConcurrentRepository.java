@@ -107,14 +107,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#annotate(java.lang.String, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#annotate(java.lang.String, java.lang.String)
 	 */
-	
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath,
 	                                      final String revision) {
@@ -127,16 +124,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#checkoutPath(java.lang.String, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @throws FilePermissionException
+	 * @see org.mozkito.versions.Repository#checkoutPath(java.lang.String, java.lang.String)
 	 */
-	
 	@Override
 	public File checkoutPath(final String relativeRepoPath,
 	                         final String revision) throws FilePermissionException {
@@ -190,17 +182,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @throws IOException
-	 * @throws FilePermissionException
+	 * @see org.mozkito.versions.Repository#diff(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	
 	@Override
 	public Collection<Delta> diff(final String filePath,
 	                              final String baseRevision,
@@ -214,14 +200,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#gatherToolInformation()
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#gatherToolInformation()
 	 */
-	
 	@Override
 	public String gatherToolInformation() {
 		// PRECONDITIONS
@@ -233,14 +216,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getChangedPaths(java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getChangedPaths(java.lang.String)
 	 */
-	
 	@Override
 	public Map<String, ChangeType> getChangedPaths(final String revision) {
 		// PRECONDITIONS
@@ -252,14 +232,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
-	
 	@Override
 	public String getFirstRevisionId() {
 		// PRECONDITIONS
@@ -271,14 +248,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getFormerPathName(java.lang.String, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getFormerPathName(java.lang.String, java.lang.String)
 	 */
-	
 	@Override
 	public String getFormerPathName(final String revision,
 	                                final String pathName) {
@@ -292,23 +266,20 @@ public class ConcurrentRepository extends Repository {
 	}
 	
 	/**
-	 * Gets the simple name of the class.
+	 * {@inheritDoc}
 	 * 
-	 * @return the simple name of the class.
+	 * @see org.mozkito.versions.Repository#getHandle()
 	 */
 	@Override
 	public final String getHandle() {
 		return JavaUtils.getHandle(ConcurrentRepository.class);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getHEADRevisionId()
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getHEADRevisionId()
 	 */
-	
 	@Override
 	public String getHEADRevisionId() {
 		// PRECONDITIONS
@@ -324,7 +295,6 @@ public class ConcurrentRepository extends Repository {
 	 * Gets the repository.
 	 * 
 	 * @return the repository
-	 * @throws IOException
 	 */
 	private Repository getRepository() {
 		final Thread thread = Thread.currentThread();
@@ -356,16 +326,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @throws IOException
+	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
-	
 	@Override
 	public RevDependencyGraph getRevDependencyGraph() throws IOException {
 		// PRECONDITIONS
@@ -377,14 +342,10 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionCount()
-	 */
 	/**
-	 * Gets the transaction count.
+	 * {@inheritDoc}
 	 * 
-	 * @return the transaction count
+	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
 	public long getTransactionCount() {
@@ -397,16 +358,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
-	 */
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @throws IOException
+	 * @see org.mozkito.versions.Repository#getTransactionId(long)
 	 */
-	
 	@Override
 	public String getTransactionId(final long index) {
 		// PRECONDITIONS
@@ -418,14 +374,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
-	
 	@Override
 	public long getTransactionIndex(final String transactionId) {
 		// PRECONDITIONS
@@ -437,14 +390,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#getWorkingCopyLocation()
 	 */
-	
 	@Override
 	public File getWorkingCopyLocation() {
 		// PRECONDITIONS
@@ -456,14 +406,11 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
 	 */
-	
 	@Override
 	public List<LogEntry> log(final String fromRevision,
 	                          final String toRevision) {
@@ -476,15 +423,12 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, org.mozkito.versions.BranchFactory, java.io.File,
-	 * java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, org.mozkito.versions.BranchFactory, java.io.File,
+	 *      java.lang.String)
 	 */
-	
 	@Override
 	public void setup(final URI address,
 	                  final BranchFactory branchFactory,
@@ -502,15 +446,12 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String,
-	 * org.mozkito.versions.BranchFactory, java.io.File, java.lang.String)
-	 */
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see org.mozkito.versions.Repository#setup(java.net.URI, java.lang.String, java.lang.String,
+	 *      org.mozkito.versions.BranchFactory, java.io.File, java.lang.String)
 	 */
-	
 	@Override
 	public void setup(final URI address,
 	                  final String username,

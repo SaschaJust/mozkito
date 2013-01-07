@@ -124,12 +124,12 @@ public class RevDependencyGraph {
 				Logger.debug("Adding branch with name %s and branch head %s.", branchName, branchHead);
 			}
 			final Vertex branchHeadVertex = addChangeSet(branchHead);
+			
 			if (branchHeadVertex == null) {
-				if (Logger.logError()) {
-					Logger.error("Trying to add %s as branch head but no vertex with this ID exists.", branchHead);
-				}
-				return null;
+				throw UnrecoverableError.format("Trying to add %s as branch head but no vertex with this ID exists.",
+				                                branchHead);
 			}
+			
 			final Vertex branchVertex = getBranch(branchName);
 			if (branchVertex != null) {
 				return branchVertex;
