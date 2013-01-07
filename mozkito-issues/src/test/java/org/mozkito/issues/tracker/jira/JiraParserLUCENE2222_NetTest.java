@@ -39,7 +39,6 @@ import org.mozkito.persistence.model.EnumTuple;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.StringTuple;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class JiraParserLUCENE2222_NetTest.
  * 

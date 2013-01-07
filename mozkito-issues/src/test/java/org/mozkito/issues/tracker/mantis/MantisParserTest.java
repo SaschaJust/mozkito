@@ -209,8 +209,7 @@ public class MantisParserTest {
 		final Map<String, PersonTuple> changedPersonValues = hElement.getChangedPersonValues();
 		assertEquals(1, changedPersonValues.size());
 		assertTrue(changedPersonValues.get("assignedto") != null);
-		assertTrue(changedPersonValues.get("assignedto").getNewValue().getPersons().iterator().next().getUsernames()
-		                              .contains("alostale"));
+		assertTrue(changedPersonValues.get("assignedto").getNewValue().getUsernames().contains("alostale"));
 		assertTrue(hElement.getChangedDateValues().isEmpty());
 		assertFalse(hElement.getChangedStringValues().isEmpty());
 		assertEquals("", hElement.getChangedStringValues().get("component").getOldValue());
