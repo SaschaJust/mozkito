@@ -363,55 +363,54 @@ public class PPAUtils {
 	                                            final Collection<ChangeOperationVisitor> visitors,
 	                                            final JavaElementFactory elementFactory,
 	                                            final String[] packageFilter) {
-		
-		final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
-		final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
-		
-		final String requestName = Thread.currentThread().getName();
-		final IJavaProject javaProject = getProject(requestName);
-		
-		final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
-		
-		for (final RCSRevision rev : rCSTransaction.getRevisions()) {
+		try {
+			final Map<RCSRevision, String> addRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> deleteRevs = new HashMap<RCSRevision, String>();
+			final Map<RCSRevision, String> modifyRevs = new HashMap<RCSRevision, String>();
 			
-			if (Logger.logDebug()) {
-				Logger.debug("PPA parsing revision: " + rev.toString());
-			}
+			final String requestName = Thread.currentThread().getName();
+			final IJavaProject javaProject = getProject(requestName);
 			
-			String changedPath = rev.getChangedFile().getPath(rCSTransaction);
-			if (changedPath == null) {
-				continue;
-			}
-			changedPath = new String(changedPath);
-			if (!changedPath.endsWith(".java")) {
+			final RCSTransaction parentTransaction = rCSTransaction.getBranchParent();
+			
+			for (final RCSRevision rev : rCSTransaction.getRevisions()) {
+				
 				if (Logger.logDebug()) {
-					Logger.debug("Ignoring non-Java file: " + changedPath);
+					Logger.debug("PPA parsing revision: " + rev.toString());
 				}
-				continue;
-			}
-			if (changedPath.startsWith("/")) {
-				changedPath = changedPath.substring(1);
+				
+				String changedPath = rev.getChangedFile().getPath(rCSTransaction);
+				if (changedPath == null) {
+					continue;
+				}
+				changedPath = new String(changedPath);
+				if (!changedPath.endsWith(".java")) {
+					if (Logger.logDebug()) {
+						Logger.debug("Ignoring non-Java file: " + changedPath);
+					}
+					continue;
+				}
+				if (changedPath.startsWith("/")) {
+					changedPath = changedPath.substring(1);
+				}
+				
+				switch (rev.getChangeType()) {
+					case Added:
+						addRevs.put(rev, changedPath);
+						break;
+					case Modified:
+						modifyRevs.put(rev, changedPath);
+						break;
+					case Deleted:
+						deleteRevs.put(rev, changedPath);
+						break;
+					default:
+						break;
+				}
 			}
 			
-			switch (rev.getChangeType()) {
-				case Added:
-					addRevs.put(rev, changedPath);
-					break;
-				case Modified:
-					modifyRevs.put(rev, changedPath);
-					break;
-				case Deleted:
-					deleteRevs.put(rev, changedPath);
-					break;
-				default:
-					break;
-			}
-		}
-		
-		// handle the removed files first
-		if (parentTransaction != null) {
-			try {
+			// handle the removed files first
+			if (parentTransaction != null) {
 				final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 				if (!oldCheckoutFile.exists()) {
 					throw new UnrecoverableError("Could not access checkout directory: "
@@ -448,14 +447,11 @@ public class PPAUtils {
 					                                       entry.getValue().getSecond(), visitors, elementFactory,
 					                                       packageFilter);
 				}
-			} catch (final FilePermissionException e) {
-				throw new UnrecoverableError(e);
 			}
-		}
-		
-		// handle added files
-		try {
-			final File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
+			
+			// handle added files
+			
+			File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 			if (!newCheckoutFile.exists()) {
 				throw new UnrecoverableError("Could not access checkout directory: "
 				        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
@@ -491,16 +487,12 @@ public class PPAUtils {
 				                                                                                          .getSecond(),
 				                                     visitors, elementFactory, packageFilter);
 			}
-		} catch (final FilePermissionException e) {
-			throw new UnrecoverableError(e);
-		}
-		
-		// handle modified files
-		for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
 			
-			Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
-			
-			try {
+			// handle modified files
+			for (final Entry<RCSRevision, String> entry : modifyRevs.entrySet()) {
+				
+				Condition.notNull(parentTransaction, "If files got modified there must exist an parent transaction");
+				
 				@SuppressWarnings ("null")
 				final File oldCheckoutFile = repository.checkoutPath("/", parentTransaction.getId());
 				if (!oldCheckoutFile.exists()) {
@@ -514,7 +506,7 @@ public class PPAUtils {
 				                                                                           packageFilter,
 				                                                                           elementFactory);
 				
-				final File newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
+				newCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 				if (!newCheckoutFile.exists()) {
 					throw new UnrecoverableError("Could not access checkout directory: "
 					        + newCheckoutFile.getAbsolutePath() + ". Ignoring!");
@@ -527,10 +519,11 @@ public class PPAUtils {
 				                                                                           elementFactory);
 				generateChangeOperationsForModifiedFile(repository, rCSTransaction, entry.getKey(), oldElems, newElems,
 				                                        entry.getValue(), visitors);
-			} catch (final FilePermissionException e) {
-				throw new UnrecoverableError(e);
 			}
+		} catch (final FilePermissionException e) {
+			throw new UnrecoverableError(e);
 		}
+		
 	}
 	
 	/**
@@ -1265,12 +1258,12 @@ public class PPAUtils {
 	protected static Map<RCSRevision, CompilationUnit> getCUsForTransaction(final Repository repository,
 	                                                                        final RCSTransaction rCSTransaction,
 	                                                                        final ChangeType changeType) {
-		
-		final Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
-		final Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
-		
-		File oldCheckoutFile = null;
 		try {
+			final Map<RCSRevision, IFile> ifiles = new HashMap<RCSRevision, IFile>();
+			final Map<RCSRevision, CompilationUnit> result = new HashMap<RCSRevision, CompilationUnit>();
+			
+			File oldCheckoutFile = null;
+			
 			oldCheckoutFile = repository.checkoutPath("/", rCSTransaction.getId());
 			Condition.notNull(oldCheckoutFile, "Cannot get CUs for transaction.");
 			if (!oldCheckoutFile.exists()) {
@@ -1280,69 +1273,70 @@ public class PPAUtils {
 				}
 				return result;
 			}
+			
+			final String requestName = Thread.currentThread().getName();
+			
+			final Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
+			for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
+				
+				if (changeType.equals(ChangeType.Added)) {
+					if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
+						continue;
+					}
+				} else if (changeType.equals(ChangeType.Deleted)) {
+					if (rCSRevision.getChangeType().equals(ChangeType.Added)) {
+						continue;
+					}
+				}
+				
+				String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
+				if (changedPath == null) {
+					continue;
+				}
+				changedPath = new String(changedPath);
+				if (!changedPath.endsWith(".java")) {
+					if (Logger.logDebug()) {
+						Logger.debug("Ignoring non-Java file: " + changedPath);
+					}
+					continue;
+				}
+				if (changedPath.startsWith("/")) {
+					changedPath = changedPath.substring(1);
+				}
+				
+				final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
+				if (!file.exists()) {
+					if (Logger.logDebug()) {
+						Logger.debug("Could not find checked out file " + file.getAbsolutePath()
+						        + " (might be added in next revision?)");
+					}
+					continue;
+				}
+				filesToAnalyze.put(file, rCSRevision);
+				
+				final String fileName = file.getName();
+				try {
+					final String packageName = getPackageFromFile(file);
+					final IJavaProject javaProject = getProject(requestName);
+					final IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file,
+					                                                         packageName, fileName);
+					ifiles.put(rCSRevision, newFile);
+				} catch (final Exception e) {
+					if (Logger.logError()) {
+						Logger.error(e, "Error while getting IFile from PPA for revision '%s'.", rCSRevision.toString());
+					}
+				}
+			}
+			
+			for (final Entry<RCSRevision, IFile> entry : ifiles.entrySet()) {
+				final CompilationUnit cu = getCU(entry.getValue(), new PPAOptions());
+				result.put(entry.getKey(), cu);
+			}
+			return result;
 		} catch (final FilePermissionException e) {
 			throw new UnrecoverableError(e);
 		}
 		
-		final String requestName = Thread.currentThread().getName();
-		
-		final Map<File, RCSRevision> filesToAnalyze = new HashMap<File, RCSRevision>();
-		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
-			
-			if (changeType.equals(ChangeType.Added)) {
-				if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
-					continue;
-				}
-			} else if (changeType.equals(ChangeType.Deleted)) {
-				if (rCSRevision.getChangeType().equals(ChangeType.Added)) {
-					continue;
-				}
-			}
-			
-			String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
-			if (changedPath == null) {
-				continue;
-			}
-			changedPath = new String(changedPath);
-			if (!changedPath.endsWith(".java")) {
-				if (Logger.logDebug()) {
-					Logger.debug("Ignoring non-Java file: " + changedPath);
-				}
-				continue;
-			}
-			if (changedPath.startsWith("/")) {
-				changedPath = changedPath.substring(1);
-			}
-			
-			final File file = new File(oldCheckoutFile.getAbsolutePath() + FileUtils.fileSeparator + changedPath);
-			if (!file.exists()) {
-				if (Logger.logDebug()) {
-					Logger.debug("Could not find checked out file " + file.getAbsolutePath()
-					        + " (might be added in next revision?)");
-				}
-				continue;
-			}
-			filesToAnalyze.put(file, rCSRevision);
-			
-			final String fileName = file.getName();
-			try {
-				final String packageName = getPackageFromFile(file);
-				final IJavaProject javaProject = getProject(requestName);
-				final IFile newFile = PPAResourceUtil.copyJavaSourceFile(javaProject.getProject(), file, packageName,
-				                                                         fileName);
-				ifiles.put(rCSRevision, newFile);
-			} catch (final Exception e) {
-				if (Logger.logError()) {
-					Logger.error(e, "Error while getting IFile from PPA for revision '%s'.", rCSRevision.toString());
-				}
-			}
-		}
-		
-		for (final Entry<RCSRevision, IFile> entry : ifiles.entrySet()) {
-			final CompilationUnit cu = getCU(entry.getValue(), new PPAOptions());
-			result.put(entry.getKey(), cu);
-		}
-		return result;
 	}
 	
 	/**
