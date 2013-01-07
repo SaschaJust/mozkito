@@ -134,7 +134,7 @@ public class IssuesFieldChangeAnalysis implements IssuesAnalysis {
 			this.fieldFileArgument = ArgumentFactory.create(fieldChangesFileOptions);
 			this.typeFileArgument = ArgumentFactory.create(typeChangesFileOptions);
 		} catch (ArgumentRegistrationException | SettingsParseError | ArgumentSetRegistrationException e) {
-			new Shutdown(e.getMessage());
+			throw new Shutdown(e.getMessage());
 		}
 	}
 	
