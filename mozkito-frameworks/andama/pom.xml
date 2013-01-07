@@ -175,11 +175,6 @@
 			<url>https://nexus.own-hero.net/content/groups/own-hero.net</url>
 			<layout>default</layout>
 		</repository>
-		<repository>
-			<id>tinkerpop-repository</id>
-			<name>TinkerPop Maven2 Repository</name>
-			<url>http://tinkerpop.com/maven2</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
