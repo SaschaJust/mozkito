@@ -17,8 +17,10 @@ import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 
 import net.ownhero.dev.andama.exceptions.ClassLoadingError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
+import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
 import org.mozkito.persistence.Annotated;
 
@@ -71,7 +73,7 @@ public class EnumTuple implements Annotated {
 		setNewStringValue(newValue.name());
 		setOldStringValue(oldValue.name());
 		setEnumClass(oldValue.getClass());
-		setEnumClassName(this.oldStringValue.getClass().getCanonicalName());
+		setEnumClassName(this.oldValue.getClass().getCanonicalName());
 	}
 	
 	/**
@@ -83,12 +85,20 @@ public class EnumTuple implements Annotated {
 	 *            the string value
 	 * @return the enum
 	 */
-	private Enum<?> convertEnum(final Class<?> enumClass,
-	                            final String stringValue) {
-		for (final Enum<?> e : (Enum<?>[]) enumClass.getEnumConstants()) {
-			if (e.name().equals(stringValue)) {
-				return e;
+	private Enum<?> convertEnum(@NotNull final Class<?> enumClass,
+	                            @NotNull final String stringValue) {
+		final Object[] enumConstants = enumClass.getEnumConstants();
+		final Enum<?>[] array = (Enum<?>[]) enumConstants;
+		
+		if (array != null) {
+			for (final Enum<?> e : array) {
+				if (e.name().toUpperCase().equals(stringValue.toUpperCase())) {
+					return e;
+				}
 			}
+		} else {
+			throw UnrecoverableError.format("Data is in an inconsistent state. Trying to convert non-enum class '%s'.",
+			                                enumClass.getCanonicalName());
 		}
 		return null;
 	}
@@ -157,6 +167,7 @@ public class EnumTuple implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Transient
 	public final String getHandle() {
 		return JavaUtils.getHandle(EnumTuple.class);
 	}
@@ -241,16 +252,22 @@ public class EnumTuple implements Annotated {
 	public void setEnumClass(final String className) {
 		try {
 			setEnumClass(Class.forName(className));
-			Enum<?> _enum = convertEnum(getEnumClass(), getOldStringValue());
 			
-			if (_enum != null) {
-				setOldValue(_enum);
+			Enum<?> _enum = null;
+			if (this.oldStringValue != null) {
+				_enum = convertEnum(getEnumClass(), getOldStringValue());
+				
+				if (_enum != null) {
+					setOldValue(_enum);
+				}
 			}
 			
-			_enum = convertEnum(getEnumClass(), getNewStringValue());
-			
-			if (_enum != null) {
-				setNewValue(_enum);
+			if (this.newStringValue != null) {
+				_enum = convertEnum(getEnumClass(), getNewStringValue());
+				
+				if (_enum != null) {
+					setNewValue(_enum);
+				}
 			}
 		} catch (final ClassNotFoundException e) {
 			throw new ClassLoadingError(e, className);
@@ -265,6 +282,7 @@ public class EnumTuple implements Annotated {
 	 */
 	private void setEnumClassName(final String enumClassName) {
 		this.enumClassName = enumClassName;
+		setEnumClass(enumClassName);
 	}
 	
 	/**
