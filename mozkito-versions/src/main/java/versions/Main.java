@@ -37,6 +37,11 @@ public class Main {
 	
 	private static final String moduleName = getModuleName();
 	
+	/**
+	 * Gets the module name.
+	 * 
+	 * @return the module name
+	 */
 	public static String getModuleName() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append(Main.class.getPackage().getName());

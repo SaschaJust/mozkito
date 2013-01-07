@@ -35,7 +35,6 @@ import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
-import difflib.Delta;
 
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
@@ -46,6 +45,8 @@ import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+
+import difflib.Delta;
 
 /**
  * The Class ConcurrentRepository.
@@ -397,14 +398,8 @@ public class ConcurrentRepository extends Repository {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
-	 */
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @throws IOException
 	 */
 	
 	@Override

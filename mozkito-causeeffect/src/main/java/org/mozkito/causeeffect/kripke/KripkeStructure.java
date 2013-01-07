@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
@@ -624,8 +625,7 @@ public class KripkeStructure<V> {
 	@SuppressWarnings ("unused")
 	private void removeState(final State state) {
 		if (this.initialStates.contains(state)) {
-			System.err.println("Can't remove initial state.");
-			throw new InternalError();
+			throw new NoSuchElementException("Can't remove initial state.");
 		}
 		this.falseFormulas.remove(state);
 		this.state2labels.remove(state);
