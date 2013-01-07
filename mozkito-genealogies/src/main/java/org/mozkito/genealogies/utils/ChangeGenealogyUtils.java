@@ -13,6 +13,7 @@
 package org.mozkito.genealogies.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,6 +29,7 @@ import java.util.Set;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 import net.ownhero.dev.kisa.Logger;
@@ -105,9 +107,14 @@ public class ChangeGenealogyUtils {
 	 * @param branchFactory
 	 *            the branch factory
 	 * @return the genealogy test environment
+	 * @throws IOException
+	 * @throws FilePermissionException
+	 * @throws FileNotFoundException
 	 */
 	public static GenealogyTestEnvironment getGenealogyTestEnvironment(final File tmpGraphDBFile,
-	                                                                   final BranchFactory branchFactory) {
+	                                                                   final BranchFactory branchFactory) throws FileNotFoundException,
+	                                                                                                     FilePermissionException,
+	                                                                                                     IOException {
 		
 		// UNZIP git repo
 		final URL zipURL = ChangeGenealogyUtils.class.getResource(FileUtils.fileSeparator + "genealogies_test.git.zip");

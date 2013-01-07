@@ -17,6 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,10 +25,10 @@ import java.util.Set;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
-
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
@@ -59,9 +60,12 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 	
 	/**
 	 * Test.
+	 * 
+	 * @throws IOException
+	 * @throws FilePermissionException
 	 */
 	@Test
-	public void test() {
+	public void test() throws IOException, FilePermissionException {
 		final File tmpGraphDBFile = FileUtils.createRandomDir(this.getClass().getSimpleName(), "",
 		                                                      FileShutdownAction.DELETE);
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());

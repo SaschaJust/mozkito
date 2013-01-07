@@ -27,6 +27,7 @@ import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.ListArgument;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.CommandExecutor;
 import net.ownhero.dev.ioda.FileUtils;
@@ -36,9 +37,6 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
-
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
-
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.model.CallGraphEdge;
 import org.mozkito.callgraph.model.MethodVertex;
@@ -55,6 +53,7 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.model.RCSTransaction;
 
 import serp.util.Strings;
+import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 
 /**
  * The Class CallGraphHandler.
@@ -266,14 +265,23 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		}
 		if (this.callGraph == null) {
 			if (callGraphFile == null) {
-				callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+				try {
+					callGraphFile = FileUtils.createRandomFile(FileShutdownAction.DELETE);
+				} catch (final IOException e) {
+					throw new UnrecoverableError(e);
+				}
 			}
 			final List<String> arguments = new LinkedList<String>();
 			for (final String arg : eclipseArguments) {
 				arguments.add(arg);
 			}
 			
-			final File eclipseExecDir = FileUtils.createRandomDir("mozkito", "callgraph_exec", FileShutdownAction.KEEP);
+			File eclipseExecDir;
+			try {
+				eclipseExecDir = FileUtils.createRandomDir("mozkito", "callgraph_exec", FileShutdownAction.KEEP);
+			} catch (final IOException e) {
+				throw new UnrecoverableError(e);
+			}
 			
 			arguments.add("-DtransactionId=" + rCSTransaction.getId());
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());

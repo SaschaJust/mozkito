@@ -56,9 +56,11 @@ public class ProxyOptionsTest {
 	
 	/**
 	 * Before class.
+	 * 
+	 * @throws IOException
 	 */
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws IOException {
 		for (final String key : ProxyOptionsTest.keys) {
 			assert (System.getProperty(key) == null);
 		}
