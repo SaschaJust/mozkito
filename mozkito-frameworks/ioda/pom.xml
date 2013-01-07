@@ -109,8 +109,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet> <docletArtifact> 
-						<groupId>org.umlgraph</groupId> <artifactId>doclet</artifactId> <version>5.3</version> 
+					<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet> <docletArtifact>
+						<groupId>org.umlgraph</groupId> <artifactId>doclet</artifactId> <version>5.3</version>
 						</docletArtifact> -->
 					<!-- <useStandardDocletOptions>true</useStandardDocletOptions> -->
 					<minmemory>64m</minmemory>
@@ -190,6 +190,12 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>net.ownhero.dev</groupId>
 			<artifactId>kanuni</artifactId>
