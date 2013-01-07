@@ -27,9 +27,11 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -213,7 +215,14 @@ public class LogEngine extends Engine {
 			final Collection<RCSFile> changedFiles = transaction.getChangedFiles();
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();
-			final File fil2e = repository.checkoutPath("/", transaction.getId()); //$NON-NLS-1$
+			File fil2e;
+			
+			try {
+				fil2e = repository.checkoutPath("/", transaction.getId()); //$NON-NLS-1$
+			} catch (final FilePermissionException e) {
+				throw new UnrecoverableError(e);
+			}
+			
 			final ConstantStringVisitor visitor = new ConstantStringVisitor();
 			final Map<RCSFile, List<String>> map = new HashMap<>();
 			

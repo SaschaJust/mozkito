@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,9 +27,11 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
@@ -172,8 +175,13 @@ public class CodeFragmentsEngine extends Engine {
 			
 			for (final RCSFile rcsFile : changedFiles) {
 				final String path = rcsFile.getPath(transaction.getTransaction());
-				final Collection<Delta> diff = repository.diff(path, transaction.getTransaction().getBranchParent()
-				                                                                .getId(), transaction.getId());
+				Collection<Delta> diff;
+				try {
+					diff = repository.diff(path, transaction.getTransaction().getBranchParent().getId(),
+					                       transaction.getId());
+				} catch (FilePermissionException | IOException e) {
+					throw new UnrecoverableError(e);
+				}
 				for (final Delta delta : diff) {
 					@SuppressWarnings ("unchecked")
 					final List<String> lines = (List<String>) delta.getOriginal().getLines();

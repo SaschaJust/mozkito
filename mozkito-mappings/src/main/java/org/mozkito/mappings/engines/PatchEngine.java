@@ -12,6 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.mappings.engines;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +25,10 @@ import net.ownhero.dev.hiari.settings.ArgumentSetOptions;
 import net.ownhero.dev.hiari.settings.IOptions;
 import net.ownhero.dev.hiari.settings.exceptions.ArgumentRegistrationException;
 import net.ownhero.dev.hiari.settings.exceptions.SettingsParseError;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import difflib.Delta;
 
 import org.mozkito.infozilla.model.EnhancedReport;
@@ -175,8 +178,12 @@ public class PatchEngine extends Engine {
 					
 					// if so, TODO get the corresponding patch
 					final Patch patch = new Patch();
-					final Collection<Delta> diff = repository.diff(path, previousTransaction.getId(),
-					                                               transaction.getId());
+					Collection<Delta> diff;
+					try {
+						diff = repository.diff(path, previousTransaction.getId(), transaction.getId());
+					} catch (FilePermissionException | IOException e) {
+						throw new UnrecoverableError(e);
+					}
 					
 					// TODO calculate the similarity measure between Patch and Collection<Delta>
 					localConfidence = Math.max(localConfidence, similarity(patch, diff));

@@ -50,8 +50,8 @@ public class Main {
 				Logger.info(Messages.getString("Main.done")); //$NON-NLS-1$
 			}
 		} catch (final Shutdown e) {
-			if (Logger.logError()) {
-				Logger.error(e);
+			if (Logger.logInfo()) {
+				Logger.info(e.getMessage());
 			}
 		} catch (final InterruptedException e) {
 			if (Logger.logError()) {

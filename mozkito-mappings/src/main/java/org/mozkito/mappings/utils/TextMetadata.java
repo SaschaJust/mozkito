@@ -16,6 +16,7 @@ package org.mozkito.mappings.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -149,14 +150,16 @@ public class TextMetadata {
 	 * 
 	 * @param args
 	 *            the arguments
+	 * @throws IOException
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException {
 		final ArrayList<String> strings = new ArrayList<>(3);
 		strings.add("Richard Hawes (1797–1877) was a United States Representative from Kentucky and the second Confederate Governor of Kentucky. Originally a Whig, Hawes became a Democrat following the dissolution of the Whig party in the 1850s. At the outbreak of the American Civil War, Hawes was a supporter of Kentucky's doctrine of armed neutrality. When the Commonwealth's neutrality was breached in September 1861, Hawes fled to Virginia and enlisted as a brigade commissary under Confederate general Humphrey Marshall. He was elected Confederate governor of the Commonwealth following the late George W. Johnson's death at the Battle of Shiloh. Hawes and the Confederate government traveled with Braxton Bragg's Army of Tennessee, and when Bragg invaded Kentucky in October 1862, he captured Frankfort and held an inauguration ceremony for Hawes. The ceremony was interrupted, however, by forces under Union general Don Carlos Buell, and the Confederates were driven from the Commonwealth following the Battle of Perryville. Hawes relocated to Virginia, where he continued to lobby President Jefferson Davis to attempt another invasion of Kentucky. Following the war, he returned to his home in Paris, Kentucky, swore an oath of allegiance to the Union, and was allowed to return to his law practice.");
 		strings.add("Clem Hill (1877–1945) was an Australian cricketer who played 49 Test matches as a specialist batsman between 1896 and 1912. He captained the Australian team in ten Tests, winning five and losing five. A prolific run scorer, Hill scored 3,412 runs in Test cricket—a world record at the time of his retirement—at an average of 39.21 per innings, including seven centuries. In 1902, Hill was the first batsman to make 1,000 Test runs in a calendar year, a feat that would not be repeated for 45 years. His innings of 365 scored against New South Wales for South Australia in 1900–01 was a Sheffield Shield record for 27 years. His Test cricket career ended in controversy after he was involved in a brawl with cricket administrator and fellow Test selector Peter McAlister in 1912. He was one of the \"Big Six\", a group of leading Australian cricketers who boycotted the 1912 Triangular Tournament in England when the players were stripped of the right to appoint the tour manager. The boycott effectively ended his Test career. After retiring from cricket, Hill worked in the horse racing industry as a stipendiary steward and later as a handicapper for races including the Caulfield Cup.");
 		strings.add("The rings of Uranus were discovered on March 10, 1977, by James L. Elliot, Edward W. Dunham, and Douglas J. Mink. Two additional rings were discovered in 1986 by the Voyager 2 spacecraft, and two outer rings were found in 2003–2005 by the Hubble Space Telescope. A number of faint dust bands and incomplete arcs may exist between the main rings. The rings are extremely dark—the Bond albedo of the rings' particles does not exceed 2%. They are likely composed of water ice with the addition of some dark radiation-processed organics. The majority of Uranus's rings are opaque and only a few kilometres wide. The ring system contains little dust overall; it consists mostly of large bodies 0.2–20 m in diameter. The relative lack of dust in the ring system is due to aerodynamic drag from the extended Uranian exosphere—corona. The rings of Uranus are thought to be relatively young, at not more than 600 million years. The mechanism that confines the narrow rings is not well understood. The Uranian ring system probably originated from the collisional fragmentation of a number of moons that once existed around the planet. After colliding, the moons broke up into numerous particles, which survived as narrow and optically dense rings only in strictly confined zones of maximum stability.");
 		
-		final ParallelTopicModel topics = topics(strings.iterator());
+		final ParallelTopicModel topics = topics(strings.iterator(), 10);
+		topics.printDocumentTopics(new PrintWriter(System.err, true));
 		if (Logger.logAlways()) {
 			Logger.always(topics.getNumTopics() + "");
 		}
@@ -190,8 +193,10 @@ public class TextMetadata {
 	 * @param text
 	 *            the text
 	 * @return the list
+	 * @throws IOException
 	 */
-	public static final ParallelTopicModel topics(final Iterator<String> text) {
+	public static final ParallelTopicModel topics(final Iterator<String> text,
+	                                              final int numTopics) throws IOException {
 		
 		try {
 			// Begin by importing documents from text to feature sequences
@@ -218,7 +223,6 @@ public class TextMetadata {
 			// Create a model with 100 topics, alpha_t = 0.01, beta_w = 0.01
 			// Note that the first parameter is passed as the sum over topics, while
 			// the second is the parameter for a single dimension of the Dirichlet prior.
-			final int numTopics = 10;
 			final ParallelTopicModel model = new ParallelTopicModel(numTopics, 1.0, 0.01);
 			
 			try {
