@@ -33,6 +33,7 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.ClassFinder;
 import net.ownhero.dev.ioda.JavaUtils;
 import net.ownhero.dev.ioda.exceptions.WrongClassSearchMethodException;
+import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.issues.analysis.IssuesAnalysis;
@@ -45,6 +46,10 @@ import org.mozkito.settings.DatabaseOptions;
  * @author Kim Herzig <herzig@mozkito.org>
  */
 public class Main {
+	
+	static {
+		KanuniAgent.initialize();
+	}
 	
 	/**
 	 * The main method.
