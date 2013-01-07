@@ -21,6 +21,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Lob;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -118,6 +119,7 @@ public class AttachmentEntry implements Annotated {
 	 * @return the description
 	 */
 	@Basic
+	@Lob
 	@Column (length = 0)
 	public String getDescription() {
 		return this.description;
