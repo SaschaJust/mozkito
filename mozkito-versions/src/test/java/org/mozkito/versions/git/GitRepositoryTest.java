@@ -29,14 +29,16 @@ import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import difflib.Delta;
+
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-
-import difflib.Delta;
 
 /**
  * The Class GitRepositoryTest.
@@ -185,9 +187,11 @@ public class GitRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetLog() {
+	public void testGetLog() throws RepositoryOperationException {
 		final List<LogEntry> log = this.repo.log("98d5c40ef3c14503a472ba4133ae3529c7578e30",
 		                                         "376adc0f9371129a76766f8030f2e576165358c1");
 		assertEquals(6, log.size());

@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
+
 import org.mozkito.infozilla.model.Attachable;
 import org.mozkito.infozilla.model.attachment.Attachment;
 
@@ -51,8 +53,9 @@ public abstract class Archive implements Attachable {
 	 * @return the file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @throws FilePermissionException
 	 */
-	public abstract File extract() throws IOException;
+	public abstract File extract() throws IOException, FilePermissionException;
 	
 	/**
 	 * Gets the attachables.

@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
 
 /**
@@ -40,8 +41,10 @@ public class LogIterator implements Iterator<LogEntry> {
 	 *            the start revision
 	 * @param endRevision
 	 *            the end revision
+	 * @throws RepositoryOperationException
 	 */
-	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision) {
+	public LogIterator(@NotNull final Repository repository, final String startRevision, final String endRevision)
+	        throws RepositoryOperationException {
 		this.logIterator = repository.log(startRevision, endRevision).iterator();
 	}
 	

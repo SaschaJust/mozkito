@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import net.ownhero.dev.kisa.Logger;
 
@@ -39,6 +37,7 @@ import org.junit.Test;
 
 import difflib.Delta;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -72,9 +71,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test annotate.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testAnnotate() {
+	public void testAnnotate() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final List<AnnotationEntry> annotation = repository.annotate("dir_b/file_2_dir_a", repository.getHEAD());
 			assertEquals(2, annotation.size());
@@ -120,10 +122,11 @@ public class RepositoryTest extends VersionsTest {
 	/**
 	 * Test checkout.
 	 * 
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testCheckout() throws FilePermissionException {
+	public void testCheckout() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final File checkoutPath = repository.checkoutPath("/", repository.getHEAD());
 			
@@ -155,10 +158,11 @@ public class RepositoryTest extends VersionsTest {
 	/**
 	 * Test checkout dir.
 	 * 
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testCheckoutDir() throws FilePermissionException {
+	public void testCheckoutDir() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final File checkoutPath = repository.checkoutPath("/dir_a", repository.getHEAD());
 			if (Logger.logDebug()) {
@@ -185,10 +189,11 @@ public class RepositoryTest extends VersionsTest {
 	/**
 	 * Test checkout file.
 	 * 
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testCheckoutFile() throws FilePermissionException {
+	public void testCheckoutFile() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final File f = repository.checkoutPath("/dir_b/file_2_dir_a", repository.getHEAD());
 			assertNotNull(f);
@@ -200,11 +205,11 @@ public class RepositoryTest extends VersionsTest {
 	/**
 	 * Test diff.
 	 * 
-	 * @throws IOException
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testDiff() throws FilePermissionException, IOException {
+	public void testDiff() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final String id = repository.getTransactionId(11);
 			final String parent = repository.getTransactionId(10);
@@ -219,11 +224,11 @@ public class RepositoryTest extends VersionsTest {
 	/**
 	 * Test diff move.
 	 * 
-	 * @throws IOException
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testDiffMove() throws FilePermissionException, IOException {
+	public void testDiffMove() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final String id = repository.getTransactionId(3);
 			final String parent = repository.getTransactionId(2);
@@ -237,9 +242,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get changed paths.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testGetChangedPaths() {
+	public void testGetChangedPaths() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getHEAD());
 			final Map<String, ChangeType> paths = new HashMap<String, ChangeType>();
@@ -256,9 +264,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get first revision id.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testGetFirstRevisionID() {
+	public void testGetFirstRevisionID() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertEquals("1", repository.getFirstRevisionId());
@@ -272,9 +283,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get former path name.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testGetFormerPathName() {
+	public void testGetFormerPathName() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final String formerPathName = repository.getFormerPathName(repository.getTransactionId(3),
 			                                                           "dir_b/file_2_dir_a");
@@ -306,9 +320,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test log.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testLog() {
+	public void testLog() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final List<LogEntry> log = repository.log(repository.getFirstRevisionId(), repository.getHEAD());
 			
@@ -419,9 +436,12 @@ public class RepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test move edit.
+	 * 
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void testMoveEdit() {
+	public void testMoveEdit() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getTransactionId(3));
 			assertEquals(2, changedPaths.size());

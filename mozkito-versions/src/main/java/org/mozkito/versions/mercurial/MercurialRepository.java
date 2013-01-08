@@ -55,6 +55,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -149,14 +150,11 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	@NoneNull
 	public List<AnnotationEntry> annotate(final String filePath,
-	                                      final String revision) {
+	                                      final String revision) throws RepositoryOperationException {
 		Condition.notNull(filePath, "Annotation of null path not possible");
 		Condition.notNull(revision, "Annotation requires revision");
 		if ((filePath == null) || (revision == null)) {
-			if (Logger.logError()) {
-				Logger.error("filePath and revision must not be null. Abort.");
-			}
-			return new ArrayList<AnnotationEntry>(0);
+			throw new RepositoryOperationException("filePath and revision must not be null. Abort.");
 		}
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "annotate", "-cfud",
 		        "-r", revision, filePath }, this.cloneDir, null, null);
@@ -166,10 +164,8 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		}
 		final List<String> lines = response.getSecond();
 		if (lines.size() < 1) {
-			if (Logger.logError()) {
-				Logger.error("Annotating file `" + filePath + "` in revision `" + revision + "` returned no output.");
-			}
-			return null;
+			throw new RepositoryOperationException("Annotating file `" + filePath + "` in revision `" + revision
+			        + "` returned no output.");
 		}
 		
 		final List<AnnotationEntry> result = new ArrayList<AnnotationEntry>();
@@ -177,10 +173,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		
 		for (final String line : lines) {
 			if (!MercurialRepository.REGEX.matchesFull(line)) {
-				if (Logger.logError()) {
-					Logger.error("Found line in annotation that cannot be parsed. Abort");
-				}
-				return null;
+				throw new RepositoryOperationException("Found line in annotation that cannot be parsed. Abort");
 			}
 			final String author = MercurialRepository.REGEX.getGroup("author");
 			final String shortHash = MercurialRepository.REGEX.getGroup("hash");
@@ -201,10 +194,10 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 						break;
 					}
 				}
+				
 				if (!found) {
-					if (Logger.logError()) {
-						Logger.error("Could not find a cached hash for short hash `" + shortHash + "`");
-					}
+					throw new RepositoryOperationException("Could not find a cached hash for short hash `" + shortHash
+					        + "`");
 				}
 			}
 			final String hash = hashCache.get(shortHash);
@@ -245,29 +238,27 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@Override
 	@NoneNull
 	public File checkoutPath(final String relativeRepoPath,
-	                         final String revision) {
+	                         final String revision) throws RepositoryOperationException {
 		Condition.notNull(relativeRepoPath, "Cannot check out NULL path");
 		Condition.notNull(revision, "Checking ut requries revision");
 		
 		if ((relativeRepoPath == null) || (revision == null)) {
-			if (Logger.logError()) {
-				Logger.error("Path and revision must not be null.");
-			}
-			return null;
+			throw new RepositoryOperationException("Path and revision must not be null.");
 		}
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "update", "-C",
 		        revision }, this.cloneDir, null, null);
+		
 		if (response.getFirst() != 0) {
 			return null;
 		}
+		
 		final File file = new File(this.cloneDir, relativeRepoPath);
+		
 		if (!file.exists()) {
-			if (Logger.logError()) {
-				Logger.error("Could not get requested path using command `hg update -C`. Abort.");
-			}
-			return null;
+			throw new RepositoryOperationException("Could not get requested path using command `hg update -C`. Abort.");
 		}
+		
 		return file;
 	}
 	
@@ -279,19 +270,17 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @param destDir
 	 *            the dest dir
 	 * @return true, if successful
+	 * @throws RepositoryOperationException
 	 */
 	private boolean clone(final InputStream inputStream,
-	                      final String destDir) {
+	                      final String destDir) throws RepositoryOperationException {
 		final Tuple<Integer, List<String>> returnValue = CommandExecutor.execute("hg", new String[] { "clone", "-U",
 		        getUri().toString(), destDir }, this.cloneDir, inputStream, null);
 		if (returnValue.getFirst() == 0) {
 			this.cloneDir = new File(destDir);
 			if (!this.cloneDir.exists()) {
-				if (Logger.logError()) {
-					Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-					        + destDir + "`");
-				}
-				return false;
+				throw new RepositoryOperationException("Could not clone git repository `" + getUri().toString()
+				        + "` to directory `" + destDir + "`");
 			}
 			FileUtils.addToFileManager(this.cloneDir, FileShutdownAction.DELETE);
 			cacheHashes();
@@ -308,16 +297,13 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	@NoneNull
 	public Collection<Delta> diff(final String filePath,
 	                              final String baseRevision,
-	                              final String revisedRevision) {
+	                              final String revisedRevision) throws RepositoryOperationException {
 		Condition.notNull(filePath, "Cannot diff NULL path");
 		Condition.notNull(baseRevision, "cannot compare to NULL revision");
 		Condition.notNull(revisedRevision, "cannot compare to NULL revision");
 		
 		if ((filePath == null) || (baseRevision == null) || (revisedRevision == null)) {
-			if (Logger.logError()) {
-				Logger.error("Path and revisions must not be null. Abort.");
-			}
-			return null;
+			throw new RepositoryOperationException("Path and revisions must not be null. Abort.");
 		}
 		
 		final File filePathFileBase = checkoutPath(filePath, baseRevision);
@@ -416,24 +402,19 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 */
 	@Override
 	@NoneNull
-	public Map<String, ChangeType> getChangedPaths(final String revision) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) throws RepositoryOperationException {
 		Condition.notNull(revision, "Cannot get changed paths for null revision");
 		
 		if (revision == null) {
-			if (Logger.logError()) {
-				Logger.error("Revision must be null. Abort.");
-			}
-			return null;
+			throw new RepositoryOperationException("Revision must be null. Abort.");
 		}
+		
 		try {
 			writeLogStyle(this.cloneDir);
 		} catch (final IOException e1) {
-			if (Logger.logError()) {
-				Logger.error("Could not set log style `miner` in order to parse log. Abort.");
-				Logger.error(e1.getMessage());
-			}
-			return null;
+			throw new RepositoryOperationException("Could not set log style `miner` in order to parse log. Abort.", e1);
 		}
+		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--style",
 		        "minerlog", "-r", revision + ":" + revision }, this.cloneDir, null, null);
 		if (response.getFirst() != 0) {
@@ -441,18 +422,15 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 		}
 		final List<String> lines = response.getSecond();
 		if (lines.size() != 1) {
-			if (Logger.logError()) {
-				Logger.error("Log returned " + lines.size() + " lines. Only one line expected. Abort.");
-			}
-			return null;
+			throw new RepositoryOperationException("Log returned " + lines.size()
+			        + " lines. Only one line expected. Abort.");
 		}
+		
 		final String line = lines.get(0);
 		final String[] lineParts = line.split("\\+~\\+");
+		
 		if (lineParts.length < MercurialRepository.HG_MAX_LINE_PARTS_LENGTH) {
-			if (Logger.logError()) {
-				Logger.error("hg log could not be parsed. Too less columns in logfile.");
-				return null;
-			}
+			throw new RepositoryOperationException("hg log could not be parsed. Too less columns in logfile.");
 		}
 		if (lineParts.length > MercurialRepository.HG_MAX_LINE_PARTS_LENGTH) {
 			final StringBuilder s = new StringBuilder();
@@ -492,7 +470,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
-	public String getFirstRevisionId() {
+	public String getFirstRevisionId() throws RepositoryOperationException {
 		if (getStartRevision() == null) {
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r0",
 			        "--template", "{node}" }, this.cloneDir, null, null);
@@ -500,11 +478,10 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 				return null;
 			}
 			final List<String> lines = response.getSecond();
+			
 			if (lines.size() < 1) {
-				if (Logger.logError()) {
-					Logger.error("Command `hg log -r0 --template {node}` returned no output. Abort.");
-				}
-				return null;
+				throw new RepositoryOperationException(
+				                                       "Command `hg log -r0 --template {node}` returned no output. Abort.");
 			}
 			return lines.get(0).trim();
 		}
@@ -552,20 +529,22 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getLastRevisionId()
 	 */
 	@Override
-	public String getHEADRevisionId() {
+	public String getHEADRevisionId() throws RepositoryOperationException {
 		if (getEndRevision() == null) {
 			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-rtip",
 			        "--template", "{node}" }, this.cloneDir, null, null);
+			
 			if (response.getFirst() != 0) {
 				return null;
 			}
+			
 			final List<String> lines = response.getSecond();
+			
 			if (lines.size() < 1) {
-				if (Logger.logError()) {
-					Logger.error("Command `hg log -rtip --template {node}` returned no output. Abort.");
-				}
-				return null;
+				throw new RepositoryOperationException(
+				                                       "Command `hg log -rtip --template {node}` returned no output. Abort.");
 			}
+			
 			return lines.get(0).trim();
 		}
 		return getEndRevision();
@@ -585,136 +564,129 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() throws IOException {
-		if (this.revDepGraph == null) {
-			this.revDepGraph = new RevDependencyGraph();
-			
-			// run hg tip --template {node}\n to get tip and to determine master branch
-			String[] arguments = new String[] { "tip", "--template", "{node}" + FileUtils.lineSeparator };
-			final Tuple<Integer, List<String>> tipResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
-			                                                                       null, null);
-			if (tipResult.getFirst() != 0) {
-				if (Logger.logError()) {
-					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
-				}
-			}
-			
-			final String tip = tipResult.getSecond().get(0);
-			
-			// run hg heads --template {node}:{branches}\n to retrieve the open branches.
-			// if {branches} is empty, it means that the branch in not names. generate name using that head hash
-			arguments = new String[] { "heads", "--template",
-			        "{node}" + FIELD_SPLITTER + "{branches}" + FileUtils.lineSeparator };
-			final Tuple<Integer, List<String>> headsResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
-			                                                                         null, null);
-			if (headsResult.getFirst() != 0) {
-				if (Logger.logError()) {
-					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
-				}
-			}
-			for (final String line : headsResult.getSecond()) {
-				final String[] lineParts = line.split(FIELD_SPLITTER);
-				if (lineParts.length < 1) {
-					if (Logger.logError()) {
-						Logger.error("Malformatted line in hg heads output: %s. Retunning null! Further parsing might lead to data inconsistency.",
-						             line);
-					}
-					return null;
-				}
-				String branchName = "";
-				if (lineParts.length > 1) {
-					branchName = lineParts[1];
-				}
-				final String node = lineParts[0];
-				if (branchName.isEmpty()) {
-					if (!node.equals(tip)) {
-						// unnamed branch. Genrating a branch name using the head commit hash as name
-						branchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE, node);
-					} else {
-						branchName = String.format(RCSBranch.MASTER_BRANCH_NAME, node);
-					}
-				}
-				this.revDepGraph.addBranch(branchName, node);
-			}
-			
-			// run hg log --template {node}+~+{parents}+~+{tags}\n --debug to retrieve change sets, patents and tags
-			arguments = new String[] { "log", "--template",
-			        "{node}" + FIELD_SPLITTER + "{parents}" + FIELD_SPLITTER + "{tags}" + FileUtils.lineSeparator,
-			        "--debug" };
-			final Tuple<Integer, List<String>> logResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
-			                                                                       null, null);
-			if (logResult.getFirst() != 0) {
-				if (Logger.logError()) {
-					Logger.error("Could not execute hg %s. Returning null!", StringUtils.join(arguments, " "));
-				}
-			}
-			for (final String line : logResult.getSecond()) {
-				final String[] lineParts = line.split(FIELD_SPLITTER);
-				if (lineParts.length < 2) {
-					if (Logger.logError()) {
-						Logger.error("Malformatted line in hg log output: %s. Returning null! Further parsing might lead to data inconsistency.",
-						             line);
-					}
-					return null;
+	public RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException {
+		try {
+			if (this.revDepGraph == null) {
+				this.revDepGraph = new RevDependencyGraph();
+				
+				// run hg tip --template {node}\n to get tip and to determine master branch
+				String[] arguments = new String[] { "tip", "--template", "{node}" + FileUtils.lineSeparator };
+				final Tuple<Integer, List<String>> tipResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+				                                                                       null, null);
+				if (tipResult.getFirst() != 0) {
+					throw new RepositoryOperationException(String.format("Could not execute hg %s.",
+					                                                     StringUtils.join(arguments, " ")));
+					
 				}
 				
-				final String node = lineParts[0];
-				final String parents = lineParts[1];
+				final String tip = tipResult.getSecond().get(0);
 				
-				final String[] parentsParts = parents.split(" ");
-				if (parentsParts.length != 2) {
-					if (Logger.logError()) {
-						Logger.error("A change set must have exactly TWO parents in hg log. Returning null. Further parsing might lead to data inconsistency. Line: %s",
-						             line);
+				// run hg heads --template {node}:{branches}\n to retrieve the open branches.
+				// if {branches} is empty, it means that the branch in not names. generate name using that head hash
+				arguments = new String[] { "heads", "--template",
+				        "{node}" + FIELD_SPLITTER + "{branches}" + FileUtils.lineSeparator };
+				final Tuple<Integer, List<String>> headsResult = CommandExecutor.execute("hg", arguments,
+				                                                                         this.cloneDir, null, null);
+				if (headsResult.getFirst() != 0) {
+					throw new RepositoryOperationException(String.format("Could not execute hg %s.",
+					                                                     StringUtils.join(arguments, " ")));
+				}
+				for (final String line : headsResult.getSecond()) {
+					final String[] lineParts = line.split(FIELD_SPLITTER);
+					if (lineParts.length < 1) {
+						throw new RepositoryOperationException(
+						                                       String.format("Malformatted line in hg heads output: %s. Further parsing would lead to data inconsistency.",
+						                                                     line));
 					}
-					return null;
-				}
-				if (!REVISION_NODE_REGEX.matches(parentsParts[0])) {
-					if (Logger.logError()) {
-						Logger.error("Found line in hg log that cannot be parsed. Returning null. Further parsing might lead to data inconsistency. Line: %s",
-						             line);
+					String branchName = "";
+					if (lineParts.length > 1) {
+						branchName = lineParts[1];
 					}
-					return null;
-				}
-				final Tuple<String, String> parentNames = new Tuple<String, String>(
-				                                                                    REVISION_NODE_REGEX.getGroup("hash"),
-				                                                                    null);
-				if (!REVISION_NODE_REGEX.matches(parentsParts[1])) {
-					if (Logger.logError()) {
-						Logger.error("Found line in hg log that cannot be parsed. Returning null. Further parsing might lead to data inconsistency. Line: %s",
-						             line);
+					final String node = lineParts[0];
+					if (branchName.isEmpty()) {
+						if (!node.equals(tip)) {
+							// unnamed branch. Genrating a branch name using the head commit hash as name
+							branchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE, node);
+						} else {
+							branchName = String.format(RCSBranch.MASTER_BRANCH_NAME, node);
+						}
 					}
-					return null;
-				}
-				final String mergeParentName = REVISION_NODE_REGEX.getGroup("hash");
-				if (!"0000000000000000000000000000000000000000".equals(mergeParentName)) {
-					parentNames.setSecond(mergeParentName);
-				}
-				
-				String[] tagNames = new String[0];
-				if (lineParts.length > 2) {
-					tagNames = lineParts[2].split(" ");
+					this.revDepGraph.addBranch(branchName, node);
 				}
 				
-				if (this.revDepGraph.addChangeSet(node) == null) {
-					if (Logger.logError()) {
-						Logger.error("An error occured while adding a node to the graph DB. Please see earlier warning and error messages. Returning null.");
+				// run hg log --template {node}+~+{parents}+~+{tags}\n --debug to retrieve change sets, patents and tags
+				arguments = new String[] { "log", "--template",
+				        "{node}" + FIELD_SPLITTER + "{parents}" + FIELD_SPLITTER + "{tags}" + FileUtils.lineSeparator,
+				        "--debug" };
+				final Tuple<Integer, List<String>> logResult = CommandExecutor.execute("hg", arguments, this.cloneDir,
+				                                                                       null, null);
+				if (logResult.getFirst() != 0) {
+					throw new RepositoryOperationException(String.format("Could not execute hg %s. Returning null!",
+					                                                     StringUtils.join(arguments, " ")));
+					
+				}
+				for (final String line : logResult.getSecond()) {
+					final String[] lineParts = line.split(FIELD_SPLITTER);
+					if (lineParts.length < 2) {
+						throw new RepositoryOperationException(
+						                                       String.format("Malformatted line in hg log output: %s. Further parsing might lead to data inconsistency.",
+						                                                     line));
 					}
-					return null;
-				}
-				for (final String tagName : tagNames) {
-					this.revDepGraph.addTag(tagName, node);
-				}
-				
-				if (!"0000000000000000000000000000000000000000".equals(parentNames.getFirst())) {
-					this.revDepGraph.addEdge(parentNames.getFirst(), node, EdgeType.BRANCH_EDGE);
-					if (parentNames.getSecond() != null) {
-						this.revDepGraph.addEdge(parentNames.getSecond(), node, EdgeType.MERGE_EDGE);
+					
+					final String node = lineParts[0];
+					final String parents = lineParts[1];
+					
+					final String[] parentsParts = parents.split(" ");
+					if (parentsParts.length != 2) {
+						throw new RepositoryOperationException(
+						                                       String.format("A change set must have exactly TWO parents in hg log. Further parsing might lead to data inconsistency. Line: %s",
+						                                                     line));
+					}
+					if (!REVISION_NODE_REGEX.matches(parentsParts[0])) {
+						throw new RepositoryOperationException(
+						                                       String.format("Found line in hg log that cannot be parsed. Further parsing might lead to data inconsistency. Line: %s",
+						                                                     line));
+					}
+					final Tuple<String, String> parentNames = new Tuple<String, String>(
+					                                                                    REVISION_NODE_REGEX.getGroup("hash"),
+					                                                                    null);
+					if (!REVISION_NODE_REGEX.matches(parentsParts[1])) {
+						throw new RepositoryOperationException(
+						                                       String.format("Found line in hg log that cannot be parsed. Further parsing might lead to data inconsistency. Line: %s",
+						                                                     line));
+					}
+					
+					final String mergeParentName = REVISION_NODE_REGEX.getGroup("hash");
+					if (!"0000000000000000000000000000000000000000".equals(mergeParentName)) {
+						parentNames.setSecond(mergeParentName);
+					}
+					
+					String[] tagNames = new String[0];
+					if (lineParts.length > 2) {
+						tagNames = lineParts[2].split(" ");
+					}
+					
+					if (this.revDepGraph.addChangeSet(node) == null) {
+						throw new RepositoryOperationException(
+						                                       "An error occured while adding a node to the graph DB. Please see earlier warning and error messages.");
+					}
+					
+					for (final String tagName : tagNames) {
+						this.revDepGraph.addTag(tagName, node);
+					}
+					
+					if (!"0000000000000000000000000000000000000000".equals(parentNames.getFirst())) {
+						this.revDepGraph.addEdge(parentNames.getFirst(), node, EdgeType.BRANCH_EDGE);
+						if (parentNames.getSecond() != null) {
+							this.revDepGraph.addEdge(parentNames.getSecond(), node, EdgeType.MERGE_EDGE);
+						}
 					}
 				}
 			}
+			return this.revDepGraph;
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
 		}
-		return this.revDepGraph;
 	}
 	
 	/*
@@ -722,7 +694,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
-	public long getTransactionCount() {
+	public long getTransactionCount() throws RepositoryOperationException {
 		
 		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "-r", "tip",
 		        "--template", "{rev}" + FileUtils.lineSeparator }, this.cloneDir, null, null);
@@ -735,9 +707,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 			result = Long.valueOf(rev);
 			result += 1;
 		} catch (final NumberFormatException e) {
-			if (Logger.logError()) {
-				Logger.error("Could not interpret revision cound " + rev + " as Long.");
-			}
+			throw new RepositoryOperationException("Could not interpret revision cound " + rev + " as Long.");
 		}
 		return result;
 	}
@@ -762,7 +732,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
-	public long getTransactionIndex(final String transactionId) {
+	public long getTransactionIndex(final String transactionId) throws RepositoryOperationException {
 		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
 			return this.transactionIDs.indexOf(getHEADRevisionId());
 		}
@@ -799,7 +769,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) throws IOException {
+	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
 		setup(address, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
@@ -822,60 +792,59 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
-	                   @NotNull final String mainBranchName) throws IOException {
-		
-		setMainBranchName(mainBranchName);
-		setUri(address);
-		
-		File localCloneDir = null;
-		if (tmpDir == null) {
-			localCloneDir = FileUtils.createRandomDir("moskito_hg_clone_",
-			
-			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
-		} else {
-			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_hg_clone_",
-			
-			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
-		}
-		
-		// clone the remote repository
-		if (!clone(null, localCloneDir.getAbsolutePath())) {
-			if (Logger.logError()) {
-				Logger.error("Could not clone git repository `" + getUri().toString() + "` to directory `"
-				        + localCloneDir.getAbsolutePath() + "`");
-				throw new RuntimeException();
-			}
-		}
-		
+	                   @NotNull final String mainBranchName) throws RepositoryOperationException {
 		try {
-			writeLogStyle(this.cloneDir);
-		} catch (final IOException e1) {
-			throw new UnrecoverableError("Could not set log style `miner` in order to parse log. Abort.");
+			setMainBranchName(mainBranchName);
+			setUri(address);
+			
+			File localCloneDir = null;
+			if (tmpDir == null) {
+				localCloneDir = FileUtils.createRandomDir("moskito_hg_clone_",
+				
+				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+			} else {
+				localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_hg_clone_",
+				
+				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+			}
+			
+			// clone the remote repository
+			if (!clone(null, localCloneDir.getAbsolutePath())) {
+				throw new RepositoryOperationException("Could not clone git repository `" + getUri().toString()
+				        + "` to directory `" + localCloneDir.getAbsolutePath() + "`");
+			}
+			
+			try {
+				writeLogStyle(this.cloneDir);
+			} catch (final IOException e1) {
+				throw new UnrecoverableError("Could not set log style `miner` in order to parse log. Abort.");
+			}
+			
+			setStartRevision(getFirstRevisionId());
+			setEndRevision(getHEADRevisionId());
+			
+			final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log",
+			        "--template", "{node}\n" }, this.cloneDir, null, new HashMap<String, String>());
+			if (response.getFirst() != 0) {
+				throw new UnrecoverableError("Could not fetch full list of revision IDs!");
+			}
+			if (Logger.logDebug()) {
+				Logger.debug("############# hg log --template '{node}\n'");
+			}
+			
+			this.transactionIDs.clear();
+			this.transactionIDs.addAll(response.getSecond());
+			Collections.reverse(this.transactionIDs);
+			
+			if (!this.transactionIDs.isEmpty()) {
+				Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+				                "First revision ID and transaction ID list missmatch!");
+				Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+				                "End revision ID and transaction ID list missmatch!");
+			}
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
 		}
-		
-		setStartRevision(getFirstRevisionId());
-		setEndRevision(getHEADRevisionId());
-		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", new String[] { "log", "--template",
-		        "{node}\n" }, this.cloneDir, null, new HashMap<String, String>());
-		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
-		}
-		if (Logger.logDebug()) {
-			Logger.debug("############# hg log --template '{node}\n'");
-		}
-		
-		this.transactionIDs.clear();
-		this.transactionIDs.addAll(response.getSecond());
-		Collections.reverse(this.transactionIDs);
-		
-		if (!this.transactionIDs.isEmpty()) {
-			Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
-			                "First revision ID and transaction ID list missmatch!");
-			Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
-			                "End revision ID and transaction ID list missmatch!");
-		}
-		
 	}
 	
 	/*
@@ -889,7 +858,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) throws IOException {
+	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
 		setup(URIUtils.encodeUsername(address, username), new ByteArrayInputStream(password.getBytes()), branchFactory,
 		      tmpDir, mainBranchName);
 	}

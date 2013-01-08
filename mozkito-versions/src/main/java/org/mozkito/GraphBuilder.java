@@ -15,7 +15,6 @@
  */
 package org.mozkito;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
@@ -61,7 +61,7 @@ public class GraphBuilder implements Runnable {
 	public GraphBuilder(final Repository repository, final PersistenceUtil persistenceUtil) {
 		try {
 			this.revDepGraph = repository.getRevDependencyGraph();
-		} catch (final IOException e) {
+		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
 		this.persistenceUtil = persistenceUtil;

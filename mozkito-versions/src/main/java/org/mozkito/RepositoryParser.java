@@ -26,6 +26,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
@@ -58,50 +59,55 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 */
 	public static RCSTransaction parseLogEntry(final Repository repository,
 	                                           final LogEntry data) {
-		if (Logger.logDebug()) {
-			Logger.debug("Parsing " + data);
-		}
 		
-		if (TRANSACTION_IDS.contains(data.getRevision())) {
-			throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
-			        + data.getRevision() + ")");
-		}
-		
-		final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
-		                                                         data.getDateTime(), data.getAuthor(),
-		                                                         data.getOriginalId());
-		TRANSACTION_IDS.add(data.getRevision());
-		final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
-		for (final String fileName : changedPaths.keySet()) {
-			RCSFile file;
+		try {
+			if (Logger.logDebug()) {
+				Logger.debug("Parsing " + data);
+			}
 			
-			if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-				file = FILE_MANAGER.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-				if (file == null) {
-					
-					if (Logger.logWarn()) {
-						Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-						        + changedPaths.get(fileName));
+			if (TRANSACTION_IDS.contains(data.getRevision())) {
+				throw new UnrecoverableError("Attempt to create an transaction that was created before! ("
+				        + data.getRevision() + ")");
+			}
+			
+			final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
+			                                                         data.getDateTime(), data.getAuthor(),
+			                                                         data.getOriginalId());
+			TRANSACTION_IDS.add(data.getRevision());
+			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
+			for (final String fileName : changedPaths.keySet()) {
+				RCSFile file;
+				
+				if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
+					file = FILE_MANAGER.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
+					if (file == null) {
+						
+						if (Logger.logWarn()) {
+							Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
+							        + changedPaths.get(fileName));
+						}
+						file = FILE_MANAGER.getFile(fileName);
+						
+						if (file == null) {
+							file = FILE_MANAGER.createFile(fileName, rcsTransaction);
+						}
+					} else {
+						file.assignTransaction(rcsTransaction, fileName);
 					}
+				} else {
 					file = FILE_MANAGER.getFile(fileName);
 					
 					if (file == null) {
 						file = FILE_MANAGER.createFile(fileName, rcsTransaction);
 					}
-				} else {
-					file.assignTransaction(rcsTransaction, fileName);
 				}
-			} else {
-				file = FILE_MANAGER.getFile(fileName);
 				
-				if (file == null) {
-					file = FILE_MANAGER.createFile(fileName, rcsTransaction);
-				}
+				new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
 			}
-			
-			new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
+			return rcsTransaction;
+		} catch (final RepositoryOperationException e) {
+			throw new UnrecoverableError(e);
 		}
-		return rcsTransaction;
 	}
 	
 	/**

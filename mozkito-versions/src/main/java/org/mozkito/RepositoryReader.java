@@ -22,8 +22,10 @@ import net.ownhero.dev.andama.threads.PreExecutionHook;
 import net.ownhero.dev.andama.threads.ProcessHook;
 import net.ownhero.dev.andama.threads.Source;
 import net.ownhero.dev.hiari.settings.Settings;
+import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.LogEntry;
 
@@ -59,10 +61,13 @@ public class RepositoryReader extends Source<LogEntry> {
 				if (Logger.logInfo()) {
 					Logger.info("Requesting logs from " + repository);
 				}
-				
-				repository.getTransactionCount();
-				RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
-				                                                   repository.getEndRevision()).iterator();
+				try {
+					repository.getTransactionCount();
+					RepositoryReader.this.logIterator = repository.log(repository.getFirstRevisionId(),
+					                                                   repository.getEndRevision()).iterator();
+				} catch (final RepositoryOperationException e) {
+					throw new UnrecoverableError(e);
+				}
 				
 				if (Logger.logInfo()) {
 					Logger.info("Created iterator.");

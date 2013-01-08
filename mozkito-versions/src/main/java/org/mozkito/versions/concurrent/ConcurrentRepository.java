@@ -15,7 +15,6 @@ package org.mozkito.versions.concurrent;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -31,15 +30,12 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
 import net.ownhero.dev.ioda.JavaUtils;
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import difflib.Delta;
 
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
@@ -110,11 +106,13 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#annotate(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<AnnotationEntry> annotate(final String filePath,
-	                                      final String revision) {
+	                                      final String revision) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -131,7 +129,7 @@ public class ConcurrentRepository extends Repository {
 	 */
 	@Override
 	public File checkoutPath(final String relativeRepoPath,
-	                         final String revision) throws FilePermissionException {
+	                         final String revision) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -143,8 +141,10 @@ public class ConcurrentRepository extends Repository {
 	
 	/**
 	 * Cleanup.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
-	private synchronized void cleanup() {
+	private synchronized void cleanup() throws RepositoryOperationException {
 		++this.cleanupCount;
 		if ((this.cleanupCount % this.cleanupThreshold) == 0) {
 			final Thread[] threads = new Thread[Thread.activeCount()];
@@ -161,6 +161,7 @@ public class ConcurrentRepository extends Repository {
 					list.add(id);
 					final Repository orphanedRepository = this.threadToRevisionMap.get(id);
 					final File wokingCopyLocation = orphanedRepository.getWorkingCopyLocation();
+					
 					if (wokingCopyLocation != null) {
 						try {
 							FileUtils.deleteDirectory(wokingCopyLocation);
@@ -190,7 +191,7 @@ public class ConcurrentRepository extends Repository {
 	@Override
 	public Collection<Delta> diff(final String filePath,
 	                              final String baseRevision,
-	                              final String revisedRevision) throws FilePermissionException, IOException {
+	                              final String revisedRevision) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -222,7 +223,7 @@ public class ConcurrentRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getChangedPaths(java.lang.String)
 	 */
 	@Override
-	public Map<String, ChangeType> getChangedPaths(final String revision) {
+	public Map<String, ChangeType> getChangedPaths(final String revision) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -238,7 +239,7 @@ public class ConcurrentRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
-	public String getFirstRevisionId() {
+	public String getFirstRevisionId() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -255,7 +256,7 @@ public class ConcurrentRepository extends Repository {
 	 */
 	@Override
 	public String getFormerPathName(final String revision,
-	                                final String pathName) {
+	                                final String pathName) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -278,10 +279,12 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#getHEADRevisionId()
 	 */
 	@Override
-	public String getHEADRevisionId() {
+	public String getHEADRevisionId() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -310,8 +313,7 @@ public class ConcurrentRepository extends Repository {
 					this.threadToRevisionMap.put(thread.getId(), repoClone);
 				} catch (final InstantiationException e) {
 					throw new InstantiationError(e, this.repository.getClass(), null, new Object[0]);
-				} catch (final MalformedURLException | InvalidProtocolType | InvalidRepositoryURI
-				        | UnsupportedProtocolType | IllegalAccessException e) {
+				} catch (final RepositoryOperationException | IllegalAccessException e) {
 					throw new UnrecoverableError(e);
 				}
 			}
@@ -321,6 +323,8 @@ public class ConcurrentRepository extends Repository {
 			Condition.notNull(threadRepository, "Local variable '%s' in '%s'.", "threadRepository", getHandle()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			return threadRepository;
+		} catch (final RepositoryOperationException e1) {
+			throw new UnrecoverableError(e1);
 		} catch (final IOException e1) {
 			throw new UnrecoverableError(e1);
 		}
@@ -332,7 +336,7 @@ public class ConcurrentRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() throws IOException {
+	public RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -345,10 +349,12 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionCount()
 	 */
 	@Override
-	public long getTransactionCount() {
+	public long getTransactionCount() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -361,10 +367,12 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionId(long)
 	 */
 	@Override
-	public String getTransactionId(final long index) {
+	public String getTransactionId(final long index) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -377,10 +385,12 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
 	 */
 	@Override
-	public long getTransactionIndex(final String transactionId) {
+	public long getTransactionIndex(final String transactionId) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -393,10 +403,12 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#getWorkingCopyLocation()
 	 */
 	@Override
-	public File getWorkingCopyLocation() {
+	public File getWorkingCopyLocation() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -409,11 +421,13 @@ public class ConcurrentRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @throws RepositoryOperationException
+	 * 
 	 * @see org.mozkito.versions.Repository#log(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public List<LogEntry> log(final String fromRevision,
-	                          final String toRevision) {
+	                          final String toRevision) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -433,10 +447,7 @@ public class ConcurrentRepository extends Repository {
 	public void setup(final URI address,
 	                  final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) throws MalformedURLException,
-	                                              InvalidProtocolType,
-	                                              InvalidRepositoryURI,
-	                                              UnsupportedProtocolType {
+	                  final String mainBranchName) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
@@ -458,10 +469,7 @@ public class ConcurrentRepository extends Repository {
 	                  final String password,
 	                  final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) throws MalformedURLException,
-	                                              InvalidProtocolType,
-	                                              InvalidRepositoryURI,
-	                                              UnsupportedProtocolType {
+	                  final String mainBranchName) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {

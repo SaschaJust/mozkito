@@ -29,6 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -40,7 +41,10 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 @RepositorySettings ({ @RepositorySetting (type = RepositoryType.GIT, uri = "testGit.zip", id = "testGit") })
 public class RevDependencyGraphTest extends VersionsTest {
 	
+	/** The repo. */
 	private Repository         repo;
+	
+	/** The graph. */
 	private RevDependencyGraph graph;
 	
 	static {
@@ -51,9 +55,12 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Gets the strange tag.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Test
-	public void getStrangeTag() throws IOException {
+	public void getStrangeTag() throws IOException, RepositoryOperationException {
 		final RevDependencyGraph graph = this.repo.getRevDependencyGraph();
 		assertEquals(1, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").size());
 		assertEquals(true, graph.getTags("927478915f2d8fb9135eb33d21cb8491c0e655be").contains("tag_one"));
@@ -63,6 +70,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Regression test rhino.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void regressionTestRhino() throws IOException {
@@ -190,6 +198,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Regression test rhino2.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void regressionTestRhino2() throws IOException {
@@ -275,10 +284,11 @@ public class RevDependencyGraphTest extends VersionsTest {
 	/**
 	 * Tear down.
 	 * 
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws RepositoryOperationException {
 		assertTrue(getRepositories().containsKey("testGit"));
 		this.repo = getRepositories().get("testGit");
 		this.graph = this.repo.getRevDependencyGraph();
@@ -468,6 +478,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Test add change set twice.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testAddBranchTwice() throws IOException {
@@ -482,6 +493,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Test add change set twice.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testAddChangeSetTwice() throws IOException {
@@ -494,6 +506,7 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 * Test add edge twice.
 	 * 
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
 	public void testAddEdgeTwice() throws IOException {

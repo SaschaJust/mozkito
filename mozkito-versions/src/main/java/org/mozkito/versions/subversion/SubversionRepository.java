@@ -68,6 +68,7 @@ import difflib.Patch;
 
 import org.mozkito.exceptions.InvalidProtocolType;
 import org.mozkito.exceptions.InvalidRepositoryURI;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.exceptions.UnsupportedProtocolType;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
@@ -201,22 +202,21 @@ public class SubversionRepository extends Repository {
 	@Override
 	@NoneNull
 	public File checkoutPath(@NotEmpty final String relativeRepoPath,
-	                         @NotEmpty final String revision) throws FilePermissionException {
+	                         @NotEmpty final String revision) throws RepositoryOperationException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
-		if (this.tmpDir == null) {
-			this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
-			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
-			                                            FileShutdownAction.DELETE);
-		} else {
-			this.workingDirectory = FileUtils.createDir(this.tmpDir,
-			                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
-			                                            FileShutdownAction.DELETE);
-		}
-		
-		Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
-		
 		try {
+			if (this.tmpDir == null) {
+				this.workingDirectory = FileUtils.createDir(FileUtils.tmpDir,
+				                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
+				                                            FileShutdownAction.DELETE);
+			} else {
+				this.workingDirectory = FileUtils.createDir(this.tmpDir,
+				                                            "moskito_clone_" + DateTimeUtils.currentTimeMillis(),
+				                                            FileShutdownAction.DELETE);
+			}
+			
+			Condition.notNull(this.workingDirectory, "Cannot operate on working directory that is set to Null");
 			
 			final SVNUpdateClient updateClient = new SVNUpdateClient(this.repository.getAuthenticationManager(),
 			                                                         SVNWCUtil.createDefaultOptions(true));
@@ -231,8 +231,8 @@ public class SubversionRepository extends Repository {
 				return null;
 			}
 			return result;
-		} catch (final SVNException e) {
-			throw new UnrecoverableError(e);
+		} catch (final SVNException | FilePermissionException e) {
+			throw new RepositoryOperationException(e);
 		}
 	}
 	
@@ -245,7 +245,7 @@ public class SubversionRepository extends Repository {
 	@NoneNull
 	public Collection<Delta> diff(@NotEmpty final String filePath,
 	                              @NotEmpty final String baseRevision,
-	                              @NotEmpty final String revisedRevision) throws FilePermissionException, IOException {
+	                              @NotEmpty final String revisedRevision) throws RepositoryOperationException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
 		
 		try {
@@ -283,26 +283,30 @@ public class SubversionRepository extends Repository {
 			return diffParser.getDeltas();
 			
 		} catch (final SVNException e) {
-			// try to checkout file in first revision
-			final String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
-			final String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-			final File parentDir = checkoutPath(parentPath, baseRevision);
-			
-			if ((parentDir == null) || (!parentDir.exists())) {
-				// checkout failed too. Return null
-				return null;
+			try {
+				// try to checkout file in first revision
+				final String parentPath = filePath.substring(0, filePath.lastIndexOf("/"));
+				final String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+				final File parentDir = checkoutPath(parentPath, baseRevision);
+				
+				if ((parentDir == null) || (!parentDir.exists())) {
+					// checkout failed too. Return null
+					return null;
+				}
+				
+				final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
+				
+				if (!checkedOutFile.exists()) {
+					return null;
+				}
+				
+				final List<String> lines = FileUtils.fileToLines(checkedOutFile);
+				final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
+				
+				return patch.getDeltas();
+			} catch (final IOException e1) {
+				throw new RepositoryOperationException(e1);
 			}
-			
-			final File checkedOutFile = new File(parentDir.getAbsolutePath() + FileUtils.fileSeparator + fileName);
-			
-			if (!checkedOutFile.exists()) {
-				return null;
-			}
-			
-			final List<String> lines = FileUtils.fileToLines(checkedOutFile);
-			final Patch patch = DiffUtils.diff(lines, new ArrayList<String>(0));
-			
-			return patch.getDeltas();
 		}
 	}
 	
@@ -480,35 +484,40 @@ public class SubversionRepository extends Repository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() throws IOException {
+	public RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
-		if (this.revDepGraph == null) {
-			
-			final String repoPath = this.svnurl.getPath();
-			String branchName = RCSBranch.MASTER_BRANCH_NAME;
-			if (BRANCH_PATTERN.matches(repoPath)) {
-				branchName = BRANCH_PATTERN.getGroup("branch_name");
-			}
-			
-			this.revDepGraph = new RevDependencyGraph();
-			this.revDepGraph.addBranch(branchName, getHEADRevisionId());
-			
-			for (final LogEntry logEntry : this.log("1", "HEAD")) {
-				this.revDepGraph.addChangeSet(logEntry.getRevision());
-				try {
-					if (!logEntry.getRevision().equals(getHEADRevisionId())) {
-						Long revNum = Long.valueOf(logEntry.getRevision());
-						++revNum;
-						this.revDepGraph.addEdge(logEntry.getRevision(), revNum.toString(), EdgeType.BRANCH_EDGE);
+		
+		try {
+			if (this.revDepGraph == null) {
+				
+				final String repoPath = this.svnurl.getPath();
+				String branchName = RCSBranch.MASTER_BRANCH_NAME;
+				if (BRANCH_PATTERN.matches(repoPath)) {
+					branchName = BRANCH_PATTERN.getGroup("branch_name");
+				}
+				
+				this.revDepGraph = new RevDependencyGraph();
+				this.revDepGraph.addBranch(branchName, getHEADRevisionId());
+				
+				for (final LogEntry logEntry : this.log("1", "HEAD")) {
+					this.revDepGraph.addChangeSet(logEntry.getRevision());
+					try {
+						if (!logEntry.getRevision().equals(getHEADRevisionId())) {
+							Long revNum = Long.valueOf(logEntry.getRevision());
+							++revNum;
+							this.revDepGraph.addEdge(logEntry.getRevision(), revNum.toString(), EdgeType.BRANCH_EDGE);
+						}
+					} catch (final NumberFormatException e) {
+						throw UnrecoverableError.format(e,
+						                                "Could not interpret revision ID %s as Long value. Returning NULL!",
+						                                logEntry.getRevision());
 					}
-				} catch (final NumberFormatException e) {
-					throw UnrecoverableError.format(e,
-					                                "Could not interpret revision ID %s as Long value. Returning NULL!",
-					                                logEntry.getRevision());
 				}
 			}
+			return this.revDepGraph;
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
 		}
-		return this.revDepGraph;
 	}
 	
 	/**
@@ -646,10 +655,7 @@ public class SubversionRepository extends Repository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) throws MalformedURLException,
-	                                                       InvalidProtocolType,
-	                                                       InvalidRepositoryURI,
-	                                                       UnsupportedProtocolType {
+	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
 		setup(address, null, null, branchFactory, tmpDir, mainBranchName);
 	}
 	
@@ -665,94 +671,95 @@ public class SubversionRepository extends Repository {
 	                  final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  @NotNull final String mainBranchName) throws MalformedURLException,
-	                                                       InvalidProtocolType,
-	                                                       InvalidRepositoryURI,
-	                                                       UnsupportedProtocolType {
-		setMainBranchName(mainBranchName);
-		setUri(address);
-		this.username = username;
-		this.password = password;
-		
-		if (Logger.logDebug()) {
-			SVNDebugLog.setDefaultLog(new SubversionLogger());
-		}
-		
-		this.tmpDir = tmpDir;
-		
-		this.type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
-		if (this.type != null) {
-			if (Logger.logInfo()) {
-				Logger.info("Setting up in '" + this.type.name() + "' mode.");
-			}
-			switch (this.type) {
-				case FILE:
-					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
-					}
-					FSRepositoryFactory.setup();
-					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
-					}
-					break;
-				case HTTP:
-				case HTTPS:
-					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
-					}
-					DAVRepositoryFactory.setup();
-					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
-					}
-					break;
-				case SSH:
-					if (Logger.logDebug()) {
-						Logger.debug("Using valid mode " + this.type.name() + ".");
-					}
-					SVNRepositoryFactoryImpl.setup();
-					if (Logger.logTrace()) {
-						Logger.trace("Setup done for mode " + this.type.name() + ".");
-					}
-					break;
-				default:
-					throw new UnsupportedProtocolType("Failed to setup in '" + this.type.name()
-					        + "' mode. Unsupported at this time. " + getHandle() + " does not support protocol "
-					        + this.type.name());
-			}
-			try {
-				if (Logger.logInfo()) {
-					Logger.info("Parsing URL: " + URIUtils.Uri2String(getUri()));
-				}
-				this.svnurl = SVNURL.parseURIDecoded(URIUtils.Uri2String(getUri()));
-				if (Logger.logTrace()) {
-					Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
-					        + this.svnurl.toString());
-				}
-				
-				if (this.username != null) {
-					final ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
-					                                                                                           this.password);
-					this.repository.setAuthenticationManager(authManager);
-				}
-				
-				this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
-				
-				this.startRevision = (SVNRevision.create(1));
-				final SVNDirEntry entry = this.repository.info("/", -1);
-				this.endRevision = SVNRevision.create(entry.getRevision());
-				
-				this.initialized = true;
-				
-				if (Logger.logInfo()) {
-					Logger.info("Setup repository: " + this);
-				}
-				
-			} catch (final SVNException e) {
-				throw new InvalidRepositoryURI(e.getMessage());
+	                  @NotNull final String mainBranchName) throws RepositoryOperationException {
+		try {
+			setMainBranchName(mainBranchName);
+			setUri(address);
+			this.username = username;
+			this.password = password;
+			
+			if (Logger.logDebug()) {
+				SVNDebugLog.setDefaultLog(new SubversionLogger());
 			}
 			
-		} else {
-			throw new InvalidProtocolType(getUri().toURL().getProtocol().toUpperCase());
+			this.tmpDir = tmpDir;
+			
+			this.type = ProtocolType.valueOf(getUri().toURL().getProtocol().toUpperCase());
+			if (this.type != null) {
+				if (Logger.logInfo()) {
+					Logger.info("Setting up in '" + this.type.name() + "' mode.");
+				}
+				switch (this.type) {
+					case FILE:
+						if (Logger.logDebug()) {
+							Logger.debug("Using valid mode " + this.type.name() + ".");
+						}
+						FSRepositoryFactory.setup();
+						if (Logger.logTrace()) {
+							Logger.trace("Setup done for mode " + this.type.name() + ".");
+						}
+						break;
+					case HTTP:
+					case HTTPS:
+						if (Logger.logDebug()) {
+							Logger.debug("Using valid mode " + this.type.name() + ".");
+						}
+						DAVRepositoryFactory.setup();
+						if (Logger.logTrace()) {
+							Logger.trace("Setup done for mode " + this.type.name() + ".");
+						}
+						break;
+					case SSH:
+						if (Logger.logDebug()) {
+							Logger.debug("Using valid mode " + this.type.name() + ".");
+						}
+						SVNRepositoryFactoryImpl.setup();
+						if (Logger.logTrace()) {
+							Logger.trace("Setup done for mode " + this.type.name() + ".");
+						}
+						break;
+					default:
+						throw new UnsupportedProtocolType("Failed to setup in '" + this.type.name()
+						        + "' mode. Unsupported at this time. " + getHandle() + " does not support protocol "
+						        + this.type.name());
+				}
+				try {
+					if (Logger.logInfo()) {
+						Logger.info("Parsing URL: " + URIUtils.Uri2String(getUri()));
+					}
+					this.svnurl = SVNURL.parseURIDecoded(URIUtils.Uri2String(getUri()));
+					if (Logger.logTrace()) {
+						Logger.trace("Done parsing URL: " + getUri().toString() + " resulting in: "
+						        + this.svnurl.toString());
+					}
+					
+					if (this.username != null) {
+						final ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(this.username,
+						                                                                                           this.password);
+						this.repository.setAuthenticationManager(authManager);
+					}
+					
+					this.repository = SVNClientManager.newInstance().createRepository(this.svnurl, true);
+					
+					this.startRevision = (SVNRevision.create(1));
+					final SVNDirEntry entry = this.repository.info("/", -1);
+					this.endRevision = SVNRevision.create(entry.getRevision());
+					
+					this.initialized = true;
+					
+					if (Logger.logInfo()) {
+						Logger.info("Setup repository: " + this);
+					}
+					
+				} catch (final SVNException e) {
+					throw new InvalidRepositoryURI(e.getMessage());
+				}
+				
+			} else {
+				throw new InvalidProtocolType(getUri().toURL().getProtocol().toUpperCase());
+			}
+		} catch (InvalidRepositoryURI | UnsupportedProtocolType | MalformedURLException | InvalidProtocolType e) {
+			throw new RepositoryOperationException(e);
 		}
 	}
 	

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.ioda.FileUtils.FileShutdownAction;
+import net.ownhero.dev.ioda.exceptions.FilePermissionException;
 
 import org.mozkito.infozilla.model.attachment.Attachment;
 
@@ -45,7 +46,7 @@ public class GzipArchive extends Archive {
 	 * @see org.mozkito.infozilla.model.archive.Archive#extract()
 	 */
 	@Override
-	public File extract() throws IOException {
+	public File extract() throws IOException, FilePermissionException {
 		final File file = FileUtils.createRandomFile(FileShutdownAction.DELETE);
 		FileUtils.dump(getAttachment().getData(), file);
 		final File dir = FileUtils.createRandomDir("test", "bleh", FileShutdownAction.DELETE);

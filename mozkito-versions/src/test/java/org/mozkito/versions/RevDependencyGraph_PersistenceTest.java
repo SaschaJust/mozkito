@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryParser;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.VersionsTest;
@@ -48,9 +49,10 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 	 * Test restored rev dep graph.
 	 * 
 	 * @throws IOException
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testRestoredRevDepGraph() throws IOException {
+	public void testRestoredRevDepGraph() throws IOException, RepositoryOperationException {
 		final PersistenceUtil persistenceUtil = getPersistenceUtil();
 		
 		assertTrue(getRepositories().containsKey("testGit"));

@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.junit.Test;
 
 import difflib.Delta;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -114,9 +114,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test annotate.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testAnnotate() {
+	public void testAnnotate() throws RepositoryOperationException {
 		List<AnnotationEntry> annotate = this.repo.annotate("3.txt",
 		                                                    MercurialRepositoryTest.T_637ACF68104E7BDFF8235FB2E1A254300FFEA3CB);
 		
@@ -169,17 +171,21 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test checkout path fail.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
-	@Test
-	public void testCheckoutPathFail() {
-		assertTrue(this.repo.checkoutPath("3.txt", MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285) == null);
+	@Test (expected = RepositoryOperationException.class)
+	public void testCheckoutPathFail() throws RepositoryOperationException {
+		this.repo.checkoutPath("3.txt", MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285);
 	}
 	
 	/**
 	 * Test checkout path success.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testCheckoutPathSuccess() {
+	public void testCheckoutPathSuccess() throws RepositoryOperationException {
 		final File file = this.repo.checkoutPath("3.txt",
 		                                         MercurialRepositoryTest.T_637ACF68104E7BDFF8235FB2E1A254300FFEA3CB);
 		assertNotNull(file);
@@ -188,9 +194,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test diff.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testDiff() {
+	public void testDiff() throws RepositoryOperationException {
 		final Collection<Delta> diff = this.repo.diff("3.txt",
 		                                              MercurialRepositoryTest.T_637ACF68104E7BDFF8235FB2E1A254300FFEA3CB,
 		                                              MercurialRepositoryTest.T_9BE561B3657E2B1DA2B09D675DDDD5F45C47F57C);
@@ -205,9 +213,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get changes paths.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetChangesPaths() {
+	public void testGetChangesPaths() throws RepositoryOperationException {
 		Map<String, ChangeType> changedPaths = this.repo.getChangedPaths(MercurialRepositoryTest.T_376ADC0F9371129A76766F8030F2E576165358C1);
 		assertEquals(1, changedPaths.size());
 		assertTrue(changedPaths.containsKey("/1.txt"));
@@ -245,9 +255,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get log.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetLog() {
+	public void testGetLog() throws RepositoryOperationException {
 		final List<LogEntry> log = this.repo.log(MercurialRepositoryTest.T_98D5C40EF3C14503A472BA4133AE3529C7578E30,
 		                                         MercurialRepositoryTest.T_376ADC0F9371129A76766F8030F2E576165358C1);
 		assertEquals(6, log.size());
@@ -291,10 +303,10 @@ public class MercurialRepositoryTest extends VersionsTest {
 	/**
 	 * Test get rev dependency graph.
 	 * 
-	 * @throws IOException
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetRevDependencyGraph() throws IOException {
+	public void testGetRevDependencyGraph() throws RepositoryOperationException {
 		final RevDependencyGraph revDepG = this.repo.getRevDependencyGraph();
 		assertNotNull(revDepG);
 		final Set<String> branches = revDepG.getBranches();
@@ -387,9 +399,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction count.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetTransactionCount() {
+	public void testGetTransactionCount() throws RepositoryOperationException {
 		assertEquals(22, this.repo.getTransactionCount());
 	}
 	
@@ -406,9 +420,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	
 	/**
 	 * Test get transaction index.
+	 * 
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testGetTransactionIndex() {
+	public void testGetTransactionIndex() throws RepositoryOperationException {
 		assertEquals(21, this.repo.getTransactionIndex("HEAD"));
 		assertEquals(6,
 		             this.repo.getTransactionIndex(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9));

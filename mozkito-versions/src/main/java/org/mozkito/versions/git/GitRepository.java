@@ -54,6 +54,7 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -556,100 +557,104 @@ public class GitRepository extends DistributedCommandLineRepository {
 	 * @see org.mozkito.versions.Repository#getRevDependencyGraph()
 	 */
 	@Override
-	public RevDependencyGraph getRevDependencyGraph() throws IOException {
+	public RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
-			if (this.revDepGraph == null) {
-				this.revDepGraph = new RevDependencyGraph();
-				
-				// use `git ls-remote .` to get all branches and their HEADs
-				final List<String> lsRemote = getLsRemote();
-				for (final String line : lsRemote) {
-					final String[] lineParts = line.split("\\s+");
-					final String clHash = lineParts[0];
-					String remoteName = lineParts[1];
-					if (Logger.logDebug()) {
-						Logger.debug("Found branch reference: " + remoteName);
-					}
-					if (remoteName.startsWith("refs/heads/")) {
-						remoteName = remoteName.substring(REFS_HEAD_LENGTH);
-						if ("master".equals(remoteName)) {
-							continue;
+			try {
+				if (this.revDepGraph == null) {
+					this.revDepGraph = new RevDependencyGraph();
+					
+					// use `git ls-remote .` to get all branches and their HEADs
+					final List<String> lsRemote = getLsRemote();
+					for (final String line : lsRemote) {
+						final String[] lineParts = line.split("\\s+");
+						final String clHash = lineParts[0];
+						String remoteName = lineParts[1];
+						if (Logger.logDebug()) {
+							Logger.debug("Found branch reference: " + remoteName);
 						}
-					} else if (remoteName.startsWith("refs/remotes/")) {
-						remoteName = remoteName.substring(REFS_REMOTES_LENGTH);
-						if ("origin/HEAD".equals(remoteName)) {
-							continue;
-						}
-						if ("origin/master".equals(remoteName)) {
-							remoteName = RCSBranch.MASTER_BRANCH_NAME;
-						}
-					} else if (remoteName.startsWith("refs/pull/")) {
-						remoteName = remoteName.substring(REFS_PULL_LENGTH);
-					} else if (remoteName.startsWith("refs/tags/")) {
-						remoteName = remoteName.substring(REFS_TAGS_LENGTH);
-						if (remoteName.endsWith("^{}")) {
-							remoteName = remoteName.replace("^{}", "");
-							if (!this.revDepGraph.addTag(remoteName, clHash)) {
-								final String hashForTag = this.revDepGraph.getHashForTag(remoteName);
-								if (hashForTag != null) {
-									this.revDepGraph.removeChangeSet(hashForTag);
+						if (remoteName.startsWith("refs/heads/")) {
+							remoteName = remoteName.substring(REFS_HEAD_LENGTH);
+							if ("master".equals(remoteName)) {
+								continue;
+							}
+						} else if (remoteName.startsWith("refs/remotes/")) {
+							remoteName = remoteName.substring(REFS_REMOTES_LENGTH);
+							if ("origin/HEAD".equals(remoteName)) {
+								continue;
+							}
+							if ("origin/master".equals(remoteName)) {
+								remoteName = RCSBranch.MASTER_BRANCH_NAME;
+							}
+						} else if (remoteName.startsWith("refs/pull/")) {
+							remoteName = remoteName.substring(REFS_PULL_LENGTH);
+						} else if (remoteName.startsWith("refs/tags/")) {
+							remoteName = remoteName.substring(REFS_TAGS_LENGTH);
+							if (remoteName.endsWith("^{}")) {
+								remoteName = remoteName.replace("^{}", "");
+								if (!this.revDepGraph.addTag(remoteName, clHash)) {
+									final String hashForTag = this.revDepGraph.getHashForTag(remoteName);
+									if (hashForTag != null) {
+										this.revDepGraph.removeChangeSet(hashForTag);
+									}
+									this.revDepGraph.removeTag(remoteName);
+									this.revDepGraph.addTag(remoteName, clHash);
 								}
-								this.revDepGraph.removeTag(remoteName);
+							} else {
 								this.revDepGraph.addTag(remoteName, clHash);
 							}
+							continue;
 						} else {
-							this.revDepGraph.addTag(remoteName, clHash);
+							continue;
 						}
-						continue;
-					} else {
-						continue;
-					}
-					if (Logger.logDebug()) {
-						Logger.debug("Adding branch head for branch %s: %s.", remoteName, clHash);
-					}
-					this.revDepGraph.addBranch(remoteName, clHash);
-				}
-				
-				// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
-				final List<String> revListParents = getRevListParents();
-				for (final String line : revListParents) {
-					final String[] lineParts = line.split("\\s+");
-					if (lineParts.length < 1) {
-						throw new UnrecoverableError(
-						                             "Cannot process rev-list --parents. Detected line with no entires.");
-					}
-					final String child = lineParts[0];
-					if (!this.revDepGraph.existsVertex(child)) {
-						if (this.revDepGraph.addChangeSet(child) != null) {
-							if (Logger.logError()) {
-								Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-								             child);
-							}
+						if (Logger.logDebug()) {
+							Logger.debug("Adding branch head for branch %s: %s.", remoteName, clHash);
 						}
+						this.revDepGraph.addBranch(remoteName, clHash);
 					}
 					
-					if (lineParts.length > 1) {
-						final String branchParent = lineParts[1];
-						if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
-							if (Logger.logError()) {
-								Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
-								             branchParent, child);
+					// use `git rev-list` to get revs and their children: <commit> <branch child> <children ...>
+					final List<String> revListParents = getRevListParents();
+					for (final String line : revListParents) {
+						final String[] lineParts = line.split("\\s+");
+						if (lineParts.length < 1) {
+							throw new UnrecoverableError(
+							                             "Cannot process rev-list --parents. Detected line with no entires.");
+						}
+						final String child = lineParts[0];
+						if (!this.revDepGraph.existsVertex(child)) {
+							if (this.revDepGraph.addChangeSet(child) != null) {
+								if (Logger.logError()) {
+									Logger.error("Could not add change set %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+									             child);
+								}
 							}
 						}
-						for (int i = 2; i < lineParts.length; ++i) {
-							if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
+						
+						if (lineParts.length > 1) {
+							final String branchParent = lineParts[1];
+							if (!this.revDepGraph.addEdge(branchParent, child, EdgeType.BRANCH_EDGE)) {
 								if (Logger.logError()) {
 									Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
 									             branchParent, child);
 								}
 							}
+							for (int i = 2; i < lineParts.length; ++i) {
+								if (!this.revDepGraph.addEdge(lineParts[i], child, EdgeType.MERGE_EDGE)) {
+									if (Logger.logError()) {
+										Logger.error("Could not add edge between %s -> %s. This might lead to inconsistent data. Please check earlier warnings and errors.",
+										             branchParent, child);
+									}
+								}
+							}
 						}
 					}
 				}
+				return this.revDepGraph;
+			} catch (final IOException e) {
+				throw new RepositoryOperationException(e);
 			}
-			return this.revDepGraph;
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -755,7 +760,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	public void setup(@NotNull final URI address,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) throws IOException {
+	                  final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		
 		setup(address, null, branchFactory, tmpDir, mainBranchName);
@@ -780,59 +785,65 @@ public class GitRepository extends DistributedCommandLineRepository {
 	                   final InputStream inputStream,
 	                   @NotNull final BranchFactory branchFactory,
 	                   final File tmpDir,
-	                   @NotNull final String mainBranchName) throws IOException {
+	                   @NotNull final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
-		setMainBranchName(mainBranchName);
-		setUri(address);
-		this.branchFactory = branchFactory;
 		
-		File localCloneDir = null;
-		if (tmpDir == null) {
-			localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+		try {
+			setMainBranchName(mainBranchName);
+			setUri(address);
+			this.branchFactory = branchFactory;
 			
-			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
-		} else {
-			localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+			File localCloneDir = null;
+			if (tmpDir == null) {
+				localCloneDir = FileUtils.createRandomDir("moskito_git_clone_",
+				
+				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+			} else {
+				localCloneDir = FileUtils.createRandomDir(tmpDir, "moskito_git_clone_",
+				
+				String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
+			}
 			
-			String.valueOf(DateTimeUtils.currentTimeMillis()), FileShutdownAction.DELETE);
-		}
-		
-		if (!clone(inputStream, localCloneDir.getAbsolutePath())) {
-			throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
-		}
-		
-		final String innerPath = ((getUri().getFragment()) != null)
-		                                                           ? (getUri().getFragment())
-		                                                           : "/";
-		this.cloneDir = new File(localCloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
-		if (!this.cloneDir.exists()) {
-			throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath() + "`");
-		}
-		
-		setStartRevision(getFirstRevisionId());
-		setEndRevision(getHEADRevisionId());
-		
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
-		                                                                              "--pretty=format:%H",
-		                                                                              "--branches", "--remotes",
-		                                                                              "--topo-order" }, this.cloneDir,
-		                                                                      null,
-		                                                                      new HashMap<String, String>());
-		if (response.getFirst() != 0) {
-			throw new UnrecoverableError("Could not fetch full list of revision IDs!");
-		}
-		if (Logger.logDebug()) {
-			Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
-		}
-		this.transactionIDs.clear();
-		this.transactionIDs.addAll(response.getSecond());
-		Collections.reverse(this.transactionIDs);
-		
-		if (!this.transactionIDs.isEmpty()) {
-			Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
-			                "First revision ID and transaction ID list missmatch!");
-			Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
-			                "End revision ID and transaction ID list missmatch!");
+			if (!clone(inputStream, localCloneDir.getAbsolutePath())) {
+				throw new UnrecoverableError("Failed to clone git repository from source: " + address.toString());
+			}
+			
+			final String innerPath = ((getUri().getFragment()) != null)
+			                                                           ? (getUri().getFragment())
+			                                                           : "/";
+			this.cloneDir = new File(localCloneDir.getAbsolutePath() + FileUtils.fileSeparator + innerPath);
+			if (!this.cloneDir.exists()) {
+				throw new UnrecoverableError("Could not access clone directory `" + this.cloneDir.getAbsolutePath()
+				        + "`");
+			}
+			
+			setStartRevision(getFirstRevisionId());
+			setEndRevision(getHEADRevisionId());
+			
+			final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", new String[] { "log",
+			                                                                              "--pretty=format:%H",
+			                                                                              "--branches", "--remotes",
+			                                                                              "--topo-order" },
+			                                                                      this.cloneDir, null,
+			                                                                      new HashMap<String, String>());
+			if (response.getFirst() != 0) {
+				throw new UnrecoverableError("Could not fetch full list of revision IDs!");
+			}
+			if (Logger.logDebug()) {
+				Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
+			}
+			this.transactionIDs.clear();
+			this.transactionIDs.addAll(response.getSecond());
+			Collections.reverse(this.transactionIDs);
+			
+			if (!this.transactionIDs.isEmpty()) {
+				Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+				                "First revision ID and transaction ID list missmatch!");
+				Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+				                "End revision ID and transaction ID list missmatch!");
+			}
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
 		}
 	}
 	
@@ -846,7 +857,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	                  @NotNull final String password,
 	                  @NotNull final BranchFactory branchFactory,
 	                  final File tmpDir,
-	                  final String mainBranchName) throws IOException {
+	                  final String mainBranchName) throws RepositoryOperationException {
 		Condition.notNull(address, "Setting up a repository without a corresponding address won't work.");
 		Condition.notNull(username, "Calling this method requires user to be set.");
 		Condition.notNull(password, "Calling this method requires password to be set.");

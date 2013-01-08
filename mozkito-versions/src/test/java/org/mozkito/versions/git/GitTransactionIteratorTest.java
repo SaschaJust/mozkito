@@ -28,6 +28,7 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -60,9 +61,10 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	 * Before class.
 	 * 
 	 * @throws IOException
+	 * @throws RepositoryOperationException
 	 */
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws IOException, RepositoryOperationException {
 		assertTrue(getRepositories().containsKey("testGit"));
 		this.repo = (GitRepository) getRepositories().get("testGit");
 		this.transactionMap.clear();
@@ -119,9 +121,10 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	 * Test maintenance branch.
 	 * 
 	 * @throws IOException
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testMaintenanceBranch() throws IOException {
+	public void testMaintenanceBranch() throws IOException, RepositoryOperationException {
 		final Iterator<String> transactions = this.repo.getRevDependencyGraph()
 		                                               .getBranchTransactions("origin/maintenance").iterator();
 		
@@ -168,9 +171,10 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	 * Test master branch.
 	 * 
 	 * @throws IOException
+	 * @throws RepositoryOperationException
 	 */
 	@Test
-	public void testMasterBranch() throws IOException {
+	public void testMasterBranch() throws IOException, RepositoryOperationException {
 		final Iterator<String> transactions = this.repo.getRevDependencyGraph()
 		                                               .getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
 		assertTrue(transactions.hasNext());

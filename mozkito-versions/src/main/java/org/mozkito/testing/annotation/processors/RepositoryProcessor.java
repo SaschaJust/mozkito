@@ -37,11 +37,9 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
-import org.mozkito.exceptions.UnsupportedProtocolType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -250,8 +248,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 					vTest.addWorkingDirectory(workingDir);
 					repository.setup(repoDir.toURI(), new BranchFactory(null), workingDir, "master");
 					map.put(repositorySetting.id(), repository);
-				} catch (final IOException | URISyntaxException | InvalidProtocolType | InvalidRepositoryURI
-				        | UnsupportedProtocolType e) {
+				} catch (final IOException | URISyntaxException | RepositoryOperationException e) {
 					throw new TestSettingsError("Could not create repository.", e);
 				}
 			} else {

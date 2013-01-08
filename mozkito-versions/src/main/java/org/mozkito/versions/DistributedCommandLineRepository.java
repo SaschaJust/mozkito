@@ -21,6 +21,7 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.elements.LogEntry;
 
 /**
@@ -67,7 +68,7 @@ public abstract class DistributedCommandLineRepository extends Repository {
 	@Override
 	@NoneNull
 	public List<LogEntry> log(@MinLength (min = 1) final String fromRevision,
-	                          @MinLength (min = 1) final String toRevision) {
+	                          @MinLength (min = 1) final String toRevision) throws RepositoryOperationException {
 		String toRev = toRevision;
 		if ("HEAD".equals(toRevision)) {
 			toRev = getHEADRevisionId();

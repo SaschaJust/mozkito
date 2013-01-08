@@ -14,18 +14,16 @@ package org.mozkito.versions;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.ownhero.dev.ioda.exceptions.FilePermissionException;
+import net.ownhero.dev.ioda.JavaUtils;
+import difflib.Delta;
 
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.UnsupportedProtocolType;
+import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
@@ -36,8 +34,6 @@ import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;
-
-import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -84,9 +80,11 @@ public abstract class Repository {
 	 * @param revision
 	 *            the revision the file path will be annotated in
 	 * @return List of AnnotationEntry for all lines starting by first line
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract List<AnnotationEntry> annotate(String filePath,
-	                                               String revision);
+	                                               String revision) throws RepositoryOperationException;
 	
 	/**
 	 * Checks out the given relative path in repository and returns the file handle to the checked out file. If the path
@@ -99,10 +97,11 @@ public abstract class Repository {
 	 *            the revision
 	 * @return The file handle to the checked out, corresponding file or directory. Null if no such file exists or if
 	 *         the file could not be checked out.
-	 * @throws FilePermissionException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract File checkoutPath(String relativeRepoPath,
-	                                  String revision) throws FilePermissionException;
+	                                  String revision) throws RepositoryOperationException;
 	
 	/**
 	 * Diff the file in the repository specified by filePath.
@@ -115,12 +114,12 @@ public abstract class Repository {
 	 * @param revisedRevision
 	 *            the revised revision
 	 * @return Collection of deltas found between two revision
-	 * @throws FilePermissionException
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract Collection<Delta> diff(String filePath,
 	                                       String baseRevision,
-	                                       String revisedRevision) throws FilePermissionException, IOException;
+	                                       String revisedRevision) throws RepositoryOperationException;
 	
 	/**
 	 * Gather tool information.
@@ -135,8 +134,10 @@ public abstract class Repository {
 	 * @param revision
 	 *            the revision to be analyzed
 	 * @return A map associating the changed paths with a ChangeType. Returns Null if an error occurrs.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract Map<String, ChangeType> getChangedPaths(String revision);
+	public abstract Map<String, ChangeType> getChangedPaths(String revision) throws RepositoryOperationException;
 	
 	/**
 	 * Get the last revision to be considered.
@@ -151,8 +152,10 @@ public abstract class Repository {
 	 * Gets the first revision of the repository.
 	 * 
 	 * @return the first revision id
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract String getFirstRevisionId();
+	public abstract String getFirstRevisionId() throws RepositoryOperationException;
 	
 	/**
 	 * Determines the former path name of the file/directory.
@@ -162,9 +165,11 @@ public abstract class Repository {
 	 * @param pathName
 	 *            (not null)
 	 * @return Returns the former path name iff the file/directory was renamed. Null otherwise.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract String getFormerPathName(String revision,
-	                                         String pathName);
+	                                         String pathName) throws RepositoryOperationException;
 	
 	/**
 	 * Determines the simple class name of the object.
@@ -172,7 +177,7 @@ public abstract class Repository {
 	 * @return this.getClass().getSimpleName();
 	 */
 	public String getHandle() {
-		return this.getClass().getSimpleName();
+		return JavaUtils.getHandle(Repository.class);
 	}
 	
 	/**
@@ -188,8 +193,10 @@ public abstract class Repository {
 	 * Gets the last revision of the repository.
 	 * 
 	 * @return the last revision id
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract String getHEADRevisionId();
+	public abstract String getHEADRevisionId() throws RepositoryOperationException;
 	
 	/**
 	 * Gets the main branch name.
@@ -218,9 +225,10 @@ public abstract class Repository {
 	 * Gets the rev dependency graph.
 	 * 
 	 * @return the rev dependency graph
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract RevDependencyGraph getRevDependencyGraph() throws IOException;
+	public abstract RevDependencyGraph getRevDependencyGraph() throws RepositoryOperationException;
 	
 	/**
 	 * Gets the rev dependency graph.
@@ -228,35 +236,40 @@ public abstract class Repository {
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return the rev dependency graph
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) throws IOException {
-		if (this.revDepGraph == null) {
-			this.revDepGraph = new RevDependencyGraph();
-			final Criteria<RCSBranch> branchCriteria = persistenceUtil.createCriteria(RCSBranch.class);
-			final List<RCSBranch> branches = persistenceUtil.load(branchCriteria);
-			for (final RCSBranch branch : branches) {
-				this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
-			}
-			final Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
-			final List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
-			for (final RCSTransaction transaction : transactions) {
-				this.revDepGraph.addChangeSet(transaction.getId());
-				for (final String tagName : transaction.getTags()) {
-					this.revDepGraph.addTag(tagName, transaction.getId());
+	public final RevDependencyGraph getRevDependencyGraph(final PersistenceUtil persistenceUtil) throws RepositoryOperationException {
+		try {
+			if (this.revDepGraph == null) {
+				this.revDepGraph = new RevDependencyGraph();
+				final Criteria<RCSBranch> branchCriteria = persistenceUtil.createCriteria(RCSBranch.class);
+				final List<RCSBranch> branches = persistenceUtil.load(branchCriteria);
+				for (final RCSBranch branch : branches) {
+					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
 				}
-				if (transaction.getBranchParent() != null) {
-					this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
-					                         EdgeType.BRANCH_EDGE);
-					if (transaction.getMergeParent() != null) {
-						this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(),
-						                         EdgeType.MERGE_EDGE);
+				final Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
+				for (final RCSTransaction transaction : transactions) {
+					this.revDepGraph.addChangeSet(transaction.getId());
+					for (final String tagName : transaction.getTags()) {
+						this.revDepGraph.addTag(tagName, transaction.getId());
 					}
+					if (transaction.getBranchParent() != null) {
+						this.revDepGraph.addEdge(transaction.getBranchParent().getId(), transaction.getId(),
+						                         EdgeType.BRANCH_EDGE);
+						if (transaction.getMergeParent() != null) {
+							this.revDepGraph.addEdge(transaction.getMergeParent().getId(), transaction.getId(),
+							                         EdgeType.MERGE_EDGE);
+						}
+					}
+					
 				}
-				
 			}
+			return this.revDepGraph;
+		} catch (final IOException e) {
+			throw new RepositoryOperationException(e);
 		}
-		return this.revDepGraph;
 	}
 	
 	/**
@@ -281,8 +294,10 @@ public abstract class Repository {
 	 * Gets the transaction count.
 	 * 
 	 * @return the total number of revisions in the repository, -1 if error occured
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract long getTransactionCount();
+	public abstract long getTransactionCount() throws RepositoryOperationException;
 	
 	/**
 	 * Returns the transaction id string to the transaction determined by the given index.
@@ -291,8 +306,10 @@ public abstract class Repository {
 	 *            Starts at 0
 	 * @return the corresponding transaction id (e.g. for reposuite {@link MercurialRepository#getTransactionId(long)}
 	 *         returns 021e7e97724b for 3.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract String getTransactionId(long index);
+	public abstract String getTransactionId(long index) throws RepositoryOperationException;
 	
 	/**
 	 * Method to retrieve the index of a transaction id within the topological order.
@@ -301,8 +318,10 @@ public abstract class Repository {
 	 * @param transactionId
 	 *            the transaction id
 	 * @return the transaction index; return -1 if the transactionId does not exist
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract long getTransactionIndex(String transactionId);
+	public abstract long getTransactionIndex(String transactionId) throws RepositoryOperationException;
 	
 	/**
 	 * Gets the uri.
@@ -318,8 +337,10 @@ public abstract class Repository {
 	 * copy).
 	 * 
 	 * @return the woking copy location
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
-	public abstract File getWorkingCopyLocation();
+	public abstract File getWorkingCopyLocation() throws RepositoryOperationException;
 	
 	/**
 	 * Extract a log from the repository.
@@ -329,9 +350,11 @@ public abstract class Repository {
 	 * @param toRevision
 	 *            the to revision
 	 * @return the list of log entries. The first entry is the oldest log entry.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract List<LogEntry> log(String fromRevision,
-	                                   String toRevision);
+	                                   String toRevision) throws RepositoryOperationException;
 	
 	/**
 	 * Extract a log from the repository spanning between two revisions.
@@ -343,13 +366,18 @@ public abstract class Repository {
 	 * @param cacheSize
 	 *            the cache size
 	 * @return Iterator running from <code>fromRevisions</code> to <code>toRevision</code>
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public Iterator<LogEntry> log(final String fromRevision,
 	                              final String toRevision,
-	                              final int cacheSize) {
+	                              final int cacheSize) throws RepositoryOperationException {
 		return new LogIterator(this, fromRevision, toRevision);
 	}
 	
+	/**
+	 * Reset RevDependencyGraph.
+	 */
 	protected void resetRevDependencyGraph() {
 		this.revDepGraph = null;
 	}
@@ -405,24 +433,13 @@ public abstract class Repository {
 	 *            the tmp dir
 	 * @param mainBranchName
 	 *            the main branch name
-	 * @throws MalformedURLException
-	 *             the malformed URL exception
-	 * @throws InvalidProtocolType
-	 *             the invalid protocol type
-	 * @throws InvalidRepositoryURI
-	 *             the invalid repository URI
-	 * @throws UnsupportedProtocolType
-	 *             the unsupported protocol type
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract void setup(URI address,
 	                           BranchFactory branchFactory,
 	                           File tmpDir,
-	                           String mainBranchName) throws MalformedURLException,
-	                                                 InvalidProtocolType,
-	                                                 InvalidRepositoryURI,
-	                                                 UnsupportedProtocolType,
-	                                                 IOException;
+	                           String mainBranchName) throws RepositoryOperationException;
 	
 	/**
 	 * Connect to repository at URI address using user name and password.
@@ -439,26 +456,15 @@ public abstract class Repository {
 	 *            the tmp dir
 	 * @param mainBranchName
 	 *            the main branch name
-	 * @throws MalformedURLException
-	 *             the malformed URL exception
-	 * @throws InvalidProtocolType
-	 *             the invalid protocol type
-	 * @throws InvalidRepositoryURI
-	 *             the invalid repository URI
-	 * @throws UnsupportedProtocolType
-	 *             the unsupported protocol type
-	 * @throws IOException
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
 	 */
 	public abstract void setup(URI address,
 	                           String username,
 	                           String password,
 	                           BranchFactory branchFactory,
 	                           File tmpDir,
-	                           String mainBranchName) throws MalformedURLException,
-	                                                 InvalidProtocolType,
-	                                                 InvalidRepositoryURI,
-	                                                 UnsupportedProtocolType,
-	                                                 IOException;
+	                           String mainBranchName) throws RepositoryOperationException;
 	
 	/**
 	 * Sets the uri.
