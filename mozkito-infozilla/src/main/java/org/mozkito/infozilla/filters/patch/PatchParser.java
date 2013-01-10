@@ -15,18 +15,15 @@ package org.mozkito.infozilla.filters.patch;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ownhero.dev.kisa.Logger;
+
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.infozilla.model.patch.PatchHunk;
-import org.mozkito.infozilla.model.patch.Patch;
 
 /**
  * The Class PatchParser.
  */
 public class PatchParser {
-	
-	// Uncomment the following line if you need debug output
-	/** The Constant debug. */
-	private static final boolean DEBUG = false;
 	
 	/**
 	 * Find and extract all Hunks in a Patch.
@@ -48,55 +45,55 @@ public class PatchParser {
 			// Check if there are more Hunks
 			if (hStart == -1) {
 				// If there are no more Hunks then we are finished
-				if (PatchParser.DEBUG) {
-					System.out.println("<>>> No More Hunks found! Finished!");
+				if (Logger.logDebug()) {
+					Logger.debug("<>>> No More Hunks found! Finished!");
 				}
 				hasMore = false;
 			} else {
 				// If there are then look for the next Hunk start
-				if (PatchParser.DEBUG) {
-					System.out.println("<>>> Hunk Start is " + hStart);
+				if (Logger.logDebug()) {
+					Logger.debug("<>>> Hunk Start is " + hStart);
 				}
 				final int nextHunkStart = findNextHunkHeader(lines, hStart + 1);
 				int searchEnd = 0;
 				if (nextHunkStart == -1) {
-					if (PatchParser.DEBUG) {
-						System.out.println("<>>> There are no more Hunks!");
+					if (Logger.logDebug()) {
+						Logger.debug("<>>> There are no more Hunks!");
 					}
 					// If there is no next Hunk we can process until the end
 					searchEnd = lines.length;
 					hasMore = false;
 				} else {
-					if (PatchParser.DEBUG) {
-						System.out.println("<>>> There are more Hunks left!");
+					if (Logger.logDebug()) {
+						Logger.debug("<>>> There are more Hunks left!");
 					}
 					// Otherwise we will look only until the next Hunk beginning
 					searchEnd = nextHunkStart - 1;
 				}
-				if (PatchParser.DEBUG) {
-					System.out.println("<>>> Will look for HunkLines from " + (hStart + 1) + " to " + (searchEnd - 1));
+				if (Logger.logDebug()) {
+					Logger.debug("<>>> Will look for HunkLines from " + (hStart + 1) + " to " + (searchEnd - 1));
 				}
 				String hunktext = "";
 				for (int i = hStart + 1; i < searchEnd; i++) {
-					if (PatchParser.DEBUG) {
-						System.out.println("<>>> Checking if Hunkline: " + lines[i]);
+					if (Logger.logDebug()) {
+						Logger.debug("<>>> Checking if Hunkline: " + lines[i]);
 					}
 					if (isHunkLine(lines[i])) {
-						if (PatchParser.DEBUG) {
-							System.out.println("<>>> Yes it is!");
+						if (Logger.logDebug()) {
+							Logger.debug("<>>> Yes it is!");
 						}
 						hunktext = hunktext + lines[i] + lineSep;
 					} else {
 						if (i < (searchEnd - 1)) {
 							if (isHunkLine(lines[i + 1])) {
-								if (PatchParser.DEBUG) {
-									System.out.println("<>>> No But next line is!");
+								if (Logger.logDebug()) {
+									Logger.debug("<>>> No But next line is!");
 								}
 								hunktext = hunktext + lines[i] + lineSep;
 							} else {
 								// we are done
-								if (PatchParser.DEBUG) {
-									System.out.println("<>>> No it is not and niether is the next one! We should stop here!");
+								if (Logger.logDebug()) {
+									Logger.debug("<>>> No it is not and niether is the next one! We should stop here!");
 								}
 								searchEnd = i;
 							}
