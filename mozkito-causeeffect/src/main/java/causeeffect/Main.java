@@ -46,8 +46,8 @@ import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class Main.
@@ -115,7 +115,7 @@ public class Main {
 			                                                                                           settings.getRoot(),
 			                                                                                           "branch",
 			                                                                                           "Use transactions of this branch to generate LTCs for. Make sure that this matches the tranactions in the genealogy graph.",
-			                                                                                           RCSBranch.MASTER_BRANCH_NAME,
+			                                                                                           Branch.MASTER_BRANCH_NAME,
 			                                                                                           Requirement.required));
 			
 			final ArgumentSet<CoreChangeGenealogy, GenealogyOptions> genealogyArgument = ArgumentSetFactory.create(genealogyOptions);
@@ -135,10 +135,10 @@ public class Main {
 			                                                   timeWindowOpt.getValue().intValue(),
 			                                                   numRecomOpt.getValue().intValue());
 			
-			final RCSBranch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), RCSBranch.class);
+			final Branch masterBranch = persistenceUtil.loadById(branchNameOptions.getValue(), Branch.class);
 			if (masterBranch == null) {
 				final List<String> branchNames = new LinkedList<>();
-				for (final RCSBranch rCSBranch : persistenceUtil.load(persistenceUtil.createCriteria(RCSBranch.class))) {
+				for (final Branch rCSBranch : persistenceUtil.load(persistenceUtil.createCriteria(Branch.class))) {
 					branchNames.add(rCSBranch.getName());
 				}
 				if (Logger.logError()) {
@@ -150,8 +150,8 @@ public class Main {
 			
 			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
-			final List<RCSTransaction> rCSTransactions = new LinkedList<>();
-			for (final RCSTransaction t : masterTransactions) {
+			final List<ChangeSet> rCSTransactions = new LinkedList<>();
+			for (final ChangeSet t : masterTransactions) {
 				if (transactionLayer.containsVertex(t)) {
 					rCSTransactions.add(t);
 				}
@@ -168,8 +168,8 @@ public class Main {
 				Logger.info("Training set contains %d entities.", trainSize);
 			}
 			
-			final List<RCSTransaction> trainList = rCSTransactions.subList(0, trainSize);
-			final List<RCSTransaction> testList = rCSTransactions.subList(trainSize, rCSTransactions.size());
+			final List<ChangeSet> trainList = rCSTransactions.subList(0, trainSize);
+			final List<ChangeSet> testList = rCSTransactions.subList(trainSize, rCSTransactions.size());
 			
 			experiment.run(trainList, testList, innerRulesOpt.getValue());
 			

@@ -24,7 +24,7 @@ import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * A factory for creating LTCFormula objects.
@@ -47,20 +47,20 @@ public class LTCFormulaFactory {
 	 *            the vertex selector
 	 * @return the collection
 	 */
-	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
-	                                               final RCSTransaction rootVertex,
-	                                               final VertexSelector<RCSTransaction> vertexSelector) {
+	public Collection<CTLFormula> generateFormulas(final ChangeGenealogy<ChangeSet> genealogy,
+	                                               final ChangeSet rootVertex,
+	                                               final VertexSelector<ChangeSet> vertexSelector) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
 		for (final CTLFormulaGenerator<Handle> generator : this.generators) {
 			
 			// implication = all changes files of all dependent vertices valid by vertexSelector
-			final LinkedList<RCSTransaction> verticesToProcess = new LinkedList<>();
+			final LinkedList<ChangeSet> verticesToProcess = new LinkedList<>();
 			verticesToProcess.add(rootVertex);
 			final Set<Handle> implications = new HashSet<>();
 			while (!verticesToProcess.isEmpty()) {
-				final RCSTransaction vertex = verticesToProcess.poll();
-				for (final RCSTransaction dependent : genealogy.getAllDependants(vertex)) {
+				final ChangeSet vertex = verticesToProcess.poll();
+				for (final ChangeSet dependent : genealogy.getAllDependants(vertex)) {
 					if (vertexSelector.selectVertex(dependent)) {
 						verticesToProcess.add(dependent);
 					}
@@ -83,8 +83,8 @@ public class LTCFormulaFactory {
 	 * @return the collection
 	 */
 	@SuppressWarnings ("unchecked")
-	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<RCSTransaction> genealogy,
-	                                                               final RCSTransaction rCSTransaction) {
+	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<ChangeSet> genealogy,
+	                                                               final ChangeSet rCSTransaction) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
 		for (final CTLFormulaGenerator<Handle> generator : this.generators) {

@@ -50,7 +50,7 @@ import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class CallGraphHandler.
@@ -98,7 +98,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		 * .RCSTransaction)
 		 */
 		@Override
-		public DataDependencyVoter createVoter(final RCSTransaction rCSTransaction) {
+		public DataDependencyVoter createVoter(final ChangeSet rCSTransaction) {
 			return new DataDependencyVoter(this.eclipseDir, this.repository, rCSTransaction, this.cacheDir);
 		}
 		
@@ -204,7 +204,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	private final File                     cacheDir;
 	
 	/** The transaction. */
-	private final RCSTransaction           rCSTransaction;
+	private final ChangeSet           rCSTransaction;
 	
 	/** The cache. */
 	private Map<String, Set<Set<Integer>>> cache       = new HashMap<>();
@@ -226,7 +226,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	@SuppressWarnings ("unchecked")
 	public DataDependencyVoter(@NotNull final File eclipseDir, @NotNull final Repository repository,
-	        final RCSTransaction rCSTransaction, final File cacheDir) {
+	        final ChangeSet rCSTransaction, final File cacheDir) {
 		this.rCSTransaction = rCSTransaction;
 		this.eclipseDir = eclipseDir;
 		this.cacheDir = cacheDir;

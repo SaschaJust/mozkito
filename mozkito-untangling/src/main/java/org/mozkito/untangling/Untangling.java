@@ -65,7 +65,7 @@ import org.mozkito.untangling.aggregation.SVMAggregation;
 import org.mozkito.untangling.aggregation.VarSumAggregation;
 import org.mozkito.untangling.blob.ArtificialBlob;
 import org.mozkito.untangling.blob.ArtificialBlobGenerator;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.untangling.blob.SerializableArtificialBlob;
 import org.mozkito.untangling.blob.combine.CombineOperator;
 import org.mozkito.untangling.settings.UntangleInstruction;
@@ -74,7 +74,7 @@ import org.mozkito.untangling.settings.UntanglingOptions;
 import org.mozkito.untangling.voters.FileDistanceVoter;
 import org.mozkito.untangling.voters.LineDistanceVoter;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 import org.uncommons.maths.combinatorics.PermutationGenerator;
 
 /**
@@ -287,7 +287,7 @@ public class Untangling {
 	 *            the transaction
 	 * @return the list
 	 */
-	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final RCSTransaction rCSTransaction) {
+	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final ChangeSet rCSTransaction) {
 		
 		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<>();
 		
@@ -323,21 +323,21 @@ public class Untangling {
 			return;
 		}
 		
-		final Set<ChangeSet> atomicChangeSets = new HashSet<ChangeSet>();
+		final Set<ChangeOperationSet> atomicChangeSets = new HashSet<ChangeOperationSet>();
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
 		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
-		Criteria<RCSTransaction> transactionCriteria = null;
+		Criteria<ChangeSet> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicTransactionIds);
 		} else {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).eq("atomic", true);
 		}
 		
-		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		final List<ChangeSet> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		
-		for (final RCSTransaction t : atomicTransactions) {
-			atomicChangeSets.add(new ChangeSet(t, PPAPersistenceUtil.getChangeOperation(persistenceUtil, t)));
+		for (final ChangeSet t : atomicTransactions) {
+			atomicChangeSets.add(new ChangeOperationSet(t, PPAPersistenceUtil.getChangeOperation(persistenceUtil, t)));
 		}
 		
 		MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
@@ -439,7 +439,7 @@ public class Untangling {
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
 		List<ArtificialBlob> artificialBlobs = new LinkedList<ArtificialBlob>();
-		final CombineOperator<ChangeSet> combineOperator = this.untanglingControl.getCombineOperator();
+		final CombineOperator<ChangeOperationSet> combineOperator = this.untanglingControl.getCombineOperator();
 		File serialBlobFile = null;
 		
 		if (this.untanglingControl.getArtificialBlobCacheDir() != null) {
@@ -482,13 +482,13 @@ public class Untangling {
 		// this map will contain change set lists that correspond to the change sets reachable from the
 		// corresponding
 		// key within the blobWindowsSize
-		final Map<ChangeSet, List<ChangeSet>> combinationCandidates = new HashMap<>();
+		final Map<ChangeOperationSet, List<ChangeOperationSet>> combinationCandidates = new HashMap<>();
 		
-		Criteria<RCSTransaction> transactionCriteria = null;
+		Criteria<ChangeSet> transactionCriteria = null;
 		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).in("id", atomicTransactionIds);
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicTransactionIds);
 		} else {
-			transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class).eq("atomic", true);
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).eq("atomic", true);
 		}
 		
 		// now load the criteria and ad fill the candidate map
@@ -496,12 +496,12 @@ public class Untangling {
 			Logger.info("Computing transaction combination candidates using blobWindowSize=%s",
 			            String.valueOf(this.untanglingControl.getBlobWindowSize()));
 		}
-		final List<RCSTransaction> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
+		final List<ChangeSet> atomicTransactions = persistenceUtil.load(transactionCriteria.oderByDesc("javaTimestamp"));
 		final int blobWindowSize = this.untanglingControl.getBlobWindowSize();
 		
-		final Set<ChangeSet> toCompare = new HashSet<>();
+		final Set<ChangeOperationSet> toCompare = new HashSet<>();
 		
-		for (final RCSTransaction t : atomicTransactions) {
+		for (final ChangeSet t : atomicTransactions) {
 			
 			// this is required due to some unknown problem which
 			// causes NullpointerExceptions because Fetch.LAZY returns null.
@@ -518,11 +518,11 @@ public class Untangling {
 			}
 			ops.removeAll(toRemove);
 			if (!ops.isEmpty()) {
-				final ChangeSet changeSet = new ChangeSet(t, ops);
+				final ChangeOperationSet changeSet = new ChangeOperationSet(t, ops);
 				toCompare.add(changeSet);
-				combinationCandidates.put(new ChangeSet(t, ops), new LinkedList<ChangeSet>());
-				final Set<ChangeSet> toCompareRemove = new HashSet<>();
-				for (final ChangeSet candidate : toCompare) {
+				combinationCandidates.put(new ChangeOperationSet(t, ops), new LinkedList<ChangeOperationSet>());
+				final Set<ChangeOperationSet> toCompareRemove = new HashSet<>();
+				for (final ChangeOperationSet candidate : toCompare) {
 					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
 					                 .getDays()) <= blobWindowSize) {
 						combinationCandidates.get(candidate).add(changeSet);
@@ -549,8 +549,8 @@ public class Untangling {
 				            combinationCandidates.size());
 			}
 			
-			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
-				final Set<ChangeSet> entrySet = new HashSet<ChangeSet>();
+			for (final Entry<ChangeOperationSet, List<ChangeOperationSet>> entry : combinationCandidates.entrySet()) {
+				final Set<ChangeOperationSet> entrySet = new HashSet<ChangeOperationSet>();
 				entrySet.addAll(entry.getValue());
 				entrySet.add(entry.getKey());
 				// use minimum and maximum blob size of 2 for pre-computation of order two blobs
@@ -575,7 +575,7 @@ public class Untangling {
 		}
 		
 		if (Logger.logInfo()) {
-			final Set<ChangeSet> changeSetsInBlobsSet = new HashSet<>();
+			final Set<ChangeOperationSet> changeSetsInBlobsSet = new HashSet<>();
 			for (final ArtificialBlob blob : artificialBlobs) {
 				changeSetsInBlobsSet.addAll(blob.getAtomicTransactions());
 			}
@@ -589,9 +589,9 @@ public class Untangling {
 			 * combination HashSet and generate Collection<ChangeSet> using artificial blobs of order two. Then reuse
 			 * BlobGenerator to generate higher order blobs.
 			 */
-			final Map<ChangeSet, Set<ArtificialBlob>> blobsPerChangeSet = new HashMap<>();
+			final Map<ChangeOperationSet, Set<ArtificialBlob>> blobsPerChangeSet = new HashMap<>();
 			for (final ArtificialBlob blob : artificialBlobs) {
-				for (final ChangeSet t : blob.getAtomicTransactions()) {
+				for (final ChangeOperationSet t : blob.getAtomicTransactions()) {
 					if (!blobsPerChangeSet.containsKey(t)) {
 						blobsPerChangeSet.put(t, new HashSet<ArtificialBlob>());
 					}
@@ -599,10 +599,10 @@ public class Untangling {
 				}
 			}
 			
-			final List<Set<ChangeSet>> possibleArtificialBlobCombinations = new ArrayList<>();
-			for (final Entry<ChangeSet, List<ChangeSet>> entry : combinationCandidates.entrySet()) {
-				final Set<ChangeSet> blobSet = new HashSet<>();
-				final ChangeSet key = entry.getKey();
+			final List<Set<ChangeOperationSet>> possibleArtificialBlobCombinations = new ArrayList<>();
+			for (final Entry<ChangeOperationSet, List<ChangeOperationSet>> entry : combinationCandidates.entrySet()) {
+				final Set<ChangeOperationSet> blobSet = new HashSet<>();
+				final ChangeOperationSet key = entry.getKey();
 				final Set<ArtificialBlob> set = blobsPerChangeSet.get(key);
 				if (set == null) {
 					continue;
@@ -610,7 +610,7 @@ public class Untangling {
 				for (final ArtificialBlob blob : set) {
 					blobSet.addAll(blob.getAtomicTransactions());
 				}
-				for (final ChangeSet s : entry.getValue()) {
+				for (final ChangeOperationSet s : entry.getValue()) {
 					final Set<ArtificialBlob> tmpSet = blobsPerChangeSet.get(s);
 					if (tmpSet == null) {
 						continue;
@@ -625,16 +625,16 @@ public class Untangling {
 				artificialBlobs.clear();
 			}
 			final ArtificialBlobGenerator pseudoBlobGenerator = new ArtificialBlobGenerator(
-			                                                                                new CombineOperator<ChangeSet>() {
+			                                                                                new CombineOperator<ChangeOperationSet>() {
 				                                                                                
 				                                                                                @Override
-				                                                                                public boolean canBeCombined(final ChangeSet t1,
-				                                                                                                             final ChangeSet t2) {
+				                                                                                public boolean canBeCombined(final ChangeOperationSet t1,
+				                                                                                                             final ChangeOperationSet t2) {
 					                                                                                return true;
 				                                                                                }
 			                                                                                });
 			
-			for (final Set<ChangeSet> blobSet : possibleArtificialBlobCombinations) {
+			for (final Set<ChangeOperationSet> blobSet : possibleArtificialBlobCombinations) {
 				artificialBlobs.addAll(pseudoBlobGenerator.generateAll(blobSet,
 				                                                       this.untanglingControl.getMinBlobSize(),
 				                                                       this.untanglingControl.getMaxBlobSize()));
@@ -664,7 +664,7 @@ public class Untangling {
 				blobSetSize = artificialBlobs.size();
 			}
 			
-			final Set<ChangeSet> changeSetsInBlobs = new HashSet<ChangeSet>();
+			final Set<ChangeOperationSet> changeSetsInBlobs = new HashSet<ChangeOperationSet>();
 			for (final ArtificialBlob blob : artificialBlobs) {
 				changeSetsInBlobs.addAll(blob.getAtomicTransactions());
 			}
@@ -679,7 +679,7 @@ public class Untangling {
 				Logger.info(experimentInfo);
 			}
 			
-			final Set<RCSTransaction> usedTransactions = new HashSet<RCSTransaction>();
+			final Set<ChangeSet> usedTransactions = new HashSet<ChangeSet>();
 			
 			MultilevelClusteringCollapseVisitor<JavaChangeOperation> collapseVisitor = null;
 			switch (this.untanglingControl.getCollapseMode()) {
@@ -808,7 +808,7 @@ public class Untangling {
 				outWriter.append(FileUtils.lineSeparator);
 				
 				outWriter.append("Used transactions:");
-				for (final RCSTransaction t : usedTransactions) {
+				for (final ChangeSet t : usedTransactions) {
 					outWriter.append(t.getId());
 					outWriter.append(",");
 				}

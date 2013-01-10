@@ -34,7 +34,7 @@ import org.mozkito.genealogies.PartitionGenerator;
 import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class UntanglingMetricsPartitioner.
@@ -143,11 +143,11 @@ public class UntanglingMetricsPartitioner implements
 	public Collection<ChangeGenealogyLayerNode> partition(final Collection<JavaChangeOperation> input) {
 		
 		if (!this.partitionCache.containsKey(input)) {
-			final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+			final Map<ChangeSet, Collection<JavaChangeOperation>> map = new HashMap<ChangeSet, Collection<JavaChangeOperation>>();
 			
 			for (final JavaChangeOperation operation : input) {
 				if (!this.partitions.containsKey(operation.getId())) {
-					final RCSTransaction rCSTransaction = operation.getRevision().getTransaction();
+					final ChangeSet rCSTransaction = operation.getRevision().getTransaction();
 					if (!map.containsKey(rCSTransaction)) {
 						map.put(rCSTransaction, new HashSet<JavaChangeOperation>());
 					}
@@ -168,7 +168,7 @@ public class UntanglingMetricsPartitioner implements
 			}
 			
 			final Set<ChangeGenealogyLayerNode> result = new HashSet<>();
-			for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
+			for (final Entry<ChangeSet, Collection<JavaChangeOperation>> entry : map.entrySet()) {
 				if (!entry.getValue().isEmpty()) {
 					result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
 				}

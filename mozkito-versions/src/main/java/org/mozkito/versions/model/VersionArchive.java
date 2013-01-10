@@ -29,7 +29,7 @@ public class VersionArchive implements Annotated {
 	 * 
 	 * @return the master branch
 	 */
-	public RCSBranch getMasterBranch() {
+	public Branch getMasterBranch() {
 		// TODO implement
 		return null;
 	}
@@ -50,7 +50,7 @@ public class VersionArchive implements Annotated {
 	 *            the id
 	 * @return the transaction by id
 	 */
-	public RCSTransaction getTransactionById(final String id) {
+	public ChangeSet getTransactionById(final String id) {
 		// TODO implement
 		return null;
 	}

@@ -21,7 +21,7 @@ public class Handle_ {
 	public static volatile SingularAttribute<Handle, VersionArchive> archive;
 	
 	/** The changed names. */
-	public static volatile MapAttribute<Handle, RCSRevision, String> changedNames;
+	public static volatile MapAttribute<Handle, Revision, String> changedNames;
 	
 	/** The generated id. */
 	public static volatile SingularAttribute<Handle, Long>           generatedId;

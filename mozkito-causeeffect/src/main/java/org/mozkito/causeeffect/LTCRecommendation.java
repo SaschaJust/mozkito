@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class LTCRecommendation.
@@ -60,7 +60,7 @@ public class LTCRecommendation {
 	 *            the r cs transaction
 	 */
 	public static void addChange(final Handle changedFile,
-	                             final RCSTransaction rCSTransaction) {
+	                             final ChangeSet rCSTransaction) {
 		if (!LTCRecommendation.recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
@@ -149,7 +149,7 @@ public class LTCRecommendation {
 	 * @param expiry
 	 *            the expiry
 	 */
-	public void addSupport(final RCSTransaction rCSTransaction,
+	public void addSupport(final ChangeSet rCSTransaction,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
 		if (!this.support.containsKey(property)) {
@@ -186,7 +186,7 @@ public class LTCRecommendation {
 	 *            the r cs transaction
 	 */
 	public void fileChanged(final Handle rCSFile,
-	                        final RCSTransaction rCSTransaction) {
+	                        final ChangeSet rCSTransaction) {
 		if (this.premise.equals(rCSFile.getGeneratedId())) {
 			this.premiseChanges.add(new Tuple<String, DateTime>(rCSTransaction.getId(), rCSTransaction.getTimestamp()));
 		}

@@ -35,8 +35,8 @@ import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class LTCExperiment.
@@ -52,7 +52,7 @@ public class LTCExperiment {
 	 *            the t
 	 * @return true, if is big change
 	 */
-	public static boolean isBigChange(final RCSTransaction t) {
+	public static boolean isBigChange(final ChangeSet t) {
 		if (t.getChangedFiles().size() > 19) {
 			return true;
 		}
@@ -66,12 +66,12 @@ public class LTCExperiment {
 	 *            the t
 	 * @return true, if is bug fix
 	 */
-	public static boolean isBugFix(final RCSTransaction t) {
+	public static boolean isBugFix(final ChangeSet t) {
 		return false;
 	}
 	
 	/** The genealogy. */
-	private final ChangeGenealogy<RCSTransaction> genealogy;
+	private final ChangeGenealogy<ChangeSet> genealogy;
 	
 	/** The formula factory. */
 	private final LTCFormulaFactory               formulaFactory;
@@ -128,7 +128,7 @@ public class LTCExperiment {
 	 *            the num recommendations
 	 */
 	@NoneNull
-	public LTCExperiment(final ChangeGenealogy<RCSTransaction> genealogy, final LTCFormulaFactory formulaFactory,
+	public LTCExperiment(final ChangeGenealogy<ChangeSet> genealogy, final LTCFormulaFactory formulaFactory,
 	        final int minSupport, final double minConfidence, final int keepFormulaMaxDays, final int timeWindow,
 	        final int numRecommendations) {
 		this.genealogy = genealogy;
@@ -178,21 +178,21 @@ public class LTCExperiment {
 	 *            the include inner rules
 	 */
 	@NoneNull
-	public void run(final List<RCSTransaction> trainingSet,
-	                final List<RCSTransaction> testingSet,
+	public void run(final List<ChangeSet> trainingSet,
+	                final List<ChangeSet> testingSet,
 	                final boolean includeInnerRules) {
 		
 		if (Logger.logInfo()) {
 			Logger.info("Training phase.");
 		}
 		
-		for (final RCSTransaction trainingInstance : trainingSet) {
+		for (final ChangeSet trainingInstance : trainingSet) {
 			train(trainingInstance, includeInnerRules);
 		}
 		if (Logger.logInfo()) {
 			Logger.info("Testing phase.");
 		}
-		for (final RCSTransaction testInstance : testingSet) {
+		for (final ChangeSet testInstance : testingSet) {
 			test(testInstance);
 			train(testInstance, includeInnerRules);
 		}
@@ -218,7 +218,7 @@ public class LTCExperiment {
 	 *            the t
 	 */
 	@NoneNull
-	public void test(final RCSTransaction t) {
+	public void test(final ChangeSet t) {
 		
 		if ((t.getRevisions().size() > 10) && (t.getRevisions().size() >= this.changeSetSizeStat.getPercentile(75))) {
 			if (Logger.logInfo()) {
@@ -237,10 +237,10 @@ public class LTCExperiment {
 			                                               t.toString()));
 		}
 		
-		final LabelGenerator<RCSTransaction> labelGenerator = new LabelGenerator<RCSTransaction>() {
+		final LabelGenerator<ChangeSet> labelGenerator = new LabelGenerator<ChangeSet>() {
 			
 			@Override
-			public Collection<Label> getLabels(final RCSTransaction t) {
+			public Collection<Label> getLabels(final ChangeSet t) {
 				final Collection<Label> labels = new HashSet<Label>();
 				for (final Handle rCSFile : t.getChangedFiles()) {
 					labels.add(Label.getLabel(rCSFile));
@@ -250,13 +250,13 @@ public class LTCExperiment {
 		};
 		
 		// generate Kripke Structure
-		final KripkeStructure<RCSTransaction> kripkeStructure = KripkeStructure.createFrom(this.genealogy,
+		final KripkeStructure<ChangeSet> kripkeStructure = KripkeStructure.createFrom(this.genealogy,
 		                                                                                   t,
 		                                                                                   labelGenerator,
-		                                                                                   new VertexSelector<RCSTransaction>() {
+		                                                                                   new VertexSelector<ChangeSet>() {
 			                                                                                   
 			                                                                                   @Override
-			                                                                                   public boolean selectVertex(final RCSTransaction vertex) {
+			                                                                                   public boolean selectVertex(final ChangeSet vertex) {
 				                                                                                   if (Math.abs(Days.daysBetween(t.getTimestamp(),
 				                                                                                                                 vertex.getTimestamp())
 				                                                                                                    .getDays()) < LTCExperiment.this.timeWindow) {
@@ -277,7 +277,7 @@ public class LTCExperiment {
 		final SortedSet<LTCRecommendation> recommendations = new TreeSet<>(
 		                                                                   new LTCRecommendationComparator(
 		                                                                                                   changeProperty));
-		for (final RCSRevision rCSRevision : t.getRevisions()) {
+		for (final Revision rCSRevision : t.getRevisions()) {
 			if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 				continue;
 			}
@@ -333,7 +333,7 @@ public class LTCExperiment {
 	 *            the inner
 	 */
 	@NoneNull
-	public void train(final RCSTransaction t,
+	public void train(final ChangeSet t,
 	                  final boolean inner) {
 		// generate formulas to be added for this vertex
 		
@@ -353,10 +353,10 @@ public class LTCExperiment {
 		
 		final Collection<CTLFormula> templateFormulas = this.formulaFactory.generateFormulas(this.genealogy,
 		                                                                                     t,
-		                                                                                     new VertexSelector<RCSTransaction>() {
+		                                                                                     new VertexSelector<ChangeSet>() {
 			                                                                                     
 			                                                                                     @Override
-			                                                                                     public boolean selectVertex(final RCSTransaction vertex) {
+			                                                                                     public boolean selectVertex(final ChangeSet vertex) {
 				                                                                                     if (Math.abs(Days.daysBetween(t.getTimestamp(),
 				                                                                                                                   vertex.getTimestamp())
 				                                                                                                      .getDays()) < LTCExperiment.this.keepFormulaMaxDays) {
@@ -374,7 +374,7 @@ public class LTCExperiment {
 		
 		// add support for these formulas
 		for (final CTLFormula f : templateFormulas) {
-			for (final RCSRevision rCSRevision : t.getRevisions()) {
+			for (final Revision rCSRevision : t.getRevisions()) {
 				if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 					continue;
 				}

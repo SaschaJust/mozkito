@@ -40,7 +40,7 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeCouplings.
@@ -135,8 +135,8 @@ public class ChangeCouplings {
 	 * Run.
 	 */
 	public void run() {
-		final RCSTransaction rCSTransaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
-		                                                                    RCSTransaction.class);
+		final ChangeSet rCSTransaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
+		                                                                    ChangeSet.class);
 		
 		if (this.granularityArgument.getValue().equals(Level.FILE)) {
 			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(rCSTransaction,

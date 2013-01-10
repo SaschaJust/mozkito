@@ -26,14 +26,14 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class GraphReader.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class GraphReader extends Source<RCSTransaction> {
+public class GraphReader extends Source<ChangeSet> {
 	
 	/**
 	 * Instantiates a new graph reader.
@@ -47,22 +47,22 @@ public class GraphReader extends Source<RCSTransaction> {
 	 */
 	public GraphReader(final Group threadGroup, final Settings settings, final PersistenceUtil persistenceUtil) {
 		super(threadGroup, settings, false);
-		final LinkedList<RCSTransaction> list = new LinkedList<RCSTransaction>();
+		final LinkedList<ChangeSet> list = new LinkedList<ChangeSet>();
 		
-		new PreExecutionHook<RCSTransaction, RCSTransaction>(this) {
+		new PreExecutionHook<ChangeSet, ChangeSet>(this) {
 			
 			@Override
 			public void preExecution() {
-				final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
+				final Criteria<ChangeSet> criteria = persistenceUtil.createCriteria(ChangeSet.class);
 				list.addAll(persistenceUtil.load(criteria));
 			}
 		};
 		
-		new ProcessHook<RCSTransaction, RCSTransaction>(this) {
+		new ProcessHook<ChangeSet, ChangeSet>(this) {
 			
 			@Override
 			public void process() {
-				final RCSTransaction rCSTransaction = list.poll();
+				final ChangeSet rCSTransaction = list.poll();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Providing " + rCSTransaction + ".");

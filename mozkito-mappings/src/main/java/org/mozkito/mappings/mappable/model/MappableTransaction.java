@@ -32,10 +32,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
- * Class that wraps {@link RCSTransaction} to be mapped.
+ * Class that wraps {@link ChangeSet} to be mapped.
  * 
  * @see MappableEntity
  * @author Sascha Just <sascha.just@mozkito.org>
@@ -49,7 +49,7 @@ public class MappableTransaction extends MappableEntity {
 	private static final long serialVersionUID = 3493346151115096823L;
 	
 	/** The transaction. */
-	private RCSTransaction    rCSTransaction;
+	private ChangeSet    rCSTransaction;
 	
 	/**
 	 * Instantiates a new mappable transaction.
@@ -67,7 +67,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @param rCSTransaction
 	 *            the transaction
 	 */
-	public MappableTransaction(final RCSTransaction rCSTransaction) {
+	public MappableTransaction(final ChangeSet rCSTransaction) {
 		super();
 		
 		setTransaction(rCSTransaction);
@@ -143,7 +143,7 @@ public class MappableTransaction extends MappableEntity {
 	@Override
 	@Transient
 	public Class<?> getBaseType() {
-		return RCSTransaction.class;
+		return ChangeSet.class;
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @return the transaction
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
-	public RCSTransaction getTransaction() {
+	public ChangeSet getTransaction() {
 		return this.rCSTransaction;
 	}
 	
@@ -200,7 +200,7 @@ public class MappableTransaction extends MappableEntity {
 	 * @param rCSTransaction
 	 *            the new transaction
 	 */
-	public void setTransaction(final RCSTransaction rCSTransaction) {
+	public void setTransaction(final ChangeSet rCSTransaction) {
 		this.rCSTransaction = rCSTransaction;
 	}
 	

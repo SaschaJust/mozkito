@@ -27,7 +27,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class GenealogyMetricAggregationReader.
@@ -80,7 +80,7 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 					}
 					
 					final String transactionId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
-					final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+					final ChangeSet rCSTransaction = persistenceUtil.loadById(transactionId, ChangeSet.class);
 					if (rCSTransaction != null) {
 						final Collection<Handle> changedFiles = rCSTransaction.getChangedFiles();
 						final Collection<GenealogyMetricValue> output = new HashSet<GenealogyMetricValue>();

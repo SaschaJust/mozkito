@@ -31,7 +31,7 @@ import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
@@ -68,7 +68,7 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		while (logIterator.hasNext()) {
 			final LogEntry logEntry = logIterator.next();
 			
-			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, versionArchive, logEntry);
+			final ChangeSet rcsTransaction = RepositoryParser.parseLogEntry(repository, versionArchive, logEntry);
 			persistenceUtil.save(rcsTransaction);
 		}
 		persistenceUtil.commitTransaction();

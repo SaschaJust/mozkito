@@ -11,20 +11,20 @@ import org.mozkito.versions.elements.ChangeType;
 /**
  * The Class RCSRevision_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSRevision.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Revision.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Jan 10 17:52:36 CET 2013")
-public class RCSRevision_ {
+public class Revision_ {
 	
 	/** The change type. */
-	public static volatile SingularAttribute<RCSRevision, ChangeType>     changeType;
+	public static volatile SingularAttribute<Revision, ChangeType>     changeType;
 	
 	/** The changed file. */
-	public static volatile SingularAttribute<RCSRevision, Handle>         changedFile;
+	public static volatile SingularAttribute<Revision, Handle>         changedFile;
 	
 	/** The revision id. */
-	public static volatile SingularAttribute<RCSRevision, Long>           revisionId;
+	public static volatile SingularAttribute<Revision, Long>           revisionId;
 	
 	/** The transaction. */
-	public static volatile SingularAttribute<RCSRevision, RCSTransaction> transaction;
+	public static volatile SingularAttribute<Revision, ChangeSet> transaction;
 }

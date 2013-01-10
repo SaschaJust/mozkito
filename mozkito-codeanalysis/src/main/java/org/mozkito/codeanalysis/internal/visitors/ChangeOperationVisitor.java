@@ -13,7 +13,7 @@
 package org.mozkito.codeanalysis.internal.visitors;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Interface ChangeOperationVisitor.
@@ -41,6 +41,6 @@ public interface ChangeOperationVisitor {
 	 * @param rCSTransaction
 	 *            the transaction
 	 */
-	void visit(RCSTransaction rCSTransaction);
+	void visit(ChangeSet rCSTransaction);
 	
 }

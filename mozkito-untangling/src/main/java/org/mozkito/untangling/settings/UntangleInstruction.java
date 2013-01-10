@@ -12,7 +12,7 @@
  **********************************************************************************************************************/
 package org.mozkito.untangling.settings;
 
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 
 /**
  * The Class UntangleInstruction.
@@ -22,7 +22,7 @@ import org.mozkito.untangling.blob.ChangeSet;
 public class UntangleInstruction {
 	
 	/** The change set. */
-	private final ChangeSet changeSet;
+	private final ChangeOperationSet changeSet;
 	
 	/** The num partitions. */
 	private int             numPartitions = 0;
@@ -38,7 +38,7 @@ public class UntangleInstruction {
 	 * @param value
 	 *            the value
 	 */
-	public UntangleInstruction(final ChangeSet changeSet, final double value) {
+	public UntangleInstruction(final ChangeOperationSet changeSet, final double value) {
 		this.changeSet = changeSet;
 		if (value >= 1) {
 			this.numPartitions = Double.valueOf(value).intValue();
@@ -52,7 +52,7 @@ public class UntangleInstruction {
 	 * 
 	 * @return the change set
 	 */
-	public ChangeSet getChangeSet() {
+	public ChangeOperationSet getChangeSet() {
 		return this.changeSet;
 	}
 	

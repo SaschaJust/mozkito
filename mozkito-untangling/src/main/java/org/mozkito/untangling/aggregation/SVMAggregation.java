@@ -34,7 +34,7 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.untangling.Untangling;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 
 /**
  * The Class SVMAggregation.
@@ -189,7 +189,7 @@ public class SVMAggregation extends UntanglingScoreAggregation implements Serial
 	 *            the transaction set
 	 * @return true, if successful
 	 */
-	public boolean train(final Collection<ChangeSet> transactionSet) {
+	public boolean train(final Collection<ChangeOperationSet> transactionSet) {
 		
 		if (this.trained) {
 			return true;

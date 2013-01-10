@@ -36,7 +36,7 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class RepositoryOptions.
@@ -192,7 +192,7 @@ public class RepositoryOptions extends ArgumentSetOptions<Repository, ArgumentSe
 			
 			this.persistenceUtil = getSettings().getArgumentSet(this.databaseOptions).getValue();
 			
-			RCSBranch.setMasterBranchName(mainBranchArgument.getValue());
+			Branch.setMasterBranchName(mainBranchArgument.getValue());
 			
 			final URI repositoryURI = dirArgument.getValue();
 			String username = userArgument.getValue();

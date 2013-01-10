@@ -20,7 +20,7 @@ import net.ownhero.dev.kanuni.conditions.CollectionCondition;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class RevDependency.
@@ -34,7 +34,7 @@ public class RevDependency {
 	private Set<String>        parents = new HashSet<String>();
 	
 	/** The commit branch. */
-	private final RCSBranch    commitBranch;
+	private final Branch    commitBranch;
 	
 	/** The tag names. */
 	private final List<String> tagNames;
@@ -56,7 +56,7 @@ public class RevDependency {
 	 * @param isMerge
 	 *            the is merge
 	 */
-	public RevDependency(final String id, final RCSBranch commitBranch, final Set<String> parents,
+	public RevDependency(final String id, final Branch commitBranch, final Set<String> parents,
 	        final List<String> tagNames, final boolean isMerge) {
 		if (isMerge) {
 			CollectionCondition.minSize(parents, 2, "Merges must have multiple parents.");
@@ -75,7 +75,7 @@ public class RevDependency {
 	 * 
 	 * @return the commit branch
 	 */
-	public RCSBranch getCommitBranch() {
+	public Branch getCommitBranch() {
 		return this.commitBranch;
 	}
 	

@@ -13,7 +13,7 @@
 package org.mozkito.untangling.voters;
 
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * A factory for creating MultilevelClusteringScoreVisitor objects.
@@ -31,7 +31,7 @@ public abstract class MultilevelClusteringScoreVisitorFactory<T extends Multilev
 	 *            the r cs transaction
 	 * @return the t
 	 */
-	public abstract T createVoter(final RCSTransaction rCSTransaction);
+	public abstract T createVoter(final ChangeSet rCSTransaction);
 	
 	/**
 	 * Gets the voter name.

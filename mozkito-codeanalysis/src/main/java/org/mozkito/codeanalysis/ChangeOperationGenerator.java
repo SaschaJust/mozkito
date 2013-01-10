@@ -22,7 +22,7 @@ import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeOperationGenerator.
@@ -66,10 +66,10 @@ public class ChangeOperationGenerator {
 	 * @param rCSTransactions
 	 *            the transactions
 	 */
-	public void handleTransactions(final List<RCSTransaction> rCSTransactions) {
+	public void handleTransactions(final List<ChangeSet> rCSTransactions) {
 		final int size = rCSTransactions.size();
 		int counter = 0;
-		for (final RCSTransaction rCSTransaction : rCSTransactions) {
+		for (final ChangeSet rCSTransaction : rCSTransactions) {
 			
 			for (final ChangeOperationVisitor visitor : this.visitors) {
 				visitor.visit(rCSTransaction);

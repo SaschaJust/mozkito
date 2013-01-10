@@ -36,7 +36,7 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.changecouplings.model.MethodChangeCoupling;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * A factory for creating ChangeCouplingRule objects.
@@ -63,7 +63,7 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final RCSTransaction rCSTransaction,
+	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final ChangeSet rCSTransaction,
 	                                                                    @Positive final int minSupport,
 	                                                                    final double minConfidence,
 	                                                                    final PersistenceUtil persistenceUtil) {
@@ -141,7 +141,7 @@ public class ChangeCouplingRuleFactory {
 	 * @return the method change couplings
 	 */
 	@NoneNull
-	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final RCSTransaction rCSTransaction,
+	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final ChangeSet rCSTransaction,
 	                                                                                     @Positive final int minSupport,
 	                                                                                     @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                                                     final Set<String> relevantMethodNames,

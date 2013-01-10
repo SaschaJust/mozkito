@@ -34,8 +34,8 @@ import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * @author "Kim Herzig <herzig@cs.uni-saarland.de>"
@@ -52,10 +52,10 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	private GitRepository                     repo;
 	
 	/** The transaction map. */
-	private final Map<String, RCSTransaction> transactionMap = new HashMap<String, RCSTransaction>();
+	private final Map<String, ChangeSet> transactionMap = new HashMap<String, ChangeSet>();
 	
 	/** The branch map. */
-	private final Map<String, RCSBranch>      branchMap      = new HashMap<String, RCSBranch>();
+	private final Map<String, Branch>      branchMap      = new HashMap<String, Branch>();
 	
 	/**
 	 * Before class.
@@ -74,14 +74,14 @@ public class GitTransactionIteratorTest extends VersionsTest {
 		
 		while (log.hasNext()) {
 			final LogEntry logEntry = log.next();
-			final RCSTransaction rcsTransaction = new RCSTransaction(logEntry.getRevision(), logEntry.getMessage(),
+			final ChangeSet rcsTransaction = new ChangeSet(logEntry.getRevision(), logEntry.getMessage(),
 			                                                         logEntry.getDateTime(), logEntry.getAuthor(),
 			                                                         logEntry.getOriginalId());
 			this.transactionMap.put(logEntry.getRevision(), rcsTransaction);
 		}
 		
 		final RevDependencyGraph revDepGraph = this.repo.getRevDependencyGraph();
-		for (final RCSTransaction rcsTransaction : this.transactionMap.values()) {
+		for (final ChangeSet rcsTransaction : this.transactionMap.values()) {
 			final String hash = rcsTransaction.getId();
 			
 			if (!revDepGraph.existsVertex(hash)) {
@@ -91,12 +91,12 @@ public class GitTransactionIteratorTest extends VersionsTest {
 			// set parents
 			final String branchParentHash = revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
-				final RCSTransaction branchParent = this.transactionMap.get(branchParentHash);
+				final ChangeSet branchParent = this.transactionMap.get(branchParentHash);
 				rcsTransaction.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
-				final RCSTransaction mergeParent = this.transactionMap.get(mergeParentHash);
+				final ChangeSet mergeParent = this.transactionMap.get(mergeParentHash);
 				rcsTransaction.setMergeParent(mergeParent);
 			}
 			
@@ -109,7 +109,7 @@ public class GitTransactionIteratorTest extends VersionsTest {
 			// persist branches
 			final String branchName = revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
-				final RCSBranch rCSBranch = this.repo.getBranchFactory().getBranch(branchName);
+				final Branch rCSBranch = this.repo.getBranchFactory().getBranch(branchName);
 				rCSBranch.setHead(rcsTransaction);
 				this.branchMap.put(branchName, rCSBranch);
 			}
@@ -176,7 +176,7 @@ public class GitTransactionIteratorTest extends VersionsTest {
 	@Test
 	public void testMasterBranch() throws IOException, RepositoryOperationException {
 		final Iterator<String> transactions = this.repo.getRevDependencyGraph()
-		                                               .getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		                                               .getBranchTransactions(Branch.MASTER_BRANCH_NAME).iterator();
 		assertTrue(transactions.hasNext());
 		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", transactions.next());
 		assertTrue(transactions.hasNext());

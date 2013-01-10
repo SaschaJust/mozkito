@@ -36,7 +36,7 @@ import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -49,7 +49,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final RCSTransaction           rCSTransaction;
+	private final ChangeSet           rCSTransaction;
 	
 	/** The min support. */
 	private final int                      minSupport;
@@ -76,7 +76,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public FileChangeCouplingVoter(@NotNull final RCSTransaction rCSTransaction, final int minSupport,
+	public FileChangeCouplingVoter(@NotNull final ChangeSet rCSTransaction, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final java.io.File cacheDir) {
 		
 		this.rCSTransaction = rCSTransaction;

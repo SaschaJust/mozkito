@@ -47,7 +47,7 @@ import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class CodeFragmentsEngine.
@@ -243,7 +243,7 @@ public class CodeFragmentsEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return new And(new Atom(Index.ONE, EnhancedReport.class), new Atom(Index.OTHER, RCSTransaction.class));
+			return new And(new Atom(Index.ONE, EnhancedReport.class), new Atom(Index.OTHER, ChangeSet.class));
 		} finally {
 			// POSTCONDITIONS
 		}

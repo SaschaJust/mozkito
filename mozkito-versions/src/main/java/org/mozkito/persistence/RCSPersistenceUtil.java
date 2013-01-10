@@ -19,8 +19,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
 import org.mozkito.versions.collections.TransactionSet;
 import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class RCSPersistenceUtil.
@@ -41,12 +41,12 @@ public class RCSPersistenceUtil {
 	 */
 	@NoneNull
 	public static TransactionSet getTransactions(final PersistenceUtil persistenceUtil,
-	                                             final RCSBranch rCSBranch,
+	                                             final Branch rCSBranch,
 	                                             final TransactionSetOrder order) {
 		
-		final Criteria<RCSTransaction> criteria = persistenceUtil.createCriteria(RCSTransaction.class);
-		final MapJoin<RCSTransaction, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
-		final CriteriaQuery<RCSTransaction> query = criteria.getQuery();
+		final Criteria<ChangeSet> criteria = persistenceUtil.createCriteria(ChangeSet.class);
+		final MapJoin<ChangeSet, String, Long> branchRoot = criteria.getRoot().joinMap("branchIndices");
+		final CriteriaQuery<ChangeSet> query = criteria.getQuery();
 		query.where(criteria.getBuilder().equal(branchRoot.key(), rCSBranch.getName()));
 		criteria.setQuery(query);
 		

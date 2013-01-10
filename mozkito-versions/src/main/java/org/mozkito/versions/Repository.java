@@ -32,8 +32,8 @@ import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.mercurial.MercurialRepository;
-import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -58,7 +58,7 @@ public abstract class Repository {
 	private String             endRevision;
 	
 	/** The start transaction. */
-	private RCSTransaction     startTransaction = null;
+	private ChangeSet     startTransaction = null;
 	
 	/** The main branch name. */
 	private String             mainBranchName;
@@ -243,14 +243,14 @@ public abstract class Repository {
 		try {
 			if (this.revDepGraph == null) {
 				this.revDepGraph = new RevDependencyGraph();
-				final Criteria<RCSBranch> branchCriteria = persistenceUtil.createCriteria(RCSBranch.class);
-				final List<RCSBranch> branches = persistenceUtil.load(branchCriteria);
-				for (final RCSBranch branch : branches) {
+				final Criteria<Branch> branchCriteria = persistenceUtil.createCriteria(Branch.class);
+				final List<Branch> branches = persistenceUtil.load(branchCriteria);
+				for (final Branch branch : branches) {
 					this.revDepGraph.addBranch(branch.getName(), branch.getHead().getId());
 				}
-				final Criteria<RCSTransaction> transactionCriteria = persistenceUtil.createCriteria(RCSTransaction.class);
-				final List<RCSTransaction> transactions = persistenceUtil.load(transactionCriteria);
-				for (final RCSTransaction transaction : transactions) {
+				final Criteria<ChangeSet> transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class);
+				final List<ChangeSet> transactions = persistenceUtil.load(transactionCriteria);
+				for (final ChangeSet transaction : transactions) {
 					this.revDepGraph.addChangeSet(transaction.getId());
 					for (final String tagName : transaction.getTags()) {
 						this.revDepGraph.addTag(tagName, transaction.getId());
@@ -286,7 +286,7 @@ public abstract class Repository {
 	 * 
 	 * @return the startTransaction
 	 */
-	public RCSTransaction getStartTransaction() {
+	public ChangeSet getStartTransaction() {
 		return this.startTransaction;
 	}
 	
@@ -418,7 +418,7 @@ public abstract class Repository {
 	 * @param startTransaction
 	 *            the startTransaction to set
 	 */
-	public void setStartTransaction(final RCSTransaction startTransaction) {
+	public void setStartTransaction(final ChangeSet startTransaction) {
 		this.startTransaction = startTransaction;
 	}
 	

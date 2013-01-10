@@ -54,7 +54,7 @@ public class Handle implements Annotated, Serializable {
 	private long                     generatedId;
 	
 	/** The changed names. */
-	private Map<RCSRevision, String> changedNames     = new HashMap<RCSRevision, String>();
+	private Map<Revision, String> changedNames     = new HashMap<Revision, String>();
 	
 	/**
 	 * used by PersistenceUtil to create a {@link Handle} instance.
@@ -82,7 +82,7 @@ public class Handle implements Annotated, Serializable {
 	 *            the new path name of this handle as changed in the revision
 	 */
 	@Transient
-	public void assignRevision(final RCSRevision revision,
+	public void assignRevision(final Revision revision,
 	                           final String pathName) {
 		getChangedNames().put(revision, pathName);
 	}
@@ -95,8 +95,8 @@ public class Handle implements Annotated, Serializable {
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean changedHandleName(final RCSTransaction transaction) {
-		for (final RCSRevision revision : transaction.getRevisions()) {
+	public boolean changedHandleName(final ChangeSet transaction) {
+		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
 				return true;
 			}
@@ -142,7 +142,7 @@ public class Handle implements Annotated, Serializable {
 	 */
 	@ElementCollection
 	@JoinTable (name = "filename_changes", joinColumns = { @JoinColumn (name = "fileid", nullable = false) })
-	public Map<RCSRevision, String> getChangedNames() {
+	public Map<Revision, String> getChangedNames() {
 		return this.changedNames;
 	}
 	
@@ -178,8 +178,8 @@ public class Handle implements Annotated, Serializable {
 	 */
 	@Transient
 	public String getLatestPath() throws NoSuchHandleException {
-		final RCSBranch masterBranch = this.archive.getMasterBranch();
-		final RCSTransaction masterBranchHead = masterBranch.getHead();
+		final Branch masterBranch = this.archive.getMasterBranch();
+		final ChangeSet masterBranchHead = masterBranch.getHead();
 		try {
 			final String path = getPath(masterBranchHead);
 			return path;
@@ -199,7 +199,7 @@ public class Handle implements Annotated, Serializable {
 	 *             if the file name of the handle was not changed by the revision
 	 */
 	@Transient
-	public String getPath(final RCSRevision revision) throws NoSuchHandleException {
+	public String getPath(final Revision revision) throws NoSuchHandleException {
 		if (getChangedNames().containsKey(revision)) {
 			return getChangedNames().get(revision);
 		}
@@ -217,19 +217,19 @@ public class Handle implements Annotated, Serializable {
 	 *             if the handle could not be found in one of the branches the given transaction is part of
 	 */
 	@Transient
-	public String getPath(final RCSTransaction transaction) throws NoSuchHandleException {
+	public String getPath(final ChangeSet transaction) throws NoSuchHandleException {
 		
 		final RevDependencyGraph revDependencyGraph = this.archive.getRevDependencyGraph();
 		
-		for (final RCSRevision revision : transaction.getRevisions()) {
+		for (final Revision revision : transaction.getRevisions()) {
 			if (getChangedNames().containsKey(revision)) {
 				return getChangedNames().get(revision);
 			}
 		}
 		
 		for (final String parentId : revDependencyGraph.getPreviousTransactions(transaction.getId())) {
-			final RCSTransaction parentTransaction = this.archive.getTransactionById(parentId);
-			for (final RCSRevision revision : parentTransaction.getRevisions()) {
+			final ChangeSet parentTransaction = this.archive.getTransactionById(parentId);
+			for (final Revision revision : parentTransaction.getRevisions()) {
 				if (getChangedNames().containsKey(revision)) {
 					return getChangedNames().get(revision);
 				}
@@ -278,7 +278,7 @@ public class Handle implements Annotated, Serializable {
 	 * @param changedNames
 	 *            the changed names
 	 */
-	protected void setChangedNames(final Map<RCSRevision, String> changedNames) {
+	protected void setChangedNames(final Map<Revision, String> changedNames) {
 		this.changedNames = changedNames;
 	}
 	

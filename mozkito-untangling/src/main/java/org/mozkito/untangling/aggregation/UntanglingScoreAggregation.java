@@ -32,8 +32,8 @@ import org.mozkito.clustering.ScoreAggregation;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.untangling.Untangling;
-import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.untangling.blob.ChangeOperationSet;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class UntanglingScoreAggregation.
@@ -66,12 +66,12 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 	 *            the untangling
 	 * @return the samples
 	 */
-	public Map<SampleType, List<List<Double>>> getSamples(final Collection<ChangeSet> transactionSet,
+	public Map<SampleType, List<List<Double>>> getSamples(final Collection<ChangeOperationSet> transactionSet,
 	                                                      final double trainFraction,
 	                                                      final Untangling untangling) {
 		Condition.check(!transactionSet.isEmpty(), "The transactionSet to train linear regression on must be not empty");
 		
-		final List<ChangeSet> transactions = new ArrayList<ChangeSet>(transactionSet.size());
+		final List<ChangeOperationSet> transactions = new ArrayList<ChangeOperationSet>(transactionSet.size());
 		transactions.addAll(transactionSet);
 		
 		if (Logger.logDebug()) {
@@ -85,11 +85,11 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			Logger.info("Using " + numSamples + " samples as positive training set.");
 		}
 		
-		final Map<ChangeSet, Set<JavaChangeOperation>> selectedTransactions = new HashMap<ChangeSet, Set<JavaChangeOperation>>();
+		final Map<ChangeOperationSet, Set<JavaChangeOperation>> selectedTransactions = new HashMap<ChangeOperationSet, Set<JavaChangeOperation>>();
 		for (int i = 0; i < numSamples; ++i) {
 			final int r = Untangling.random.nextInt(transactions.size());
 			
-			final ChangeSet t = transactions.get(r);
+			final ChangeOperationSet t = transactions.get(r);
 			final Set<JavaChangeOperation> changeOperations = t.getChangeOperation(JavaMethodDefinition.class);
 			
 			if (changeOperations.size() < 2) {
@@ -105,8 +105,8 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			Logger.debug("Creating positive samples.");
 		}
 		
-		for (final Entry<ChangeSet, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
-			final ChangeSet t = e.getKey();
+		for (final Entry<ChangeOperationSet, Set<JavaChangeOperation>> e : selectedTransactions.entrySet()) {
+			final ChangeOperationSet t = e.getKey();
 			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
 			                                                                                           .size()]);
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
@@ -132,9 +132,9 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 		
 		final List<List<Double>> negativeValues = new LinkedList<List<Double>>();
 		
-		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> negativePool = new LinkedList<>();
+		final List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, ChangeSet>> negativePool = new LinkedList<>();
 		
-		for (final Entry<ChangeSet, Set<JavaChangeOperation>> entry : selectedTransactions.entrySet()) {
+		for (final Entry<ChangeOperationSet, Set<JavaChangeOperation>> entry : selectedTransactions.entrySet()) {
 			final List<JavaChangeOperation> opList = new ArrayList<>(entry.getValue().size());
 			opList.addAll(entry.getValue());
 			for (int i = 0; i < opList.size(); ++i) {
@@ -142,7 +142,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 					final Tuple<JavaChangeOperation, JavaChangeOperation> negInnerTuple = new Tuple<JavaChangeOperation, JavaChangeOperation>(
 					                                                                                                                          opList.get(i),
 					                                                                                                                          opList.get(j));
-					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>(
+					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, ChangeSet>(
 					                                                                                            negInnerTuple,
 					                                                                                            entry.getKey()
 					                                                                                                 .getTransaction()));
@@ -164,7 +164,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			}
 		}
 		
-		List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction>> sampledNegativePool = new LinkedList<>();
+		List<Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, ChangeSet>> sampledNegativePool = new LinkedList<>();
 		if (!seenSamples.isEmpty()) {
 			
 			for (final int i : seenSamples) {
@@ -174,7 +174,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			sampledNegativePool = negativePool;
 		}
 		
-		for (final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, RCSTransaction> sample : sampledNegativePool) {
+		for (final Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, ChangeSet> sample : sampledNegativePool) {
 			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(sample.getSecond());
 			final List<Double> values = new ArrayList<Double>(scoreVisitors.size());
 			for (final MultilevelClusteringScoreVisitor<JavaChangeOperation> v : scoreVisitors) {

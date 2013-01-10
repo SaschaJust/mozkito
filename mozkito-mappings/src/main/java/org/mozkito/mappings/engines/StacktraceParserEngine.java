@@ -46,7 +46,7 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class StacktraceParserEngine.
@@ -145,7 +145,7 @@ public class StacktraceParserEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final RCSTransaction transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getTransaction();
 			final PersistenceUtil persistenceUtil = getPersistenceUtil();
 			final Set<String> subjects = new HashSet<>();
 			final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(persistenceUtil,
@@ -193,7 +193,7 @@ public class StacktraceParserEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, RCSTransaction.class));
+			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, ChangeSet.class));
 		} finally {
 			// POSTCONDITIONS
 		}

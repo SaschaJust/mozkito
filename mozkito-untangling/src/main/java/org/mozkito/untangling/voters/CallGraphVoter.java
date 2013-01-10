@@ -50,7 +50,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 import serp.util.Strings;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
@@ -101,7 +101,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		 * .RCSTransaction)
 		 */
 		@Override
-		public CallGraphVoter createVoter(final RCSTransaction rCSTransaction) {
+		public CallGraphVoter createVoter(final ChangeSet rCSTransaction) {
 			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, rCSTransaction, this.cacheDir);
 		}
 		
@@ -253,7 +253,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 *            the cache dir
 	 */
 	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments,
-	        final RCSTransaction rCSTransaction, final File cacheDir) {
+	        final ChangeSet rCSTransaction, final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
 			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId()

@@ -43,7 +43,7 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class SubversionRepositoryTest.
@@ -291,7 +291,7 @@ public class SubversionRepositoryTest extends VersionsTest {
 		assertNotNull(revDepG);
 		final Set<String> branches = revDepG.getBranches();
 		assertEquals(1, branches.size());
-		final Iterator<String> masterIter = revDepG.getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		final Iterator<String> masterIter = revDepG.getBranchTransactions(Branch.MASTER_BRANCH_NAME).iterator();
 		assertTrue(masterIter.hasNext());
 		assertEquals("18", masterIter.next());
 		assertTrue(masterIter.hasNext());

@@ -28,7 +28,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ArtificialBlob.
@@ -50,7 +50,7 @@ public class ArtificialBlob {
 	}
 	
 	/** The blob transactions. */
-	private final TreeSet<ChangeSet> blobTransactions = new TreeSet<ChangeSet>();
+	private final TreeSet<ChangeOperationSet> blobTransactions = new TreeSet<ChangeOperationSet>();
 	
 	/**
 	 * Instantiates a new artificial blob.
@@ -59,7 +59,7 @@ public class ArtificialBlob {
 	 *            the transaction
 	 */
 	@NoneNull
-	public ArtificialBlob(final ChangeSet changeSet) {
+	public ArtificialBlob(final ChangeOperationSet changeSet) {
 		if (!add(changeSet)) {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding transaction " + changeSet.getTransaction().getId() + " failed!");
@@ -74,7 +74,7 @@ public class ArtificialBlob {
 	 *            the input
 	 */
 	@NoneNull
-	public ArtificialBlob(final Set<ChangeSet> changeSets) {
+	public ArtificialBlob(final Set<ChangeOperationSet> changeSets) {
 		if (!addAll(changeSets)) {
 			if (Logger.logDebug()) {
 				Logger.debug("Adding transactions failed!" + StringUtils.join(changeSets, ","));
@@ -90,7 +90,7 @@ public class ArtificialBlob {
 	 * @return true, if successful
 	 */
 	@NoneNull
-	public boolean add(final ChangeSet changeSet) {
+	public boolean add(final ChangeOperationSet changeSet) {
 		return this.blobTransactions.add(changeSet);
 	}
 	
@@ -101,7 +101,7 @@ public class ArtificialBlob {
 	 *            the blob transactions
 	 * @return true, if successful
 	 */
-	private boolean addAll(final Collection<ChangeSet> changeSets) {
+	private boolean addAll(final Collection<ChangeOperationSet> changeSets) {
 		return this.blobTransactions.addAll(changeSets);
 		
 	}
@@ -114,7 +114,7 @@ public class ArtificialBlob {
 	public List<JavaChangeOperation> getAllChangeOperations() {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
-		for (final ChangeSet t : this.blobTransactions) {
+		for (final ChangeOperationSet t : this.blobTransactions) {
 			result.addAll(t.getOperations());
 		}
 		return result;
@@ -125,7 +125,7 @@ public class ArtificialBlob {
 	 * 
 	 * @return the transactions
 	 */
-	public Set<ChangeSet> getAtomicTransactions() {
+	public Set<ChangeOperationSet> getAtomicTransactions() {
 		return this.blobTransactions;
 	}
 	
@@ -136,7 +136,7 @@ public class ArtificialBlob {
 	 */
 	public List<List<JavaChangeOperation>> getChangeOperationPartitions() {
 		final List<List<JavaChangeOperation>> result = new LinkedList<List<JavaChangeOperation>>();
-		for (final ChangeSet t : this.blobTransactions) {
+		for (final ChangeOperationSet t : this.blobTransactions) {
 			result.add(new ArrayList<JavaChangeOperation>(t.getOperations()));
 		}
 		return result;
@@ -149,7 +149,7 @@ public class ArtificialBlob {
 	 */
 	public Long getDayWindow() {
 		final TreeSet<DateTime> timeStamps = new TreeSet<DateTime>();
-		for (final RCSTransaction t : getTransactions()) {
+		for (final ChangeSet t : getTransactions()) {
 			timeStamps.add(t.getTimestamp());
 		}
 		final Days daysBetween = Days.daysBetween(timeStamps.first(), timeStamps.last());
@@ -161,7 +161,7 @@ public class ArtificialBlob {
 	 * 
 	 * @return the latest transaction
 	 */
-	public RCSTransaction getLatestTransaction() {
+	public ChangeSet getLatestTransaction() {
 		return this.blobTransactions.last().getTransaction();
 	}
 	
@@ -170,9 +170,9 @@ public class ArtificialBlob {
 	 * 
 	 * @return the transactions
 	 */
-	public Set<RCSTransaction> getTransactions() {
-		final Set<RCSTransaction> result = new HashSet<RCSTransaction>();
-		for (final ChangeSet t : this.blobTransactions) {
+	public Set<ChangeSet> getTransactions() {
+		final Set<ChangeSet> result = new HashSet<ChangeSet>();
+		for (final ChangeOperationSet t : this.blobTransactions) {
 			result.add(t.getTransaction());
 		}
 		return result;

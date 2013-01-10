@@ -10,17 +10,17 @@ import javax.persistence.metamodel.SingularAttribute;
 /**
  * The Class RCSBranch_.
  */
-@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.RCSBranch.class)
+@javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.Branch.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
                              date = "Thu Jan 10 17:52:36 CET 2013")
-public class RCSBranch_ {
+public class Branch_ {
 	
 	/** The head. */
-	public static volatile SingularAttribute<RCSBranch, RCSTransaction> head;
+	public static volatile SingularAttribute<Branch, ChangeSet> head;
 	
 	/** The merged in. */
-	public static volatile SetAttribute<RCSBranch, String>              mergedIn;
+	public static volatile SetAttribute<Branch, String>              mergedIn;
 	
 	/** The name. */
-	public static volatile SingularAttribute<RCSBranch, String>         name;
+	public static volatile SingularAttribute<Branch, String>         name;
 }

@@ -23,17 +23,17 @@ import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalTempParentsMetrics;
 import org.mozkito.genealogies.metrics.utils.DaysBetweenUtils;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionTempParentsMetrics.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionTempParentsMetrics extends GenealogyTransactionMetric implements DayTimeDiff<RCSTransaction> {
+public class TransactionTempParentsMetrics extends GenealogyTransactionMetric implements DayTimeDiff<ChangeSet> {
 	
 	/** The universal metric. */
-	private final UniversalTempParentsMetrics<RCSTransaction> universalMetric;
+	private final UniversalTempParentsMetrics<ChangeSet> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction temp parents metrics.
@@ -43,7 +43,7 @@ public class TransactionTempParentsMetrics extends GenealogyTransactionMetric im
 	 */
 	public TransactionTempParentsMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalTempParentsMetrics<RCSTransaction>(genealogy, this);
+		this.universalMetric = new UniversalTempParentsMetrics<ChangeSet>(genealogy, this);
 	}
 	
 	/*
@@ -51,8 +51,8 @@ public class TransactionTempParentsMetrics extends GenealogyTransactionMetric im
 	 * @see org.mozkito.genealogies.metrics.DayTimeDiff#daysDiff(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int daysDiff(final RCSTransaction t1,
-	                    final RCSTransaction t2) {
+	public int daysDiff(final ChangeSet t1,
+	                    final ChangeSet t2) {
 		return DaysBetweenUtils.getDaysBetween(t1, t2);
 	}
 	

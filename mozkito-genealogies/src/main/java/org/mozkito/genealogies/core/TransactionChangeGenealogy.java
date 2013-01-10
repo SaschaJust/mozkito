@@ -39,14 +39,14 @@ import org.neo4j.tooling.GlobalGraphOperations;
 
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 // import org.neo4j.graphdb.Transaction;
 
 /**
  * The Class TransactionChangeGenealogy.
  */
-public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransaction> {
+public class TransactionChangeGenealogy implements ChangeGenealogy<ChangeSet> {
 	
 	/** The Constant NODE_ID. */
 	public static final String                NODE_ID       = "transaction_id";
@@ -76,7 +76,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	private final CoreChangeGenealogy         core;
 	
 	/** The node cache. */
-	private final Map<String, RCSTransaction> nodeCache     = new HashMap<String, RCSTransaction>();
+	private final Map<String, ChangeSet> nodeCache     = new HashMap<String, ChangeSet>();
 	
 	/**
 	 * Instantiates a new change genealogy.
@@ -114,8 +114,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return true, if successful
 	 */
 	@NoneNull
-	boolean addEdge(final RCSTransaction dependent,
-	                final RCSTransaction target,
+	boolean addEdge(final ChangeSet dependent,
+	                final ChangeSet target,
 	                final GenealogyEdgeType edgeType) {
 		
 		// add both vertices
@@ -172,7 +172,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *         already).
 	 */
 	@NoneNull
-	boolean addVertex(@NotNull final RCSTransaction v) {
+	boolean addVertex(@NotNull final ChangeSet v) {
 		if (hasVertex(v)) {
 			if (Logger.logTrace()) {
 				Logger.trace("Transaction with id `" + v.getId() + "` already exists");
@@ -218,8 +218,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return true, if an edge from <code>from</code> to <code>to</code> exists, false otherwise.
 	 */
 	@Override
-	public boolean containsEdge(final RCSTransaction from,
-	                            final RCSTransaction to) {
+	public boolean containsEdge(final ChangeSet from,
+	                            final ChangeSet to) {
 		final GenealogyEdgeType result = getEdge(from, to);
 		return result != null;
 	}
@@ -229,7 +229,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#containsVertex(java.lang.Object)
 	 */
 	@Override
-	public boolean containsVertex(final RCSTransaction vertex) {
+	public boolean containsVertex(final ChangeSet vertex) {
 		return hasVertex(vertex);
 	}
 	
@@ -256,7 +256,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getAllDependants(final RCSTransaction operation) {
+	public Collection<ChangeSet> getAllDependants(final ChangeSet operation) {
 		return getDependants(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                     GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                     GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -285,7 +285,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return all dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getAllParents(final RCSTransaction operation) {
+	public Collection<ChangeSet> getAllParents(final ChangeSet operation) {
 		return getParents(operation, GenealogyEdgeType.CallOnDefinition, GenealogyEdgeType.DefinitionOnDefinition,
 		                  GenealogyEdgeType.DefinitionOnDeletedDefinition, GenealogyEdgeType.DeletedCallOnCall,
 		                  GenealogyEdgeType.DeletedCallOnDeletedDefinition,
@@ -313,7 +313,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 */
 	@Override
 	@NoneNull
-	public Collection<RCSTransaction> getDependants(final RCSTransaction operation,
+	public Collection<ChangeSet> getDependants(final ChangeSet operation,
 	                                                final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
@@ -322,10 +322,10 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 				        + operation.toString()
 				        + " that has no correspondence within the ChangeGenealogy. Returning empty collection.");
 			}
-			return new HashSet<RCSTransaction>();
+			return new HashSet<ChangeSet>();
 		}
 		final Collection<Node> dependentNodes = getDependents(node, edgeTypes);
-		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
+		final Set<ChangeSet> parentOperations = new HashSet<ChangeSet>();
 		for (final Node dependentNode : dependentNodes) {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
@@ -365,8 +365,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return the edge or <code>null</code> if no such edge exists.
 	 */
 	@NoneNull
-	public GenealogyEdgeType getEdge(final RCSTransaction from,
-	                                 final RCSTransaction to) {
+	public GenealogyEdgeType getEdge(final ChangeSet from,
+	                                 final ChangeSet to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -400,8 +400,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getEdges(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public Collection<GenealogyEdgeType> getEdges(final RCSTransaction from,
-	                                              final RCSTransaction to) {
+	public Collection<GenealogyEdgeType> getEdges(final ChangeSet from,
+	                                              final ChangeSet to) {
 		final Node fromNode = getNodeForVertex(from);
 		final Node toNode = getNodeForVertex(to);
 		if ((fromNode == null) || (toNode == null)) {
@@ -484,7 +484,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *            the op
 	 * @return the node for vertex
 	 */
-	private Node getNodeForVertex(final RCSTransaction op) {
+	private Node getNodeForVertex(final ChangeSet op) {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(TransactionChangeGenealogy.NODE_ID, op.getId());
 		if (!indexHits.hasNext()) {
 			indexHits.close();
@@ -500,7 +500,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getNodeId(java.lang.Object)
 	 */
 	@Override
-	public String getNodeId(final RCSTransaction t) {
+	public String getNodeId(final ChangeSet t) {
 		if (containsVertex(t)) {
 			return t.getId();
 		}
@@ -536,7 +536,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @return the dependents
 	 */
 	@Override
-	public Collection<RCSTransaction> getParents(final RCSTransaction operation,
+	public Collection<ChangeSet> getParents(final ChangeSet operation,
 	                                             final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(operation);
 		if (node == null) {
@@ -544,10 +544,10 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 				Logger.warn("You cannot retrieve edges for RCSTransction `" + operation.toString()
 				        + "` that has no corresponce within the ChangeGenealogy. Returning empty null.");
 			}
-			return new HashSet<RCSTransaction>();
+			return new HashSet<ChangeSet>();
 		}
 		final Collection<Node> dependentNodes = getParents(node, edgeTypes);
-		final Set<RCSTransaction> parentOperations = new HashSet<RCSTransaction>();
+		final Set<ChangeSet> parentOperations = new HashSet<ChangeSet>();
 		for (final Node dependentNode : dependentNodes) {
 			parentOperations.add(getVertexForNode(dependentNode));
 		}
@@ -568,8 +568,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#getRoots()
 	 */
 	@Override
-	public Collection<RCSTransaction> getRoots() {
-		final Collection<RCSTransaction> result = new HashSet<RCSTransaction>();
+	public Collection<ChangeSet> getRoots() {
+		final Collection<ChangeSet> result = new HashSet<ChangeSet>();
 		final IndexHits<Node> indexHits = this.rootIndex.query(TransactionChangeGenealogy.ROOT_VERTICES, 1);
 		while (indexHits.hasNext()) {
 			result.add(getVertexForNode(indexHits.next()));
@@ -585,9 +585,9 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *            the dependent node
 	 * @return the vertex for node
 	 */
-	private RCSTransaction getVertexForNode(final Node dependentNode) {
+	private ChangeSet getVertexForNode(final Node dependentNode) {
 		final String operationId = (String) dependentNode.getProperty(TransactionChangeGenealogy.NODE_ID);
-		return loadById(operationId, RCSTransaction.class);
+		return loadById(operationId, ChangeSet.class);
 	}
 	
 	/**
@@ -597,7 +597,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *            the vertex
 	 * @return true, if successful
 	 */
-	public boolean hasVertex(final RCSTransaction vertex) {
+	public boolean hasVertex(final ChangeSet vertex) {
 		return (getNodeForVertex(vertex) != null);
 	}
 	
@@ -606,7 +606,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#inDegree(java.lang.Object)
 	 */
 	@Override
-	public int inDegree(final RCSTransaction op) {
+	public int inDegree(final ChangeSet op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING,
 		                                                                   GenealogyEdgeType.values());
@@ -624,7 +624,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
-	public int inDegree(final RCSTransaction op,
+	public int inDegree(final ChangeSet op,
 	                    final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.INCOMING, edgeTypes);
@@ -666,8 +666,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 *            the clazz
 	 * @return the rCS transaction
 	 */
-	public RCSTransaction loadById(final String id,
-	                               final Class<? extends RCSTransaction> clazz) {
+	public ChangeSet loadById(final String id,
+	                               final Class<? extends ChangeSet> clazz) {
 		if (!this.nodeCache.containsKey(id)) {
 			this.nodeCache.put(id, this.persistenceUtil.loadById(id, clazz));
 		}
@@ -688,7 +688,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#outDegree(java.lang.Object)
 	 */
 	@Override
-	public int outDegree(final RCSTransaction op) {
+	public int outDegree(final ChangeSet op) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING,
 		                                                                   GenealogyEdgeType.values());
@@ -706,7 +706,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * org.mozkito.genealogies.core.GenealogyEdgeType[])
 	 */
 	@Override
-	public int outDegree(final RCSTransaction op,
+	public int outDegree(final ChangeSet op,
 	                     final GenealogyEdgeType... edgeTypes) {
 		final Node node = getNodeForVertex(op);
 		final Iterable<Relationship> relationships = node.getRelationships(Direction.OUTGOING, edgeTypes);
@@ -723,7 +723,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * 
 	 * @return the iterator
 	 */
-	public Iterator<RCSTransaction> vertexIterator() {
+	public Iterator<ChangeSet> vertexIterator() {
 		final IndexHits<Node> indexHits = this.nodeIndex.query(TransactionChangeGenealogy.NODE_ID, "*");
 		
 		final Set<String> ids = new HashSet<String>();
@@ -731,7 +731,7 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			ids.add((String) node.getProperty(TransactionChangeGenealogy.NODE_ID));
 		}
 		indexHits.close();
-		return new Iterator<RCSTransaction>() {
+		return new Iterator<ChangeSet>() {
 			
 			private final Iterator<String> idIter = ids.iterator();
 			
@@ -741,8 +741,8 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 			}
 			
 			@Override
-			public RCSTransaction next() {
-				return loadById(this.idIter.next(), RCSTransaction.class);
+			public ChangeSet next() {
+				return loadById(this.idIter.next(), ChangeSet.class);
 			}
 			
 			@Override
@@ -757,11 +757,11 @@ public class TransactionChangeGenealogy implements ChangeGenealogy<RCSTransactio
 	 * @see org.mozkito.genealogies.ChangeGenealogy#vertexSet()
 	 */
 	@Override
-	public Iterable<RCSTransaction> vertexSet() {
-		return new Iterable<RCSTransaction>() {
+	public Iterable<ChangeSet> vertexSet() {
+		return new Iterable<ChangeSet>() {
 			
 			@Override
-			public Iterator<RCSTransaction> iterator() {
+			public Iterator<ChangeSet> iterator() {
 				return vertexIterator();
 			}
 		};

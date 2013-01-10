@@ -47,7 +47,7 @@ public class ArtificialBlobGenerator {
 	}
 	
 	/** The combine operator. */
-	private final CombineOperator<ChangeSet> combineOperator;
+	private final CombineOperator<ChangeOperationSet> combineOperator;
 	
 	/**
 	 * Instantiates a new artificial blob generator.
@@ -55,7 +55,7 @@ public class ArtificialBlobGenerator {
 	 * @param combineOperator
 	 *            the combine operator
 	 */
-	public ArtificialBlobGenerator(final CombineOperator<ChangeSet> combineOperator) {
+	public ArtificialBlobGenerator(final CombineOperator<ChangeOperationSet> combineOperator) {
 		this.combineOperator = combineOperator;
 	}
 	
@@ -70,7 +70,7 @@ public class ArtificialBlobGenerator {
 	 *            the max blob size
 	 * @return the sets the
 	 */
-	public Set<ArtificialBlob> generateAll(@NotNull final Collection<ChangeSet> changeSets,
+	public Set<ArtificialBlob> generateAll(@NotNull final Collection<ChangeOperationSet> changeSets,
 	                                       @GreaterOrEqualInt (ref = 2) @NotNegative final int minBlobSize,
 	                                       @GreaterOrEqualInt (ref = -1) final int maxBlobSize) {
 		
@@ -85,7 +85,7 @@ public class ArtificialBlobGenerator {
 		if (Logger.logInfo()) {
 			Logger.info("Generating all combinations between %s transactions.", String.valueOf(changeSets.size()));
 		}
-		final Set<Set<ChangeSet>> allCombinations = CollectionUtils.getAllCombinations(changeSets,
+		final Set<Set<ChangeOperationSet>> allCombinations = CollectionUtils.getAllCombinations(changeSets,
 		                                                                               this.combineOperator,
 		                                                                               maxBlobSize);
 		
@@ -94,16 +94,16 @@ public class ArtificialBlobGenerator {
 		}
 		
 		// Filter out too small combinations
-		final Iterator<Set<ChangeSet>> setIter = allCombinations.iterator();
+		final Iterator<Set<ChangeOperationSet>> setIter = allCombinations.iterator();
 		while (setIter.hasNext()) {
-			final Set<ChangeSet> next = setIter.next();
+			final Set<ChangeOperationSet> next = setIter.next();
 			if (next.size() < minBlobSize) {
 				setIter.remove();
 			}
 		}
 		
 		final Set<ArtificialBlob> result = new HashSet<ArtificialBlob>();
-		for (final Set<ChangeSet> set : allCombinations) {
+		for (final Set<ChangeOperationSet> set : allCombinations) {
 			result.add(new ArtificialBlob(set));
 		}
 		

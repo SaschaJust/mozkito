@@ -45,7 +45,7 @@ import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class PatchEngine.
@@ -142,7 +142,7 @@ public class PatchEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final RCSTransaction transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getTransaction();
 			
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();
@@ -163,7 +163,7 @@ public class PatchEngine extends Engine {
 			}
 			
 			final Collection<Handle> changedFiles = transaction.getChangedFiles();
-			final RCSTransaction previousTransaction = transaction.getBranchParent();
+			final ChangeSet previousTransaction = transaction.getBranchParent();
 			
 			double localConfidence = 0.0d;
 			
@@ -249,7 +249,7 @@ public class PatchEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, RCSTransaction.class));
+			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, ChangeSet.class));
 		} finally {
 			// POSTCONDITIONS
 		}

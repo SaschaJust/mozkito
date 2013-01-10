@@ -15,7 +15,7 @@ package org.mozkito.codeanalysis.model;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.versions.model.Revision;
 
 /**
  * The Class JavaChangeOperation_.
@@ -38,6 +38,6 @@ public class JavaChangeOperation_ {
 	public static volatile SingularAttribute<JavaChangeOperation, Long>                id;
 	
 	/** The revision. */
-	public static volatile SingularAttribute<JavaChangeOperation, RCSRevision>         revision;
+	public static volatile SingularAttribute<JavaChangeOperation, Revision>         revision;
 	
 }

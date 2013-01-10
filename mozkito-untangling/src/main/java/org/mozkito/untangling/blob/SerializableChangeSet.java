@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class SerializableChangeSet.
@@ -42,7 +42,7 @@ public class SerializableChangeSet implements Serializable {
 	 * @param changeSet
 	 *            the change set
 	 */
-	public SerializableChangeSet(final ChangeSet changeSet) {
+	public SerializableChangeSet(final ChangeOperationSet changeSet) {
 		this.transactionId = changeSet.getTransaction().getId();
 		for (final JavaChangeOperation operation : changeSet.getOperations()) {
 			this.operationIds.add(operation.getId());
@@ -56,13 +56,13 @@ public class SerializableChangeSet implements Serializable {
 	 *            the persistence util
 	 * @return the change set
 	 */
-	public ChangeSet unserialize(final PersistenceUtil persistenceUtil) {
-		final RCSTransaction rCSTransaction = persistenceUtil.loadById(this.transactionId, RCSTransaction.class);
+	public ChangeOperationSet unserialize(final PersistenceUtil persistenceUtil) {
+		final ChangeSet rCSTransaction = persistenceUtil.loadById(this.transactionId, ChangeSet.class);
 		final Set<JavaChangeOperation> operations = new HashSet<>();
 		for (final Long operationId : this.operationIds) {
 			operations.add(persistenceUtil.loadById(operationId, JavaChangeOperation.class));
 		}
-		return new ChangeSet(rCSTransaction, operations);
+		return new ChangeOperationSet(rCSTransaction, operations);
 	}
 	
 }

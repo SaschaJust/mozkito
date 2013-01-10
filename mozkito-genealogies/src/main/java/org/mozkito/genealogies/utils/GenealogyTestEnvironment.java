@@ -25,7 +25,7 @@ import org.mozkito.genealogies.core.CoreChangeGenealogy;
 import org.mozkito.genealogies.core.GenealogyEdgeType;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class GenealogyTestEnvironment.
@@ -77,10 +77,10 @@ public class GenealogyTestEnvironment {
 	private final PersistenceUtil                                    persistenceUtil;
 	
 	/** The transaction map. */
-	private final Map<RCSTransaction, Set<JavaChangeOperation>>      transactionMap;
+	private final Map<ChangeSet, Set<JavaChangeOperation>>      transactionMap;
 	
 	/** The environment transactions. */
-	private final Map<Integer, RCSTransaction>                       environmentTransactions;
+	private final Map<Integer, ChangeSet>                       environmentTransactions;
 	
 	/** The environment operations. */
 	private final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations;
@@ -113,8 +113,8 @@ public class GenealogyTestEnvironment {
 	 *            the tmp graph db file
 	 */
 	GenealogyTestEnvironment(final PersistenceUtil persistenceUtil,
-	        final Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap,
-	        final Map<Integer, RCSTransaction> environmentTransactions,
+	        final Map<ChangeSet, Set<JavaChangeOperation>> transactionMap,
+	        final Map<Integer, ChangeSet> environmentTransactions,
 	        final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations,
 	        final Repository repository, final CoreChangeGenealogy changeGenealogy, final File tmpGraphDBFile) {
 		
@@ -225,7 +225,7 @@ public class GenealogyTestEnvironment {
 	 * 
 	 * @return the environment transactions
 	 */
-	public Map<Integer, RCSTransaction> getEnvironmentTransactions() {
+	public Map<Integer, ChangeSet> getEnvironmentTransactions() {
 		return this.environmentTransactions;
 	}
 	
@@ -261,7 +261,7 @@ public class GenealogyTestEnvironment {
 	 * 
 	 * @return the transaction map
 	 */
-	public Map<RCSTransaction, Set<JavaChangeOperation>> getTransactionMap() {
+	public Map<ChangeSet, Set<JavaChangeOperation>> getTransactionMap() {
 		return this.transactionMap;
 	}
 	

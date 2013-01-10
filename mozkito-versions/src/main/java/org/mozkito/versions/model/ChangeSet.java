@@ -57,52 +57,52 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
  * @author Sascha Just <sascha.just@mozkito.org>
  */
 @Entity
-@Table (name = "rcstransaction")
-public class RCSTransaction implements Annotated {
+@Table (name = "changeset")
+public class ChangeSet implements Annotated {
 	
 	/** The Constant serialVersionUID. */
-	private static final long       serialVersionUID = -7619009648634901112L;
+	private static final long    serialVersionUID = -7619009648634901112L;
 	
 	/** The persons. */
-	private PersonContainer         persons          = new PersonContainer();
+	private PersonContainer      persons          = new PersonContainer();
 	
 	/** The id. */
-	private String                  id;
+	private String               id;
 	
 	/** The message. */
-	private String                  message;
+	private String               message;
 	
 	/** The children. */
-	private Set<RCSTransaction>     children         = new HashSet<RCSTransaction>();
+	private Set<ChangeSet>       children         = new HashSet<ChangeSet>();
 	
 	/** The branch parent. */
-	private RCSTransaction          branchParent     = null;
+	private ChangeSet            branchParent     = null;
 	
 	/** The merge parent. */
-	private RCSTransaction          mergeParent      = null;
+	private ChangeSet            mergeParent      = null;
 	
 	/** The revisions. */
-	private Collection<RCSRevision> revisions        = new LinkedList<RCSRevision>();
+	private Collection<Revision> revisions        = new LinkedList<Revision>();
 	
 	/** The java timestamp. */
-	private DateTime                javaTimestamp;
+	private DateTime             javaTimestamp;
 	
 	/** The tags. */
-	private Set<String>             tags             = new HashSet<String>();
+	private Set<String>          tags             = new HashSet<String>();
 	
 	/** The original id. */
-	private String                  originalId;
+	private String               originalId;
 	
 	/** The atomic. */
-	private boolean                 atomic           = false;
+	private boolean              atomic           = false;
 	
 	/** The branch indices. */
-	private Map<String, Long>       branchIndices    = new HashMap<String, Long>();
+	private Map<String, Long>    branchIndices    = new HashMap<String, Long>();
 	
 	/**
 	 * used by PersistenceUtil to create Transaction instance.
 	 */
-	protected RCSTransaction() {
+	protected ChangeSet() {
 		this.atomic = false;
 	}
 	
@@ -120,7 +120,7 @@ public class RCSTransaction implements Annotated {
 	 * @param originalId
 	 *            the original id
 	 */
-	public RCSTransaction(@NotNull final String id, @NotNull final String message, @NotNull final DateTime timestamp,
+	public ChangeSet(@NotNull final String id, @NotNull final String message, @NotNull final DateTime timestamp,
 	        @NotNull final Person author, final String originalId) {
 		setId(id);
 		setMessage(message);
@@ -158,7 +158,7 @@ public class RCSTransaction implements Annotated {
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addBranch(final RCSBranch rCSBranch,
+	public boolean addBranch(final Branch rCSBranch,
 	                         final Long index) {
 		if (getBranchIndices().containsKey(rCSBranch.getName())) {
 			return false;
@@ -175,12 +175,12 @@ public class RCSTransaction implements Annotated {
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addChild(final RCSTransaction rcsTransaction) {
+	public boolean addChild(final ChangeSet rcsTransaction) {
 		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
 		boolean ret = false;
 		
 		if (!getChildren().contains(rcsTransaction)) {
-			final Set<RCSTransaction> children = getChildren();
+			final Set<ChangeSet> children = getChildren();
 			ret = children.add(rcsTransaction);
 			setChildren(children);
 		}
@@ -196,8 +196,8 @@ public class RCSTransaction implements Annotated {
 	 * @return true, if successful
 	 */
 	@Transient
-	protected boolean addRevision(@NotNull final RCSRevision rCSRevision) {
-		final Collection<RCSRevision> rCSRevisions = getRevisions();
+	protected boolean addRevision(@NotNull final Revision rCSRevision) {
+		final Collection<Revision> rCSRevisions = getRevisions();
 		final boolean ret = rCSRevisions.add(rCSRevision);
 		setRevisions(rCSRevisions);
 		return ret;
@@ -269,7 +269,7 @@ public class RCSTransaction implements Annotated {
 	 * @return the branch parent
 	 */
 	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	public RCSTransaction getBranchParent() {
+	public ChangeSet getBranchParent() {
 		return this.branchParent;
 	}
 	
@@ -281,7 +281,7 @@ public class RCSTransaction implements Annotated {
 	@Transient
 	public Collection<Handle> getChangedFiles() {
 		final List<Handle> changedFiles = new LinkedList<Handle>();
-		for (final RCSRevision rCSRevision : getRevisions()) {
+		for (final Revision rCSRevision : getRevisions()) {
 			changedFiles.add(rCSRevision.getChangedFile());
 		}
 		return changedFiles;
@@ -295,10 +295,10 @@ public class RCSTransaction implements Annotated {
 	// @Transient
 	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
 	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
-	public Set<RCSTransaction> getChildren() {
+	public Set<ChangeSet> getChildren() {
 		return this.children != null
 		                            ? this.children
-		                            : new HashSet<RCSTransaction>();
+		                            : new HashSet<ChangeSet>();
 	}
 	
 	/*
@@ -307,7 +307,7 @@ public class RCSTransaction implements Annotated {
 	 */
 	@Override
 	public final String getHandle() {
-		return JavaUtils.getHandle(RCSTransaction.class);
+		return JavaUtils.getHandle(ChangeSet.class);
 	}
 	
 	/**
@@ -341,7 +341,7 @@ public class RCSTransaction implements Annotated {
 	 * @return the merge parent
 	 */
 	@ManyToOne (cascade = { CascadeType.REFRESH, CascadeType.MERGE }, fetch = FetchType.LAZY)
-	public RCSTransaction getMergeParent() {
+	public ChangeSet getMergeParent() {
 		// PRECONDITIONS
 		
 		try {
@@ -388,12 +388,12 @@ public class RCSTransaction implements Annotated {
 	 * @return the revision for path if found. Returns <code>null</code> otherwise.
 	 */
 	@Transient
-	public RCSRevision getRevisionForPath(final String path) {
+	public Revision getRevisionForPath(final String path) {
 		String comparePath = path;
 		if (path.startsWith("/")) {
 			comparePath = path.substring(1);
 		}
-		for (final RCSRevision revision : getRevisions()) {
+		for (final Revision revision : getRevisions()) {
 			try {
 				final String fileName = revision.getChangedFile().getPath(this);
 				if (fileName.equals(comparePath)) {
@@ -411,11 +411,11 @@ public class RCSTransaction implements Annotated {
 	 * 
 	 * @return the revisions
 	 */
-	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = RCSRevision.class)
-	public Collection<RCSRevision> getRevisions() {
+	@OneToMany (cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, targetEntity = Revision.class)
+	public Collection<Revision> getRevisions() {
 		return this.revisions != null
 		                             ? this.revisions
-		                             : new HashSet<RCSRevision>();
+		                             : new HashSet<Revision>();
 	}
 	
 	/**
@@ -490,7 +490,7 @@ public class RCSTransaction implements Annotated {
 	 * @param branchParent
 	 *            the new branch parent
 	 */
-	public void setBranchParent(final RCSTransaction branchParent) {
+	public void setBranchParent(final ChangeSet branchParent) {
 		// PRECONDITIONS
 		try {
 			this.branchParent = branchParent;
@@ -505,7 +505,7 @@ public class RCSTransaction implements Annotated {
 	 * @param children
 	 *            the children to set
 	 */
-	public void setChildren(final Set<RCSTransaction> children) {
+	public void setChildren(final Set<ChangeSet> children) {
 		this.children = children;
 	}
 	
@@ -537,7 +537,7 @@ public class RCSTransaction implements Annotated {
 	 * @param mergeParent
 	 *            the new merge parent
 	 */
-	public void setMergeParent(final RCSTransaction mergeParent) {
+	public void setMergeParent(final ChangeSet mergeParent) {
 		// PRECONDITIONS
 		try {
 			this.mergeParent = mergeParent;
@@ -582,7 +582,7 @@ public class RCSTransaction implements Annotated {
 	 * @param rCSRevisions
 	 *            the revisions to set
 	 */
-	protected void setRevisions(final Collection<RCSRevision> rCSRevisions) {
+	protected void setRevisions(final Collection<Revision> rCSRevisions) {
 		this.revisions = rCSRevisions;
 	}
 	
@@ -643,7 +643,7 @@ public class RCSTransaction implements Annotated {
 		string.append("["); //$NON-NLS-1$
 		final StringBuilder builder2 = new StringBuilder();
 		
-		for (final RCSTransaction rCSTransaction : getChildren()) {
+		for (final ChangeSet rCSTransaction : getChildren()) {
 			if (builder2.length() > 0) {
 				builder2.append(", "); //$NON-NLS-1$
 			}

@@ -26,14 +26,14 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.codeanalysis.utils.PPAUtils;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class PPATransformer.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperation> {
+public class PPATransformer extends Transformer<ChangeSet, JavaChangeOperation> {
 	
 	/**
 	 * Instantiates a new pPA transformer.
@@ -56,7 +56,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 		super(threadGroup, settings, false);
 		
 		final PPATransformerVisitor visitor = new PPATransformerVisitor();
-		new ProcessHook<RCSTransaction, JavaChangeOperation>(this) {
+		new ProcessHook<ChangeSet, JavaChangeOperation>(this) {
 			
 			private Iterator<JavaChangeOperation> iterator;
 			
@@ -65,7 +65,7 @@ public class PPATransformer extends Transformer<RCSTransaction, JavaChangeOperat
 				
 				if ((this.iterator == null) || (!this.iterator.hasNext())) {
 					
-					final RCSTransaction rCSTransaction = getInputData();
+					final ChangeSet rCSTransaction = getInputData();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Computing change operations for transaction `" + rCSTransaction.getId() + "`");

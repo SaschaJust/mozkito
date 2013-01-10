@@ -62,7 +62,7 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class GitRepository. This class is _not_ thread safe.
@@ -585,7 +585,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 								continue;
 							}
 							if ("origin/master".equals(remoteName)) {
-								remoteName = RCSBranch.MASTER_BRANCH_NAME;
+								remoteName = Branch.MASTER_BRANCH_NAME;
 							}
 						} else if (remoteName.startsWith("refs/pull/")) {
 							remoteName = remoteName.substring(REFS_PULL_LENGTH);

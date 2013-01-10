@@ -23,7 +23,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.genealogies.core.TransactionChangeGenealogy;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionGenealogyReader.
@@ -33,7 +33,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionGenealogyReader extends Source<GenealogyTransactionNode> {
 	
 	/** The iterator. */
-	private Iterator<RCSTransaction> iterator;
+	private Iterator<ChangeSet> iterator;
 	
 	/**
 	 * Instantiates a new transaction genealogy reader.
@@ -62,7 +62,7 @@ public class TransactionGenealogyReader extends Source<GenealogyTransactionNode>
 			@Override
 			public void process() {
 				if (TransactionGenealogyReader.this.iterator.hasNext()) {
-					final RCSTransaction t = TransactionGenealogyReader.this.iterator.next();
+					final ChangeSet t = TransactionGenealogyReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
 						Logger.info("Providing " + t);

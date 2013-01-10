@@ -42,7 +42,7 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class MercurialRepositoryTest.
@@ -313,8 +313,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 		final String maintenanceBranchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE,
 		                                                   "2d18bf2cbffbdc6b5ad321dc2fc5e57dc810e4a9");
 		assertEquals(true, branches.contains(maintenanceBranchName));
-		assertEquals(true, branches.contains(RCSBranch.MASTER_BRANCH_NAME));
-		final Iterator<String> masterIter = revDepG.getBranchTransactions(RCSBranch.MASTER_BRANCH_NAME).iterator();
+		assertEquals(true, branches.contains(Branch.MASTER_BRANCH_NAME));
+		final Iterator<String> masterIter = revDepG.getBranchTransactions(Branch.MASTER_BRANCH_NAME).iterator();
 		
 		assertTrue(masterIter.hasNext());
 		assertEquals("d9a5542fe1b5a755502320ba38fdf180011b40df", masterIter.next());

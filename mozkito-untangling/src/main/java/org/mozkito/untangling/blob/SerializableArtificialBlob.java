@@ -38,7 +38,7 @@ public class SerializableArtificialBlob implements Serializable {
 	 *            the blob
 	 */
 	public SerializableArtificialBlob(final ArtificialBlob blob) {
-		for (final ChangeSet changeSet : blob.getAtomicTransactions()) {
+		for (final ChangeOperationSet changeSet : blob.getAtomicTransactions()) {
 			this.changeSets.add(new SerializableChangeSet(changeSet));
 		}
 	}
@@ -51,7 +51,7 @@ public class SerializableArtificialBlob implements Serializable {
 	 * @return the artificial blob
 	 */
 	public ArtificialBlob unserialize(final PersistenceUtil persistenceUtil) {
-		final Set<ChangeSet> unserChangeSets = new HashSet<>();
+		final Set<ChangeOperationSet> unserChangeSets = new HashSet<>();
 		for (final SerializableChangeSet sChangeSet : this.changeSets) {
 			unserChangeSets.add(sChangeSet.unserialize(persistenceUtil));
 		}

@@ -36,8 +36,8 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeCouplingRuleFactoryTest.
@@ -108,47 +108,47 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		// ###transaction 1
 		
 		final DateTime now = new DateTime();
-		final RCSTransaction rcsTransaction = new RCSTransaction("0", "", now, person, "");
+		final ChangeSet rcsTransaction = new ChangeSet("0", "", now, person, "");
 		final Handle fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
-		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
+		new Revision(rcsTransaction, fileA, ChangeType.Added);
 		
 		final Handle fileB = fileManager.createFile("B.java", rcsTransaction);
 		fileB.assignTransaction(rcsTransaction, "B.java");
-		new RCSRevision(rcsTransaction, fileB, ChangeType.Added);
+		new Revision(rcsTransaction, fileB, ChangeType.Added);
 		
 		final Handle fileC = fileManager.createFile("C.java", rcsTransaction);
 		fileC.assignTransaction(rcsTransaction, "C.java");
-		new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
+		new Revision(rcsTransaction, fileC, ChangeType.Added);
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction);
 		
 		// ### transaction 2
 		
-		final RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", now.plus(10000), person, "");
-		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
-		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
+		final ChangeSet rcsTransaction2 = new ChangeSet("1", "", now.plus(10000), person, "");
+		new Revision(rcsTransaction2, fileA, ChangeType.Modified);
+		new Revision(rcsTransaction2, fileB, ChangeType.Added);
 		final Handle fileD = fileManager.createFile("D.java", rcsTransaction);
 		// fileC.assignTransaction(rcsTransaction2, "D.java");
-		new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
+		new Revision(rcsTransaction2, fileD, ChangeType.Added);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction2);
 		
 		// ### transaction 3
 		
-		final RCSTransaction rcsTransaction3 = new RCSTransaction("2", "", now.plus(20000), person, "");
-		new RCSRevision(rcsTransaction3, fileA, ChangeType.Modified);
+		final ChangeSet rcsTransaction3 = new ChangeSet("2", "", now.plus(20000), person, "");
+		new Revision(rcsTransaction3, fileA, ChangeType.Modified);
 		
 		fileC.assignTransaction(rcsTransaction3, "C.java");
-		new RCSRevision(rcsTransaction3, fileC, ChangeType.Modified);
-		new RCSRevision(rcsTransaction3, fileB, ChangeType.Added);
+		new Revision(rcsTransaction3, fileC, ChangeType.Modified);
+		new Revision(rcsTransaction3, fileB, ChangeType.Added);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction3);
 		
 		// ### transaction 4
 		
-		final RCSTransaction rcsTransaction4 = new RCSTransaction("3", "", now.plus(30000), person, "");
-		new RCSRevision(rcsTransaction4, fileA, ChangeType.Modified);
-		new RCSRevision(rcsTransaction4, fileC, ChangeType.Modified);
-		new RCSRevision(rcsTransaction4, fileB, ChangeType.Modified);
+		final ChangeSet rcsTransaction4 = new ChangeSet("3", "", now.plus(30000), person, "");
+		new Revision(rcsTransaction4, fileA, ChangeType.Modified);
+		new Revision(rcsTransaction4, fileC, ChangeType.Modified);
+		new Revision(rcsTransaction4, fileB, ChangeType.Modified);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction4);
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();

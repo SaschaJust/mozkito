@@ -34,8 +34,8 @@ import org.jdom2.Element;
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class JavaChangeOperation.
@@ -64,11 +64,11 @@ public class JavaChangeOperation implements Annotated {
 	 */
 	@NoneNull
 	public static JavaChangeOperation fromXMLRepresentation(final Element element,
-	                                                        final ModelStorage<String, RCSTransaction> transactionStorage,
+	                                                        final ModelStorage<String, ChangeSet> transactionStorage,
 	                                                        final JavaElementFactory elementFactory) {
 		
 		ChangeType changeType = null;
-		RCSRevision rCSRevision = null;
+		Revision rCSRevision = null;
 		JavaElementLocation location = null;
 		
 		try {
@@ -97,7 +97,7 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		final RCSTransaction rCSTransaction = transactionStorage.getById(transaction_id);
+		final ChangeSet rCSTransaction = transactionStorage.getById(transaction_id);
 		if (!changedPath.startsWith("/")) {
 			changedPath = "/" + changedPath;
 		}
@@ -125,7 +125,7 @@ public class JavaChangeOperation implements Annotated {
 	private JavaElementLocation changedElementLocation;
 	
 	/** The revision. */
-	private RCSRevision         revision;
+	private Revision         revision;
 	
 	/** The essential. */
 	private boolean             essential = true;
@@ -151,7 +151,7 @@ public class JavaChangeOperation implements Annotated {
 	 *            the revision
 	 */
 	@NoneNull
-	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final RCSRevision rCSRevision) {
+	public JavaChangeOperation(final ChangeType type, final JavaElementLocation element, final Revision rCSRevision) {
 		setChangeType(type);
 		setChangedElementLocation(element);
 		setRevision(rCSRevision);
@@ -250,7 +250,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @return the revision
 	 */
 	@ManyToOne (cascade = {}, fetch = FetchType.EAGER)
-	public RCSRevision getRevision() {
+	public Revision getRevision() {
 		return this.revision;
 	}
 	
@@ -346,7 +346,7 @@ public class JavaChangeOperation implements Annotated {
 	 * @param revision
 	 *            the new revision
 	 */
-	protected void setRevision(final RCSRevision revision) {
+	protected void setRevision(final Revision revision) {
 		this.revision = revision;
 	}
 	

@@ -23,8 +23,8 @@ import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class JavaChangeOperationTest.
@@ -32,7 +32,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class JavaChangeOperationTest {
 	
 	/** The r cs transaction. */
-	private RCSTransaction         rCSTransaction;
+	private ChangeSet         rCSTransaction;
 	
 	/** The anonymous class location. */
 	private JavaElementLocation    anonymousClassLocation;
@@ -62,11 +62,11 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null,
+		this.rCSTransaction = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null,
 		                                                                                                 null), "143");
 		this.rcsFile = new Handle("org/mozkito/codeanalysis/model/TestClass.java", this.rCSTransaction);
 		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-		                                  new RCSRevision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
+		                                  new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
 	}
 	
 	/**
@@ -85,10 +85,10 @@ public class JavaChangeOperationTest {
 	public void testXML() {
 		final Element xmlOp = this.op.getXMLRepresentation();
 		assertEquals(this.op,
-		             JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, RCSTransaction>() {
+		             JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, ChangeSet>() {
 			             
 			             @Override
-			             public RCSTransaction getById(final String id) {
+			             public ChangeSet getById(final String id) {
 				             return JavaChangeOperationTest.this.rCSTransaction;
 			             }
 		             }, this.elementFactory));

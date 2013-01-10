@@ -43,10 +43,10 @@
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<properties>
 			<property name="openjpa.Log" value="slf4j"/>
 			<property name="openjpa.Multithreaded" value="true"/>
@@ -69,10 +69,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
@@ -101,10 +101,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
@@ -143,10 +143,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>
 		<class>org.mozkito.issues.tracker.model.History</class>
@@ -182,10 +182,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.codeanalysis.model.JavaElement</class>
 		<class>org.mozkito.codeanalysis.model.JavaTypeDefinition</class>
@@ -215,10 +215,10 @@
 		<class>org.mozkito.persistence.model.Person</class>
 		<class>org.mozkito.persistence.model.PersonContainer</class>
 		<class>org.mozkito.persistence.model.PersonTuple</class>
-		<class>org.mozkito.versions.model.RCSBranch</class>
+		<class>org.mozkito.versions.model.Branch</class>
 		<class>org.mozkito.versions.model.Handle</class>
-		<class>org.mozkito.versions.model.RCSRevision</class>
-		<class>org.mozkito.versions.model.RCSTransaction</class>
+		<class>org.mozkito.versions.model.Revision</class>
+		<class>org.mozkito.versions.model.ChangeSet</class>
 		<class>org.mozkito.persistence.model.StringTuple</class>
 		<class>org.mozkito.issues.tracker.model.AttachmentEntry</class>
 		<class>org.mozkito.issues.tracker.model.Comment</class>

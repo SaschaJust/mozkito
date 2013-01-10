@@ -36,7 +36,7 @@ import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.persistence.PPAPersistenceUtil;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionChangeSizeMetrics.
@@ -158,7 +158,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		}
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
-		final RCSTransaction rCSTransaction = item.getNode();
+		final ChangeSet rCSTransaction = item.getNode();
 		final String nodeId = this.genealogy.getNodeId(rCSTransaction);
 		
 		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
@@ -268,7 +268,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANEGED_BLOCKS, nodeId,
 		                                          numChangedLineBlocks));
 		
-		for (final RCSTransaction dependant : this.genealogy.getAllDependants(rCSTransaction)) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependants(rCSTransaction)) {
 			// ignore test and non java files.
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
@@ -286,7 +286,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		                                                                     ? 0
 		                                                                     : dependantStats.getSum()));
 		
-		for (final RCSTransaction parent : this.genealogy.getAllParents(rCSTransaction)) {
+		for (final ChangeSet parent : this.genealogy.getAllParents(rCSTransaction)) {
 			// ignore test and non java files.
 			parentStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}

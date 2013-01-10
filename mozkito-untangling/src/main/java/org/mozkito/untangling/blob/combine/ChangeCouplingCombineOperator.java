@@ -36,16 +36,16 @@ import org.mozkito.changecouplings.model.FileChangeCoupling;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeCouplingCombineOperator.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet> {
+public class ChangeCouplingCombineOperator implements CombineOperator<ChangeOperationSet> {
 	
 	/**
 	 * The Class Options.
@@ -152,13 +152,13 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean canBeCombined(final ChangeSet cl1,
-	                             final ChangeSet cl2) {
+	public boolean canBeCombined(final ChangeOperationSet cl1,
+	                             final ChangeOperationSet cl2) {
 		// PRECONDITIONS
 		
 		try {
-			final RCSTransaction cl1T = cl1.getTransaction();
-			final RCSTransaction cl2T = cl2.getTransaction();
+			final ChangeSet cl1T = cl1.getTransaction();
+			final ChangeSet cl2T = cl2.getTransaction();
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Trying to combine %s and %s ...", cl1T.getId(), cl2T.getId());

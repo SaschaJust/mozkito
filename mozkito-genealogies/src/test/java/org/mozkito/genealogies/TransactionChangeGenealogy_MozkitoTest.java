@@ -39,7 +39,7 @@ import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionChangeGenealogy_MozkitoTest.
@@ -72,7 +72,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		final GenealogyTestEnvironment testEnvironment = ChangeGenealogyUtils.getGenealogyTestEnvironment(tmpGraphDBFile,
 		                                                                                                  branchFactory);
 		final CoreChangeGenealogy changeGenealogy = testEnvironment.getChangeGenealogy();
-		final Map<Integer, RCSTransaction> environmentTransactions = testEnvironment.getEnvironmentTransactions();
+		final Map<Integer, ChangeSet> environmentTransactions = testEnvironment.getEnvironmentTransactions();
 		
 		changeGenealogy.close();
 		final TransactionChangeGenealogy tdg = changeGenealogy.getTransactionLayer();
@@ -258,7 +258,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		
 		assertFalse(tdg.containsEdge(environmentTransactions.get(10), environmentTransactions.get(10)));
 		
-		Collection<RCSTransaction> dependents = tdg.getAllDependants(environmentTransactions.get(3));
+		Collection<ChangeSet> dependents = tdg.getAllDependants(environmentTransactions.get(3));
 		assertEquals(4, dependents.size());
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
@@ -270,7 +270,7 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		assertTrue(dependents.contains(environmentTransactions.get(4)));
 		assertTrue(dependents.contains(environmentTransactions.get(5)));
 		
-		Collection<RCSTransaction> parents = tdg.getAllParents(environmentTransactions.get(10));
+		Collection<ChangeSet> parents = tdg.getAllParents(environmentTransactions.get(10));
 		assertEquals(3, parents.size());
 		assertTrue(parents.contains(environmentTransactions.get(4)));
 		assertTrue(parents.contains(environmentTransactions.get(5)));
@@ -282,8 +282,8 @@ public class TransactionChangeGenealogy_MozkitoTest extends DatabaseTest {
 		assertTrue(parents.contains(environmentTransactions.get(5)));
 		
 		assertEquals(10, tdg.vertexSize());
-		final Set<RCSTransaction> vertices = new HashSet<RCSTransaction>();
-		for (final RCSTransaction v : tdg.vertexSet()) {
+		final Set<ChangeSet> vertices = new HashSet<ChangeSet>();
+		for (final ChangeSet v : tdg.vertexSet()) {
 			vertices.add(v);
 		}
 		

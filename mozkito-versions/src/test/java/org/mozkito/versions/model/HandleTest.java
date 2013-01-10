@@ -36,12 +36,12 @@ import org.mozkito.versions.exceptions.NoSuchHandleException;
 public class HandleTest {
 	
 	private Person             person;
-	private RCSTransaction     t_0;
-	private RCSTransaction     t_1;
-	private RCSTransaction     t_2;
-	private RCSTransaction     t_3;
-	private RCSTransaction     t_4;
-	private RCSTransaction     t_5;
+	private ChangeSet     t_0;
+	private ChangeSet     t_1;
+	private ChangeSet     t_2;
+	private ChangeSet     t_3;
+	private ChangeSet     t_4;
+	private ChangeSet     t_5;
 	private VersionArchive     versionArchive;
 	private RevDependencyGraph revDepGraph;
 	
@@ -60,12 +60,12 @@ public class HandleTest {
 	public void setup() {
 		this.person = new Person("kim", "", "");
 		
-		this.t_0 = new RCSTransaction("0", "", new DateTime(), this.person, "");
-		this.t_1 = new RCSTransaction("1", "", new DateTime(), this.person, "");
-		this.t_2 = new RCSTransaction("2", "", new DateTime(), this.person, "");
-		this.t_3 = new RCSTransaction("3", "", new DateTime(), this.person, "");
-		this.t_4 = new RCSTransaction("4", "", new DateTime(), this.person, "");
-		this.t_5 = new RCSTransaction("5", "", new DateTime(), this.person, "");
+		this.t_0 = new ChangeSet("0", "", new DateTime(), this.person, "");
+		this.t_1 = new ChangeSet("1", "", new DateTime(), this.person, "");
+		this.t_2 = new ChangeSet("2", "", new DateTime(), this.person, "");
+		this.t_3 = new ChangeSet("3", "", new DateTime(), this.person, "");
+		this.t_4 = new ChangeSet("4", "", new DateTime(), this.person, "");
+		this.t_5 = new ChangeSet("5", "", new DateTime(), this.person, "");
 		
 		this.t_1.setBranchParent(this.t_0);
 		this.t_2.setBranchParent(this.t_0);
@@ -83,7 +83,7 @@ public class HandleTest {
 			private static final long serialVersionUID = 8388504356360016697L;
 			
 			@Override
-			public RCSTransaction getTransactionById(final String id) {
+			public ChangeSet getTransactionById(final String id) {
 				switch (id) {
 					case "0":
 						return HandleTest.this.t_0;
@@ -154,8 +154,8 @@ public class HandleTest {
 		this.versionArchive.setRevDependencyGraph(this.revDepGraph);
 		
 		final Handle handle = new Handle(this.versionArchive);
-		handle.assignRevision(new RCSRevision(this.t_0, handle, ChangeType.Added), "public.java");
-		handle.assignRevision(new RCSRevision(this.t_4, handle, ChangeType.Added), "new_name.java");
+		handle.assignRevision(new Revision(this.t_0, handle, ChangeType.Added), "public.java");
+		handle.assignRevision(new Revision(this.t_4, handle, ChangeType.Added), "new_name.java");
 		
 		this.t_1.setBranchParent(this.t_0);
 		this.t_2.setBranchParent(this.t_1);
@@ -199,17 +199,17 @@ public class HandleTest {
 	//@formatter:on
 		
 		final Handle handle = new Handle(this.versionArchive);
-		handle.assignRevision(new RCSRevision(this.t_0, handle, ChangeType.Added), "public.java");
+		handle.assignRevision(new Revision(this.t_0, handle, ChangeType.Added), "public.java");
 		
-		new RCSRevision(this.t_1, handle, ChangeType.Modified);
-		new RCSRevision(this.t_2, handle, ChangeType.Modified);
+		new Revision(this.t_1, handle, ChangeType.Modified);
+		new Revision(this.t_2, handle, ChangeType.Modified);
 		
 		final Handle hiddenFile = new Handle(this.versionArchive);
-		hiddenFile.assignRevision(new RCSRevision(this.t_3, hiddenFile, ChangeType.Added), "hidden.java");
+		hiddenFile.assignRevision(new Revision(this.t_3, hiddenFile, ChangeType.Added), "hidden.java");
 		
-		new RCSRevision(this.t_4, hiddenFile, ChangeType.Modified);
+		new Revision(this.t_4, hiddenFile, ChangeType.Modified);
 		
-		new RCSRevision(this.t_5, handle, ChangeType.Modified);
+		new Revision(this.t_5, handle, ChangeType.Modified);
 		
 		try {
 			assertEquals("hidden.java", hiddenFile.getPath(this.t_5));
@@ -243,16 +243,16 @@ public class HandleTest {
 	//@formatter:on
 		
 		final Handle rCSFile = new Handle(this.versionArchive);
-		rCSFile.assignRevision(new RCSRevision(this.t_0, rCSFile, ChangeType.Added), "public.java");
+		rCSFile.assignRevision(new Revision(this.t_0, rCSFile, ChangeType.Added), "public.java");
 		
-		new RCSRevision(this.t_1, rCSFile, ChangeType.Modified);
+		new Revision(this.t_1, rCSFile, ChangeType.Modified);
 		
 		final Handle hiddenFile = new Handle(this.versionArchive);
-		hiddenFile.assignRevision(new RCSRevision(this.t_2, hiddenFile, ChangeType.Added), "hidden.java");
-		hiddenFile.assignRevision(new RCSRevision(this.t_3, hiddenFile, ChangeType.Renamed), "moreHidden.java");
+		hiddenFile.assignRevision(new Revision(this.t_2, hiddenFile, ChangeType.Added), "hidden.java");
+		hiddenFile.assignRevision(new Revision(this.t_3, hiddenFile, ChangeType.Renamed), "moreHidden.java");
 		
-		new RCSRevision(this.t_4, hiddenFile, ChangeType.Modified);
-		new RCSRevision(this.t_5, rCSFile, ChangeType.Modified);
+		new Revision(this.t_4, hiddenFile, ChangeType.Modified);
+		new Revision(this.t_5, rCSFile, ChangeType.Modified);
 		
 		try {
 			assertEquals("moreHidden.java", hiddenFile.getPath(this.t_5));

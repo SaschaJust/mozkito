@@ -47,7 +47,7 @@ import org.mozkito.untangling.Untangling.ScoreCombinationMode;
 import org.mozkito.untangling.Untangling.UntanglingCollapse;
 import org.mozkito.untangling.blob.ArtificialBlobGenerator;
 import org.mozkito.untangling.blob.ArtificialBlobGenerator.ArtificialBlobGeneratorStrategy;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.untangling.blob.combine.ChangeCouplingCombineOperator;
 import org.mozkito.untangling.blob.combine.ConsecutiveChangeCombineOperator;
 import org.mozkito.untangling.blob.combine.PackageDistanceCombineOperator;
@@ -56,7 +56,7 @@ import org.mozkito.untangling.voters.ChangeCouplingVoter;
 import org.mozkito.untangling.voters.DataDependencyVoter;
 import org.mozkito.untangling.voters.TestImpactVoter;
 import org.mozkito.untangling.voters.TestImpactVoter.Factory;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class UntanglingOptions.
@@ -253,8 +253,8 @@ public class UntanglingOptions extends
 								            line);
 							}
 						}
-						final RCSTransaction rCSTransaction = persistenceUtil.loadById(lineParts[0],
-						                                                               RCSTransaction.class);
+						final ChangeSet rCSTransaction = persistenceUtil.loadById(lineParts[0],
+						                                                               ChangeSet.class);
 						if (rCSTransaction == null) {
 							if (Logger.logWarn()) {
 								Logger.warn("Could not find change set with ID %s. Ignoring corresponding line in change set file.",
@@ -263,7 +263,7 @@ public class UntanglingOptions extends
 							continue;
 						}
 						instructions.add(new UntangleInstruction(
-						                                         new ChangeSet(
+						                                         new ChangeOperationSet(
 						                                                       rCSTransaction,
 						                                                       PPAPersistenceUtil.getChangeOperation(persistenceUtil,
 						                                                                                             rCSTransaction)),

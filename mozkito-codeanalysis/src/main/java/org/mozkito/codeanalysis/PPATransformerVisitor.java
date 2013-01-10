@@ -17,7 +17,7 @@ import java.util.LinkedList;
 
 import org.mozkito.codeanalysis.internal.visitors.ChangeOperationVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class PPATransformerVisitor.
@@ -61,7 +61,7 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.rcs.model.RCSTransaction)
 	 */
 	@Override
-	public void visit(final RCSTransaction rCSTransaction) {
+	public void visit(final ChangeSet rCSTransaction) {
 		// ignore
 	}
 	

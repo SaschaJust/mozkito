@@ -39,7 +39,7 @@ public class RCSTransactionTest {
 	public void testGetChangedFiles() {
 		final Person person = new Person("kim", "", "");
 		
-		final RCSTransaction t_0 = new RCSTransaction("0", "", new DateTime(), person, "");
+		final ChangeSet t_0 = new ChangeSet("0", "", new DateTime(), person, "");
 		
 		final VersionArchive versionArchive = new VersionArchive() {
 			
@@ -49,7 +49,7 @@ public class RCSTransactionTest {
 			private static final long serialVersionUID = 8388504356360016697L;
 			
 			@Override
-			public RCSTransaction getTransactionById(final String id) {
+			public ChangeSet getTransactionById(final String id) {
 				switch (id) {
 					case "0":
 						return t_0;
@@ -64,7 +64,7 @@ public class RCSTransactionTest {
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
 			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new RCSRevision(t_0, rCSFile, ChangeType.Added), "public.java");
+			rCSFile.assignRevision(new Revision(t_0, rCSFile, ChangeType.Added), "public.java");
 			
 			final Collection<Handle> changedFiles = t_0.getChangedFiles();
 			assertEquals(1, changedFiles.size());
@@ -99,12 +99,12 @@ public class RCSTransactionTest {
 		
 		final Person person = new Person("kim", "", "");
 		
-		final RCSTransaction t_0 = new RCSTransaction("0", "", new DateTime(), person, "");
-		final RCSTransaction t_1 = new RCSTransaction("1", "", new DateTime(), person, "");
-		final RCSTransaction t_2 = new RCSTransaction("2", "", new DateTime(), person, "");
-		final RCSTransaction t_3 = new RCSTransaction("3", "", new DateTime(), person, "");
-		final RCSTransaction t_4 = new RCSTransaction("4", "", new DateTime(), person, "");
-		final RCSTransaction t_5 = new RCSTransaction("5", "", new DateTime(), person, "");
+		final ChangeSet t_0 = new ChangeSet("0", "", new DateTime(), person, "");
+		final ChangeSet t_1 = new ChangeSet("1", "", new DateTime(), person, "");
+		final ChangeSet t_2 = new ChangeSet("2", "", new DateTime(), person, "");
+		final ChangeSet t_3 = new ChangeSet("3", "", new DateTime(), person, "");
+		final ChangeSet t_4 = new ChangeSet("4", "", new DateTime(), person, "");
+		final ChangeSet t_5 = new ChangeSet("5", "", new DateTime(), person, "");
 		
 		t_1.setBranchParent(t_0);
 		t_2.setBranchParent(t_0);
@@ -122,7 +122,7 @@ public class RCSTransactionTest {
 			private static final long serialVersionUID = 8388504356360016697L;
 			
 			@Override
-			public RCSTransaction getTransactionById(final String id) {
+			public ChangeSet getTransactionById(final String id) {
 				switch (id) {
 					case "0":
 						return t_0;
@@ -154,19 +154,19 @@ public class RCSTransactionTest {
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
 			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new RCSRevision(t_0, rCSFile, ChangeType.Added), "public.java");
+			rCSFile.assignRevision(new Revision(t_0, rCSFile, ChangeType.Added), "public.java");
 			
-			new RCSRevision(t_1, rCSFile, ChangeType.Modified);
+			new Revision(t_1, rCSFile, ChangeType.Modified);
 			
 			final Handle hiddenFile = new Handle(versionArchive);
-			hiddenFile.assignRevision(new RCSRevision(t_2, hiddenFile, ChangeType.Added), "hidden.java");
+			hiddenFile.assignRevision(new Revision(t_2, hiddenFile, ChangeType.Added), "hidden.java");
 			
-			final RCSRevision rCSRevision = new RCSRevision(t_3, hiddenFile, ChangeType.Renamed);
+			final Revision rCSRevision = new Revision(t_3, hiddenFile, ChangeType.Renamed);
 			hiddenFile.assignRevision(rCSRevision, "moreHidden.java");
 			
-			final RCSRevision revision2 = new RCSRevision(t_4, hiddenFile, ChangeType.Modified);
+			final Revision revision2 = new Revision(t_4, hiddenFile, ChangeType.Modified);
 			
-			new RCSRevision(t_5, rCSFile, ChangeType.Modified);
+			new Revision(t_5, rCSFile, ChangeType.Modified);
 			
 			assertEquals(null, t_4.getRevisionForPath("hubba"));
 			assertEquals(revision2, t_4.getRevisionForPath("moreHidden.java"));

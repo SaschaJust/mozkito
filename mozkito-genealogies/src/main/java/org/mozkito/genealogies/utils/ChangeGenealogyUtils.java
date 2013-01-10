@@ -45,8 +45,8 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
 import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -208,18 +208,18 @@ public class ChangeGenealogyUtils {
 		// till here we loaded the database dump and extracted the repository.
 		
 		final Map<TestEnvironmentOperation, JavaChangeOperation> environmentOperations = new HashMap<TestEnvironmentOperation, JavaChangeOperation>();
-		final Map<Integer, RCSTransaction> environmentTransactions = new HashMap<Integer, RCSTransaction>();
-		final Map<RCSTransaction, Set<JavaChangeOperation>> transactionMap = new HashMap<RCSTransaction, Set<JavaChangeOperation>>();
+		final Map<Integer, ChangeSet> environmentTransactions = new HashMap<Integer, ChangeSet>();
+		final Map<ChangeSet, Set<JavaChangeOperation>> transactionMap = new HashMap<ChangeSet, Set<JavaChangeOperation>>();
 		
 		// read all transactions and JavaChangeOperations
-		final Criteria<RCSTransaction> transactionCriteria = branchFactory.getPersistenceUtil()
-		                                                                  .createCriteria(RCSTransaction.class);
-		final List<RCSTransaction> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
+		final Criteria<ChangeSet> transactionCriteria = branchFactory.getPersistenceUtil()
+		                                                                  .createCriteria(ChangeSet.class);
+		final List<ChangeSet> transactionList = branchFactory.getPersistenceUtil().load(transactionCriteria);
 		CollectionCondition.size(transactionList, 10, "Transaction list from database has fixed precomputed size.");
 		if (Logger.logDebug()) {
 			Logger.debug(JavaUtils.collectionToString(transactionList));
 		}
-		for (final RCSTransaction transaction : transactionList) {
+		for (final ChangeSet transaction : transactionList) {
 			if ("a64df287a21f8a7b0690d13c1561171cbf48a0e1".equals(transaction.getId())) {
 				environmentTransactions.put(1, transaction);
 			} else if ("a10344533c2b442235aa3bf3dc87dd0ac37cb0af".equals(transaction.getId())) {
@@ -246,7 +246,7 @@ public class ChangeGenealogyUtils {
 			
 			final Set<JavaChangeOperation> operations = new HashSet<JavaChangeOperation>();
 			
-			for (final RCSRevision revision : transaction.getRevisions()) {
+			for (final Revision revision : transaction.getRevisions()) {
 				final Criteria<JavaChangeOperation> operationCriteria = branchFactory.getPersistenceUtil()
 				                                                                     .createCriteria(JavaChangeOperation.class);
 				operationCriteria.eq("revision", revision);
@@ -330,7 +330,7 @@ public class ChangeGenealogyUtils {
 			                             "Could not generate test change genealogy environment. Reading the CoreChangeGenealogy failed!");
 		}
 		
-		for (final Entry<RCSTransaction, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
+		for (final Entry<ChangeSet, Set<JavaChangeOperation>> transactionEntry : transactionMap.entrySet()) {
 			for (final JavaChangeOperation operation : transactionEntry.getValue()) {
 				changeGenealogy.addVertex(operation);
 			}

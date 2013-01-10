@@ -25,7 +25,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionSet is a sorted set of transactions. All transactions in such a set must share at least one
@@ -33,7 +33,7 @@ import org.mozkito.versions.model.RCSTransaction;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCSTransaction> {
+public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSet> {
 	
 	/**
 	 * The Enum TransactionSetOrder.
@@ -55,7 +55,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	private final Set<String>             branchIntersection = new HashSet<String>();
 	
 	/** The tree set. */
-	private final TreeSet<RCSTransaction> treeSet;
+	private final TreeSet<ChangeSet> treeSet;
 	
 	/**
 	 * Instantiates a new transaction set.
@@ -65,7 +65,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 */
 	public TransactionSet(final TransactionSetOrder order) {
 		this.order = order;
-		this.treeSet = new TreeSet<RCSTransaction>((Comparator<RCSTransaction>) this);
+		this.treeSet = new TreeSet<ChangeSet>((Comparator<ChangeSet>) this);
 	}
 	
 	/*
@@ -74,7 +74,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 */
 	@Override
 	@NoneNull
-	public boolean add(final RCSTransaction e) {
+	public boolean add(final ChangeSet e) {
 		// PRECONDITIONS
 		
 		try {
@@ -110,11 +110,11 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Set#addAll(java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(final Collection<? extends RCSTransaction> c) {
+	public boolean addAll(final Collection<? extends ChangeSet> c) {
 		// PRECONDITIONS
 		boolean changed = false;
 		try {
-			for (final RCSTransaction t : c) {
+			for (final ChangeSet t : c) {
 				changed |= add(t);
 			}
 			return changed;
@@ -144,7 +144,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#comparator()
 	 */
 	@Override
-	public Comparator<? super RCSTransaction> comparator() {
+	public Comparator<? super ChangeSet> comparator() {
 		// PRECONDITIONS
 		
 		try {
@@ -159,8 +159,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(final RCSTransaction o1,
-	                   final RCSTransaction o2) {
+	public int compare(final ChangeSet o1,
+	                   final ChangeSet o2) {
 		// PRECONDITIONS
 		
 		try {
@@ -218,7 +218,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#first()
 	 */
 	@Override
-	public RCSTransaction first() {
+	public ChangeSet first() {
 		// PRECONDITIONS
 		
 		try {
@@ -233,7 +233,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#headSet(java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> headSet(final RCSTransaction arg0) {
+	public SortedSet<ChangeSet> headSet(final ChangeSet arg0) {
 		// PRECONDITIONS
 		
 		try {
@@ -265,7 +265,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.Set#iterator()
 	 */
 	@Override
-	public Iterator<RCSTransaction> iterator() {
+	public Iterator<ChangeSet> iterator() {
 		// PRECONDITIONS
 		
 		try {
@@ -280,7 +280,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#last()
 	 */
 	@Override
-	public RCSTransaction last() {
+	public ChangeSet last() {
 		// PRECONDITIONS
 		
 		try {
@@ -304,7 +304,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<ChangeSet> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -331,7 +331,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<ChangeSet> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -358,7 +358,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 				return false;
 			}
 			// Now we have to recompute the branch intersection
-			final Iterator<RCSTransaction> iter = this.treeSet.iterator();
+			final Iterator<ChangeSet> iter = this.treeSet.iterator();
 			Collection<String> intersection = new HashSet<String>();
 			while (iter.hasNext()) {
 				intersection = CollectionUtils.intersection(intersection, iter.next().getBranchNames());
@@ -391,8 +391,8 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#subSet(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> subSet(final RCSTransaction arg0,
-	                                        final RCSTransaction arg1) {
+	public SortedSet<ChangeSet> subSet(final ChangeSet arg0,
+	                                        final ChangeSet arg1) {
 		// PRECONDITIONS
 		
 		try {
@@ -409,7 +409,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 	 * @see java.util.SortedSet#tailSet(java.lang.Object)
 	 */
 	@Override
-	public SortedSet<RCSTransaction> tailSet(final RCSTransaction arg0) {
+	public SortedSet<ChangeSet> tailSet(final ChangeSet arg0) {
 		// PRECONDITIONS
 		
 		try {
@@ -450,7 +450,7 @@ public class TransactionSet implements SortedSet<RCSTransaction>, Comparator<RCS
 		// PRECONDITIONS
 		
 		try {
-			return (T[]) this.treeSet.toArray(new RCSTransaction[this.treeSet.size()]);
+			return (T[]) this.treeSet.toArray(new ChangeSet[this.treeSet.size()]);
 		} finally {
 			// POSTCONDITIONS
 		}

@@ -26,15 +26,15 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
-import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.untangling.blob.ChangeOperationSet;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class ChangeCouplingCombineOperator.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeSet> {
+public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeOperationSet> {
 	
 	/**
 	 * The Class Options.
@@ -107,14 +107,14 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeS
 	 * @see org.mozkito.untangling.blob.compare.CombineOperator#canBeCombined(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean canBeCombined(final ChangeSet cl1,
-	                             final ChangeSet cl2) {
+	public boolean canBeCombined(final ChangeOperationSet cl1,
+	                             final ChangeOperationSet cl2) {
 		// PRECONDITIONS
 		
 		try {
 			
-			final RCSTransaction cl1T = cl1.getTransaction();
-			final RCSTransaction cl2T = cl2.getTransaction();
+			final ChangeSet cl1T = cl1.getTransaction();
+			final ChangeSet cl2T = cl2.getTransaction();
 			
 			if (cl1T.getAuthor().equals(cl2T.getAuthor())) {
 				// only consider change sets stemming from the same author.

@@ -29,15 +29,15 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.RCSRevision;
+import org.mozkito.untangling.blob.ChangeOperationSet;
+import org.mozkito.versions.model.Revision;
 
 /**
  * The Class BlobTransactionCombineOperator.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet> {
+public class PackageDistanceCombineOperator implements CombineOperator<ChangeOperationSet> {
 	
 	/**
 	 * The Class Options.
@@ -154,12 +154,12 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeSet
 	 * @see org.mozkito.untangling.blob.CombineOperator#canBeCombined (java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public boolean canBeCombined(final ChangeSet t1,
-	                             final ChangeSet t2) {
+	public boolean canBeCombined(final ChangeOperationSet t1,
+	                             final ChangeOperationSet t2) {
 		
-		for (final RCSRevision rev : t1.getTransaction().getRevisions()) {
+		for (final Revision rev : t1.getTransaction().getRevisions()) {
 			final String path = rev.getChangedFile().getPath(t1.getTransaction());
-			for (final RCSRevision rev2 : t2.getTransaction().getRevisions()) {
+			for (final Revision rev2 : t2.getTransaction().getRevisions()) {
 				final String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
 				if (Logger.logDebug()) {
 					Logger.debug("Trying to combine %s and %s using max package distance of %d ...", path, path2,

@@ -34,7 +34,7 @@ import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class AuthorEqualityEngineTest.
@@ -83,7 +83,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	 */
 	private Relation score(final String transactionId,
 	                       final String reportId) throws Exception {
-		final RCSTransaction rCSTransaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
+		final ChangeSet rCSTransaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
 		assertNotNull("Failed retreiving transaction from database.", rCSTransaction);
 		
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);

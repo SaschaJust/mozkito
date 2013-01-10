@@ -21,7 +21,7 @@ import org.mozkito.genealogies.core.TransactionChangeGenealogy;
 import org.mozkito.genealogies.metrics.GenealogyMetricValue;
 import org.mozkito.genealogies.metrics.GenealogyTransactionNode;
 import org.mozkito.genealogies.metrics.layer.universal.UniversalAncestorMetrics;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionDependantsMetrics.
@@ -31,7 +31,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class TransactionDependantsMetrics extends GenealogyTransactionMetric {
 	
 	/** The universal metric. */
-	private final UniversalAncestorMetrics<RCSTransaction> universalMetric;
+	private final UniversalAncestorMetrics<ChangeSet> universalMetric;
 	
 	/**
 	 * Instantiates a new transaction dependants metrics.
@@ -41,7 +41,7 @@ public class TransactionDependantsMetrics extends GenealogyTransactionMetric {
 	 */
 	public TransactionDependantsMetrics(final TransactionChangeGenealogy genealogy) {
 		super(genealogy);
-		this.universalMetric = new UniversalAncestorMetrics<RCSTransaction>(genealogy);
+		this.universalMetric = new UniversalAncestorMetrics<ChangeSet>(genealogy);
 	}
 	
 	/*

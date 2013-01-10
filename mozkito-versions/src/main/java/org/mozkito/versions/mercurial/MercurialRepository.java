@@ -63,7 +63,7 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class MercurialRepository.
@@ -608,7 +608,7 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 							// unnamed branch. Genrating a branch name using the head commit hash as name
 							branchName = String.format(MercurialRepository.UNNAMED_BRANCH_NAME_TEMPLATE, node);
 						} else {
-							branchName = String.format(RCSBranch.MASTER_BRANCH_NAME, node);
+							branchName = String.format(Branch.MASTER_BRANCH_NAME, node);
 						}
 					}
 					this.revDepGraph.addBranch(branchName, node);

@@ -24,7 +24,7 @@ import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 
 /**
  * The Class RevDependencyTest.
@@ -41,7 +41,7 @@ public class RevDependencyTest {
 	@Test
 	public void testRevDependencyMerge() {
 		final String id = "r17";
-		final RCSBranch branch = new RCSBranch("brachName");
+		final Branch branch = new Branch("brachName");
 		final Set<String> parents = new HashSet<>();
 		parents.add("r13");
 		parents.add("r4");
@@ -62,7 +62,7 @@ public class RevDependencyTest {
 	@Test
 	public void testRevDependencyNonMerge() {
 		final String id = "r17";
-		final RCSBranch branch = new RCSBranch("brachName");
+		final Branch branch = new Branch("brachName");
 		final Set<String> parents = new HashSet<>();
 		parents.add("r13");
 		final List<String> tagNames = new ArrayList<>(2);

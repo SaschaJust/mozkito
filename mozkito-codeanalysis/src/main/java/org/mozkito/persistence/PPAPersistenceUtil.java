@@ -37,8 +37,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class PPAPersistenceUtil.
@@ -60,14 +60,14 @@ public class PPAPersistenceUtil {
 	 * @return the change operation
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                 @NotNull final RCSTransaction rCSTransaction) {
+	                                                                 @NotNull final ChangeSet rCSTransaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Loading change operations for transaction " + rCSTransaction.getId() + " from database.");
 		}
 		
-		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
+		for (final Revision rCSRevision : rCSTransaction.getRevisions()) {
 			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
 			criteria.eq("revision", rCSRevision);
 			result.addAll(persistenceUtil.load(criteria));
@@ -88,7 +88,7 @@ public class PPAPersistenceUtil {
 	                                                                 @NotNull final String transactionId) {
 		final List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
-		final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
+		final ChangeSet rCSTransaction = persistenceUtil.loadById(transactionId, ChangeSet.class);
 		if (rCSTransaction != null) {
 			return getChangeOperation(persistenceUtil, rCSTransaction);
 		}
@@ -107,7 +107,7 @@ public class PPAPersistenceUtil {
 	 * @return the change operation no test
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperationNoTest(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                       @NotNull final RCSTransaction rCSTransaction) {
+	                                                                       @NotNull final ChangeSet rCSTransaction) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
@@ -115,7 +115,7 @@ public class PPAPersistenceUtil {
 			        + " from database.");
 		}
 		
-		for (final RCSRevision rCSRevision : rCSTransaction.getRevisions()) {
+		for (final Revision rCSRevision : rCSTransaction.getRevisions()) {
 			final String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
 			if (changedPath.toLowerCase().contains("test")) {
 				continue;
@@ -161,16 +161,16 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static RCSTransaction getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static ChangeSet getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                 @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from firstElementChange(");
 		query.append(element.getGeneratedId());
 		query.append(");");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
 		if (nativeQuery != null) {
-			final List<RCSTransaction> resultList = nativeQuery.getResultList();
+			final List<ChangeSet> resultList = nativeQuery.getResultList();
 			if (!resultList.isEmpty()) {
 				return resultList.get(0);
 			}
@@ -225,15 +225,15 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                  @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
-		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
+		final List<ChangeSet> result = new LinkedList<ChangeSet>();
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from elementChanges(");
 		query.append(element.getGeneratedId());
 		query.append(");");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
 		if (nativeQuery != null) {
 			result.addAll(nativeQuery.getResultList());
 		} else {
@@ -259,12 +259,12 @@ public class PPAPersistenceUtil {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static List<RCSTransaction> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
+	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
 	                                                                  @NotNull final JavaElement element,
 	                                                                  @NotNull final DateTime before,
 	                                                                  @NotNull final DateTime after) {
 		updateProcedures(persistenceUtil);
-		final List<RCSTransaction> result = new LinkedList<RCSTransaction>();
+		final List<ChangeSet> result = new LinkedList<ChangeSet>();
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 		
 		final StringBuilder query = new StringBuilder();
@@ -275,7 +275,7 @@ public class PPAPersistenceUtil {
 		query.append("','");
 		query.append(formatter.print(after));
 		query.append("');");
-		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), RCSTransaction.class);
+		final Query nativeQuery = persistenceUtil.createNativeQuery(query.toString(), ChangeSet.class);
 		if (nativeQuery != null) {
 			result.addAll(nativeQuery.getResultList());
 		} else {

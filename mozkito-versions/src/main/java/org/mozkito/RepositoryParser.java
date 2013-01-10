@@ -32,18 +32,18 @@ import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced.
  * 
- * {@link RCSTransaction} in the output storage.
+ * {@link ChangeSet} in the output storage.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
+public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	
 	private static final Set<String>         TRANSACTION_IDS = new HashSet<String>();
 	private static final Map<String, Handle> CURRENT_FILES   = new HashMap<String, Handle>();
@@ -60,7 +60,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 *            the data
 	 * @return the rCS transaction
 	 */
-	public static RCSTransaction parseLogEntry(final Repository repository,
+	public static ChangeSet parseLogEntry(final Repository repository,
 	                                           final VersionArchive archive,
 	                                           final LogEntry data) {
 		
@@ -74,7 +74,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 				        + data.getRevision() + ")");
 			}
 			
-			final RCSTransaction rcsTransaction = new RCSTransaction(data.getRevision(), data.getMessage(),
+			final ChangeSet rcsTransaction = new ChangeSet(data.getRevision(), data.getMessage(),
 			                                                         data.getDateTime(), data.getAuthor(),
 			                                                         data.getOriginalId());
 			TRANSACTION_IDS.add(data.getRevision());
@@ -90,19 +90,19 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 							}
 							renamedHandle = new Handle(archive);
 							CURRENT_FILES.put(fileName, renamedHandle);
-							final RCSRevision addRevision = new RCSRevision(rcsTransaction, renamedHandle,
+							final Revision addRevision = new Revision(rcsTransaction, renamedHandle,
 							                                                changedPaths.get(fileName));
 							renamedHandle.assignRevision(addRevision, fileName);
 							break;
 						}
-						final RCSRevision renameRevision = new RCSRevision(rcsTransaction, renamedHandle,
+						final Revision renameRevision = new Revision(rcsTransaction, renamedHandle,
 						                                                   changedPaths.get(fileName));
 						renamedHandle.assignRevision(renameRevision, fileName);
 						break;
 					case Added:
 						final Handle addedHandle = new Handle(archive);
 						CURRENT_FILES.put(fileName, addedHandle);
-						final RCSRevision revision = new RCSRevision(rcsTransaction, addedHandle,
+						final Revision revision = new Revision(rcsTransaction, addedHandle,
 						                                             changedPaths.get(fileName));
 						addedHandle.assignRevision(revision, fileName);
 						break;
@@ -115,7 +115,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 							}
 							break;
 						}
-						new RCSRevision(rcsTransaction, deletedHandle, changedPaths.get(fileName));
+						new Revision(rcsTransaction, deletedHandle, changedPaths.get(fileName));
 						break;
 					default:
 						Handle modifiedHandle = CURRENT_FILES.get(fileName);
@@ -126,12 +126,12 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 							}
 							modifiedHandle = new Handle(archive);
 							CURRENT_FILES.put(fileName, modifiedHandle);
-							final RCSRevision addRevision = new RCSRevision(rcsTransaction, modifiedHandle,
+							final Revision addRevision = new Revision(rcsTransaction, modifiedHandle,
 							                                                changedPaths.get(fileName));
 							modifiedHandle.assignRevision(addRevision, fileName);
 							break;
 						}
-						new RCSRevision(rcsTransaction, modifiedHandle, changedPaths.get(fileName));
+						new Revision(rcsTransaction, modifiedHandle, changedPaths.get(fileName));
 						break;
 				}
 			}
@@ -157,12 +157,12 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	        final VersionArchive archive) {
 		super(threadGroup, settings, false);
 		
-		new ProcessHook<LogEntry, RCSTransaction>(this) {
+		new ProcessHook<LogEntry, ChangeSet>(this) {
 			
 			@Override
 			public void process() {
 				final LogEntry data = getInputData();
-				final RCSTransaction rcsTransaction = parseLogEntry(repository, archive, data);
+				final ChangeSet rcsTransaction = parseLogEntry(repository, archive, data);
 				provideOutputData(rcsTransaction);
 			}
 		};

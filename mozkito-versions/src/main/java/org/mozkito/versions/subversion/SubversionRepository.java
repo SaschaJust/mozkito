@@ -55,7 +55,7 @@ import org.mozkito.versions.exceptions.InvalidProtocolType;
 import org.mozkito.versions.exceptions.InvalidRepositoryURI;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.exceptions.UnsupportedProtocolType;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -491,7 +491,7 @@ public class SubversionRepository extends Repository {
 			if (this.revDepGraph == null) {
 				
 				final String repoPath = this.svnurl.getPath();
-				String branchName = RCSBranch.MASTER_BRANCH_NAME;
+				String branchName = Branch.MASTER_BRANCH_NAME;
 				if (BRANCH_PATTERN.matches(repoPath)) {
 					branchName = BRANCH_PATTERN.getGroup("branch_name");
 				}

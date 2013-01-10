@@ -38,7 +38,7 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.clustering.MultilevelClustering;
 import org.mozkito.untangling.Untangling;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Attribute;
@@ -199,7 +199,7 @@ public class LinearRegressionAggregation extends UntanglingScoreAggregation {
 	 * @return true, if training was completed successful. False otherwise.
 	 */
 	@NoneNull
-	public boolean train(final Collection<ChangeSet> transactionSet) {
+	public boolean train(final Collection<ChangeOperationSet> transactionSet) {
 		
 		if (this.trained) {
 			return true;

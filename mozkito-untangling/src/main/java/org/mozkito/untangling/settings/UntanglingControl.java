@@ -27,7 +27,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.untangling.Untangling.ScoreCombinationMode;
 import org.mozkito.untangling.Untangling.UntanglingCollapse;
-import org.mozkito.untangling.blob.ChangeSet;
+import org.mozkito.untangling.blob.ChangeOperationSet;
 import org.mozkito.untangling.blob.combine.CombineOperator;
 import org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory;
 
@@ -42,7 +42,7 @@ public class UntanglingControl {
 	private final boolean                                                                                                       measurePrecision;
 	
 	/** The change coupling combine operator. */
-	private CombineOperator<ChangeSet>                                                                                          combineOperator;
+	private CombineOperator<ChangeOperationSet>                                                                                          combineOperator;
 	
 	/** The confidence voters. */
 	private final Set<MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>>> confidenceVoters       = new HashSet<>();
@@ -162,7 +162,7 @@ public class UntanglingControl {
 	 * 
 	 * @return the change coupling combine operator
 	 */
-	public CombineOperator<ChangeSet> getCombineOperator() {
+	public CombineOperator<ChangeOperationSet> getCombineOperator() {
 		// PRECONDITIONS
 		
 		try {
@@ -359,7 +359,7 @@ public class UntanglingControl {
 	 * @param combineOperator
 	 *            the new combine operator
 	 */
-	protected void setCombineOperator(final CombineOperator<ChangeSet> combineOperator) {
+	protected void setCombineOperator(final CombineOperator<ChangeOperationSet> combineOperator) {
 		// PRECONDITIONS
 		Condition.notNull(combineOperator, "Argument '%s' in '%s'.", "changeCouplingCombineOperator",
 		                  getClass().getSimpleName());

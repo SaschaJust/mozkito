@@ -22,7 +22,7 @@ import java.util.Set;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.genealogies.PartitionGenerator;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class TransactionPartitioner.
@@ -36,9 +36,9 @@ public class TransactionPartitioner implements
 	 */
 	@Override
 	public Collection<PartitionChangeGenealogyNode> partition(final Collection<JavaChangeOperation> input) {
-		final Map<RCSTransaction, Collection<JavaChangeOperation>> map = new HashMap<RCSTransaction, Collection<JavaChangeOperation>>();
+		final Map<ChangeSet, Collection<JavaChangeOperation>> map = new HashMap<ChangeSet, Collection<JavaChangeOperation>>();
 		for (final JavaChangeOperation operation : input) {
-			final RCSTransaction rCSTransaction = operation.getRevision().getTransaction();
+			final ChangeSet rCSTransaction = operation.getRevision().getTransaction();
 			if (!map.containsKey(rCSTransaction)) {
 				map.put(rCSTransaction, new HashSet<JavaChangeOperation>());
 			}
@@ -46,7 +46,7 @@ public class TransactionPartitioner implements
 		}
 		
 		final Set<PartitionChangeGenealogyNode> result = new HashSet<>();
-		for (final Entry<RCSTransaction, Collection<JavaChangeOperation>> entry : map.entrySet()) {
+		for (final Entry<ChangeSet, Collection<JavaChangeOperation>> entry : map.entrySet()) {
 			result.add(new TransactionChangeGenealogyNode(entry.getKey(), entry.getValue()));
 		}
 		

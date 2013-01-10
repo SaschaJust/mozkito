@@ -27,10 +27,10 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSBranch;
+import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSRevision;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class OpenJPA_PPA_MozkitoTest.
@@ -51,13 +51,13 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		
 		final Person p = new Person("kim", "", "");
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
-		final RCSBranch masterBranch = branchFactory.getMasterBranch();
+		final Branch masterBranch = branchFactory.getMasterBranch();
 		
-		final RCSTransaction rCSTransaction = new RCSTransaction("1", "", now, p, "1");
+		final ChangeSet rCSTransaction = new ChangeSet("1", "", now, p, "1");
 		masterBranch.setHead(rCSTransaction);
 		
 		final Handle rCSFile = new RCSFileManager().createFile("a.java", rCSTransaction);
-		final RCSRevision rev = new RCSRevision(rCSTransaction, rCSFile, ChangeType.Added);
+		final Revision rev = new Revision(rCSTransaction, rCSFile, ChangeType.Added);
 		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
 		getPersistenceUtil().save(rCSTransaction);
 		getPersistenceUtil().save(op);

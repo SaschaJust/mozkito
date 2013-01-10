@@ -55,7 +55,7 @@ import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Handle;
-import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.ChangeSet;
 
 /**
  * The Class LogEngine.
@@ -211,7 +211,7 @@ public class LogEngine extends Engine {
 			final EnhancedReport report = mappableStructuredReport.getReport();
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
-			final RCSTransaction transaction = mappableTransaction.getTransaction();
+			final ChangeSet transaction = mappableTransaction.getTransaction();
 			final Collection<Handle> changedFiles = transaction.getChangedFiles();
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();
@@ -296,7 +296,7 @@ public class LogEngine extends Engine {
 		// PRECONDITIONS
 		
 		try {
-			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, RCSTransaction.class));
+			return new And(new Atom(Index.FROM, EnhancedReport.class), new Atom(Index.TO, ChangeSet.class));
 		} finally {
 			// POSTCONDITIONS
 		}
