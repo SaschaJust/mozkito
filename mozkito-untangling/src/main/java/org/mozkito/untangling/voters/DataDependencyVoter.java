@@ -186,7 +186,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			this.cacheDirOptions = new DirectoryArgument.Options(
 			                                                     argumentSet,
 			                                                     "cacheDir",
-			                                                     "Cache directory containing datadepency pre-computations using the naming converntion <transactionId>.dd",
+			                                                     "Cache directory containing datadepency pre-computations using the naming converntion <changeSetId>.dd",
 			                                                     null, Requirement.required, false);
 			map.put(this.cacheDirOptions.getName(), this.cacheDirOptions);
 			

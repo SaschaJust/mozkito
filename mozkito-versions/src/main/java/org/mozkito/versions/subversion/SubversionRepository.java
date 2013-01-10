@@ -537,10 +537,10 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
 	 */
 	@Override
-	public String getTransactionId(final long index) {
+	public String getChangeSetId(final long index) {
 		if (index < getTransactionCount()) {
 			return String.valueOf(1 + index);
 		}
@@ -550,13 +550,13 @@ public class SubversionRepository extends Repository {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
 	 */
 	@Override
-	public long getTransactionIndex(final String transactionId) {
-		String searchRev = transactionId;
+	public long getChangeSetIndex(final String changeSetId) {
+		String searchRev = changeSetId;
 		
-		if ("HEAD".equals(transactionId.toUpperCase()) || ("TIP".equals(transactionId.toUpperCase()))) {
+		if ("HEAD".equals(changeSetId.toUpperCase()) || ("TIP".equals(changeSetId.toUpperCase()))) {
 			searchRev = getHEADRevisionId();
 		}
 		

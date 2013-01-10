@@ -53,8 +53,8 @@ public class DaysBetweenUtils {
 	 */
 	public static int getDaysBetween(final JavaChangeOperation op1,
 	                                 final JavaChangeOperation op2) {
-		return Math.abs(Days.daysBetween(op1.getRevision().getTransaction().getTimestamp(),
-		                                 op2.getRevision().getTransaction().getTimestamp()).getDays());
+		return Math.abs(Days.daysBetween(op1.getRevision().getChangeSet().getTimestamp(),
+		                                 op2.getRevision().getChangeSet().getTimestamp()).getDays());
 	}
 	
 	/**

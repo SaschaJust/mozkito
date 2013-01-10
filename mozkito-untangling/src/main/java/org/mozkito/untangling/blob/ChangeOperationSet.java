@@ -57,7 +57,7 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	public int compareTo(final ChangeOperationSet other) {
 		
 		final Comparator<? super ChangeSet> comparator = new ChangeSetSet(TransactionSetOrder.ASC).comparator();
-		return comparator.compare(other.getTransaction(), this.changeset);
+		return comparator.compare(other.getChangeSet(), this.changeset);
 	}
 	
 	/*
@@ -119,7 +119,7 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	 * 
 	 * @return the transaction
 	 */
-	public ChangeSet getTransaction() {
+	public ChangeSet getChangeSet() {
 		return this.changeset;
 	}
 	
@@ -143,7 +143,7 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	 */
 	@Override
 	public String toString() {
-		return getTransaction().getId();
+		return getChangeSet().getId();
 	}
 	
 }

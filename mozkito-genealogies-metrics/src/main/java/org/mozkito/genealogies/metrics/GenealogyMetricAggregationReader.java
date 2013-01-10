@@ -80,13 +80,13 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 						return;
 					}
 					
-					final String transactionId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
-					final ChangeSet changeset = persistenceUtil.loadById(transactionId, ChangeSet.class);
+					final String changeSetId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
+					final ChangeSet changeset = persistenceUtil.loadById(changeSetId, ChangeSet.class);
 					if (changeset != null) {
 						final Collection<Handle> changedFiles = changeset.getChangedFiles();
 						final Collection<GenealogyMetricValue> output = new HashSet<GenealogyMetricValue>();
 						
-						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
+						for (final Entry<String, Double> metricSet : metricValues.get(changeSetId).entrySet()) {
 							for (final Handle handle : changedFiles) {
 								try {
 									output.add(new GenealogyMetricValue(metricSet.getKey(),

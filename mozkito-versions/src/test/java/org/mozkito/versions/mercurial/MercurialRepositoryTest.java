@@ -411,11 +411,11 @@ public class MercurialRepositoryTest extends VersionsTest {
 	 * Test get transaction id.
 	 */
 	@Test
-	public void testGetTransactionId() {
-		assertEquals(MercurialRepositoryTest.T_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getTransactionId(0));
-		assertEquals(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getTransactionId(6));
-		assertEquals(MercurialRepositoryTest.T_67635FE9EFEB2FD3751DF9EA67650C71E59E3DF1, this.repo.getTransactionId(18));
-		assertEquals(MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getTransactionId(19));
+	public void testGetChangeSetId() {
+		assertEquals(MercurialRepositoryTest.T_E52DEF97EBC1F78C9286B1E7C36783AA67604439, this.repo.getChangeSetId(0));
+		assertEquals(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9, this.repo.getChangeSetId(6));
+		assertEquals(MercurialRepositoryTest.T_67635FE9EFEB2FD3751DF9EA67650C71E59E3DF1, this.repo.getChangeSetId(18));
+		assertEquals(MercurialRepositoryTest.T_96A9F105774B50F1FA3361212C4D12AE057A4285, this.repo.getChangeSetId(19));
 	}
 	
 	/**
@@ -425,8 +425,8 @@ public class MercurialRepositoryTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetTransactionIndex() throws RepositoryOperationException {
-		assertEquals(21, this.repo.getTransactionIndex("HEAD"));
+		assertEquals(21, this.repo.getChangeSetIndex("HEAD"));
 		assertEquals(6,
-		             this.repo.getTransactionIndex(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9));
+		             this.repo.getChangeSetIndex(MercurialRepositoryTest.T_CBCC33D919A27B9450D117F211A5F4F45615CAB9));
 	}
 }

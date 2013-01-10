@@ -72,14 +72,14 @@ public class CoreAuthorMetrics extends GenealogyCoreMetric {
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
 		for (final JavaChangeOperation dependant : this.genealogy.getAllDependants(operation)) {
-			depAuthors.add(dependant.getRevision().getTransaction().getPersons().getGeneratedId());
+			depAuthors.add(dependant.getRevision().getChangeSet().getPersons().getGeneratedId());
 		}
 		
 		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.NUM_DEP_AUTHORS, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
 		for (final JavaChangeOperation parent : this.genealogy.getAllParents(operation)) {
-			parentAuthors.add(parent.getRevision().getTransaction().getPersons().getGeneratedId());
+			parentAuthors.add(parent.getRevision().getChangeSet().getPersons().getGeneratedId());
 		}
 		metricValues.add(new GenealogyMetricValue(CoreAuthorMetrics.NUM_PARENT_AUTHORS, nodeId, parentAuthors.size()));
 		

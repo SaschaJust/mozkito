@@ -113,8 +113,8 @@ public class ConsecutiveChangeCombineOperator implements CombineOperator<ChangeO
 		
 		try {
 			
-			final ChangeSet cl1T = cl1.getTransaction();
-			final ChangeSet cl2T = cl2.getTransaction();
+			final ChangeSet cl1T = cl1.getChangeSet();
+			final ChangeSet cl2T = cl2.getChangeSet();
 			
 			if (cl1T.getAuthor().equals(cl2T.getAuthor())) {
 				// only consider change sets stemming from the same author.

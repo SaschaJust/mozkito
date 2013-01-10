@@ -369,14 +369,14 @@ public class ConcurrentRepository extends Repository {
 	 * 
 	 * @throws RepositoryOperationException
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
 	 */
 	@Override
-	public String getTransactionId(final long index) throws RepositoryOperationException {
+	public String getChangeSetId(final long index) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
-			return getRepository().getTransactionId(index);
+			return getRepository().getChangeSetId(index);
 		} finally {
 			// POSTCONDITIONS
 		}
@@ -387,14 +387,14 @@ public class ConcurrentRepository extends Repository {
 	 * 
 	 * @throws RepositoryOperationException
 	 * 
-	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 * @see org.mozkito.versions.Repository#getChangeSetIndex(java.lang.String)
 	 */
 	@Override
-	public long getTransactionIndex(final String transactionId) throws RepositoryOperationException {
+	public long getChangeSetIndex(final String changeSetId) throws RepositoryOperationException {
 		// PRECONDITIONS
 		
 		try {
-			return getRepository().getTransactionIndex(transactionId);
+			return getRepository().getChangeSetIndex(changeSetId);
 		} finally {
 			// POSTCONDITIONS
 		}

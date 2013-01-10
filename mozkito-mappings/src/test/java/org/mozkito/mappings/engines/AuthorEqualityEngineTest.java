@@ -73,7 +73,7 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	/**
 	 * Score.
 	 * 
-	 * @param transactionId
+	 * @param changeSetId
 	 *            the transaction id
 	 * @param reportId
 	 *            the report id
@@ -81,9 +81,9 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	private Relation score(final String transactionId,
+	private Relation score(final String changeSetId,
 	                       final String reportId) throws Exception {
-		final ChangeSet changeset = Environment.loadTransaction(getPersistenceUtil(), transactionId);
+		final ChangeSet changeset = Environment.loadTransaction(getPersistenceUtil(), changeSetId);
 		assertNotNull("Failed retreiving transaction from database.", changeset);
 		
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);

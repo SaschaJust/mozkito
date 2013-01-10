@@ -60,7 +60,7 @@ public class Main {
 			try (final BufferedReader csvReader = new BufferedReader(new FileReader(importFile));) {
 				String line = null;
 				while ((line = csvReader.readLine()) != null) {
-					if (!AtomicTransactionImporter.markTransactionIdAsAtomic(line.trim(), persistenceUtil)) {
+					if (!AtomicTransactionImporter.markChangeSetIdAsAtomic(line.trim(), persistenceUtil)) {
 						if (Logger.logError()) {
 							Logger.error("Could not mark Transaction with id %s as atomic. Transaction does not exist in DB.",
 							             line.trim());

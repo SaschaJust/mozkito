@@ -70,14 +70,14 @@ public class ImpactMatrix implements Serializable {
 	 *            the changed source
 	 * @param impactedSource
 	 *            the impacted source
-	 * @param transactionId
+	 * @param changeSetId
 	 *            the transaction id
 	 * @param numDiff
 	 *            the num diff
 	 */
 	public void add(final String changedSource,
 	                final String impactedSource,
-	                final String transactionId,
+	                final String changeSetId,
 	                final long numDiff) {
 		if (!this.impactMatrix.containsKey(changedSource)) {
 			this.impactMatrix.put(changedSource, new HashMap<String, Set<String>>());
@@ -87,17 +87,17 @@ public class ImpactMatrix implements Serializable {
 			innerMap.put(impactedSource, new HashSet<String>());
 		}
 		final Set<String> set = innerMap.get(impactedSource);
-		set.add(transactionId);
+		set.add(changeSetId);
 		
 		if (!this.sumSourceChanged.containsKey(changedSource)) {
 			this.sumSourceChanged.put(changedSource, new HashSet<String>());
 		}
-		this.sumSourceChanged.get(changedSource).add(transactionId);
+		this.sumSourceChanged.get(changedSource).add(changeSetId);
 		
 		if (!this.sumSourceImpacted.containsKey(impactedSource)) {
 			this.sumSourceImpacted.put(impactedSource, new HashSet<String>());
 		}
-		this.sumSourceImpacted.get(impactedSource).add(transactionId);
+		this.sumSourceImpacted.get(impactedSource).add(changeSetId);
 		
 		if (!this.impactWeightedChurn.containsKey(changedSource)) {
 			this.impactWeightedChurn.put(changedSource, 0l);

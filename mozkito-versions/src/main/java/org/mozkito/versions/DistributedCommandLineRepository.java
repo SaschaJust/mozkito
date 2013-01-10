@@ -73,8 +73,8 @@ public abstract class DistributedCommandLineRepository extends Repository {
 		if ("HEAD".equals(toRevision)) {
 			toRev = getHEADRevisionId();
 		}
-		final long fromIndex = getTransactionIndex(fromRevision);
-		final long toIndex = getTransactionIndex(toRev);
+		final long fromIndex = getChangeSetIndex(fromRevision);
+		final long toIndex = getChangeSetIndex(toRev);
 		
 		Condition.check(fromIndex >= 0, String.format("Start transaction %s for log() is unknown (%s)!", fromRevision,
 		                                              this.getClass().getCanonicalName()));
@@ -98,7 +98,7 @@ public abstract class DistributedCommandLineRepository extends Repository {
 		}
 		
 		for (long i = fromIndex; i <= toIndex; ++i) {
-			final String tId = getTransactionId(i);
+			final String tId = getChangeSetId(i);
 			
 			if (this.logCache.containsKey(tId)) {
 				result.add(this.logCache.get(tId));

@@ -251,7 +251,7 @@ public class PPAUtils {
 		        + " and endline >= "
 		        + location.getStartLine()
 		        + " AND l.element_generatedid = e.generatedid AND e.type = 'JAVAMETHODDEFINITION' AND l.id = o.changedelementlocation_id AND o.revision_revisionid = r.revisionid AND (l.id < "
-		        + location.getId() + " OR transaction_id = '" + op.getRevision().getTransaction().getId() + "'))";
+		        + location.getId() + " OR transaction_id = '" + op.getRevision().getChangeSet().getId() + "'))";
 		final Query defIdQuery = persistenceUtil.createNativeQuery(defIdQueryStr, JavaElementLocation.class);
 		
 		@SuppressWarnings ("unchecked")
@@ -313,7 +313,7 @@ public class PPAUtils {
 		final JavaElementLocation location = op.getChangedElementLocation();
 		final JavaElement element = location.getElement();
 		JavaElement searchElement = element;
-		final ChangeSet opTransaction = op.getRevision().getTransaction();
+		final ChangeSet opTransaction = op.getRevision().getChangeSet();
 		
 		// distinguish between definitions and calls
 		if (element instanceof JavaMethodCall) {

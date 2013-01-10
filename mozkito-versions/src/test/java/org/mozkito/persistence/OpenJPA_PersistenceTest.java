@@ -118,7 +118,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		assertFalse(revisionList.isEmpty());
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
-		assertEquals(changeset, revisionList.get(0).getTransaction());
+		assertEquals(changeset, revisionList.get(0).getChangeSet());
 		assertEquals(ChangeType.Added, revisionList.get(0).getChangeType());
 		assertEquals(handle, revisionList.get(0).getChangedFile());
 		

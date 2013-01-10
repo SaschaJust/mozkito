@@ -324,8 +324,8 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			return false;
 		}
 		
-		if (target.getRevision().getTransaction().getTimestamp()
-		          .isAfter(dependent.getRevision().getTransaction().getTimestamp())) {
+		if (target.getRevision().getChangeSet().getTimestamp()
+		          .isAfter(dependent.getRevision().getChangeSet().getTimestamp())) {
 			return false;
 		}
 		
@@ -355,9 +355,9 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 			
 		}
 		
-		if (!dependent.getRevision().getTransaction().getId().equals(target.getRevision().getTransaction().getId())) {
-			this.transactionGenealogy.addEdge(dependent.getRevision().getTransaction(), target.getRevision()
-			                                                                                  .getTransaction(),
+		if (!dependent.getRevision().getChangeSet().getId().equals(target.getRevision().getChangeSet().getId())) {
+			this.transactionGenealogy.addEdge(dependent.getRevision().getChangeSet(), target.getRevision()
+			                                                                                  .getChangeSet(),
 			                                  edgeType);
 		}
 		
@@ -396,7 +396,7 @@ public class CoreChangeGenealogy implements ChangeGenealogy<JavaChangeOperation>
 		tx.success();
 		tx.finish();
 		
-		this.transactionGenealogy.addVertex(v.getRevision().getTransaction());
+		this.transactionGenealogy.addVertex(v.getRevision().getChangeSet());
 		
 		return true;
 		

@@ -208,7 +208,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			this.cacheDirOptions = new DirectoryArgument.Options(
 			                                                     argumentSet,
 			                                                     "cacheDir",
-			                                                     "Cache directory containing change coupling pre-computations using the naming converntion <transactionId>.cc",
+			                                                     "Cache directory containing change coupling pre-computations using the naming converntion <changeSetId>.cc",
 			                                                     null, Requirement.required, false);
 			map.put(this.cacheDirOptions.getName(), this.cacheDirOptions);
 			
@@ -247,8 +247,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public ChangeCouplingVoter(@NotNull final ChangeSet changeset, final int minSupport,
-	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
+	public ChangeCouplingVoter(@NotNull final ChangeSet changeset, final int minSupport, final double minConfidence,
+	        @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 		
 		this.changeset = changeset;
 		this.minSupport = minSupport;
@@ -256,8 +256,8 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
-			        + changeset.getId() + ".cc");
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + changeset.getId()
+			        + ".cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {

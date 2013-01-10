@@ -51,7 +51,7 @@ public class Revision implements Annotated {
 	private ChangeType        changeType;
 	
 	/** The transaction. */
-	private ChangeSet    changeSet;
+	private ChangeSet         changeSet;
 	
 	/** The changed file. */
 	private Handle            changedFile;
@@ -82,14 +82,14 @@ public class Revision implements Annotated {
 		setChangedFile(handle);
 		setChangeType(changeType);
 		
-		final boolean success = getTransaction().addRevision(this);
+		final boolean success = getChangeSet().addRevision(this);
 		Condition.check(success, "Revision could not be registered at transaction.");
 		
 		if (Logger.logTrace()) {
 			Logger.trace("Creating " + getHandle() + ": " + this);
 		}
 		
-		Condition.notNull(getTransaction(), "Transaction may never be null after creation.");
+		Condition.notNull(getChangeSet(), "Transaction may never be null after creation.");
 		Condition.notNull(getChangedFile(), "Changed file may never be null after creation.");
 	}
 	
@@ -120,11 +120,11 @@ public class Revision implements Annotated {
 			return false;
 		}
 		
-		if (getTransaction() == null) {
-			if (other.getTransaction() != null) {
+		if (getChangeSet() == null) {
+			if (other.getChangeSet() != null) {
 				return false;
 			}
-		} else if (!getTransaction().equals(other.getTransaction())) {
+		} else if (!getChangeSet().equals(other.getChangeSet())) {
 			return false;
 		}
 		return true;
@@ -140,6 +140,18 @@ public class Revision implements Annotated {
 	@Column (nullable = false)
 	public Handle getChangedFile() {
 		return this.changedFile;
+	}
+	
+	/**
+	 * Gets the transaction.
+	 * 
+	 * @return the transaction
+	 */
+	// @MapsId ("transaction")
+	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@Column (nullable = false)
+	public ChangeSet getChangeSet() {
+		return this.changeSet;
 	}
 	
 	/**
@@ -172,18 +184,6 @@ public class Revision implements Annotated {
 		return this.revisionId;
 	}
 	
-	/**
-	 * Gets the transaction.
-	 * 
-	 * @return the transaction
-	 */
-	// @MapsId ("transaction")
-	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	@Column (nullable = false)
-	public ChangeSet getTransaction() {
-		return this.changeSet;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -201,9 +201,9 @@ public class Revision implements Annotated {
 		// result = prime * result + ((getPrimaryKey() == null)
 		// ? 0
 		// : getPrimaryKey().hashCode());
-		result = (prime * result) + ((getTransaction() == null)
-		                                                       ? 0
-		                                                       : getTransaction().hashCode());
+		result = (prime * result) + ((getChangeSet() == null)
+		                                                     ? 0
+		                                                     : getChangeSet().hashCode());
 		return result;
 	}
 	
@@ -253,7 +253,7 @@ public class Revision implements Annotated {
 	 */
 	@Override
 	public String toString() {
-		return "Revision [transactionId=" + getTransaction().getId() + ", changedFile=" + getChangedFile()
+		return "Revision [changeSetId=" + getChangeSet().getId() + ", changedFile=" + getChangedFile()
 		        + ", changeType=" + getChangeType() + "]";
 	}
 }

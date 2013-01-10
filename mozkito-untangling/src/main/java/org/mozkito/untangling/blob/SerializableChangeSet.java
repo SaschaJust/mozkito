@@ -43,7 +43,7 @@ public class SerializableChangeSet implements Serializable {
 	 *            the change set
 	 */
 	public SerializableChangeSet(final ChangeOperationSet changeSet) {
-		this.changesetId = changeSet.getTransaction().getId();
+		this.changesetId = changeSet.getChangeSet().getId();
 		for (final JavaChangeOperation operation : changeSet.getOperations()) {
 			this.operationIds.add(operation.getId());
 		}

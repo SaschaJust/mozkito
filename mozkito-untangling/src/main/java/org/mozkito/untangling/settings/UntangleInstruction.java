@@ -25,10 +25,10 @@ public class UntangleInstruction {
 	private final ChangeOperationSet changeSet;
 	
 	/** The num partitions. */
-	private int             numPartitions = 0;
+	private int                      numPartitions = 0;
 	
 	/** The threshold. */
-	private double          threshold     = 0.0d;
+	private double                   threshold     = 0.0d;
 	
 	/**
 	 * Instantiates a new untangle instruction.
@@ -81,8 +81,8 @@ public class UntangleInstruction {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("UntanglingInstruction[transactionid=");
-		sb.append(getChangeSet().getTransaction().getId());
+		sb.append("UntanglingInstruction[changeSetId=");
+		sb.append(getChangeSet().getChangeSet().getId());
 		sb.append(", numPartitions=");
 		sb.append(getNumPartitions());
 		sb.append("]");

@@ -311,8 +311,8 @@ public class UntanglingOptions extends
 			
 			final ListArgument atomicChangesArg = getSettings().getArgument(this.atomicChangesOptions);
 			if (atomicChangesArg != null) {
-				final List<String> atomicTransactionIds = atomicChangesArg.getValue();
-				control.setAtomicTransactionIds(atomicTransactionIds);
+				final List<String> atomicChangeSetIds = atomicChangesArg.getValue();
+				control.setAtomicChangeSetIds(atomicChangeSetIds);
 			}
 			
 			final File outFile = getSettings().getArgument(this.outOptions).getValue();

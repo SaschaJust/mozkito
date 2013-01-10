@@ -62,7 +62,7 @@ public class ChangeCouplings {
 	private EnumArgument<Level>                           granularityArgument;
 	
 	/** The transaction id argument. */
-	private StringArgument                                transactionIdArgument;
+	private StringArgument                                changeSetIdArgument;
 	
 	/** The min confidence argument. */
 	private DoubleArgument                                minConfidenceArgument;
@@ -96,7 +96,7 @@ public class ChangeCouplings {
 			                                                                                  Level.FILE,
 			                                                                                  Requirement.required));
 			
-			this.transactionIdArgument = ArgumentFactory.create(new StringArgument.Options(
+			this.changeSetIdArgument = ArgumentFactory.create(new StringArgument.Options(
 			                                                                               settings.getRoot(),
 			                                                                               "transaction",
 			                                                                               "The transaction id to compute change couplings for.",
@@ -135,7 +135,7 @@ public class ChangeCouplings {
 	 * Run.
 	 */
 	public void run() {
-		final ChangeSet changeSet = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
+		final ChangeSet changeSet = this.persistenceUtil.loadById(this.changeSetIdArgument.getValue(),
 		                                                                    ChangeSet.class);
 		
 		if (this.granularityArgument.getValue().equals(Level.FILE)) {

@@ -316,7 +316,7 @@ public class ChangeSet implements Annotated {
 	 * @return the id
 	 */
 	@Id
-	@Index (name = "idx_transactionid")
+	@Index (name = "idx_changesetid")
 	public String getId() {
 		return this.id;
 	}

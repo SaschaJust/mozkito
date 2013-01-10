@@ -54,10 +54,10 @@ public class CoreDwReachMetric extends GenealogyCoreMetric {
 			                                                                                          final JavaChangeOperation t) {
 				                                                                       
 				                                                                       final DateTime oTime = original.getRevision()
-				                                                                                                      .getTransaction()
+				                                                                                                      .getChangeSet()
 				                                                                                                      .getTimestamp();
 				                                                                       final DateTime tTime = t.getRevision()
-				                                                                                               .getTransaction()
+				                                                                                               .getChangeSet()
 				                                                                                               .getTimestamp();
 				                                                                       
 				                                                                       final Days daysBetween = Days.daysBetween(oTime,

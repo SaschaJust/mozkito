@@ -41,7 +41,6 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
 import org.mozkito.persistence.ModelStorage;
@@ -165,19 +164,19 @@ public class PPAXMLTransformer extends Sink<JavaChangeOperation> {
 			@Override
 			public void process() {
 				final JavaChangeOperation currentOperation = getInputData();
-				final String transactionId = currentOperation.getRevision().getTransaction().getId();
+				final String changeSetId = currentOperation.getRevision().getChangeSet().getId();
 				
 				if (Logger.logDebug()) {
 					Logger.debug("Storing " + currentOperation);
 				}
 				
-				if (!transactionElements.containsKey(transactionId)) {
+				if (!transactionElements.containsKey(changeSetId)) {
 					final Element transactionElement = new Element("transaction");
-					transactionElement.setAttribute("id", transactionId);
+					transactionElement.setAttribute("id", changeSetId);
 					operationsElement.addContent(transactionElement);
-					transactionElements.put(transactionId, transactionElement);
+					transactionElements.put(changeSetId, transactionElement);
 				}
-				final Element transactionElement = transactionElements.get(transactionId);
+				final Element transactionElement = transactionElements.get(changeSetId);
 				
 				final Element operationElement = currentOperation.getXMLRepresentation();
 				transactionElement.addContent(operationElement);

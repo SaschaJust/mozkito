@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.ownhero.dev.ioda.JavaUtils;
-import difflib.Delta;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
@@ -34,6 +33,8 @@ import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
+
+import difflib.Delta;
 
 /**
  * The Class Repository. Every repository connector that extends this class has to be named [Repotype]Repository. E.g.
@@ -58,7 +59,7 @@ public abstract class Repository {
 	private String             endRevision;
 	
 	/** The start transaction. */
-	private ChangeSet     startTransaction = null;
+	private ChangeSet          startTransaction = null;
 	
 	/** The main branch name. */
 	private String             mainBranchName;
@@ -138,6 +139,30 @@ public abstract class Repository {
 	 *             the repository operation exception
 	 */
 	public abstract Map<String, ChangeType> getChangedPaths(String revision) throws RepositoryOperationException;
+	
+	/**
+	 * Returns the transaction id string to the transaction determined by the given index.
+	 * 
+	 * @param index
+	 *            Starts at 0
+	 * @return the corresponding transaction id (e.g. for reposuite {@link MercurialRepository#getChangeSetId(long)}
+	 *         returns 021e7e97724b for 3.
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
+	 */
+	public abstract String getChangeSetId(long index) throws RepositoryOperationException;
+	
+	/**
+	 * Method to retrieve the index of a transaction id within the topological order.
+	 * getChangeSetId(getTransactionIndex("abc")).equals("abc")
+	 * 
+	 * @param changeSetId
+	 *            the transaction id
+	 * @return the transaction index; return -1 if the changeSetId does not exist
+	 * @throws RepositoryOperationException
+	 *             the repository operation exception
+	 */
+	public abstract long getChangeSetIndex(String changeSetId) throws RepositoryOperationException;
 	
 	/**
 	 * Get the last revision to be considered.
@@ -298,30 +323,6 @@ public abstract class Repository {
 	 *             the repository operation exception
 	 */
 	public abstract long getTransactionCount() throws RepositoryOperationException;
-	
-	/**
-	 * Returns the transaction id string to the transaction determined by the given index.
-	 * 
-	 * @param index
-	 *            Starts at 0
-	 * @return the corresponding transaction id (e.g. for reposuite {@link MercurialRepository#getTransactionId(long)}
-	 *         returns 021e7e97724b for 3.
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
-	 */
-	public abstract String getTransactionId(long index) throws RepositoryOperationException;
-	
-	/**
-	 * Method to retrieve the index of a transaction id within the topological order.
-	 * getTransactionId(getTransactionIndex("abc")).equals("abc")
-	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @return the transaction index; return -1 if the transactionId does not exist
-	 * @throws RepositoryOperationException
-	 *             the repository operation exception
-	 */
-	public abstract long getTransactionIndex(String transactionId) throws RepositoryOperationException;
 	
 	/**
 	 * Gets the uri.

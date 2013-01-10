@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ca.mcgill.cs.swevo.ppa.PPAOptions;
 import net.ownhero.dev.andama.exceptions.Shutdown;
 import net.ownhero.dev.hiari.settings.ArgumentFactory;
 import net.ownhero.dev.hiari.settings.ArgumentSet;
@@ -40,7 +39,6 @@ import net.ownhero.dev.ioda.FileUtils;
 import net.ownhero.dev.kisa.Logger;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import org.mozkito.callgraph.model.CallGraph;
 import org.mozkito.callgraph.visitor.CallGraphPPAVisitor;
 import org.mozkito.codeanalysis.model.JavaElementFactory;
@@ -51,6 +49,8 @@ import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+
+import ca.mcgill.cs.swevo.ppa.PPAOptions;
 
 /**
  * The Class CallGraphToolChain.
@@ -69,7 +69,7 @@ public class CallGraphToolChain {
 	private File                                       sourceDir;
 	
 	/** The transaction id. */
-	private final String                               transactionId;
+	private final String                               changeSetId;
 	
 	/** The repository arguments. */
 	private ArgumentSet<Repository, RepositoryOptions> repositoryArguments;
@@ -105,12 +105,12 @@ public class CallGraphToolChain {
 			                                                                  databaseOptions);
 			this.repositoryArguments = ArgumentSetFactory.create(repositoryOptions);
 			
-			final StringArgument.Options transactionIdOptions = new StringArgument.Options(
-			                                                                               settings.getRoot(),
-			                                                                               "transactionId",
-			                                                                               "The transaction id to create the call graph for.",
-			                                                                               null, Requirement.optional);
-			this.transactionArgument = ArgumentFactory.create(transactionIdOptions);
+			final StringArgument.Options changeSetIdOptions = new StringArgument.Options(
+			                                                                             settings.getRoot(),
+			                                                                             "changeSetId",
+			                                                                             "The transaction id to create the call graph for.",
+			                                                                             null, Requirement.optional);
+			this.transactionArgument = ArgumentFactory.create(changeSetIdOptions);
 			
 			this.sourceDirArgument = ArgumentFactory.create(new DirectoryArgument.Options(
 			                                                                              settings.getRoot(),
@@ -119,7 +119,7 @@ public class CallGraphToolChain {
 			                                                                                      + this.transactionArgument.getTag()
 			                                                                                      + " not set)",
 			                                                                              null,
-			                                                                              Requirement.unset(transactionIdOptions),
+			                                                                              Requirement.unset(changeSetIdOptions),
 			                                                                              false));
 			
 			this.packageFilterArgument = ArgumentFactory.create(new SetArgument.Options(
@@ -157,16 +157,16 @@ public class CallGraphToolChain {
 				throw new Shutdown();
 			}
 			
-			this.transactionId = this.transactionArgument.getValue();
+			this.changeSetId = this.transactionArgument.getValue();
 			
-			if (this.transactionId != null) {
+			if (this.changeSetId != null) {
 				this.repository = this.repositoryArguments.getValue();
 				try {
-					this.sourceDir = this.repository.checkoutPath("/", this.transactionId);
+					this.sourceDir = this.repository.checkoutPath("/", this.changeSetId);
 				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(
 					                             String.format("Could not checkout transaction %s from repository %s. See errors above.",
-					                                           this.transactionId, this.repository.getUri().toString()));
+					                                           this.changeSetId, this.repository.getUri().toString()));
 				}
 			} else {
 				this.sourceDir = this.sourceDirArgument.getValue();
@@ -212,8 +212,8 @@ public class CallGraphToolChain {
 		// generate the call graph
 		CallGraph callGraph = null;
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory()) && (cacheDir.canRead())
-		        && (this.transactionId != null)) {
-			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.transactionId
+		        && (this.changeSetId != null)) {
+			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + this.changeSetId
 			        + ".cg");
 			if (serialFile.exists()) {
 				callGraph = CallGraph.unserialize(serialFile);

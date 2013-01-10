@@ -49,11 +49,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
-
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -63,6 +58,10 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
 
 /**
  * The Class GitRepository. This class is _not_ thread safe.
@@ -112,7 +111,7 @@ public class GitRepository extends DistributedCommandLineRepository {
 	private File                             cloneDir;
 	
 	/** The transaction i ds. */
-	private final List<String>               transactionIDs      = new LinkedList<String>();
+	private final List<String>               changeSetIds        = new LinkedList<String>();
 	
 	/** The branch factory. */
 	private BranchFactory                    branchFactory;
@@ -454,6 +453,35 @@ public class GitRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
+	 */
+	@Override
+	public String getChangeSetId(@NotNegative ("Cannot get transaction id for revision number smaller than zero.") final long index) {
+		// final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "--topo-order",
+		// "--reverse" };
+		// final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null,
+		// null);
+		// if (response.getFirst() != 0) {
+		// return null;
+		// }
+		// return response.getSecond().get((int) index);
+		return this.changeSetIds.get(Long.valueOf(index).intValue());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 */
+	@Override
+	public long getChangeSetIndex(final String changeSetId) {
+		if ("HEAD".equals(changeSetId.toUpperCase()) || "TIP".equals(changeSetId.toUpperCase())) {
+			return this.changeSetIds.indexOf(getHEADRevisionId());
+		}
+		return this.changeSetIds.indexOf(changeSetId);
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -694,35 +722,6 @@ public class GitRepository extends DistributedCommandLineRepository {
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
-	 */
-	@Override
-	public String getTransactionId(@NotNegative ("Cannot get transaction id for revision number smaller than zero.") final long index) {
-		// final String[] args = new String[] { "log", "--branches", "--remotes", "--pretty=format:%H", "--topo-order",
-		// "--reverse" };
-		// final Tuple<Integer, List<String>> response = CommandExecutor.execute("git", args, this.cloneDir, null,
-		// null);
-		// if (response.getFirst() != 0) {
-		// return null;
-		// }
-		// return response.getSecond().get((int) index);
-		return this.transactionIDs.get(Long.valueOf(index).intValue());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
-	 */
-	@Override
-	public long getTransactionIndex(final String transactionId) {
-		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
-			return this.transactionIDs.indexOf(getHEADRevisionId());
-		}
-		return this.transactionIDs.indexOf(transactionId);
-	}
-	
-	/*
 	 * In case of git this method returns a file pointing to a bare repository mirror!
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
@@ -832,14 +831,14 @@ public class GitRepository extends DistributedCommandLineRepository {
 			if (Logger.logDebug()) {
 				Logger.debug("############# git log --pretty=format:%H --branches --remotes --topo-order");
 			}
-			this.transactionIDs.clear();
-			this.transactionIDs.addAll(response.getSecond());
-			Collections.reverse(this.transactionIDs);
+			this.changeSetIds.clear();
+			this.changeSetIds.addAll(response.getSecond());
+			Collections.reverse(this.changeSetIds);
 			
-			if (!this.transactionIDs.isEmpty()) {
-				Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+			if (!this.changeSetIds.isEmpty()) {
+				Condition.check(getFirstRevisionId().equals(this.changeSetIds.get(0)),
 				                "First revision ID and transaction ID list missmatch!");
-				Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+				Condition.check(getHEADRevisionId().equals(this.changeSetIds.get(this.changeSetIds.size() - 1)),
 				                "End revision ID and transaction ID list missmatch!");
 			}
 		} catch (final IOException e) {

@@ -27,6 +27,50 @@ import org.mozkito.versions.model.ChangeSet;
 public class AtomicTransactionImporter {
 	
 	/**
+	 * Mark transaction id as atomic.
+	 * 
+	 * @param changeSetId
+	 *            the transaction id
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return true, if successful
+	 */
+	public static synchronized boolean markChangeSetIdAsAtomic(final String changeSetId,
+	                                                           final PersistenceUtil persistenceUtil) {
+		final ChangeSet changeSet = persistenceUtil.loadById(changeSetId, ChangeSet.class);
+		if (changeSet == null) {
+			return false;
+		}
+		changeSet.setAtomic(true);
+		persistenceUtil.saveOrUpdate(changeSet);
+		return true;
+	}
+	
+	/**
+	 * Mark transaction ids as atomic.
+	 * 
+	 * @param changeSetIds
+	 *            the transaction ids
+	 * @param persistenceUtil
+	 *            the persistence util
+	 * @return true, if successful
+	 */
+	@NoneNull
+	public static synchronized boolean markChangeSetIdsAsAtomic(final Collection<String> changeSetIds,
+	                                                            final PersistenceUtil persistenceUtil) {
+		persistenceUtil.beginTransaction();
+		for (final String id : changeSetIds) {
+			final ChangeSet changeSet = persistenceUtil.loadById(id, ChangeSet.class);
+			if ((changeSet == null) || (!markTransactionAsAtomic(changeSet, persistenceUtil))) {
+				persistenceUtil.rollbackTransaction();
+				return false;
+			}
+		}
+		persistenceUtil.commitTransaction();
+		return true;
+	}
+	
+	/**
 	 * Mark transaction as atomic.
 	 * 
 	 * @param changeSet
@@ -39,50 +83,6 @@ public class AtomicTransactionImporter {
 	                                                           final PersistenceUtil persistenceUtil) {
 		changeSet.setAtomic(true);
 		persistenceUtil.saveOrUpdate(changeSet);
-		return true;
-	}
-	
-	/**
-	 * Mark transaction id as atomic.
-	 * 
-	 * @param transactionId
-	 *            the transaction id
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @return true, if successful
-	 */
-	public static synchronized boolean markTransactionIdAsAtomic(final String transactionId,
-	                                                             final PersistenceUtil persistenceUtil) {
-		final ChangeSet changeSet = persistenceUtil.loadById(transactionId, ChangeSet.class);
-		if (changeSet == null) {
-			return false;
-		}
-		changeSet.setAtomic(true);
-		persistenceUtil.saveOrUpdate(changeSet);
-		return true;
-	}
-	
-	/**
-	 * Mark transaction ids as atomic.
-	 * 
-	 * @param transactionIds
-	 *            the transaction ids
-	 * @param persistenceUtil
-	 *            the persistence util
-	 * @return true, if successful
-	 */
-	@NoneNull
-	public static synchronized boolean markTransactionIdsAsAtomic(final Collection<String> transactionIds,
-	                                                              final PersistenceUtil persistenceUtil) {
-		persistenceUtil.beginTransaction();
-		for (final String id : transactionIds) {
-			final ChangeSet changeSet = persistenceUtil.loadById(id, ChangeSet.class);
-			if ((changeSet == null) || (!markTransactionAsAtomic(changeSet, persistenceUtil))) {
-				persistenceUtil.rollbackTransaction();
-				return false;
-			}
-		}
-		persistenceUtil.commitTransaction();
 		return true;
 	}
 	

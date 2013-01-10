@@ -109,7 +109,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 			final ChangeOperationSet t = e.getKey();
 			final JavaChangeOperation[] operationArray = e.getValue().toArray(new JavaChangeOperation[e.getValue()
 			                                                                                           .size()]);
-			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getTransaction());
+			final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = untangling.generateScoreVisitors(t.getChangeSet());
 			for (int i = 0; i < operationArray.length; ++i) {
 				for (int j = i + 1; j < operationArray.length; ++j) {
 					
@@ -145,7 +145,7 @@ public abstract class UntanglingScoreAggregation extends ScoreAggregation<JavaCh
 					negativePool.add(new Tuple<Tuple<JavaChangeOperation, JavaChangeOperation>, ChangeSet>(
 					                                                                                            negInnerTuple,
 					                                                                                            entry.getKey()
-					                                                                                                 .getTransaction()));
+					                                                                                                 .getChangeSet()));
 				}
 			}
 		}

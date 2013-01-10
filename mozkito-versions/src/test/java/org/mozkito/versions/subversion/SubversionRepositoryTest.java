@@ -343,12 +343,12 @@ public class SubversionRepositoryTest extends VersionsTest {
 	 * Test get transaction id.
 	 */
 	@Test
-	public void testGetTransactionId() {
-		assertEquals("1", this.repo.getTransactionId(0));
-		assertEquals("7", this.repo.getTransactionId(6));
-		assertEquals("12", this.repo.getTransactionId(11));
-		assertEquals("17", this.repo.getTransactionId(16));
-		assertTrue(this.repo.getTransactionId(18) == null);
+	public void testGetChangeSetId() {
+		assertEquals("1", this.repo.getChangeSetId(0));
+		assertEquals("7", this.repo.getChangeSetId(6));
+		assertEquals("12", this.repo.getChangeSetId(11));
+		assertEquals("17", this.repo.getChangeSetId(16));
+		assertTrue(this.repo.getChangeSetId(18) == null);
 	}
 	
 	/**
@@ -356,7 +356,7 @@ public class SubversionRepositoryTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetTransactionIndex() {
-		assertEquals(17, this.repo.getTransactionIndex("HEAD"));
-		assertEquals(5, this.repo.getTransactionIndex("6"));
+		assertEquals(17, this.repo.getChangeSetIndex("HEAD"));
+		assertEquals(5, this.repo.getChangeSetIndex("6"));
 	}
 }

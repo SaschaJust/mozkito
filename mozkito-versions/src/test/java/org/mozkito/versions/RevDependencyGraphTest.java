@@ -21,19 +21,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.Vertex;
-
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * The Class RevDependencyGraphTest.
@@ -555,31 +554,31 @@ public class RevDependencyGraphTest extends VersionsTest {
 	 */
 	@Test
 	public void testGetVertices() {
-		final Set<String> transactionIDs = new HashSet<>();
+		final Set<String> chnageSetIds = new HashSet<>();
 		for (final String v : this.graph.getVertices()) {
-			transactionIDs.add(v);
+			chnageSetIds.add(v);
 		}
-		assertEquals(20, transactionIDs.size());
-		assertEquals(true, transactionIDs.contains("96a9f105774b50f1fa3361212c4d12ae057a4285"));
-		assertEquals(true, transactionIDs.contains("fe56f365f798c3742bac5e56f5ff30eca4f622c6"));
-		assertEquals(true, transactionIDs.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
-		assertEquals(true, transactionIDs.contains("637acf68104e7bdff8235fb2e1a254300ffea3cb"));
-		assertEquals(true, transactionIDs.contains("376adc0f9371129a76766f8030f2e576165358c1"));
-		assertEquals(true, transactionIDs.contains("41a40fb23b54a49e91eb4cee510533eef810ec68"));
-		assertEquals(true, transactionIDs.contains("1ac6aaa05eb6d55939b20e70ec818bb413417757"));
-		assertEquals(true, transactionIDs.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
-		assertEquals(true, transactionIDs.contains("8273c1e51992a4d7a1da012dbb416864c2749a7f"));
-		assertEquals(true, transactionIDs.contains("ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
-		assertEquals(true, transactionIDs.contains("cbcc33d919a27b9450d117f211a5f4f45615cab9"));
-		assertEquals(true, transactionIDs.contains("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8"));
-		assertEquals(true, transactionIDs.contains("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
-		assertEquals(true, transactionIDs.contains("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
-		assertEquals(true, transactionIDs.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
-		assertEquals(true, transactionIDs.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
-		assertEquals(true, transactionIDs.contains("e52def97ebc1f78c9286b1e7c36783aa67604439"));
-		assertEquals(true, transactionIDs.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
-		assertEquals(true, transactionIDs.contains("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2"));
-		assertEquals(true, transactionIDs.contains("67635fe9efeb2fd3751df9ea67650c71e59e3df1"));
+		assertEquals(20, chnageSetIds.size());
+		assertEquals(true, chnageSetIds.contains("96a9f105774b50f1fa3361212c4d12ae057a4285"));
+		assertEquals(true, chnageSetIds.contains("fe56f365f798c3742bac5e56f5ff30eca4f622c6"));
+		assertEquals(true, chnageSetIds.contains("9be561b3657e2b1da2b09d675dddd5f45c47f57c"));
+		assertEquals(true, chnageSetIds.contains("637acf68104e7bdff8235fb2e1a254300ffea3cb"));
+		assertEquals(true, chnageSetIds.contains("376adc0f9371129a76766f8030f2e576165358c1"));
+		assertEquals(true, chnageSetIds.contains("41a40fb23b54a49e91eb4cee510533eef810ec68"));
+		assertEquals(true, chnageSetIds.contains("1ac6aaa05eb6d55939b20e70ec818bb413417757"));
+		assertEquals(true, chnageSetIds.contains("927478915f2d8fb9135eb33d21cb8491c0e655be"));
+		assertEquals(true, chnageSetIds.contains("8273c1e51992a4d7a1da012dbb416864c2749a7f"));
+		assertEquals(true, chnageSetIds.contains("ae94d7fa81437cbbd723049e3951f9daaa62a7c0"));
+		assertEquals(true, chnageSetIds.contains("cbcc33d919a27b9450d117f211a5f4f45615cab9"));
+		assertEquals(true, chnageSetIds.contains("deeefc5f6ab45a88c568fc8f27ee6f42e4a191b8"));
+		assertEquals(true, chnageSetIds.contains("d23c3c69e8b9b8d8c0ee6ef08ea6f1944e186df6"));
+		assertEquals(true, chnageSetIds.contains("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
+		assertEquals(true, chnageSetIds.contains("9d647acdef18e1bc6137354359ae75e490a7687d"));
+		assertEquals(true, chnageSetIds.contains("19bc6c11d2d8cff62f911f26bad29690c3cee256"));
+		assertEquals(true, chnageSetIds.contains("e52def97ebc1f78c9286b1e7c36783aa67604439"));
+		assertEquals(true, chnageSetIds.contains("d98b5a8740dbbe912b711e3a29dcc4fa3d3890e9"));
+		assertEquals(true, chnageSetIds.contains("a92759a8824c8a13c60f9d1c04fb16bd7bb37cc2"));
+		assertEquals(true, chnageSetIds.contains("67635fe9efeb2fd3751df9ea67650c71e59e3df1"));
 		
 	}
 	

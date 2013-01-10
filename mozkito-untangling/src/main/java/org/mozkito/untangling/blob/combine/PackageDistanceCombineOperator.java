@@ -157,12 +157,12 @@ public class PackageDistanceCombineOperator implements CombineOperator<ChangeOpe
 	public boolean canBeCombined(final ChangeOperationSet t1,
 	                             final ChangeOperationSet t2) {
 		
-		for (final Revision rev : t1.getTransaction().getRevisions()) {
+		for (final Revision rev : t1.getChangeSet().getRevisions()) {
 			try {
-				final String path = rev.getChangedFile().getPath(t1.getTransaction());
-				for (final Revision rev2 : t2.getTransaction().getRevisions()) {
+				final String path = rev.getChangedFile().getPath(t1.getChangeSet());
+				for (final Revision rev2 : t2.getChangeSet().getRevisions()) {
 					try {
-						final String path2 = rev2.getChangedFile().getPath(t2.getTransaction());
+						final String path2 = rev2.getChangedFile().getPath(t2.getChangeSet());
 						if (Logger.logDebug()) {
 							Logger.debug("Trying to combine %s and %s using max package distance of %d ...", path,
 							             path2, this.maxPackageDistance.intValue());

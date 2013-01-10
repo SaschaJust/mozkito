@@ -217,7 +217,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 			this.callGraphCacheDirOptions = new DirectoryArgument.Options(
 			                                                              argumentSet,
 			                                                              "cacheDir",
-			                                                              "Cache directory containing call graphs using the naming converntion <transactionId>.cg",
+			                                                              "Cache directory containing call graphs using the naming converntion <changeSetId>.cg",
 			                                                              null, Requirement.required, false);
 			map.put(this.callGraphCacheDirOptions.getName(), this.callGraphCacheDirOptions);
 			
@@ -282,7 +282,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				throw new UnrecoverableError(e);
 			}
 			
-			arguments.add("-DtransactionId=" + changeset.getId());
+			arguments.add("-DchangeSetId=" + changeset.getId());
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph

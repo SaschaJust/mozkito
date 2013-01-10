@@ -326,10 +326,10 @@ public class Untangling {
 		final Set<ChangeOperationSet> atomicChangeSets = new HashSet<ChangeOperationSet>();
 		final PersistenceUtil persistenceUtil = this.untanglingControl.getPersistenceUtil();
 		
-		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		final List<String> atomicChangeSetIds = this.untanglingControl.getAtomicChangeSetIds();
 		Criteria<ChangeSet> transactionCriteria = null;
-		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicTransactionIds);
+		if ((atomicChangeSetIds != null) && (!atomicChangeSetIds.isEmpty())) {
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicChangeSetIds);
 		} else {
 			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).eq("atomic", true);
 		}
@@ -391,7 +391,7 @@ public class Untangling {
 				}
 				
 				final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = generateScoreVisitors(instruction.getChangeSet()
-				                                                                                                                   .getTransaction());
+				                                                                                                                   .getChangeSet());
 				
 				final MultilevelClustering<JavaChangeOperation> clustering = new MultilevelClustering<JavaChangeOperation>(
 				                                                                                                           instruction.getChangeSet()
@@ -409,7 +409,7 @@ public class Untangling {
 				
 				int counter = 0;
 				for (final Set<JavaChangeOperation> partition : partitions) {
-					outWriter.append(instruction.getChangeSet().getTransaction().getId());
+					outWriter.append(instruction.getChangeSet().getChangeSet().getId());
 					outWriter.append(",");
 					outWriter.append(String.valueOf(counter++));
 					outWriter.append(",");
@@ -477,7 +477,7 @@ public class Untangling {
 			}
 		}
 		
-		final List<String> atomicTransactionIds = this.untanglingControl.getAtomicTransactionIds();
+		final List<String> atomicChangeSetIds = this.untanglingControl.getAtomicChangeSetIds();
 		
 		// this map will contain change set lists that correspond to the change sets reachable from the
 		// corresponding
@@ -485,8 +485,8 @@ public class Untangling {
 		final Map<ChangeOperationSet, List<ChangeOperationSet>> combinationCandidates = new HashMap<>();
 		
 		Criteria<ChangeSet> transactionCriteria = null;
-		if ((atomicTransactionIds != null) && (!atomicTransactionIds.isEmpty())) {
-			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicTransactionIds);
+		if ((atomicChangeSetIds != null) && (!atomicChangeSetIds.isEmpty())) {
+			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).in("id", atomicChangeSetIds);
 		} else {
 			transactionCriteria = persistenceUtil.createCriteria(ChangeSet.class).eq("atomic", true);
 		}
@@ -523,7 +523,7 @@ public class Untangling {
 				combinationCandidates.put(new ChangeOperationSet(t, ops), new LinkedList<ChangeOperationSet>());
 				final Set<ChangeOperationSet> toCompareRemove = new HashSet<>();
 				for (final ChangeOperationSet candidate : toCompare) {
-					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getTransaction().getTimestamp())
+					if (Math.abs(Days.daysBetween(t.getTimestamp(), candidate.getChangeSet().getTimestamp())
 					                 .getDays()) <= blobWindowSize) {
 						combinationCandidates.get(candidate).add(changeSet);
 					} else {

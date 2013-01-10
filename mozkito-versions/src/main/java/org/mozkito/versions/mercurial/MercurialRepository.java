@@ -50,11 +50,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
-
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -64,6 +59,10 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.Branch;
+
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
 
 /**
  * The Class MercurialRepository.
@@ -136,10 +135,10 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	private File               cloneDir;
 	
 	/** The hashes. */
-	protected List<String>     hashes         = new ArrayList<String>();
+	protected List<String>     hashes       = new ArrayList<String>();
 	
 	/** The transaction i ds. */
-	private final List<String> transactionIDs = new LinkedList<String>();
+	private final List<String> changeSetIds = new LinkedList<String>();
 	
 	private RevDependencyGraph revDepGraph;
 	
@@ -467,6 +466,33 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getChangeSetId(long)
+	 */
+	@Override
+	public String getChangeSetId(@NotNegative final long index) {
+		
+		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template={node}\\n" };
+		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
+		if (response.getFirst() != 0) {
+			return null;
+		}
+		return response.getSecond().get(0).trim();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
+	 */
+	@Override
+	public long getChangeSetIndex(final String changeSetId) throws RepositoryOperationException {
+		if ("HEAD".equals(changeSetId.toUpperCase()) || "TIP".equals(changeSetId.toUpperCase())) {
+			return this.changeSetIds.indexOf(getHEADRevisionId());
+		}
+		return this.changeSetIds.indexOf(changeSetId);
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getFirstRevisionId()
 	 */
 	@Override
@@ -714,33 +740,6 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionId(long)
-	 */
-	@Override
-	public String getTransactionId(@NotNegative final long index) {
-		
-		final String[] args = new String[] { "log", "-r", String.valueOf(index), "--template={node}\\n" };
-		final Tuple<Integer, List<String>> response = CommandExecutor.execute("hg", args, this.cloneDir, null, null);
-		if (response.getFirst() != 0) {
-			return null;
-		}
-		return response.getSecond().get(0).trim();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.versions.Repository#getTransactionIndex(java.lang.String)
-	 */
-	@Override
-	public long getTransactionIndex(final String transactionId) throws RepositoryOperationException {
-		if ("HEAD".equals(transactionId.toUpperCase()) || "TIP".equals(transactionId.toUpperCase())) {
-			return this.transactionIDs.indexOf(getHEADRevisionId());
-		}
-		return this.transactionIDs.indexOf(transactionId);
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.mozkito.versions.Repository#getWokingCopyLocation()
 	 */
 	@Override
@@ -832,14 +831,14 @@ public class MercurialRepository extends DistributedCommandLineRepository {
 				Logger.debug("############# hg log --template '{node}\n'");
 			}
 			
-			this.transactionIDs.clear();
-			this.transactionIDs.addAll(response.getSecond());
-			Collections.reverse(this.transactionIDs);
+			this.changeSetIds.clear();
+			this.changeSetIds.addAll(response.getSecond());
+			Collections.reverse(this.changeSetIds);
 			
-			if (!this.transactionIDs.isEmpty()) {
-				Condition.check(getFirstRevisionId().equals(this.transactionIDs.get(0)),
+			if (!this.changeSetIds.isEmpty()) {
+				Condition.check(getFirstRevisionId().equals(this.changeSetIds.get(0)),
 				                "First revision ID and transaction ID list missmatch!");
-				Condition.check(getHEADRevisionId().equals(this.transactionIDs.get(this.transactionIDs.size() - 1)),
+				Condition.check(getHEADRevisionId().equals(this.changeSetIds.get(this.changeSetIds.size() - 1)),
 				                "End revision ID and transaction ID list missmatch!");
 			}
 		} catch (final IOException e) {

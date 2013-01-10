@@ -29,9 +29,6 @@ import net.ownhero.dev.regex.Match;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import difflib.Delta;
-
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.versions.RepositoryType;
@@ -39,6 +36,8 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+
+import difflib.Delta;
 
 /**
  * The Class GitRepositoryTest.
@@ -155,6 +154,17 @@ public class GitRepositoryTest extends VersionsTest {
 	}
 	
 	/**
+	 * Test get transaction id.
+	 */
+	@Test
+	public void testGetChangeSetId() {
+		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", this.repo.getChangeSetId(0));
+		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", this.repo.getChangeSetId(6));
+		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", this.repo.getChangeSetId(18));
+		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", this.repo.getChangeSetId(19));
+	}
+	
+	/**
 	 * Test get changes paths.
 	 */
 	@Test
@@ -242,23 +252,12 @@ public class GitRepositoryTest extends VersionsTest {
 	}
 	
 	/**
-	 * Test get transaction id.
-	 */
-	@Test
-	public void testGetTransactionId() {
-		assertEquals("e52def97ebc1f78c9286b1e7c36783aa67604439", this.repo.getTransactionId(0));
-		assertEquals("98d5c40ef3c14503a472ba4133ae3529c7578e30", this.repo.getTransactionId(6));
-		assertEquals("fe56f365f798c3742bac5e56f5ff30eca4f622c6", this.repo.getTransactionId(18));
-		assertEquals("96a9f105774b50f1fa3361212c4d12ae057a4285", this.repo.getTransactionId(19));
-	}
-	
-	/**
 	 * Test get transaction index.
 	 */
 	@Test
 	public void testGetTransactionIndex() {
-		assertEquals(19, this.repo.getTransactionIndex("HEAD"));
-		assertEquals(6, this.repo.getTransactionIndex("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
+		assertEquals(19, this.repo.getChangeSetIndex("HEAD"));
+		assertEquals(6, this.repo.getChangeSetIndex("98d5c40ef3c14503a472ba4133ae3529c7578e30"));
 	}
 	
 	/**

@@ -613,8 +613,8 @@ public class JavaMethodRegistry {
 			this.methodDefinitionDeletions.put(fullName, new ArrayList<JavaChangeOperation>());
 		}
 		this.methodDefinitionDeletions.get(fullName).add(del);
-		if (def.getRevision().getTransaction().getTimestamp()
-		       .isAfter(del.getRevision().getTransaction().getTimestamp())) {
+		if (def.getRevision().getChangeSet().getTimestamp()
+		       .isAfter(del.getRevision().getChangeSet().getTimestamp())) {
 			if (Logger.logError()) {
 				Logger.error("Found method definition that was added after the deletion! Should not happen!");
 			}

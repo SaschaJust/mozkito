@@ -62,7 +62,7 @@ public class ArtificialBlob {
 	public ArtificialBlob(final ChangeOperationSet changeSet) {
 		if (!add(changeSet)) {
 			if (Logger.logDebug()) {
-				Logger.debug("Adding transaction " + changeSet.getTransaction().getId() + " failed!");
+				Logger.debug("Adding transaction " + changeSet.getChangeSet().getId() + " failed!");
 			}
 		}
 	}
@@ -162,7 +162,7 @@ public class ArtificialBlob {
 	 * @return the latest transaction
 	 */
 	public ChangeSet getLatestTransaction() {
-		return this.blobTransactions.last().getTransaction();
+		return this.blobTransactions.last().getChangeSet();
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public class ArtificialBlob {
 	public Set<ChangeSet> getTransactions() {
 		final Set<ChangeSet> result = new HashSet<ChangeSet>();
 		for (final ChangeOperationSet t : this.blobTransactions) {
-			result.add(t.getTransaction());
+			result.add(t.getChangeSet());
 		}
 		return result;
 	}

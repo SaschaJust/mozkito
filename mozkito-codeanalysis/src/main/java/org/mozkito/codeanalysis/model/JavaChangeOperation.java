@@ -262,7 +262,7 @@ public class JavaChangeOperation implements Annotated {
 	@Transient
 	public Element getXMLRepresentation() {
 		final Element thisElement = new Element(getChangeType().toString());
-		thisElement.setAttribute(JavaChangeOperation.TRANSACTION_TAG_NAME, getRevision().getTransaction().getId());
+		thisElement.setAttribute(JavaChangeOperation.TRANSACTION_TAG_NAME, getRevision().getChangeSet().getId());
 		thisElement.addContent(getChangedElementLocation().getXMLRepresentation());
 		return thisElement;
 	}
@@ -370,7 +370,7 @@ public class JavaChangeOperation implements Annotated {
 			}
 		}
 		sb.append(", transaction: ");
-		sb.append(getRevision().getTransaction().getId());
+		sb.append(getRevision().getChangeSet().getId());
 		sb.append(">");
 		return sb.toString();
 	}

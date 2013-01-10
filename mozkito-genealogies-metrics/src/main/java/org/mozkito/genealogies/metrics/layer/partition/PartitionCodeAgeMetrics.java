@@ -106,7 +106,7 @@ public class PartitionCodeAgeMetrics extends GenealogyPartitionMetric {
 			
 			final JavaElement element = op.getChangedElementLocation().getElement();
 			
-			final DateTime before = op.getRevision().getTransaction().getTimestamp();
+			final DateTime before = op.getRevision().getChangeSet().getTimestamp();
 			
 			final List<ChangeSet> pastTransactions = PPAPersistenceUtil.getTransactionsChangingElement(this.persistenceUtil,
 			                                                                                                element);

@@ -51,7 +51,7 @@ public class UntanglingControl {
 	private Long                                                                                                                seed;
 	
 	/** The atomic change sets. */
-	private List<String>                                                                                                        atomicTransactionIds;
+	private List<String>                                                                                                        atomicChangeSetIds;
 	
 	/** The persistence util. */
 	private PersistenceUtil                                                                                                     persistenceUtil;
@@ -126,8 +126,8 @@ public class UntanglingControl {
 	 * 
 	 * @return the atomic change sets
 	 */
-	public List<String> getAtomicTransactionIds() {
-		return this.atomicTransactionIds;
+	public List<String> getAtomicChangeSetIds() {
+		return this.atomicChangeSetIds;
 	}
 	
 	/**
@@ -292,14 +292,14 @@ public class UntanglingControl {
 	/**
 	 * Sets the atomic transaction ids.
 	 * 
-	 * @param atomicTransactionIds
+	 * @param atomicChangeSetIds
 	 *            the new atomic transaction ids
 	 */
-	protected void setAtomicTransactionIds(final List<String> atomicTransactionIds) {
+	protected void setAtomicChangeSetIds(final List<String> atomicChangeSetIds) {
 		// PRECONDITIONS
 		
 		try {
-			this.atomicTransactionIds = atomicTransactionIds;
+			this.atomicChangeSetIds = atomicChangeSetIds;
 		} finally {
 			// POSTCONDITIONS
 		}

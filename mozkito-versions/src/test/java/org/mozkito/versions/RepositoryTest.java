@@ -211,8 +211,8 @@ public class RepositoryTest extends VersionsTest {
 	@Test
 	public void testDiff() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
-			final String id = repository.getTransactionId(11);
-			final String parent = repository.getTransactionId(10);
+			final String id = repository.getChangeSetId(11);
+			final String parent = repository.getChangeSetId(10);
 			final Collection<Delta> diff = repository.diff("file_1", parent, id);
 			assertEquals(1, diff.size());
 			final Delta[] deltas = diff.toArray(new Delta[1]);
@@ -230,8 +230,8 @@ public class RepositoryTest extends VersionsTest {
 	@Test
 	public void testDiffMove() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
-			final String id = repository.getTransactionId(3);
-			final String parent = repository.getTransactionId(2);
+			final String id = repository.getChangeSetId(3);
+			final String parent = repository.getChangeSetId(2);
 			final Collection<Delta> diff = repository.diff("dir_a/file_2_dir_a", parent, id);
 			assertEquals(1, diff.size());
 			final Delta[] deltas = diff.toArray(new Delta[1]);
@@ -290,7 +290,7 @@ public class RepositoryTest extends VersionsTest {
 	@Test
 	public void testGetFormerPathName() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
-			final String formerPathName = repository.getFormerPathName(repository.getTransactionId(3),
+			final String formerPathName = repository.getFormerPathName(repository.getChangeSetId(3),
 			                                                           "dir_b/file_2_dir_a");
 			try {
 				assertEquals("dir_a/file_2_dir_a", formerPathName);
@@ -443,7 +443,7 @@ public class RepositoryTest extends VersionsTest {
 	@Test
 	public void testMoveEdit() throws RepositoryOperationException {
 		for (final Repository repository : getRepositories().values()) {
-			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getTransactionId(3));
+			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(repository.getChangeSetId(3));
 			assertEquals(2, changedPaths.size());
 			if (repository.getRepositoryType().equals(RepositoryType.SUBVERSION)) {
 				assertTrue(changedPaths.containsKey("/dir_a"));

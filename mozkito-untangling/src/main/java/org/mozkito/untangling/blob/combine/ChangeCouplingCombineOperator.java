@@ -157,8 +157,8 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeOper
 		// PRECONDITIONS
 		
 		try {
-			final ChangeSet cl1T = cl1.getTransaction();
-			final ChangeSet cl2T = cl2.getTransaction();
+			final ChangeSet cl1T = cl1.getChangeSet();
+			final ChangeSet cl2T = cl2.getChangeSet();
 			
 			if (Logger.logDebug()) {
 				Logger.debug("Trying to combine %s and %s ...", cl1T.getId(), cl2T.getId());

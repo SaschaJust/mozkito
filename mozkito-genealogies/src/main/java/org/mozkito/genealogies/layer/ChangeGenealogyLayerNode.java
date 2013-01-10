@@ -92,7 +92,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 		if (this.earliestTimestamp == null) {
 			final DateTimeComparator timeComparator = DateTimeComparator.getInstance();
 			for (final JavaChangeOperation op : this) {
-				final DateTime time = op.getRevision().getTransaction().getTimestamp();
+				final DateTime time = op.getRevision().getChangeSet().getTimestamp();
 				if ((this.earliestTimestamp == null) || (timeComparator.compare(time, this.earliestTimestamp) < 0)) {
 					this.earliestTimestamp = time;
 				}
@@ -110,7 +110,7 @@ public abstract class ChangeGenealogyLayerNode implements Iterable<JavaChangeOpe
 		if (this.latestTimestamp == null) {
 			final DateTimeComparator timeComparator = DateTimeComparator.getInstance();
 			for (final JavaChangeOperation op : this) {
-				final DateTime time = op.getRevision().getTransaction().getTimestamp();
+				final DateTime time = op.getRevision().getChangeSet().getTimestamp();
 				if ((this.latestTimestamp == null) || (timeComparator.compare(time, this.latestTimestamp) > 0)) {
 					this.latestTimestamp = time;
 				}
