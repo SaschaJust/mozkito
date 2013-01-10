@@ -337,8 +337,8 @@ public class FileUtils {
 			}
 			return null;
 		}
-		if (Logger.logInfo()) {
-			Logger.info("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
+		if (Logger.logDebug()) {
+			Logger.debug("Created temp directory `" + name + "` in parent directory `" + parentDir.getAbsolutePath());
 		}
 		addToFileManager(newDir, shutdownAction);
 		return newDir;
