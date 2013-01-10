@@ -18,14 +18,13 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.mozkito.versions.RepositoryFactoryTest;
 import org.mozkito.versions.RevDependencyGraphTest;
 import org.mozkito.versions.collections.TransactionSetTest;
-import org.mozkito.versions.elements.RCSFileManagerTest;
 import org.mozkito.versions.elements.RevDependencyTest;
 import org.mozkito.versions.git.GitLogParserTest;
 import org.mozkito.versions.git.GitRepositoryTest;
 import org.mozkito.versions.git.GitTransactionIteratorTest;
 import org.mozkito.versions.mercurial.MercurialLogParserTest;
 import org.mozkito.versions.mercurial.MercurialRepositoryTest;
-import org.mozkito.versions.model.RCSFileTest;
+import org.mozkito.versions.model.HandleTest;
 import org.mozkito.versions.model.RCSTransactionTest;
 import org.mozkito.versions.subversion.SubversionDiffParserTest;
 import org.mozkito.versions.subversion.SubversionRepositoryTest;
@@ -35,10 +34,9 @@ import org.mozkito.versions.subversion.SubversionRepositoryTest;
  */
 @RunWith (Suite.class)
 @SuiteClasses ({ RepositoryFactoryTest.class, TransactionSetTest.class, GitLogParserTest.class,
-        GitRepositoryTest.class, RevDependencyGraphTest.class, GitTransactionIteratorTest.class, RCSFileTest.class,
+        GitRepositoryTest.class, RevDependencyGraphTest.class, GitTransactionIteratorTest.class, HandleTest.class,
         RCSTransactionTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class,
-        SubversionRepositoryTest.class, RCSFileManagerTest.class, RevDependencyTest.class,
-        SubversionDiffParserTest.class })
+        SubversionRepositoryTest.class, RevDependencyTest.class, SubversionDiffParserTest.class })
 public class AllTests {
 	// stub
 }

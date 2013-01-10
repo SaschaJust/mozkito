@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -41,7 +41,7 @@ public class JavaChangeOperationTest {
 	private JavaElementLocationSet set;
 	
 	/** The rcs file. */
-	private RCSFile                rcsFile;
+	private Handle                rcsFile;
 	
 	/** The op. */
 	private JavaChangeOperation    op;
@@ -64,7 +64,7 @@ public class JavaChangeOperationTest {
 		                                                                   20, 23, 43674, 20);
 		this.rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null,
 		                                                                                                 null), "143");
-		this.rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", this.rCSTransaction);
+		this.rcsFile = new Handle("org/mozkito/codeanalysis/model/TestClass.java", this.rCSTransaction);
 		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
 		                                  new RCSRevision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
 	}

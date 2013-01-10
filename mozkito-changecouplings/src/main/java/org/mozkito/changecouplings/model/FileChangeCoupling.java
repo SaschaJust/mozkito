@@ -23,7 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class FileChangeCoupling.
@@ -33,10 +33,10 @@ import org.mozkito.versions.model.RCSFile;
 public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	
 	/** The premise. */
-	private final Set<RCSFile> premise;
+	private final Set<Handle> premise;
 	
 	/** The implication. */
-	private final RCSFile      implication;
+	private final Handle      implication;
 	
 	/** The support. */
 	private final Integer      support;
@@ -60,7 +60,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 */
 	public FileChangeCoupling(final Long[] premise, final Long implication, final Integer support,
 	        final Double confidence, final PersistenceUtil persistenceUtil) {
-		this.premise = new HashSet<RCSFile>();
+		this.premise = new HashSet<Handle>();
 		
 		boolean commit = false;
 		if (!persistenceUtil.activeTransaction()) {
@@ -69,18 +69,18 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		}
 		for (final Long fileId : premise) {
 			
-			final RCSFile rcsFile = persistenceUtil.loadById((long) fileId, RCSFile.class);
+			final Handle rcsFile = persistenceUtil.loadById((long) fileId, Handle.class);
 			if (rcsFile == null) {
 				throw new UnrecoverableError("Could not retrieve File with id " + fileId);
 			}
 			this.premise.add(rcsFile);
 		}
 		
-		RCSFile rcsFile = persistenceUtil.loadById((long) implication, RCSFile.class);
+		Handle rcsFile = persistenceUtil.loadById((long) implication, Handle.class);
 		
-		final Criteria<RCSFile> criteria = persistenceUtil.createCriteria(RCSFile.class).eq("generatedId",
+		final Criteria<Handle> criteria = persistenceUtil.createCriteria(Handle.class).eq("generatedId",
 		                                                                                    (long) implication);
-		final List<RCSFile> load = persistenceUtil.load(criteria);
+		final List<Handle> load = persistenceUtil.load(criteria);
 		rcsFile = load.get(0);
 		
 		if (rcsFile == null) {
@@ -135,7 +135,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 * 
 	 * @return the implication
 	 */
-	public RCSFile getImplication() {
+	public Handle getImplication() {
 		return this.implication;
 	}
 	
@@ -145,7 +145,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 * @return the premise
 	 */
 	@Id
-	public Set<RCSFile> getPremise() {
+	public Set<Handle> getPremise() {
 		return this.premise;
 	}
 	
@@ -164,7 +164,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	 */
 	@Override
 	public String toString() {
-		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new RCSFile[this.premise.size()]))
+		return "ChangeCouplingRule [premise=" + Arrays.toString(this.premise.toArray(new Handle[this.premise.size()]))
 		        + ", implication=" + this.implication + ", support=" + this.support + ", confidence=" + this.confidence
 		        + "]";
 	}

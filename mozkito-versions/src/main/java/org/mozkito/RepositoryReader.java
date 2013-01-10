@@ -25,9 +25,9 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The {@link RepositoryReader} reads data from a given {@link Repository} and outputs {@link LogEntry} chunks.

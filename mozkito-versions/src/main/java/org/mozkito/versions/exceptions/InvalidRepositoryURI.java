@@ -13,55 +13,26 @@
 /**
  * 
  */
-package org.mozkito.exceptions;
+package org.mozkito.versions.exceptions;
 
 /**
- * The Class UnsupportedProtocolType.
+ * The Class InvalidRepositoryURI.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class UnsupportedProtocolType extends Exception {
+public class InvalidRepositoryURI extends Exception {
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 4200014637263024209L;
+	private static final long serialVersionUID = 1215614419586597882L;
 	
 	/**
-	 * Instantiates a new unsupported protocol type.
-	 */
-	public UnsupportedProtocolType() {
-		super();
-	}
-	
-	/**
-	 * Instantiates a new unsupported protocol type.
+	 * Instantiates a new invalid repository uri.
 	 * 
 	 * @param message
 	 *            the message
 	 */
-	public UnsupportedProtocolType(final String message) {
+	public InvalidRepositoryURI(final String message) {
 		super(message);
-	}
-	
-	/**
-	 * Instantiates a new unsupported protocol type.
-	 * 
-	 * @param message
-	 *            the message
-	 * @param cause
-	 *            the cause
-	 */
-	public UnsupportedProtocolType(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-	
-	/**
-	 * Instantiates a new unsupported protocol type.
-	 * 
-	 * @param cause
-	 *            the cause
-	 */
-	public UnsupportedProtocolType(final Throwable cause) {
-		super(cause);
 	}
 	
 }

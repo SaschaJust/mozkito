@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 import net.ownhero.dev.kanuni.annotations.simple.NotNull;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The Class LogIterator.

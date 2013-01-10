@@ -21,8 +21,8 @@ import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 import net.ownhero.dev.kanuni.annotations.string.MinLength;
 import net.ownhero.dev.kanuni.conditions.Condition;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The Class DistributedCommandLineRepository.

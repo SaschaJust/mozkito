@@ -55,7 +55,6 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.DistributedCommandLineRepository;
 import org.mozkito.versions.LogParser;
@@ -63,6 +62,7 @@ import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.RCSBranch;
 
 /**

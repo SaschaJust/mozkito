@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import difflib.Delta;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
@@ -42,6 +41,7 @@ import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.RCSBranch;
 
 /**

@@ -29,7 +29,6 @@ import net.ownhero.dev.hiari.settings.requirements.Requirement;
 import net.ownhero.dev.ioda.JavaUtils;
 import difflib.Delta;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.patch.Patch;
 import org.mozkito.mappings.mappable.model.MappableEntity;
@@ -44,7 +43,8 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -162,12 +162,12 @@ public class PatchEngine extends Engine {
 				}
 			}
 			
-			final Collection<RCSFile> changedFiles = transaction.getChangedFiles();
+			final Collection<Handle> changedFiles = transaction.getChangedFiles();
 			final RCSTransaction previousTransaction = transaction.getBranchParent();
 			
 			double localConfidence = 0.0d;
 			
-			for (final RCSFile changedFile : changedFiles) {
+			for (final Handle changedFile : changedFiles) {
 				final String path = changedFile.getPath(previousTransaction);
 				final String[] split = path.split("/"); //$NON-NLS-1$
 				if (split.length > 0) {

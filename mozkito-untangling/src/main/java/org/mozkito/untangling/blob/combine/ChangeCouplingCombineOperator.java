@@ -37,7 +37,7 @@ import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.untangling.blob.ChangeSet;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -204,12 +204,12 @@ public class ChangeCouplingCombineOperator implements CombineOperator<ChangeSet>
 			}
 			for (final FileChangeCoupling coupling : fileChangeCouplings) {
 				
-				final Set<RCSFile> premise = coupling.getPremise();
+				final Set<Handle> premise = coupling.getPremise();
 				final Set<Long> premiseIds = new HashSet<>(premise.size());
-				for (final RCSFile p : premise) {
+				for (final Handle p : premise) {
 					premiseIds.add(p.getGeneratedId());
 				}
-				final RCSFile implication = coupling.getImplication();
+				final Handle implication = coupling.getImplication();
 				final Long implicationId = implication.getGeneratedId();
 				
 				if (Logger.logTrace()) {

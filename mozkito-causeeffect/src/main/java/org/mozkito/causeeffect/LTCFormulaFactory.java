@@ -23,7 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.mozkito.causeeffect.ctl.CTLFormula;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -34,7 +34,7 @@ import org.mozkito.versions.model.RCSTransaction;
 public class LTCFormulaFactory {
 	
 	/** The generators. */
-	private final Set<CTLFormulaGenerator<RCSFile>> generators = new HashSet<>();
+	private final Set<CTLFormulaGenerator<Handle>> generators = new HashSet<>();
 	
 	/**
 	 * Generate formulas.
@@ -52,12 +52,12 @@ public class LTCFormulaFactory {
 	                                               final VertexSelector<RCSTransaction> vertexSelector) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
-		for (final CTLFormulaGenerator<RCSFile> generator : this.generators) {
+		for (final CTLFormulaGenerator<Handle> generator : this.generators) {
 			
 			// implication = all changes files of all dependent vertices valid by vertexSelector
 			final LinkedList<RCSTransaction> verticesToProcess = new LinkedList<>();
 			verticesToProcess.add(rootVertex);
-			final Set<RCSFile> implications = new HashSet<>();
+			final Set<Handle> implications = new HashSet<>();
 			while (!verticesToProcess.isEmpty()) {
 				final RCSTransaction vertex = verticesToProcess.poll();
 				for (final RCSTransaction dependent : genealogy.getAllDependants(vertex)) {
@@ -87,11 +87,11 @@ public class LTCFormulaFactory {
 	                                                               final RCSTransaction rCSTransaction) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
-		for (final CTLFormulaGenerator<RCSFile> generator : this.generators) {
+		for (final CTLFormulaGenerator<Handle> generator : this.generators) {
 			
-			final Collection<RCSFile> implications = rCSTransaction.getChangedFiles();
-			for (final RCSFile rCSFile : implications) {
-				final ArrayList<RCSFile> premise = new ArrayList<RCSFile>(1);
+			final Collection<Handle> implications = rCSTransaction.getChangedFiles();
+			for (final Handle rCSFile : implications) {
+				final ArrayList<Handle> premise = new ArrayList<Handle>(1);
 				premise.add(rCSFile);
 				formulas.addAll(generator.generate(premise, CollectionUtils.removeAll(implications, premise)));
 			}
@@ -106,7 +106,7 @@ public class LTCFormulaFactory {
 	 *            the generator
 	 * @return true, if successful
 	 */
-	public boolean register(final CTLFormulaGenerator<RCSFile> generator) {
+	public boolean register(final CTLFormulaGenerator<Handle> generator) {
 		return this.generators.add(generator);
 	}
 }

@@ -35,13 +35,13 @@ import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 import difflib.Delta;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 
 /**
  * The Class ConcurrentRepository.

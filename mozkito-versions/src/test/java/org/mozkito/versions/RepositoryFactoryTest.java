@@ -17,7 +17,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
+import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.git.GitRepository;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.subversion.SubversionRepository;

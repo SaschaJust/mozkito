@@ -47,9 +47,9 @@ import org.mozkito.clustering.MultilevelClustering;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElementLocation.LineCover;
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**

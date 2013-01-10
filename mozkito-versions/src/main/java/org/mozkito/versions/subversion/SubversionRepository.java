@@ -42,6 +42,20 @@ import net.ownhero.dev.regex.Regex;
 import org.apache.commons.io.output.NullOutputStream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.ProtocolType;
+import org.mozkito.versions.Repository;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
+import org.mozkito.versions.elements.AnnotationEntry;
+import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.InvalidProtocolType;
+import org.mozkito.versions.exceptions.InvalidRepositoryURI;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.exceptions.UnsupportedProtocolType;
+import org.mozkito.versions.model.RCSBranch;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -65,21 +79,6 @@ import org.tmatesoft.svn.util.SVNDebugLog;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
-
-import org.mozkito.exceptions.InvalidProtocolType;
-import org.mozkito.exceptions.InvalidRepositoryURI;
-import org.mozkito.exceptions.RepositoryOperationException;
-import org.mozkito.exceptions.UnsupportedProtocolType;
-import org.mozkito.persistence.model.Person;
-import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.ProtocolType;
-import org.mozkito.versions.Repository;
-import org.mozkito.versions.RevDependencyGraph;
-import org.mozkito.versions.RevDependencyGraph.EdgeType;
-import org.mozkito.versions.elements.AnnotationEntry;
-import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.model.RCSBranch;
 
 /**
  * Subversion connector extending the {@link Repository} base class.
@@ -423,6 +422,7 @@ public class SubversionRepository extends Repository {
 			
 			for (final SVNLogEntry entry : logs) {
 				
+				@SuppressWarnings ("unchecked")
 				final Map<String, SVNLogEntryPath> changedPaths = entry.getChangedPaths();
 				for (final String o : changedPaths.keySet()) {
 					final SVNLogEntryPath logEntryPath = changedPaths.get(o);

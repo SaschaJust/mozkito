@@ -37,9 +37,7 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.exceptions.TestSettingsError;
-import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.VersionsTest;
 import org.mozkito.testing.annotation.RepositorySetting;
@@ -49,6 +47,8 @@ import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.RepositoryFactory;
 import org.mozkito.versions.RepositoryType;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 
 /**
  * The Class RepositorySettingsProcessor.

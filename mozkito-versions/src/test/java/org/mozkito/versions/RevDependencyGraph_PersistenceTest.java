@@ -21,10 +21,8 @@ import java.util.Iterator;
 import net.ownhero.dev.kanuni.instrumentation.KanuniAgent;
 
 import org.junit.Test;
-
 import org.mozkito.GraphBuilder;
 import org.mozkito.RepositoryParser;
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.ConnectOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.testing.VersionsTest;
@@ -32,7 +30,9 @@ import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.testing.annotation.RepositorySetting;
 import org.mozkito.testing.annotation.RepositorySettings;
 import org.mozkito.versions.elements.LogEntry;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class RevDependencyGraphTest.
@@ -59,12 +59,16 @@ public class RevDependencyGraph_PersistenceTest extends VersionsTest {
 		
 		final Repository repository = getRepositories().get("testGit");
 		
+		final VersionArchive versionArchive = new VersionArchive();
+		versionArchive.setRevDependencyGraph(repository.getRevDependencyGraph());
+		
 		persistenceUtil.beginTransaction();
 		final Iterator<LogEntry> logIterator = repository.log(repository.getFirstRevisionId(),
 		                                                      repository.getEndRevision()).iterator();
 		while (logIterator.hasNext()) {
 			final LogEntry logEntry = logIterator.next();
-			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, logEntry);
+			
+			final RCSTransaction rcsTransaction = RepositoryParser.parseLogEntry(repository, versionArchive, logEntry);
 			persistenceUtil.save(rcsTransaction);
 		}
 		persistenceUtil.commitTransaction();

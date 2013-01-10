@@ -10,29 +10,26 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
-/**
- * 
- */
-package org.mozkito.exceptions;
+package org.mozkito.versions.exceptions;
 
 /**
- * The Class InvalidRepositoryURI.
+ * The Class UnregisteredRepositoryTypeException.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class InvalidRepositoryURI extends Exception {
+public class UnregisteredRepositoryTypeException extends Exception {
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1215614419586597882L;
+	private static final long serialVersionUID = -7392389210139073113L;
 	
 	/**
-	 * Instantiates a new invalid repository uri.
+	 * Instantiates a new unregistered repository type exception.
 	 * 
-	 * @param message
-	 *            the message
+	 * @param string
+	 *            the string
 	 */
-	public InvalidRepositoryURI(final String message) {
-		super(message);
+	public UnregisteredRepositoryTypeException(final String string) {
+		super(string);
 	}
 	
 }

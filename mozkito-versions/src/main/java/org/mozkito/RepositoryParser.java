@@ -15,6 +15,7 @@
  */
 package org.mozkito;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,14 +27,14 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
-import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The {@link RepositoryParser} takes {@link LogEntry}s from the input storage, parses the data and stores the produced.
@@ -44,8 +45,8 @@ import org.mozkito.versions.model.RCSTransaction;
  */
 public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	
-	private static final RCSFileManager FILE_MANAGER    = new RCSFileManager();
-	private static final Set<String>    TRANSACTION_IDS = new HashSet<String>();
+	private static final Set<String>         TRANSACTION_IDS = new HashSet<String>();
+	private static final Map<String, Handle> CURRENT_FILES   = new HashMap<String, Handle>();
 	
 	/**
 	 * Parses the log entry assuming that it was extracted from the provided repository and returns the corresponding
@@ -53,11 +54,14 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 * 
 	 * @param repository
 	 *            the repository
+	 * @param archive
+	 *            the archive
 	 * @param data
 	 *            the data
 	 * @return the rCS transaction
 	 */
 	public static RCSTransaction parseLogEntry(final Repository repository,
+	                                           final VersionArchive archive,
 	                                           final LogEntry data) {
 		
 		try {
@@ -76,33 +80,60 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 			TRANSACTION_IDS.add(data.getRevision());
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 			for (final String fileName : changedPaths.keySet()) {
-				RCSFile file;
-				
-				if (changedPaths.get(fileName).equals(ChangeType.Renamed)) {
-					file = FILE_MANAGER.getFile(repository.getFormerPathName(rcsTransaction.getId(), fileName));
-					if (file == null) {
-						
-						if (Logger.logWarn()) {
-							Logger.warn("Found renaming of unknown file. Assuming type `added` instead of `renamed`: "
-							        + changedPaths.get(fileName));
+				switch (changedPaths.get(fileName)) {
+					case Renamed:
+						Handle renamedHandle = CURRENT_FILES.get(fileName);
+						if (renamedHandle == null) {
+							if (Logger.logError()) {
+								Logger.error("Renaming of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
+								             fileName);
+							}
+							renamedHandle = new Handle(archive);
+							CURRENT_FILES.put(fileName, renamedHandle);
+							final RCSRevision addRevision = new RCSRevision(rcsTransaction, renamedHandle,
+							                                                changedPaths.get(fileName));
+							renamedHandle.assignRevision(addRevision, fileName);
+							break;
 						}
-						file = FILE_MANAGER.getFile(fileName);
-						
-						if (file == null) {
-							file = FILE_MANAGER.createFile(fileName, rcsTransaction);
+						final RCSRevision renameRevision = new RCSRevision(rcsTransaction, renamedHandle,
+						                                                   changedPaths.get(fileName));
+						renamedHandle.assignRevision(renameRevision, fileName);
+						break;
+					case Added:
+						final Handle addedHandle = new Handle(archive);
+						CURRENT_FILES.put(fileName, addedHandle);
+						final RCSRevision revision = new RCSRevision(rcsTransaction, addedHandle,
+						                                             changedPaths.get(fileName));
+						addedHandle.assignRevision(revision, fileName);
+						break;
+					case Deleted:
+						final Handle deletedHandle = CURRENT_FILES.get(fileName);
+						if (deletedHandle == null) {
+							if (Logger.logError()) {
+								Logger.error("Deletion of unknown file with file name %s. Ignoring operation. Data may be incosistent!",
+								             fileName);
+							}
+							break;
 						}
-					} else {
-						file.assignTransaction(rcsTransaction, fileName);
-					}
-				} else {
-					file = FILE_MANAGER.getFile(fileName);
-					
-					if (file == null) {
-						file = FILE_MANAGER.createFile(fileName, rcsTransaction);
-					}
+						new RCSRevision(rcsTransaction, deletedHandle, changedPaths.get(fileName));
+						break;
+					default:
+						Handle modifiedHandle = CURRENT_FILES.get(fileName);
+						if (modifiedHandle == null) {
+							if (Logger.logError()) {
+								Logger.error("Modification of unknown file with file name %s. Assuming 'ADD' operation instead. Data may be incosistent!",
+								             fileName);
+							}
+							modifiedHandle = new Handle(archive);
+							CURRENT_FILES.put(fileName, modifiedHandle);
+							final RCSRevision addRevision = new RCSRevision(rcsTransaction, modifiedHandle,
+							                                                changedPaths.get(fileName));
+							modifiedHandle.assignRevision(addRevision, fileName);
+							break;
+						}
+						new RCSRevision(rcsTransaction, modifiedHandle, changedPaths.get(fileName));
+						break;
 				}
-				
-				new RCSRevision(rcsTransaction, file, changedPaths.get(fileName));
 			}
 			return rcsTransaction;
 		} catch (final RepositoryOperationException e) {
@@ -119,8 +150,11 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 	 *            the settings
 	 * @param repository
 	 *            the repository
+	 * @param archive
+	 *            the archive
 	 */
-	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository) {
+	public RepositoryParser(final Group threadGroup, final Settings settings, final Repository repository,
+	        final VersionArchive archive) {
 		super(threadGroup, settings, false);
 		
 		new ProcessHook<LogEntry, RCSTransaction>(this) {
@@ -128,7 +162,7 @@ public class RepositoryParser extends Transformer<LogEntry, RCSTransaction> {
 			@Override
 			public void process() {
 				final LogEntry data = getInputData();
-				final RCSTransaction rcsTransaction = parseLogEntry(repository, data);
+				final RCSTransaction rcsTransaction = parseLogEntry(repository, archive, data);
 				provideOutputData(rcsTransaction);
 			}
 		};

@@ -18,28 +18,28 @@ import java.util.HashSet;
 import org.mozkito.causeeffect.ctl.CTLAtomicFormula;
 import org.mozkito.causeeffect.ctl.CTLEF;
 import org.mozkito.causeeffect.ctl.CTLFormula;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class EF_FormulaGenearator.
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class EF_FormulaGenearator extends CTLFormulaGenerator<RCSFile> {
+public class EF_FormulaGenearator extends CTLFormulaGenerator<Handle> {
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.mozkito.causeeffect.CTLFormulaGenerator#generate(java.util.Collection, java.util.Collection)
 	 */
 	@Override
-	public Collection<CTLFormula> generate(final Collection<RCSFile> premises,
-	                                       final Collection<RCSFile> implications) {
+	public Collection<CTLFormula> generate(final Collection<Handle> premises,
+	                                       final Collection<Handle> implications) {
 		// PRECONDITIONS
 		
 		try {
 			final Collection<CTLFormula> formulas = new HashSet<CTLFormula>();
 			
-			for (final RCSFile implication : implications) {
+			for (final Handle implication : implications) {
 				formulas.add(CTLEF.get(CTLAtomicFormula.get(implication.getGeneratedId())));
 			}
 			return formulas;

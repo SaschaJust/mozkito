@@ -34,7 +34,7 @@ import org.mozkito.causeeffect.kripke.LabelGenerator;
 import org.mozkito.genealogies.ChangeGenealogy;
 import org.mozkito.genealogies.utils.VertexSelector;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -242,7 +242,7 @@ public class LTCExperiment {
 			@Override
 			public Collection<Label> getLabels(final RCSTransaction t) {
 				final Collection<Label> labels = new HashSet<Label>();
-				for (final RCSFile rCSFile : t.getChangedFiles()) {
+				for (final Handle rCSFile : t.getChangedFiles()) {
 					labels.add(Label.getLabel(rCSFile));
 				}
 				return labels;
@@ -281,7 +281,7 @@ public class LTCExperiment {
 			if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 				continue;
 			}
-			final RCSFile changedFile = rCSRevision.getChangedFile();
+			final Handle changedFile = rCSRevision.getChangedFile();
 			final SortedSet<LTCRecommendation> fileRecommends = LTCRecommendation.getRecommendations(changedFile,
 			                                                                                         changeProperty);
 			final Iterator<LTCRecommendation> fileRecommendIterator = fileRecommends.iterator();
@@ -378,7 +378,7 @@ public class LTCExperiment {
 				if (rCSRevision.getChangeType().equals(ChangeType.Deleted)) {
 					continue;
 				}
-				final RCSFile changedFile = rCSRevision.getChangedFile();
+				final Handle changedFile = rCSRevision.getChangedFile();
 				LTCRecommendation.getRecommendation(changedFile, f).addSupport(t,
 				                                                               changeProperty,
 				                                                               t.getTimestamp()
@@ -392,7 +392,7 @@ public class LTCExperiment {
 			// add support for these formulas
 			for (final CTLFormula f : innerFormulas) {
 				if (!templateFormulas.contains(f)) {
-					for (final RCSFile changedFile : t.getChangedFiles()) {
+					for (final Handle changedFile : t.getChangedFiles()) {
 						LTCRecommendation.getRecommendation(changedFile, f)
 						                 .addSupport(t, changeProperty,
 						                             t.getTimestamp().minusDays(this.keepFormulaMaxDays));
@@ -402,7 +402,7 @@ public class LTCExperiment {
 		}
 		
 		// mark file as changed in recommendations
-		for (final RCSFile changedFile : t.getChangedFiles()) {
+		for (final Handle changedFile : t.getChangedFiles()) {
 			LTCRecommendation.addChange(changedFile, t);
 		}
 	}

@@ -26,7 +26,7 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -82,11 +82,11 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 					final String transactionId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
 					final RCSTransaction rCSTransaction = persistenceUtil.loadById(transactionId, RCSTransaction.class);
 					if (rCSTransaction != null) {
-						final Collection<RCSFile> changedFiles = rCSTransaction.getChangedFiles();
+						final Collection<Handle> changedFiles = rCSTransaction.getChangedFiles();
 						final Collection<GenealogyMetricValue> output = new HashSet<GenealogyMetricValue>();
 						
 						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
-							for (final RCSFile rCSFile : changedFiles) {
+							for (final Handle rCSFile : changedFiles) {
 								output.add(new GenealogyMetricValue(metricSet.getKey(),
 								                                    rCSFile.getPath(rCSTransaction),
 								                                    metricSet.getValue()));

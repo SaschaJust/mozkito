@@ -35,7 +35,7 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.RCSFileManager;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -109,15 +109,15 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		
 		final DateTime now = new DateTime();
 		final RCSTransaction rcsTransaction = new RCSTransaction("0", "", now, person, "");
-		final RCSFile fileA = fileManager.createFile("A.java", rcsTransaction);
+		final Handle fileA = fileManager.createFile("A.java", rcsTransaction);
 		fileA.assignTransaction(rcsTransaction, "A.java");
 		new RCSRevision(rcsTransaction, fileA, ChangeType.Added);
 		
-		final RCSFile fileB = fileManager.createFile("B.java", rcsTransaction);
+		final Handle fileB = fileManager.createFile("B.java", rcsTransaction);
 		fileB.assignTransaction(rcsTransaction, "B.java");
 		new RCSRevision(rcsTransaction, fileB, ChangeType.Added);
 		
-		final RCSFile fileC = fileManager.createFile("C.java", rcsTransaction);
+		final Handle fileC = fileManager.createFile("C.java", rcsTransaction);
 		fileC.assignTransaction(rcsTransaction, "C.java");
 		new RCSRevision(rcsTransaction, fileC, ChangeType.Added);
 		
@@ -128,7 +128,7 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 		final RCSTransaction rcsTransaction2 = new RCSTransaction("1", "", now.plus(10000), person, "");
 		new RCSRevision(rcsTransaction2, fileA, ChangeType.Modified);
 		new RCSRevision(rcsTransaction2, fileB, ChangeType.Added);
-		final RCSFile fileD = fileManager.createFile("D.java", rcsTransaction);
+		final Handle fileD = fileManager.createFile("D.java", rcsTransaction);
 		// fileC.assignTransaction(rcsTransaction2, "D.java");
 		new RCSRevision(rcsTransaction2, fileD, ChangeType.Added);
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction2);

@@ -32,7 +32,7 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.DatabaseType;
 import org.mozkito.persistence.PersistenceManager;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class File2Bugs.
@@ -82,10 +82,10 @@ public class File2Bugs implements Annotated {
 		@SuppressWarnings ("unchecked")
 		final List<Object[]> result = util.executeNativeSelectQuery(PersistenceManager.getNativeQuery(util,
 		                                                                                              "files2bugs")); //$NON-NLS-1$
-		Criteria<RCSFile> fileCriteria;
+		Criteria<Handle> fileCriteria;
 		Criteria<Report> reportCriteria;
 		long fileid = -1, tmp = -1, bugid = -1;
-		RCSFile rCSFile = null;
+		Handle rCSFile = null;
 		final Set<Report> reports = new HashSet<Report>();
 		
 		for (final Object[] entries : result) {
@@ -99,7 +99,7 @@ public class File2Bugs implements Annotated {
 				}
 				
 				fileid = tmp;
-				fileCriteria = util.createCriteria(RCSFile.class).eq("generatedId", fileid); //$NON-NLS-1$
+				fileCriteria = util.createCriteria(Handle.class).eq("generatedId", fileid); //$NON-NLS-1$
 				rCSFile = util.load(fileCriteria).iterator().next();
 			}
 			
@@ -116,7 +116,7 @@ public class File2Bugs implements Annotated {
 	}
 	
 	/** The file. */
-	RCSFile     rCSFile;
+	Handle     rCSFile;
 	
 	/** The reports. */
 	Set<Report> reports;
@@ -135,7 +135,7 @@ public class File2Bugs implements Annotated {
 	 * @param reports
 	 *            the reports
 	 */
-	public File2Bugs(final RCSFile rCSFile, final Set<Report> reports) {
+	public File2Bugs(final Handle rCSFile, final Set<Report> reports) {
 		setFile(rCSFile);
 		setReports(reports);
 	}
@@ -172,7 +172,7 @@ public class File2Bugs implements Annotated {
 	 * @return the file
 	 */
 	@OneToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	public RCSFile getFile() {
+	public Handle getFile() {
 		return this.rCSFile;
 	}
 	
@@ -214,7 +214,7 @@ public class File2Bugs implements Annotated {
 	 * @param rCSFile
 	 *            the file to set
 	 */
-	public void setFile(final RCSFile rCSFile) {
+	public void setFile(final Handle rCSFile) {
 		this.rCSFile = rCSFile;
 	}
 	

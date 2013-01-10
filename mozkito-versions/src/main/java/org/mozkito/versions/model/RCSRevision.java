@@ -55,7 +55,7 @@ public class RCSRevision implements Annotated {
 	private RCSTransaction    transaction;
 	
 	/** The changed file. */
-	private RCSFile           changedFile;
+	private Handle            changedFile;
 	
 	/** The revision id. */
 	private long              revisionId;
@@ -78,7 +78,7 @@ public class RCSRevision implements Annotated {
 	 *            the change type
 	 */
 	@NoneNull
-	public RCSRevision(final RCSTransaction rcsTransaction, final RCSFile rcsFile, final ChangeType changeType) {
+	public RCSRevision(final RCSTransaction rcsTransaction, final Handle rcsFile, final ChangeType changeType) {
 		setTransaction(rcsTransaction);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
@@ -139,7 +139,7 @@ public class RCSRevision implements Annotated {
 	// @MapsId ("changedFile")
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
-	public RCSFile getChangedFile() {
+	public Handle getChangedFile() {
 		return this.changedFile;
 	}
 	
@@ -157,6 +157,7 @@ public class RCSRevision implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	public final String getHandle() {
 		return JavaUtils.getHandle(RCSRevision.class);
 	}
@@ -213,7 +214,7 @@ public class RCSRevision implements Annotated {
 	 * @param changedFile
 	 *            the changedFile to set
 	 */
-	public void setChangedFile(final RCSFile changedFile) {
+	public void setChangedFile(final Handle changedFile) {
 		this.changedFile = changedFile;
 	}
 	

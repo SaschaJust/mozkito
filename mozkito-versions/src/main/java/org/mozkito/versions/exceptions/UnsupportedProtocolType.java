@@ -13,55 +13,55 @@
 /**
  * 
  */
-package org.mozkito.exceptions;
+package org.mozkito.versions.exceptions;
 
 /**
- * The Class InvalidProtocolType.
+ * The Class UnsupportedProtocolType.
  * 
  * @author Sascha Just <sascha.just@mozkito.org>
  */
-public class InvalidProtocolType extends Exception {
+public class UnsupportedProtocolType extends Exception {
 	
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = -3141953030979198993L;
+	private static final long serialVersionUID = 4200014637263024209L;
 	
 	/**
-	 * Instantiates a new invalid protocol type.
+	 * Instantiates a new unsupported protocol type.
 	 */
-	public InvalidProtocolType() {
+	public UnsupportedProtocolType() {
 		super();
 	}
 	
 	/**
-	 * Instantiates a new invalid protocol type.
+	 * Instantiates a new unsupported protocol type.
 	 * 
-	 * @param arg0
-	 *            the arg0
+	 * @param message
+	 *            the message
 	 */
-	public InvalidProtocolType(final String arg0) {
-		super(arg0);
+	public UnsupportedProtocolType(final String message) {
+		super(message);
 	}
 	
 	/**
-	 * Instantiates a new invalid protocol type.
+	 * Instantiates a new unsupported protocol type.
 	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
 	 */
-	public InvalidProtocolType(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
+	public UnsupportedProtocolType(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 	
 	/**
-	 * Instantiates a new invalid protocol type.
+	 * Instantiates a new unsupported protocol type.
 	 * 
-	 * @param arg0
-	 *            the arg0
+	 * @param cause
+	 *            the cause
 	 */
-	public InvalidProtocolType(final Throwable arg0) {
-		super(arg0);
+	public UnsupportedProtocolType(final Throwable cause) {
+		super(cause);
 	}
 	
 }

@@ -33,8 +33,8 @@ import net.ownhero.dev.kanuni.conditions.CompareCondition;
 import net.ownhero.dev.kanuni.conditions.Condition;
 import net.ownhero.dev.kisa.Logger;
 
-import org.mozkito.exceptions.UnregisteredRepositoryTypeException;
 import org.mozkito.versions.concurrent.ConcurrentRepository;
+import org.mozkito.versions.exceptions.UnregisteredRepositoryTypeException;
 
 /**
  * A factory for creating Repository objects.

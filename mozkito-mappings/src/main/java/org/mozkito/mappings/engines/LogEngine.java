@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.StringLiteral;
 
 import org.mozkito.codeanalysis.utils.PPAUtils;
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.infozilla.model.EnhancedReport;
 import org.mozkito.infozilla.model.log.Log;
 import org.mozkito.infozilla.model.log.LogEntry;
@@ -54,7 +53,8 @@ import org.mozkito.mappings.requirements.Index;
 import org.mozkito.mappings.storages.RepositoryStorage;
 import org.mozkito.mappings.storages.Storage;
 import org.mozkito.versions.Repository;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -212,7 +212,7 @@ public class LogEngine extends Engine {
 			
 			final MappableTransaction mappableTransaction = (MappableTransaction) to;
 			final RCSTransaction transaction = mappableTransaction.getTransaction();
-			final Collection<RCSFile> changedFiles = transaction.getChangedFiles();
+			final Collection<Handle> changedFiles = transaction.getChangedFiles();
 			final RepositoryStorage storage = getStorage(RepositoryStorage.class);
 			final Repository repository = storage.getRepository();
 			File fil2e;
@@ -224,9 +224,9 @@ public class LogEngine extends Engine {
 			}
 			
 			final ConstantStringVisitor visitor = new ConstantStringVisitor();
-			final Map<RCSFile, List<String>> map = new HashMap<>();
+			final Map<Handle, List<String>> map = new HashMap<>();
 			
-			for (final RCSFile file : changedFiles) {
+			for (final Handle file : changedFiles) {
 				final File file3 = new File(fil2e.getAbsolutePath() + FileUtils.fileSeparator
 				        + file.getPath(transaction));
 				final CompilationUnit cu = PPAUtils.getCUNoPPA(file3);

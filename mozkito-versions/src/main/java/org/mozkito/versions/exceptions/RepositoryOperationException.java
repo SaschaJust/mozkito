@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  **********************************************************************************************************************/
 
-package org.mozkito.exceptions;
+package org.mozkito.versions.exceptions;
 
 import net.ownhero.dev.ioda.JavaUtils;
 

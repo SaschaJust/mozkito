@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 
@@ -63,7 +63,7 @@ public class ChangeOperationsTest {
 		                                                                 7854);
 		final RCSTransaction rCSTransaction = new RCSTransaction("hash", "hubba hubba hopp!", new DateTime(),
 		                                                         new Person("kim", null, null), "143");
-		final RCSFile rcsFile = new RCSFile("org/mozkito/codeanalysis/model/TestClass.java", rCSTransaction);
+		final Handle rcsFile = new Handle("org/mozkito/codeanalysis/model/TestClass.java", rCSTransaction);
 		final JavaChangeOperation addAnonClassDefOp = new JavaChangeOperation(ChangeType.Added, anonymousClassLocation,
 		                                                                      new RCSRevision(rCSTransaction, rcsFile,
 		                                                                                      ChangeType.Added));

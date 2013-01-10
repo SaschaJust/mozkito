@@ -15,6 +15,7 @@ package org.mozkito.persistence;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -26,11 +27,12 @@ import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.RCSFileManager;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSBranch;
-import org.mozkito.versions.model.RCSFile;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class OpenJPA_RCS_MozkitoTest.
@@ -93,37 +95,45 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 */
 	@Test
 	public void testRCSRevision() {
+		
+		final VersionArchive versionArchive = new VersionArchive();
+		
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final Person person = new Person("just", null, null);
 		final RCSTransaction rCSTransaction = new RCSTransaction("0", "", new DateTime(), person, "");
-		final RCSFile rCSFile = new RCSFileManager().createFile("test.java", rCSTransaction);
-		final RCSRevision rCSRevision = new RCSRevision(rCSTransaction, rCSFile, ChangeType.Added);
+		final Handle handle = new Handle(versionArchive);
+		final RCSRevision revision = new RCSRevision(rCSTransaction, handle, ChangeType.Added);
+		handle.assignRevision(revision, "test.java");
 		
-		assertTrue(rCSTransaction.getRevisions().contains(rCSRevision));
+		assertTrue(rCSTransaction.getRevisions().contains(revision));
 		this.branchFactory.getMasterBranch().setHead(rCSTransaction);
 		getPersistenceUtil().beginTransaction();
 		getPersistenceUtil().save(rCSTransaction);
 		getPersistenceUtil().commitTransaction();
 		
-		assertTrue(rCSTransaction.getRevisions().contains(rCSRevision));
+		assertTrue(rCSTransaction.getRevisions().contains(revision));
 		
 		// revision
 		final List<RCSRevision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSRevision.class));
 		assertFalse(revisionList.isEmpty());
 		assertEquals(1, revisionList.size());
-		assertEquals(rCSRevision, revisionList.get(0));
+		assertEquals(revision, revisionList.get(0));
 		assertEquals(rCSTransaction, revisionList.get(0).getTransaction());
 		assertEquals(ChangeType.Added, revisionList.get(0).getChangeType());
-		assertEquals(rCSFile, revisionList.get(0).getChangedFile());
+		assertEquals(handle, revisionList.get(0).getChangedFile());
 		
 		// file
-		final List<RCSFile> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSFile.class));
+		final List<Handle> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Handle.class));
 		assertFalse(fileList.isEmpty());
 		assertEquals(1, fileList.size());
-		assertEquals(rCSFile, fileList.get(0));
+		assertEquals(handle, fileList.get(0));
 		assertFalse(fileList.get(0).getChangedNames().isEmpty());
 		assertEquals(1, fileList.get(0).getChangedNames().size());
-		assertEquals("test.java", fileList.get(0).getLatestPath());
+		try {
+			assertEquals("test.java", fileList.get(0).getLatestPath());
+		} catch (final NoSuchHandleException e) {
+			fail();
+		}
 		
 		// person
 		final List<Person> personList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Person.class));
@@ -153,14 +163,16 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 	 */
 	@Test
 	public void testSaveRCSFile() {
+		
+		final VersionArchive versionArchive = new VersionArchive();
+		
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
-		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", null, null);
 		final RCSTransaction rcsTransaction = new RCSTransaction("0", "", new DateTime(), person, "");
 		
-		final RCSFile rCSFile = fileManager.createFile("test.java", rcsTransaction);
-		rCSFile.assignTransaction(rcsTransaction, "formerTest.java");
-		final RCSRevision rCSRevision = new RCSRevision(rcsTransaction, rCSFile, ChangeType.Added);
+		final Handle handle = new Handle(versionArchive);
+		final RCSRevision revision = new RCSRevision(rcsTransaction, handle, ChangeType.Added);
+		handle.assignRevision(revision, "formerTest.java");
 		getPersistenceUtil().beginTransaction();
 		
 		this.branchFactory.getMasterBranch().setHead(rcsTransaction);
@@ -168,9 +180,9 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		getPersistenceUtil().saveOrUpdate(rcsTransaction);
 		getPersistenceUtil().commitTransaction();
 		
-		final List<RCSFile> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSFile.class));
+		final List<Handle> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Handle.class));
 		assertEquals(1, fileList.size());
-		assertEquals(rCSFile, fileList.get(0));
+		assertEquals(handle, fileList.get(0));
 		
 		final List<Person> personList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Person.class));
 		assertFalse(personList.isEmpty());
@@ -178,7 +190,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		final List<RCSRevision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSRevision.class));
 		assertEquals(1, revisionList.size());
-		assertEquals(rCSRevision, revisionList.get(0));
+		assertEquals(revision, revisionList.get(0));
 		
 		final List<RCSTransaction> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(RCSTransaction.class));
 		assertFalse(transactionList.isEmpty());

@@ -31,6 +31,7 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.settings.RepositoryOptions;
 import org.mozkito.versions.Repository;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class RepositoryToolchain.
@@ -132,8 +133,15 @@ public class RepositoryToolchain extends Chain<Settings> {
 		
 		this.repository = this.repositoryArguments.getValue();
 		
+		// TODO complete the VersionArchive Setup
+		
+		final VersionArchive versionArchive = new VersionArchive();
+		this.persistenceUtil.beginTransaction();
+		this.persistenceUtil.save(versionArchive);
+		this.persistenceUtil.commitTransaction();
+		
 		new RepositoryReader(this.threadPool.getThreadGroup(), getSettings(), this.repository);
-		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository);
+		new RepositoryParser(this.threadPool.getThreadGroup(), getSettings(), this.repository, versionArchive);
 		
 		if (this.persistenceUtil != null) {
 			new RepositoryPersister(this.threadPool.getThreadGroup(), getSettings(), this.persistenceUtil);

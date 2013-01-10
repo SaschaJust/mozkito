@@ -31,7 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.mozkito.mappings.mappable.FieldKey;
 import org.mozkito.mappings.messages.Messages;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -154,11 +154,11 @@ public class MappableTransaction extends MappableEntity {
 	 * @return the file
 	 */
 	@Transient
-	public RCSFile getFile(@NotNegative final int index) {
-		final Collection<RCSFile> changedFiles = getTransaction().getChangedFiles();
+	public Handle getFile(@NotNegative final int index) {
+		final Collection<Handle> changedFiles = getTransaction().getChangedFiles();
 		
 		if (changedFiles.size() > index) {
-			return (RCSFile) CollectionUtils.get(changedFiles, index);
+			return (Handle) CollectionUtils.get(changedFiles, index);
 		} else {
 			return null;
 		}

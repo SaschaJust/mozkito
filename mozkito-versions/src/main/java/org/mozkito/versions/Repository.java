@@ -23,7 +23,6 @@ import java.util.Map;
 import net.ownhero.dev.ioda.JavaUtils;
 import difflib.Delta;
 
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.versions.RevDependencyGraph.EdgeType;
@@ -31,6 +30,7 @@ import org.mozkito.versions.elements.AnnotationEntry;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.elements.LogIterator;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.mercurial.MercurialRepository;
 import org.mozkito.versions.model.RCSBranch;
 import org.mozkito.versions.model.RCSTransaction;

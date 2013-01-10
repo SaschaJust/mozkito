@@ -46,10 +46,10 @@ import net.ownhero.dev.kisa.Logger;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.openjpa.persistence.jdbc.Index;
 import org.joda.time.DateTime;
-
 import org.mozkito.persistence.Annotated;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.persistence.model.PersonContainer;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 
 /**
  * The Class Transaction.
@@ -279,8 +279,8 @@ public class RCSTransaction implements Annotated {
 	 * @return the changed files
 	 */
 	@Transient
-	public Collection<RCSFile> getChangedFiles() {
-		final List<RCSFile> changedFiles = new LinkedList<RCSFile>();
+	public Collection<Handle> getChangedFiles() {
+		final List<Handle> changedFiles = new LinkedList<Handle>();
 		for (final RCSRevision rCSRevision : getRevisions()) {
 			changedFiles.add(rCSRevision.getChangedFile());
 		}
@@ -305,6 +305,7 @@ public class RCSTransaction implements Annotated {
 	 * (non-Javadoc)
 	 * @see org.mozkito.persistence.Annotated#getHandle()
 	 */
+	@Override
 	public final String getHandle() {
 		return JavaUtils.getHandle(RCSTransaction.class);
 	}
@@ -392,9 +393,14 @@ public class RCSTransaction implements Annotated {
 		if (path.startsWith("/")) {
 			comparePath = path.substring(1);
 		}
-		for (final RCSRevision rCSRevision : getRevisions()) {
-			if (rCSRevision.getChangedFile().getPath(this).equals(comparePath)) {
-				return rCSRevision;
+		for (final RCSRevision revision : getRevisions()) {
+			try {
+				final String fileName = revision.getChangedFile().getPath(this);
+				if (fileName.equals(comparePath)) {
+					return revision;
+				}
+			} catch (final NoSuchHandleException e) {
+				// ignore
 			}
 		}
 		return null;

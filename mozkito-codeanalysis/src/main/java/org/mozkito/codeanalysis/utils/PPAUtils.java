@@ -75,12 +75,12 @@ import org.mozkito.codeanalysis.model.JavaMethodCall;
 import org.mozkito.codeanalysis.model.JavaMethodDefinition;
 import org.mozkito.codeanalysis.visitors.PPAMethodCallVisitor;
 import org.mozkito.codeanalysis.visitors.PPATypeVisitor;
-import org.mozkito.exceptions.RepositoryOperationException;
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.utils.DiffUtils;
 import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.exceptions.RepositoryOperationException;
 import org.mozkito.versions.model.RCSRevision;
 import org.mozkito.versions.model.RCSTransaction;
 

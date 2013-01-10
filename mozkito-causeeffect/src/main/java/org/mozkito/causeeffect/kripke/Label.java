@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 
 /**
  * Instances of this class represent labels used by Kripke structures to label the states.
@@ -39,7 +39,7 @@ public class Label {
 	 *            Content to be associated with the label.
 	 * @return Label associated with the given content.
 	 */
-	public static Label getLabel(final RCSFile content) {
+	public static Label getLabel(final Handle content) {
 		if (!Label.content2label.containsKey(content.toString())) {
 			Label.content2label.put(content.toString(), new Label(content));
 		}
@@ -55,7 +55,7 @@ public class Label {
 	 * @param content
 	 *            the content
 	 */
-	private Label(final RCSFile content) {
+	private Label(final Handle content) {
 		this.content = content.getGeneratedId();
 	}
 	

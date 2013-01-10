@@ -35,7 +35,7 @@ import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.RCSFile;
+import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.RCSTransaction;
 
 /**
@@ -188,7 +188,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			
 			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
-				for (final RCSFile rCSFile : c.getPremise()) {
+				for (final Handle rCSFile : c.getPremise()) {
 					final String fPath = rCSFile.getPath(this.rCSTransaction);
 					if (fPath.equals(path1) || fPath.equals(path2)) {
 						found = true;
