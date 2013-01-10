@@ -250,7 +250,6 @@ public class RCSFile implements Annotated, Serializable {
 	@Transient
 	public String getPath(final RCSTransaction transaction) {
 		
-		// TODO replace by using a RevDependencyGraph (see MOZKITO-29)
 		final FileNameTransactionIterator fileNameIter = new FileNameTransactionIterator(transaction);
 		while (fileNameIter.hasNext()) {
 			final RCSTransaction current = fileNameIter.next();
