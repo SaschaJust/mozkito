@@ -23,6 +23,7 @@ import net.ownhero.dev.hiari.settings.exceptions.UnrecoverableError;
 
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.Handle;
 
 /**
@@ -39,10 +40,10 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 	private final Handle      implication;
 	
 	/** The support. */
-	private final Integer      support;
+	private final Integer     support;
 	
 	/** The confidence. */
-	private final Double       confidence;
+	private final Double      confidence;
 	
 	/**
 	 * Instantiates a new file change coupling.
@@ -79,7 +80,7 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 		Handle rcsFile = persistenceUtil.loadById((long) implication, Handle.class);
 		
 		final Criteria<Handle> criteria = persistenceUtil.createCriteria(Handle.class).eq("generatedId",
-		                                                                                    (long) implication);
+		                                                                                  (long) implication);
 		final List<Handle> load = persistenceUtil.load(criteria);
 		rcsFile = load.get(0);
 		
@@ -115,7 +116,11 @@ public class FileChangeCoupling implements Comparable<FileChangeCoupling> {
 				} else if (getPremise().size() < o.getPremise().size()) {
 					return 1;
 				} else {
-					return getImplication().getLatestPath().compareTo(o.getImplication().getLatestPath());
+					try {
+						return getImplication().getLatestPath().compareTo(o.getImplication().getLatestPath());
+					} catch (final NoSuchHandleException e) {
+						throw new UnrecoverableError(e);
+					}
 				}
 			}
 		}

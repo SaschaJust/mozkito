@@ -13,18 +13,22 @@
 package org.mozkito.codeanalysis.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
 
 import org.jdom2.Element;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mozkito.persistence.ModelStorage;
 import org.mozkito.persistence.model.Person;
+import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.ChangeType;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class JavaChangeOperationTest.
@@ -32,7 +36,7 @@ import org.mozkito.versions.model.ChangeSet;
 public class JavaChangeOperationTest {
 	
 	/** The r cs transaction. */
-	private ChangeSet         rCSTransaction;
+	private ChangeSet              rCSTransaction;
 	
 	/** The anonymous class location. */
 	private JavaElementLocation    anonymousClassLocation;
@@ -41,7 +45,7 @@ public class JavaChangeOperationTest {
 	private JavaElementLocationSet set;
 	
 	/** The rcs file. */
-	private Handle                rcsFile;
+	private Handle                 rcsFile;
 	
 	/** The op. */
 	private JavaChangeOperation    op;
@@ -62,11 +66,39 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.rCSTransaction = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null,
-		                                                                                                 null), "143");
-		this.rcsFile = new Handle("org/mozkito/codeanalysis/model/TestClass.java", this.rCSTransaction);
-		this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-		                                  new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
+		this.rCSTransaction = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null, null),
+		                                    "143");
+		
+		final VersionArchive versionArchive = new VersionArchive() {
+			
+			/**
+             * 
+             */
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public ChangeSet getTransactionById(final String id) {
+				switch (id) {
+					case "hash":
+						return JavaChangeOperationTest.this.rCSTransaction;
+					default:
+						return null;
+				}
+			}
+		};
+		try {
+			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+			revDepGraph.addBranch("master", this.rCSTransaction.getId());
+			versionArchive.setRevDependencyGraph(revDepGraph);
+			
+			this.rcsFile = new Handle(versionArchive);
+			this.rcsFile.assignRevision(new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Modified),
+			                            "org/mozkito/codeanalysis/model/TestClass.java");
+			this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
+			                                  new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
+		} catch (final IOException e) {
+			fail();
+		}
 	}
 	
 	/**
@@ -84,14 +116,13 @@ public class JavaChangeOperationTest {
 	@Test
 	public void testXML() {
 		final Element xmlOp = this.op.getXMLRepresentation();
-		assertEquals(this.op,
-		             JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, ChangeSet>() {
-			             
-			             @Override
-			             public ChangeSet getById(final String id) {
-				             return JavaChangeOperationTest.this.rCSTransaction;
-			             }
-		             }, this.elementFactory));
+		assertEquals(this.op, JavaChangeOperation.fromXMLRepresentation(xmlOp, new ModelStorage<String, ChangeSet>() {
+			
+			@Override
+			public ChangeSet getById(final String id) {
+				return JavaChangeOperationTest.this.rCSTransaction;
+			}
+		}, this.elementFactory));
 	}
 	
 }

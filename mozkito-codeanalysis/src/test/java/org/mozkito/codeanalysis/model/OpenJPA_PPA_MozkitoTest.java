@@ -13,24 +13,26 @@
 package org.mozkito.codeanalysis.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
+import org.mozkito.versions.RevDependencyGraph;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.RCSFileManager;
 import org.mozkito.versions.model.Branch;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class OpenJPA_PPA_MozkitoTest.
@@ -54,20 +56,49 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		final Branch masterBranch = branchFactory.getMasterBranch();
 		
 		final ChangeSet rCSTransaction = new ChangeSet("1", "", now, p, "1");
-		masterBranch.setHead(rCSTransaction);
 		
-		final Handle rCSFile = new RCSFileManager().createFile("a.java", rCSTransaction);
-		final Revision rev = new Revision(rCSTransaction, rCSFile, ChangeType.Added);
-		final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-		getPersistenceUtil().save(rCSTransaction);
-		getPersistenceUtil().save(op);
-		getPersistenceUtil().commitTransaction();
-		getPersistenceUtil().beginTransaction();
+		final VersionArchive versionArchive = new VersionArchive() {
+			
+			/**
+             * 
+             */
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public ChangeSet getTransactionById(final String id) {
+				switch (id) {
+					case "1":
+						return rCSTransaction;
+					default:
+						return null;
+				}
+			}
+		};
 		
-		final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
-		final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
-		assertEquals(1, list.size());
-		getPersistenceUtil().commitTransaction();
+		try {
+			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+			revDepGraph.addBranch(masterBranch.getName(), rCSTransaction.getId());
+			versionArchive.setRevDependencyGraph(revDepGraph);
+			
+			masterBranch.setHead(rCSTransaction);
+			
+			final Handle rCSFile = new Handle(versionArchive);
+			rCSFile.assignRevision(new Revision(rCSTransaction, rCSFile, ChangeType.Added), "a.java");
+			
+			final Revision rev = new Revision(rCSTransaction, rCSFile, ChangeType.Added);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
+			getPersistenceUtil().save(rCSTransaction);
+			getPersistenceUtil().save(op);
+			getPersistenceUtil().commitTransaction();
+			getPersistenceUtil().beginTransaction();
+			
+			final Criteria<JavaChangeOperation> criteria = getPersistenceUtil().createCriteria(JavaChangeOperation.class);
+			final List<JavaChangeOperation> list = getPersistenceUtil().load(criteria);
+			assertEquals(1, list.size());
+			getPersistenceUtil().commitTransaction();
+		} catch (final IOException e) {
+			fail();
+		}
 	}
 	
 	/**

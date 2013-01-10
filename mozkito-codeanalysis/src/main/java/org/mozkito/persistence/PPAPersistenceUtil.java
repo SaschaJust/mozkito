@@ -34,11 +34,11 @@ import net.ownhero.dev.kisa.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.versions.model.Revision;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Revision;
 
 /**
  * The Class PPAPersistenceUtil.
@@ -102,27 +102,35 @@ public class PPAPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction
 	 * @return the change operation no test
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperationNoTest(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                       @NotNull final ChangeSet rCSTransaction) {
+	                                                                       @NotNull final ChangeSet changeSet) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Loading change operations (without tests) for transaction " + rCSTransaction.getId()
+			Logger.debug("Loading change operations (without tests) for transaction " + changeSet.getId()
 			        + " from database.");
 		}
 		
-		for (final Revision rCSRevision : rCSTransaction.getRevisions()) {
-			final String changedPath = rCSRevision.getChangedFile().getPath(rCSTransaction);
-			if (changedPath.toLowerCase().contains("test")) {
-				continue;
+		for (final Revision revision : changeSet.getRevisions()) {
+			try {
+				final String changedPath = revision.getChangedFile().getPath(changeSet);
+				
+				if (changedPath.toLowerCase().contains("test")) {
+					continue;
+				}
+				final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
+				criteria.eq("revision", revision);
+				result.addAll(persistenceUtil.load(criteria));
+			} catch (final NoSuchHandleException e) {
+				if (Logger.logWarn()) {
+					Logger.warn("Could not determine path name for Handle %s in ChangeSet %s.",
+					            revision.getChangedFile().toString(), changeSet.toString());
+				}
 			}
-			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			criteria.eq("revision", rCSRevision);
-			result.addAll(persistenceUtil.load(criteria));
 		}
 		return result;
 	}
@@ -162,7 +170,7 @@ public class PPAPersistenceUtil {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static ChangeSet getFirstTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                 @NotNull final JavaElement element) {
+	                                                            @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final StringBuilder query = new StringBuilder();
 		query.append("select * from firstElementChange(");
@@ -226,7 +234,7 @@ public class PPAPersistenceUtil {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                  @NotNull final JavaElement element) {
+	                                                             @NotNull final JavaElement element) {
 		updateProcedures(persistenceUtil);
 		final List<ChangeSet> result = new LinkedList<ChangeSet>();
 		final StringBuilder query = new StringBuilder();
@@ -260,9 +268,9 @@ public class PPAPersistenceUtil {
 	@SuppressWarnings ("unchecked")
 	@NoneNull
 	public static List<ChangeSet> getTransactionsChangingElement(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                  @NotNull final JavaElement element,
-	                                                                  @NotNull final DateTime before,
-	                                                                  @NotNull final DateTime after) {
+	                                                             @NotNull final JavaElement element,
+	                                                             @NotNull final DateTime before,
+	                                                             @NotNull final DateTime after) {
 		updateProcedures(persistenceUtil);
 		final List<ChangeSet> result = new LinkedList<ChangeSet>();
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");

@@ -14,6 +14,7 @@ package org.mozkito.changecouplings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -33,11 +34,13 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
+import org.mozkito.versions.RevDependencyGraph;
+import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
-import org.mozkito.versions.elements.RCSFileManager;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.VersionArchive;
 
 /**
  * The Class ChangeCouplingRuleFactoryTest.
@@ -101,126 +104,153 @@ public class ChangeCouplingRuleFactory_PostgresTest extends DatabaseTest {
 	public void testChangeCouplings() {
 		
 		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.beginTransaction();
-		
-		final RCSFileManager fileManager = new RCSFileManager();
 		final Person person = new Person("kim", "", "");
-		
-		// ###transaction 1
-		
 		final DateTime now = new DateTime();
-		final ChangeSet rcsTransaction = new ChangeSet("0", "", now, person, "");
-		final Handle fileA = fileManager.createFile("A.java", rcsTransaction);
-		fileA.assignTransaction(rcsTransaction, "A.java");
-		new Revision(rcsTransaction, fileA, ChangeType.Added);
+		final ChangeSet cs0 = new ChangeSet("0", "", now, person, "");
+		final ChangeSet cs1 = new ChangeSet("1", "", now.plus(10000), person, "");
+		final ChangeSet cs2 = new ChangeSet("2", "", now.plus(20000), person, "");
+		final ChangeSet cs3 = new ChangeSet("3", "", now.plus(30000), person, "");
 		
-		final Handle fileB = fileManager.createFile("B.java", rcsTransaction);
-		fileB.assignTransaction(rcsTransaction, "B.java");
-		new Revision(rcsTransaction, fileB, ChangeType.Added);
-		
-		final Handle fileC = fileManager.createFile("C.java", rcsTransaction);
-		fileC.assignTransaction(rcsTransaction, "C.java");
-		new Revision(rcsTransaction, fileC, ChangeType.Added);
-		
-		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction);
-		
-		// ### transaction 2
-		
-		final ChangeSet rcsTransaction2 = new ChangeSet("1", "", now.plus(10000), person, "");
-		new Revision(rcsTransaction2, fileA, ChangeType.Modified);
-		new Revision(rcsTransaction2, fileB, ChangeType.Added);
-		final Handle fileD = fileManager.createFile("D.java", rcsTransaction);
-		// fileC.assignTransaction(rcsTransaction2, "D.java");
-		new Revision(rcsTransaction2, fileD, ChangeType.Added);
-		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction2);
-		
-		// ### transaction 3
-		
-		final ChangeSet rcsTransaction3 = new ChangeSet("2", "", now.plus(20000), person, "");
-		new Revision(rcsTransaction3, fileA, ChangeType.Modified);
-		
-		fileC.assignTransaction(rcsTransaction3, "C.java");
-		new Revision(rcsTransaction3, fileC, ChangeType.Modified);
-		new Revision(rcsTransaction3, fileB, ChangeType.Added);
-		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction3);
-		
-		// ### transaction 4
-		
-		final ChangeSet rcsTransaction4 = new ChangeSet("3", "", now.plus(30000), person, "");
-		new Revision(rcsTransaction4, fileA, ChangeType.Modified);
-		new Revision(rcsTransaction4, fileC, ChangeType.Modified);
-		new Revision(rcsTransaction4, fileB, ChangeType.Modified);
-		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(rcsTransaction4);
-		
-		ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();
-		
-		final List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(rcsTransaction3,
-		                                                                                                      1,
-		                                                                                                      0,
-		                                                                                                      ChangeCouplingRuleFactory_PostgresTest.persistenceUtil);
-		assertEquals(9, changeCouplingRules.size());
-		FileChangeCoupling rule = changeCouplingRules.get(0);
-		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileB));
-		assertEquals(fileA, rule.getImplication());
-		assertEquals(2, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(1);
-		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileA));
-		assertEquals(fileB, rule.getImplication());
-		assertEquals(2, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(2);
-		assertEquals(2, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileC));
-		assertTrue(rule.getPremise().contains(fileB));
-		assertEquals(fileA, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(3);
-		assertEquals(2, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileA));
-		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileB, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(4);
-		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileA, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(5);
-		assertEquals(1, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileC));
-		assertEquals(fileB, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(1, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(6);
-		assertEquals(2, rule.getPremise().size());
-		assertTrue(rule.getPremise().contains(fileA));
-		assertTrue(rule.getPremise().contains(fileB));
-		assertEquals(fileC, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(0.5, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(7);
-		assertEquals(1, rule.getPremise().size());
-		assertEquals(fileC, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(.5, rule.getConfidence().doubleValue(), 0);
-		
-		rule = changeCouplingRules.get(8);
-		assertEquals(1, rule.getPremise().size());
-		assertEquals(fileC, rule.getImplication());
-		assertEquals(1, rule.getSupport().intValue());
-		assertEquals(.5, rule.getConfidence().doubleValue(), 0);
+		final VersionArchive versionArchive = new VersionArchive() {
+			
+			/**
+             * 
+             */
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public ChangeSet getTransactionById(final String id) {
+				switch (id) {
+					case "0":
+						return cs0;
+					case "1":
+						return cs1;
+					case "2":
+						return cs2;
+					case "3":
+						return cs3;
+					default:
+						return null;
+				}
+			}
+		};
+		try {
+			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
+			revDepGraph.addBranch("master", cs3.getId());
+			revDepGraph.addEdge(cs2.getId(), cs3.getId(), EdgeType.BRANCH_HEAD);
+			revDepGraph.addEdge(cs1.getId(), cs2.getId(), EdgeType.BRANCH_HEAD);
+			revDepGraph.addEdge(cs0.getId(), cs1.getId(), EdgeType.BRANCH_HEAD);
+			versionArchive.setRevDependencyGraph(revDepGraph);
+			
+			// ###transaction 1
+			
+			final Handle fileA = new Handle(versionArchive);
+			fileA.assignRevision(new Revision(cs0, fileA, ChangeType.Added), "A.java");
+			
+			final Handle fileB = new Handle(versionArchive);
+			fileB.assignRevision(new Revision(cs0, fileB, ChangeType.Added), "B.java");
+			
+			final Handle fileC = new Handle(versionArchive);
+			fileC.assignRevision(new Revision(cs0, fileC, ChangeType.Added), "C.java");
+			
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs0);
+			
+			// ### transaction 2
+			
+			new Revision(cs1, fileA, ChangeType.Modified);
+			new Revision(cs1, fileB, ChangeType.Added);
+			
+			final Handle fileD = new Handle(versionArchive);
+			fileD.assignRevision(new Revision(cs1, fileD, ChangeType.Added), "D.java");
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs1);
+			
+			// ### transaction 3
+			
+			new Revision(cs2, fileA, ChangeType.Modified);
+			new Revision(cs2, fileC, ChangeType.Modified);
+			new Revision(cs2, fileB, ChangeType.Added);
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs2);
+			
+			// ### transaction 4
+			
+			new Revision(cs3, fileA, ChangeType.Modified);
+			new Revision(cs3, fileC, ChangeType.Modified);
+			new Revision(cs3, fileB, ChangeType.Modified);
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.saveOrUpdate(cs3);
+			
+			ChangeCouplingRuleFactory_PostgresTest.persistenceUtil.commitTransaction();
+			
+			final List<FileChangeCoupling> changeCouplingRules = ChangeCouplingRuleFactory.getFileChangeCouplings(cs2,
+			                                                                                                      1,
+			                                                                                                      0,
+			                                                                                                      ChangeCouplingRuleFactory_PostgresTest.persistenceUtil);
+			assertEquals(9, changeCouplingRules.size());
+			FileChangeCoupling rule = changeCouplingRules.get(0);
+			assertEquals(1, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileB));
+			assertEquals(fileA, rule.getImplication());
+			assertEquals(2, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(1);
+			assertEquals(1, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileA));
+			assertEquals(fileB, rule.getImplication());
+			assertEquals(2, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(2);
+			assertEquals(2, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileC));
+			assertTrue(rule.getPremise().contains(fileB));
+			assertEquals(fileA, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(3);
+			assertEquals(2, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileA));
+			assertTrue(rule.getPremise().contains(fileC));
+			assertEquals(fileB, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(4);
+			assertEquals(1, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileC));
+			assertEquals(fileA, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(5);
+			assertEquals(1, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileC));
+			assertEquals(fileB, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(1, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(6);
+			assertEquals(2, rule.getPremise().size());
+			assertTrue(rule.getPremise().contains(fileA));
+			assertTrue(rule.getPremise().contains(fileB));
+			assertEquals(fileC, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(0.5, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(7);
+			assertEquals(1, rule.getPremise().size());
+			assertEquals(fileC, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(.5, rule.getConfidence().doubleValue(), 0);
+			
+			rule = changeCouplingRules.get(8);
+			assertEquals(1, rule.getPremise().size());
+			assertEquals(fileC, rule.getImplication());
+			assertEquals(1, rule.getSupport().intValue());
+			assertEquals(.5, rule.getConfidence().doubleValue(), 0);
+		} catch (final IOException e) {
+			fail();
+		}
 		
 	}
 }

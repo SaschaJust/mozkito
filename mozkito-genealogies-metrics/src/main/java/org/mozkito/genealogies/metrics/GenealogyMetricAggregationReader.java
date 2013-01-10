@@ -26,8 +26,9 @@ import net.ownhero.dev.hiari.settings.Settings;
 import net.ownhero.dev.kisa.Logger;
 
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Handle;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class GenealogyMetricAggregationReader.
@@ -87,9 +88,16 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 						
 						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
 							for (final Handle rCSFile : changedFiles) {
-								output.add(new GenealogyMetricValue(metricSet.getKey(),
-								                                    rCSFile.getPath(rCSTransaction),
-								                                    metricSet.getValue()));
+								try {
+									output.add(new GenealogyMetricValue(metricSet.getKey(),
+									                                    rCSFile.getPath(rCSTransaction),
+									                                    metricSet.getValue()));
+								} catch (final NoSuchHandleException e) {
+									if (Logger.logError()) {
+										Logger.error("Could not determine path name for file %s in ChangeSet %s. Skipping output. Output in corresponding CSV file is likely to be incomplete.",
+										             rCSFile.toString(), rCSTransaction.toString());
+									}
+								}
 							}
 						}
 						GenealogyMetricAggregationReader.this.outputIter = output.iterator();

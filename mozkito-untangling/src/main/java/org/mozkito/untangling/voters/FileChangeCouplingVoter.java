@@ -35,8 +35,9 @@ import org.mozkito.changecouplings.model.SerialFileChangeCoupling;
 import org.mozkito.clustering.MultilevelClusteringScoreVisitor;
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.persistence.PersistenceUtil;
-import org.mozkito.versions.model.Handle;
+import org.mozkito.versions.exceptions.NoSuchHandleException;
 import org.mozkito.versions.model.ChangeSet;
+import org.mozkito.versions.model.Handle;
 
 /**
  * The Class ChangeCouplingVoter.
@@ -49,7 +50,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final ChangeSet           rCSTransaction;
+	private final ChangeSet                rCSTransaction;
 	
 	/** The min support. */
 	private final int                      minSupport;
@@ -189,16 +190,30 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			for (final FileChangeCoupling c : this.couplings) {
 				boolean found = false;
 				for (final Handle rCSFile : c.getPremise()) {
-					final String fPath = rCSFile.getPath(this.rCSTransaction);
-					if (fPath.equals(path1) || fPath.equals(path2)) {
-						found = true;
-						break;
+					try {
+						final String fPath = rCSFile.getPath(this.rCSTransaction);
+						if (fPath.equals(path1) || fPath.equals(path2)) {
+							found = true;
+							break;
+						}
+					} catch (final NoSuchHandleException e) {
+						if (Logger.logError()) {
+							Logger.error("Could not determine file name of %s as of %s.", rCSFile.toString(),
+							             this.rCSTransaction);
+						}
 					}
 				}
 				
-				final String iPath = c.getImplication().getPath(this.rCSTransaction);
-				if (found && (iPath.equals(path1) || iPath.equals(path2))) {
-					currentCouplings.add(c);
+				try {
+					final String iPath = c.getImplication().getPath(this.rCSTransaction);
+					if (found && (iPath.equals(path1) || iPath.equals(path2))) {
+						currentCouplings.add(c);
+					}
+				} catch (final NoSuchHandleException e) {
+					if (Logger.logError()) {
+						Logger.error("Could not determine file name of %s as of %s.", c.getImplication().toString(),
+						             this.rCSTransaction);
+					}
 				}
 			}
 			
