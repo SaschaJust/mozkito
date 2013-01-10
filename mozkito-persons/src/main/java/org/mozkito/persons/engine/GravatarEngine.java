@@ -130,7 +130,8 @@ public class GravatarEngine extends MergingEngine {
 		 * 
 		 * @return the data
 		 */
-		public final byte[] getData() {
+		@SuppressWarnings ("unused")
+		public byte[] getData() {
 			// PRECONDITIONS
 			
 			try {
@@ -146,7 +147,8 @@ public class GravatarEngine extends MergingEngine {
 		 * 
 		 * @return the email
 		 */
-		public final String getEmail() {
+		@SuppressWarnings ("unused")
+		public String getEmail() {
 			// PRECONDITIONS
 			
 			try {
@@ -162,7 +164,8 @@ public class GravatarEngine extends MergingEngine {
 		 * 
 		 * @return the size
 		 */
-		public final int getSize() {
+		@SuppressWarnings ("unused")
+		public int getSize() {
 			// PRECONDITIONS
 			
 			try {
