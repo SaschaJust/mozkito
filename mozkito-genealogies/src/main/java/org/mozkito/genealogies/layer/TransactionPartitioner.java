@@ -38,11 +38,11 @@ public class TransactionPartitioner implements
 	public Collection<PartitionChangeGenealogyNode> partition(final Collection<JavaChangeOperation> input) {
 		final Map<ChangeSet, Collection<JavaChangeOperation>> map = new HashMap<ChangeSet, Collection<JavaChangeOperation>>();
 		for (final JavaChangeOperation operation : input) {
-			final ChangeSet rCSTransaction = operation.getRevision().getTransaction();
-			if (!map.containsKey(rCSTransaction)) {
-				map.put(rCSTransaction, new HashSet<JavaChangeOperation>());
+			final ChangeSet changeSet = operation.getRevision().getTransaction();
+			if (!map.containsKey(changeSet)) {
+				map.put(changeSet, new HashSet<JavaChangeOperation>());
 			}
-			map.get(rCSTransaction).add(operation);
+			map.get(changeSet).add(operation);
 		}
 		
 		final Set<PartitionChangeGenealogyNode> result = new HashSet<>();

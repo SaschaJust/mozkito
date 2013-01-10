@@ -253,9 +253,9 @@ public class UntanglingOptions extends
 								            line);
 							}
 						}
-						final ChangeSet rCSTransaction = persistenceUtil.loadById(lineParts[0],
+						final ChangeSet changeset = persistenceUtil.loadById(lineParts[0],
 						                                                               ChangeSet.class);
-						if (rCSTransaction == null) {
+						if (changeset == null) {
 							if (Logger.logWarn()) {
 								Logger.warn("Could not find change set with ID %s. Ignoring corresponding line in change set file.",
 								            lineParts[0]);
@@ -264,9 +264,9 @@ public class UntanglingOptions extends
 						}
 						instructions.add(new UntangleInstruction(
 						                                         new ChangeOperationSet(
-						                                                       rCSTransaction,
+						                                                       changeset,
 						                                                       PPAPersistenceUtil.getChangeOperation(persistenceUtil,
-						                                                                                             rCSTransaction)),
+						                                                                                             changeset)),
 						                                         Double.valueOf(lineParts[1])));
 					}
 				} catch (final NumberFormatException | IOException e) {

@@ -27,11 +27,11 @@ public abstract class MultilevelClusteringScoreVisitorFactory<T extends Multilev
 	/**
 	 * Creates a new MultilevelClusteringScoreVisitor object.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the r cs transaction
 	 * @return the t
 	 */
-	public abstract T createVoter(final ChangeSet rCSTransaction);
+	public abstract T createVoter(final ChangeSet changeset);
 	
 	/**
 	 * Gets the voter name.

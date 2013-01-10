@@ -63,24 +63,24 @@ public class ChangeOperationGenerator {
 	/**
 	 * Handle transactions and generate ChangeOperations.
 	 * 
-	 * @param rCSTransactions
+	 * @param changeSets
 	 *            the transactions
 	 */
-	public void handleTransactions(final List<ChangeSet> rCSTransactions) {
-		final int size = rCSTransactions.size();
+	public void handleTransactions(final List<ChangeSet> changeSets) {
+		final int size = changeSets.size();
 		int counter = 0;
-		for (final ChangeSet rCSTransaction : rCSTransactions) {
+		for (final ChangeSet changeSet : changeSets) {
 			
 			for (final ChangeOperationVisitor visitor : this.visitors) {
-				visitor.visit(rCSTransaction);
+				visitor.visit(changeSet);
 			}
 			
 			if (Logger.logInfo()) {
-				Logger.info("Computing change operations for transaction `" + rCSTransaction.getId() + "` ("
+				Logger.info("Computing change operations for transaction `" + changeSet.getId() + "` ("
 				        + (++counter) + "/" + size + ")");
 			}
 			
-			PPAUtils.generateChangeOperations(this.repo, rCSTransaction, this.visitors, this.elementFactory,
+			PPAUtils.generateChangeOperations(this.repo, changeSet, this.visitors, this.elementFactory,
 			                                  this.packageFilter);
 		}
 		for (final ChangeOperationVisitor visitor : this.visitors) {

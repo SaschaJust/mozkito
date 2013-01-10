@@ -100,25 +100,25 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final Person person = new Person("just", null, null);
-		final ChangeSet rCSTransaction = new ChangeSet("0", "", new DateTime(), person, "");
+		final ChangeSet changeset = new ChangeSet("0", "", new DateTime(), person, "");
 		final Handle handle = new Handle(versionArchive);
-		final Revision revision = new Revision(rCSTransaction, handle, ChangeType.Added);
+		final Revision revision = new Revision(changeset, handle, ChangeType.Added);
 		handle.assignRevision(revision, "test.java");
 		
-		assertTrue(rCSTransaction.getRevisions().contains(revision));
-		this.branchFactory.getMasterBranch().setHead(rCSTransaction);
+		assertTrue(changeset.getRevisions().contains(revision));
+		this.branchFactory.getMasterBranch().setHead(changeset);
 		getPersistenceUtil().beginTransaction();
-		getPersistenceUtil().save(rCSTransaction);
+		getPersistenceUtil().save(changeset);
 		getPersistenceUtil().commitTransaction();
 		
-		assertTrue(rCSTransaction.getRevisions().contains(revision));
+		assertTrue(changeset.getRevisions().contains(revision));
 		
 		// revision
 		final List<Revision> revisionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Revision.class));
 		assertFalse(revisionList.isEmpty());
 		assertEquals(1, revisionList.size());
 		assertEquals(revision, revisionList.get(0));
-		assertEquals(rCSTransaction, revisionList.get(0).getTransaction());
+		assertEquals(changeset, revisionList.get(0).getTransaction());
 		assertEquals(ChangeType.Added, revisionList.get(0).getChangeType());
 		assertEquals(handle, revisionList.get(0).getChangedFile());
 		
@@ -152,7 +152,7 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		final List<ChangeSet> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(ChangeSet.class));
 		assertFalse(transactionList.isEmpty());
 		assertEquals(1, transactionList.size());
-		assertEquals(rCSTransaction, transactionList.get(0));
+		assertEquals(changeset, transactionList.get(0));
 		assertEquals(person, transactionList.get(0).getAuthor());
 		assertFalse(transactionList.get(0).getRevisions().isEmpty());
 		assertEquals(1, transactionList.get(0).getRevisions().size());
@@ -168,16 +168,16 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		this.branchFactory = new BranchFactory(getPersistenceUtil());
 		final Person person = new Person("kim", null, null);
-		final ChangeSet rcsTransaction = new ChangeSet("0", "", new DateTime(), person, "");
+		final ChangeSet changeset = new ChangeSet("0", "", new DateTime(), person, "");
 		
 		final Handle handle = new Handle(versionArchive);
-		final Revision revision = new Revision(rcsTransaction, handle, ChangeType.Added);
+		final Revision revision = new Revision(changeset, handle, ChangeType.Added);
 		handle.assignRevision(revision, "formerTest.java");
 		getPersistenceUtil().beginTransaction();
 		
-		this.branchFactory.getMasterBranch().setHead(rcsTransaction);
+		this.branchFactory.getMasterBranch().setHead(changeset);
 		
-		getPersistenceUtil().saveOrUpdate(rcsTransaction);
+		getPersistenceUtil().saveOrUpdate(changeset);
 		getPersistenceUtil().commitTransaction();
 		
 		final List<Handle> fileList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(Handle.class));
@@ -194,6 +194,6 @@ public class OpenJPA_PersistenceTest extends DatabaseTest {
 		
 		final List<ChangeSet> transactionList = getPersistenceUtil().load(getPersistenceUtil().createCriteria(ChangeSet.class));
 		assertFalse(transactionList.isEmpty());
-		assertTrue(transactionList.contains(rcsTransaction));
+		assertTrue(transactionList.contains(changeset));
 	}
 }

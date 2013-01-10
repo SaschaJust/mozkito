@@ -158,14 +158,14 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		}
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(7);
 		
-		final ChangeSet rCSTransaction = item.getNode();
-		final String nodeId = this.genealogy.getNodeId(rCSTransaction);
+		final ChangeSet changeset = item.getNode();
+		final String nodeId = this.genealogy.getNodeId(changeset);
 		
 		final DescriptiveStatistics dependantStats = new DescriptiveStatistics();
 		final DescriptiveStatistics parentStats = new DescriptiveStatistics();
 		
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-		                                                                                               rCSTransaction);
+		                                                                                               changeset);
 		
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANGE_SIZE, nodeId,
 		                                          changeOperations.size()));
@@ -268,7 +268,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		metricValues.add(new GenealogyMetricValue(TransactionChangeSizeMetrics.CHANEGED_BLOCKS, nodeId,
 		                                          numChangedLineBlocks));
 		
-		for (final ChangeSet dependant : this.genealogy.getAllDependants(rCSTransaction)) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependants(changeset)) {
 			// ignore test and non java files.
 			dependantStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, dependant).size());
 		}
@@ -286,7 +286,7 @@ public class TransactionChangeSizeMetrics extends GenealogyTransactionMetric {
 		                                                                     ? 0
 		                                                                     : dependantStats.getSum()));
 		
-		for (final ChangeSet parent : this.genealogy.getAllParents(rCSTransaction)) {
+		for (final ChangeSet parent : this.genealogy.getAllParents(changeset)) {
 			// ignore test and non java files.
 			parentStats.addValue(PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, parent).size());
 		}

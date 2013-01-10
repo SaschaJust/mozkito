@@ -79,18 +79,18 @@ public class TransactionAuthorMetrics extends GenealogyTransactionMetric {
 		}
 		final Collection<GenealogyMetricValue> metricValues = new ArrayList<GenealogyMetricValue>(2);
 		
-		final ChangeSet rCSTransaction = item.getNode();
-		final String nodeId = this.genealogy.getNodeId(rCSTransaction);
+		final ChangeSet changeSet = item.getNode();
+		final String nodeId = this.genealogy.getNodeId(changeSet);
 		
 		final Set<Long> depAuthors = new HashSet<Long>();
-		for (final ChangeSet dependant : this.genealogy.getAllDependants(rCSTransaction)) {
+		for (final ChangeSet dependant : this.genealogy.getAllDependants(changeSet)) {
 			depAuthors.add(dependant.getPersons().getGeneratedId());
 		}
 		
 		metricValues.add(new GenealogyMetricValue(TransactionAuthorMetrics.NUM_DEP_AUTHORS, nodeId, depAuthors.size()));
 		
 		final Set<Long> parentAuthors = new HashSet<Long>();
-		for (final ChangeSet parent : this.genealogy.getAllParents(rCSTransaction)) {
+		for (final ChangeSet parent : this.genealogy.getAllParents(changeSet)) {
 			parentAuthors.add(parent.getPersons().getGeneratedId());
 		}
 		

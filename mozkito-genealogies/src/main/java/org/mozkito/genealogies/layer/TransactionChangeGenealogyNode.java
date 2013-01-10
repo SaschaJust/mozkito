@@ -15,7 +15,6 @@ package org.mozkito.genealogies.layer;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
-
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -27,20 +26,20 @@ import org.mozkito.versions.model.ChangeSet;
 public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode {
 	
 	/** The r cs transaction. */
-	private final ChangeSet rCSTransaction;
+	private final ChangeSet changeSet;
 	
 	/**
 	 * Instantiates a new transaction change genealogy node.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 * @param partition
 	 *            the partition
 	 */
-	public TransactionChangeGenealogyNode(final ChangeSet rCSTransaction,
+	public TransactionChangeGenealogyNode(final ChangeSet changeSet,
 	        final Collection<JavaChangeOperation> partition) {
-		super(rCSTransaction.getId(), partition);
-		this.rCSTransaction = rCSTransaction;
+		super(changeSet.getId(), partition);
+		this.changeSet = changeSet;
 	}
 	
 	/*
@@ -49,7 +48,7 @@ public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode
 	 */
 	@Override
 	public DateTime getEarliestTimestamp() {
-		return this.rCSTransaction.getTimestamp();
+		return this.changeSet.getTimestamp();
 	}
 	
 	/*
@@ -58,6 +57,6 @@ public class TransactionChangeGenealogyNode extends PartitionChangeGenealogyNode
 	 */
 	@Override
 	public DateTime getLatestTimestamp() {
-		return this.rCSTransaction.getTimestamp();
+		return this.changeSet.getTimestamp();
 	}
 }

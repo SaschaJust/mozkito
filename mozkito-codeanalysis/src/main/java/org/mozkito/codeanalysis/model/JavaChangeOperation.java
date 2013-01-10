@@ -97,11 +97,11 @@ public class JavaChangeOperation implements Annotated {
 		
 		String changedPath = location.getFilePath();
 		
-		final ChangeSet rCSTransaction = transactionStorage.getById(transaction_id);
+		final ChangeSet changeSet = transactionStorage.getById(transaction_id);
 		if (!changedPath.startsWith("/")) {
 			changedPath = "/" + changedPath;
 		}
-		rCSRevision = rCSTransaction.getRevisionForPath(changedPath);
+		rCSRevision = changeSet.getRevisionForPath(changedPath);
 		
 		if (rCSRevision == null) {
 			if (Logger.logWarn()) {

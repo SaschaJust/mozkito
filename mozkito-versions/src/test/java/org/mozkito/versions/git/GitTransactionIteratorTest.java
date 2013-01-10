@@ -74,15 +74,15 @@ public class GitTransactionIteratorTest extends VersionsTest {
 		
 		while (log.hasNext()) {
 			final LogEntry logEntry = log.next();
-			final ChangeSet rcsTransaction = new ChangeSet(logEntry.getRevision(), logEntry.getMessage(),
+			final ChangeSet changeset = new ChangeSet(logEntry.getRevision(), logEntry.getMessage(),
 			                                                         logEntry.getDateTime(), logEntry.getAuthor(),
 			                                                         logEntry.getOriginalId());
-			this.transactionMap.put(logEntry.getRevision(), rcsTransaction);
+			this.transactionMap.put(logEntry.getRevision(), changeset);
 		}
 		
 		final RevDependencyGraph revDepGraph = this.repo.getRevDependencyGraph();
-		for (final ChangeSet rcsTransaction : this.transactionMap.values()) {
-			final String hash = rcsTransaction.getId();
+		for (final ChangeSet changeset : this.transactionMap.values()) {
+			final String hash = changeset.getId();
 			
 			if (!revDepGraph.existsVertex(hash)) {
 				throw new UnrecoverableError("RevDependencyGraph does not contain transaction " + hash);
@@ -92,25 +92,25 @@ public class GitTransactionIteratorTest extends VersionsTest {
 			final String branchParentHash = revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
 				final ChangeSet branchParent = this.transactionMap.get(branchParentHash);
-				rcsTransaction.setBranchParent(branchParent);
+				changeset.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
 				final ChangeSet mergeParent = this.transactionMap.get(mergeParentHash);
-				rcsTransaction.setMergeParent(mergeParent);
+				changeset.setMergeParent(mergeParent);
 			}
 			
 			// set tags
 			final Set<String> tags = revDepGraph.getTags(hash);
 			if (tags != null) {
-				rcsTransaction.addAllTags(tags);
+				changeset.addAllTags(tags);
 			}
 			
 			// persist branches
 			final String branchName = revDepGraph.isBranchHead(hash);
 			if (branchName != null) {
 				final Branch rCSBranch = this.repo.getBranchFactory().getBranch(branchName);
-				rCSBranch.setHead(rcsTransaction);
+				rCSBranch.setHead(changeset);
 				this.branchMap.put(branchName, rCSBranch);
 			}
 		}

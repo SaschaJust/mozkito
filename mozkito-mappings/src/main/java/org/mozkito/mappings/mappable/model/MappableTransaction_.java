@@ -25,5 +25,5 @@ import org.mozkito.versions.model.ChangeSet;
 public class MappableTransaction_ extends MappableEntity_ {
 	
 	/** The transaction. */
-	public static volatile SingularAttribute<MappableTransaction, ChangeSet> rCSTransaction;
+	public static volatile SingularAttribute<MappableTransaction, ChangeSet> changeset;
 }

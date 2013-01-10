@@ -49,7 +49,7 @@ public class MappableTransaction extends MappableEntity {
 	private static final long serialVersionUID = 3493346151115096823L;
 	
 	/** The transaction. */
-	private ChangeSet    rCSTransaction;
+	private ChangeSet    changeset;
 	
 	/**
 	 * Instantiates a new mappable transaction.
@@ -64,13 +64,13 @@ public class MappableTransaction extends MappableEntity {
 	/**
 	 * Instantiates a new mappable transaction.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 */
-	public MappableTransaction(final ChangeSet rCSTransaction) {
+	public MappableTransaction(final ChangeSet changeset) {
 		super();
 		
-		setTransaction(rCSTransaction);
+		setTransaction(changeset);
 	}
 	
 	/*
@@ -191,17 +191,17 @@ public class MappableTransaction extends MappableEntity {
 	 */
 	@OneToOne (fetch = FetchType.LAZY)
 	public ChangeSet getTransaction() {
-		return this.rCSTransaction;
+		return this.changeset;
 	}
 	
 	/**
 	 * Sets the transaction.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the new transaction
 	 */
-	public void setTransaction(final ChangeSet rCSTransaction) {
-		this.rCSTransaction = rCSTransaction;
+	public void setTransaction(final ChangeSet changeset) {
+		this.changeset = changeset;
 	}
 	
 	/*

@@ -50,7 +50,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	private LinkedList<FileChangeCoupling> couplings = null;
 	
 	/** The transaction. */
-	private final ChangeSet                rCSTransaction;
+	private final ChangeSet                changeset;
 	
 	/** The min support. */
 	private final int                      minSupport;
@@ -64,7 +64,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -77,17 +77,17 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public FileChangeCouplingVoter(@NotNull final ChangeSet rCSTransaction, final int minSupport,
+	public FileChangeCouplingVoter(@NotNull final ChangeSet changeset, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final java.io.File cacheDir) {
 		
-		this.rCSTransaction = rCSTransaction;
+		this.changeset = changeset;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
 			final java.io.File serialFile = new java.io.File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
-			        + rCSTransaction.getId() + "_file.cc");
+			        + changeset.getId() + "_file.cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
@@ -114,7 +114,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 			}
 			if (this.couplings == null) {
 				// run query and save tmp file
-				final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(rCSTransaction,
+				final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(changeset,
 				                                                                                                            3,
 				                                                                                                            0.1,
 				                                                                                                            persistenceUtil);
@@ -179,7 +179,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 		Condition.check(path2 != null, "The changed elements must not be null!");
 		
 		if (this.couplings == null) {
-			this.couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.rCSTransaction, 3, 0.1,
+			this.couplings = ChangeCouplingRuleFactory.getFileChangeCouplings(this.changeset, 3, 0.1,
 			                                                                  this.persistenceUtil);
 		}
 		
@@ -191,7 +191,7 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 				boolean found = false;
 				for (final Handle rCSFile : c.getPremise()) {
 					try {
-						final String fPath = rCSFile.getPath(this.rCSTransaction);
+						final String fPath = rCSFile.getPath(this.changeset);
 						if (fPath.equals(path1) || fPath.equals(path2)) {
 							found = true;
 							break;
@@ -199,20 +199,20 @@ public class FileChangeCouplingVoter implements MultilevelClusteringScoreVisitor
 					} catch (final NoSuchHandleException e) {
 						if (Logger.logError()) {
 							Logger.error("Could not determine file name of %s as of %s.", rCSFile.toString(),
-							             this.rCSTransaction);
+							             this.changeset);
 						}
 					}
 				}
 				
 				try {
-					final String iPath = c.getImplication().getPath(this.rCSTransaction);
+					final String iPath = c.getImplication().getPath(this.changeset);
 					if (found && (iPath.equals(path1) || iPath.equals(path2))) {
 						currentCouplings.add(c);
 					}
 				} catch (final NoSuchHandleException e) {
 					if (Logger.logError()) {
 						Logger.error("Could not determine file name of %s as of %s.", c.getImplication().toString(),
-						             this.rCSTransaction);
+						             this.changeset);
 					}
 				}
 			}

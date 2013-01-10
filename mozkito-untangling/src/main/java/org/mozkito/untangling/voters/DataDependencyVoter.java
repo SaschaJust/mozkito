@@ -95,11 +95,11 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		 * (non-Javadoc)
 		 * @see
 		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
-		 * .RCSTransaction)
+		 * .ChangeSet)
 		 */
 		@Override
-		public DataDependencyVoter createVoter(final ChangeSet rCSTransaction) {
-			return new DataDependencyVoter(this.eclipseDir, this.repository, rCSTransaction, this.cacheDir);
+		public DataDependencyVoter createVoter(final ChangeSet changeset) {
+			return new DataDependencyVoter(this.eclipseDir, this.repository, changeset, this.cacheDir);
 		}
 		
 		/*
@@ -204,7 +204,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	private final File                     cacheDir;
 	
 	/** The transaction. */
-	private final ChangeSet           rCSTransaction;
+	private final ChangeSet                changeset;
 	
 	/** The cache. */
 	private Map<String, Set<Set<Integer>>> cache       = new HashMap<>();
@@ -219,18 +219,18 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 	 *            the eclipse dir
 	 * @param repository
 	 *            the repository
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @param cacheDir
 	 *            the cache file
 	 */
 	@SuppressWarnings ("unchecked")
 	public DataDependencyVoter(@NotNull final File eclipseDir, @NotNull final Repository repository,
-	        final ChangeSet rCSTransaction, final File cacheDir) {
-		this.rCSTransaction = rCSTransaction;
+	        final ChangeSet changeset, final File cacheDir) {
+		this.changeset = changeset;
 		this.eclipseDir = eclipseDir;
 		this.cacheDir = cacheDir;
-		final String cacheFileName = this.rCSTransaction.getId() + ".dd";
+		final String cacheFileName = this.changeset.getId() + ".dd";
 		this.cacheFile = new File(this.cacheDir.getAbsolutePath() + FileUtils.fileSeparator + cacheFileName);
 		if ((this.cacheDir != null) && (this.cacheFile.exists())) {
 			try (final ObjectInputStream objIn = new ObjectInputStream(
@@ -249,14 +249,14 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		} else {
 			if (this.checkoutDir == null) {
 				try {
-					this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
+					this.checkoutDir = repository.checkoutPath("/", changeset.getId());
 				} catch (final RepositoryOperationException e) {
 					throw new UnrecoverableError(e);
 				}
 			}
 		}
 		try {
-			this.checkoutDir = repository.checkoutPath("/", rCSTransaction.getId());
+			this.checkoutDir = repository.checkoutPath("/", changeset.getId());
 		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
@@ -299,7 +299,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Computing data dependency score for transaction %s and JavaChangeOperations %s and %s.",
-			             this.rCSTransaction.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
+			             this.changeset.getId(), String.valueOf(op1.getId()), String.valueOf(op2.getId()));
 		}
 		
 		Condition.notNull(op1.getChangedElementLocation(), "op1.getChangeElementLocation() must not be NULL.",
@@ -326,7 +326,7 @@ public class DataDependencyVoter implements MultilevelClusteringScoreVisitor<Jav
 			// build path for file to analyze
 			if (this.checkoutDir == null) {
 				if ((this.checkoutDir == null) || (!this.checkoutDir.exists())) {
-					throw new UnrecoverableError("Could not checkout transaction " + this.rCSTransaction.getId());
+					throw new UnrecoverableError("Could not checkout transaction " + this.changeset.getId());
 				}
 			}
 			

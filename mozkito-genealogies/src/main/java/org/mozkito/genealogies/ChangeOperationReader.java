@@ -39,8 +39,8 @@ import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -125,19 +125,19 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 	private final Iterator<ChangeSet> iterator;
 	
 	/** The branch factory. */
-	private final BranchFactory            branchFactory;
+	private final BranchFactory       branchFactory;
 	
 	/** The persistence util. */
-	private final PersistenceUtil          persistenceUtil;
+	private final PersistenceUtil     persistenceUtil;
 	
 	/** The ignore tests. */
-	private final boolean                  ignoreTests;
+	private final boolean             ignoreTests;
 	
 	/** The num transaction. */
-	private final int                      numTransaction;
+	private final int                 numTransaction;
 	
 	/** The t counter. */
-	private int                            tCounter = 0;
+	private int                       tCounter = 0;
 	
 	/**
 	 * Instantiates a new change operation reader.
@@ -168,16 +168,16 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 			throw new Shutdown();
 		}
 		
-		final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(this.branchFactory.getPersistenceUtil(),
+		final ChangeSetSet masterChangeSets = RCSPersistenceUtil.getTransactions(this.branchFactory.getPersistenceUtil(),
 		                                                                             masterBranch,
 		                                                                             TransactionSetOrder.ASC);
 		if (Logger.logInfo()) {
-			Logger.info("Added " + masterTransactions.size()
-			                    + " RCSTransactions that were found in branch %s to build the change genealogy.",
+			Logger.info("Added " + masterChangeSets.size()
+			                    + " ChangeSet that were found in branch %s to build the change genealogy.",
 			            this.branchFactory.getMasterBranch().getName());
 		}
-		this.numTransaction = masterTransactions.size();
-		this.iterator = masterTransactions.iterator();
+		this.numTransaction = masterChangeSets.size();
+		this.iterator = masterChangeSets.iterator();
 	}
 	
 	/*
@@ -204,17 +204,17 @@ public class ChangeOperationReader implements Iterator<Collection<JavaChangeOper
 		// PRECONDITIONS
 		++this.tCounter;
 		try {
-			final ChangeSet rCSTransaction = this.iterator.next();
+			final ChangeSet changeSet = this.iterator.next();
 			if (Logger.logInfo()) {
-				Logger.info("Processing transaction %s (%s/%s).", rCSTransaction.getId(),
-				            String.valueOf(this.tCounter), String.valueOf(this.numTransaction));
+				Logger.info("Processing transaction %s (%s/%s).", changeSet.getId(), String.valueOf(this.tCounter),
+				            String.valueOf(this.numTransaction));
 			}
 			Collection<JavaChangeOperation> changeOperations = new ArrayList<JavaChangeOperation>(0);
 			
 			if (this.ignoreTests) {
-				changeOperations = PPAPersistenceUtil.getChangeOperationNoTest(this.persistenceUtil, rCSTransaction);
+				changeOperations = PPAPersistenceUtil.getChangeOperationNoTest(this.persistenceUtil, changeSet);
 			} else {
-				changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, rCSTransaction);
+				changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil, changeSet);
 			}
 			return changeOperations;
 		} finally {

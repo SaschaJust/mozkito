@@ -33,7 +33,7 @@ import org.mozkito.versions.model.ChangeSet;
  * 
  * @author Kim Herzig <herzig@mozkito.org>
  */
-public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSet> {
+public class ChangeSetSet implements SortedSet<ChangeSet>, Comparator<ChangeSet> {
 	
 	/**
 	 * The Enum TransactionSetOrder.
@@ -63,7 +63,7 @@ public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSe
 	 * @param order
 	 *            the order
 	 */
-	public TransactionSet(final TransactionSetOrder order) {
+	public ChangeSetSet(final TransactionSetOrder order) {
 		this.order = order;
 		this.treeSet = new TreeSet<ChangeSet>((Comparator<ChangeSet>) this);
 	}
@@ -237,7 +237,7 @@ public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSe
 		// PRECONDITIONS
 		
 		try {
-			final TransactionSet result = new TransactionSet(this.order);
+			final ChangeSetSet result = new ChangeSetSet(this.order);
 			result.addAll(this.treeSet.headSet(arg0));
 			return result;
 		} finally {
@@ -396,7 +396,7 @@ public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSe
 		// PRECONDITIONS
 		
 		try {
-			final TransactionSet result = new TransactionSet(this.order);
+			final ChangeSetSet result = new ChangeSetSet(this.order);
 			result.addAll(this.treeSet.subSet(arg0, arg1));
 			return result;
 		} finally {
@@ -413,7 +413,7 @@ public class TransactionSet implements SortedSet<ChangeSet>, Comparator<ChangeSe
 		// PRECONDITIONS
 		
 		try {
-			final TransactionSet result = new TransactionSet(this.order);
+			final ChangeSetSet result = new ChangeSetSet(this.order);
 			result.addAll(this.treeSet.tailSet(arg0));
 			return result;
 		} finally {

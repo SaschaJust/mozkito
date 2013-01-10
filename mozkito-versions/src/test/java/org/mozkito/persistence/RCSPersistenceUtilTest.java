@@ -27,7 +27,7 @@ import org.mozkito.persistence.model.Person;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.annotation.DatabaseSettings;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 

@@ -97,9 +97,9 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 	 */
 	@Override
 	public Collection<GenealogyMetricValue> handle(final GenealogyTransactionNode item) {
-		final ChangeSet rCSTransaction = item.getNode();
+		final ChangeSet changeset = item.getNode();
 		final Collection<JavaChangeOperation> changeOperations = PPAPersistenceUtil.getChangeOperation(this.persistenceUtil,
-		                                                                                               rCSTransaction);
+		                                                                                               changeset);
 		final DescriptiveStatistics lastModifiedStats = new DescriptiveStatistics();
 		final DescriptiveStatistics ageStats = new DescriptiveStatistics();
 		final DescriptiveStatistics numChangesStats = new DescriptiveStatistics();
@@ -115,7 +115,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				numChangesStats.addValue(pastTransactions.size());
 				
 				final ChangeSet lastModified = pastTransactions.get(pastTransactions.size() - 1);
-				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, rCSTransaction));
+				lastModifiedStats.addValue(DaysBetweenUtils.getDaysBetween(lastModified, changeset));
 			}
 			// final Transaction firstModified =
 			// PPAPersistenceUtil.getFirstTransactionsChangingElement(this.persistenceUtil,
@@ -129,7 +129,7 @@ public class TransactionCodeAgeMetrics extends GenealogyTransactionMetric {
 				}
 				continue;
 			}
-			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, rCSTransaction.getTimestamp()).getDays()));
+			ageStats.addValue(Math.abs(Days.daysBetween(firstModified, changeset.getTimestamp()).getDays()));
 		}
 		
 		final Collection<GenealogyMetricValue> result = new HashSet<GenealogyMetricValue>();

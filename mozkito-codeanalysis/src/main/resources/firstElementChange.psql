@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION public.firstElementChange(int)
- RETURNS setof rcstransaction AS $$
-  select * from rcstransaction WHERE id IN (select r.transaction_id from javaelementlocation l JOIN javachangeoperation o ON l.id = o.changedelementlocation_id JOIN rcsrevision r ON o.revision_revisionid=r.revisionid where l.element_generatedid = $1) ORDER BY timestamp ASC LIMIT 1;
+ RETURNS setof changeset AS $$
+  select * from changeset WHERE id IN (select r.transaction_id from javaelementlocation l JOIN javachangeoperation o ON l.id = o.changedelementlocation_id JOIN revision r ON o.revision_revisionid=r.revisionid where l.element_generatedid = $1) ORDER BY timestamp ASC LIMIT 1;
 $$ language sql;
 
-CREATE OR REPLACE VIEW firstElementChanges AS (select element_generatedid, min(timestamp) AS timestamp from javaelementlocation l JOIN javachangeoperation o ON l.id = o.changedelementlocation_id JOIN rcsrevision r ON o.revision_revisionid=r.revisionid JOIN rcstransaction t ON r.transaction_id = t.id GROUP BY element_generatedid);
+CREATE OR REPLACE VIEW firstElementChanges AS (select element_generatedid, min(timestamp) AS timestamp from javaelementlocation l JOIN javachangeoperation o ON l.id = o.changedelementlocation_id JOIN revision r ON o.revision_revisionid=r.revisionid JOIN changeset t ON r.transaction_id = t.id GROUP BY element_generatedid);

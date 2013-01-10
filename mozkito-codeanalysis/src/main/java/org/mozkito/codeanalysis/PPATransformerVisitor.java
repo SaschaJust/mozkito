@@ -49,20 +49,20 @@ public class PPATransformerVisitor implements ChangeOperationVisitor {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.rcs.model.ChangeSet)
+	 */
+	@Override
+	public void visit(final ChangeSet changeSet) {
+		// ignore
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.ppa.model.JavaChangeOperation)
 	 */
 	@Override
 	public void visit(final JavaChangeOperation change) {
 		this.list.add(change);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mozkito.ppa.internal.visitors.ChangeOperationVisitor #visit(org.mozkito.rcs.model.RCSTransaction)
-	 */
-	@Override
-	public void visit(final ChangeSet rCSTransaction) {
-		// ignore
 	}
 	
 }

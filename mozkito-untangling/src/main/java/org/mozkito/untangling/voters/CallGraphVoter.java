@@ -98,11 +98,11 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 		 * (non-Javadoc)
 		 * @see
 		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
-		 * .RCSTransaction)
+		 * .ChangeSet)
 		 */
 		@Override
-		public CallGraphVoter createVoter(final ChangeSet rCSTransaction) {
-			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, rCSTransaction, this.cacheDir);
+		public CallGraphVoter createVoter(final ChangeSet changeset) {
+			return new CallGraphVoter(this.eclipseDir, this.eclipseArguments, changeset, this.cacheDir);
 		}
 		
 		/*
@@ -247,17 +247,16 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 	 *            the eclipse dir
 	 * @param eclipseArguments
 	 *            the eclipse arguments
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @param cacheDir
 	 *            the cache dir
 	 */
-	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments,
-	        final ChangeSet rCSTransaction, final File cacheDir) {
+	protected CallGraphVoter(final File eclipseDir, final String[] eclipseArguments, final ChangeSet changeset,
+	        final File cacheDir) {
 		File callGraphFile = null;
 		if ((cacheDir != null) && (cacheDir.isDirectory()) && (cacheDir.canRead())) {
-			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + rCSTransaction.getId()
-			        + ".cg");
+			callGraphFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator + changeset.getId() + ".cg");
 			if (callGraphFile.exists()) {
 				this.callGraph = CallGraph.unserialize(callGraphFile);
 				this.usedGraphFile = callGraphFile;
@@ -283,7 +282,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				throw new UnrecoverableError(e);
 			}
 			
-			arguments.add("-DtransactionId=" + rCSTransaction.getId());
+			arguments.add("-DtransactionId=" + changeset.getId());
 			arguments.add("-Doutput=" + callGraphFile.getAbsolutePath());
 			
 			// generate call graph
@@ -307,7 +306,7 @@ public class CallGraphVoter implements MultilevelClusteringScoreVisitor<JavaChan
 				if (Logger.logError()) {
 					final StringBuilder sb = new StringBuilder();
 					sb.append("Could not generate call graph for transaction ");
-					sb.append(rCSTransaction);
+					sb.append(changeset);
 					sb.append(". Reason:");
 					sb.append(FileUtils.lineSeparator);
 					if (response.getSecond() != null) {

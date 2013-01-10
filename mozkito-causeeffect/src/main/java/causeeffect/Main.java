@@ -44,8 +44,8 @@ import org.mozkito.genealogies.settings.GenealogyOptions;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.settings.DatabaseOptions;
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -148,28 +148,28 @@ public class Main {
 				throw new Shutdown();
 			}
 			
-			final TransactionSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
+			final ChangeSetSet masterTransactions = RCSPersistenceUtil.getTransactions(persistenceUtil, masterBranch,
 			                                                                             TransactionSetOrder.ASC);
-			final List<ChangeSet> rCSTransactions = new LinkedList<>();
+			final List<ChangeSet> changeSets = new LinkedList<>();
 			for (final ChangeSet t : masterTransactions) {
 				if (transactionLayer.containsVertex(t)) {
-					rCSTransactions.add(t);
+					changeSets.add(t);
 				}
 			}
 			
 			if (Logger.logDebug()) {
-				Logger.debug("%d out of %d transactions found in genealogy graph.", rCSTransactions.size(),
+				Logger.debug("%d out of %d transactions found in genealogy graph.", changeSets.size(),
 				             masterTransactions.size());
 			}
 			
-			final int trainSize = new Double(rCSTransactions.size() * 0.1).intValue();
+			final int trainSize = new Double(changeSets.size() * 0.1).intValue();
 			
 			if (Logger.logInfo()) {
 				Logger.info("Training set contains %d entities.", trainSize);
 			}
 			
-			final List<ChangeSet> trainList = rCSTransactions.subList(0, trainSize);
-			final List<ChangeSet> testList = rCSTransactions.subList(trainSize, rCSTransactions.size());
+			final List<ChangeSet> trainList = changeSets.subList(0, trainSize);
+			final List<ChangeSet> testList = changeSets.subList(trainSize, changeSets.size());
 			
 			experiment.run(trainList, testList, innerRulesOpt.getValue());
 			

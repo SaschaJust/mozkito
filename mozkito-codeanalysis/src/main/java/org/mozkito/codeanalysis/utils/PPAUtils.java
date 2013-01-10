@@ -540,9 +540,9 @@ public class PPAUtils {
 	 * 
 	 * @param repository
 	 *            the repository
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
-	 * @param rCSRevision
+	 * @param revision
 	 *            the r cs revision
 	 * @param cu
 	 *            the cu
@@ -556,8 +556,8 @@ public class PPAUtils {
 	 *            the package filter
 	 */
 	private static void generateChangeOperationsForAddedFile(final Repository repository,
-	                                                         final ChangeSet rCSTransaction,
-	                                                         final Revision rCSRevision,
+	                                                         final ChangeSet changeSet,
+	                                                         final Revision revision,
 	                                                         final CompilationUnit cu,
 	                                                         final String changedPath,
 	                                                         final Collection<ChangeOperationVisitor> visitors,
@@ -567,16 +567,16 @@ public class PPAUtils {
 		final JavaElementLocations newElems = PPAUtils.getJavaElementLocationsByCU(cu, changedPath, packageFilter,
 		                                                                           elementFactory);
 		for (final JavaElementLocation classDef : newElems.getClassDefs(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDef, revision);
 			operations.add(op);
 			
 		}
 		for (final JavaElementLocation methDef : newElems.getMethodDefs(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methDef, revision);
 			operations.add(op);
 		}
 		for (final JavaElementLocation methCall : newElems.getMethodCalls(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, methCall, revision);
 			operations.add(op);
 		}
 		for (final JavaChangeOperation op : operations.getOperations()) {
@@ -592,10 +592,10 @@ public class PPAUtils {
 	 * 
 	 * @param repository
 	 *            the repository
-	 * @param rCSTransaction
-	 *            the r cs transaction
-	 * @param rCSRevision
-	 *            the r cs revision
+	 * @param changeSet
+	 *            the changeset
+	 * @param revision
+	 *            the revision
 	 * @param cu
 	 *            the cu
 	 * @param changedPath
@@ -608,8 +608,8 @@ public class PPAUtils {
 	 *            the package filter
 	 */
 	protected static void generateChangeOperationsForDeletedFile(final Repository repository,
-	                                                             final ChangeSet rCSTransaction,
-	                                                             final Revision rCSRevision,
+	                                                             final ChangeSet changeSet,
+	                                                             final Revision revision,
 	                                                             final CompilationUnit cu,
 	                                                             final String changedPath,
 	                                                             final Collection<ChangeOperationVisitor> visitors,
@@ -622,15 +622,15 @@ public class PPAUtils {
 		                                                                           elementFactory);
 		
 		for (final JavaElementLocation classDef : oldElems.getClassDefs(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, classDef, revision);
 			operations.add(op);
 		}
 		for (final JavaElementLocation methDef : oldElems.getMethodDefs(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methDef, revision);
 			operations.add(op);
 		}
 		for (final JavaElementLocation methCall : oldElems.getMethodCalls(changedPath)) {
-			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, rCSRevision);
+			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Deleted, methCall, revision);
 			operations.add(op);
 		}
 		for (final JavaChangeOperation op : operations.getOperations()) {
@@ -646,9 +646,9 @@ public class PPAUtils {
 	 * 
 	 * @param repository
 	 *            the repository
-	 * @param rCSTransaction
-	 *            the r cs transaction
-	 * @param rCSRevision
+	 * @param changeSet
+	 *            the change set
+	 * @param revision
 	 *            the revision
 	 * @param oldElems
 	 *            the old elems
@@ -661,15 +661,15 @@ public class PPAUtils {
 	 */
 	@SuppressWarnings ("unchecked")
 	protected static void generateChangeOperationsForModifiedFile(final Repository repository,
-	                                                              final ChangeSet rCSTransaction,
-	                                                              final Revision rCSRevision,
+	                                                              final ChangeSet changeSet,
+	                                                              final Revision revision,
 	                                                              final JavaElementLocations oldElems,
 	                                                              final JavaElementLocations newElems,
 	                                                              final String changedPath,
 	                                                              final Collection<ChangeOperationVisitor> visitors) {
 		
 		try {
-			final ChangeSet parentTransaction = rCSTransaction.getBranchParent();
+			final ChangeSet parentTransaction = changeSet.getBranchParent();
 			if (parentTransaction == null) {
 				return;
 			}
@@ -677,7 +677,7 @@ public class PPAUtils {
 			// generate diff
 			Collection<Delta> diff;
 			
-			diff = repository.diff(changedPath, parentTransaction.getId(), rCSTransaction.getId());
+			diff = repository.diff(changedPath, parentTransaction.getId(), changeSet.getId());
 			final ChangeOperations operations = new ChangeOperations();
 			for (final Delta delta : diff) {
 				
@@ -689,10 +689,10 @@ public class PPAUtils {
 						switch (cover) {
 							case DEFINITION:
 							case DEF_AND_BODY:
-								operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, rCSRevision));
+								operations.add(new JavaChangeOperation(ChangeType.Deleted, javaElem, revision));
 								break;
 							case BODY:
-								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
+								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
 								break;
 							default:
 								break;
@@ -706,10 +706,10 @@ public class PPAUtils {
 						switch (cover) {
 							case DEFINITION:
 							case DEF_AND_BODY:
-								operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, rCSRevision));
+								operations.add(new JavaChangeOperation(ChangeType.Added, javaElem, revision));
 								break;
 							case BODY:
-								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, rCSRevision));
+								operations.add(new JavaChangeOperation(ChangeType.Modified, javaElem, revision));
 								break;
 							default:
 								break;
@@ -829,22 +829,22 @@ public class PPAUtils {
 					// up the operations
 					for (final TreeSet<JavaElementLocation> methodCallsToDelete : removeCallCandidates.values()) {
 						for (final JavaElementLocation methodCall : methodCallsToDelete) {
-							operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, rCSRevision));
+							operations.add(new JavaChangeOperation(ChangeType.Deleted, methodCall, revision));
 						}
 					}
 					for (final TreeSet<JavaElementLocation> methodCallsToAdd : addCallCandidates.values()) {
 						for (final JavaElementLocation methodCall : methodCallsToAdd) {
-							operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, rCSRevision));
+							operations.add(new JavaChangeOperation(ChangeType.Added, methodCall, revision));
 						}
 					}
 					for (final JavaElementLocation methodDefToDelete : defsToRemove) {
-						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, rCSRevision));
+						operations.add(new JavaChangeOperation(ChangeType.Deleted, methodDefToDelete, revision));
 					}
 					for (final JavaElementLocation methodDefToAdd : defsToAdd) {
-						operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, rCSRevision));
+						operations.add(new JavaChangeOperation(ChangeType.Added, methodDefToAdd, revision));
 					}
 					for (final JavaElementLocation methodDefModified : modifiedDefCandidates) {
-						operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, rCSRevision));
+						operations.add(new JavaChangeOperation(ChangeType.Modified, methodDefModified, revision));
 					}
 				}
 			}

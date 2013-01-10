@@ -135,11 +135,11 @@ public class ChangeCouplings {
 	 * Run.
 	 */
 	public void run() {
-		final ChangeSet rCSTransaction = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
+		final ChangeSet changeSet = this.persistenceUtil.loadById(this.transactionIdArgument.getValue(),
 		                                                                    ChangeSet.class);
 		
 		if (this.granularityArgument.getValue().equals(Level.FILE)) {
-			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(rCSTransaction,
+			final LinkedList<FileChangeCoupling> fileChangeCouplings = ChangeCouplingRuleFactory.getFileChangeCouplings(changeSet,
 			                                                                                                            this.minSupport.intValue(),
 			                                                                                                            this.minConf.doubleValue(),
 			                                                                                                            this.persistenceUtil);

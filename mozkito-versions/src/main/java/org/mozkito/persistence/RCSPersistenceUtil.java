@@ -17,8 +17,8 @@ import javax.persistence.criteria.MapJoin;
 
 import net.ownhero.dev.kanuni.annotations.bevahiors.NoneNull;
 
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -40,7 +40,7 @@ public class RCSPersistenceUtil {
 	 * 
 	 */
 	@NoneNull
-	public static TransactionSet getTransactions(final PersistenceUtil persistenceUtil,
+	public static ChangeSetSet getTransactions(final PersistenceUtil persistenceUtil,
 	                                             final Branch rCSBranch,
 	                                             final TransactionSetOrder order) {
 		
@@ -50,7 +50,7 @@ public class RCSPersistenceUtil {
 		query.where(criteria.getBuilder().equal(branchRoot.key(), rCSBranch.getName()));
 		criteria.setQuery(query);
 		
-		final TransactionSet result = new TransactionSet(order);
+		final ChangeSetSet result = new ChangeSetSet(order);
 		result.addAll(persistenceUtil.load(criteria));
 		return result;
 	}

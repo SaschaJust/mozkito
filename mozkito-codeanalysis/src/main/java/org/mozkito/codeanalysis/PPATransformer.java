@@ -65,10 +65,10 @@ public class PPATransformer extends Transformer<ChangeSet, JavaChangeOperation> 
 				
 				if ((this.iterator == null) || (!this.iterator.hasNext())) {
 					
-					final ChangeSet rCSTransaction = getInputData();
+					final ChangeSet changeSet = getInputData();
 					
 					if (Logger.logInfo()) {
-						Logger.info("Computing change operations for transaction `" + rCSTransaction.getId() + "`");
+						Logger.info("Computing change operations for transaction `" + changeSet.getId() + "`");
 					}
 					
 					try {
@@ -78,7 +78,7 @@ public class PPATransformer extends Transformer<ChangeSet, JavaChangeOperation> 
 					}
 					if (usePPA) {
 						
-						PPAUtils.generateChangeOperations(repository, rCSTransaction,
+						PPAUtils.generateChangeOperations(repository, changeSet,
 						                                  new HashSet<ChangeOperationVisitor>() {
 							                                  
 							                                  private static final long serialVersionUID = -6294280837922825955L;
@@ -88,7 +88,7 @@ public class PPATransformer extends Transformer<ChangeSet, JavaChangeOperation> 
 							                                  }
 						                                  }, factory, packageFilter);
 					} else {
-						PPAUtils.generateChangeOperationsNOPPA(repository, rCSTransaction,
+						PPAUtils.generateChangeOperationsNOPPA(repository, changeSet,
 						                                       new HashSet<ChangeOperationVisitor>() {
 							                                       
 							                                       private static final long serialVersionUID = -3888102603870272730L;

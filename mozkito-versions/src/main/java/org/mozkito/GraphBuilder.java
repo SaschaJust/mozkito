@@ -78,9 +78,9 @@ public class GraphBuilder implements Runnable {
 		this.persistenceUtil.beginTransaction();
 		int counter = 0;
 		for (final String hash : this.revDepGraph.getVertices()) {
-			final ChangeSet rcsTransaction = this.persistenceUtil.loadById(hash, ChangeSet.class);
+			final ChangeSet changeSet = this.persistenceUtil.loadById(hash, ChangeSet.class);
 			
-			if (rcsTransaction == null) {
+			if (changeSet == null) {
 				throw new UnrecoverableError("Could not load transaction " + hash + " from database.");
 			}
 			
@@ -91,20 +91,19 @@ public class GraphBuilder implements Runnable {
 			// set parents
 			final String branchParentHash = this.revDepGraph.getBranchParent(hash);
 			if (branchParentHash != null) {
-				final ChangeSet branchParent = this.persistenceUtil.loadById(branchParentHash,
-				                                                                  ChangeSet.class);
-				rcsTransaction.setBranchParent(branchParent);
+				final ChangeSet branchParent = this.persistenceUtil.loadById(branchParentHash, ChangeSet.class);
+				changeSet.setBranchParent(branchParent);
 			}
 			final String mergeParentHash = this.revDepGraph.getMergeParent(hash);
 			if (mergeParentHash != null) {
 				final ChangeSet mergeParent = this.persistenceUtil.loadById(mergeParentHash, ChangeSet.class);
-				rcsTransaction.setMergeParent(mergeParent);
+				changeSet.setMergeParent(mergeParent);
 			}
 			
 			// set tags
 			final Set<String> tags = this.revDepGraph.getTags(hash);
 			if (tags != null) {
-				rcsTransaction.addAllTags(tags);
+				changeSet.addAllTags(tags);
 			}
 			
 			// persist branches
@@ -114,10 +113,10 @@ public class GraphBuilder implements Runnable {
 				if (Logger.logDebug()) {
 					Logger.debug("Adding branch " + branchName);
 				}
-				rCSBranch.setHead(rcsTransaction);
+				rCSBranch.setHead(changeSet);
 				this.persistenceUtil.saveOrUpdate(rCSBranch);
 			}
-			this.persistenceUtil.saveOrUpdate(rcsTransaction);
+			this.persistenceUtil.saveOrUpdate(changeSet);
 			if ((++counter % GraphBuilder.COMMIT_LIMIT) == 0) {
 				this.persistenceUtil.commitTransaction();
 				this.persistenceUtil.beginTransaction();
@@ -191,10 +190,10 @@ public class GraphBuilder implements Runnable {
 			long index = 0l;
 			this.persistenceUtil.beginTransaction();
 			for (final String transactionId : this.revDepGraph.getBranchTransactions(rCSBranch.getName())) {
-				final ChangeSet rCSTransaction = this.persistenceUtil.loadById(transactionId, ChangeSet.class);
-				if (!rCSTransaction.addBranch(rCSBranch, index)) {
+				final ChangeSet changeSet = this.persistenceUtil.loadById(transactionId, ChangeSet.class);
+				if (!changeSet.addBranch(rCSBranch, index)) {
 					throw new UnrecoverableError("Could not add branch index " + rCSBranch.getName()
-					        + " to transaction: " + rCSTransaction.getId()
+					        + " to transaction: " + changeSet.getId()
 					        + ". It appreas to be set before. Fatal error.");
 				}
 				--index;

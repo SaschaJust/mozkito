@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.mozkito.codeanalysis.model.JavaChangeOperation;
 import org.mozkito.codeanalysis.model.JavaElement;
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.ChangeSet;
 
 /**
@@ -31,7 +31,7 @@ import org.mozkito.versions.model.ChangeSet;
 public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	
 	/** The transaction. */
-	private final ChangeSet                  rCSTransaction;
+	private final ChangeSet                  changeset;
 	
 	/** The operations. */
 	private final Collection<JavaChangeOperation> operations;
@@ -39,13 +39,13 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	/**
 	 * Instantiates a new blob transaction.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @param operations
 	 *            the operations
 	 */
-	public ChangeOperationSet(final ChangeSet rCSTransaction, final Collection<JavaChangeOperation> operations) {
-		this.rCSTransaction = rCSTransaction;
+	public ChangeOperationSet(final ChangeSet changeset, final Collection<JavaChangeOperation> operations) {
+		this.changeset = changeset;
 		this.operations = operations;
 	}
 	
@@ -56,8 +56,8 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	@Override
 	public int compareTo(final ChangeOperationSet other) {
 		
-		final Comparator<? super ChangeSet> comparator = new TransactionSet(TransactionSetOrder.ASC).comparator();
-		return comparator.compare(other.getTransaction(), this.rCSTransaction);
+		final Comparator<? super ChangeSet> comparator = new ChangeSetSet(TransactionSetOrder.ASC).comparator();
+		return comparator.compare(other.getTransaction(), this.changeset);
 	}
 	
 	/*
@@ -76,11 +76,11 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 			return false;
 		}
 		final ChangeOperationSet other = (ChangeOperationSet) obj;
-		if (this.rCSTransaction == null) {
-			if (other.rCSTransaction != null) {
+		if (this.changeset == null) {
+			if (other.changeset != null) {
 				return false;
 			}
-		} else if (!this.rCSTransaction.equals(other.rCSTransaction)) {
+		} else if (!this.changeset.equals(other.changeset)) {
 			return false;
 		}
 		return true;
@@ -120,7 +120,7 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	 * @return the transaction
 	 */
 	public ChangeSet getTransaction() {
-		return this.rCSTransaction;
+		return this.changeset;
 	}
 	
 	/*
@@ -131,9 +131,9 @@ public class ChangeOperationSet implements Comparable<ChangeOperationSet> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.rCSTransaction == null)
+		result = (prime * result) + ((this.changeset == null)
 		                                                          ? 0
-		                                                          : this.rCSTransaction.hashCode());
+		                                                          : this.changeset.hashCode());
 		return result;
 	}
 	

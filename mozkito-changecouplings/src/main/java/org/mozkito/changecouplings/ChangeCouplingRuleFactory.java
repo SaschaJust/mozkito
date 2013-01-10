@@ -51,7 +51,7 @@ public class ChangeCouplingRuleFactory {
 	/**
 	 * Gets the change coupling rules.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -63,7 +63,7 @@ public class ChangeCouplingRuleFactory {
 	 */
 	@SuppressWarnings ("unchecked")
 	@NoneNull
-	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final ChangeSet rCSTransaction,
+	public static LinkedList<FileChangeCoupling> getFileChangeCouplings(final ChangeSet changeSet,
 	                                                                    @Positive final int minSupport,
 	                                                                    final double minConfidence,
 	                                                                    final PersistenceUtil persistenceUtil) {
@@ -81,7 +81,7 @@ public class ChangeCouplingRuleFactory {
 		tablename = "mozkito_cc_" + tablename;
 		persistenceUtil.commitTransaction();
 		
-		final String query = "select mozkito_file_changecouplings('" + rCSTransaction.getId() + "','" + tablename
+		final String query = "select mozkito_file_changecouplings('" + changeSet.getId() + "','" + tablename
 		        + "')";
 		
 		if (Logger.logTrace()) {
@@ -93,7 +93,7 @@ public class ChangeCouplingRuleFactory {
 		        + tablename);
 		
 		if (Logger.logTrace()) {
-			Logger.trace("Found %s file change couplings for %s.", String.valueOf(list.size()), rCSTransaction.getId());
+			Logger.trace("Found %s file change couplings for %s.", String.valueOf(list.size()), changeSet.getId());
 		}
 		
 		if (list == null) {
@@ -118,7 +118,7 @@ public class ChangeCouplingRuleFactory {
 		
 		if (Logger.logDebug()) {
 			Logger.debug("Found %s file change couplings for %s with minSupport=%s and minConfidence=%s.",
-			             String.valueOf(result.size()), rCSTransaction.getId(), String.valueOf(minSupport),
+			             String.valueOf(result.size()), changeSet.getId(), String.valueOf(minSupport),
 			             String.valueOf(minConfidence));
 		}
 		
@@ -128,7 +128,7 @@ public class ChangeCouplingRuleFactory {
 	/**
 	 * Gets the method change couplings.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -141,7 +141,7 @@ public class ChangeCouplingRuleFactory {
 	 * @return the method change couplings
 	 */
 	@NoneNull
-	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final ChangeSet rCSTransaction,
+	public static synchronized LinkedList<MethodChangeCoupling> getMethodChangeCouplings(final ChangeSet changeSet,
 	                                                                                     @Positive final int minSupport,
 	                                                                                     @LessOrEqualDouble (ref = 1d) @Positive final double minConfidence,
 	                                                                                     final Set<String> relevantMethodNames,
@@ -161,7 +161,7 @@ public class ChangeCouplingRuleFactory {
 		
 		final StringBuilder query = new StringBuilder();
 		query.append("select mozkito_method_changecouplings('");
-		query.append(rCSTransaction.getId());
+		query.append(changeSet.getId());
 		query.append("','");
 		query.append(tablename);
 		query.append("', ARRAY[");

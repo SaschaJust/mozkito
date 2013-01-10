@@ -66,14 +66,14 @@ public class Merge_NetTest extends DatabaseTest {
 		        new Person("just", "Sascha Just", null), new Person(null, "Sascha Just", "sascha.just@mozkito.org"),
 		        new Person("just", null, "sascha.just@mozkito.org") };
 		
-		ChangeSet rcsTransaction = null;
+		ChangeSet changeset = null;
 		
 		persistenceUtil.beginTransaction();
 		
 		int i = 0;
 		for (final Person person : persons) {
-			rcsTransaction = new ChangeSet("" + ++i, "test", new DateTime(), person, "");
-			persistenceUtil.saveOrUpdate(rcsTransaction);
+			changeset = new ChangeSet("" + ++i, "test", new DateTime(), person, "");
+			persistenceUtil.saveOrUpdate(changeset);
 		}
 		
 		persistenceUtil.commitTransaction();

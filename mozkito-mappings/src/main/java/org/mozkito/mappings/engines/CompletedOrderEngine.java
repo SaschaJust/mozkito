@@ -185,20 +185,20 @@ public class CompletedOrderEngine extends Engine {
 	public final void score(final MappableEntity from,
 	                        final MappableEntity to,
 	                        final Relation score) {
-		final ChangeSet rCSTransaction = ((MappableTransaction) from).getTransaction();
+		final ChangeSet changeset = ((MappableTransaction) from).getTransaction();
 		final Report report = ((MappableReport) to).getReport();
 		double localConfidence = 0d;
 		
 		if ((report.getResolutionTimestamp() != null)
-		        && rCSTransaction.getTimestamp().isBefore(report.getResolutionTimestamp())) {
+		        && changeset.getTimestamp().isBefore(report.getResolutionTimestamp())) {
 			if (Logger.logDebug()) {
 				Logger.debug("Transaction was committed before report got marked as resolved."); //$NON-NLS-1$
 			}
 			localConfidence = getConfidence();
 		}
 		
-		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), rCSTransaction.getTimestamp(),
-		           rCSTransaction.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
+		addFeature(score, localConfidence, FieldKey.CREATION_TIMESTAMP.name(), changeset.getTimestamp(),
+		           changeset.getTimestamp(), FieldKey.CREATION_TIMESTAMP.name(), report.getResolutionTimestamp(),
 		           report.getResolutionTimestamp());
 		
 	}

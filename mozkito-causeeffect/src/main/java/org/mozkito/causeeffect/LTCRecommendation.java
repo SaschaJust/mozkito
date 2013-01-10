@@ -56,16 +56,16 @@ public class LTCRecommendation {
 	 * 
 	 * @param changedFile
 	 *            the changed file
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 */
 	public static void addChange(final Handle changedFile,
-	                             final ChangeSet rCSTransaction) {
+	                             final ChangeSet changeSet) {
 		if (!LTCRecommendation.recommendations.containsKey(changedFile.getGeneratedId())) {
 			return;
 		}
 		for (final LTCRecommendation r : LTCRecommendation.recommendations.get(changedFile.getGeneratedId()).values()) {
-			r.fileChanged(changedFile, rCSTransaction);
+			r.fileChanged(changedFile, changeSet);
 		}
 	}
 	
@@ -142,22 +142,22 @@ public class LTCRecommendation {
 	/**
 	 * Adds the support.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 * @param property
 	 *            the property
 	 * @param expiry
 	 *            the expiry
 	 */
-	public void addSupport(final ChangeSet rCSTransaction,
+	public void addSupport(final ChangeSet changeSet,
 	                       final ChangeProperty property,
 	                       final DateTime expiry) {
 		if (!this.support.containsKey(property)) {
 			this.support.put(property, new LinkedList<Tuple<String, DateTime>>());
 		}
 		
-		this.support.get(ChangeProperty.NONE).add(new Tuple<String, DateTime>(rCSTransaction.getId(),
-		                                                                      rCSTransaction.getTimestamp()));
+		this.support.get(ChangeProperty.NONE).add(new Tuple<String, DateTime>(changeSet.getId(),
+		                                                                      changeSet.getTimestamp()));
 		Tuple<String, DateTime> supportEntry = this.support.get(ChangeProperty.NONE).peek();
 		while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 			supportEntry = this.support.get(ChangeProperty.NONE).poll();
@@ -168,8 +168,8 @@ public class LTCRecommendation {
 		}
 		
 		if (!property.equals(ChangeProperty.NONE)) {
-			this.support.get(property).add(new Tuple<String, DateTime>(rCSTransaction.getId(),
-			                                                           rCSTransaction.getTimestamp()));
+			this.support.get(property).add(new Tuple<String, DateTime>(changeSet.getId(),
+			                                                           changeSet.getTimestamp()));
 			supportEntry = this.support.get(property).peek();
 			while ((supportEntry != null) && supportEntry.getSecond().isBefore(expiry)) {
 				supportEntry = this.support.get(property).poll();
@@ -180,15 +180,15 @@ public class LTCRecommendation {
 	/**
 	 * File changed.
 	 * 
-	 * @param rCSFile
+	 * @param handle
 	 *            the r cs file
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 */
-	public void fileChanged(final Handle rCSFile,
-	                        final ChangeSet rCSTransaction) {
-		if (this.premise.equals(rCSFile.getGeneratedId())) {
-			this.premiseChanges.add(new Tuple<String, DateTime>(rCSTransaction.getId(), rCSTransaction.getTimestamp()));
+	public void fileChanged(final Handle handle,
+	                        final ChangeSet changeSet) {
+		if (this.premise.equals(handle.getGeneratedId())) {
+			this.premiseChanges.add(new Tuple<String, DateTime>(changeSet.getId(), changeSet.getTimestamp()));
 		}
 	}
 	

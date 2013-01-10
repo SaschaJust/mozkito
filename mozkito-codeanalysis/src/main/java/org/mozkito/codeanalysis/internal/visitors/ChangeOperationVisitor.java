@@ -38,9 +38,9 @@ public interface ChangeOperationVisitor {
 	/**
 	 * Visit.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction
 	 */
-	void visit(ChangeSet rCSTransaction);
+	void visit(ChangeSet changeSet);
 	
 }

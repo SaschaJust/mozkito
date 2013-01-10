@@ -55,21 +55,21 @@ public class PPAPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction
 	 * @return the change operation
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                 @NotNull final ChangeSet rCSTransaction) {
+	                                                                 @NotNull final ChangeSet changeSet) {
 		final List<JavaChangeOperation> result = new LinkedList<JavaChangeOperation>();
 		
 		if (Logger.logDebug()) {
-			Logger.debug("Loading change operations for transaction " + rCSTransaction.getId() + " from database.");
+			Logger.debug("Loading change operations for transaction " + changeSet.getId() + " from database.");
 		}
 		
-		for (final Revision rCSRevision : rCSTransaction.getRevisions()) {
+		for (final Revision revision : changeSet.getRevisions()) {
 			final Criteria<JavaChangeOperation> criteria = persistenceUtil.createCriteria(JavaChangeOperation.class);
-			criteria.eq("revision", rCSRevision);
+			criteria.eq("revision", revision);
 			result.addAll(persistenceUtil.load(criteria));
 		}
 		return result;
@@ -80,17 +80,17 @@ public class PPAPersistenceUtil {
 	 * 
 	 * @param persistenceUtil
 	 *            the persistence util
-	 * @param transactionId
+	 * @param changeSetId
 	 *            the transaction id
 	 * @return the change operation
 	 */
 	public static Collection<JavaChangeOperation> getChangeOperation(@NotNull final PersistenceUtil persistenceUtil,
-	                                                                 @NotNull final String transactionId) {
+	                                                                 @NotNull final String changeSetId) {
 		final List<JavaChangeOperation> result = new ArrayList<JavaChangeOperation>(0);
 		
-		final ChangeSet rCSTransaction = persistenceUtil.loadById(transactionId, ChangeSet.class);
-		if (rCSTransaction != null) {
-			return getChangeOperation(persistenceUtil, rCSTransaction);
+		final ChangeSet changeSet = persistenceUtil.loadById(changeSetId, ChangeSet.class);
+		if (changeSet != null) {
+			return getChangeOperation(persistenceUtil, changeSet);
 		}
 		
 		return result;

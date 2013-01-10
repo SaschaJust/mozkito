@@ -170,18 +170,18 @@ public class ChangeSet implements Annotated {
 	/**
 	 * Adds the child.
 	 * 
-	 * @param rcsTransaction
+	 * @param changeSet
 	 *            the rcs transaction
 	 * @return true, if successful
 	 */
 	@Transient
-	public boolean addChild(final ChangeSet rcsTransaction) {
-		CompareCondition.notEquals(rcsTransaction, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
+	public boolean addChild(final ChangeSet changeSet) {
+		CompareCondition.notEquals(changeSet, this, "a transaction may never be a child of its own: %s", this); //$NON-NLS-1$
 		boolean ret = false;
 		
-		if (!getChildren().contains(rcsTransaction)) {
+		if (!getChildren().contains(changeSet)) {
 			final Set<ChangeSet> children = getChildren();
-			ret = children.add(rcsTransaction);
+			ret = children.add(changeSet);
 			setChildren(children);
 		}
 		
@@ -294,7 +294,7 @@ public class ChangeSet implements Annotated {
 	 */
 	// @Transient
 	@ManyToMany (fetch = FetchType.LAZY, cascade = {})
-	@JoinTable (name = "rcstransaction_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
+	@JoinTable (name = "changeset_children", joinColumns = { @JoinColumn (nullable = true, name = "childrenid") })
 	public Set<ChangeSet> getChildren() {
 		return this.children != null
 		                            ? this.children
@@ -643,11 +643,11 @@ public class ChangeSet implements Annotated {
 		string.append("["); //$NON-NLS-1$
 		final StringBuilder builder2 = new StringBuilder();
 		
-		for (final ChangeSet rCSTransaction : getChildren()) {
+		for (final ChangeSet changeSet : getChildren()) {
 			if (builder2.length() > 0) {
 				builder2.append(", "); //$NON-NLS-1$
 			}
-			builder2.append(rCSTransaction.getId());
+			builder2.append(changeSet.getId());
 		}
 		string.append(builder2.toString());
 		string.append("]"); //$NON-NLS-1$

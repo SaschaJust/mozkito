@@ -147,11 +147,11 @@ public class UntanglingMetricsPartitioner implements
 			
 			for (final JavaChangeOperation operation : input) {
 				if (!this.partitions.containsKey(operation.getId())) {
-					final ChangeSet rCSTransaction = operation.getRevision().getTransaction();
-					if (!map.containsKey(rCSTransaction)) {
-						map.put(rCSTransaction, new HashSet<JavaChangeOperation>());
+					final ChangeSet changeSet = operation.getRevision().getTransaction();
+					if (!map.containsKey(changeSet)) {
+						map.put(changeSet, new HashSet<JavaChangeOperation>());
 					}
-					map.get(rCSTransaction).add(operation);
+					map.get(changeSet).add(operation);
 				} else {
 					this.partitions.get(operation.getId()).add(operation);
 				}

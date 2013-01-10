@@ -78,18 +78,18 @@ public class LTCFormulaFactory {
 	 * 
 	 * @param genealogy
 	 *            the genealogy
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 * @return the collection
 	 */
 	@SuppressWarnings ("unchecked")
 	public Collection<CTLFormula> generateInnerTransactionFormulas(final ChangeGenealogy<ChangeSet> genealogy,
-	                                                               final ChangeSet rCSTransaction) {
+	                                                               final ChangeSet changeSet) {
 		// generate CTL formulas
 		final Collection<CTLFormula> formulas = new HashSet<>();
 		for (final CTLFormulaGenerator<Handle> generator : this.generators) {
 			
-			final Collection<Handle> implications = rCSTransaction.getChangedFiles();
+			final Collection<Handle> implications = changeSet.getChangedFiles();
 			for (final Handle rCSFile : implications) {
 				final ArrayList<Handle> premise = new ArrayList<Handle>(1);
 				premise.add(rCSFile);

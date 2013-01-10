@@ -28,9 +28,9 @@ import org.mozkito.versions.RevDependencyGraph.EdgeType;
 import org.mozkito.versions.elements.ChangeType;
 
 /**
- * The Class RCSTransactionTest.
+ * The Class ChangeSetTest.
  */
-public class RCSTransactionTest {
+public class ChangeSetTest {
 	
 	/**
 	 * Test get changed files.

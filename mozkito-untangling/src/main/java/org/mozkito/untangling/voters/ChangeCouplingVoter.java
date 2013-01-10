@@ -103,11 +103,11 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 		 * (non-Javadoc)
 		 * @see
 		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
-		 * .RCSTransaction)
+		 * .ChangeSet)
 		 */
 		@Override
-		public ChangeCouplingVoter createVoter(final ChangeSet rCSTransaction) {
-			return new ChangeCouplingVoter(rCSTransaction, this.minSupport, this.minConfidence, this.persistenceUtil,
+		public ChangeCouplingVoter createVoter(final ChangeSet changeset) {
+			return new ChangeCouplingVoter(changeset, this.minSupport, this.minConfidence, this.persistenceUtil,
 			                               this.cacheDir);
 		}
 		
@@ -220,7 +220,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	private LinkedList<MethodChangeCoupling> couplings;
 	
 	/** The transaction. */
-	private final ChangeSet             rCSTransaction;
+	private final ChangeSet                  changeset;
 	
 	/** The min support. */
 	private final int                        minSupport;
@@ -234,7 +234,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	/**
 	 * Instantiates a new change coupling voter.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @param minSupport
 	 *            the min support
@@ -247,17 +247,17 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	public ChangeCouplingVoter(@NotNull final ChangeSet rCSTransaction, final int minSupport,
+	public ChangeCouplingVoter(@NotNull final ChangeSet changeset, final int minSupport,
 	        final double minConfidence, @NotNull final PersistenceUtil persistenceUtil, final File cacheDir) {
 		
-		this.rCSTransaction = rCSTransaction;
+		this.changeset = changeset;
 		this.minSupport = minSupport;
 		this.minConfidence = minConfidence;
 		this.persistenceUtil = persistenceUtil;
 		
 		if ((cacheDir != null) && (cacheDir.exists()) && (cacheDir.isDirectory())) {
 			final File serialFile = new File(cacheDir.getAbsolutePath() + FileUtils.fileSeparator
-			        + rCSTransaction.getId() + ".cc");
+			        + changeset.getId() + ".cc");
 			if (serialFile.exists()) {
 				// load serial file
 				try {
@@ -284,7 +284,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 			}
 			if (this.couplings == null) {
 				// run query and save tmp file
-				this.couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(rCSTransaction, minSupport,
+				this.couplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(changeset, minSupport,
 				                                                                    minConfidence,
 				                                                                    new HashSet<String>(),
 				                                                                    persistenceUtil);
@@ -380,7 +380,7 @@ public class ChangeCouplingVoter implements MultilevelClusteringScoreVisitor<Jav
 				
 			}
 		} else {
-			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.rCSTransaction, this.minSupport,
+			currentCouplings = ChangeCouplingRuleFactory.getMethodChangeCouplings(this.changeset, this.minSupport,
 			                                                                      this.minConfidence,
 			                                                                      relevantMethodNames,
 			                                                                      this.persistenceUtil);

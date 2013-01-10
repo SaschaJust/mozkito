@@ -51,7 +51,7 @@ public class Revision implements Annotated {
 	private ChangeType        changeType;
 	
 	/** The transaction. */
-	private ChangeSet    transaction;
+	private ChangeSet    changeSet;
 	
 	/** The changed file. */
 	private Handle            changedFile;
@@ -69,7 +69,7 @@ public class Revision implements Annotated {
 	/**
 	 * Instantiates a new revision.
 	 * 
-	 * @param rcsTransaction
+	 * @param changeSet
 	 *            the rcs transaction
 	 * @param rcsFile
 	 *            the rcs file
@@ -77,8 +77,8 @@ public class Revision implements Annotated {
 	 *            the change type
 	 */
 	@NoneNull
-	public Revision(final ChangeSet rcsTransaction, final Handle rcsFile, final ChangeType changeType) {
-		setTransaction(rcsTransaction);
+	public Revision(final ChangeSet changeSet, final Handle rcsFile, final ChangeType changeType) {
+		setTransaction(changeSet);
 		setChangedFile(rcsFile);
 		setChangeType(changeType);
 		
@@ -181,7 +181,7 @@ public class Revision implements Annotated {
 	@ManyToOne (cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	@Column (nullable = false)
 	public ChangeSet getTransaction() {
-		return this.transaction;
+		return this.changeSet;
 	}
 	
 	/*
@@ -240,11 +240,11 @@ public class Revision implements Annotated {
 	/**
 	 * Sets the transaction.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the transaction to set
 	 */
-	public void setTransaction(final ChangeSet rCSTransaction) {
-		this.transaction = rCSTransaction;
+	public void setTransaction(final ChangeSet changeSet) {
+		this.changeSet = changeSet;
 	}
 	
 	/*

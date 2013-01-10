@@ -30,8 +30,8 @@ import org.mozkito.persistence.Criteria;
 import org.mozkito.persistence.PersistenceUtil;
 import org.mozkito.persistence.RCSPersistenceUtil;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.collections.TransactionSet;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.Revision;
 import org.mozkito.versions.model.ChangeSet;
@@ -124,7 +124,7 @@ public class PPASource extends Source<ChangeSet> {
 						// load new transactions
 						if (PPASource.this.branchIterator.hasNext()) {
 							final Branch next = PPASource.this.branchIterator.next();
-							final TransactionSet set = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
+							final ChangeSetSet set = RCSPersistenceUtil.getTransactions(persistenceUtil, next,
 							                                                              TransactionSetOrder.ASC);
 							PPASource.this.tIterator = set.iterator();
 							if (Logger.logInfo()) {
@@ -141,7 +141,7 @@ public class PPASource extends Source<ChangeSet> {
 					
 					if (PPASource.this.tIterator.hasNext()) {
 						
-						final ChangeSet rCSTransaction = PPASource.this.tIterator.next();
+						final ChangeSet changeSet = PPASource.this.tIterator.next();
 						
 						// final int numRevision = transaction.getChangedFiles().size();
 						// if (numRevision > 50) {
@@ -153,7 +153,7 @@ public class PPASource extends Source<ChangeSet> {
 						
 						// test if seen already
 						boolean skip = false;
-						for (final Revision rCSRevision : rCSTransaction.getRevisions()) {
+						for (final Revision rCSRevision : changeSet.getRevisions()) {
 							final Criteria<JavaChangeOperation> skipCriteria = persistenceUtil.createCriteria(JavaChangeOperation.class)
 							                                                                  .eq("revision",
 							                                                                      rCSRevision);
@@ -161,7 +161,7 @@ public class PPASource extends Source<ChangeSet> {
 								skip = true;
 								if (Logger.logDebug()) {
 									Logger.debug("Skipping Transaction %s. This transaction was analyzed and persisted already.",
-									             rCSTransaction.getId());
+									             changeSet.getId());
 								}
 								break;
 							}
@@ -175,7 +175,7 @@ public class PPASource extends Source<ChangeSet> {
 							if (Logger.logTrace()) {
 								Logger.trace("Providing partial output data.");
 							}
-							providePartialOutputData(rCSTransaction);
+							providePartialOutputData(changeSet);
 						}
 						if ((!PPASource.this.tIterator.hasNext()) && (!PPASource.this.branchIterator.hasNext())) {
 							if (Logger.logTrace()) {

@@ -81,21 +81,21 @@ public class GenealogyMetricAggregationReader extends Source<GenealogyMetricValu
 					}
 					
 					final String transactionId = GenealogyMetricAggregationReader.this.nodeIditerator.next();
-					final ChangeSet rCSTransaction = persistenceUtil.loadById(transactionId, ChangeSet.class);
-					if (rCSTransaction != null) {
-						final Collection<Handle> changedFiles = rCSTransaction.getChangedFiles();
+					final ChangeSet changeset = persistenceUtil.loadById(transactionId, ChangeSet.class);
+					if (changeset != null) {
+						final Collection<Handle> changedFiles = changeset.getChangedFiles();
 						final Collection<GenealogyMetricValue> output = new HashSet<GenealogyMetricValue>();
 						
 						for (final Entry<String, Double> metricSet : metricValues.get(transactionId).entrySet()) {
 							for (final Handle rCSFile : changedFiles) {
 								try {
 									output.add(new GenealogyMetricValue(metricSet.getKey(),
-									                                    rCSFile.getPath(rCSTransaction),
+									                                    rCSFile.getPath(changeset),
 									                                    metricSet.getValue()));
 								} catch (final NoSuchHandleException e) {
 									if (Logger.logError()) {
 										Logger.error("Could not determine path name for file %s in ChangeSet %s. Skipping output. Output in corresponding CSV file is likely to be incomplete.",
-										             rCSFile.toString(), rCSTransaction.toString());
+										             rCSFile.toString(), changeset.toString());
 									}
 								}
 							}

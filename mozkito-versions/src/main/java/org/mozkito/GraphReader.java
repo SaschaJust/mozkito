@@ -62,13 +62,13 @@ public class GraphReader extends Source<ChangeSet> {
 			
 			@Override
 			public void process() {
-				final ChangeSet rCSTransaction = list.poll();
+				final ChangeSet changeSet = list.poll();
 				
 				if (Logger.logDebug()) {
-					Logger.debug("Providing " + rCSTransaction + ".");
+					Logger.debug("Providing " + changeSet + ".");
 				}
-				if (rCSTransaction != null) {
-					providePartialOutputData(rCSTransaction);
+				if (changeSet != null) {
+					providePartialOutputData(changeSet);
 				} else {
 					provideOutputData(null, true);
 					setCompleted();

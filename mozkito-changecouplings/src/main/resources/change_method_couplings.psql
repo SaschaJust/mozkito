@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	    q = q + " INTERSECT " + basequery +str(counter)
 	    argtypes.append("text")
 	    counter = counter + 1
-	  q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN rcstransaction t ON r.tid = t.id WHERE timestamp < $"+str(counter)
+	  q = "SELECT COUNT(distinct t.id) AS support FROM ("+q+") AS r INNER JOIN changeset t ON r.tid = t.id WHERE timestamp < $"+str(counter)
 	  args.append(ctime)
 	  argtypes.append("timestamp")
 	  q = plpy.prepare(q,argtypes)
@@ -46,7 +46,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	
 	plpy.execute("DROP TABLE IF EXISTS "+tablename+"TMP")
 	plpy.execute("CREATE TABLE "+tablename+"TMP (tid character varying(40), fullqualifiedname text)")
-	plpy.execute("INSERT INTO "+tablename+"TMP (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, rcsrevision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='org.mozkito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
+	plpy.execute("INSERT INTO "+tablename+"TMP (select r.transaction_id, l.fullqualifiedname FROM javachangeoperation o, (SELECT * FROM javaelementlocation il, javaelement ie WHERE il.element_generatedid = ie.generatedid) AS l, revision r WHERE o.changedelementlocation_id = l.id AND l.elementtype='org.mozkito.ppa.model.JavaMethodDefinition' AND r.revisionid = o.revision_revisionid)")
 	plpy.execute("DROP TABLE IF EXISTS "+str(tablename))
 	plpy.execute("CREATE TABLE "+str(tablename)+" (premise text[], implication text, support integer, confidence float)")
 	
@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION mozkito_method_changecouplings(tid character varying(
 	
 	q = plpy.prepare(query,["text"])
 	q_rows = plpy.execute(q, [tid])
-	cquery = plpy.prepare("SELECT timestamp FROM rcstransaction WHERE id = $1",["text"])
+	cquery = plpy.prepare("SELECT timestamp FROM changeset WHERE id = $1",["text"])
 	ctime = plpy.execute(cquery,[tid],1)[0]['timestamp']
 	seen = []
 	premises = []

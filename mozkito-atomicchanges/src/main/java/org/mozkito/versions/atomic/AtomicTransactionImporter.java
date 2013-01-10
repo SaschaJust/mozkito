@@ -29,16 +29,16 @@ public class AtomicTransactionImporter {
 	/**
 	 * Mark transaction as atomic.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeSet
 	 *            the r cs transaction
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return true, if successful
 	 */
-	public static synchronized boolean markTransactionAsAtomic(final ChangeSet rCSTransaction,
+	public static synchronized boolean markTransactionAsAtomic(final ChangeSet changeSet,
 	                                                           final PersistenceUtil persistenceUtil) {
-		rCSTransaction.setAtomic(true);
-		persistenceUtil.saveOrUpdate(rCSTransaction);
+		changeSet.setAtomic(true);
+		persistenceUtil.saveOrUpdate(changeSet);
 		return true;
 	}
 	
@@ -53,12 +53,12 @@ public class AtomicTransactionImporter {
 	 */
 	public static synchronized boolean markTransactionIdAsAtomic(final String transactionId,
 	                                                             final PersistenceUtil persistenceUtil) {
-		final ChangeSet rCSTransaction = persistenceUtil.loadById(transactionId, ChangeSet.class);
-		if (rCSTransaction == null) {
+		final ChangeSet changeSet = persistenceUtil.loadById(transactionId, ChangeSet.class);
+		if (changeSet == null) {
 			return false;
 		}
-		rCSTransaction.setAtomic(true);
-		persistenceUtil.saveOrUpdate(rCSTransaction);
+		changeSet.setAtomic(true);
+		persistenceUtil.saveOrUpdate(changeSet);
 		return true;
 	}
 	
@@ -76,8 +76,8 @@ public class AtomicTransactionImporter {
 	                                                              final PersistenceUtil persistenceUtil) {
 		persistenceUtil.beginTransaction();
 		for (final String id : transactionIds) {
-			final ChangeSet rCSTransaction = persistenceUtil.loadById(id, ChangeSet.class);
-			if ((rCSTransaction == null) || (!markTransactionAsAtomic(rCSTransaction, persistenceUtil))) {
+			final ChangeSet changeSet = persistenceUtil.loadById(id, ChangeSet.class);
+			if ((changeSet == null) || (!markTransactionAsAtomic(changeSet, persistenceUtil))) {
 				persistenceUtil.rollbackTransaction();
 				return false;
 			}
@@ -89,16 +89,16 @@ public class AtomicTransactionImporter {
 	/**
 	 * Mark transactions as atomic.
 	 * 
-	 * @param rCSTransactions
+	 * @param changeSets
 	 *            the r cs transactions
 	 * @param persistenceUtil
 	 *            the persistence util
 	 * @return true, if successful
 	 */
-	public static synchronized boolean markTransactionsAsAtomic(final Collection<ChangeSet> rCSTransactions,
+	public static synchronized boolean markTransactionsAsAtomic(final Collection<ChangeSet> changeSets,
 	                                                            final PersistenceUtil persistenceUtil) {
 		persistenceUtil.beginTransaction();
-		for (final ChangeSet t : rCSTransactions) {
+		for (final ChangeSet t : changeSets) {
 			if (!markTransactionAsAtomic(t, persistenceUtil)) {
 				persistenceUtil.rollbackTransaction();
 				return false;

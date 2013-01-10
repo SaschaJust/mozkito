@@ -55,7 +55,7 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		final BranchFactory branchFactory = new BranchFactory(getPersistenceUtil());
 		final Branch masterBranch = branchFactory.getMasterBranch();
 		
-		final ChangeSet rCSTransaction = new ChangeSet("1", "", now, p, "1");
+		final ChangeSet changeSet = new ChangeSet("1", "", now, p, "1");
 		
 		final VersionArchive versionArchive = new VersionArchive() {
 			
@@ -68,7 +68,7 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 			public ChangeSet getTransactionById(final String id) {
 				switch (id) {
 					case "1":
-						return rCSTransaction;
+						return changeSet;
 					default:
 						return null;
 				}
@@ -77,17 +77,17 @@ public class OpenJPA_PPA_MozkitoTest extends DatabaseTest {
 		
 		try {
 			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-			revDepGraph.addBranch(masterBranch.getName(), rCSTransaction.getId());
+			revDepGraph.addBranch(masterBranch.getName(), changeSet.getId());
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
-			masterBranch.setHead(rCSTransaction);
+			masterBranch.setHead(changeSet);
 			
 			final Handle rCSFile = new Handle(versionArchive);
-			rCSFile.assignRevision(new Revision(rCSTransaction, rCSFile, ChangeType.Added), "a.java");
+			rCSFile.assignRevision(new Revision(changeSet, rCSFile, ChangeType.Added), "a.java");
 			
-			final Revision rev = new Revision(rCSTransaction, rCSFile, ChangeType.Added);
+			final Revision rev = new Revision(changeSet, rCSFile, ChangeType.Added);
 			final JavaChangeOperation op = new JavaChangeOperation(ChangeType.Added, classDefinition, rev);
-			getPersistenceUtil().save(rCSTransaction);
+			getPersistenceUtil().save(changeSet);
 			getPersistenceUtil().save(op);
 			getPersistenceUtil().commitTransaction();
 			getPersistenceUtil().beginTransaction();

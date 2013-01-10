@@ -283,16 +283,16 @@ public class Untangling {
 	/**
 	 * Generate score visitors.
 	 * 
-	 * @param rCSTransaction
+	 * @param changeset
 	 *            the transaction
 	 * @return the list
 	 */
-	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final ChangeSet rCSTransaction) {
+	public List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> generateScoreVisitors(final ChangeSet changeset) {
 		
 		final List<MultilevelClusteringScoreVisitor<JavaChangeOperation>> scoreVisitors = new LinkedList<>();
 		
 		for (final MultilevelClusteringScoreVisitorFactory<? extends MultilevelClusteringScoreVisitor<JavaChangeOperation>> voterFactory : this.untanglingControl.getConfidenceVoters()) {
-			scoreVisitors.add(voterFactory.createVoter(rCSTransaction));
+			scoreVisitors.add(voterFactory.createVoter(changeset));
 		}
 		scoreVisitors.add(new LineDistanceVoter());
 		scoreVisitors.add(new FileDistanceVoter());

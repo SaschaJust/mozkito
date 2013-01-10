@@ -65,13 +65,13 @@ public class TransactionReader extends Source<ChangeSet> {
 			@Override
 			public void process() {
 				if (TransactionReader.this.iterator.hasNext()) {
-					final ChangeSet rCSTransaction = TransactionReader.this.iterator.next();
+					final ChangeSet changeset = TransactionReader.this.iterator.next();
 					
 					if (Logger.logInfo()) {
-						Logger.info(Messages.getString("ReportReader.providing", rCSTransaction)); //$NON-NLS-1$
+						Logger.info(Messages.getString("ReportReader.providing", changeset)); //$NON-NLS-1$
 					}
 					
-					providePartialOutputData(rCSTransaction);
+					providePartialOutputData(changeset);
 				} else {
 					provideOutputData(null, true);
 				}

@@ -25,7 +25,7 @@ import org.mozkito.versions.git.GitTransactionIteratorTest;
 import org.mozkito.versions.mercurial.MercurialLogParserTest;
 import org.mozkito.versions.mercurial.MercurialRepositoryTest;
 import org.mozkito.versions.model.HandleTest;
-import org.mozkito.versions.model.RCSTransactionTest;
+import org.mozkito.versions.model.ChangeSetTest;
 import org.mozkito.versions.subversion.SubversionDiffParserTest;
 import org.mozkito.versions.subversion.SubversionRepositoryTest;
 
@@ -35,7 +35,7 @@ import org.mozkito.versions.subversion.SubversionRepositoryTest;
 @RunWith (Suite.class)
 @SuiteClasses ({ RepositoryFactoryTest.class, TransactionSetTest.class, GitLogParserTest.class,
         GitRepositoryTest.class, RevDependencyGraphTest.class, GitTransactionIteratorTest.class, HandleTest.class,
-        RCSTransactionTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class,
+        ChangeSetTest.class, MercurialRepositoryTest.class, MercurialLogParserTest.class,
         SubversionRepositoryTest.class, RevDependencyTest.class, SubversionDiffParserTest.class })
 public class AllTests {
 	// stub

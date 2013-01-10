@@ -65,10 +65,10 @@ public class TestImpactVoter implements MultilevelClusteringScoreVisitor<JavaCha
 		 * (non-Javadoc)
 		 * @see
 		 * org.mozkito.untangling.voters.MultilevelClusteringScoreVisitorFactory#createVoter(org.mozkito.versions.model
-		 * .RCSTransaction)
+		 * .ChangeSet)
 		 */
 		@Override
-		public TestImpactVoter createVoter(final ChangeSet rCSTransaction) {
+		public TestImpactVoter createVoter(final ChangeSet changeset) {
 			return new TestImpactVoter(this.testCoverageIn);
 		}
 		

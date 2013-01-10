@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mozkito.persistence.model.Person;
 import org.mozkito.versions.BranchFactory;
-import org.mozkito.versions.collections.TransactionSet.TransactionSetOrder;
+import org.mozkito.versions.collections.ChangeSetSet.TransactionSetOrder;
 import org.mozkito.versions.model.Branch;
 import org.mozkito.versions.model.ChangeSet;
 
@@ -160,7 +160,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testAddFail() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.add(this.tList.get(0));
 		try {
 			tSet.add(this.otherT);
@@ -175,7 +175,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testAsc() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.ASC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.ASC);
 		tSet.addAll(this.tList);
 		
 		final Iterator<ChangeSet> iterator = tSet.iterator();
@@ -212,7 +212,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testClear() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		tSet.clear();
 		assertTrue(tSet.isEmpty());
@@ -223,7 +223,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testContains() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		for (final ChangeSet t : this.tList) {
 			assertTrue(tSet.contains(t));
@@ -235,7 +235,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testContainsAll() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		assertTrue(tSet.containsAll(this.tList));
 		this.tList.remove(2);
@@ -252,7 +252,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testDesc() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		
 		final Iterator<ChangeSet> iterator = tSet.iterator();
@@ -288,7 +288,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testFirst() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		assertEquals(this.tList.get(0), tSet.first());
 	}
@@ -298,7 +298,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testHeadTailSet() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		final SortedSet<ChangeSet> headSet = tSet.headSet(this.tList.get(6));
 		final SortedSet<ChangeSet> tailSet = tSet.tailSet(this.tList.get(6));
@@ -313,7 +313,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testLast() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		assertEquals(this.tList.get(this.tList.size() - 1), tSet.last());
 	}
@@ -323,7 +323,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testRemove() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		final ChangeSet t7 = this.tList.get(7);
 		assertTrue(tSet.remove(t7));
@@ -341,7 +341,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testRemoveAll() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		assertTrue(tSet.removeAll(this.tList));
 		assertTrue(tSet.isEmpty());
@@ -371,7 +371,7 @@ public class TransactionSetTest {
 	 */
 	@Test
 	public void testRetainAll() {
-		final TransactionSet tSet = new TransactionSet(TransactionSetOrder.DESC);
+		final ChangeSetSet tSet = new ChangeSetSet(TransactionSetOrder.DESC);
 		tSet.addAll(this.tList);
 		assertTrue(tSet.retainAll(this.tList.subList(1, 3)));
 		assertEquals(2, tSet.size());

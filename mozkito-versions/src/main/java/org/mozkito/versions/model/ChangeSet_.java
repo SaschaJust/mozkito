@@ -14,7 +14,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.mozkito.persistence.model.PersonContainer;
 
 /**
- * The Class RCSTransaction_.
+ * The Class ChangeSet_.
  */
 @javax.persistence.metamodel.StaticMetamodel (value = org.mozkito.versions.model.ChangeSet.class)
 @javax.annotation.Generated (value = "org.apache.openjpa.persistence.meta.AnnotationProcessor6",
@@ -22,10 +22,10 @@ import org.mozkito.persistence.model.PersonContainer;
 public class ChangeSet_ {
 	
 	/** The atomic. */
-	public static volatile SingularAttribute<ChangeSet, Boolean>                                   atomic;
+	public static volatile SingularAttribute<ChangeSet, Boolean>                              atomic;
 	
 	/** The branch indices. */
-	public static volatile MapAttribute<ChangeSet, String, Long>                                   branchIndices;
+	public static volatile MapAttribute<ChangeSet, String, Long>                              branchIndices;
 	
 	/** The branch parent. */
 	public static volatile SingularAttribute<ChangeSet, org.mozkito.versions.model.ChangeSet> branchParent;
@@ -34,26 +34,26 @@ public class ChangeSet_ {
 	public static volatile SetAttribute<ChangeSet, org.mozkito.versions.model.ChangeSet>      children;
 	
 	/** The id. */
-	public static volatile SingularAttribute<ChangeSet, String>                                    id;
+	public static volatile SingularAttribute<ChangeSet, String>                               id;
 	
 	/** The java timestamp. */
-	public static volatile SingularAttribute<ChangeSet, Date>                                      javaTimestamp;
+	public static volatile SingularAttribute<ChangeSet, Date>                                 javaTimestamp;
 	
 	/** The merge parent. */
 	public static volatile SingularAttribute<ChangeSet, org.mozkito.versions.model.ChangeSet> mergeParent;
 	
 	/** The message. */
-	public static volatile SingularAttribute<ChangeSet, String>                                    message;
+	public static volatile SingularAttribute<ChangeSet, String>                               message;
 	
 	/** The original id. */
-	public static volatile SingularAttribute<ChangeSet, String>                                    originalId;
+	public static volatile SingularAttribute<ChangeSet, String>                               originalId;
 	
 	/** The persons. */
-	public static volatile SingularAttribute<ChangeSet, PersonContainer>                           persons;
+	public static volatile SingularAttribute<ChangeSet, PersonContainer>                      persons;
 	
 	/** The revisions. */
-	public static volatile CollectionAttribute<ChangeSet, Revision>                             revisions;
+	public static volatile CollectionAttribute<ChangeSet, Revision>                           revisions;
 	
 	/** The tags. */
-	public static volatile SetAttribute<ChangeSet, String>                                         tags;
+	public static volatile SetAttribute<ChangeSet, String>                                    tags;
 }

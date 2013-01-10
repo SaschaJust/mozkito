@@ -83,14 +83,14 @@ public class AuthorEqualityEngineTest extends DatabaseTest {
 	 */
 	private Relation score(final String transactionId,
 	                       final String reportId) throws Exception {
-		final ChangeSet rCSTransaction = Environment.loadTransaction(getPersistenceUtil(), transactionId);
-		assertNotNull("Failed retreiving transaction from database.", rCSTransaction);
+		final ChangeSet changeset = Environment.loadTransaction(getPersistenceUtil(), transactionId);
+		assertNotNull("Failed retreiving transaction from database.", changeset);
 		
 		final Report report = Environment.loadReport(getPersistenceUtil(), reportId);
 		assertNotNull("Failed retreiving report from database.", report);
 		
-		final Relation relation = Environment.relation(rCSTransaction, report);
-		assertNotNull("Failed creating relation from " + rCSTransaction + " and " + report, relation);
+		final Relation relation = Environment.relation(changeset, report);
+		assertNotNull("Failed creating relation from " + changeset + " and " + report, relation);
 		
 		AuthorEqualityEngineTest.finder.score(this.engine, relation);
 		

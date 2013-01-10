@@ -31,9 +31,9 @@ import org.mozkito.versions.Repository;
 import org.mozkito.versions.elements.ChangeType;
 import org.mozkito.versions.elements.LogEntry;
 import org.mozkito.versions.exceptions.RepositoryOperationException;
+import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.Handle;
 import org.mozkito.versions.model.Revision;
-import org.mozkito.versions.model.ChangeSet;
 import org.mozkito.versions.model.VersionArchive;
 
 /**
@@ -50,7 +50,7 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	
 	/**
 	 * Parses the log entry assuming that it was extracted from the provided repository and returns the corresponding
-	 * RCSTransaction.
+	 * ChangeSet.
 	 * 
 	 * @param repository
 	 *            the repository
@@ -61,8 +61,8 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 	 * @return the rCS transaction
 	 */
 	public static ChangeSet parseLogEntry(final Repository repository,
-	                                           final VersionArchive archive,
-	                                           final LogEntry data) {
+	                                      final VersionArchive archive,
+	                                      final LogEntry data) {
 		
 		try {
 			if (Logger.logDebug()) {
@@ -74,9 +74,8 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 				        + data.getRevision() + ")");
 			}
 			
-			final ChangeSet rcsTransaction = new ChangeSet(data.getRevision(), data.getMessage(),
-			                                                         data.getDateTime(), data.getAuthor(),
-			                                                         data.getOriginalId());
+			final ChangeSet changeSet = new ChangeSet(data.getRevision(), data.getMessage(), data.getDateTime(),
+			                                          data.getAuthor(), data.getOriginalId());
 			TRANSACTION_IDS.add(data.getRevision());
 			final Map<String, ChangeType> changedPaths = repository.getChangedPaths(data.getRevision());
 			for (final String fileName : changedPaths.keySet()) {
@@ -90,20 +89,19 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 							}
 							renamedHandle = new Handle(archive);
 							CURRENT_FILES.put(fileName, renamedHandle);
-							final Revision addRevision = new Revision(rcsTransaction, renamedHandle,
-							                                                changedPaths.get(fileName));
+							final Revision addRevision = new Revision(changeSet, renamedHandle,
+							                                          changedPaths.get(fileName));
 							renamedHandle.assignRevision(addRevision, fileName);
 							break;
 						}
-						final Revision renameRevision = new Revision(rcsTransaction, renamedHandle,
-						                                                   changedPaths.get(fileName));
+						final Revision renameRevision = new Revision(changeSet, renamedHandle,
+						                                             changedPaths.get(fileName));
 						renamedHandle.assignRevision(renameRevision, fileName);
 						break;
 					case Added:
 						final Handle addedHandle = new Handle(archive);
 						CURRENT_FILES.put(fileName, addedHandle);
-						final Revision revision = new Revision(rcsTransaction, addedHandle,
-						                                             changedPaths.get(fileName));
+						final Revision revision = new Revision(changeSet, addedHandle, changedPaths.get(fileName));
 						addedHandle.assignRevision(revision, fileName);
 						break;
 					case Deleted:
@@ -115,7 +113,7 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 							}
 							break;
 						}
-						new Revision(rcsTransaction, deletedHandle, changedPaths.get(fileName));
+						new Revision(changeSet, deletedHandle, changedPaths.get(fileName));
 						break;
 					default:
 						Handle modifiedHandle = CURRENT_FILES.get(fileName);
@@ -126,16 +124,16 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 							}
 							modifiedHandle = new Handle(archive);
 							CURRENT_FILES.put(fileName, modifiedHandle);
-							final Revision addRevision = new Revision(rcsTransaction, modifiedHandle,
-							                                                changedPaths.get(fileName));
+							final Revision addRevision = new Revision(changeSet, modifiedHandle,
+							                                          changedPaths.get(fileName));
 							modifiedHandle.assignRevision(addRevision, fileName);
 							break;
 						}
-						new Revision(rcsTransaction, modifiedHandle, changedPaths.get(fileName));
+						new Revision(changeSet, modifiedHandle, changedPaths.get(fileName));
 						break;
 				}
 			}
-			return rcsTransaction;
+			return changeSet;
 		} catch (final RepositoryOperationException e) {
 			throw new UnrecoverableError(e);
 		}
@@ -162,8 +160,8 @@ public class RepositoryParser extends Transformer<LogEntry, ChangeSet> {
 			@Override
 			public void process() {
 				final LogEntry data = getInputData();
-				final ChangeSet rcsTransaction = parseLogEntry(repository, archive, data);
-				provideOutputData(rcsTransaction);
+				final ChangeSet changeSet = parseLogEntry(repository, archive, data);
+				provideOutputData(changeSet);
 			}
 		};
 	}

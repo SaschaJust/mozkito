@@ -36,7 +36,7 @@ import org.mozkito.versions.model.VersionArchive;
 public class JavaChangeOperationTest {
 	
 	/** The r cs transaction. */
-	private ChangeSet              rCSTransaction;
+	private ChangeSet              changeSet;
 	
 	/** The anonymous class location. */
 	private JavaElementLocation    anonymousClassLocation;
@@ -66,8 +66,8 @@ public class JavaChangeOperationTest {
 		                                                                   "org.mozkito.codeanalysis.model.TestClass$1",
 		                                                                   "org/mozkito/codeanalysis/model/TestClass.java",
 		                                                                   20, 23, 43674, 20);
-		this.rCSTransaction = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null, null),
-		                                    "143");
+		this.changeSet = new ChangeSet("hash", "hubba hubba hopp!", new DateTime(), new Person("kim", null, null),
+		                               "143");
 		
 		final VersionArchive versionArchive = new VersionArchive() {
 			
@@ -80,7 +80,7 @@ public class JavaChangeOperationTest {
 			public ChangeSet getTransactionById(final String id) {
 				switch (id) {
 					case "hash":
-						return JavaChangeOperationTest.this.rCSTransaction;
+						return JavaChangeOperationTest.this.changeSet;
 					default:
 						return null;
 				}
@@ -88,14 +88,14 @@ public class JavaChangeOperationTest {
 		};
 		try {
 			final RevDependencyGraph revDepGraph = new RevDependencyGraph();
-			revDepGraph.addBranch("master", this.rCSTransaction.getId());
+			revDepGraph.addBranch("master", this.changeSet.getId());
 			versionArchive.setRevDependencyGraph(revDepGraph);
 			
 			this.rcsFile = new Handle(versionArchive);
-			this.rcsFile.assignRevision(new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Modified),
+			this.rcsFile.assignRevision(new Revision(this.changeSet, this.rcsFile, ChangeType.Modified),
 			                            "org/mozkito/codeanalysis/model/TestClass.java");
 			this.op = new JavaChangeOperation(ChangeType.Added, this.anonymousClassLocation,
-			                                  new Revision(this.rCSTransaction, this.rcsFile, ChangeType.Added));
+			                                  new Revision(this.changeSet, this.rcsFile, ChangeType.Added));
 		} catch (final IOException e) {
 			fail();
 		}
@@ -120,7 +120,7 @@ public class JavaChangeOperationTest {
 			
 			@Override
 			public ChangeSet getById(final String id) {
-				return JavaChangeOperationTest.this.rCSTransaction;
+				return JavaChangeOperationTest.this.changeSet;
 			}
 		}, this.elementFactory));
 	}

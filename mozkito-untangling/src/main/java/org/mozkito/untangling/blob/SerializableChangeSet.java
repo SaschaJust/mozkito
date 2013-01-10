@@ -31,7 +31,7 @@ public class SerializableChangeSet implements Serializable {
 	private static final long serialVersionUID = 5508693461764140540L;
 	
 	/** The transaction id. */
-	private final String      transactionId;
+	private final String      changesetId;
 	
 	/** The operation ids. */
 	private final Set<Long>   operationIds     = new HashSet<>();
@@ -43,7 +43,7 @@ public class SerializableChangeSet implements Serializable {
 	 *            the change set
 	 */
 	public SerializableChangeSet(final ChangeOperationSet changeSet) {
-		this.transactionId = changeSet.getTransaction().getId();
+		this.changesetId = changeSet.getTransaction().getId();
 		for (final JavaChangeOperation operation : changeSet.getOperations()) {
 			this.operationIds.add(operation.getId());
 		}
@@ -57,12 +57,12 @@ public class SerializableChangeSet implements Serializable {
 	 * @return the change set
 	 */
 	public ChangeOperationSet unserialize(final PersistenceUtil persistenceUtil) {
-		final ChangeSet rCSTransaction = persistenceUtil.loadById(this.transactionId, ChangeSet.class);
+		final ChangeSet changeset = persistenceUtil.loadById(this.changesetId, ChangeSet.class);
 		final Set<JavaChangeOperation> operations = new HashSet<>();
 		for (final Long operationId : this.operationIds) {
 			operations.add(persistenceUtil.loadById(operationId, JavaChangeOperation.class));
 		}
-		return new ChangeOperationSet(rCSTransaction, operations);
+		return new ChangeOperationSet(changeset, operations);
 	}
 	
 }
