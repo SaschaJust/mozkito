@@ -162,11 +162,13 @@ public class SubversionRepository extends Repository {
 	
 	/**
 	 * Converts a given string to the corresponding SVNRevision. This requires
-	 *
-	 * @param revision the string representing an SVN revision. This is either a numeric of type long or a case insensitive
-	 * version of the alias string versions. This may not be null.
+	 * 
+	 * @param revision
+	 *            the string representing an SVN revision. This is either a numeric of type long or a case insensitive
+	 *            version of the alias string versions. This may not be null.
 	 * @return the corresponding SVNRevision {@link Repository#setup(URI, String, String)} to be executed.
-	 * @throws SVNException the sVN exception
+	 * @throws SVNException
+	 *             the sVN exception
 	 */
 	private SVNRevision buildRevision(@NotNull @NotEmpty final String revision) throws SVNException {
 		Condition.check(this.initialized, "Repository has to be initialized before calling this method.");
@@ -759,7 +761,7 @@ public class SubversionRepository extends Repository {
 			} else {
 				throw new InvalidProtocolType(getUri().toURL().getProtocol().toUpperCase());
 			}
-		} catch (InvalidRepositoryURI | UnsupportedProtocolType | MalformedURLException | InvalidProtocolType e) {
+		} catch (final InvalidRepositoryURI | UnsupportedProtocolType | MalformedURLException | InvalidProtocolType e) {
 			throw new RepositoryOperationException(e);
 		}
 	}

@@ -36,7 +36,6 @@ import net.ownhero.dev.kisa.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-
 import org.mozkito.exceptions.TestSettingsError;
 import org.mozkito.testing.DatabaseTest;
 import org.mozkito.testing.VersionsTest;
@@ -187,7 +186,7 @@ public class RepositoryProcessor implements MozkitoSettingsProcessor {
 							
 							try {
 								FileUtils.unpack(file, new File(repoPath));
-							} catch (FilePermissionException | IOException e) {
+							} catch (final FilePermissionException | IOException e) {
 								throw new TestSettingsError("Could not create repository.", e);
 							}
 						} catch (final IllegalArgumentException e) {

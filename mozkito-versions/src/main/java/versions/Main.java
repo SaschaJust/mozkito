@@ -36,7 +36,7 @@ public class Main {
 	}
 	
 	/** The Constant moduleName. */
-	private static final String moduleName = getModuleName();
+	private static final String MODULE_NAME = getModuleName();
 	
 	/**
 	 * Gets the module name.
@@ -66,7 +66,7 @@ public class Main {
 			rCS.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("%s: %s finished. Starting GraphToolChain ...", moduleName, rCS.getClass().getSimpleName());
+				Logger.info("%s: %s finished. Starting GraphToolChain ...", MODULE_NAME, rCS.getClass().getSimpleName());
 			}
 			
 			final Thread graphBuilderThread = new Thread(
@@ -76,7 +76,7 @@ public class Main {
 			graphBuilderThread.join();
 			
 			if (Logger.logInfo()) {
-				Logger.info("%s: All done. Cerio!", moduleName);
+				Logger.info("%s: All done. Cerio!", MODULE_NAME);
 			}
 		} catch (final Shutdown e) {
 			if (Logger.logInfo()) {
